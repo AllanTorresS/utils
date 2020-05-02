@@ -1,0 +1,1384 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:s="http://www.w3.org/2001/XMLSchema"
+             xmlns:s0="http://ipiranga.com.br/voucher" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             targetNamespace="http://ipiranga.com.br/voucher">
+    <types>
+        <s:schema elementFormDefault="qualified" targetNamespace="http://ipiranga.com.br/voucher">
+            <s:element name="buscar">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" name="pRequest" type="s0:buscarReq"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="buscarReq">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Request">
+                        <s:sequence>
+                            <s:element name="codigoFornecedor" type="s:long"/>
+                            <s:element name="documento" type="s:long"/>
+                            <s:element name="tipoDocumento">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="8"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element name="companhiaDocumento">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="5"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="parcela">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="extensaoParcela" type="s:long"/>
+                            <s:element minOccurs="0" name="filial">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="12"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="companhia">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="5"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="numeroFatura">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="25"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="dataFatura" type="s:dateTime"/>
+                            <s:element minOccurs="0" name="dataContabilizacao" type="s:dateTime"/>
+                            <s:element minOccurs="0" name="observacao" type="s:string"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="Ens_Request">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Messagebody"/>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="Ens_Messagebody"/>
+            <s:element name="buscarResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element name="buscarResult" type="s0:buscarResp"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="buscarResp">
+                <s:complexContent>
+                    <s:extension base="s0:v2">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="cabecalho" type="s0:ArrayOfcabecalhocabecalho"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="v2">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Response">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="statusIntegracao" type="s0:statusIntegracao"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="Ens_Response">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Messagebody"/>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="statusIntegracao">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Response">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="status" type="s:boolean"/>
+                            <s:element minOccurs="0" name="mensagem">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="1024"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="sessionId" type="s:long"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="ArrayOfcabecalhocabecalho">
+                <s:sequence>
+                    <s:element maxOccurs="unbounded" minOccurs="0" name="cabecalho" nillable="true" type="s0:cabecalho"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="cabecalho">
+                <s:sequence>
+                    <s:element minOccurs="0" name="chaveVoucher" type="s0:chaveVoucher"/>
+                    <s:element minOccurs="0" name="companhia">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="5"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="filial">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="12"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="numeroFatura">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="25"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="taxaConversaoMoeda" type="s:long"/>
+                    <s:element minOccurs="0" name="codigoMoeda">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="3"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="tipoMoeda">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="numeroLote" type="s:long"/>
+                    <s:element minOccurs="0" name="tipoLote">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="2"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="dataLote" type="s:dateTime"/>
+                    <s:element minOccurs="0" name="contabilGeral" type="s0:ArrayOfcontabilGeralcontabilGeral"/>
+                    <s:element minOccurs="0" name="detalhe" type="s0:ArrayOfdetalhedetalhe"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="chaveVoucher">
+                <s:sequence>
+                    <s:element minOccurs="0" name="documento" type="s:long"/>
+                    <s:element minOccurs="0" name="tipoDocumento">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="2"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="companhiaDocumento">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="5"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="ArrayOfcontabilGeralcontabilGeral">
+                <s:sequence>
+                    <s:element maxOccurs="unbounded" minOccurs="0" name="contabilGeral" nillable="true" type="s0:contabilGeral"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="contabilGeral">
+                <s:sequence>
+                    <s:element minOccurs="0" name="chaveContabilGeral" type="s0:chaveContabilGeral"/>
+                    <s:element minOccurs="0" name="contaContabilGeral" type="s0:contaContabilGeral"/>
+                    <s:element minOccurs="0" name="subContabil" type="s0:subContabil"/>
+                    <s:element minOccurs="0" name="codContabilizacaoAlternativo" type="s0:codContabilizacaoAlternativo"/>
+                    <s:element minOccurs="0" name="codigoContabilizacao">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="numeroLote" type="s:long"/>
+                    <s:element minOccurs="0" name="tipoLote">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="2"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="dataLote" type="s:dateTime"/>
+                    <s:element minOccurs="0" name="dataSistemaLote" type="s:dateTime"/>
+                    <s:element minOccurs="0" name="horaSistemaLote" type="s:long"/>
+                    <s:element minOccurs="0" name="companhia">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="5"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="idConta">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="8"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="codigoConta">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="29"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="modoConta">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="periodo" type="s:long"/>
+                    <s:element minOccurs="0" name="seculo" type="s:long"/>
+                    <s:element minOccurs="0" name="ano" type="s:long"/>
+                    <s:element minOccurs="0" name="moeda">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="3"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="taxaConversaoMoeda" type="s:long"/>
+                    <s:element minOccurs="0" name="historicoTaxaConversaoMoeda" type="s:long"/>
+                    <s:element minOccurs="0" name="dataHistorica" type="s:dateTime"/>
+                    <s:element minOccurs="0" name="valor" type="s:decimal"/>
+                    <s:element minOccurs="0" name="valorMoeda" type="s:decimal"/>
+                    <s:element minOccurs="0" name="unidades" type="s:decimal"/>
+                    <s:element minOccurs="0" name="unidadeMedida">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="2"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="classeGL">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="4"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="estornado" type="s:boolean"/>
+                    <s:element minOccurs="0" name="explicacao">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="200"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="explicacaoObservacao">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="200"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="referencia1">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="8"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="referencia2">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="8"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="referencia3">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="8"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="numeroPagamento">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="8"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="dataPagamento" type="s:dateTime"/>
+                    <s:element minOccurs="0" name="dataChequeCompensado" type="s:dateTime"/>
+                    <s:element minOccurs="0" name="numeroSerie">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="25"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="codigoContabilizacaoFinalLote">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="codigoReconciliado">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="consolidado" type="s:boolean"/>
+                    <s:element minOccurs="0" name="codigoRemocao">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="indicador1099">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="exclusaoNaoPermitida">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="formatoLivreParaClienteAltern1">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="formatoLivreParaClienteAltern2">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="codContabilizadoRazaoCustoArrendam">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="codigoFatura">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="dataFatura" type="s:dateTime"/>
+                    <s:element minOccurs="0" name="categoriasOrdemServico01">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="4"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="anoFiscalSemanal" type="s:long"/>
+                    <s:element minOccurs="0" name="periodoFiscalSemanal" type="s:long"/>
+                    <s:element minOccurs="0" name="itemFechadoAPartirProcessamento">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="numeroSequenciaOperacoes" type="s:decimal"/>
+                    <s:element minOccurs="0" name="codigoTipoServico">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="6"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="etapaServico">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="4"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="unidadeNegociosPrincipal">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="12"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="divisaoInteresse" type="s:decimal"/>
+                    <s:element minOccurs="0" name="idArrendamentoBemExterno">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="25"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="tipoIdentificacao">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="2"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="dataImposto" type="s:dateTime"/>
+                    <s:element minOccurs="0" name="originador">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="10"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="numeroRegistro" type="s:long"/>
+                    <s:element minOccurs="0" name="identificacaoPagamentoInterno" type="s:long"/>
+                    <s:element minOccurs="0" name="codigoMoeda">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="3"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="impostoNumeroCurtoItem" type="s:long"/>
+                    <s:element minOccurs="0" name="codigoCustoComBaseNaAtividade">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="10"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="numeroLinhaDistribuicao" type="s:long"/>
+                    <s:element minOccurs="0" name="numeroRecebimento">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="25"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="chaveContabilGeral">
+                <s:sequence>
+                    <s:element minOccurs="0" name="documentoContabil" type="s:long"/>
+                    <s:element minOccurs="0" name="tipoDocumentoContabil">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="2"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="companhiaDocumentoContabil">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="5"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="linhaDocumentoContabil" type="s:long"/>
+                    <s:element minOccurs="0" name="dataContabilizacao" type="s:dateTime"/>
+                    <s:element minOccurs="0" name="codigoExtensaoLinha">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="2"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="tipoRazao">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="2"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="contaContabilGeral">
+                <s:sequence>
+                    <s:element minOccurs="0" name="contaObjeto">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="6"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="centroCusto">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="12"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="detalhe">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="8"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="subConta">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="8"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="subContabil">
+                <s:sequence>
+                    <s:element minOccurs="0" name="subConta">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="8"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="tipoSubConta">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="codContabilizacaoAlternativo">
+                <s:sequence>
+                    <s:element minOccurs="0" name="codContabilizacaoAlternativo0">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="codContabilizacaoAlternativo1">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="codContabilizacaoAlternativo2">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="codContabilizacaoAlternativo3">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="codContabilizacaoAlternativo4">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="codContabilizacaoAlternativo5">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="codContabilizacaoAlternativo6">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="codContabilizacaoAlternativo7">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="codContabilizacaoAlternativo8">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="codContabilizacaoAlternativo9">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="ArrayOfdetalhedetalhe">
+                <s:sequence>
+                    <s:element maxOccurs="unbounded" minOccurs="0" name="detalhe" nillable="true" type="s0:detalhe"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="detalhe">
+                <s:sequence>
+                    <s:element minOccurs="0" name="resultadoVoucher" type="s0:resultadoVoucher"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="resultadoVoucher">
+                <s:sequence>
+                    <s:element minOccurs="0" name="tipoDocumentoAjuste">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="2"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="codPagador" type="s:long"/>
+                    <s:element minOccurs="0" name="codAprovador" type="s:long"/>
+                    <s:element minOccurs="0" name="dataFatura" type="s:dateTime"/>
+                    <s:element minOccurs="0" name="dataServicoImposto" type="s:dateTime"/>
+                    <s:element minOccurs="0" name="dataVencimento" type="s:dateTime"/>
+                    <s:element minOccurs="0" name="dataVencimentoDesconto" type="s:dateTime"/>
+                    <s:element minOccurs="0" name="dataContabilizacao" type="s:dateTime"/>
+                    <s:element minOccurs="0" name="ano" type="s:long"/>
+                    <s:element minOccurs="0" name="seculo" type="s:long"/>
+                    <s:element minOccurs="0" name="periodo" type="s:long"/>
+                    <s:element minOccurs="0" name="documentoBalanceado">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="statusPagamento">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="valorBruto" type="s:decimal"/>
+                    <s:element minOccurs="0" name="valorEmAberto" type="s:decimal"/>
+                    <s:element minOccurs="0" name="descontoDisponivel" type="s:decimal"/>
+                    <s:element minOccurs="0" name="descontoObtido" type="s:decimal"/>
+                    <s:element minOccurs="0" name="valorTributável" type="s:decimal"/>
+                    <s:element minOccurs="0" name="valorNaoTributável" type="s:decimal"/>
+                    <s:element minOccurs="0" name="valorImposto" type="s:decimal"/>
+                    <s:element minOccurs="0" name="areaTaxaImposto">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="10"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="codigoExplicacaoImposto1">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="2"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="valorMoeda" type="s:decimal"/>
+                    <s:element minOccurs="0" name="valorEmAbertoEstrangeiro" type="s:decimal"/>
+                    <s:element minOccurs="0" name="valorDescontoEstrangeiroDisponivel" type="s:decimal"/>
+                    <s:element minOccurs="0" name="valorDescontoEstrangeiroObtido" type="s:decimal"/>
+                    <s:element minOccurs="0" name="valoEstrangeiroTributável" type="s:decimal"/>
+                    <s:element minOccurs="0" name="valorEstrangeiroNaoTributável" type="s:decimal"/>
+                    <s:element minOccurs="0" name="valorImpostoEstrangeiro" type="s:decimal"/>
+                    <s:element minOccurs="0" name="classeGL">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="4"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="iDConta">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="8"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="codigoContabilizadoGL">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="identificacaoCurtaTransacaoBancaria">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="8"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="codigoCondicoesPagamento">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="3"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="indicadorCancelado">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="numeroSequenciaOperacoes" type="s:decimal"/>
+                    <s:element minOccurs="0" name="referencia">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="25"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="unidade">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="8"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="unidadeNegocios2">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="12"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="descricao">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="30"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="frequenciaPeriodica">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="2"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="frequenciaPeriodicaNumeroPagamentos" type="s:long"/>
+                    <s:element minOccurs="0" name="campoControleDemonstrativo">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="13"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="itemFechadoAPartirProcessamento">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="unidades" type="s:decimal"/>
+                    <s:element minOccurs="0" name="unidadeMedida">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="2"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="instrumentoPagamento">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="areaTaxadeImposto2Retencao">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="10"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="codigoExplicacaoImposto3Retencao">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="2"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="codigoMiscelaneos">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="codigoMiscelaneos2">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="codigoMiscelaneos3">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="indicador1099">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="entradaDomestDistMultiMoedas">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="historicoTaxaConversaoMoeda" type="s:long"/>
+                    <s:element minOccurs="0" name="dataHistorica" type="s:dateTime"/>
+                    <s:element minOccurs="0" name="orignadorTransacao">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="10"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="numeroTransacaoBancária">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="20"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="codigoNegociacaoPagamento">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="3"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="statusImpostoDiferidoIVA">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="codigoMoeda">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="3"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="valorDistribuir" type="s:decimal"/>
+                    <s:element minOccurs="0" name="valorMoedaDistribuir" type="s:decimal"/>
+                    <s:element minOccurs="0" name="valorImpostoIrrecuperavel" type="s:decimal"/>
+                    <s:element minOccurs="0" name="impostoIrrecuperavelMoedaEstr" type="s:decimal"/>
+                    <s:element minOccurs="0" name="criadoPorComprasas" type="s:boolean"/>
+                    <s:element minOccurs="0" name="consolidado" type="s:boolean"/>
+                    <s:element minOccurs="0" name="pagarQuandoPago">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="numeroGrupoPagarQuandoPago" type="s:long"/>
+                    <s:element minOccurs="0" name="idTransacaoEncontroContas" type="s:long"/>
+                    <s:element minOccurs="0" name="numeroDocumentoEncontroContas" type="s:long"/>
+                    <s:element minOccurs="0" name="codigoStatusEncontroContas">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="chaveLinhaVoucher" type="s0:chaveLinhaVoucher"/>
+                    <s:element minOccurs="0" name="chavePedidoOriginal" type="s0:chavePedidoOriginal"/>
+                    <s:element minOccurs="0" name="chavePedidoCompraLinha" type="s0:chavePedidoCompraLinha"/>
+                    <s:element minOccurs="0" name="codigoCategoriaConta" type="s0:codigoCategoriaConta"/>
+                    <s:element minOccurs="0" name="reservadoUsoFuturo" type="s0:reservadoUsoFuturo"/>
+                    <s:element minOccurs="0" name="dadosFornecedor" type="s0:dadosFornecedor"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="chaveLinhaVoucher">
+                <s:sequence>
+                    <s:element minOccurs="0" name="parcela">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="3"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="extensaoParcela" type="s:decimal"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="chavePedidoOriginal">
+                <s:sequence>
+                    <s:element minOccurs="0" name="documentoOriginal" type="s:long"/>
+                    <s:element minOccurs="0" name="tipoDocumentoOriginal">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="2"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="companhiaDocumentoOriginal">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="5"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="sufixoDocumentoOriginal">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="3"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="chavePedidoCompraLinha">
+                <s:sequence>
+                    <s:element minOccurs="0" name="linhaPedidoCompras" type="s:long"/>
+                    <s:element minOccurs="0" name="buscaChavePedidoCompra" type="s0:buscaChavePedidoCompra"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="buscaChavePedidoCompra">
+                <s:sequence>
+                    <s:element minOccurs="0" name="pedidoCompras">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="8"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="tipoPedidoCompras">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="2"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="companhiaPedidoCompras">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="5"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="sufixoPedidoCompras">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="3"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="codigoCategoriaConta">
+                <s:sequence>
+                    <s:element minOccurs="0" name="codCategoria1">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="3"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="codCategoria2">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="3"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="codCategoria3">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="3"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="codCategoria4">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="3"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="codCategoria5">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="3"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="codCategoria6">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="3"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="codCategoria7">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="3"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="codCategoria8">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="3"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="codCategoria9">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="3"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="codCategoria10">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="3"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="reservadoUsoFuturo">
+                <s:sequence>
+                    <s:element minOccurs="0" name="codigoUsoFuturo">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="3"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="dataUsoFuturo" type="s:dateTime"/>
+                    <s:element minOccurs="0" name="valorUsoFuturo" type="s:decimal"/>
+                    <s:element minOccurs="0" name="numeroUsoFuturo" type="s:long"/>
+                    <s:element minOccurs="0" name="refUsoFuturo">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="15"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="dadosFornecedor">
+                <s:sequence>
+                    <s:element minOccurs="0" name="codFornecedor" type="s:long"/>
+                    <s:element minOccurs="0" name="codLongoFornecedor">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="20"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="cpfCnpjFornecedor">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="20"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="criar">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" name="pRequest" type="s0:criarReq"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="criarReq">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Request">
+                        <s:sequence>
+                            <s:element name="cenario" type="s:long"/>
+                            <s:element minOccurs="0" name="filial" type="s:string"/>
+                            <s:element minOccurs="0" name="companhia" type="s:string"/>
+                            <s:element minOccurs="0" name="codigoPagamento" type="s:string"/>
+                            <s:element minOccurs="0" name="instrumentoPagamento" type="s:string"/>
+                            <s:element minOccurs="0" name="numeroFatura" type="s:string"/>
+                            <s:element minOccurs="0" name="dataFatura" type="s:dateTime"/>
+                            <s:element minOccurs="0" name="dataContabil" type="s:dateTime"/>
+                            <s:element minOccurs="0" name="dataTributacaoServico" type="s:dateTime"/>
+                            <s:element minOccurs="0" name="dataProcessamento" type="s:dateTime"/>
+                            <s:element minOccurs="0" name="codigoMoeda" type="s:string"/>
+                            <s:element minOccurs="0" name="taxaConversao" type="s:decimal"/>
+                            <s:element minOccurs="0" name="tipoMoeda" type="s:string"/>
+                            <s:element minOccurs="0" name="observacao" type="s:string"/>
+                            <s:element minOccurs="0" name="processamento" type="s0:processamento"/>
+                            <s:element minOccurs="0" name="chaveDocumento" type="s0:chaveDocumento"/>
+                            <s:element minOccurs="0" name="chavePedido" type="s0:chavePedido"/>
+                            <s:element minOccurs="0" name="fornecedor" type="s0:fornecedor"/>
+                            <s:element minOccurs="0" name="aprovador" type="s0:aprovador"/>
+                            <s:element minOccurs="0" name="voucher" type="s0:ArrayOfvouchervoucher"/>
+                            <s:element minOccurs="0" name="distribuicaoContabil" type="s0:ArrayOfdistribuicaoContabildistribuicaoContabil"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="processamento">
+                <s:sequence>
+                    <s:element minOccurs="0" name="versaoProcessamento" type="s:string"/>
+                    <s:element minOccurs="0" name="versaoProcessamentoContabil" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="chaveDocumento">
+                <s:sequence>
+                    <s:element minOccurs="0" name="numeroDocumento" type="s:long"/>
+                    <s:element minOccurs="0" name="tipoDocumento" type="s:string"/>
+                    <s:element minOccurs="0" name="companhiaDocumento" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="chavePedido">
+                <s:sequence>
+                    <s:element minOccurs="0" name="numeroDocumentoPedido" type="s:string"/>
+                    <s:element minOccurs="0" name="tipoDocumentoPedido" type="s:string"/>
+                    <s:element minOccurs="0" name="companhiaDocumentoPedido" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="fornecedor">
+                <s:sequence>
+                    <s:element minOccurs="0" name="codigo" type="s:long"/>
+                    <s:element minOccurs="0" name="numeroCadastrato" type="s:string"/>
+                    <s:element minOccurs="0" name="cnpj" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="aprovador">
+                <s:sequence>
+                    <s:element minOccurs="0" name="codigo" type="s:long"/>
+                    <s:element minOccurs="0" name="numeroCadastro" type="s:string"/>
+                    <s:element minOccurs="0" name="cnpj" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="ArrayOfvouchervoucher">
+                <s:sequence>
+                    <s:element maxOccurs="unbounded" minOccurs="0" name="voucher" nillable="true" type="s0:voucher"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="voucher">
+                <s:sequence>
+                    <s:element minOccurs="0" name="condicaoPagamento" type="s:string"/>
+                    <s:element minOccurs="0" name="valorMoedaNacional" type="s:string"/>
+                    <s:element minOccurs="0" name="valorMoedaEstrangeira" type="s:decimal"/>
+                    <s:element minOccurs="0" name="descontoDispMoedaNacional" type="s:decimal"/>
+                    <s:element minOccurs="0" name="descontoDispMoedaEstrangeira" type="s:decimal"/>
+                    <s:element minOccurs="0" name="descontoApliMoedaNacional" type="s:decimal"/>
+                    <s:element minOccurs="0" name="descontoApliMoedaEstrangeira" type="s:decimal"/>
+                    <s:element minOccurs="0" name="valorTribMoedaNacional" type="s:decimal"/>
+                    <s:element minOccurs="0" name="valorTribMoedaEstrangeira" type="s:decimal"/>
+                    <s:element minOccurs="0" name="valorNaoTribMoedaNacional" type="s:decimal"/>
+                    <s:element minOccurs="0" name="valorNaoTribMoedaEstrangeira" type="s:decimal"/>
+                    <s:element minOccurs="0" name="valorImpostoMoedaNacional" type="s:decimal"/>
+                    <s:element minOccurs="0" name="valorImpostoMoedaEstrangeira" type="s:decimal"/>
+                    <s:element minOccurs="0" name="impostoNaoRecMoedaNacional" type="s:decimal"/>
+                    <s:element minOccurs="0" name="impostoNaoRecMoedaEstrangeira" type="s:decimal"/>
+                    <s:element minOccurs="0" name="dataVencimento" type="s:dateTime"/>
+                    <s:element minOccurs="0" name="percentualImposto" type="s:string"/>
+                    <s:element minOccurs="0" name="codigoImposto" type="s:string"/>
+                    <s:element minOccurs="0" name="frequenciaRecorrencia" type="s:string"/>
+                    <s:element minOccurs="0" name="numeroPagamentoRecorrencia" type="s:string"/>
+                    <s:element minOccurs="0" name="item" type="s0:item"/>
+                    <s:element minOccurs="0" name="beneficiario" type="s0:beneficiario"/>
+                    <s:element minOccurs="0" name="chavePedido" type="s0:chavePedido"/>
+                    <s:element minOccurs="0" name="usoFuturo" type="s0:usoFuturo"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="item">
+                <s:sequence>
+                    <s:element minOccurs="0" name="itemPagamento" type="s:string"/>
+                    <s:element minOccurs="0" name="itemPagamentoNumExtensao" type="s:long"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="beneficiario">
+                <s:sequence>
+                    <s:element minOccurs="0" name="codigo" type="s:long"/>
+                    <s:element minOccurs="0" name="numeroCadastro" type="s:string"/>
+                    <s:element minOccurs="0" name="cnpj" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="usoFuturo">
+                <s:sequence>
+                    <s:element minOccurs="0" name="codigo" type="s:string"/>
+                    <s:element minOccurs="0" name="data" type="s:dateTime"/>
+                    <s:element minOccurs="0" name="valor" type="s:decimal"/>
+                    <s:element minOccurs="0" name="numero" type="s:long"/>
+                    <s:element minOccurs="0" name="referencia" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="ArrayOfdistribuicaoContabildistribuicaoContabil">
+                <s:sequence>
+                    <s:element maxOccurs="unbounded" minOccurs="0" name="distribuicaoContabil" nillable="true" type="s0:distribuicaoContabil"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="distribuicaoContabil">
+                <s:sequence>
+                    <s:element minOccurs="0" name="indiceContaContabil" type="s:long"/>
+                    <s:element minOccurs="0" name="linhaDocumento" type="s:long"/>
+                    <s:element minOccurs="0" name="valorMoedaNacional" type="s:decimal"/>
+                    <s:element minOccurs="0" name="valorMoedaEstrangeira" type="s:decimal"/>
+                    <s:element minOccurs="0" name="observacao" type="s:string"/>
+                    <s:element minOccurs="0" name="referencia" type="s:string"/>
+                    <s:element minOccurs="0" name="numeroSerie" type="s:string"/>
+                    <s:element minOccurs="0" name="subConta" type="s0:subConta"/>
+                    <s:element minOccurs="0" name="chaveDaConta" type="s0:chaveConta"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="subConta">
+                <s:sequence>
+                    <s:element minOccurs="0" name="subConta" type="s:string"/>
+                    <s:element minOccurs="0" name="tipoSubConta" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="chaveConta">
+                <s:sequence>
+                    <s:element minOccurs="0" name="identificacaoDaConta" type="s:string"/>
+                    <s:element minOccurs="0" name="identificacaoCompletaDaConta" type="s:string"/>
+                    <s:element minOccurs="0" name="contaAlternativa" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="criarResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element name="criarResult" type="s0:criarResp"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="criarResp">
+                <s:complexContent>
+                    <s:extension base="s0:v2">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="numeroDocumento" type="s:string"/>
+                            <s:element minOccurs="0" name="tipoCodigoDocumento" type="s:string"/>
+                            <s:element minOccurs="0" name="companhiaDocumento" type="s:string"/>
+                            <s:element minOccurs="0" name="listaItemVoucher" type="s0:ArrayOfitemVoucheritemVoucher"/>
+                            <s:element minOccurs="0" name="listaLinhaVoucher" type="s0:ArrayOflinhaVoucherlinhaVoucher"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="ArrayOfitemVoucheritemVoucher">
+                <s:sequence>
+                    <s:element maxOccurs="unbounded" minOccurs="0" name="itemVoucher" nillable="true" type="s0:itemVoucher"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="itemVoucher">
+                <s:sequence>
+                    <s:element minOccurs="0" name="itemPagamento" type="s:string"/>
+                    <s:element minOccurs="0" name="itemPagamentoExtensao" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="ArrayOflinhaVoucherlinhaVoucher">
+                <s:sequence>
+                    <s:element maxOccurs="unbounded" minOccurs="0" name="linhaVoucher" nillable="true" type="s0:linhaVoucher"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="linhaVoucher">
+                <s:sequence>
+                    <s:element minOccurs="0" name="linhaDocumento" type="s:string"/>
+                    <s:element minOccurs="0" name="linhaExtensao" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+        </s:schema>
+    </types>
+    <message name="buscarSoapIn">
+        <part name="parameters" element="s0:buscar"/>
+    </message>
+    <message name="buscarSoapOut">
+        <part name="parameters" element="s0:buscarResponse"/>
+    </message>
+    <message name="criarSoapIn">
+        <part name="parameters" element="s0:criar"/>
+    </message>
+    <message name="criarSoapOut">
+        <part name="parameters" element="s0:criarResponse"/>
+    </message>
+    <portType name="voucherSoap">
+        <operation name="buscar">
+            <input message="s0:buscarSoapIn"/>
+            <output message="s0:buscarSoapOut"/>
+        </operation>
+        <operation name="criar">
+            <input message="s0:criarSoapIn"/>
+            <output message="s0:criarSoapOut"/>
+        </operation>
+    </portType>
+    <binding name="voucherSoap" type="s0:voucherSoap">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="buscar">
+            <soap:operation soapAction="http://ipiranga.com.br/voucher/ws.voucher.Service.buscar" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="criar">
+            <soap:operation soapAction="http://ipiranga.com.br/voucher/ws.voucher.Service.criar" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="voucher">
+        <port name="voucherSoap" binding="s0:voucherSoap">
+            <soap:address location="http://ensemdes.ipiranga.com.br:7070/csp/ipirangaws/ws.voucher.Service.CLS"/>
+        </port>
+    </service>
+</definitions>

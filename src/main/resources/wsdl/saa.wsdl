@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:s="http://www.w3.org/2001/XMLSchema"
+             xmlns:s0="http://tempuri.org" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             targetNamespace="http://tempuri.org">
+    <types>
+        <s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org">
+            <s:element name="autenticacaoUsuario">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" name="pRequest" type="s0:autenticacaoUsuarioReq"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="autenticacaoUsuarioReq">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Request">
+                        <s:sequence>
+                            <s:element name="usuario" type="s:string"/>
+                            <s:element name="senha" type="s:string"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="Ens_Request">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Messagebody"/>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="Ens_Messagebody"/>
+            <s:element name="autenticacaoUsuarioResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element name="autenticacaoUsuarioResult" type="s0:autenticacaoUsuarioResp"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="autenticacaoUsuarioResp">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Response">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="usuarioAutenticou" type="s:long"/>
+                            <s:element minOccurs="0" name="status" type="s:base64Binary"/>
+                            <s:element minOccurs="0" name="msgErro" type="s:string"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="Ens_Response">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Messagebody"/>
+                </s:complexContent>
+            </s:complexType>
+            <s:element name="autorizacaoUsuario">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" name="pRequest" type="s0:autorizacaoReq"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="autorizacaoReq">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Request">
+                        <s:sequence>
+                            <s:element name="usuario" type="s:string"/>
+                            <s:element name="sistema">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:element name="autorizacaoUsuarioResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element name="autorizacaoUsuarioResult" type="s0:autorizacaoResp"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="autorizacaoResp">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Response">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="possuiPermissaoSistemaReturn" type="s:boolean"/>
+                            <s:element minOccurs="0" name="permissoesSistemaAutenticado" type="s0:ArrayOfpermissoesSistemaAutenticadoItemBoolean"/>
+                            <s:element minOccurs="0" name="status" type="s:base64Binary"/>
+                            <s:element minOccurs="0" name="msgErro">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="200"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="ArrayOfpermissoesSistemaAutenticadoItemBoolean">
+                <s:sequence>
+                    <s:element maxOccurs="unbounded" minOccurs="0" name="permissoesSistemaAutenticadoItem" nillable="true" type="s:boolean"/>
+                </s:sequence>
+            </s:complexType>
+        </s:schema>
+    </types>
+    <message name="autenticacaoUsuarioSoapIn">
+        <part name="parameters" element="s0:autenticacaoUsuario"/>
+    </message>
+    <message name="autenticacaoUsuarioSoapOut">
+        <part name="parameters" element="s0:autenticacaoUsuarioResponse"/>
+    </message>
+    <message name="autorizacaoUsuarioSoapIn">
+        <part name="parameters" element="s0:autorizacaoUsuario"/>
+    </message>
+    <message name="autorizacaoUsuarioSoapOut">
+        <part name="parameters" element="s0:autorizacaoUsuarioResponse"/>
+    </message>
+    <portType name="saaAcessoExternoSoap">
+        <operation name="autenticacaoUsuario">
+            <input message="s0:autenticacaoUsuarioSoapIn"/>
+            <output message="s0:autenticacaoUsuarioSoapOut"/>
+        </operation>
+        <operation name="autorizacaoUsuario">
+            <input message="s0:autorizacaoUsuarioSoapIn"/>
+            <output message="s0:autorizacaoUsuarioSoapOut"/>
+        </operation>
+    </portType>
+    <binding name="saaAcessoExternoSoap" type="s0:saaAcessoExternoSoap">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="autenticacaoUsuario">
+            <soap:operation soapAction="http://tempuri.org/cbpi.bs.saa.acessoExterno.Service.autenticacaoUsuario" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="autorizacaoUsuario">
+            <soap:operation soapAction="http://tempuri.org/cbpi.bs.saa.acessoExterno.Service.autorizacaoUsuario" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="saaAcessoExterno">
+        <port name="saaAcessoExternoSoap" binding="s0:saaAcessoExternoSoap">
+            <soap:address location="http://ensemdes.ipiranga.com.br:7070/csp/ensinfraws/cbpi.bs.saa.acessoExterno.Service.CLS"/>
+        </port>
+    </service>
+</definitions>

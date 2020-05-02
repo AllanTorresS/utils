@@ -1,0 +1,168 @@
+<definitions targetNamespace="http://ipiranga.com.br/vinculoCreditoBoleto" xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:ns2="java:oracle.e1.bssvfoundation.util"
+             xmlns:ns3="http://ipiranga.com.br/statusIntegracao" xmlns:s="http://www.w3.org/2001/XMLSchema"
+             xmlns:s0="http://ipiranga.com.br/vinculoCreditoBoleto" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    <types>
+        <s:schema elementFormDefault="qualified" targetNamespace="http://ipiranga.com.br/vinculoCreditoBoleto">
+            <s:import namespace="http://ipiranga.com.br/statusIntegracao"/>
+            <s:import namespace="java:oracle.e1.bssvfoundation.util"/>
+            <s:element name="vincular">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" name="pRequest" type="s0:Request"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="Request">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Request">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="entrada" type="s0:vincularCreditoRequest"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="Ens_Request">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Messagebody"/>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="Ens_Messagebody">
+                <s:annotation>
+                    <s:documentation>Base class for simple Ensemble message classes, and for the sub- base classes
+                        Ens.Request and Ens.Response. Note however that any persistent or serial object can be sent as a
+                        message body. It is not required that all message body object classes to be derived from this
+                        class. Also note that all message classes derived from this class will share the same storage
+                        extent in the database.
+                    </s:documentation>
+                </s:annotation>
+            </s:complexType>
+            <s:complexType name="vincularCreditoRequest">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Request">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="SzConta" type="s:string"/>
+                            <s:element minOccurs="0" name="MnCliente" type="s:int"/>
+                            <s:element minOccurs="0" name="SzCondPagamento" type="s:string"/>
+                            <s:element minOccurs="0" name="SzObservacao" type="s:string"/>
+                            <s:element minOccurs="0" name="MnCenario" type="s:int"/>
+                            <s:element minOccurs="0" name="MnValorTransacao" type="s:decimal"/>
+                            <s:element minOccurs="0" name="JdDataDaFatura" type="s:dateTime"/>
+                            <s:element minOccurs="0" name="SzPosto" type="s:string"/>
+                            <s:element minOccurs="0" name="MnNumBoleto" type="s:long"/>
+                            <s:element minOccurs="0" name="JdDataVencimentoDDJ" type="s:dateTime"/>
+                            <s:element minOccurs="0" name="E1MessageList" type="ns2:E1MessageList"/>
+                            <s:element minOccurs="0" name="MnDocGerado" type="s:long"/>
+                            <s:element minOccurs="0" name="SzErrorCode" type="s:string"/>
+                            <s:element minOccurs="0" name="SzErrorDescription" type="s:string"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:element name="vincularResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element name="vincularResult" type="ns3:Response"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="Ens_Response">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Messagebody"/>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="vincularCreditoResponse">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Response">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="E1MessageList" type="ns2:E1MessageList"/>
+                            <s:element minOccurs="0" name="MnDocGerado" type="s:long"/>
+                            <s:element minOccurs="0" name="SzErrorCode" type="s:string"/>
+                            <s:element minOccurs="0" name="SzErrorDescription" type="s:string"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+        </s:schema>
+        <s:schema elementFormDefault="qualified" targetNamespace="java:oracle.e1.bssvfoundation.util">
+            <s:complexType name="E1MessageList">
+                <s:sequence>
+                    <s:element maxOccurs="unbounded" minOccurs="0" name="E1Messages" nillable="true"
+                               type="ns2:E1Message"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="ArrayOfE1Message">
+                <s:sequence>
+                    <s:element maxOccurs="unbounded" minOccurs="0" name="E1Message" nillable="true"
+                               type="ns2:E1Message"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="E1Message">
+                <s:sequence>
+                    <s:element minOccurs="0" name="MessagePrefix" type="s:string"/>
+                    <s:element minOccurs="0" name="Message" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+        </s:schema>
+        <s:schema elementFormDefault="qualified" targetNamespace="http://ipiranga.com.br/statusIntegracao">
+            <s:import namespace="http://ipiranga.com.br/vinculoCreditoBoleto"/>
+            <s:complexType name="Response">
+                <s:complexContent>
+                    <s:extension base="ns3:v3">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="saida" type="s0:vincularCreditoResponse"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="v3">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Response">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="statusIntegracao" type="ns3:statusIntegracao"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="statusIntegracao">
+                <s:sequence>
+                    <s:element minOccurs="0" name="status" type="s:boolean"/>
+                    <s:element minOccurs="0" name="codigo" type="s:string"/>
+                    <s:element minOccurs="0" name="mensagem" type="s:string"/>
+                    <s:element minOccurs="0" name="sessionId" type="s:long"/>
+                </s:sequence>
+            </s:complexType>
+        </s:schema>
+    </types>
+    <message name="vincularSoapIn">
+        <part name="parameters" element="s0:vincular"/>
+    </message>
+    <message name="vincularSoapOut">
+        <part name="parameters" element="s0:vincularResponse"/>
+    </message>
+    <portType name="vinculoCreditoBoletoSoap">
+        <operation name="vincular">
+            <input message="s0:vincularSoapIn"/>
+            <output message="s0:vincularSoapOut"/>
+        </operation>
+    </portType>
+    <binding name="vinculoCreditoBoletoSoap" type="s0:vinculoCreditoBoletoSoap">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="vincular">
+            <soap:operation
+                    soapAction="http://ipiranga.com.br/vinculoCreditoBoleto/ws.vinculoCreditoBoleto.Service.vincular"
+                    style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="vinculoCreditoBoleto">
+        <port name="vinculoCreditoBoletoSoap" binding="s0:vinculoCreditoBoletoSoap">
+            <soap:address location="http://ensemdes.ipiranga.com.br:7070/csp/ipirangaws/ws.vinculoCreditoBoleto.Service.CLS"/>
+        </port>
+    </service>
+</definitions>

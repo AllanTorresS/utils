@@ -1,0 +1,24 @@
+<jaxws:bindings version="2.0"
+                xmlns:jaxws="http://java.sun.com/xml/ns/jaxws"
+                xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+                xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                wsdlLocation="fatura.wsdl">
+
+    <jaxws:package name="ipp.aci.boleia.dados.servicos.ensemble.jde.fatura.jaxws" />
+
+    <jxb:bindings node="//xs:schema">
+        <jxb:bindings node="//xs:complexType[@name='ArrayOfmarcarTituloASerBaixadoLoteLancamentoRespPairOflistaLancamentoRetornoKeymarcarTituloASerBaixadoLoteLancamentoResp']">
+            <jxb:class name="ListaLancamentoRetorno"/>
+        </jxb:bindings>
+        <jxb:bindings node="//xs:complexType[@name='ArrayOfmarcarTituloASerBaixadoLoteTituloParcelaReqPairOflistaParcelasKeymarcarTituloASerBaixadoLoteTituloParcelaReq']">
+            <jxb:class name="ListaParcelas"/>
+        </jxb:bindings>
+        <jxb:bindings node="//xs:complexType[@name='ArrayOfmarcarTituloASerBaixadoLoteTituloReqPairOflistaTituloKeymarcarTituloASerBaixadoLoteTituloReq']">
+            <jxb:class name="ListaTitulo"/>
+        </jxb:bindings>
+        <jxb:bindings node="//xs:complexType[@name='PairOflistaLancamentoRetornoKeymarcarTituloASerBaixadoLoteLancamentoResp']">
+            <jxb:class name="ParListasLancamentoRetorno"/>
+        </jxb:bindings>
+    </jxb:bindings>
+
+</jaxws:bindings>

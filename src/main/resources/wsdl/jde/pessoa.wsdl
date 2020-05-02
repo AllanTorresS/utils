@@ -1,0 +1,1956 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:s="http://www.w3.org/2001/XMLSchema"
+             xmlns:s0="http://tempuri.org" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             targetNamespace="http://tempuri.org">
+    <types>
+        <s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org">
+            <s:element name="atualizarClienteJDE">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" name="pRequest" type="s0:atualizarJDEReq"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="atualizarJDEReq">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Request">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="somenteInformacoesTributarias" type="s:boolean"/>
+                            <s:element minOccurs="0" name="codigoCliente" type="s:long"/>
+                            <s:element minOccurs="0" name="cenario" type="s:long"/>
+                            <s:element name="unidadeNegocio">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="12"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element name="nomeCliente">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="40"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="ramoAtividade">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="10"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="observacao">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="30"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element name="tipoContribuinte">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="1"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="inscricaoEstadual">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="20"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="isencaoImposto">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="20"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element name="temRecebiveis" type="s:boolean"/>
+                            <s:element name="pontoEntrega">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="20"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element name="cpfCnpj">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="20"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="codCatGerenciaVenda">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="codCatCoordVenda">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="codCatZonaVenda">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="codCatGerenciaComercial">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="codCatTipoNegocio">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="codCatDistribuicaoLubes">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="codCatLocalPagamento">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="codCatGarantia">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="codCatSegmentoMercadoria">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="codCatMicromercado">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="codCatPrevisaoLubes">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="codCatTipoComponente">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="codCatLimiteTolerancia">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="codCatPerfilPosto">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="codCatPropriedadeTerreno">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="codCatLocalizacao">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="codCatTipoImagem">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element name="codCatEmpresa">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="codCatBeneficioFiscal">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="codCatAgenteEconomicoANP">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="codCatGrupoSuspensao">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="codCatSituacaoTributaria">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="codCatMotivoInativacao">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="codCatStatusFornecedor">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element name="nomeCorrespondencia">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="40"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="enderecoCompleto">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="40"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element name="logradouro">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="40"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element name="numero">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="40"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element name="bairro">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="40"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element name="cidade">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="25"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element name="municipio">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="25"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element name="estado">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element name="cep">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="12"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element name="pais">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="codigoReservado">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="dataReservada" type="s:dateTime"/>
+                            <s:element minOccurs="0" name="valorReservado" type="s:decimal"/>
+                            <s:element minOccurs="0" name="numeroReservado" type="s:long"/>
+                            <s:element minOccurs="0" name="textoReservado">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="15"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="listaTelefone" type="s0:ArrayOftelefonePairOflistaTelefoneKeytelefone"/>
+                            <s:element minOccurs="0" name="listaEmail" type="s0:ArrayOfemailPairOflistaEmailKeyemail"/>
+                            <s:element minOccurs="0" name="companhiaCliente" type="s:string"/>
+                            <s:element minOccurs="0" name="valorLimiteCredito" type="s:long"/>
+                            <s:element minOccurs="0" name="mensagemCredito" type="s:string"/>
+                            <s:element minOccurs="0" name="codUsuarioGerenteCredito" type="s:string"/>
+                            <s:element minOccurs="0" name="mensagemCreditoTemporario">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="2"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="codigoVendaABC" type="s:string"/>
+                            <s:element minOccurs="0" name="codigoMargemABC" type="s:string"/>
+                            <s:element minOccurs="0" name="codigoMediaDiasABC" type="s:string"/>
+                            <s:element minOccurs="0" name="codigoReservadoCR">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="dataReservadaCR" type="s:date"/>
+                            <s:element minOccurs="0" name="valorReservadoCR" type="s:decimal"/>
+                            <s:element minOccurs="0" name="numeroReservadoCR" type="s:long"/>
+                            <s:element minOccurs="0" name="textoReservadoCR">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="15"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="dataAberturaConta" type="s:date"/>
+                            <s:element minOccurs="0" name="informacoesTributarias" type="s0:informacoesTributarias"/>
+                            <s:element minOccurs="0" name="condicaoPagamento" type="s:string"/>
+                            <s:element minOccurs="0" name="cadastroPai" type="s:long"/>
+                            <s:element minOccurs="0" name="cadastroRelacionado1" type="s:long"/>
+                            <s:element minOccurs="0" name="cadastroRelacionado2" type="s:long"/>
+                            <s:element minOccurs="0" name="cadastroRelacionado3" type="s:long"/>
+                            <s:element minOccurs="0" name="cadastroRelacionado4" type="s:long"/>
+                            <s:element minOccurs="0" name="cadastroRelacionado5" type="s:long"/>
+                            <s:element minOccurs="0" name="cadastroRelacionado6" type="s:long"/>
+                            <s:element minOccurs="0" name="usuario" type="s:string"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="Ens_Request">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Messagebody"/>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="Ens_Messagebody"/>
+            <s:complexType name="ArrayOftelefonePairOflistaTelefoneKeytelefone">
+                <s:sequence>
+                    <s:element maxOccurs="unbounded" minOccurs="0" name="telefone" type="s0:PairOflistaTelefoneKeytelefone"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="PairOflistaTelefoneKeytelefone">
+                <s:complexContent>
+                    <s:extension base="s0:telefone">
+                        <s:attribute name="listaTelefoneKey" type="s:string" use="required"/>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="telefone">
+                <s:sequence>
+                    <s:element minOccurs="0" name="ddd">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="3"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="tipoTelefone">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="3"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="numeroTelefone">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="20"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="ArrayOfemailPairOflistaEmailKeyemail">
+                <s:sequence>
+                    <s:element maxOccurs="unbounded" minOccurs="0" name="email" type="s0:PairOflistaEmailKeyemail"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="PairOflistaEmailKeyemail">
+                <s:complexContent>
+                    <s:extension base="s0:email">
+                        <s:attribute name="listaEmailKey" type="s:string" use="required"/>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="email">
+                <s:sequence>
+                    <s:element minOccurs="0" name="tipoEmail">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="2"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="eMail">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="256"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="informacoesTributarias">
+                <s:sequence>
+                    <s:element minOccurs="0" name="inscricaoMunicipal">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="12"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="classeContribuinte">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element name="repasseICMS" type="s:boolean"/>
+                    <s:element minOccurs="0" name="indicadorICMS">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="indicadorISS">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="indicadorZonaFranca">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="identificadorComplementar">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="10"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="identidadePF">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="9"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="orgaoExpedidorPF">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="5"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="ufExpedidora">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="3"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="dataExpedicao" type="s:date"/>
+                    <s:element minOccurs="0" name="inscISSProfAutonomo">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="12"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="cidadeProfAutonomo">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="25"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="ufProfAutonomo">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="3"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="listaImposto" type="s0:ArrayOfimpostoPairOflistaImpostoKeyimposto"/>
+                    <s:element minOccurs="0" name="numRegistroINSS">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="20"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="substituicaoICMS">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="codigoApuracaoIPI">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="1"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="cpf">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="11"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="ArrayOfimpostoPairOflistaImpostoKeyimposto">
+                <s:sequence>
+                    <s:element maxOccurs="unbounded" minOccurs="0" name="imposto" type="s0:PairOflistaImpostoKeyimposto"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="PairOflistaImpostoKeyimposto">
+                <s:complexContent>
+                    <s:extension base="s0:imposto">
+                        <s:attribute name="listaImpostoKey" type="s:string" use="required"/>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="imposto">
+                <s:sequence>
+                    <s:element name="codigoImposto">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="8"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="atualizarClienteJDEResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element name="atualizarClienteJDEResult" type="s0:Response"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="Response">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Response">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="codigoERP" type="s:long"/>
+                            <s:element minOccurs="0" name="status" type="s:boolean"/>
+                            <s:element minOccurs="0" name="msgErro">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="1024"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="statusInformacoesTributaria" type="s:boolean"/>
+                            <s:element minOccurs="0" name="msgErroInformacoesTributaria">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="1024"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="Ens_Response">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Messagebody"/>
+                </s:complexContent>
+            </s:complexType>
+            <s:element name="cadastrarClienteJDE">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" name="pRequest" type="s0:cadastrarJDEReq"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="cadastrarJDEReq">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Request">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="somenteInformacoesTributarias" type="s:boolean"/>
+                            <s:element minOccurs="0" name="codigoCliente" type="s:long"/>
+                            <s:element name="cenario" type="s:long"/>
+                            <s:element name="unidadeNegocio">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="12"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element name="nomeCliente">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="40"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="ramoAtividade">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="10"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="observacao">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="30"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element name="tipoContribuinte">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="1"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="inscricaoEstadual">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="20"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="isencaoImposto">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="20"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element name="temRecebiveis" type="s:boolean"/>
+                            <s:element name="pontoEntrega">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="20"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element name="cpfCnpj">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="20"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="codCatGerenciaVenda" type="s:string"/>
+                            <s:element minOccurs="0" name="codCatCoordVenda" type="s:string"/>
+                            <s:element minOccurs="0" name="codCatZonaVenda" type="s:string"/>
+                            <s:element minOccurs="0" name="codCatGerenciaComercial" type="s:string"/>
+                            <s:element minOccurs="0" name="codCatTipoNegocio" type="s:string"/>
+                            <s:element minOccurs="0" name="codCatDistribuicaoLubes" type="s:string"/>
+                            <s:element minOccurs="0" name="codCatLocalPagamento" type="s:string"/>
+                            <s:element minOccurs="0" name="codCatGarantia" type="s:string"/>
+                            <s:element minOccurs="0" name="codCatSegmentoMercadoria" type="s:string"/>
+                            <s:element minOccurs="0" name="codCatMicromercado" type="s:string"/>
+                            <s:element minOccurs="0" name="codCatPrevisaoLubes" type="s:string"/>
+                            <s:element minOccurs="0" name="codCatTipoComponente" type="s:string"/>
+                            <s:element minOccurs="0" name="codCatLimiteTolerancia" type="s:string"/>
+                            <s:element minOccurs="0" name="codCatPerfilPosto" type="s:string"/>
+                            <s:element minOccurs="0" name="codCatPropriedadeTerreno" type="s:string"/>
+                            <s:element minOccurs="0" name="codCatLocalizacao" type="s:string"/>
+                            <s:element minOccurs="0" name="codCatTipoImagem" type="s:string"/>
+                            <s:element name="codCatEmpresa" type="s:string"/>
+                            <s:element minOccurs="0" name="codCatBeneficioFiscal" type="s:string"/>
+                            <s:element minOccurs="0" name="codCatAgenteEconomicoANP" type="s:string"/>
+                            <s:element minOccurs="0" name="codCatGrupoSuspensao" type="s:string"/>
+                            <s:element minOccurs="0" name="codCatSituacaoTributaria" type="s:string"/>
+                            <s:element name="nomeCorrespondencia">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="40"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="enderecoCompleto">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="40"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element name="logradouro">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="40"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element name="numero">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="40"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element name="bairro">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="40"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element name="cidade">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="25"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element name="municipio">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="25"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element name="estado">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element name="cep">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="12"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element name="pais">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="codigoReservado">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="dataReservada" type="s:dateTime"/>
+                            <s:element minOccurs="0" name="valorReservado" type="s:decimal"/>
+                            <s:element minOccurs="0" name="numeroReservado" type="s:long"/>
+                            <s:element minOccurs="0" name="textoReservado">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="15"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="listaTelefone" type="s0:ArrayOftelefonePairOflistaTelefoneKeytelefone"/>
+                            <s:element minOccurs="0" name="listaEmail" type="s0:ArrayOfemailPairOflistaEmailKeyemail"/>
+                            <s:element minOccurs="0" name="companhiaCliente" type="s:string"/>
+                            <s:element minOccurs="0" name="valorLimiteCredito" type="s:long"/>
+                            <s:element minOccurs="0" name="mensagemCredito" type="s:string"/>
+                            <s:element minOccurs="0" name="codUsuarioGerenteCredito" type="s:string"/>
+                            <s:element minOccurs="0" name="mensagemCreditoTemporario">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="2"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="codigoVendaABC" type="s:string"/>
+                            <s:element minOccurs="0" name="codigoMargemABC" type="s:string"/>
+                            <s:element minOccurs="0" name="codigoMediaDiasABC" type="s:string"/>
+                            <s:element minOccurs="0" name="codigoReservadoCR">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="dataReservadaCR" type="s:date"/>
+                            <s:element minOccurs="0" name="valorReservadoCR" type="s:decimal"/>
+                            <s:element minOccurs="0" name="numeroReservadoCR" type="s:long"/>
+                            <s:element minOccurs="0" name="textoReservadoCR">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="15"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="dataAberturaConta" type="s:date"/>
+                            <s:element minOccurs="0" name="informacoesTributarias" type="s0:informacoesTributarias"/>
+                            <s:element minOccurs="0" name="condicaoPagamento" type="s:string"/>
+                            <s:element minOccurs="0" name="cadastroPai" type="s:long"/>
+                            <s:element minOccurs="0" name="cadastroRelacionado1" type="s:long"/>
+                            <s:element minOccurs="0" name="cadastroRelacionado2" type="s:long"/>
+                            <s:element minOccurs="0" name="cadastroRelacionado3" type="s:long"/>
+                            <s:element minOccurs="0" name="cadastroRelacionado4" type="s:long"/>
+                            <s:element minOccurs="0" name="cadastroRelacionado5" type="s:long"/>
+                            <s:element minOccurs="0" name="cadastroRelacionado6" type="s:long"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:element name="cadastrarClienteJDEResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element name="cadastrarClienteJDEResult" type="s0:cadastrarJDEResp"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="cadastrarJDEResp">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Response">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="codigoERP" type="s:long"/>
+                            <s:element minOccurs="0" name="status" type="s:boolean"/>
+                            <s:element minOccurs="0" name="msgErro">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="1024"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="statusInformacoesTributaria" type="s:boolean"/>
+                            <s:element minOccurs="0" name="msgErroInformacoesTributaria">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="1024"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:element name="consultarCadastroGeralJDE">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" name="pRequest" type="s0:consultarCadastroGeralJDEReq"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="consultarCadastroGeralJDEReq">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Request">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="nome">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="40"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="filial">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="12"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="codigoClassificacaoIndustrial">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="10"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="codigoIdioma">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="2"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="indTipoCadastro">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="codigoCadastro" type="s:long"/>
+                            <s:element minOccurs="0" name="codigoLongoCadastro">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="20"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="cpfCnpj">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="20"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="cep">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="12"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="municipio">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="25"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="siglaEstado">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="siglaPais">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="gerenciaVenda">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="coordVenda">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="zonaVenda">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="gerenciaComercial">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="tipoNegocio">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="distribuicaoLubes">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="localPagamento">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="garantia">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="segmentoMercadoria">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="micromercado">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="cargoFuncionario">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="lotacaoFuncionario">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="previsaoLubes">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="tipoComponente">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="limiteTolerancia">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="motivoInativacao">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="perfilPosto">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="propriedadeTerreno">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="localizacao">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="tipoImagem">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="tipoFornecedor">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="statusFornecedor">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="empresa">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="beneficioFiscal">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="emprContabBenef">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="repasseFrete">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="coligada">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="agenteEconomicoANP">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="grupoSuspensao">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="situacaoTributaria">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:element name="consultarCadastroGeralJDEResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element name="consultarCadastroGeralJDEResult" type="s0:consultarCadastroGeralJDEResp"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="consultarCadastroGeralJDEResp">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Response">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="listaContato" type="s0:ArrayOfcontatoPairOflistaContatoKeycontato"/>
+                            <s:element minOccurs="0" name="status" type="s:boolean"/>
+                            <s:element minOccurs="0" name="msgErro">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="1024"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="ArrayOfcontatoPairOflistaContatoKeycontato">
+                <s:sequence>
+                    <s:element maxOccurs="unbounded" minOccurs="0" name="contato" nillable="true" type="s0:PairOflistaContatoKeycontato"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="PairOflistaContatoKeycontato">
+                <s:complexContent>
+                    <s:extension base="s0:contato">
+                        <s:attribute name="listaContatoKey" type="s:string" use="required"/>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="contato">
+                <s:sequence>
+                    <s:element minOccurs="0" name="tipoCadastro" type="s:string"/>
+                    <s:element minOccurs="0" name="nome" type="s:string"/>
+                    <s:element minOccurs="0" name="filial" type="s:string"/>
+                    <s:element minOccurs="0" name="idioma" type="s:string"/>
+                    <s:element minOccurs="0" name="codigoClassificacaoIndustrial" type="s:string"/>
+                    <s:element minOccurs="0" name="codigoCadastro" type="s:long"/>
+                    <s:element minOccurs="0" name="codigoLongoCadastro" type="s:string"/>
+                    <s:element minOccurs="0" name="cpfCnpj" type="s:string"/>
+                    <s:element minOccurs="0" name="enderecoContato" type="s0:enderecoContato"/>
+                    <s:element minOccurs="0" name="listaTelefoneContato" type="s0:ArrayOftelefoneContatoPairOflistaTelefoneContatoKeytelefoneContato"/>
+                    <s:element minOccurs="0" name="listaEmailContato" type="s0:ArrayOfemailContatoPairOflistaEmailContatoKeyemailContato"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="enderecoContato">
+                <s:sequence>
+                    <s:element minOccurs="0" name="nomeCadastro" type="s:string"/>
+                    <s:element minOccurs="0" name="endereco1" type="s:string"/>
+                    <s:element minOccurs="0" name="endereco2" type="s:string"/>
+                    <s:element minOccurs="0" name="endereco3" type="s:string"/>
+                    <s:element minOccurs="0" name="endereco4" type="s:string"/>
+                    <s:element minOccurs="0" name="cidade" type="s:string"/>
+                    <s:element minOccurs="0" name="municipio" type="s:string"/>
+                    <s:element minOccurs="0" name="siglaEstado" type="s:string"/>
+                    <s:element minOccurs="0" name="cep" type="s:string"/>
+                    <s:element minOccurs="0" name="siglaPais" type="s:string"/>
+                    <s:element minOccurs="0" name="dataCadastro" type="s:dateTime"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="ArrayOftelefoneContatoPairOflistaTelefoneContatoKeytelefoneContato">
+                <s:sequence>
+                    <s:element maxOccurs="unbounded" minOccurs="0" name="telefoneContato" nillable="true" type="s0:PairOflistaTelefoneContatoKeytelefoneContato"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="PairOflistaTelefoneContatoKeytelefoneContato">
+                <s:complexContent>
+                    <s:extension base="s0:telefoneContato">
+                        <s:attribute name="listaTelefoneContatoKey" type="s:string" use="required"/>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="telefoneContato">
+                <s:sequence>
+                    <s:element minOccurs="0" name="codigoCadastro" type="s:long"/>
+                    <s:element minOccurs="0" name="linhaCadastro" type="s:string"/>
+                    <s:element minOccurs="0" name="ddd" type="s:string"/>
+                    <s:element minOccurs="0" name="tipoTelefone" type="s:string"/>
+                    <s:element minOccurs="0" name="numeroTelefone" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="ArrayOfemailContatoPairOflistaEmailContatoKeyemailContato">
+                <s:sequence>
+                    <s:element maxOccurs="unbounded" minOccurs="0" name="emailContato" nillable="true" type="s0:PairOflistaEmailContatoKeyemailContato"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="PairOflistaEmailContatoKeyemailContato">
+                <s:complexContent>
+                    <s:extension base="s0:emailContato">
+                        <s:attribute name="listaEmailContatoKey" type="s:string" use="required"/>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="emailContato">
+                <s:sequence>
+                    <s:element minOccurs="0" name="tipoEmail" type="s:string"/>
+                    <s:element minOccurs="0" name="email" type="s:string"/>
+                    <s:element minOccurs="0" name="numeroLinha" type="s:long"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="consultarPessoaJuridica">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" name="pRequest" type="s0:consultarPessoaJuridicaReq"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="consultarPessoaJuridicaReq">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Request">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="cnpjBasico" type="s:string"/>
+                            <s:element minOccurs="0" name="razaoSocial">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="256"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="uf">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="2"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="listaCodigoPessoa" type="s0:ArrayOflistaCodigoPessoaItemLong"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="ArrayOflistaCodigoPessoaItemLong">
+                <s:sequence>
+                    <s:element maxOccurs="unbounded" minOccurs="0" name="listaCodigoPessoaItem" nillable="true" type="s:long"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="consultarPessoaJuridicaResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element name="consultarPessoaJuridicaResult" type="s0:consultarPessoaJuridicaeResp"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="consultarPessoaJuridicaeResp">
+                <s:complexContent>
+                    <s:extension base="s0:v2">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="listaPessoaJuridica" type="s0:ArrayOfpessoaJuridicapessoaJuridica"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="v2">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Response">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="statusIntegracao" type="s0:statusIntegracao"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="statusIntegracao">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Response">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="status" type="s:boolean"/>
+                            <s:element minOccurs="0" name="mensagem">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="1024"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="sessionId" type="s:long"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="ArrayOfpessoaJuridicapessoaJuridica">
+                <s:sequence>
+                    <s:element maxOccurs="unbounded" minOccurs="0" name="pessoaJuridica" nillable="true" type="s0:pessoaJuridica"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="pessoaJuridica">
+                <s:sequence>
+                    <s:element minOccurs="0" name="codigoPessoa" type="s:long"/>
+                    <s:element minOccurs="0" name="dadosBasicos" type="s0:dadosBasicos"/>
+                    <s:element minOccurs="0" name="endereco" type="s0:enderecoPessoaJuridica"/>
+                    <s:element minOccurs="0" name="contato" type="s0:contatoPessoaJuridica"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="dadosBasicos">
+                <s:sequence>
+                    <s:element minOccurs="0" name="razaoSocial">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="256"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="cnpjBasico" type="s:string"/>
+                    <s:element minOccurs="0" name="digitoVerificador" type="s:string"/>
+                    <s:element minOccurs="0" name="nomeFantasia">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="256"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="inscricaoEstadual" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="enderecoPessoaJuridica">
+                <s:sequence>
+                    <s:element minOccurs="0" name="endereco">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="256"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="bairro">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="256"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="cep" type="s:string"/>
+                    <s:element minOccurs="0" name="codigoMunicipio" type="s:long"/>
+                    <s:element minOccurs="0" name="uf" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="contatoPessoaJuridica">
+                <s:sequence>
+                    <s:element minOccurs="0" name="nomeContato">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="256"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="dddTelefone" type="s:long"/>
+                    <s:element minOccurs="0" name="telefone" type="s:long"/>
+                    <s:element minOccurs="0" name="dddFax" type="s:long"/>
+                    <s:element minOccurs="0" name="fax" type="s:long"/>
+                    <s:element minOccurs="0" name="email">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="256"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="inativarClienteJDE">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" name="pRequest" type="s0:inativarJDEReq"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="inativarJDEReq">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Request">
+                        <s:sequence>
+                            <s:element name="codigoCliente" type="s:long"/>
+                            <s:element name="cenario" type="s:long"/>
+                            <s:element name="codCatMotivoInativacao">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element name="codCatStatusFornecedor">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element name="pontoEntrega">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="20"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element name="cpfCnpj">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="20"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:element name="inativarClienteJDEResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element name="inativarClienteJDEResult" type="s0:Response"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="listarEstadoCivil">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" name="pRequest" type="s0:listarEstadoCivilReq"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="listarEstadoCivilReq">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Request"/>
+                </s:complexContent>
+            </s:complexType>
+            <s:element name="listarEstadoCivilResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element name="listarEstadoCivilResult" type="s0:listarEstadoCivilResp"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="listarEstadoCivilResp">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Response">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="listaEstadoCivil" type="s0:ArrayOfestadoCivilPairOflistaEstadoCivilKeyestadoCivil"/>
+                            <s:element minOccurs="0" name="status" type="s:boolean"/>
+                            <s:element minOccurs="0" name="msgErro">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="500"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="ArrayOfestadoCivilPairOflistaEstadoCivilKeyestadoCivil">
+                <s:sequence>
+                    <s:element maxOccurs="unbounded" minOccurs="0" name="estadoCivil" nillable="true" type="s0:PairOflistaEstadoCivilKeyestadoCivil"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="PairOflistaEstadoCivilKeyestadoCivil">
+                <s:complexContent>
+                    <s:extension base="s0:estadoCivil">
+                        <s:attribute name="listaEstadoCivilKey" type="s:string" use="required"/>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="estadoCivil">
+                <s:sequence>
+                    <s:element minOccurs="0" name="codigoEstadoCivil">
+                        <s:simpleType>
+                            <s:restriction base="s:long">
+                                <s:maxInclusive value="9"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="descricaoEstadoCivil">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="30"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="listarOrgEmisDocumentosPF">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" name="pRequest" type="s0:listarOrgEmisDocumentosPFReq"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="listarOrgEmisDocumentosPFReq">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Request"/>
+                </s:complexContent>
+            </s:complexType>
+            <s:element name="listarOrgEmisDocumentosPFResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element name="listarOrgEmisDocumentosPFResult" type="s0:listarOrgEmisDocumentosPFResp"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="listarOrgEmisDocumentosPFResp">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Response">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="listaOrgaoEmissor" type="s0:ArrayOforgaoEmissorPairOflistaOrgaoEmissorKeyorgaoEmissor"/>
+                            <s:element minOccurs="0" name="status" type="s:boolean"/>
+                            <s:element minOccurs="0" name="msgErro">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="500"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="ArrayOforgaoEmissorPairOflistaOrgaoEmissorKeyorgaoEmissor">
+                <s:sequence>
+                    <s:element maxOccurs="unbounded" minOccurs="0" name="orgaoEmissor" nillable="true" type="s0:PairOflistaOrgaoEmissorKeyorgaoEmissor"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="PairOflistaOrgaoEmissorKeyorgaoEmissor">
+                <s:complexContent>
+                    <s:extension base="s0:orgaoEmissor">
+                        <s:attribute name="listaOrgaoEmissorKey" type="s:string" use="required"/>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="orgaoEmissor">
+                <s:sequence>
+                    <s:element minOccurs="0" name="codigoOrgaoEmissor">
+                        <s:simpleType>
+                            <s:restriction base="s:long">
+                                <s:maxInclusive value="999"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="nomeOrgaoEmissor">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="120"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="siglaOrgaoEmissor">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="10"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="listarOrgEmisPorDocumentoPF">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" name="pRequest" type="s0:listarOrgEmisPorDocPFReq"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="listarOrgEmisPorDocPFReq">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Request">
+                        <s:sequence>
+                            <s:element name="codigoTipoDocumento">
+                                <s:simpleType>
+                                    <s:restriction base="s:long">
+                                        <s:maxInclusive value="99"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:element name="listarOrgEmisPorDocumentoPFResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element name="listarOrgEmisPorDocumentoPFResult" type="s0:listarOrgEmisPorDocPFResp"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="listarOrgEmisPorDocPFResp">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Response">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="listaOrgaoEmissor" type="s0:ArrayOforgaoEmissorPairOflistaOrgaoEmissorKeyorgaoEmissor"/>
+                            <s:element minOccurs="0" name="status" type="s:boolean"/>
+                            <s:element minOccurs="0" name="msgErro">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="500"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:element name="listarTipoDocumentoPF">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" name="pRequest" type="s0:listarTipoDocumentoPFReq"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="listarTipoDocumentoPFReq">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Request"/>
+                </s:complexContent>
+            </s:complexType>
+            <s:element name="listarTipoDocumentoPFResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element name="listarTipoDocumentoPFResult" type="s0:listarTipoDocumentoPFResp"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="listarTipoDocumentoPFResp">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Response">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="listaTipoDocumentoPF" type="s0:ArrayOftipoDocumentoPairOflistaTipoDocumentoPFKeytipoDocumento"/>
+                            <s:element minOccurs="0" name="status" type="s:boolean"/>
+                            <s:element minOccurs="0" name="msgErro">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="500"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="ArrayOftipoDocumentoPairOflistaTipoDocumentoPFKeytipoDocumento">
+                <s:sequence>
+                    <s:element maxOccurs="unbounded" minOccurs="0" name="tipoDocumento" nillable="true" type="s0:PairOflistaTipoDocumentoPFKeytipoDocumento"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="PairOflistaTipoDocumentoPFKeytipoDocumento">
+                <s:complexContent>
+                    <s:extension base="s0:tipoDocumento">
+                        <s:attribute name="listaTipoDocumentoPFKey" type="s:string" use="required"/>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="tipoDocumento">
+                <s:sequence>
+                    <s:element minOccurs="0" name="codigoTipoDocumento">
+                        <s:simpleType>
+                            <s:restriction base="s:long">
+                                <s:maxInclusive value="99"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="descricaoTipoDocumento">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="80"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                </s:sequence>
+            </s:complexType>
+        </s:schema>
+    </types>
+    <message name="atualizarClienteJDESoapIn">
+        <part name="parameters" element="s0:atualizarClienteJDE"/>
+    </message>
+    <message name="atualizarClienteJDESoapOut">
+        <part name="parameters" element="s0:atualizarClienteJDEResponse"/>
+    </message>
+    <message name="cadastrarClienteJDESoapIn">
+        <part name="parameters" element="s0:cadastrarClienteJDE"/>
+    </message>
+    <message name="cadastrarClienteJDESoapOut">
+        <part name="parameters" element="s0:cadastrarClienteJDEResponse"/>
+    </message>
+    <message name="consultarCadastroGeralJDESoapIn">
+        <part name="parameters" element="s0:consultarCadastroGeralJDE"/>
+    </message>
+    <message name="consultarCadastroGeralJDESoapOut">
+        <part name="parameters" element="s0:consultarCadastroGeralJDEResponse"/>
+    </message>
+    <message name="consultarPessoaJuridicaSoapIn">
+        <part name="parameters" element="s0:consultarPessoaJuridica"/>
+    </message>
+    <message name="consultarPessoaJuridicaSoapOut">
+        <part name="parameters" element="s0:consultarPessoaJuridicaResponse"/>
+    </message>
+    <message name="inativarClienteJDESoapIn">
+        <part name="parameters" element="s0:inativarClienteJDE"/>
+    </message>
+    <message name="inativarClienteJDESoapOut">
+        <part name="parameters" element="s0:inativarClienteJDEResponse"/>
+    </message>
+    <message name="listarEstadoCivilSoapIn">
+        <part name="parameters" element="s0:listarEstadoCivil"/>
+    </message>
+    <message name="listarEstadoCivilSoapOut">
+        <part name="parameters" element="s0:listarEstadoCivilResponse"/>
+    </message>
+    <message name="listarOrgEmisDocumentosPFSoapIn">
+        <part name="parameters" element="s0:listarOrgEmisDocumentosPF"/>
+    </message>
+    <message name="listarOrgEmisDocumentosPFSoapOut">
+        <part name="parameters" element="s0:listarOrgEmisDocumentosPFResponse"/>
+    </message>
+    <message name="listarOrgEmisPorDocumentoPFSoapIn">
+        <part name="parameters" element="s0:listarOrgEmisPorDocumentoPF"/>
+    </message>
+    <message name="listarOrgEmisPorDocumentoPFSoapOut">
+        <part name="parameters" element="s0:listarOrgEmisPorDocumentoPFResponse"/>
+    </message>
+    <message name="listarTipoDocumentoPFSoapIn">
+        <part name="parameters" element="s0:listarTipoDocumentoPF"/>
+    </message>
+    <message name="listarTipoDocumentoPFSoapOut">
+        <part name="parameters" element="s0:listarTipoDocumentoPFResponse"/>
+    </message>
+    <portType name="pessoaSoap">
+        <operation name="atualizarClienteJDE">
+            <input message="s0:atualizarClienteJDESoapIn"/>
+            <output message="s0:atualizarClienteJDESoapOut"/>
+        </operation>
+        <operation name="cadastrarClienteJDE">
+            <input message="s0:cadastrarClienteJDESoapIn"/>
+            <output message="s0:cadastrarClienteJDESoapOut"/>
+        </operation>
+        <operation name="consultarCadastroGeralJDE">
+            <input message="s0:consultarCadastroGeralJDESoapIn"/>
+            <output message="s0:consultarCadastroGeralJDESoapOut"/>
+        </operation>
+        <operation name="consultarPessoaJuridica">
+            <input message="s0:consultarPessoaJuridicaSoapIn"/>
+            <output message="s0:consultarPessoaJuridicaSoapOut"/>
+        </operation>
+        <operation name="inativarClienteJDE">
+            <input message="s0:inativarClienteJDESoapIn"/>
+            <output message="s0:inativarClienteJDESoapOut"/>
+        </operation>
+        <operation name="listarEstadoCivil">
+            <input message="s0:listarEstadoCivilSoapIn"/>
+            <output message="s0:listarEstadoCivilSoapOut"/>
+        </operation>
+        <operation name="listarOrgEmisDocumentosPF">
+            <input message="s0:listarOrgEmisDocumentosPFSoapIn"/>
+            <output message="s0:listarOrgEmisDocumentosPFSoapOut"/>
+        </operation>
+        <operation name="listarOrgEmisPorDocumentoPF">
+            <input message="s0:listarOrgEmisPorDocumentoPFSoapIn"/>
+            <output message="s0:listarOrgEmisPorDocumentoPFSoapOut"/>
+        </operation>
+        <operation name="listarTipoDocumentoPF">
+            <input message="s0:listarTipoDocumentoPFSoapIn"/>
+            <output message="s0:listarTipoDocumentoPFSoapOut"/>
+        </operation>
+    </portType>
+    <binding name="pessoaSoap" type="s0:pessoaSoap">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="atualizarClienteJDE">
+            <soap:operation soapAction="http://tempuri.org/cbpi.bs.pessoa.Service.atualizarClienteJDE" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="cadastrarClienteJDE">
+            <soap:operation soapAction="http://tempuri.org/cbpi.bs.pessoa.Service.cadastrarClienteJDE" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="consultarCadastroGeralJDE">
+            <soap:operation soapAction="http://tempuri.org/cbpi.bs.pessoa.Service.consultarCadastroGeralJDE" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="consultarPessoaJuridica">
+            <soap:operation soapAction="http://tempuri.org/cbpi.bs.pessoa.Service.consultarPessoaJuridica" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="inativarClienteJDE">
+            <soap:operation soapAction="http://tempuri.org/cbpi.bs.pessoa.Service.inativarClienteJDE" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="listarEstadoCivil">
+            <soap:operation soapAction="http://tempuri.org/cbpi.bs.pessoa.Service.listarEstadoCivil" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="listarOrgEmisDocumentosPF">
+            <soap:operation soapAction="http://tempuri.org/cbpi.bs.pessoa.Service.listarOrgEmisDocumentosPF" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="listarOrgEmisPorDocumentoPF">
+            <soap:operation soapAction="http://tempuri.org/cbpi.bs.pessoa.Service.listarOrgEmisPorDocumentoPF" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="listarTipoDocumentoPF">
+            <soap:operation soapAction="http://tempuri.org/cbpi.bs.pessoa.Service.listarTipoDocumentoPF" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="pessoa">
+        <port name="pessoaSoap" binding="s0:pessoaSoap">
+            <soap:address location="http://ensemdes.ipiranga.com.br:7070/csp/enscorpws/cbpi.bs.pessoa.Service.CLS"/>
+        </port>
+    </service>
+</definitions>
