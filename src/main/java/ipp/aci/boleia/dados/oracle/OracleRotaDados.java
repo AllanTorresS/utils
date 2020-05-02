@@ -1,0 +1,150 @@
+package ipp.aci.boleia.dados.oracle;
+
+import ipp.aci.boleia.dados.IRotaDados;
+import ipp.aci.boleia.dominio.Rota;
+import ipp.aci.boleia.dominio.Usuario;
+import ipp.aci.boleia.dominio.enums.TipoPontoRota;
+import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
+import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
+import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgualIgnoreCase;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaRotaVo;
+import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Respositorio de entidades Rota
+ */
+@Repository
+public class OracleRotaDados extends OracleRepositorioBoleiaDados<Rota> implements IRotaDados {
+
+    @Autowired
+    private UtilitarioAmbiente ambiente;
+
+    private static final String COUNT_PVS      = " (SELECT COUNT(ponto) FROM PontoRota ponto JOIN ponto.rota rota WHERE ponto.pontoVenda IS NOT NULL AND rota.id = r.id) ";
+
+    private static final String CONSULTA_ROTAS =
+     " SELECT " +
+     "    r, " + COUNT_PVS +
+     " FROM Rota r " +
+     " JOIN r.frota f " +
+     " WHERE " +
+     "    EXISTS ( " +
+     "       SELECT 1 " +
+     "       FROM " +
+     "           PontoRota p1  " +
+     "           JOIN p1.rota r1  " +
+     "       WHERE " +
+     "           (:nomeDestino IS NULL OR (p1.tipo = " + TipoPontoRota.DESTINO.getValue() + " AND LOWER(" + removerAcentosCampo("p1.nome") + ") like :nomeDestino))" +
+     "           AND r1.id = r.id " +
+     "    ) " +
+     "    AND EXISTS ( " +
+     "       SELECT 1 " +
+     "       FROM " +
+     "           PontoRota p2  " +
+     "           JOIN p2.rota r2  " +
+     "       WHERE " +
+     "           (:nomeOrigem IS NULL OR (p2.tipo = " + TipoPontoRota.ORIGEM.getValue() + " AND LOWER(" + removerAcentosCampo("p2.nome") + ") like :nomeOrigem))" +
+     "           AND r2.id = r.id " +
+     "    ) " +
+     "    AND EXISTS ( " +
+     "       SELECT 1 " +
+     "       FROM " +
+     "           PontoRota p3  " +
+     "           JOIN p3.rota r3  " +
+     "           LEFT JOIN p3.pontoVenda pv3  " +
+     "       WHERE " +
+     "           (:idPontoVenda IS NULL OR pv3.id = :idPontoVenda) " +
+     "           AND r3.id = r.id " +
+     "    ) " +
+     "    AND (:quantidadePvs IS NULL OR " + COUNT_PVS + " > 0) " +
+     "    AND (:nome IS NULL OR LOWER(" + removerAcentosCampo("r.nome") + ") like :nome) " +
+     "    AND (:idFrota IS NULL OR f.id = :idFrota) " +
+     "    AND (r.excluido = 0) " +
+     "    %s %s ";
+
+
+    private static final String ORDER_BY_NOME        = " ORDER BY LOWER(" + removerAcentosCampo("r.nome") + ") ";
+    private static final String ORDER_BY_DISTANCIA   = " ORDER BY r.distancia ";
+    private static final String ORDER_BY_POSTOS      = " ORDER BY 2 ";
+
+    /**
+     * Construtor
+     */
+    public OracleRotaDados() {
+        super(Rota.class);
+    }
+
+    @Override
+    public ResultadoPaginado<Rota> pesquisar(FiltroPesquisaRotaVo filtro) {
+        List<ParametroPesquisa> params = new ArrayList<>();
+        params.add(new ParametroPesquisaIgual("quantidadePvs", filtro.getPossuiPostos() != null && filtro.getPossuiPostos() ? 0 : null));
+        params.add(new ParametroPesquisaLike("nomeDestino", StringUtils.isNotBlank(filtro.getDestino()) ? filtro.getDestino() : null));
+        params.add(new ParametroPesquisaLike("nomeOrigem", StringUtils.isNotBlank(filtro.getOrigem()) ? filtro.getOrigem() : null));
+        params.add(new ParametroPesquisaLike("nome",       StringUtils.isNotBlank(filtro.getNome()) ? filtro.getNome() : null));
+        params.add(new ParametroPesquisaIgual("idPontoVenda", filtro.getPontoVenda() != null ? filtro.getPontoVenda().getId() : null));
+
+        Usuario usuario = ambiente.getUsuarioLogado();
+        params.add(new ParametroPesquisaIgual("idFrota", usuario.getTipoPerfil().isFrotista() ? usuario.getFrota().getId() : null));
+
+        ResultadoPaginado<Object[]> resultadoBruto = pesquisar(filtro.getPaginacao(), montarClausulaOrdenacaoDinamica(filtro), Object[].class, params.toArray(new ParametroPesquisa[params.size()]));
+        return mapearResultadoPesquisa(resultadoBruto);
+    }
+
+    @Override
+    public Rota buscarPorNome(String nome, Long idFrota) {
+        return pesquisarUnico(new ParametroPesquisaIgualIgnoreCase("nome", nome), new ParametroPesquisaIgual("frota.id", idFrota));
+    }
+
+    /**
+     * Altera a consulta, adicionando a clausula de ordenacao de acordo com o filtro recebido
+     *
+     * @param filtro O filtro da consulta
+     * @return A consulta com a clausula de ordenacao
+     */
+    private String montarClausulaOrdenacaoDinamica(FiltroPesquisaRotaVo filtro) {
+
+        String orderBy = "";
+        String orderDirection = "";
+
+        if(filtro.getPaginacao() != null && CollectionUtils.isNotEmpty(filtro.getPaginacao().getParametrosOrdenacaoColuna())) {
+            ParametroOrdenacaoColuna parametro = filtro.getPaginacao().getParametrosOrdenacaoColuna().get(0);
+            switch (parametro.getNome()) {
+                case "nome":
+                    orderBy = ORDER_BY_NOME;
+                    break;
+                case "distancia":
+                    orderBy = ORDER_BY_DISTANCIA;
+                    break;
+                case "quantidadePostos":
+                    orderBy = ORDER_BY_POSTOS;
+            }
+            orderDirection = (parametro.isDecrescente() ? " DESC" : " ASC");
+        }
+
+        return String.format(CONSULTA_ROTAS, orderBy, orderDirection);
+    }
+
+    /**
+     * Converte o resultado da consulta para um resultado paginado de rotas
+     * @param resultadoBruto O resultado bruto da consulta
+     * @return O resultado mapeado
+     */
+    private ResultadoPaginado<Rota> mapearResultadoPesquisa(ResultadoPaginado<Object[]> resultadoBruto) {
+        List<Rota> rotas = new ArrayList<>(resultadoBruto.getRegistros().size());
+        resultadoBruto.getRegistros().forEach(array->{
+            Rota rota = (Rota) array[0];
+            rota.setQuantidadePostos((long) array[1]);
+            rotas.add(rota);
+        });
+        return new ResultadoPaginado<>(rotas, resultadoBruto.getTotalItems());
+    }
+}

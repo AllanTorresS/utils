@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:s="http://www.w3.org/2001/XMLSchema"
+             xmlns:s0="http://ipiranga.com.br/dadosContaBancaria" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             targetNamespace="http://ipiranga.com.br/dadosContaBancaria">
+    <types>
+        <s:schema elementFormDefault="qualified" targetNamespace="http://ipiranga.com.br/dadosContaBancaria">
+            <s:element name="dadosContaBancaria">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" name="pRequest" type="s0:dadosContaBancariaReq"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="dadosContaBancariaReq">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Request">
+                        <s:sequence>
+                            <s:element name="acao">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="1"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="tipoRegistro">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="1"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="bancoAgencia">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="20"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="numeroContaBancaria">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="20"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="codigoCadastroCliente" type="s:decimal"/>
+                            <s:element minOccurs="0" name="descricao">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="30"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="digitoControle">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="2"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="numeroReferencia">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="18"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="codigoSwift">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="15"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="tipoConta">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="1"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="paisDoBanco">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="iban">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="34"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="codigoCasdastroBanco" type="s:decimal"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="Ens_Request">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Messagebody"/>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="Ens_Messagebody"/>
+            <s:element name="dadosContaBancariaResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element name="dadosContaBancariaResult" type="s0:dadosContaBancariaResp"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="dadosContaBancariaResp">
+                <s:complexContent>
+                    <s:extension base="s0:v2">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="mensagemRetorno" type="s:string"/>
+                            <s:element minOccurs="0" name="numeroContaBancaria" type="s:decimal"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="v2">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Response">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="statusIntegracao" type="s0:statusIntegracao"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="Ens_Response">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Messagebody"/>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="statusIntegracao">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Response">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="status" type="s:boolean"/>
+                            <s:element minOccurs="0" name="mensagem">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="1024"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="sessionId" type="s:long"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+        </s:schema>
+    </types>
+    <message name="dadosContaBancariaSoapIn">
+        <part name="parameters" element="s0:dadosContaBancaria"/>
+    </message>
+    <message name="dadosContaBancariaSoapOut">
+        <part name="parameters" element="s0:dadosContaBancariaResponse"/>
+    </message>
+    <portType name="contaBancariaSoap">
+        <operation name="dadosContaBancaria">
+            <input message="s0:dadosContaBancariaSoapIn"/>
+            <output message="s0:dadosContaBancariaSoapOut"/>
+        </operation>
+    </portType>
+    <binding name="contaBancariaSoap" type="s0:contaBancariaSoap">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="dadosContaBancaria">
+            <soap:operation soapAction="http://ipiranga.com.br/dadosContaBancaria/ws.retornoDadosContaBancaria.Service.dadosContaBancaria" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="contaBancaria">
+        <port name="contaBancariaSoap" binding="s0:contaBancariaSoap">
+            <soap:address location="http://ensemdes.ipiranga.com.br:7070/csp/ipirangaws/ws.retornoDadosContaBancaria.Service.CLS"/>
+        </port>
+    </service>
+</definitions>

@@ -1,0 +1,412 @@
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:s="http://www.w3.org/2001/XMLSchema"
+             xmlns:s0="http://tempuri.org" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             targetNamespace="http://tempuri.org">
+    <types>
+        <s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org">
+            <s:element name="buscar">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" name="pRequest" type="s0:buscarReq"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="buscarReq">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Request">
+                        <s:sequence>
+                            <s:element name="codigoPontoVenda" type="s:long"/>
+                            <s:element name="codigoCompanhia" type="s:long"/>
+                            <s:element name="tipoDocumento">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="limite" type="s:long"/>
+                            <s:element minOccurs="0" name="ultimoApenas" type="s:boolean"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="Ens_Request">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Messagebody"/>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="Ens_Messagebody"/>
+            <s:element name="buscarResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element name="buscarResult" type="s0:buscarResp"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="buscarResp">
+                <s:complexContent>
+                    <s:extension base="s0:v2">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="totalRegistros" type="s:long"/>
+                            <s:element minOccurs="0" name="boletos" type="s0:ArrayOfboletoPairOfboletosKeyboleto"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="v2">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Response">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="statusIntegracao" type="s0:statusIntegracao"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="Ens_Response">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Messagebody"/>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="statusIntegracao">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Response">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="status" type="s:boolean"/>
+                            <s:element minOccurs="0" name="mensagem">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="1024"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="sessionId" type="s:long"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="ArrayOfboletoPairOfboletosKeyboleto">
+                <s:sequence>
+                    <s:element maxOccurs="unbounded" minOccurs="0" name="boleto" nillable="true" type="s0:PairOfboletosKeyboleto"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="PairOfboletosKeyboleto">
+                <s:complexContent>
+                    <s:extension base="s0:boleto">
+                        <s:attribute name="boletosKey" type="s:string" use="required"/>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="boleto">
+                <s:sequence>
+                    <s:element minOccurs="0" name="nomeBanco" type="s:string"/>
+                    <s:element minOccurs="0" name="codigoBanco" type="s:string"/>
+                    <s:element minOccurs="0" name="usoBanco" type="s:string"/>
+                    <s:element minOccurs="0" name="linhaDigitavel">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="100"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="cedente" type="s:string"/>
+                    <s:element minOccurs="0" name="vencimento" type="s:date"/>
+                    <s:element minOccurs="0" name="nossoNumero" type="s:string"/>
+                    <s:element minOccurs="0" name="numeroDocumento" type="s:string"/>
+                    <s:element minOccurs="0" name="especieDocumento" type="s:string"/>
+                    <s:element minOccurs="0" name="dataDocumento" type="s:date"/>
+                    <s:element minOccurs="0" name="agenciaCodigo" type="s:string"/>
+                    <s:element minOccurs="0" name="valorDocumento" type="s:decimal"/>
+                    <s:element minOccurs="0" name="acrescimos" type="s:decimal"/>
+                    <s:element minOccurs="0" name="valorCobrado" type="s:decimal"/>
+                    <s:element minOccurs="0" name="nomeSacado" type="s:string"/>
+                    <s:element minOccurs="0" name="cgcCpf" type="s:string"/>
+                    <s:element minOccurs="0" name="localPagamento" type="s:string"/>
+                    <s:element minOccurs="0" name="aceite" type="s:string"/>
+                    <s:element minOccurs="0" name="dataProcessamento" type="s:date"/>
+                    <s:element minOccurs="0" name="carteira" type="s:string"/>
+                    <s:element minOccurs="0" name="especificacaoMoeda" type="s:string"/>
+                    <s:element minOccurs="0" name="quantidade" type="s:decimal"/>
+                    <s:element minOccurs="0" name="valorMoeda" type="s:decimal"/>
+                    <s:element minOccurs="0" name="descontos" type="s:decimal"/>
+                    <s:element minOccurs="0" name="deducoes" type="s:decimal"/>
+                    <s:element minOccurs="0" name="multa" type="s:decimal"/>
+                    <s:element minOccurs="0" name="instrMsg1">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="100"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="instrMsg2">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="100"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="instrMsg3">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="100"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="instrMsg4">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="100"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="instrMsg5">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="100"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="instrMsg6">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="100"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="instrMsg7">
+                        <s:simpleType>
+                            <s:restriction base="s:string">
+                                <s:maxLength value="100"/>
+                            </s:restriction>
+                        </s:simpleType>
+                    </s:element>
+                    <s:element minOccurs="0" name="bar" type="s:string"/>
+                    <s:element minOccurs="0" name="sistemaOrigem" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="gerarPDF">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" name="pRequest" type="s0:GerarPDFReq"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="GerarPDFReq">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Request">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="codigoClienteAN8" type="s:long"/>
+                            <s:element minOccurs="0" name="centroDeCusto">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="12"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="codigoDependencia" type="s:string"/>
+                            <s:element name="tipoDocumento">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="modeloNF">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="2"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="serieNF">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element name="numeroNF">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="9"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element name="parcela">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="3"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="numeroBoleto" type="s:string"/>
+                            <s:element name="ciaFiscal" type="s:string"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:element name="gerarPDFResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element name="gerarPDFResult" type="s0:GerarPDFResp"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="GerarPDFResp">
+                <s:complexContent>
+                    <s:extension base="s0:v2">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="pdf" type="s:base64Binary"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:element name="recuperar">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" name="pRequest" type="s0:recuperarBoletoReq"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="recuperarBoletoReq">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Request">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="tipoDocumento" type="s:string"/>
+                            <s:element minOccurs="0" name="codigoCliente" type="s:decimal"/>
+                            <s:element minOccurs="0" name="numeroBoleto" type="s:string"/>
+                            <s:element minOccurs="0" name="companhia" type="s:string"/>
+                            <s:element minOccurs="0" name="documento" type="s:decimal"/>
+                            <s:element minOccurs="0" name="parcela" type="s:string"/>
+                            <s:element minOccurs="0" name="tipoDocumentoAbadi" type="s:string"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:element name="recuperarResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element name="recuperarResult" type="s0:recuperarBoletoResp"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="recuperarBoletoResp">
+                <s:complexContent>
+                    <s:extension base="s0:v2">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="nomeBanco" type="s:string"/>
+                            <s:element minOccurs="0" name="usoDoBanco" type="s:string"/>
+                            <s:element minOccurs="0" name="linhaDigitavel" type="s:string"/>
+                            <s:element minOccurs="0" name="cedente" type="s:string"/>
+                            <s:element minOccurs="0" name="dataDeVencimento" type="s:dateTime"/>
+                            <s:element minOccurs="0" name="nossoNumeroFormatado" type="s:string"/>
+                            <s:element minOccurs="0" name="numeroDocumento" type="s:string"/>
+                            <s:element minOccurs="0" name="tipoDocumento" type="s:string"/>
+                            <s:element minOccurs="0" name="dataCocumento" type="s:dateTime"/>
+                            <s:element minOccurs="0" name="codigoAgencia" type="s:string"/>
+                            <s:element minOccurs="0" name="valorDocumento" type="s:decimal"/>
+                            <s:element minOccurs="0" name="valorAcrescimos" type="s:decimal"/>
+                            <s:element minOccurs="0" name="valorCobrado" type="s:decimal"/>
+                            <s:element minOccurs="0" name="sacado" type="s:string"/>
+                            <s:element minOccurs="0" name="cpfCnpj" type="s:string"/>
+                            <s:element minOccurs="0" name="localPagamento" type="s:string"/>
+                            <s:element minOccurs="0" name="aceite" type="s:string"/>
+                            <s:element minOccurs="0" name="dataProcessamento" type="s:dateTime"/>
+                            <s:element minOccurs="0" name="carteira" type="s:string"/>
+                            <s:element minOccurs="0" name="moeda" type="s:string"/>
+                            <s:element minOccurs="0" name="quantidade" type="s:decimal"/>
+                            <s:element minOccurs="0" name="valorMoeda" type="s:decimal"/>
+                            <s:element minOccurs="0" name="valorDesconto" type="s:decimal"/>
+                            <s:element minOccurs="0" name="valorDeducoes" type="s:decimal"/>
+                            <s:element minOccurs="0" name="valorMulta" type="s:decimal"/>
+                            <s:element minOccurs="0" name="codigoBarras" type="s:string"/>
+                            <s:element minOccurs="0" name="instrucoesLinha1" type="s:string"/>
+                            <s:element minOccurs="0" name="instrucoesLinha2" type="s:string"/>
+                            <s:element minOccurs="0" name="instrucoesLinha3" type="s:string"/>
+                            <s:element minOccurs="0" name="instrucoesLinha4" type="s:string"/>
+                            <s:element minOccurs="0" name="instrucoesLinha5" type="s:string"/>
+                            <s:element minOccurs="0" name="instrucoesLinha6" type="s:string"/>
+                            <s:element minOccurs="0" name="instrucoesLinha7" type="s:string"/>
+                            <s:element minOccurs="0" name="instrucoesLinha8" type="s:string"/>
+                            <s:element minOccurs="0" name="codigoCliente" type="s:decimal"/>
+                            <s:element minOccurs="0" name="numeroBoleto" type="s:string"/>
+                            <s:element minOccurs="0" name="codigoErro" type="s:string"/>
+                            <s:element minOccurs="0" name="encontrouBoleto" type="s:string"/>
+                            <s:element minOccurs="0" name="codigoBanco" type="s:string"/>
+                            <s:element minOccurs="0" name="sacador" type="s:string"/>
+                            <s:element minOccurs="0" name="companhia" type="s:string"/>
+                            <s:element minOccurs="0" name="documento" type="s:decimal"/>
+                            <s:element minOccurs="0" name="parcela" type="s:string"/>
+                            <s:element minOccurs="0" name="tipoDocumentoAbadi" type="s:string"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+        </s:schema>
+    </types>
+    <message name="buscarSoapIn">
+        <part name="parameters" element="s0:buscar"/>
+    </message>
+    <message name="buscarSoapOut">
+        <part name="parameters" element="s0:buscarResponse"/>
+    </message>
+    <message name="gerarPDFSoapIn">
+        <part name="parameters" element="s0:gerarPDF"/>
+    </message>
+    <message name="gerarPDFSoapOut">
+        <part name="parameters" element="s0:gerarPDFResponse"/>
+    </message>
+    <message name="recuperarSoapIn">
+        <part name="parameters" element="s0:recuperar"/>
+    </message>
+    <message name="recuperarSoapOut">
+        <part name="parameters" element="s0:recuperarResponse"/>
+    </message>
+    <portType name="BoletoSoap">
+        <operation name="buscar">
+            <input message="s0:buscarSoapIn"/>
+            <output message="s0:buscarSoapOut"/>
+        </operation>
+        <operation name="gerarPDF">
+            <input message="s0:gerarPDFSoapIn"/>
+            <output message="s0:gerarPDFSoapOut"/>
+        </operation>
+        <operation name="recuperar">
+            <input message="s0:recuperarSoapIn"/>
+            <output message="s0:recuperarSoapOut"/>
+        </operation>
+    </portType>
+    <binding name="BoletoSoap" type="s0:BoletoSoap">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="buscar">
+            <soap:operation soapAction="http://tempuri.org/ws.boleto.Service.buscar" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="gerarPDF">
+            <soap:operation soapAction="http://tempuri.org/ws.boleto.Service.gerarPDF" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="recuperar">
+            <soap:operation soapAction="http://tempuri.org/ws.boleto.Service.recuperar" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="Boleto">
+        <port name="BoletoSoap" binding="s0:BoletoSoap">
+            <soap:address location="http://ensemdes.ipiranga.com.br:7070/csp/enscrmws/ws.boleto.Service.CLS"/>
+        </port>
+    </service>
+</definitions>
