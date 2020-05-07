@@ -13,7 +13,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.timestamp>${maven.build.timestamp}</project.build.timestamp>
         <project.build.node.path>${main.basedir}</project.build.node.path>
-        <settings.s3.repo.bucketName>boleia-maven</settings.s3.repo.bucketName>
         <versions.libs.auth0.jwt>3.2.0</versions.libs.auth0.jwt>
         <versions.libs.bouncy.castle>1.57</versions.libs.bouncy.castle>
         <versions.libs.commons.lang>3.5</versions.libs.commons.lang>
@@ -46,8 +45,14 @@
             <url>file://${project.basedir}/../repo</url>
         </repository>
         <repository>
-            <id>boleia-maven</id>
-            <url>s3://${settings.s3.repo.bucketName/release</url>
+            <id>boleia-maven-snapshot</id>
+            <name>boleia-maven-snapshot</name>
+            <url>http://repositorio.profrotas.com.br:8081/repository/boleia-maven-snapshot/</url>
+        </repository>
+        <repository>
+            <id>boleia-maven-release</id>
+            <name>boleia-maven-release</name>
+            <url>http://repositorio.profrotas.com.br:8081/repository/boleia-maven-release/</url>
         </repository>
     </repositories>
 
@@ -214,13 +219,6 @@
     </dependencies>
 
     <build>
-        <extensions>
-            <extension>
-                <groupId>com.github.seahen</groupId>
-                <artifactId>maven-s3-wagon</artifactId>
-                <version>1.3.1</version>
-            </extension>
-        </extensions>
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -255,12 +253,14 @@
 
     <distributionManagement>
         <repository>
-            <id>boleia-maven</id>
-            <url>s3://${settings.s3.repo.bucketName}/release</url>
+            <id>boleia-maven-release</id>
+            <name>boleia-maven-release</name>
+            <url>http://repositorio.profrotas.com.br:8081/repository/boleia-maven-release/</url>
         </repository>
         <snapshotRepository>
-            <id>boleia-maven</id>
-            <url>s3://${settings.s3.repo.bucketName}/snapshot</url>
+            <id>boleia-maven-snapshot</id>
+            <name>boleia-maven-snapshot</name>
+            <url>http://repositorio.profrotas.com.br:8081/repository/boleia-maven-snapshot/</url>
         </snapshotRepository>
     </distributionManagement>
 
