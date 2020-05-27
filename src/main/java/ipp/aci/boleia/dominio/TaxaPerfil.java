@@ -1,8 +1,7 @@
 package ipp.aci.boleia.dominio;
 
 
-import ipp.aci.boleia.dominio.interfaces.IPersistente;
-import org.hibernate.envers.Audited;
+import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,7 +13,10 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.math.BigDecimal;
+
+import org.hibernate.envers.Audited;
+
+import ipp.aci.boleia.dominio.interfaces.IPersistente;
 
 /**
  * Representa a tabela de Taxa do perfil.

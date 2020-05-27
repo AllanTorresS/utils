@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "E1Message", namespace = "java:oracle.e1.bssvfoundation.util", propOrder = {
     "messagePrefix",

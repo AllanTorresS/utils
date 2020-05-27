@@ -9,7 +9,7 @@ import java.util.Optional;
  * Contrato de implementação de telemetria veículo dados.
  *
  */
-public interface ITelemetriaVeiculoDados extends  IRepositorioBoleiaDados<TelemetriaVeiculo> {
+public interface ITelemetriaVeiculoDados extends IRepositorioBoleiaDados<TelemetriaVeiculo> {
 
     /**
      * Obtém registro de telemetria mais recente de uma placa.

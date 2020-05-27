@@ -13,6 +13,8 @@ import ipp.aci.boleia.dados.servicos.ensemble.jde.fatura.jaxws.Fatura_Service;
 import ipp.aci.boleia.dados.servicos.ensemble.jde.fatura.jaxws.IncluirJDEReq;
 import ipp.aci.boleia.dados.servicos.ensemble.jde.fatura.jaxws.IncluirJDEResp;
 import ipp.aci.boleia.dados.servicos.ensemble.jde.fatura.jaxws.PairOflistaItemFaturaKeyitemFatura;
+import ipp.aci.boleia.dados.servicos.ensemble.jde.fatura.jaxws.ProrrogarVencimentoReq;
+import ipp.aci.boleia.dados.servicos.ensemble.jde.fatura.jaxws.ProrrogarVencimentoResp;
 import ipp.aci.boleia.dominio.AjusteCobranca;
 import ipp.aci.boleia.dominio.CicloRepasse;
 import ipp.aci.boleia.dominio.Cobranca;
@@ -51,6 +53,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import static ipp.aci.boleia.util.UtilitarioFormatacaoData.formatarDataGregorian;
 import static ipp.aci.boleia.util.jde.ConstantesJde.BOLEIA;
 import static ipp.aci.boleia.util.jde.ConstantesJde.CLIENTE_REPASSE;
 import static ipp.aci.boleia.util.jde.ConstantesJde.CONDICAO_PGTO_REPASSE;
@@ -106,23 +109,19 @@ public class JdeFaturaDados extends JdeBaseDados<FaturaSoap> implements IFaturaD
     }
 
     @Override
-    public Cobranca incluir(Cobranca cobranca, Cobranca cobrancaAnterior) {
-        IncluirJDEReq requisicao = obterRequisicaoIncluir(cobranca, cobrancaAnterior);
+    public IncluirJDEResp incluir(IncluirJDEReq requisicao) {
         try {
-            IncluirJDEResp resposta = invocarIntegracao(requisicao, "incluir", getServico()::incluirJDE);
-            cobranca.setCiaDocumento(resposta.getCiaDocumento());
-            cobranca.setTipoDocumento(resposta.getTipoDocumento());
-            cobranca.setNumeroDocumento(resposta.getNumeroDocumento().longValue());
-            cobranca.setQuantidadeParcelas(resposta.getQtdeParcelas().intValue());
-            cobranca.setMensagemErro(null);
-            cobranca.setStatusIntegracaoJDE(StatusIntegracaoJde.REALIZADO.getValue());
-        } catch (ExcecaoValidacao | ExcecaoBoleiaRuntime ex ) {
+            return invocarIntegracao(requisicao, "incluir", getServico()::incluirJDE);
+        } catch (ExcecaoValidacao | ExcecaoBoleiaRuntime ex) {
+            IncluirJDEResp respostaErro = new IncluirJDEResp();
             String mensagem = getMensagens().obterMensagem(ex.getErro().getChaveMensagem(), ex.getArgs());
+
             LOGGER.error(mensagem, ex);
-            cobranca.setMensagemErro(mensagem);
-            cobranca.setStatusIntegracaoJDE(StatusIntegracaoJde.ERRO_ENVIO.getValue());
+            respostaErro.setStatus(false);
+            respostaErro.setMsgErro(mensagem);
+
+            return respostaErro;
         }
-        return cobranca;
     }
 
     @Override
@@ -221,6 +220,46 @@ public class JdeFaturaDados extends JdeBaseDados<FaturaSoap> implements IFaturaD
         return cicloRepasse;
     }
 
+    @Override
+    public void prorrogarVencimento(AjusteCobranca ajusteCobranca) throws ExcecaoValidacao {
+        ProrrogarVencimentoReq requisicao = criarRequisicaoProrrogarVencimento(ajusteCobranca);
+        enviarRequisicaoProrrogarVencimento(requisicao);
+    }
+
+    /**
+     * Envia a requisição para prorrogar o vencimento do boleto.
+     *
+     * @param requisicao para ser enviada
+     * @throws ExcecaoValidacao caso ocorra erro durante o processo.
+     */
+    private void enviarRequisicaoProrrogarVencimento(ProrrogarVencimentoReq requisicao) throws ExcecaoValidacao {
+        ProrrogarVencimentoResp response = invocarIntegracao(requisicao, "prorrogarVencimento", getServico()::prorrogarVencimento);
+        if (! response.isStatus()) {
+            String mensagem = getMensagens().obterMensagem(Erro.ERRO_INTEGRACAO.getChaveMensagem(), NOME_SERVICO + ".prorrogarVencimento: " + response.getMensagem());
+            LOGGER.error(mensagem);
+            throw new ExcecaoBoleiaRuntime(Erro.ERRO_INTEGRACAO, NOME_SERVICO + ".prorrogarVencimento");
+        }
+    }
+
+    /**
+     * Cria o objeto com as informações da requisição do serviço de prorrogar o vencimento.
+     *
+     * @param ajusteCobranca O ajuste realizado na cobrança
+     * @return Objeto da requisição.
+     */
+    private ProrrogarVencimentoReq criarRequisicaoProrrogarVencimento(AjusteCobranca ajusteCobranca) {
+        ProrrogarVencimentoReq req = new ProrrogarVencimentoReq();
+        req.setTipo(ajusteCobranca.getCobranca().getTipoDocumento());
+        req.setDocumento(new BigDecimal(ajusteCobranca.getCobranca().getNumeroDocumento()));
+        req.setCompanhia(ajusteCobranca.getCobranca().getCiaDocumento());
+        req.setSufixo(ConstantesJde.SUFIXO_PRORROGAR_VENCIMENTO);
+        req.setAcrecimo(ConstantesJde.ACRECIMO_PRORROGAR_VENCIMENTO);
+        req.setVencimento(formatarDataGregorian(ajusteCobranca.getDataVencimentoAjuste()));
+        req.setAlteracao(ConstantesJde.ALTERACAO_PRORROGAR_VENCIMENTO);
+        req.setAprovacao(formatarDataGregorian(ajusteCobranca.getDataAjuste()));
+        return req;
+    }
+
     /**
     * Método que consome método da api e trata exceção.
     *
@@ -230,7 +269,7 @@ public class JdeFaturaDados extends JdeBaseDados<FaturaSoap> implements IFaturaD
     * @return Reposta da integração
     * @throws ExcecaoBoleiaRuntime caso ocorra um erro de integração
     */
-    private <E extends EnsRequest, S extends EnsResponse> S invocarIntegracao(E requisicao, String nomeServico, ConsumidorIntegracao<E, S> consumidor) throws ExcecaoValidacao {
+    private <E extends EnsRequest, S extends EnsResponse> S invocarIntegracao(E requisicao, String nomeServico, ConsumidorIntegracao<E, S> consumidor) throws ExcecaoValidacao  {
         S resp = UtilitarioIntegracao.invocarIntegracao(requisicao, NOME_SERVICO + "." + nomeServico, consumidor);
         validarResposta(resp, nomeServico);
         return resp;
@@ -281,7 +320,7 @@ public class JdeFaturaDados extends JdeBaseDados<FaturaSoap> implements IFaturaD
         req.setTipoDocumento(CREDITO_FROTA_TIPO_DOCUMENTO);
         req.setSistemaGeradorFatura(BOLEIA);
         req.setCliente(new BigDecimal(pedido.getFrota().getNumeroJdeInterno()));
-        req.setDataFatura(UtilitarioFormatacaoData.formatarDataGregorian(dataAmbiente));
+        req.setDataFatura(formatarDataGregorian(dataAmbiente));
         req.setObservacao(CREDITO_FROTA_OBSERVACAO);
         req.setListaItemFatura(obterListaItensFatura(pedido));
         return req;
@@ -323,14 +362,8 @@ public class JdeFaturaDados extends JdeBaseDados<FaturaSoap> implements IFaturaD
         return listaItensFatura;
     }
 
-    /**
-     * Cria uma requisicao para inclusao de cobranca no JDE.
-     *
-     * @param cobranca A cobranca em questao
-     * @param cobrancaAnterior A cobrança anterior à cobrança em questão
-     * @return Um objeto de requisicao conforme o contrato de uso do JDE
-     */
-    private IncluirJDEReq obterRequisicaoIncluir(Cobranca cobranca, Cobranca cobrancaAnterior) {
+    @Override
+    public IncluirJDEReq obterRequisicaoIncluir(Cobranca cobranca, Cobranca cobrancaAnterior) {
         IncluirJDEReq req = new IncluirJDEReq();
         req.setCenario(new BigDecimal(FATURA_CENARIO));
         req.setFilialFabrica(FILIAL);
@@ -388,7 +421,7 @@ public class JdeFaturaDados extends JdeBaseDados<FaturaSoap> implements IFaturaD
     /**
      * Cria uma lista de itens de fatura a partir de um objeto Cobranca
      *
-     * @param cobranca A Cobranca em questao
+     * @param cobranca A cobranca em questão
      * @param cobrancaAnterior A cobrança anterior à cobrança em questão
      * @return Uma instancia de {@link ArrayOfitemFaturaPairOflistaItemFaturaKeyitemFatura}, contendo os itens da Cobranca informada.
      */

@@ -5,7 +5,7 @@ import ipp.aci.boleia.dominio.FrotaParametroSistemaHorario;
 import org.springframework.stereotype.Repository;
 
 /**
- * Implementação oracle para {@link ipp.aci.boleia.dados.IFrotaParametroSistemaHorarioDados}
+ * Implementação oracle para {@link IFrotaParametroSistemaHorarioDados}
  */
 @Repository
 public class OracleFrotaParametroSistemaHorarioDados extends OracleRepositorioBoleiaDados<FrotaParametroSistemaHorario> implements IFrotaParametroSistemaHorarioDados {

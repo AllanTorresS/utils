@@ -5,6 +5,8 @@ import ipp.aci.boleia.dados.IBoletoDados;
 import ipp.aci.boleia.dados.ICobrancaDados;
 import ipp.aci.boleia.dados.IConfiguracaoSistemaDados;
 import ipp.aci.boleia.dados.IFaturaDados;
+import ipp.aci.boleia.dados.IFilaCobrancaIncluirFaturaDados;
+import ipp.aci.boleia.dados.servicos.ensemble.jde.fatura.jaxws.IncluirJDEReq;
 import ipp.aci.boleia.dominio.AjusteCobranca;
 import ipp.aci.boleia.dominio.Cobranca;
 import ipp.aci.boleia.dominio.Frota;
@@ -88,12 +90,15 @@ public class CobrancaSd {
     @Value("${frota.controle.cnpj}")
     private Long cnpjFrotaControle;
 
+    @Autowired
+    IFilaCobrancaIncluirFaturaDados filaCobrancaIncluirFatura;
+
     /**
      * Método gera um boleto em PDF para uma cobrança.
      *
      * @param cobranca o objeto com informações da cobrança
-     * @return Boleto gerado
      * @throws ExcecaoValidacao excecao de validacao do boleto
+     * @return Boleto gerado
      */
     public byte[] gerarBoletoPDFPorCobranca(Cobranca cobranca) throws ExcecaoValidacao {
         BoletoVo boleto = gerarBoletoPorCobranca(cobranca);
@@ -104,8 +109,8 @@ public class CobrancaSd {
      * Método gera um boleto para uma cobrança.
      *
      * @param cobranca o objeto com informações da cobrança
-     * @return Boleto gerado
      * @throws ExcecaoValidacao excecao de validacao do boleto
+     * @return Boleto gerado
      */
     public BoletoVo gerarBoletoPorCobranca(Cobranca cobranca) throws ExcecaoValidacao {
         BoletoVo boleto = repositorioBoleto.recuperar(cobranca);
@@ -118,7 +123,6 @@ public class CobrancaSd {
 
     /**
      * Método que cria uma cobrança a partir de uma lista de transações.
-     *
      * @param listaTransacoes Lista de transações.
      * @return Nova cobrança para lista de transações.
      */
@@ -164,30 +168,14 @@ public class CobrancaSd {
     }
 
     /**
-     * Método que gera fatura para uma cobrança.
+     * Método que gera requisição de inclusão de fatura no JDE a partir de uma cobrança
      *
      * @param cobranca Cobranca
-     * @return Cobranca faturada.
+     * @return a requisição a ser enviada ao JDE
      */
-    public Cobranca gerarFatura(Cobranca cobranca) {
+    public IncluirJDEReq gerarRequisicaoIncluirFatura(Cobranca cobranca) {
         Cobranca cobrancaAnterior = repositorioCobranca.obterCobrancaAnterior(cobranca);
-        Cobranca cobrancaComFatura = repositorioFatura.incluir(cobranca, cobrancaAnterior);
-        incrementarNumeroTentativasEnvio(cobrancaComFatura);
-        return repositorioCobranca.armazenar(cobrancaComFatura);
-    }
-
-    /**
-     * Incrementa o número de tentativas de envio de uma Cobrança para o JDE.
-     *
-     * @param cobranca Cobrança a ter o numero de tentativas incrementado.
-     */
-    private void incrementarNumeroTentativasEnvio(Cobranca cobranca) {
-        Integer numeroTentativas = cobranca.getNumeroTentativasEnvio();
-        if (numeroTentativas != null) {
-            cobranca.setNumeroTentativasEnvio(numeroTentativas + 1);
-        } else {
-            cobranca.setNumeroTentativasEnvio(1);
-        }
+        return repositorioFatura.obterRequisicaoIncluir(cobranca, cobrancaAnterior);
     }
 
     /**
@@ -209,13 +197,14 @@ public class CobrancaSd {
     private List<AjusteCobrancaVo> construirAjustesParaBoleto(Cobranca cobranca) {
         List<AjusteCobranca> ajustesAnteriores = obterAjustesCicloAnterior(cobranca);
 
-        List<AjusteCobrancaVo> ajustesCiclo = extrairAjustesCobrancaVoParaBoleto(cobranca.getAjustes(), false, null, mensagens.obterMensagem("boleto.ajustecobranca.descricaoajusteciclo"));
+        List<AjusteCobrancaVo> ajustesCiclo = extrairAjustesCobrancaVoParaBoleto(cobranca.getAjustesComValor(), false, null, mensagens.obterMensagem("boleto.ajustecobranca.descricaoajusteciclo"));
 
         List<AjusteCobrancaVo> debitosConcedido = new ArrayList<>();
         List<AjusteCobrancaVo> creditosConcedido = new ArrayList<>();
         if (ajustesAnteriores != null) {
-            debitosConcedido = extrairAjustesCobrancaVoParaBoleto(ajustesAnteriores, true, AjusteCobranca::isAcrescimo, mensagens.obterMensagem("boleto.ajustecobranca.descricaodebitoconcedido"));
-            creditosConcedido = extrairAjustesCobrancaVoParaBoleto(ajustesAnteriores, true, AjusteCobranca::isDesconto, mensagens.obterMensagem("boleto.ajustecobranca.descricaocreditoconcedido"));
+            List<AjusteCobranca> ajustesValorAnteriores = ajustesAnteriores.stream().filter(AjusteCobranca::isAjusteValor).collect(Collectors.toList());
+            debitosConcedido = extrairAjustesCobrancaVoParaBoleto(ajustesValorAnteriores, true, AjusteCobranca::isAcrescimo, mensagens.obterMensagem("boleto.ajustecobranca.descricaodebitoconcedido"));
+            creditosConcedido = extrairAjustesCobrancaVoParaBoleto(ajustesValorAnteriores, true, AjusteCobranca::isDesconto, mensagens.obterMensagem("boleto.ajustecobranca.descricaocreditoconcedido"));
         }
 
         return concatenarListas(ajustesCiclo, debitosConcedido, creditosConcedido);
@@ -259,7 +248,6 @@ public class CobrancaSd {
 
     /**
      * Controi um aviso de debito a partir de uma cobranca
-     *
      * @param cobranca cobraca
      * @return Aviso de Debito
      */
@@ -290,12 +278,12 @@ public class CobrancaSd {
         aviso.setCodigoCliente(frota.getNumeroJdeInterno().toString());
         aviso.setCiclo(mensagens.obterMensagem("boleto.avisodebito.ciclo", UtilitarioFormatacaoData.formatarPeriodoDias(transacaoConsolidada.getDataInicioPeriodo(), transacaoConsolidada.getDataFimPeriodo(), false)));
 
-        if (cobranca.getValorDescontoAbastecimentos() != null && BigDecimal.ZERO.compareTo(cobranca.getValorDescontoAbastecimentos()) != 0) {
-            aviso.setValorAbastecimentosTotalComDesconto(UtilitarioFormatacao.formatarDecimal(cobranca.getValorTotal().subtract(cobranca.getValorDescontoAbastecimentos().setScale(2, RoundingMode.HALF_UP))));
-            aviso.setValorDescontoAbastecimentos(UtilitarioFormatacao.formatarDecimal(cobranca.getValorDescontoAbastecimentos().setScale(2, RoundingMode.HALF_UP)));
+        if(cobranca.getValorDescontoAbastecimentos() != null && BigDecimal.ZERO.compareTo(cobranca.getValorDescontoAbastecimentos()) != 0 ) {
+            aviso.setValorAbastecimentosTotalComDesconto(UtilitarioFormatacao.formatarDecimal(cobranca.getValorTotal().subtract(cobranca.getValorDescontoAbastecimentos().setScale(2,RoundingMode.HALF_UP))));
+            aviso.setValorDescontoAbastecimentos(UtilitarioFormatacao.formatarDecimal(cobranca.getValorDescontoAbastecimentos().setScale(2,RoundingMode.HALF_UP)));
         } else {
             aviso.setValorDescontoAbastecimentos("");
-            aviso.setValorAbastecimentosTotalComDesconto(UtilitarioFormatacao.formatarDecimal(cobranca.getValorTotal().setScale(2, RoundingMode.HALF_UP)));
+            aviso.setValorAbastecimentosTotalComDesconto(UtilitarioFormatacao.formatarDecimal(cobranca.getValorTotal().setScale(2,RoundingMode.HALF_UP)));
         }
         return aviso;
     }
@@ -342,7 +330,6 @@ public class CobrancaSd {
 
     /**
      * Verifica se cobranças para a frota controle devem ser excluídas dos resultados.
-     *
      * @param usuarioLogado o usuário logado.
      * @return true se a frota controle deve ser ignorada, false caso contrário.
      */
@@ -353,7 +340,6 @@ public class CobrancaSd {
     /**
      * Dado o horario atual, verifica se a inativação de frotas está habilitada,
      * para inativar frotas conforme rotina de verificação de debido.
-     *
      * @return true caso o parametro do horário seja 1 false caso contrário
      */
     public Boolean deveInativarFrota() {

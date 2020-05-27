@@ -83,7 +83,7 @@ public class JdeVinculoCreditoBoletoDados extends JdeBaseDados<VinculoCreditoBol
         vincularCreditoRequest.setMnCliente(frota.getNumeroJdeInterno());
         vincularCreditoRequest.setMnCenario(Integer.parseInt(VINCULO_CREDITO_CENARIO));
         vincularCreditoRequest.setMnValorTransacao(ajusteCobranca.getValorAjuste());
-        if (ajusteCobranca.getDataVencimentoAjuste() == null) {
+        if(ajusteCobranca.getDataVencimentoAjuste() == null){
             vincularCreditoRequest.setJdDataVencimentoDDJ(formatarDataGregorian(ajusteCobranca.getCobranca().getDataVencimentoPagto()));
         } else {
             vincularCreditoRequest.setJdDataVencimentoDDJ(formatarDataGregorian(ajusteCobranca.getDataVencimentoAjuste()));

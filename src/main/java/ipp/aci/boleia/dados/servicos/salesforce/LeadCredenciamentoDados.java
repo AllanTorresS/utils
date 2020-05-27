@@ -31,7 +31,7 @@ public class LeadCredenciamentoDados implements ILeadCredenciamentoDados {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(LeadCredenciamentoDados.class);
 
-    private static final String AUTHORIZATION_HEADER = "Authorization";
+	private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String AUTHORIZATION_TIPO_CONCESSAO = "grant_type";
     private static final String AUTHORIZATION_CLIENTE_ID = "client_id";
     private static final String AUTHORIZATION_CLIENTE_SEGREDO = "client_secret";
@@ -97,24 +97,24 @@ public class LeadCredenciamentoDados implements ILeadCredenciamentoDados {
     
     @Override
     public String criarLead(String cnpj, Object corpo) throws ExcecaoValidacao {
-        if (Boolean.TRUE.equals(validarLeadExistente(cnpj))) {
-            throw new ExcecaoValidacao(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("credenciamento.servico.criarLead.existente"));
-        }
-        prepararRequisicao(this.criarAlterarLeadUrl.replace(CNPJ_URL, cnpj), corpo);
-        String leadId = restDados.doPatchJson(this.endpointUrl, corpo, this.authorizationHeaders, this::tratarCriarLead);
-        if (leadId == null) {
-            LOGGER.error(this.mensagem);
-            throw new ExcecaoBoleiaRuntime(Erro.ERRO_INTEGRACAO, this.mensagem);
-        }
-        return leadId;
+    	if (Boolean.TRUE.equals(validarLeadExistente(cnpj))) {
+			throw new ExcecaoValidacao(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("credenciamento.servico.criarLead.existente"));
+    	}
+    	prepararRequisicao(this.criarAlterarLeadUrl.replace(CNPJ_URL, cnpj), corpo);
+		String leadId = restDados.doPatchJson(this.endpointUrl, corpo, this.authorizationHeaders, this::tratarCriarLead);
+		if (leadId == null) {
+			LOGGER.error(this.mensagem);
+			throw new ExcecaoBoleiaRuntime(Erro.ERRO_INTEGRACAO, this.mensagem);
+		}
+		return leadId;
 	}
 
 	@Override
     public void atualizarLead(String cnpj, Object corpo) throws ExcecaoValidacao {
-        if (Boolean.FALSE.equals(validarLeadExistente(cnpj))) {
-            throw new ExcecaoValidacao(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("credenciamento.servico.atualizarLead.inexistente"));
-        }
-        prepararRequisicao(this.criarAlterarLeadUrl.replace(CNPJ_URL, cnpj), corpo);
+		if (Boolean.FALSE.equals(validarLeadExistente(cnpj))) {
+			throw new ExcecaoValidacao(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("credenciamento.servico.atualizarLead.inexistente"));
+    	}
+		prepararRequisicao(this.criarAlterarLeadUrl.replace(CNPJ_URL, cnpj), corpo);
 		boolean leadAtualizado = restDados.doPatchJson(this.endpointUrl, corpo, this.authorizationHeaders, this::tratarAtualizacaoLead);
 		if (!leadAtualizado) {
 			LOGGER.error(this.mensagem);
@@ -134,50 +134,50 @@ public class LeadCredenciamentoDados implements ILeadCredenciamentoDados {
 	
 	@Override
     public LeadCredenciamentoPostoIntegradorVo consultarPostoLead(String cnpj) throws ExcecaoValidacao {
-        prepararRequisicao(this.consultarLeadUrl.replace(ATRIBUTOS_URL, ATRIBUTOS_CONSULTA_POSTO).replace(CNPJ_URL, cnpj), null);
-        LeadCredenciamentoPostoIntegradorVo postoLeadVo = restDados.doGet(this.endpointUrl, this.authorizationHeaders, this::tratarConsultaPostoLead);
-        if (postoLeadVo == null) {
-            LOGGER.error(this.mensagem);
-            throw new ExcecaoBoleiaRuntime(Erro.ERRO_INTEGRACAO, this.mensagem);
-        }
-        if (postoLeadVo.getPaginaCredenciamento() == null) {
-            throw new ExcecaoValidacao(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("credenciamento.servico.consultarLead.inexistente"));
-        }
-        return postoLeadVo;
-    }
+		prepararRequisicao(this.consultarLeadUrl.replace(ATRIBUTOS_URL, ATRIBUTOS_CONSULTA_POSTO).replace(CNPJ_URL, cnpj), null);
+		LeadCredenciamentoPostoIntegradorVo postoLeadVo = restDados.doGet(this.endpointUrl, this.authorizationHeaders, this::tratarConsultaPostoLead);
+		if (postoLeadVo == null) {
+			LOGGER.error(this.mensagem);
+			throw new ExcecaoBoleiaRuntime(Erro.ERRO_INTEGRACAO, this.mensagem);
+		}
+		if (postoLeadVo.getPaginaCredenciamento() == null) {
+			throw new ExcecaoValidacao(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("credenciamento.servico.consultarLead.inexistente"));
+		}
+		return postoLeadVo;
+	}
 
-    @Override
-    public Boolean validarLeadExistente(String cnpj) {
-        prepararRequisicao(this.consultarLeadUrl.replace(ATRIBUTOS_URL, CAMPO_CNPJ).replace(CNPJ_URL, cnpj), null);
-        return restDados.doGet(this.endpointUrl, this.authorizationHeaders, this::tratarValidarExistenciaLead);
-    }
+	@Override
+	public Boolean validarLeadExistente(String cnpj) {
+		prepararRequisicao(this.consultarLeadUrl.replace(ATRIBUTOS_URL, CAMPO_CNPJ).replace(CNPJ_URL, cnpj), null);
+		return restDados.doGet(this.endpointUrl, this.authorizationHeaders, this::tratarValidarExistenciaLead);
+	}
 
-    /**
-     * Prepara os dados de requisição para chamada dos serviços de integração com o Salesforce.
-     *
-     * @param servicoUrl Url do serviço a ser chamada.
-     * @param corpo      Conteúdo enviado na chamada.
-     */
-    private void prepararRequisicao(String servicoUrl, Object corpo) {
+	/**
+	 * Prepara os dados de requisição para chamada dos serviços de integração com o Salesforce.
+	 *
+	 * @param servicoUrl Url do serviço a ser chamada.
+	 * @param corpo Conteúdo enviado na chamada.
+	 */
+	private void prepararRequisicao(String servicoUrl, Object corpo) {
 		autenticarSalesforce();
         this.endpointUrl = this.instance_url.concat(servicoUrl);
-        this.requestBody = UtilitarioJson.toJSON(corpo != null ? corpo : new String());
-    }
+    	this.requestBody = UtilitarioJson.toJSON(corpo != null ? corpo : new String());
+	}
 
-    /**
-     * Prepara os dados de resposta da integração com o Salesforce.
-     *
-     * @param httpResponse A resposta recebida do Salesforce.
-     */
-    private void prepararResposta(CloseableHttpResponse httpResponse) {
-        this.statusCode = httpResponse.getStatusLine().getStatusCode();
-        this.responseBody = new ObjectMapper().createObjectNode();
-        if (httpResponse.getEntity() != null) {
-            this.responseBody = UtilitarioJson.toObject(httpResponse, JsonNode.class);
-        }
-        String responseStatus = this.statusCode + " " + httpResponse.getStatusLine().getReasonPhrase();
-        this.mensagem = mensagens.obterMensagem("credenciamento.resposta.integracao",
-                this.endpointUrl, this.requestBody, responseStatus, responseBody.toString());
+	/**
+	 * Prepara os dados de resposta da integração com o Salesforce.
+	 *
+	 * @param httpResponse A resposta recebida do Salesforce.
+	 */
+	private void prepararResposta(CloseableHttpResponse httpResponse) {
+		this.statusCode = httpResponse.getStatusLine().getStatusCode();
+		this.responseBody = new ObjectMapper().createObjectNode();
+		if (httpResponse.getEntity() != null) {
+			this.responseBody = UtilitarioJson.toObject(httpResponse, JsonNode.class);
+		}
+		String responseStatus = this.statusCode + " " + httpResponse.getStatusLine().getReasonPhrase();
+		this.mensagem = mensagens.obterMensagem("credenciamento.resposta.integracao",
+				this.endpointUrl, this.requestBody, responseStatus, responseBody.toString());
 	}
 	
 	/**
@@ -199,7 +199,7 @@ public class LeadCredenciamentoDados implements ILeadCredenciamentoDados {
 		}
 	}
 
-	/**
+    /**
 	 * Tratamento da resposta da autenticação para montar o cabeçalho
 	 * das futuras requisições ao Salesforce.
 	 * 
@@ -281,17 +281,17 @@ public class LeadCredenciamentoDados implements ILeadCredenciamentoDados {
         return null;
     }
 
-	/**
-	 * Tratamento da resposta da solicitação de validação da existencia do Lead para o CNPJ informado.
-	 *
-	 * @param httpResponse A resposta recebida do Salesforce.
-	 * @return true em caso de existencia do Lead, caso contrario false.
-	 */
-	private boolean tratarValidarExistenciaLead(CloseableHttpResponse httpResponse) {
-		prepararResposta(httpResponse);
-		if (this.statusCode == HttpStatus.OK.value() && this.responseBody.get(CAMPO_TAMANHO).intValue() > 0) {
-			return true;
-		} else {
+    /**
+     * Tratamento da resposta da solicitação de validação da existencia do Lead para o CNPJ informado.
+     *
+     * @param httpResponse A resposta recebida do Salesforce.
+     * @return true em caso de existencia do Lead, caso contrario false.
+     */
+    private boolean tratarValidarExistenciaLead(CloseableHttpResponse httpResponse) {
+        prepararResposta(httpResponse);
+        if (this.statusCode == HttpStatus.OK.value() && this.responseBody.get(CAMPO_TAMANHO).intValue() > 0) {
+            return true;
+        } else {
 			return false;
 		}
 	}

@@ -1,14 +1,16 @@
 package ipp.aci.boleia.dados.servicos.aws;
 
 
+import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceAsync;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceAsyncClientBuilder;
 import com.amazonaws.services.simpleemail.model.RawMessage;
 import com.amazonaws.services.simpleemail.model.SendRawEmailRequest;
 import com.amazonaws.services.simpleemail.model.SendRawEmailResult;
+import com.google.common.util.concurrent.RateLimiter;
 import ipp.aci.boleia.dados.IEmailEnvioDados;
 import ipp.aci.boleia.dominio.vo.CredenciaisAwsVo;
-import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
+import ipp.aci.boleia.util.i18n.Mensagens;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +35,6 @@ import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Properties;
-import java.util.stream.Collectors;
 
 /**
  * Classe para integração com o serviço de email Amazon SES
@@ -44,6 +45,10 @@ public class AwsEmailEnvioDados implements InitializingBean, IEmailEnvioDados {
     private static final Logger LOGGER = LoggerFactory.getLogger(AwsEmailEnvioDados.class);
     private static final int MAX_DESTINATARIOS_POR_EMAIL = 50;
     private static final String CONTENT_TYPE_CHARSET = "text/html; charset=UTF-8";
+    public static final String THROTTLING = "Throttling";
+    public static final String MAXIMUM_SENDING_RATE_EXCEEDED = "Maximum sending rate exceeded.";
+    public static final int TEMPO_ESPERA_MAXIMO_MILISSEGUNDOS = 3000;
+    public static final int TEMPO_ESPERA_MINIMO_MILISSEGUNDOS = 10;
 
     @Autowired
     private CredenciaisAwsVo credenciais;
@@ -51,11 +56,20 @@ public class AwsEmailEnvioDados implements InitializingBean, IEmailEnvioDados {
     @Autowired
     private UtilitarioAmbiente ambiente;
 
+    @Autowired
+    private Mensagens mensagens;
+
     @Value("${aws.ses.region}")
     private String region;
 
     @Value("${aws.ses.mail}")
     private String mail;
+
+    @Value("${aws.ses.maxSendRate}")
+    private Integer requestsPorSegundoAoSES;
+
+    @Value("${aws.ses.maxSendRateRetryLimit}")
+    private Integer tentativasAposAtingirLimitDeRequestSES;
 
     private AmazonSimpleEmailServiceAsync clienteSES;
 
@@ -84,6 +98,11 @@ public class AwsEmailEnvioDados implements InitializingBean, IEmailEnvioDados {
 
     /**
      * Envia o email ao conjunto de destinatarios informado
+     * Segue a recomentação da AWS conforme em:
+     * <a href="https://aws.amazon.com/pt/blogs/messaging-and-targeting/how-to-handle-a-throttling-maximum-sending-rate-exceeded-error/">Throttling – Maximum sending rate exceeded</a>
+     *
+     * Note que o limite é baseada no número de destinatários, e não no número de mensagens.
+     *
      * @param assunto O assunto
      * @param corpo O corpo
      * @param destinatarios A lista de destinatarios
@@ -91,43 +110,91 @@ public class AwsEmailEnvioDados implements InitializingBean, IEmailEnvioDados {
      * @param nomeAnexo o nome do arquivo anexado
      */
     private void enviarLote(String assunto, String corpo, List<String> destinatarios, DataSource anexo, String nomeAnexo) {
-        try {
-            MimeMessage message = construirMensagemEmail(assunto, corpo, destinatarios, anexo, nomeAnexo);
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            message.writeTo(outputStream);
-            RawMessage rawMessage = new RawMessage(ByteBuffer.wrap(outputStream.toByteArray()));
-            SendRawEmailRequest rawEmailRequest = new SendRawEmailRequest(rawMessage);
-            SendRawEmailResult sendResult = clienteSES.sendRawEmail(rawEmailRequest);
-            LOGGER.info("Mensagem [{}] enviada a partir de [{}] para {}", sendResult.getMessageId(), ambiente.getIdentificadorAmbiente(), destinatarios);
-        } catch(Exception ex) {
-            LOGGER.error(ex.getMessage(),ex);
-        }
+
+            RateLimiter limitadorDeTaxa = RateLimiter.create(requestsPorSegundoAoSES);
+            try {
+                MimeMessage message = construirMensagemEmail(assunto, corpo, anexo, nomeAnexo);
+                for (String destinatario : destinatarios) {
+                    int tentativas = tentativasAposAtingirLimitDeRequestSES;
+                    while (tentativas --> 0){
+                        try{
+                            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                            message.setRecipient(Message.RecipientType.TO, new InternetAddress(destinatario));
+                            message.writeTo(outputStream);
+
+                            RawMessage rawMessage = new RawMessage(ByteBuffer.wrap(outputStream.toByteArray()));
+                            SendRawEmailRequest rawEmailRequest = new SendRawEmailRequest(rawMessage);
+
+                            //Esperar pela permissão estar disponivel para enviar
+                            limitadorDeTaxa.acquire();
+
+                            SendRawEmailResult sendResult = clienteSES.sendRawEmail(rawEmailRequest);
+                            LOGGER.info(mensagens.obterMensagem("envio.email.tentativa.sucesso"), assunto, ambiente.getIdentificadorAmbiente(), destinatario);
+                            break;
+                        } catch (AmazonServiceException e) {
+                            if (THROTTLING.equals(e.getErrorCode()) && MAXIMUM_SENDING_RATE_EXCEEDED.equals(e.getMessage())) {
+                                long tempoDeEsperaDeTentativa = obterTempoDeEspera(tentativas, TEMPO_ESPERA_MINIMO_MILISSEGUNDOS, TEMPO_ESPERA_MAXIMO_MILISSEGUNDOS);
+                                if (tentativas > 0) {
+                                    LOGGER.warn(mensagens.obterMensagem("envio.email.tentativa.falha"), destinatario);
+                                } else {
+                                    LOGGER.error(mensagens.obterMensagem("envio.email.erro.maximo.tentativas"), destinatario, e);
+                                }
+
+                                try {
+                                    Thread.sleep(tempoDeEsperaDeTentativa);
+                                } catch (InterruptedException e1) {
+                                    return;
+                                }
+                            } else {
+                                LOGGER.error(mensagens.obterMensagem("envio.email.erro.amazon"), e.getErrorCode(), destinatario, e);
+                                break;
+                            }
+
+                        } catch (AddressException e) {
+                            LOGGER.error(mensagens.obterMensagem("envio.email.erro.formato.invalido"), destinatario, e);
+                            break;
+                        } catch(Exception e) {
+                            LOGGER.error(mensagens.obterMensagem("envio.email.erro.inesperado"), destinatario, e);
+                            break;
+                        }
+                    }
+                }
+
+            } catch (Exception e){
+                LOGGER.error(mensagens.obterMensagem("envio.email.erro.inesperado.lote"), e);
+            }
+    }
+
+
+    /**
+     * Retorna o tempo de espera conforme o numero de tentativas, limitando entre intervalo de Minimo e Maximo.
+     *
+     * @param tentativaAtual quantidade de tentativas
+     * @param tempoEsperaMinimoMilissegundos tempo minimo
+     * @param tempoEsperaMaximoMilissegundos tempo maximo
+     * @return tempo em millisegundos
+     */
+    private long obterTempoDeEspera(int tentativaAtual, long tempoEsperaMinimoMilissegundos, long tempoEsperaMaximoMilissegundos) {
+        tentativaAtual = Math.max(0, tentativaAtual);
+        long tempoDeEsperaEmMillisegundos = (long) (tempoEsperaMinimoMilissegundos*Math.pow(2, tentativaAtual));
+        return Math.min(tempoDeEsperaEmMillisegundos, tempoEsperaMaximoMilissegundos);
     }
 
     /**
      * Cria a mensagem de email utilizando a javax-mail-api, para permitir codificacao de caracteres UTF-8 no campo from
      * @param assunto O assunto do email
      * @param corpo O corpo do email
-     * @param destinatarios A lista de destinatarios
      * @param anexo o arquivo a ser anexado ao email
      * @param nomeAnexo Nome do arquivo a ser anexado ao email
      * @return A mensagem a ser enviada
      * @throws MessagingException Quando ocorre algum erro ao codificar a mensagem
      */
-    private MimeMessage construirMensagemEmail(String assunto, String corpo, List<String> destinatarios, DataSource anexo, String nomeAnexo) throws MessagingException {
+    private MimeMessage construirMensagemEmail(String assunto, String corpo, DataSource anexo, String nomeAnexo) throws MessagingException {
         Session session = Session.getDefaultInstance(new Properties());
         MimeMessage message = new MimeMessage(session);
         message.addHeader("Source-Env", ambiente.getIdentificadorAmbiente());
         message.setSubject(assunto, "UTF-8");
         message.setFrom(new InternetAddress(ambiente.getNomeSistema() + " <" + mail + ">"));
-        List<InternetAddress> enderecosDestinatarios = destinatarios.stream().map(d -> {
-            try {
-                return new InternetAddress(d);
-            } catch (AddressException e) {
-                throw new ExcecaoBoleiaRuntime(e);
-            }
-        }).collect(Collectors.toList());
-        message.setRecipients(Message.RecipientType.TO, enderecosDestinatarios.toArray(new InternetAddress[enderecosDestinatarios.size()]));
 
         if (anexo != null) {
             Multipart multipartMessage = new MimeMultipart();

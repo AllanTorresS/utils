@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
 
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "obterLayoutDetalhado", propOrder = {
     "usuario",

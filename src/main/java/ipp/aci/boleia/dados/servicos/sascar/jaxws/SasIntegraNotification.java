@@ -4,6 +4,7 @@ package ipp.aci.boleia.dados.servicos.sascar.jaxws;
 import javax.xml.ws.WebFault;
 
 
+
 @WebFault(name = "SasIntegraFault", targetNamespace = "http://webservice.web.integracao.sascar.com.br/")
 public class SasIntegraNotification
     extends java.lang.Exception

@@ -2,6 +2,7 @@ package ipp.aci.boleia.dominio.servico;
 
 import ipp.aci.boleia.dados.IItemAutorizacaoPagamentoDados;
 import ipp.aci.boleia.dados.ISaldoVeiculoDados;
+import ipp.aci.boleia.dados.IVeiculoDados;
 import ipp.aci.boleia.dominio.AutorizacaoPagamento;
 import ipp.aci.boleia.dominio.SaldoVeiculo;
 import ipp.aci.boleia.dominio.Veiculo;
@@ -22,6 +23,9 @@ public class TransacaoVeiculoSd {
 
     @Autowired
     private ISaldoVeiculoDados repositorioSaldo;
+
+    @Autowired
+    private IVeiculoDados repositorioVeiculo;
 
     @Autowired
     private IItemAutorizacaoPagamentoDados repositorioItemAutorizacaoPagamento;
@@ -60,9 +64,9 @@ public class TransacaoVeiculoSd {
             saldo = new SaldoVeiculo();
             saldo.setVeiculo(veiculo);
             saldo = repositorioSaldo.armazenar(saldo);
-            veiculo.setSaldoVeiculo(saldo);
         }
         saldo = registraTransacao(autorizacaoPagamento, debito, veiculo, saldo);
+        armazenarDados(veiculo, saldo);
         return saldo;
     }
 
@@ -131,7 +135,7 @@ public class TransacaoVeiculoSd {
         if (litrosConsumidosAtual.compareTo(BigDecimal.ZERO) >= 0) {
             saldo.setLitrosConsumidos(litrosConsumidosAtual);
         }
-        return repositorioSaldo.armazenar(saldo);
+        return saldo;
     }
 
 
@@ -149,7 +153,7 @@ public class TransacaoVeiculoSd {
         if (valorConsumidoAtual.compareTo(BigDecimal.ZERO) >= 0) {
             saldo.setValorConsumido(valorConsumidoAtual);
         }
-        return repositorioSaldo.armazenar(saldo);
+        return saldo;
     }
 
     /**
@@ -180,4 +184,17 @@ public class TransacaoVeiculoSd {
                 .map(i ->  i.getValorTotal())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
+
+     /**
+     * Armazena o veículo e o saldo em seus respectivos repositórios
+     *
+     * @param veiculo veiculo a ser armazenado.
+     * @param saldo saldo atualizado a ser armazenado.
+     */
+    private void armazenarDados(Veiculo veiculo, SaldoVeiculo saldo) {
+        veiculo.setSaldoVeiculo(saldo);
+        repositorioVeiculo.armazenar(veiculo);
+        repositorioSaldo.armazenar(saldo);
+    }
+
 }

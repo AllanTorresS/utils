@@ -8,9 +8,9 @@ import ipp.aci.boleia.dominio.TransacaoConsolidada;
 import ipp.aci.boleia.dominio.Unidade;
 import ipp.aci.boleia.dominio.enums.ClassificacaoAgregado;
 import ipp.aci.boleia.dominio.enums.ModalidadePagamento;
-import ipp.aci.boleia.dominio.enums.StatusAcumuloKmv;
 import ipp.aci.boleia.dominio.enums.StatusAutorizacao;
 import ipp.aci.boleia.dominio.enums.StatusConfirmacaoTransacao;
+import ipp.aci.boleia.dominio.enums.StatusEdicao;
 import ipp.aci.boleia.dominio.enums.StatusNotaFiscalAbastecimento;
 import ipp.aci.boleia.dominio.enums.TipoAutorizacaoPagamento;
 import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
@@ -46,6 +46,7 @@ import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -144,7 +145,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         paginacao.setPagina(1);
         paginacao.setTamanhoPagina(30);
         paginacao.setParametrosOrdenacaoColuna(
-                Arrays.asList(new ParametroOrdenacaoColuna("transacaoFrota.dataTransacao", Ordenacao.DECRESCENTE))
+                Collections.singletonList(new ParametroOrdenacaoColuna("transacaoFrota.dataTransacao", Ordenacao.DECRESCENTE))
         );
 
         ResultadoPaginado<AutorizacaoPagamento> autorizacoes = pesquisar(paginacao,
@@ -193,7 +194,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         paginacao.setPagina(1);
         paginacao.setTamanhoPagina(10);
         paginacao.setParametrosOrdenacaoColuna(
-                Arrays.asList(new ParametroOrdenacaoColuna("transacaoFrota.dataTransacao", Ordenacao.DECRESCENTE))
+                Collections.singletonList(new ParametroOrdenacaoColuna("transacaoFrota.dataTransacao", Ordenacao.DECRESCENTE))
         );
 
         ResultadoPaginado<AutorizacaoPagamento> notas = pesquisar(paginacao,
@@ -322,12 +323,14 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         povoarParametroPesquisaUnidade(filtro, parametros);
         povoarParametroOrdenacaoColuna(filtro);
         povoarParametroLike("notasFiscais.numero", filtro.getNotaFiscal(), parametros);
+        povoarParametroIgual("notasFiscais.numeroSerie", filtro.getNumeroSerie(), parametros);
         povoarParametroEmpresaAgregada(filtro, parametros);
         povoarParametroModalidadePagementoPre(filtro, parametros);
         povoarParametrosStatus(filtro, parametros);
         povoarParametrosEstorno(filtro, parametros);
         povoarParametroDataHoraMaiorIgual("dataProcessamento", filtro.getDataHoraProcessamentoDe(), parametros);
         povoarParametroDataHoraMenorIgual("dataProcessamento", filtro.getDataHoraProcessamentoAte(), parametros);
+        povoarParametrosAjustados(filtro, parametros);
 
         if(filtro.isContingencia()){
             parametros.add(new ParametroPesquisaIn("tipoAutorizacaoPagamento", Arrays.asList(TipoAutorizacaoPagamento.PCC.getValue(), TipoAutorizacaoPagamento.MAN.getValue())));
@@ -342,6 +345,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         if(filtro.getIdConsolidado() != null){
             parametros.add(new ParametroPesquisaIgual("empresaAgregadaExigeNf", filtro.getEmpresaAgregada() != null));
             parametros.add(new ParametroPesquisaIgual("unidadeExigeNf", filtro.getUnidade() != null));
+            parametros.add(new ParametroPesquisaIgual("transacaoConsolidada.id", filtro.getIdConsolidado()));
         }
         if(filtro.isPdv()){
             parametros.add(new ParametroPesquisaIgual("tipoAutorizacaoPagamento", TipoAutorizacaoPagamento.PDV_WEB.getValue()));
@@ -355,37 +359,37 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         if (filtro.getIdReembolso() != null) {
             parametros.add(new ParametroPesquisaIgual("transacaoConsolidada.reembolso.id", filtro.getIdReembolso()));
         }
-
         return parametros;
     }
 
     @Override
     public ResultadoPaginado<AutorizacaoPagamento> pesquisaPaginada(FiltroPesquisaAbastecimentoVo filtro) {
+        return pesquisaPaginada(filtro, false);
+    }
+
+    @Override
+    public ResultadoPaginado<AutorizacaoPagamento> pesquisaPaginada(FiltroPesquisaAbastecimentoVo filtro, Boolean fetchCamposExportacao) {
         List<ParametroPesquisa> parametros = montarParametroPesquisa(filtro);
+
+        if (fetchCamposExportacao) {
+            parametros.add(new ParametroPesquisaFetch("empresaAgregada"));
+            parametros.add(new ParametroPesquisaFetch("unidade"));
+            parametros.add(new ParametroPesquisaFetch("frota"));
+            parametros.add(new ParametroPesquisaFetch("pontoVenda"));
+        }
+
         if(filtro.getPaginacao() != null && filtro.getPaginacao().getParametrosOrdenacaoColuna().isEmpty()) {
-            filtro.getPaginacao().getParametrosOrdenacaoColuna().add(new ParametroOrdenacaoColuna("dataProcessamento",Ordenacao.DECRESCENTE));
+            filtro.getPaginacao().getParametrosOrdenacaoColuna().add(new ParametroOrdenacaoColuna("dataProcessamento", Ordenacao.DECRESCENTE));
         }
         return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
-    @Override
-    public List<AutorizacaoPagamento> obterNotasSemAcumuloKmv(Integer numeroDeRegistros) {
-        List<ParametroPesquisa> parametros = new ArrayList<>();
-        parametros.add(new ParametroPesquisaIgual("kmvAcumulado", StatusAcumuloKmv.PENDENTE.getValue()));
-        parametros.add(new ParametroPesquisaMaior("valorUnitarioAbastecimento",BigDecimal.ZERO));
-        parametros.add(new ParametroPesquisaMaior("totalLitrosAbastecimento",BigDecimal.ZERO));
-        parametros.add(new ParametroPesquisaIgual("status",StatusAutorizacao.AUTORIZADO.getValue()));
-        InformacaoPaginacao paginacao = new InformacaoPaginacao();
-        paginacao.setPagina(1);
-        paginacao.setTamanhoPagina(numeroDeRegistros);
-        paginacao.getParametrosOrdenacaoColuna().add(new ParametroOrdenacaoColuna("dataProcessamento"));
-        return pesquisar(paginacao, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
-    }
+
 
     @Override
     public List<Long> obterAguardandoSaldo() {
         List<AutorizacaoPagamento> autorizacoes = pesquisar(new ParametroOrdenacaoColuna("dataRequisicao", Ordenacao.DECRESCENTE), new ParametroPesquisaIgual("status", StatusAutorizacao.AGUARDANDO_SALDO.getValue()));
-        return autorizacoes.stream().map(a->a.getId()).collect(Collectors.toList());
+        return autorizacoes.stream().map(AutorizacaoPagamento::getId).collect(Collectors.toList());
     }
 
     @Override
@@ -401,7 +405,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     @Override
     public List<AutorizacaoPagamento> obterAbastecimentosCanceladosNoPeriodo(Long codigoFrota, Long codigoPV, Date dataInicioPeriodo, Date dataFimPeriodo) {
         List<ParametroPesquisa> params = new ArrayList<>();
-        params.add(new ParametroPesquisaIgual("status",StatusAutorizacao.CANCELADO.getValue()));
+        params.add(new ParametroPesquisaIgual("status", StatusAutorizacao.CANCELADO.getValue()));
         params.add(new ParametroPesquisaIgual("transacaoFrota.frota.id", codigoFrota));
         params.add(new ParametroPesquisaIgual("pontoVenda.id", codigoPV));
         params.add(new ParametroPesquisaDataMaiorOuIgual("dataProcessamento", dataInicioPeriodo));
@@ -411,21 +415,21 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
 
     @Override
     public List<AutorizacaoPagamento> obterAbastecimentosPendenteAutorizacao(Date dataExpiracao) {
-        return pesquisar(new ParametroOrdenacaoColuna("dataRequisicao",Ordenacao.DECRESCENTE), new ParametroPesquisaIgual("status", StatusAutorizacao.PENDENTE_AUTORIZACAO.getValue()), new ParametroPesquisaDataMenorOuIgual("dataRequisicao", dataExpiracao));
+        return pesquisar(new ParametroOrdenacaoColuna("dataRequisicao", Ordenacao.DECRESCENTE), new ParametroPesquisaIgual("status", StatusAutorizacao.PENDENTE_AUTORIZACAO.getValue()), new ParametroPesquisaDataMenorOuIgual("dataRequisicao", dataExpiracao));
     }
 
     @Override
     public AutorizacaoPagamento buscarEstornoNegativoAbastecimento(Long idAutorizacaoPagamento) {
         return pesquisarUnico(
-                new ParametroPesquisaIgual("idAutorizacaoEstorno", idAutorizacaoPagamento),
-                new ParametroPesquisaMenor("valorTotal", BigDecimal.ZERO)
+            new ParametroPesquisaIgual("idAutorizacaoEstorno", idAutorizacaoPagamento),
+            new ParametroPesquisaMenor("valorTotal", BigDecimal.ZERO)
         );
     }
 
     @Override
     public List<AutorizacaoPagamento> obterAbastecimentosParaNotaFiscal(Long codigoFrota, Long codigoPV, EmpresaAgregada empresaAgregada, Unidade unidade, Date dataInicioPeriodo, Date dataFimPeriodo, Boolean prePago) {
         List<ParametroPesquisa> params = new ArrayList<>();
-        params.add(new ParametroPesquisaIgual("status",StatusAutorizacao.AUTORIZADO.getValue()));
+        params.add(new ParametroPesquisaIgual("status", StatusAutorizacao.AUTORIZADO.getValue()));
         params.add(new ParametroPesquisaMaior("valorTotal", BigDecimal.ZERO));
         params.add(new ParametroPesquisaIgual("transacaoFrota.frota.id", codigoFrota));
         params.add(new ParametroPesquisaNulo("transacaoFrota.frota.numeroJdeInterno", true));
@@ -498,7 +502,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     public List<AutorizacaoPagamento> obterEstornosPorIdAutorizacaoCancelada(Long idAutorizacaoPagamentoCancelada){
         List<ParametroPesquisa> parametros = new ArrayList<>();
         parametros.add(new ParametroPesquisaIgual("idAutorizacaoEstorno", idAutorizacaoPagamentoCancelada));
-        parametros.add(new ParametroPesquisaIgual("status",StatusAutorizacao.AUTORIZADO.getValue()));
+        parametros.add(new ParametroPesquisaIgual("status", StatusAutorizacao.AUTORIZADO.getValue()));
         return pesquisar((ParametroOrdenacaoColuna) null, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
@@ -545,7 +549,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     @Override
     public BigDecimal obterLitragemDoAbastecimentoAnterior(Long idAbastecimento, Date dataAbastecimento, String placaVeiculo, Long cnpjFrota) {
 
-        List<BigDecimal> litragem = this.pesquisar(new InformacaoPaginacao(1, 1),
+        List<BigDecimal> litragem = this.pesquisar(new InformacaoPaginacao(1,1),
                 QUERY_LITRAGEM_ULTIMO_ABASTECIMENTO,
                 BigDecimal.class,
                 new ParametroPesquisaIgual("idAbastecimento", idAbastecimento),
@@ -559,7 +563,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
 
     @Override
     public List<AutorizacaoPagamento> obterAbastecimentoPorNota(Long cnpjDest, Long cnpjEmit, Date dataEmissao, BigDecimal valorTotalNota) {
-        final BigDecimal toleranciaDeValorNota = new BigDecimal(.05);
+        final BigDecimal toleranciaDeValorNota = BigDecimal.valueOf(.05);
         List<ParametroPesquisa> parametros = new ArrayList<>();
         parametros.add(new ParametroPesquisaIgual("pontoVenda.componentes.codigoPessoa", cnpjEmit));
         parametros.add(
@@ -670,10 +674,10 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
             new ParametroPesquisaAnd(
                 new ParametroPesquisaIgual("frota.cnpj", cnpjRevenda),
                 new ParametroPesquisaNulo("unidade", false),
-                new ParametroPesquisaNulo("pontoVenda", false)    
+                new ParametroPesquisaNulo("pontoVenda", false)
             ),
             new ParametroPesquisaNulo("unidade", true),
-            new ParametroPesquisaNulo("pontoVenda", true)    
+            new ParametroPesquisaNulo("pontoVenda", true)
         );
     }
 
@@ -800,10 +804,18 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
      * @param parametros Lista de parametros de pesquisa de abastecimento
      */
     private void povoarParametrosStatus(FiltroPesquisaAbastecimentoVo filtro, List<ParametroPesquisa> parametros) {
-        if(filtro.getStatusAutorizacao() != null && filtro.getStatusAutorizacao().getName() != null){
-            parametros.add(new ParametroPesquisaIgual("status", StatusAutorizacao.valueOf(filtro.getStatusAutorizacao().getName()).getValue()));
+        if(filtro.getStatusAutorizacao() != null && filtro.getStatusAutorizacao().getName() != null) {
+            Integer status = StatusAutorizacao.valueOf(filtro.getStatusAutorizacao().getName()).getValue();
+            if(StatusAutorizacao.AGUARDANDO_APROVACAO_SOLUCAO.getValue().equals(status)) {
+                parametros.add(new ParametroPesquisaOr(
+                        new ParametroPesquisaIgual("status", StatusAutorizacao.AGUARDANDO_APROVACAO_SOLUCAO.getValue()),
+                        new ParametroPesquisaIgual("statusEdicao", StatusEdicao.PENDENTE.getValue())
+                ));
+            } else {
+                parametros.add(new ParametroPesquisaIgual("status", status));
+            }
         }
-        if(filtro.getStatusEmissaoNf() != null && filtro.getStatusEmissaoNf().getName() != null){
+        if(filtro.getStatusEmissaoNf() != null && filtro.getStatusEmissaoNf().getName() != null) {
             parametros.add(new ParametroPesquisaIgual("statusNotaFiscal", StatusNotaFiscalAbastecimento.valueOf(filtro.getStatusEmissaoNf().getName()).getValue()));
         }
     }
@@ -817,6 +829,23 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         if(filtro.getSemEstorno() != null && filtro.getSemEstorno()){
             parametros.add(new ParametroPesquisaMaior("valorTotal", BigDecimal.ZERO));
             parametros.add(new ParametroPesquisaIgual("status", StatusAutorizacao.AUTORIZADO.getValue()));
+        }
+
+        if(null != filtro.isApenasEstornos() && filtro.isApenasEstornos()) {
+            parametros.add(new ParametroPesquisaNulo("idAutorizacaoEstorno", true));
+            parametros.add(new ParametroPesquisaMenor("valorTotal", BigDecimal.ZERO));
+        }
+    }
+
+    /**
+     * Verifica se a consulta foi para abastecimentos ajustados e insere as restrições na query
+     * @param filtro Filtro de pesquisa usado na consulta dos abastecimentos
+     * @param parametros Lista de parametros de pesquisa de abastecimento
+     */
+    private void povoarParametrosAjustados(FiltroPesquisaAbastecimentoVo filtro, List<ParametroPesquisa> parametros) {
+        if(null != filtro.isApenasAjustados() && filtro.isApenasAjustados()) {
+            parametros.add(new ParametroPesquisaNulo("idAutorizacaoEstorno", true));
+            parametros.add(new ParametroPesquisaMaior("valorTotal", BigDecimal.ZERO));
         }
     }
 

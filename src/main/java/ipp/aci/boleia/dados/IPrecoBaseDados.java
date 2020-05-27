@@ -1,6 +1,7 @@
 package ipp.aci.boleia.dados;
 
 import ipp.aci.boleia.dominio.PrecoBase;
+import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaAlteracaoPrecoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaLocalizacaoVo;
@@ -17,10 +18,11 @@ public interface IPrecoBaseDados extends IRepositorioBoleiaDados<PrecoBase> {
      * Pesquisa Preco paginado a partir do filtro informado
      *
      * @param filtro O filtro da busca
+     * @param usuario o usuário especifico para a busca, em casos de usuários que não sejam internos
      * @param statusPossiveis lista de status a serem condiderados na busca
      * @return Uma lista de ResultadoPaginado localizadas
      */
-    ResultadoPaginado<PrecoBase> pesquisaPaginada(FiltroPesquisaAlteracaoPrecoVo filtro, Integer... statusPossiveis);
+    ResultadoPaginado<PrecoBase> pesquisaPaginada(FiltroPesquisaAlteracaoPrecoVo filtro, Usuario usuario, Integer... statusPossiveis);
 
     /**
      * Busca todos os precos atuais
@@ -98,4 +100,13 @@ public interface IPrecoBaseDados extends IRepositorioBoleiaDados<PrecoBase> {
      * @return a lista de preços
      */
     List<PrecoBase> buscarPrecosPorPontoDeVendaCombustivelSemAgendamento(Long idPtov, Long idCombustivel);
+
+    /**
+     * Busca todos os preços bases de um combustível
+     *
+     * @param idCombustivel Id do produto
+     * @param municipioPontoDeVenda Nome do município
+     * @return Lista de preços
+     */
+    List<PrecoBase> buscarPrecosPorCombustivelERegiao(Long idCombustivel, String municipioPontoDeVenda);
 }

@@ -1,13 +1,13 @@
 package ipp.aci.boleia.dominio.servico;
 
 import ipp.aci.boleia.dados.IAutorizacaoPagamentoDados;
-import ipp.aci.boleia.dados.IFrotaDados;
 import ipp.aci.boleia.dados.INegociacaoDados;
 import ipp.aci.boleia.dados.INotaFiscalDados;
 import ipp.aci.boleia.dados.IParametroCicloDados;
 import ipp.aci.boleia.dados.ITransacaoConsolidadaDados;
 import ipp.aci.boleia.dados.ITransacaoConsolidadaDetalheDados;
 import ipp.aci.boleia.dominio.AutorizacaoPagamento;
+import ipp.aci.boleia.dominio.AutorizacaoPagamentoEdicao;
 import ipp.aci.boleia.dominio.EmpresaAgregada;
 import ipp.aci.boleia.dominio.FrotaPontoVenda;
 import ipp.aci.boleia.dominio.Negociacao;
@@ -35,6 +35,7 @@ import ipp.aci.boleia.util.concorrencia.MapeadorLock;
 import ipp.aci.boleia.util.concorrencia.Sincronizador;
 import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.excecao.ExcecaoRecursoBloqueado;
+import ipp.aci.boleia.util.excecao.ExcecaoRecursoNaoEncontrado;
 import ipp.aci.boleia.util.excecao.ExcecaoValidacao;
 import ipp.aci.boleia.util.i18n.Mensagens;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
@@ -53,6 +54,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
@@ -63,6 +65,7 @@ import static ipp.aci.boleia.util.UtilitarioCalculo.somarValoresLista;
 import static ipp.aci.boleia.util.UtilitarioCalculoData.adicionarDiasData;
 import static ipp.aci.boleia.util.UtilitarioCalculoData.obterPrimeiroInstanteDia;
 import static ipp.aci.boleia.util.UtilitarioCalculoData.obterUltimoInstanteDia;
+import static ipp.aci.boleia.util.UtilitarioLambda.agrupar;
 
 
 /**
@@ -86,9 +89,6 @@ public class TransacaoConsolidadaSd {
     private IParametroCicloDados parametroCicloDados;
 
     @Autowired
-    private IFrotaDados repositorioFrota;
-
-    @Autowired
     private INotaFiscalDados repositorioNF;
 
     @Autowired
@@ -107,6 +107,12 @@ public class TransacaoConsolidadaSd {
     private IAutorizacaoPagamentoDados repositorioAutorizacaoPgto;
 
     @Autowired
+    private AutorizacaoPagamentoSd autorizacaoPagamentoSd;
+
+    @Autowired
+    private EmailSd emailSd;
+
+    @Autowired
     @Qualifier("Redis")
     private Sincronizador sincronizador;
 
@@ -115,6 +121,9 @@ public class TransacaoConsolidadaSd {
 
     @Value("${concorrencia.lock.trans-consol.prefixo}")
     private String prefixoLockTransacaoConsolidada;
+
+    @Value("${email.financeiro}")
+    private String destinatarioFinanceiro;
 
     private MapeadorLock<Long> mapeadorLockAutorizacaoPagamento;
     private MapeadorLock<Long> mapeadorLockTransacaoConsolidada;
@@ -159,6 +168,10 @@ public class TransacaoConsolidadaSd {
                 fecharCicloConsolidadoSePossivel(transacaoConsolidada);
                 consolidarNotasFiscais(transacaoConsolidada);
                 repositorio.armazenar(transacaoConsolidada);
+
+                if(transacaoConsolidada.esta(StatusTransacaoConsolidada.FECHADA)) {
+                    reverterEdicoesPendentes(transacaoConsolidada);
+                }
             } finally {
                 lock.unlock();
             }
@@ -229,7 +242,6 @@ public class TransacaoConsolidadaSd {
      */
     public void verificarCiclosAVencer() {
         Date dataAtual = utilitarioAmbiente.buscarDataAmbiente();
-        List<TransacaoConsolidada> transacoes = new ArrayList<>();
         List<TransacaoConsolidada> transacoes24horas;
         List<TransacaoConsolidada> transacoes72horas;
 
@@ -238,7 +250,7 @@ public class TransacaoConsolidadaSd {
         Date dataVencimento24hrMax = obterUltimoInstanteDia(adicionarDiasData(dataAtual,1));
         transacoes24horas = repositorio.obterConsolidacoesSemNotaFiscalEntreDatas(
                 dataVencimento24hrMin, dataVencimento24hrMax);
-        transacoes.addAll(transacoes24horas);
+        List<TransacaoConsolidada> transacoes = new ArrayList<>(transacoes24horas);
 
         if(!transacoes24horas.isEmpty()) {
             notificacaoUsuarioSd.enviarNotificacaoCiclosAVencerSolucao();
@@ -267,7 +279,6 @@ public class TransacaoConsolidadaSd {
      */
     public void verificarCiclosAtrasados() {
         Date dataAtual = utilitarioAmbiente.buscarDataAmbiente();
-        List<TransacaoConsolidada> transacoes = new ArrayList<>();
         List<TransacaoConsolidada> transacoes24horas;
         List<TransacaoConsolidada> transacoes72horas;
 
@@ -276,7 +287,7 @@ public class TransacaoConsolidadaSd {
         Date data48HorasAposVencimento = obterUltimoInstanteDia(adicionarDiasData(dataAtual,-2));
         transacoes24horas = repositorio.obterConsolidacoesSemNotaFiscalEntreDatas(
                 data24HorasAposVencimento, data48HorasAposVencimento);
-        transacoes.addAll(transacoes24horas);
+        List<TransacaoConsolidada> transacoes = new ArrayList<>(transacoes24horas);
 
         // Vencidas há mais de 72 horas (e menos de 96 horas)
         Date data72HorasAposVencimento = obterPrimeiroInstanteDia(adicionarDiasData(dataAtual,-4));
@@ -308,7 +319,7 @@ public class TransacaoConsolidadaSd {
         );
 
         if (!transacoes.isEmpty()) {
-            transacoes.forEach(transacao -> atualizarConsolidadoNotaFiscal(transacao));
+            transacoes.forEach(this::atualizarConsolidadoNotaFiscal);
             notificacaoUsuarioSd.enviarNotificacaoCiclosEncerrados(ontemComecoDoDia);
         }
     }
@@ -344,7 +355,7 @@ public class TransacaoConsolidadaSd {
         }
 
         // um ciclo pos eh sempre mais longo que um ciclo pre
-        TransacaoConsolidada maiorConsolidado = consolidados.stream().max(Comparator.comparing(TransacaoConsolidada::getModalidadePagamento)).get();
+        TransacaoConsolidada maiorConsolidado = consolidados.stream().max(Comparator.comparing(TransacaoConsolidada::getModalidadePagamento)).orElseThrow(ExcecaoRecursoNaoEncontrado::new);
         vo.setDataInicioCiclo(UtilitarioFormatacaoData.formatarDataDiaMes(maiorConsolidado.getDataInicioPeriodo()));
         vo.setDataFimCiclo(UtilitarioFormatacaoData.formatarDataDiaMes(maiorConsolidado.getDataFimPeriodo()));
         vo.setVolumeCiclo(UtilitarioFormatacao.formatarDecimal(volume.setScale(1, BigDecimal.ROUND_HALF_UP)));
@@ -377,13 +388,13 @@ public class TransacaoConsolidadaSd {
         }
 
         Date dataInicioCandidata = datasInicioNoMes.stream().filter(
-                d -> (d.compareTo(dataProcessamento) <= 0) && (ultimoDiaMes - UtilitarioCalculoData.obterCampoData(d, Calendar.DAY_OF_MONTH) > 3)
-        ).max(Date::compareTo).get();
+                        d -> (d.compareTo(dataProcessamento) <= 0) && (ultimoDiaMes - UtilitarioCalculoData.obterCampoData(d, Calendar.DAY_OF_MONTH) >= 3)
+                ).max(Date::compareTo).orElseThrow(ExcecaoRecursoNaoEncontrado::new);
 
         // Verifica se existe um "salto" entre as datas inicial e final, se houver, a data inicial será imediatamente após à data final do ciclo anterior.
         TransacaoConsolidada consolidadoSobreposto = repositorio.obterUltimoConsolidadoAnteriorAoAbastecimentoSemCiclo(orfa.getIdFrota(), orfa.getIdPontoVenda(), idEmpresaAgregada, idUnidade, dataInicioCandidata, orfa.getDataProcessamento());
-        if (consolidadoSobreposto != null) {
-            dataInicioCandidata = obterPrimeiroInstanteDia(adicionarDiasData(consolidadoSobreposto.getDataFimPeriodo(), 1));
+        if(consolidadoSobreposto != null){
+            dataInicioCandidata = obterPrimeiroInstanteDia(adicionarDiasData(consolidadoSobreposto.getDataFimPeriodo(),1));
         }
         return dataInicioCandidata;
     }
@@ -441,14 +452,11 @@ public class TransacaoConsolidadaSd {
     public TransacaoConsolidada criarTransacaoConsolidada(AutorizacaoPagamentoOrfaVo orfa, FrotaPontoVenda frotaPtov, EmpresaAgregada empresaAgregada, Unidade unidade, boolean prePago) {
 
         TransacaoConsolidada tc = new TransacaoConsolidada();
-        /**
-         * Nota: Consolidação de autorização de pagamento PRE-PAGO é diária.
-         */
+        // Nota: Consolidação de autorização de pagamento PRE-PAGO é diária.
         Date dataInicio = UtilitarioCalculoData.obterPrimeiroInstanteDia(orfa.getDataProcessamento());
         Date dataFim = UtilitarioCalculoData.obterUltimoInstanteDia(orfa.getDataProcessamento());
-        /**
-         * Nota: Prazo de 5 dias será utilizado apenas para autorizações de pagamento pré-pago.
-         */
+        //Nota: Prazo de 5 dias será utilizado apenas para autorizações de pagamento pré-pago.
+
         Date dataEmissaoNfe = UtilitarioCalculoData.adicionarDiasData(dataFim, 5);
         Long prazoPagamentoDias = 0L;
         Long prazoReembolsoDias = 2L;
@@ -521,7 +529,7 @@ public class TransacaoConsolidadaSd {
     /**
      * Cria a chave do lock de autorização de pagamento para criação de ciclos
      *
-     * @param idAutorizacaoPagamento
+     * @param idAutorizacaoPagamento id do abastecimento
      * @return chave do lock criada
      */
     private String construirChaveLockAutorizacaoPagamento(Long idAutorizacaoPagamento) {
@@ -580,7 +588,7 @@ public class TransacaoConsolidadaSd {
         } else {
             transacaoConsolidada.setStatusNotaFiscal(StatusNotaFiscal.PENDENTE.getValue());
         }
-        if (transacaoConsolidada.getReembolso() != null) {
+        if(transacaoConsolidada.getReembolso() != null) {
             reembolsoSd.atualizarStatusReembolso(transacaoConsolidada.getReembolso());
         }
     }
@@ -657,6 +665,9 @@ public class TransacaoConsolidadaSd {
         fecharCicloConsolidadoSePossivel(consolidado);
         consolidarNotasFiscais(consolidado);
         repositorio.armazenar(consolidado);
+        if(consolidado.esta(StatusTransacaoConsolidada.FECHADA)) {
+            reverterEdicoesPendentes(consolidado);
+        }
     }
 
     /**
@@ -666,23 +677,43 @@ public class TransacaoConsolidadaSd {
     private void fecharCicloConsolidadoSePossivel(TransacaoConsolidada transacaoConsolidada) {
         Date fimPeriodo = obterUltimoInstanteDia(transacaoConsolidada.getDataFimPeriodo());
         boolean periodoEncerrado = fimPeriodo.compareTo(utilitarioAmbiente.buscarDataAmbiente()) < 0;
-        ajustarParametroCiclo(transacaoConsolidada, periodoEncerrado);
-        transacaoConsolidada.setStatusConsolidacao(periodoEncerrado ? StatusTransacaoConsolidada.FECHADA.getValue() : StatusTransacaoConsolidada.ABERTA.getValue());
+        if(periodoEncerrado) {
+            transacaoConsolidada.setStatusConsolidacao(StatusTransacaoConsolidada.FECHADA.getValue());
+        } else {
+            transacaoConsolidada.setStatusConsolidacao(StatusTransacaoConsolidada.ABERTA.getValue());
+        }
     }
 
     /**
-     * Verifica se houve agendamento de alteração de ciclo da frota e atualiza.
-     *
-     * @param transacaoConsolidada TransacaoConsolidada a ser processada
-     * @param periodoEncerrado     Booleano que representa se o periodo esta encerrado (true) ou aberto (false)
+     * Verifica se existem edições pendentes nos abastecimentos de um consolidado e, caso exista, realiza a reversão
+     * @param transacaoConsolidada O ciclo de faturamento (transacao consolidada)
      */
-    private void ajustarParametroCiclo(TransacaoConsolidada transacaoConsolidada, boolean periodoEncerrado) {
-        if (periodoEncerrado && transacaoConsolidada.getFrota().getNovoParametroCiclo() != null) {
-            transacaoConsolidada.getFrota().setParametroCiclo(transacaoConsolidada.getFrota().getNovoParametroCiclo());
-            transacaoConsolidada.getFrota().setNovoParametroCiclo(null);
-            transacaoConsolidada.getFrota().setDataAlteracaoCiclo(null);
-            repositorioFrota.armazenar(transacaoConsolidada.getFrota());
+    private void reverterEdicoesPendentes(TransacaoConsolidada transacaoConsolidada) {
+        List<AutorizacaoPagamentoEdicao> autorizacoesPendentes = autorizacaoPagamentoSd.obtemAutorizacoesPendentesDeUmConsolidado(transacaoConsolidada);
+
+        if (!autorizacoesPendentes.isEmpty()) {
+            autorizacoesPendentes.forEach(a -> autorizacaoPagamentoSd.expirarEdicaoAbastecimento(a));
+            List<AutorizacaoPagamento> abastecimentosAtualizados = autorizacaoPagamentoSd.reverterStatusEdicao(transacaoConsolidada.getAutorizacaoPagamentos());
+            transacaoConsolidada.setAutorizacaoPagamentos(abastecimentosAtualizados);
+
+            notificacaoUsuarioSd.enviarNotificacaoEdicaoAbastecimentoExpirado(autorizacoesPendentes.stream().map(AutorizacaoPagamentoEdicao::getUsuario).collect(Collectors.toList()));
+            enviarEmailsEdicoesRevertidas(transacaoConsolidada, autorizacoesPendentes);
         }
+    }
+
+    /**
+     * Envia os emails de aviso após uma lista de edições de abastecimentos forem revertidas.
+     *
+     * @param transacaoConsolidada Ciclo de faturamento.
+     * @param autorizacoesPendentes Lista de alterações de abastecimento que foram revertidas.
+     */
+    private void enviarEmailsEdicoesRevertidas(TransacaoConsolidada transacaoConsolidada, List<AutorizacaoPagamentoEdicao> autorizacoesPendentes) {
+        //Envio de emails por usuario
+        Map<String, List<AutorizacaoPagamentoEdicao>> autorizacoesPendentesPorUsuario = agrupar(autorizacoesPendentes, a -> a.getUsuario().getEmail());
+        autorizacoesPendentesPorUsuario.forEach((email, edicoes) -> emailSd.enviarEmailCicloFechadoSemAprovacaoDeAlteracao(email, transacaoConsolidada, edicoes));
+
+        //Envio de email completo para o financeiro
+        emailSd.enviarEmailCicloFechadoSemAprovacaoDeAlteracao(destinatarioFinanceiro, transacaoConsolidada, autorizacoesPendentes);
     }
 
     /**
@@ -712,7 +743,7 @@ public class TransacaoConsolidadaSd {
     /**
      * Realiza uma consulta das transações consolidadas de acordo com o filtro informado.
      *
-     * @param filtro        O filtro da busca
+     * @param filtro O filtro da busca
      * @param usuarioLogado usuario logado que solicita a pesquisa
      * @return Uma lista transações consolidadas
      */

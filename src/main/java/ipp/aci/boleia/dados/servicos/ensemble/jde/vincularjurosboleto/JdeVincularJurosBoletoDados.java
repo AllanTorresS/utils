@@ -83,7 +83,7 @@ public class JdeVincularJurosBoletoDados extends JdeBaseDados<VincularJurosBolet
         request.setMnValorTransacao(ajusteCobranca.getValorAjuste());
         request.setMnNumBoleto(cobranca.getNumeroDocumento());
         request.setJdDataDaFatura(formatarDataGregorian(getUtilitarioAmbiente().buscarDataAmbiente()));
-        if (ajusteCobranca.getDataVencimentoAjuste() == null) {
+        if(ajusteCobranca.getDataVencimentoAjuste() == null){
             request.setJdDateDueJulian(formatarDataGregorian(ajusteCobranca.getCobranca().getDataVencimentoPagto()));
         } else {
             request.setJdDateDueJulian(formatarDataGregorian(ajusteCobranca.getDataVencimentoAjuste()));

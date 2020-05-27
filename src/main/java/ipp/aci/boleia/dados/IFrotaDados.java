@@ -126,4 +126,18 @@ public interface IFrotaDados extends IRepositorioBoleiaDados<Frota> {
      */
     List<Frota> buscarFrotaUnidadeAtivaComPostoInternoPorDataAtualizacaoECnpj(Date dataUltimaAtualizacao, Long cnpj);
 
+    /**
+     * Retorna as frotas que os donos acúmularam KMV em um intervalo
+     * @param dataInicio o inicio do intervalo
+     * @param dataFim o final do intervalo
+     * @return Lista de Frotas paginada
+     */
+    List<Frota> buscarFrotaComKmvAcumuladosParaDonoDaFrota(Date dataInicio, Date dataFim);
+
+    /**
+     * Obtem a frota associada à cobrança informada
+     * @param idCobranca o id da cobrança
+     * @return a frota associada à cobrança informada
+     */
+    Frota obterPorCobranca(Long idCobranca);
 }

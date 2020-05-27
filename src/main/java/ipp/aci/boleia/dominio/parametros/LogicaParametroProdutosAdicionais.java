@@ -8,6 +8,7 @@ import ipp.aci.boleia.dominio.Veiculo;
 import ipp.aci.boleia.dominio.enums.StatusExecucaoParametroSistema;
 import ipp.aci.boleia.dominio.vo.ContextoExecucaoParametroSistemaVo;
 import ipp.aci.boleia.dominio.vo.ResultadoExecucaoParametroSistemaVo;
+import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.i18n.Mensagens;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -30,7 +31,7 @@ public class LogicaParametroProdutosAdicionais implements ILogicaParametroSistem
         AutorizacaoPagamento autorizacao = contexto.getDados();
         ResultadoExecucaoParametroSistemaVo<AutorizacaoPagamento> resultado = new ResultadoExecucaoParametroSistemaVo<>(autorizacao);
         Veiculo veiculo = autorizacao.getVeiculo();
-        if(veiculo.isProprio()) {
+        if(veiculo.isProprio() || veiculo.isAgregado()) {
             Map<Long, FrotaParametroSistemaProduto> mapaProdutos = obterMapaProdutos(frotaParam);
             StringBuilder produtosInvalidos = new StringBuilder();
             for (ItemAutorizacaoPagamento item : autorizacao.getItems()) {
@@ -44,6 +45,7 @@ public class LogicaParametroProdutosAdicionais implements ILogicaParametroSistem
             if (produtosInvalidos.length() > 0) {
                 String strProdutos = produtosInvalidos.toString();
                 resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
+                resultado.setCodigoErro(Erro.ERRO_AUTORIZACAO_PRODUTOS_ADICIONAIS);
                 resultado.setMensagemErro(mensagens.obterMensagem("parametro.sistema.erro.abastecimento.produtos.adicionais",
                         autorizacao.getVeiculo().getPlaca(), strProdutos.substring(0, strProdutos.length() - 2)));
             }

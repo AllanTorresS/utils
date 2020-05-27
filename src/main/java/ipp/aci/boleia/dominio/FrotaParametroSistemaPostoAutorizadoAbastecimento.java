@@ -1,5 +1,6 @@
 package ipp.aci.boleia.dominio;
 
+import ipp.aci.boleia.dominio.enums.TipoRestricaoPostosPermitidos;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
 import org.hibernate.envers.Audited;
@@ -127,5 +128,14 @@ public class FrotaParametroSistemaPostoAutorizadoAbastecimento implements IPersi
 
     public void setMaximoValor(BigDecimal maximoValor) {
         this.maximoValor = maximoValor;
+    }
+
+    @Transient
+    public TipoRestricaoPostosPermitidos getTipoRestricaoPostoPermitido() {
+        boolean isEmLitros = frotaParametroSistema.getEmLitros() != null && frotaParametroSistema.getEmLitros();
+        if(isEmLitros) {
+            return TipoRestricaoPostosPermitidos.LITRAGEM;
+        }
+        return TipoRestricaoPostosPermitidos.VALOR;
     }
 }

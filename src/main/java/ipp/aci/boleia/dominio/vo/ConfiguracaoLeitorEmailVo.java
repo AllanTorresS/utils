@@ -10,8 +10,9 @@ public class ConfiguracaoLeitorEmailVo {
     private String porta;
     private String usuario;
     private String senha;
-    private String diretorio;
+    private String[] diretorios;
     private String mimeTypeAnexo;
+    private String diretorioArquivamento;
 
     /**
      * Construtor padrão
@@ -21,20 +22,23 @@ public class ConfiguracaoLeitorEmailVo {
 
     /**
      * Instancia o objeto
+     *
      * @param host O host do e-mail
      * @param porta A porta utiilizada
      * @param usuario O usuário (endereço de e-mail)
      * @param senha A senha
-     * @param diretorio O diretório do e-mail
+     * @param diretorios O diretório do e-mail
      * @param mimeTypeAnexo Mime Type do anexo
+     * @param diretorioArquivamento Diretório onde os e-mails serão arquivados
      */
-    public ConfiguracaoLeitorEmailVo(String host, String porta, String usuario, String senha, String diretorio, String mimeTypeAnexo) {
+    public ConfiguracaoLeitorEmailVo(String host, String porta, String usuario, String senha, String diretorios, String mimeTypeAnexo, String diretorioArquivamento) {
         this.host = host;
         this.porta = porta;
         this.usuario = usuario;
         this.senha = senha;
-        this.diretorio = diretorio;
+        this.diretorios = diretorios.replaceAll("\"","").split(",");
         this.mimeTypeAnexo = mimeTypeAnexo;
+        this.diretorioArquivamento = diretorioArquivamento;
     }
 
     public String getHost() {
@@ -69,12 +73,12 @@ public class ConfiguracaoLeitorEmailVo {
         this.senha = senha;
     }
 
-    public String getDiretorio() {
-        return diretorio;
+    public String[] getDiretorios() {
+        return diretorios;
     }
 
-    public void setDiretorio(String diretorio) {
-        this.diretorio = diretorio;
+    public void setDiretorios(String[] diretorios) {
+        this.diretorios = diretorios;
     }
 
     public String getMimeTypeAnexo() {
@@ -84,4 +88,8 @@ public class ConfiguracaoLeitorEmailVo {
     public void setMimeTypeAnexo(String mimeTypeAnexo) {
         this.mimeTypeAnexo = mimeTypeAnexo;
     }
+
+    public String getDiretorioArquivamento() { return diretorioArquivamento; }
+
+    public void setDiretorioArquivamento(String diretorioArquivamento) { this.diretorioArquivamento = diretorioArquivamento; }
 }

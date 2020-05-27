@@ -123,8 +123,8 @@ public class OracleUsuarioDados extends OracleRepositorioBoleiaDados<Usuario> im
     @Override
     public Usuario obterPorCpf(Long cpf, Boolean usuarioMotorista) {
         ParametroPesquisa parametroPesquisaUsuarioMotorista = usuarioMotorista ?
-                new ParametroPesquisaIgual("tipoPerfil.id",TipoPerfilUsuario.MOTORISTA.getValue())
-                : new ParametroPesquisaDiferente("tipoPerfil.id",TipoPerfilUsuario.MOTORISTA.getValue());
+                new ParametroPesquisaIgual("tipoPerfil.id", TipoPerfilUsuario.MOTORISTA.getValue())
+                : new ParametroPesquisaDiferente("tipoPerfil.id", TipoPerfilUsuario.MOTORISTA.getValue());
         return pesquisarUnicoSemIsolamentoDados(new ParametroPesquisaIgual("cpf", cpf), parametroPesquisaUsuarioMotorista);
     }
 

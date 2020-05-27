@@ -82,9 +82,11 @@ public class FrotaPontoVendaSd {
      */
     public void validarHistoricoBloqueio(Long idFrota, Long idPv, Date dataAbastecimento) throws ExcecaoValidacao {
         FrotaPontoVenda frotaPontoVenda = frotaPontoVendaDados.obterFrotaPontoVenda(idFrota, idPv);
-        boolean estavaBloqueado = historicoBloqueioFrotaPontoVendaDados.obterBloqueioPorData(frotaPontoVenda.getId(), dataAbastecimento) != null;
-        if(estavaBloqueado) {
-            throw new ExcecaoValidacao(Erro.FROTA_PONTO_VENDA_BLOQUEADO);
+        if(frotaPontoVenda != null){
+            boolean estavaBloqueado = historicoBloqueioFrotaPontoVendaDados.obterBloqueioPorData(frotaPontoVenda.getId(), dataAbastecimento) != null;
+            if(estavaBloqueado) {
+                throw new ExcecaoValidacao(Erro.FROTA_PONTO_VENDA_BLOQUEADO);
+            }
         }
     }
 }

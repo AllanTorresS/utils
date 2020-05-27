@@ -252,4 +252,13 @@ public class ItemAutorizacaoPagamento implements IPersistente, IPertenceFrota, I
     public void setCampanhasElegiveis(List<Campanha> campanhasElegiveis) {
         this.campanhasElegiveis = campanhasElegiveis;
     }
+
+    /**
+     * Remove campanha e o desconto que foi gerado
+     */
+    public void removeCampanha() {
+        this.setValorPercentualDesconto(BigDecimal.ZERO);
+        this.setValorDescontoTotal(BigDecimal.ZERO);
+        this.setCampanha(null);
+    }
 }

@@ -28,23 +28,23 @@ public interface IUnidadeDados extends IRepositorioBoleiaDados<Unidade> {
 	 */
     Unidade pesquisarPorCnpj(Long cnpj);
 
-    /**
-     * Pesquisa unidade por CNPJ na solução
-     *
-     * @param cnpj cnpj da unidade
-     * @return A unuidade encontrada
-     */
-    List<Unidade> pesquisarPorCnpjSemIsolamento(Long cnpj);
+	/**
+	 * Pesquisa unidade por CNPJ na solução
+	 *
+	 * @param cnpj cnpj da unidade
+	 * @return A unuidade encontrada
+	 */
+	List<Unidade> pesquisarPorCnpjSemIsolamento(Long cnpj);
 
-    /**
+	/**
      * Pesquisa unidades pela razao social, CNPJ e frota.
      *
      * @param termo              O termo de busca
-     * @param idFrota            O id da frota
-     * @param possuiPostoInterno Informa se as unidades buscadas deverão possuir posto interno
+	 * @param idFrota O id da frota
+	 * @param possuiPostoInterno Informa se as unidades buscadas deverão possuir posto interno
      * @return A lista de unidades encontradas
-     */
-    List<Unidade> pesquisarPorCnpjRazaoSocial(String termo, Long idFrota, boolean possuiPostoInterno);
+	 */
+	List<Unidade> pesquisarPorCnpjRazaoSocial(String termo, Long idFrota, boolean possuiPostoInterno);
 
 	/**
 	 * Pesquisa de unidades pelo identificador da frota

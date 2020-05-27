@@ -19,7 +19,7 @@ public abstract class ServicoSoapDados<T> {
     private static final String TIMEOUT_CONEXAO_PARAM = "com.sun.xml.internal.ws.connect.timeout";
     private static final String TIMEOUT_RESPOSTA_PARAM = "com.sun.xml.internal.ws.request.timeout";
     private static final int TIMEOUT_CONEXAO_VALOR = 30000;
-    private static final int TIMEOUT_RESPOSTA_VALOR = 60000;
+    private static final int TIMEOUT_RESPOSTA_VALOR = 120000;
 
     private T servico;
 

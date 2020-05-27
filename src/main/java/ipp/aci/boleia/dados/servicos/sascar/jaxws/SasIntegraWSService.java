@@ -1,17 +1,18 @@
 
 package ipp.aci.boleia.dados.servicos.sascar.jaxws;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebEndpoint;
 import javax.xml.ws.WebServiceClient;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.WebServiceFeature;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 
-@WebServiceClient(name = "SasIntegraWSService", targetNamespace = "http://webservice.web.integracao.sascar.com.br/", wsdlLocation = "file:/C:/Users/pedro.silva/IdeaProjects/boleia-master/boleia-backend/src/main/resources/wsdl/sascar.wsdl")
+
+@WebServiceClient(name = "SasIntegraWSService", targetNamespace = "http://webservice.web.integracao.sascar.com.br/", wsdlLocation = "file:/C:/Projetos/ProFrotas/boleia/boleia-master/boleia-backend/src/main/resources/wsdl/sascar.wsdl")
 public class SasIntegraWSService
     extends Service
 {
@@ -24,7 +25,7 @@ public class SasIntegraWSService
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("file:/C:/Users/pedro.silva/IdeaProjects/boleia-master/boleia-backend/src/main/resources/wsdl/sascar.wsdl");
+            url = new URL("file:/C:/Projetos/ProFrotas/boleia/boleia-master/boleia-backend/src/main/resources/wsdl/sascar.wsdl");
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }

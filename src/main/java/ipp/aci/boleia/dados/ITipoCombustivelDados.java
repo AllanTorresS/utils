@@ -17,6 +17,15 @@ public interface ITipoCombustivelDados extends IRepositorioBoleiaDados<TipoCombu
     List<TipoCombustivel> buscarCombustiveisSemPrecoPV(Long idPontoVenda);
 
     /**
+     * Procura todos os combustiveis para os quais não existe preço cadastrado para o ponto de venda informado
+     * e (ou) todas as negociações do combustivel já estão inativas
+     *
+     * @param idPontoVenda ID do ponto de venda procurado
+     * @return Lista de Combustíveis ausentes
+     */
+    List<TipoCombustivel> buscarCombustiveisSemPrecoNegociacoesAtivasPV(Long idPontoVenda);
+
+    /**
      * Retorna todos os combustíveis de um determinado tipo
      * @param tipoCombustivelMtec tipo combustivel mtec
      * @return Lista de Combustíveis

@@ -7,13 +7,14 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Ens_Request")
 @XmlSeeAlso({
     MarcarTituloASerBaixadoReq.class,
     GerarJDEReq.class,
-    MarcarTituloASerBaixadoLoteReq.class,
     DemostrativoAbatimentoCreditoCombReq.class,
+    ProrrogarVencimentoReq.class,
     InserirEmLoteJDEReq.class,
     IncluirJDEReq.class,
     VerificarTituloPagoReq.class,

@@ -7,12 +7,13 @@ import ipp.aci.boleia.dominio.parametros.LogicaParametroCreditoVeiculoAgregado;
 import ipp.aci.boleia.dominio.parametros.LogicaParametroHodometroHorimetro;
 import ipp.aci.boleia.dominio.parametros.LogicaParametroHorariosAbastecimento;
 import ipp.aci.boleia.dominio.parametros.LogicaParametroIntervaloAbastecimento;
-import ipp.aci.boleia.dominio.parametros.LogicaParametroLocalizacaoAbastecimento;
 import ipp.aci.boleia.dominio.parametros.LogicaParametroPostosAutorizadosAbastecimento;
 import ipp.aci.boleia.dominio.parametros.LogicaParametroPrecoMaximo;
 import ipp.aci.boleia.dominio.parametros.LogicaParametroProdutoAbastecido;
 import ipp.aci.boleia.dominio.parametros.LogicaParametroProdutosAdicionais;
 import ipp.aci.boleia.dominio.parametros.LogicaParametroVolumeAbastecido;
+import ipp.aci.boleia.dominio.parametros.LogicaParametroLocalizacaoAbastecimento;
+
 
 
 /**

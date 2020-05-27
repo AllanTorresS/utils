@@ -72,7 +72,7 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
         statusValidos.add(StatusPreco.HISTORICO.getValue());
         statusValidos.add(StatusPreco.PENDENTE.getValue());
 
-        ResultadoPaginado<Preco>  result =  pesquisar(paginacao,
+        ResultadoPaginado<Preco> result =  pesquisar(paginacao,
                 new ParametroPesquisaIgual("precoBase.precoMicromercado.tipoCombustivel.id", idTipoCombustivel),
                 new ParametroPesquisaIgual("frotaPtov.pontoVenda.id", idPontoVenda),
                 new ParametroPesquisaIgual("frotaPtov.frota.id", idFrota),

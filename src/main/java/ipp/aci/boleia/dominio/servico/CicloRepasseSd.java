@@ -8,6 +8,8 @@ import ipp.aci.boleia.dominio.ConfiguracaoRepasse;
 import ipp.aci.boleia.dominio.EntidadeRepasse;
 import ipp.aci.boleia.dominio.ParametroCiclo;
 import ipp.aci.boleia.dominio.enums.StatusPagamentoCobranca;
+import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaCicloRepasseVo;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.concorrencia.MapeadorLock;
 import ipp.aci.boleia.util.concorrencia.Sincronizador;
@@ -249,5 +251,15 @@ public class CicloRepasseSd {
         final Boolean CICLO_POSSUI_CREDITO = cicloRepasse.getValorCredito() != null && cicloRepasse.getValorCredito().compareTo(BigDecimal.ZERO) != 0;
 
         return CICLO_POSSUI_CREDITO? valorRepasse.subtract(cicloRepasse.getValorCredito()):valorRepasse;
+    }
+
+    /**
+     * Obtem lista de Informações de um Repasse que serão exibidas nas linhas da tabela de exportação
+     * de acordo com o filtro informado.
+     * @param filtro O filtro da ultima busca
+     * @return Uma lista de ciclos de repasse para exportação
+     */
+    public ResultadoPaginado<CicloRepasse> pesquisarRepasses(FiltroPesquisaCicloRepasseVo filtro) {
+        return repositorio.pesquisarRepasse(filtro);
     }
 }

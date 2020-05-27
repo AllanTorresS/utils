@@ -2,9 +2,11 @@ package ipp.aci.boleia.dados.oracle;
 
 import ipp.aci.boleia.dados.IFrotaDados;
 import ipp.aci.boleia.dominio.Frota;
+import ipp.aci.boleia.dominio.enums.StatusAcumuloKmv;
 import ipp.aci.boleia.dominio.enums.StatusApiToken;
 import ipp.aci.boleia.dominio.enums.StatusContrato;
 import ipp.aci.boleia.dominio.enums.StatusFrota;
+import ipp.aci.boleia.dominio.enums.TipoAcumuloKmv;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
@@ -40,13 +42,29 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
     @Autowired
     private UtilitarioAmbiente ambiente;
 
-    private static final String CONSULTA_FROTA_UNIDADE_HQL =
+
+    private static final String CONSULTA_DONO_FROTA_COM_ACUMULO =
             "SELECT DISTINCT fr" +
-                " FROM Frota fr " +
-                " LEFT JOIN fetch fr.unidades u" +
-                " WHERE fr.postoInterno = true AND fr.status = 1" +
-                "  %s " +
-                "  %s ";
+                " FROM AcumuloKmv ac " +
+                " INNER JOIN ac.frota fr" +
+                " WHERE ac.statusAcumulo = " + StatusAcumuloKmv.ACUMULADO.getValue().toString() +
+                    " AND ac.tipoAcumulo = " + TipoAcumuloKmv.DONO_FROTA.getValue().toString()  +
+                    " AND fr.emailDonoFrota is not null" +
+                    " AND ac.dataEnvio BETWEEN :dataInicial AND :dataFinal";
+
+    private static final String CONSULTA_FROTA_UNIDADE_HQL = "SELECT DISTINCT fr" +
+            " FROM Frota fr " +
+            " LEFT JOIN fetch fr.unidades u" +
+            " WHERE fr.postoInterno = true AND fr.status = 1" +
+            "  %s " +
+            "  %s ";
+
+    private static final String CONSULTA_FROTA_POR_COBRANCA =
+            "SELECT DISTINCT f " +
+            "FROM TransacaoConsolidada tc " +
+            "JOIN tc.frotaPtov.frota f " +
+            "WHERE tc.cobranca.id = :idCobranca " +
+            "     AND f.excluido = 0";
 
     /**
      * Instancia o repositorio
@@ -137,7 +155,7 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
 
     @Override
     public List<Frota> pesquisarPorCnpjSemIsolamento(Long cnpj) {
-        if(cnpj==null) {
+        if(cnpj == null) {
             return null;
         }
         return pesquisarSemIsolamentoDados((ParametroOrdenacaoColuna) null, new ParametroPesquisaIgual("cnpj", cnpj));
@@ -314,5 +332,15 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
             parametros.add(new ParametroPesquisaIgual("dataUltimaAtualizacao",dataUltimaAtualizacao));
         }
         return pesquisar(null, consulta, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+    }
+
+    @Override
+    public List<Frota> buscarFrotaComKmvAcumuladosParaDonoDaFrota(Date dataInicio, Date dataFim) {
+        return pesquisar(null, CONSULTA_DONO_FROTA_COM_ACUMULO,new ParametroPesquisaIgual("dataInicial", dataInicio), new ParametroPesquisaIgual("dataFinal", dataFim)).getRegistros();
+    }
+
+    @Override
+    public Frota obterPorCobranca(Long idCobranca) {
+        return pesquisarUnico(CONSULTA_FROTA_POR_COBRANCA, new ParametroPesquisaIgual("idCobranca", idCobranca));
     }
 }

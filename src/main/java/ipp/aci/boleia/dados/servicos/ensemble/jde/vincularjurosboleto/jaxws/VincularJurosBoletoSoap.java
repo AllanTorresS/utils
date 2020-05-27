@@ -10,6 +10,7 @@ import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
 
 
+
 @WebService(name = "vincularJurosBoletoSoap", targetNamespace = "http://ipiranga.com.br/vincularJurosBoleto")
 @XmlSeeAlso({
     ObjectFactory.class
@@ -23,7 +24,7 @@ public interface VincularJurosBoletoSoap {
     @RequestWrapper(localName = "vincular", targetNamespace = "http://ipiranga.com.br/vincularJurosBoleto", className = "ipp.aci.boleia.dados.servicos.ensemble.jde.vincularjurosboleto.jaxws.Vincular")
     @ResponseWrapper(localName = "vincularResponse", targetNamespace = "http://ipiranga.com.br/vincularJurosBoleto", className = "ipp.aci.boleia.dados.servicos.ensemble.jde.vincularjurosboleto.jaxws.VincularResponse")
     public Response vincular(
-            @WebParam(name = "pRequest", targetNamespace = "http://ipiranga.com.br/vincularJurosBoleto")
-                    Request pRequest);
+        @WebParam(name = "pRequest", targetNamespace = "http://ipiranga.com.br/vincularJurosBoleto")
+        Request pRequest);
 
 }

@@ -98,4 +98,12 @@ public interface ICobrancaDados extends IRepositorioBoleiaDados<Cobranca> {
      * @return lista com as cobranças
      */
     List<Cobranca> obterCobrancasErroEnvio(Integer numeroTentativas);
+
+    /**
+     * Altera o estado da entidade para desanexado
+     * @param cobranca a cobrança a ser desanexada
+     * @return a cobrança desanexada
+     */
+    Cobranca desanexar(Cobranca cobranca);
+
 }

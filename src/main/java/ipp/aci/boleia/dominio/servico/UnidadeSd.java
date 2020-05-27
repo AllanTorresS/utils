@@ -52,7 +52,6 @@ public class UnidadeSd {
 
     /**
      * Obtem a unidade matriz para a frota logada
-     *
      * @return Unidade matriz
      */
     public Unidade criarUnidadeMatriz() {
@@ -61,7 +60,6 @@ public class UnidadeSd {
 
     /**
      * Obtem a unidade matriz para uma frota específica.
-     *
      * @param frota Frota que será obtida a unidade matriz.
      * @return Unidade matriz
      */
@@ -108,7 +106,6 @@ public class UnidadeSd {
 
     /**
      * Obtem o número de registros relacionados
-     *
      * @param id id da Unidade
      * @return Quantidade
      */
@@ -119,7 +116,6 @@ public class UnidadeSd {
 
     /**
      * Obtem o número de registros relacionados
-     *
      * @param unidade Unidade a ser usada na busca.
      * @return Quantidade
      */

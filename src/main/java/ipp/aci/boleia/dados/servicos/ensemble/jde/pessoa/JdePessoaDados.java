@@ -128,7 +128,7 @@ public class JdePessoaDados extends ServicoSoapDados<PessoaSoap> implements IPes
     }
 
     @Override
-    public void excluir(Frota frota) throws ExcecaoValidacao {
+    public void excluir(Frota frota) throws ExcecaoValidacao{
         InativarJDEReq req = obterRequisicaoExclusao(frota);
         enviarRequisicaoInativar(req);
     }
@@ -191,7 +191,7 @@ public class JdePessoaDados extends ServicoSoapDados<PessoaSoap> implements IPes
      * @return O resultado obtido
      * @throws ExcecaoValidacao Caso a invocacao falhe
      */
-    private Long enviarRequisicaoInativar(InativarJDEReq req) throws ExcecaoValidacao {
+    private Long enviarRequisicaoInativar(InativarJDEReq req) throws ExcecaoValidacao{
         Response response;
         try {
             response = getServico().inativarClienteJDE(req);

@@ -176,6 +176,32 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @Column(name = "DS_EMAIL_RESP")
     private String emailResponsavelFrota;
 
+
+    @Size(max=250)
+    @Column(name = "NM_DONO")
+    private String nomeDonoFrota;
+
+    @Max(99999999999L)
+    @Column(name = "CD_CPF_DONO")
+    private Long cpfDonoFrota;
+
+    @Size(max=250)
+    @Column(name = "DS_CARGO_DONO")
+    private String cargoDonoFrota;
+
+    @Max(99)
+    @Column(name = "CD_DDD_TEL_DONO")
+    private Integer dddTelefoneDonoFrota;
+
+    @Min(10000000L)
+    @Max(999999999L)
+    @Column(name = "NO_TEL_DONO")
+    private Long telefoneDonoFrota;
+
+    @Size(max=250)
+    @Column(name = "DS_EMAIL_DONO")
+    private String emailDonoFrota;
+
     @Column(name="CD_FX_QTD_VEIC_PESADOS")
     private Integer faixaQtdVeicPesados;
 
@@ -354,72 +380,72 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     /**
      * Construtor da classe.
      *
-     * @param id                          Identificador da frota
-     * @param cnpj                        CNPJ da frota
-     * @param status                      Identificador do status da frota
-     * @param nomeRazaoFrota              Nome da frota
-     * @param statusConvertido            Label do status da frota
-     * @param razaoSocial                 Razão social da frota
-     * @param nomeFantasia                Nome fantasia da frota
-     * @param inscricaoEstadual           Inscrição estadual da frota
-     * @param inscricaoMunicipal          Inscrição municipal da frota
-     * @param cep                         CEP do endereço da frota
-     * @param logradouro                  Logradouro do endereço
-     * @param numero                      Número do endereço
-     * @param complemento                 Complemento do endereço
-     * @param bairro                      Bairro da frota
-     * @param municipio                   Município
-     * @param unidadeFederativa           Unidade federativa da frota
-     * @param assessorResponsavel         Assessor responsável pela frota
-     * @param dddTelefone                 DDD do telefone da frota
-     * @param telefone                    Telefone da frota
-     * @param email                       Email da frota
-     * @param nomeResponsavelFrota        Nome do responsável pela frota
-     * @param cpfResponsavelFrota         CPF do responsável pela frota
-     * @param cargoResponsavelFrota       Cargo do responsável pela frota
+     * @param id Identificador da frota
+     * @param cnpj CNPJ da frota
+     * @param status Identificador do status da frota
+     * @param nomeRazaoFrota Nome da frota
+     * @param statusConvertido Label do status da frota
+     * @param razaoSocial Razão social da frota
+     * @param nomeFantasia Nome fantasia da frota
+     * @param inscricaoEstadual Inscrição estadual da frota
+     * @param inscricaoMunicipal Inscrição municipal da frota
+     * @param cep CEP do endereço da frota
+     * @param logradouro Logradouro do endereço
+     * @param numero Número do endereço
+     * @param complemento Complemento do endereço
+     * @param bairro Bairro da frota
+     * @param municipio Município
+     * @param unidadeFederativa Unidade federativa da frota
+     * @param assessorResponsavel Assessor responsável pela frota
+     * @param dddTelefone DDD do telefone da frota
+     * @param telefone Telefone da frota
+     * @param email Email da frota
+     * @param nomeResponsavelFrota Nome do responsável pela frota
+     * @param cpfResponsavelFrota CPF do responsável pela frota
+     * @param cargoResponsavelFrota Cargo do responsável pela frota
      * @param dddTelefoneResponsavelFrota DDD do telefone do responsável pela frota
-     * @param telefoneResponsavelFrota    Telefone do responsável pela frota
-     * @param emailResponsavelFrota       Email do responsável pela frota
-     * @param faixaQtdVeicPesados         Faixa da quantidade de veículos pesados que a frota possui
-     * @param faixaQtdVeicLeves           Faixa da quantidade de veículos leves que a frota possui
-     * @param volumeEstimadoDiesel        Volume estimado de diesel da frota
-     * @param volumeEstimadoCicloOtto     Volume estimado de ciclo otto da frota
-     * @param modoPagamento               Modo de pagamento da frota
-     * @param porte                       Porte da frota
-     * @param segmentoAtuacao             Segmento de atuação da frota
-     * @param statusContrato              Status do contrato da frota
-     * @param statusContratoConvertido    Label do status do contrato
-     * @param inicioContrato              Data de inicio do contrato
-     * @param prazoContrato               Prazo do contrato
-     * @param dataHabilitacao             Data de habilitação da frota
-     * @param dataSaldoZerado             Data em que o saldo da frota é zerado
-     * @param permiteAcordoEspecial       Informa se é permitido algum acordo especial
-     * @param excluido                    Informa se a frota esta excluida
-     * @param codigoIBGE                  Código IBGE da frota
-     * @param codCatBeneficioFiscal       Código de beneficio fiscal da frota
-     * @param numeroJdeInterno            Identificador da frota no JDE
-     * @param gruposOperacionais          Grupos operacionais da frota
-     * @param veiculos                    Veículos da frota
-     * @param motoristas                  Lista de motoristas da frota
-     * @param unidades                    Lista de unidades da frota
-     * @param negociacoes                 Lista de negociações que a frota possui
-     * @param parametroCiclo              Parametros do ciclo da frota
-     * @param saldo                       Saldo da frota
-     * @param apiTokens                   Lista de tokens de API da frota
-     * @param versao                      Versao do registro no banco
-     * @param postoInterno                Informa se é posto interno
-     * @param numeroSequencialJde         Número sequencial do JDE
-     * @param inicioAtivacaoTemporaria    Data de início da ativação temporária
-     * @param fimAtivacaoTemporaria       Data fim da ativação temporária
-     * @param parametrosSistema           Parametros do sistema atrelados a frota
-     * @param semNotaFiscal               Informa se a frota não possui nota fiscal
-     * @param dataAceiteTermos            Data de aceite dos termos
-     * @param primeiraCompra              Informa se a frota fez a primeira compra
-     * @param empresasAgregadas           Empresas agregadas à frota
-     * @param permissoes                  Lista de permissões da frota
-     * @param dataCriacao                 Data de criação da frota
-     * @param dataAtualizacao             Data de atualização da frota
-     * @param connectCTAToken             Token do connect
+     * @param telefoneResponsavelFrota Telefone do responsável pela frota
+     * @param emailResponsavelFrota Email do responsável pela frota
+     * @param faixaQtdVeicPesados Faixa da quantidade de veículos pesados que a frota possui
+     * @param faixaQtdVeicLeves Faixa da quantidade de veículos leves que a frota possui
+     * @param volumeEstimadoDiesel Volume estimado de diesel da frota
+     * @param volumeEstimadoCicloOtto Volume estimado de ciclo otto da frota
+     * @param modoPagamento Modo de pagamento da frota
+     * @param porte Porte da frota
+     * @param segmentoAtuacao Segmento de atuação da frota
+     * @param statusContrato Status do contrato da frota
+     * @param statusContratoConvertido Label do status do contrato
+     * @param inicioContrato Data de inicio do contrato
+     * @param prazoContrato Prazo do contrato
+     * @param dataHabilitacao Data de habilitação da frota
+     * @param dataSaldoZerado Data em que o saldo da frota é zerado
+     * @param permiteAcordoEspecial Informa se é permitido algum acordo especial
+     * @param excluido Informa se a frota esta excluida
+     * @param codigoIBGE Código IBGE da frota
+     * @param codCatBeneficioFiscal Código de beneficio fiscal da frota
+     * @param numeroJdeInterno Identificador da frota no JDE
+     * @param gruposOperacionais Grupos operacionais da frota
+     * @param veiculos Veículos da frota
+     * @param motoristas Lista de motoristas da frota
+     * @param unidades Lista de unidades da frota
+     * @param negociacoes Lista de negociações que a frota possui
+     * @param parametroCiclo Parametros do ciclo da frota
+     * @param saldo Saldo da frota
+     * @param apiTokens Lista de tokens de API da frota
+     * @param versao Versao do registro no banco
+     * @param postoInterno Informa se é posto interno
+     * @param numeroSequencialJde Número sequencial do JDE
+     * @param inicioAtivacaoTemporaria Data de início da ativação temporária
+     * @param fimAtivacaoTemporaria Data fim da ativação temporária
+     * @param parametrosSistema Parametros do sistema atrelados a frota
+     * @param semNotaFiscal Informa se a frota não possui nota fiscal
+     * @param dataAceiteTermos Data de aceite dos termos
+     * @param primeiraCompra Informa se a frota fez a primeira compra
+     * @param empresasAgregadas Empresas agregadas à frota
+     * @param permissoes Lista de permissões da frota
+     * @param dataCriacao Data de criação da frota
+     * @param dataAtualizacao Data de atualização da frota
+     * @param connectCTAToken Token do connect
      */
     public Frota(Long id, Long cnpj, Integer status, String nomeRazaoFrota, String statusConvertido, String razaoSocial, String nomeFantasia, Long inscricaoEstadual, Long inscricaoMunicipal, Integer cep, String logradouro, Integer numero, String complemento, String bairro, String municipio, String unidadeFederativa, String assessorResponsavel, Integer dddTelefone, Long telefone, String email, String nomeResponsavelFrota, Long cpfResponsavelFrota, String cargoResponsavelFrota, Integer dddTelefoneResponsavelFrota, Long telefoneResponsavelFrota, String emailResponsavelFrota, Integer faixaQtdVeicPesados, Integer faixaQtdVeicLeves, Long volumeEstimadoDiesel, Long volumeEstimadoCicloOtto, Integer modoPagamento, Integer porte, Integer segmentoAtuacao, Integer statusContrato, String statusContratoConvertido, Date inicioContrato, Integer prazoContrato, Date dataHabilitacao, Date dataSaldoZerado, Boolean permiteAcordoEspecial, Boolean excluido, String codigoIBGE, String codCatBeneficioFiscal, Integer numeroJdeInterno, List<GrupoOperacional> gruposOperacionais, List<Veiculo> veiculos, List<Motorista> motoristas, List<Unidade> unidades, List<FrotaPontoVenda> negociacoes, ParametroCiclo parametroCiclo, SaldoFrota saldo, List<ApiToken> apiTokens, Long versao, Boolean postoInterno, Long numeroSequencialJde, Date inicioAtivacaoTemporaria, Date fimAtivacaoTemporaria, List<FrotaParametroSistema> parametrosSistema, Boolean semNotaFiscal, Date dataAceiteTermos, Boolean primeiraCompra, List<EmpresaAgregada> empresasAgregadas, List<Permissao> permissoes, Date dataCriacao, Date dataAtualizacao, String connectCTAToken) {
         this.id = id;
@@ -700,6 +726,54 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
 
     public void setEmailResponsavelFrota(String emailResponsavelFrota) {
         this.emailResponsavelFrota = emailResponsavelFrota;
+    }
+
+    public String getNomeDonoFrota() {
+        return nomeDonoFrota;
+    }
+
+    public void setNomeDonoFrota(String nomeDonoFrota) {
+        this.nomeDonoFrota = nomeDonoFrota;
+    }
+
+    public Long getCpfDonoFrota() {
+        return cpfDonoFrota;
+    }
+
+    public void setCpfDonoFrota(Long cpfDonoFrota) {
+        this.cpfDonoFrota = cpfDonoFrota;
+    }
+
+    public String getCargoDonoFrota() {
+        return cargoDonoFrota;
+    }
+
+    public void setCargoDonoFrota(String cargoDonoFrota) {
+        this.cargoDonoFrota = cargoDonoFrota;
+    }
+
+    public Integer getDddTelefoneDonoFrota() {
+        return dddTelefoneDonoFrota;
+    }
+
+    public void setDddTelefoneDonoFrota(Integer dddTelefoneDonoFrota) {
+        this.dddTelefoneDonoFrota = dddTelefoneDonoFrota;
+    }
+
+    public Long getTelefoneDonoFrota() {
+        return telefoneDonoFrota;
+    }
+
+    public void setTelefoneDonoFrota(Long telefoneDonoFrota) {
+        this.telefoneDonoFrota = telefoneDonoFrota;
+    }
+
+    public String getEmailDonoFrota() {
+        return emailDonoFrota;
+    }
+
+    public void setEmailDonoFrota(String emailDonoFrota) {
+        this.emailDonoFrota = emailDonoFrota;
     }
 
     public Integer getFaixaQtdVeicPesados() {
@@ -1114,7 +1188,7 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
      */
     @Transient
     public boolean isPrePago() {
-        return this.modoPagamento != null ? ModalidadePagamento.obterPorValor(this.modoPagamento).equals(ModalidadePagamento.PRE_PAGO) : false;
+        return this.modoPagamento != null && ModalidadePagamento.obterPorValor(this.modoPagamento).equals(ModalidadePagamento.PRE_PAGO);
     }
 
     public Boolean getExibirDesconto() {
@@ -1159,5 +1233,20 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @Transient
     public boolean exigeNotaFiscal() {
         return semNotaFiscal == null || !semNotaFiscal;
+    }
+
+    /**
+     * Atualiza parametro ciclo com novo parametro ciclo agendado e remove o agendamento
+     * @return true caso a operação seja realizada com sucesso
+     */
+    @Transient
+    public boolean atualizaParametroDeCicloConformeNovoCiclo() {
+        if (this.getNovoParametroCiclo() != null) {
+            this.setParametroCiclo(this.getNovoParametroCiclo());
+            this.setNovoParametroCiclo(null);
+            this.setDataAlteracaoCiclo(null);
+            return true;
+        }
+        return false;
     }
 }

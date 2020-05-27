@@ -77,7 +77,7 @@ public class JdeVoucherDados extends JdeBaseDados<VoucherSoap> implements IVouch
                 reembolso.setQuantidadeParcelas(resposta.getListaItemVoucher().getItemVoucher().size());
                 reembolso.setMensagemErro(null);
 
-                if (reembolso.estaAprovadoParaPagamento()) {
+                if(reembolso.estaAprovadoParaPagamento()) {
                     reembolso.setStatusIntegracao(StatusIntegracaoReembolsoJde.REALIZADO.getValue());
                 } else {
                     reembolso.setStatusIntegracao(StatusIntegracaoReembolsoJde.AGUARDANDO_LIBERACAO.getValue());
@@ -113,7 +113,7 @@ public class JdeVoucherDados extends JdeBaseDados<VoucherSoap> implements IVouch
             reembolso.setMensagemErro(null);
             XMLGregorianCalendar dataVencimentoXML = resultado.getDataVencimento();
             reembolso.setDataVencimentoPagto(UtilitarioCalculoData
-                    .obterData(dataVencimentoXML.getDay(), dataVencimentoXML.getMonth() - 1, dataVencimentoXML.getYear()));
+                    .obterData(dataVencimentoXML.getDay(),dataVencimentoXML.getMonth()-1,dataVencimentoXML.getYear()));
         } else {
             reembolso.setMensagemErro(resposta.getStatusIntegracao().getMensagem());
         }

@@ -28,6 +28,8 @@ import java.util.stream.Collectors;
 @Table(name = "CONDICAO_CAMPANHA", schema = "BOLEIA_CAMPANHA_SCHEMA")
 public class CondicaoCampanha implements IPersistente, Cloneable {
 
+    private static final long serialVersionUID = -3723808629907149757L;
+
     @Id
     @Column(name = "CD_CONDICAO")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_CONDICAO_CAMPANHA")

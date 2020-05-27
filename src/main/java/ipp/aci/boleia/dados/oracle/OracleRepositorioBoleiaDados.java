@@ -358,9 +358,9 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
     /**
      * Aplica paginação em uma lista de registros obtidos no banco.
      *
-     * @param paginacao      Informação de paginação
+     * @param paginacao Informação de paginação
      * @param totalRegistros Lista de registros obtidos.
-     * @param <K>            Tipo de objeto da lista
+     * @param <K> Tipo de objeto da lista
      * @return Lista paginada.
      */
     private <K> List<K> aplicarPaginacaoListaRegistros(InformacaoPaginacao paginacao, List<K> totalRegistros) {

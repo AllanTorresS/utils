@@ -277,14 +277,14 @@ public class OraclePontoDeVendaDados extends OracleRepositorioBoleiaDados<PontoD
     
     @Override
     public PontoDeVenda obterPorCnpj(Long cnpj) {
-        List<PontoDeVenda> pdvs = pesquisarSemIsolamentoDados(
-                new ParametroOrdenacaoColuna("componentes.codigoCorporativo", Ordenacao.DECRESCENTE),
-                new ParametroPesquisaIgual("componentes.codigoPessoa", cnpj),
-                new ParametroPesquisaIn("componentes.atividadeComponente.codigoCorporativo", AtividadeComponente.obterCodigosAreaAbastecimento()));
-        if (CollectionUtils.isNotEmpty(pdvs)) {
-            return pdvs.get(0);
-        }
-        return null;
+    	List<PontoDeVenda> pdvs = pesquisarSemIsolamentoDados(
+    			new ParametroOrdenacaoColuna("componentes.codigoCorporativo", Ordenacao.DECRESCENTE),
+    			new ParametroPesquisaIgual("componentes.codigoPessoa", cnpj),
+    			new ParametroPesquisaIn("componentes.atividadeComponente.codigoCorporativo",  AtividadeComponente.obterCodigosAreaAbastecimento()));
+    	if (CollectionUtils.isNotEmpty(pdvs)) {
+    		return pdvs.get(0);
+    	}
+    	return null;
     }
 
     @Override

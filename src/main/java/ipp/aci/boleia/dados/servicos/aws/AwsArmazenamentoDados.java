@@ -59,7 +59,7 @@ public class AwsArmazenamentoDados implements InitializingBean, IArmazenamentoDa
     @Value("${aws.s3.bucket.relatorio48Horas.tempoDescarte}")
     private Integer tempoDescarteRelatorio48horas;
 
-    @Value("$(aws.s3.bucket.nfeAnexoArmazem.prefixo")
+    @Value("${aws.s3.bucket.nfeAnexoArmazem.prefixo}")
     private String prefixoNfeAnexoArmazem;
 
     private AmazonS3 clienteS3;
@@ -199,8 +199,7 @@ public class AwsArmazenamentoDados implements InitializingBean, IArmazenamentoDa
             InputStream arquivoOrigem = obterArquivo(origem, idOrigem);
             armazenarArquivo(destino, idDestino, IOUtils.toByteArray(arquivoOrigem));
             removerArquivo(origem, idDestino);
-        }
-        catch (IOException | ExcecaoArquivoNaoEncontrado ioe) {
+        } catch (IOException | ExcecaoArquivoNaoEncontrado ioe) {
             throw new ExcecaoBoleiaRuntime(Erro.ERRO_INTEGRACAO, ioe, this.getClass().getName());
         }
     }

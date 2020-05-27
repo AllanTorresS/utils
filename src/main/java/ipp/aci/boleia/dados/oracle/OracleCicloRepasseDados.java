@@ -3,10 +3,12 @@ package ipp.aci.boleia.dados.oracle;
 import ipp.aci.boleia.dados.ICicloRepasseDados;
 import ipp.aci.boleia.dominio.AutorizacaoPagamento;
 import ipp.aci.boleia.dominio.CicloRepasse;
+import ipp.aci.boleia.dominio.enums.StatusIntegracaoJde;
 import ipp.aci.boleia.dominio.enums.StatusPagamentoCobranca;
 import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
+import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenor;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
@@ -83,9 +85,11 @@ public class OracleCicloRepasseDados extends OracleRepositorioBoleiaDados<CicloR
     }
 
 	@Override
-	public List<CicloRepasse> pesquisarParaRelatorioRepasse(FiltroPesquisaCicloRepasseVo filtro){
+	public ResultadoPaginado<CicloRepasse> pesquisarRepasse(FiltroPesquisaCicloRepasseVo filtro){
         List<ParametroPesquisa> parametros = criarParametrosPesquisa(filtro);
-        return pesquisar(new ParametroOrdenacaoColuna("dataVencimento",Ordenacao.DECRESCENTE), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        parametros.add(new ParametroPesquisaDiferente("valorTotal", BigDecimal.ZERO));
+        filtro.getPaginacao().getParametrosOrdenacaoColuna().add(new ParametroOrdenacaoColuna("dataFim", Ordenacao.CRESCENTE));
+        return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
     @Override
@@ -106,13 +110,18 @@ public class OracleCicloRepasseDados extends OracleRepositorioBoleiaDados<CicloR
         povoarParametroDataMaiorIgual("dataInicio", UtilitarioCalculoData.obterPrimeiroDiaMes(UtilitarioFormatacaoData.lerDataMesAno(filtro.getDe())), parametros);
         povoarParametroDataMenorIgual("dataFim", UtilitarioCalculoData.obterUltimoDiaMes(UtilitarioFormatacaoData.lerDataMesAno(filtro.getAte())), parametros);
 
+        povoarParametroIgual("pontoDeVenda.id", filtro.getPontoDeVenda() != null ? String.valueOf(filtro.getPontoDeVenda().getId()) : null, parametros);
+
+        if (StringUtils.isNotBlank(filtro.getNumeroDocumento())) {
+            parametros.add(new ParametroPesquisaLike("numeroDocumento", filtro.getNumeroDocumento()));
+        }
+
         if (filtro.getStatusPagamento() != null && filtro.getStatusPagamento().getName() != null) {
             parametros.add(new ParametroPesquisaIgual("status", StatusPagamentoCobranca.valueOf(filtro.getStatusPagamento().getName()).getValue()));
         }
 
-
-        if (StringUtils.isNotBlank(filtro.getNumeroDocumento())) {
-            parametros.add(new ParametroPesquisaLike("numeroDocumento", filtro.getNumeroDocumento()));
+        if (filtro.getStatusIntegracao() != null && filtro.getStatusIntegracao().getName() != null) {
+            parametros.add(new ParametroPesquisaIgual("statusIntegracaoJDE", StatusIntegracaoJde.valueOf(filtro.getStatusIntegracao().getName()).getValue()));
         }
 
         return parametros;

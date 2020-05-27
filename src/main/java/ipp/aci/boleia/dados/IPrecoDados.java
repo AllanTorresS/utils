@@ -26,7 +26,7 @@ public interface IPrecoDados extends IRepositorioBoleiaDados<Preco> {
      * @param statusPossiveis status permitidos na consulta
      * @return Uma lista de negociações.
      */
-    ResultadoPaginado<Preco> pesquisaPrecoPaginada(FiltroPesquisaPrecoVo filtro, Boolean acordo, Integer... statusPossiveis);
+    ResultadoPaginado<Preco> pesquisaPrecoPaginada(FiltroPesquisaPrecoVo filtro, Boolean acordo, Integer... statusPossiveis );
 
     /**
      * Busca o preco atual para um determinado PontoVenda,Frota e tipo combustivel

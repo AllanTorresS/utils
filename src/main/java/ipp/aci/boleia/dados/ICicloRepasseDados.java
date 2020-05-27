@@ -2,6 +2,7 @@ package ipp.aci.boleia.dados;
 
 import ipp.aci.boleia.dominio.AutorizacaoPagamento;
 import ipp.aci.boleia.dominio.CicloRepasse;
+import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaCicloRepasseVo;
 
 import java.util.Date;
@@ -46,11 +47,11 @@ public interface ICicloRepasseDados extends IRepositorioBoleiaDados<CicloRepasse
     List<CicloRepasse> buscarCiclosRepasseParaConsultarAvisoDebito();
 
     /**
-     * Obtem os ciclos de Repasses para o relatorio de repasse Ipiranga a partir do filtro informado
+     * Obtem os ciclos de Repasses a partir do filtro informado
      * @param filtro O filtro da busca
      * @return Uma lista de entidades de Ciclo de Repasse
      */
-     List<CicloRepasse> pesquisarParaRelatorioRepasse(FiltroPesquisaCicloRepasseVo filtro);
+    ResultadoPaginado<CicloRepasse> pesquisarRepasse(FiltroPesquisaCicloRepasseVo filtro);
 
     /**
      * Obtém um {@link CicloRepasse} a partir de uma {@link AutorizacaoPagamento}.
@@ -58,5 +59,5 @@ public interface ICicloRepasseDados extends IRepositorioBoleiaDados<CicloRepasse
      * @param autorizacaoPagamento Autorização de pagamento utilizada na pesquisa.
      * @return o {@link CicloRepasse} encontrado.
      */
-     CicloRepasse obterCicloRepassePorAutorizacaoPagamento(AutorizacaoPagamento autorizacaoPagamento);
+    CicloRepasse obterCicloRepassePorAutorizacaoPagamento(AutorizacaoPagamento autorizacaoPagamento);
 }

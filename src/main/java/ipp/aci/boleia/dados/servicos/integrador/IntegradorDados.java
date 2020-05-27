@@ -9,6 +9,7 @@ import ipp.aci.boleia.dominio.vo.AutenticacaoIntegradorVo;
 import ipp.aci.boleia.dominio.vo.CredenciaisIntegradorVo;
 import ipp.aci.boleia.dominio.vo.PontoVendaIntegradorVo;
 import ipp.aci.boleia.dominio.vo.RespostaAbastecimentoIntegradorVo;
+import ipp.aci.boleia.util.UtilitarioFormatacaoData;
 import ipp.aci.boleia.util.UtilitarioJson;
 import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
 import ipp.aci.boleia.util.seguranca.UtilitarioJwt;
@@ -23,12 +24,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
+import java.util.Date;
 
 /**
  * Respositorio de entidades do Integrador
  */
 @Repository
-public class IntegradorDados implements IIntegradorDados {
+public class IntegradorDados implements IIntegradorDados{
 
     @Autowired
     private IClienteHttpDados clientRest;
@@ -123,8 +125,8 @@ public class IntegradorDados implements IIntegradorDados {
     }
 
     @Override
-    public RespostaAbastecimentoIntegradorVo obterAbastecimentos(String tokenJWT, String refreshToken, Long codigoPontoVendaCorporativo, String codigoBico, Integer offset){
-        return clientRest.doGet(integradorObterAbastecimentosUrl.replace("{codigoPontoVendaCorporativo}", codigoPontoVendaCorporativo.toString()) + "&codigoBico=" + codigoBico + "&ord[0][campo]=dataAbastecimento&ord[0][ordem]=DESC" + (offset != null ? "&offset=" + offset : null), montarHeader(tokenJWT, refreshToken), this::tratarRespostaAbastecimentos);
+    public RespostaAbastecimentoIntegradorVo obterAbastecimentos(String tokenJWT, String refreshToken, Long codigoPontoVendaCorporativo, String codigoBico, Date dataAbastecimentoDesde, Integer offset){
+        return clientRest.doGet(integradorObterAbastecimentosUrl.replace("{codigoPontoVendaCorporativo}", codigoPontoVendaCorporativo.toString()) + "&codigoBico=" + codigoBico + "&dataAbastecimentoDesde="+ UtilitarioFormatacaoData.formatarDataCurtaHifen(dataAbastecimentoDesde) + "&ord[0][campo]=dataAbastecimento&ord[0][ordem]=DESC" + (offset != null ? "&offset=" + offset : null), montarHeader(tokenJWT, refreshToken), this::tratarRespostaAbastecimentos);
     }
 
     /**

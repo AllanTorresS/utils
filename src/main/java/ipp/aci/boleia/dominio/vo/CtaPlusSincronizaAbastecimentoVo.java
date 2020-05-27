@@ -1,7 +1,6 @@
 package ipp.aci.boleia.dominio.vo;
 
 import ipp.aci.boleia.util.ConstantesCta;
-
 import java.util.List;
 
 /**
@@ -15,8 +14,7 @@ public class CtaPlusSincronizaAbastecimentoVo {
     /**
      * Construtor default da classe.
      */
-    public CtaPlusSincronizaAbastecimentoVo() {
-    }
+    public CtaPlusSincronizaAbastecimentoVo() { }
 
     /**
      * Constrói a classe com um erro de sincronização.

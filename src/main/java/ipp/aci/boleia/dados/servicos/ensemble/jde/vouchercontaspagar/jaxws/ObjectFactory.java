@@ -4,6 +4,7 @@ package ipp.aci.boleia.dados.servicos.ensemble.jde.vouchercontaspagar.jaxws;
 import javax.xml.bind.annotation.XmlRegistry;
 
 
+
 @XmlRegistry
 public class ObjectFactory {
 

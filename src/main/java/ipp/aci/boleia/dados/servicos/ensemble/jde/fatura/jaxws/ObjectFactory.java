@@ -4,6 +4,7 @@ package ipp.aci.boleia.dados.servicos.ensemble.jde.fatura.jaxws;
 import javax.xml.bind.annotation.XmlRegistry;
 
 
+
 @XmlRegistry
 public class ObjectFactory {
 
@@ -33,16 +34,6 @@ public class ObjectFactory {
     }
 
     
-    public MarcarTituloASerBaixadoLoteResponse createMarcarTituloASerBaixadoLoteResponse() {
-        return new MarcarTituloASerBaixadoLoteResponse();
-    }
-
-    
-    public MarcarTituloASerBaixadoLoteResp createMarcarTituloASerBaixadoLoteResp() {
-        return new MarcarTituloASerBaixadoLoteResp();
-    }
-
-    
     public GerarJDE createGerarJDE() {
         return new GerarJDE();
     }
@@ -50,16 +41,6 @@ public class ObjectFactory {
     
     public GerarJDEReq createGerarJDEReq() {
         return new GerarJDEReq();
-    }
-
-    
-    public MarcarTituloASerBaixadoLote createMarcarTituloASerBaixadoLote() {
-        return new MarcarTituloASerBaixadoLote();
-    }
-
-    
-    public MarcarTituloASerBaixadoLoteReq createMarcarTituloASerBaixadoLoteReq() {
-        return new MarcarTituloASerBaixadoLoteReq();
     }
 
     
@@ -103,6 +84,16 @@ public class ObjectFactory {
     }
 
     
+    public ProrrogarVencimento createProrrogarVencimento() {
+        return new ProrrogarVencimento();
+    }
+
+    
+    public ProrrogarVencimentoReq createProrrogarVencimentoReq() {
+        return new ProrrogarVencimentoReq();
+    }
+
+    
     public IncluirJDEResponse createIncluirJDEResponse() {
         return new IncluirJDEResponse();
     }
@@ -130,6 +121,16 @@ public class ObjectFactory {
     
     public IncluirJDEReq createIncluirJDEReq() {
         return new IncluirJDEReq();
+    }
+
+    
+    public ProrrogarVencimentoResponse createProrrogarVencimentoResponse() {
+        return new ProrrogarVencimentoResponse();
+    }
+
+    
+    public ProrrogarVencimentoResp createProrrogarVencimentoResp() {
+        return new ProrrogarVencimentoResp();
     }
 
     
@@ -178,18 +179,78 @@ public class ObjectFactory {
     }
 
     
+    public Detalhe createDetalhe() {
+        return new Detalhe();
+    }
+
+    
+    public PairOflistaFaturaRespKeyfaturaResp createPairOflistaFaturaRespKeyfaturaResp() {
+        return new PairOflistaFaturaRespKeyfaturaResp();
+    }
+
+    
+    public ArrayOfparcelaBaixadaPairOflistaParcelasBaixadasKeyparcelaBaixada createArrayOfparcelaBaixadaPairOflistaParcelasBaixadasKeyparcelaBaixada() {
+        return new ArrayOfparcelaBaixadaPairOflistaParcelasBaixadasKeyparcelaBaixada();
+    }
+
+    
+    public Parcela createParcela() {
+        return new Parcela();
+    }
+
+    
+    public ArrayOffaturaRespPairOflistaFaturaRespKeyfaturaResp createArrayOffaturaRespPairOflistaFaturaRespKeyfaturaResp() {
+        return new ArrayOffaturaRespPairOflistaFaturaRespKeyfaturaResp();
+    }
+
+    
+    public ArrayOfparcelaPairOflistaParcelasKeyparcela createArrayOfparcelaPairOflistaParcelasKeyparcela() {
+        return new ArrayOfparcelaPairOflistaParcelasKeyparcela();
+    }
+
+    
+    public PairOflistaDetalhesKeyDetalhe createPairOflistaDetalhesKeyDetalhe() {
+        return new PairOflistaDetalhesKeyDetalhe();
+    }
+
+    
+    public ArrayOfitemFaturaPairOflistaItemFaturaKeyitemFatura createArrayOfitemFaturaPairOflistaItemFaturaKeyitemFatura() {
+        return new ArrayOfitemFaturaPairOflistaItemFaturaKeyitemFatura();
+    }
+
+    
+    public ParcelaBaixada createParcelaBaixada() {
+        return new ParcelaBaixada();
+    }
+
+    
     public ItemFatura createItemFatura() {
         return new ItemFatura();
     }
 
     
-    public ParListasLancamentoRetorno createParListasLancamentoRetorno() {
-        return new ParListasLancamentoRetorno();
+    public FaturaResp createFaturaResp() {
+        return new FaturaResp();
+    }
+
+    
+    public PairOflistaFaturaKeyfatura createPairOflistaFaturaKeyfatura() {
+        return new PairOflistaFaturaKeyfatura();
+    }
+
+    
+    public ArrayOfCabecalhoPairOflistaCabecalhosKeyCabecalho createArrayOfCabecalhoPairOflistaCabecalhosKeyCabecalho() {
+        return new ArrayOfCabecalhoPairOflistaCabecalhosKeyCabecalho();
     }
 
     
     public EnsResponse createEnsResponse() {
         return new EnsResponse();
+    }
+
+    
+    public Cabecalho createCabecalho() {
+        return new Cabecalho();
     }
 
     
@@ -218,13 +279,8 @@ public class ObjectFactory {
     }
 
     
-    public MarcarTituloASerBaixadoLoteLancamentoResp createMarcarTituloASerBaixadoLoteLancamentoResp() {
-        return new MarcarTituloASerBaixadoLoteLancamentoResp();
-    }
-
-    
-    public PairOflistaParcelasKeymarcarTituloASerBaixadoLoteTituloParcelaReq createPairOflistaParcelasKeymarcarTituloASerBaixadoLoteTituloParcelaReq() {
-        return new PairOflistaParcelasKeymarcarTituloASerBaixadoLoteTituloParcelaReq();
+    public EnsRequest createEnsRequest() {
+        return new EnsRequest();
     }
 
     
@@ -235,106 +291,6 @@ public class ObjectFactory {
     
     public ArrayOfDetalhePairOflistaDetalhesKeyDetalhe createArrayOfDetalhePairOflistaDetalhesKeyDetalhe() {
         return new ArrayOfDetalhePairOflistaDetalhesKeyDetalhe();
-    }
-
-    
-    public Detalhe createDetalhe() {
-        return new Detalhe();
-    }
-
-    
-    public PairOflistaFaturaRespKeyfaturaResp createPairOflistaFaturaRespKeyfaturaResp() {
-        return new PairOflistaFaturaRespKeyfaturaResp();
-    }
-
-    
-    public ArrayOfparcelaBaixadaPairOflistaParcelasBaixadasKeyparcelaBaixada createArrayOfparcelaBaixadaPairOflistaParcelasBaixadasKeyparcelaBaixada() {
-        return new ArrayOfparcelaBaixadaPairOflistaParcelasBaixadasKeyparcelaBaixada();
-    }
-
-    
-    public Parcela createParcela() {
-        return new Parcela();
-    }
-
-    
-    public MarcarTituloASerBaixadoLoteTituloParcelaReq createMarcarTituloASerBaixadoLoteTituloParcelaReq() {
-        return new MarcarTituloASerBaixadoLoteTituloParcelaReq();
-    }
-
-    
-    public ListaParcelas createListaParcelas() {
-        return new ListaParcelas();
-    }
-
-    
-    public ArrayOffaturaRespPairOflistaFaturaRespKeyfaturaResp createArrayOffaturaRespPairOflistaFaturaRespKeyfaturaResp() {
-        return new ArrayOffaturaRespPairOflistaFaturaRespKeyfaturaResp();
-    }
-
-    
-    public PairOflistaTituloKeymarcarTituloASerBaixadoLoteTituloReq createPairOflistaTituloKeymarcarTituloASerBaixadoLoteTituloReq() {
-        return new PairOflistaTituloKeymarcarTituloASerBaixadoLoteTituloReq();
-    }
-
-    
-    public MarcarTituloASerBaixadoLoteTituloReq createMarcarTituloASerBaixadoLoteTituloReq() {
-        return new MarcarTituloASerBaixadoLoteTituloReq();
-    }
-
-    
-    public ArrayOfparcelaPairOflistaParcelasKeyparcela createArrayOfparcelaPairOflistaParcelasKeyparcela() {
-        return new ArrayOfparcelaPairOflistaParcelasKeyparcela();
-    }
-
-    
-    public ListaLancamentoRetorno createListaLancamentoRetorno() {
-        return new ListaLancamentoRetorno();
-    }
-
-    
-    public PairOflistaDetalhesKeyDetalhe createPairOflistaDetalhesKeyDetalhe() {
-        return new PairOflistaDetalhesKeyDetalhe();
-    }
-
-    
-    public ArrayOfitemFaturaPairOflistaItemFaturaKeyitemFatura createArrayOfitemFaturaPairOflistaItemFaturaKeyitemFatura() {
-        return new ArrayOfitemFaturaPairOflistaItemFaturaKeyitemFatura();
-    }
-
-    
-    public ParcelaBaixada createParcelaBaixada() {
-        return new ParcelaBaixada();
-    }
-
-    
-    public FaturaResp createFaturaResp() {
-        return new FaturaResp();
-    }
-
-    
-    public PairOflistaFaturaKeyfatura createPairOflistaFaturaKeyfatura() {
-        return new PairOflistaFaturaKeyfatura();
-    }
-
-    
-    public ArrayOfCabecalhoPairOflistaCabecalhosKeyCabecalho createArrayOfCabecalhoPairOflistaCabecalhosKeyCabecalho() {
-        return new ArrayOfCabecalhoPairOflistaCabecalhosKeyCabecalho();
-    }
-
-    
-    public Cabecalho createCabecalho() {
-        return new Cabecalho();
-    }
-
-    
-    public ListaTitulo createListaTitulo() {
-        return new ListaTitulo();
-    }
-
-    
-    public EnsRequest createEnsRequest() {
-        return new EnsRequest();
     }
 
 }

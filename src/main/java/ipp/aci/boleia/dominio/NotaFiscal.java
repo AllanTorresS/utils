@@ -51,6 +51,10 @@ public class NotaFiscal implements IPersistente, IPertenceRevendedor, IPertenceF
     @Column(name = "NO_NUMERO")
     private String numero;
 
+    @Size(max=10)
+    @Column(name = "NO_NUMERO_SERIE")
+    private String numeroSerie;
+
     @NotNull
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_ARQUIVO")
@@ -114,6 +118,14 @@ public class NotaFiscal implements IPersistente, IPertenceRevendedor, IPertenceF
         this.numero = numero;
     }
 
+    public String getNumeroSerie() {
+        return numeroSerie;
+    }
+
+    public void setNumeroSerie(String numeroSerie) {
+        this.numeroSerie = numeroSerie;
+    }
+
     public Arquivo getArquivo() {
         return arquivo;
     }
@@ -152,11 +164,6 @@ public class NotaFiscal implements IPersistente, IPertenceRevendedor, IPertenceF
 
     public void setValorTotal(BigDecimal valorTotal) {
         this.valorTotal = valorTotal;
-    }
-
-    @Transient
-    public String getNomeXml() {
-        return getNumero().concat(".xml");
     }
 
     public List<AutorizacaoPagamento> getAutorizacoesPagamento() {

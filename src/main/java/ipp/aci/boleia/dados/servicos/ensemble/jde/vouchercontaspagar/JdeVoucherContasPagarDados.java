@@ -87,10 +87,10 @@ public class JdeVoucherContasPagarDados extends JdeBaseDados<VoucherContasPagarS
      */
     private String obterMensagemErro(LiberarResp resposta) {
         String mensagemErro = "";
-        if (resposta.getMsgErro() != null) {
+        if(resposta.getMsgErro() != null) {
             mensagemErro = resposta.getMsgErro();
         }
-        if (resposta.getErrorDescription() != null) {
+        if(resposta.getErrorDescription() != null) {
             mensagemErro = mensagemErro + " - " + resposta.getErrorDescription();
         }
         return mensagemErro;

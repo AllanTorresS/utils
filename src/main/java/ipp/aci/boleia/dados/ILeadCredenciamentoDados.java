@@ -41,14 +41,13 @@ public interface ILeadCredenciamentoDados {
      * @return {@link LeadCredenciamentoPostoIntegradorVo} Dados do lead de posto.
      * @throws ExcecaoValidacao Caso não exista dados de Lead para o posto com o CNPJ informado.
      */
-    LeadCredenciamentoPostoIntegradorVo consultarPostoLead(String cnpj) throws ExcecaoValidacao;
+	LeadCredenciamentoPostoIntegradorVo consultarPostoLead(String cnpj) throws ExcecaoValidacao;
 
-    /**
+	/**
      * Valida a existencia de Lead para o CNPJ informado.
      *
      * @param cnpj Parâmetro de busca do Lead.
      * @return true em caso de existencia do Lead, caso contrario false.
      */
-    Boolean validarLeadExistente(String cnpj);
-
+	Boolean validarLeadExistente(String cnpj);
 }

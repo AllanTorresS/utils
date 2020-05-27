@@ -1,8 +1,12 @@
 package ipp.aci.boleia.dados;
 
+import ipp.aci.boleia.dados.servicos.ensemble.jde.fatura.jaxws.IncluirJDEReq;
+import ipp.aci.boleia.dados.servicos.ensemble.jde.fatura.jaxws.IncluirJDEResp;
+import ipp.aci.boleia.dominio.AjusteCobranca;
 import ipp.aci.boleia.dominio.CicloRepasse;
 import ipp.aci.boleia.dominio.Cobranca;
 import ipp.aci.boleia.dominio.PedidoCreditoFrota;
+import ipp.aci.boleia.util.excecao.ExcecaoValidacao;
 
 import java.util.List;
 
@@ -15,11 +19,10 @@ public interface IFaturaDados {
     /**
      * Método que inclui uma fatura nova no JDE.
      * 
-     * @param cobranca Cobrança para qual será gerada a fatura.
-     * @param cobrancaAnterior A cobranca anterior à atual, para compensação de ajustes feitos no ciclo anterior
-     * @return Cobrança atualizada
+     * @param requisicao a requisição de inclusão de fatura que deve ser enviada ao JDE
+     * @return resposta do JDE
      */
-    Cobranca incluir(Cobranca cobranca, Cobranca cobrancaAnterior);
+    IncluirJDEResp incluir(IncluirJDEReq requisicao);
 
 
     /**
@@ -55,4 +58,21 @@ public interface IFaturaDados {
      * @return CicloRepasse atualizado
      */
     CicloRepasse consultarCicloRepasse(CicloRepasse cicloRepasse);
+
+    /**
+     * Cria uma requisicao para inclusao de cobranca no JDE.
+     *
+     * @param cobranca A cobranca em questao
+     * @param cobrancaAnterior A cobrança anterior à cobrança em questão
+     * @return Um objeto de requisicao conforme o contrato de uso do JDE
+     */
+    IncluirJDEReq obterRequisicaoIncluir(Cobranca cobranca, Cobranca cobrancaAnterior);
+
+    /**
+     * Método que alterar a data de vencimento em um documento
+     *
+     * @param ajusteCobranca O ajuste realizado na cobrança
+     * @throws ExcecaoValidacao caso ocorra erro durante o processo.
+     */
+    void prorrogarVencimento(AjusteCobranca ajusteCobranca) throws ExcecaoValidacao;
 }

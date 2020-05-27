@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Contrato para implementacao de repositorios de entidades ItemAutorizacaoPagamento
  */
-public interface IItemAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<ItemAutorizacaoPagamento> {
+public interface  IItemAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<ItemAutorizacaoPagamento> {
 
     /**
      * Obtem os itens das transacoes de acordo com o codigo da frota e codigo do ponto de venda,

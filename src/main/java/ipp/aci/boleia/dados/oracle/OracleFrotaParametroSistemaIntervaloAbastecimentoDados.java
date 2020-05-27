@@ -5,7 +5,7 @@ import ipp.aci.boleia.dominio.FrotaParametroSistemaIntervaloAbastecimento;
 import org.springframework.stereotype.Repository;
 
 /**
- * Implementação oracle para {@link ipp.aci.boleia.dados.IFrotaParametroSistemaIntervaloAbastecimentoDados}
+ * Implementação oracle para {@link IFrotaParametroSistemaIntervaloAbastecimentoDados}
  */
 @Repository
 public class OracleFrotaParametroSistemaIntervaloAbastecimentoDados extends OracleRepositorioBoleiaDados<FrotaParametroSistemaIntervaloAbastecimento> implements IFrotaParametroSistemaIntervaloAbastecimentoDados {

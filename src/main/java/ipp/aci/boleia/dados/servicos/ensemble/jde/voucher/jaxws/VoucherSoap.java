@@ -10,6 +10,7 @@ import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
 
 
+
 @WebService(name = "voucherSoap", targetNamespace = "http://ipiranga.com.br/voucher")
 @XmlSeeAlso({
     ObjectFactory.class
@@ -23,16 +24,16 @@ public interface VoucherSoap {
     @RequestWrapper(localName = "buscar", targetNamespace = "http://ipiranga.com.br/voucher", className = "ipp.aci.boleia.dados.servicos.ensemble.jde.voucher.jaxws.Buscar")
     @ResponseWrapper(localName = "buscarResponse", targetNamespace = "http://ipiranga.com.br/voucher", className = "ipp.aci.boleia.dados.servicos.ensemble.jde.voucher.jaxws.BuscarResponse")
     public BuscarResp buscar(
-            @WebParam(name = "pRequest", targetNamespace = "http://ipiranga.com.br/voucher")
-                    BuscarReq pRequest);
+        @WebParam(name = "pRequest", targetNamespace = "http://ipiranga.com.br/voucher")
+        BuscarReq pRequest);
 
-
+    
     @WebMethod(action = "http://ipiranga.com.br/voucher/ws.voucher.Service.criar")
     @WebResult(name = "criarResult", targetNamespace = "http://ipiranga.com.br/voucher")
     @RequestWrapper(localName = "criar", targetNamespace = "http://ipiranga.com.br/voucher", className = "ipp.aci.boleia.dados.servicos.ensemble.jde.voucher.jaxws.Criar")
     @ResponseWrapper(localName = "criarResponse", targetNamespace = "http://ipiranga.com.br/voucher", className = "ipp.aci.boleia.dados.servicos.ensemble.jde.voucher.jaxws.CriarResponse")
     public CriarResp criar(
-            @WebParam(name = "pRequest", targetNamespace = "http://ipiranga.com.br/voucher")
-                    CriarReq pRequest);
+        @WebParam(name = "pRequest", targetNamespace = "http://ipiranga.com.br/voucher")
+        CriarReq pRequest);
 
 }

@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Ens_Response")
 @XmlSeeAlso({
@@ -18,7 +19,7 @@ import javax.xml.bind.annotation.XmlType;
     ListarOrgEmisDocumentosPFResp.class,
     ListarOrgEmisPorDocPFResp.class,
     StatusIntegracao.class,
-    V2.class
+    V2 .class
 })
 public class EnsResponse
     extends EnsMessagebody

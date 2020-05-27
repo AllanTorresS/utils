@@ -22,9 +22,9 @@ public class AjusteCobrancaVo {
     /**
      * Constrói o VO com os dados necessário.
      *
-     * @param dataAjuste      Data em que o ajuste foi realizado.
+     * @param dataAjuste Data em que o ajuste foi realizado.
      * @param descricaoAjuste Descrição do ajuste realizado.
-     * @param valorAjuste     Valor do ajuste.
+     * @param valorAjuste Valor do ajuste.
      */
     public AjusteCobrancaVo(String dataAjuste, String descricaoAjuste, BigDecimal valorAjuste) {
         this.dataAjuste = dataAjuste;

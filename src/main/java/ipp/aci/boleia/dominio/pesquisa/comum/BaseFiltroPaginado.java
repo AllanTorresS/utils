@@ -7,6 +7,17 @@ public class BaseFiltroPaginado {
 
     private InformacaoPaginacao paginacao;
 
+    public BaseFiltroPaginado(){
+    }
+
+    /**
+     * Construtor de um BaseFiltroPaginado
+     * @param paginacao Informações da paginação
+     */
+    public BaseFiltroPaginado(InformacaoPaginacao paginacao){
+        this.paginacao = paginacao;
+    }
+
     /**
      * Retorna os dados da paginacao
      *
@@ -23,5 +34,15 @@ public class BaseFiltroPaginado {
      */
     public void setPaginacao(InformacaoPaginacao paginacao) {
         this.paginacao = paginacao;
+    }
+
+    /**
+     * Limpa as informações de paginação presentes no filtro.
+     */
+    public void limparPaginacao() {
+        if(paginacao != null) {
+            paginacao.setTamanhoPagina(null);
+            paginacao.setPagina(null);
+        }
     }
 }

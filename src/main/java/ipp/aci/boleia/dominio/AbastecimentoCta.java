@@ -149,4 +149,12 @@ public class AbastecimentoCta implements IPersistente {
     public void limparErroSincronizacao() {
         this.erroSincronismo = null;
     }
+
+    /**
+     * Define Status como impotado e remove o erro de importação
+     */
+    public void defineComoImportado() {
+        this.setStatusImportacao(StatusImportacaoCta.IMPORTADO.getValue());
+        this.setErroImportacao(null);
+    }
 }

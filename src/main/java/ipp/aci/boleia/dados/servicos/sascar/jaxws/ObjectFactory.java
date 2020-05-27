@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlRegistry;
 import javax.xml.namespace.QName;
 
 
+
 @XmlRegistry
 public class ObjectFactory {
 
@@ -1213,7 +1214,7 @@ public class ObjectFactory {
     
     @XmlElementDecl(namespace = "http://webservice.web.integracao.sascar.com.br/", name = "obterMacroTd40")
     public JAXBElement<ObterMacroTd40> createObterMacroTd40(ObterMacroTd40 value) {
-        return new JAXBElement<ObterMacroTd40>(_ObterMacroTd40_QNAME, ObterMacroTd40.class, null, value);
+        return new JAXBElement<ObterMacroTd40>(_ObterMacroTd40_QNAME, ObterMacroTd40 .class, null, value);
     }
 
     
@@ -1321,7 +1322,7 @@ public class ObjectFactory {
     
     @XmlElementDecl(namespace = "http://webservice.web.integracao.sascar.com.br/", name = "obterMacroTms3")
     public JAXBElement<ObterMacroTms3> createObterMacroTms3(ObterMacroTms3 value) {
-        return new JAXBElement<ObterMacroTms3>(_ObterMacroTms3_QNAME, ObterMacroTms3.class, null, value);
+        return new JAXBElement<ObterMacroTms3>(_ObterMacroTms3_QNAME, ObterMacroTms3 .class, null, value);
     }
 
     

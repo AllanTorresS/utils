@@ -80,6 +80,12 @@ public class MotorGeracaoRelatorios implements IPersistente {
     @Column(name="ID_EXTENSAO_ARQUIVO")
     private Integer extensaoArquivo;
 
+    @Column(name = "VA_TOTAL_REGISTROS")
+    private Long totalRegistros;
+
+    @Column(name = "VA_REGISTROS_PROCESSADOS")
+    private Long registrosProcessados;
+
     @Override
     public Long getId() {
         return id;
@@ -136,5 +142,21 @@ public class MotorGeracaoRelatorios implements IPersistente {
 
     public void setMsgErro(String msgErro) {
         this.msgErro = msgErro;
+    }
+
+    public Long getTotalRegistros() {
+        return totalRegistros;
+    }
+
+    public void setTotalRegistros(Long totalRegistros) {
+        this.totalRegistros = totalRegistros;
+    }
+
+    public Long getRegistrosProcessados() {
+        return registrosProcessados;
+    }
+
+    public void setRegistrosProcessados(Long registrosProcessados) {
+        this.registrosProcessados = registrosProcessados;
     }
 }

@@ -53,10 +53,12 @@ public class PontoDeVendaSd {
     private ITaxaPerfilDados repositorioTaxaPerfil;
 
     @Autowired
-    private ILeadCredenciamentoDados repositorioLeadCredenciamentoPosto;
+	private ILeadCredenciamentoDados repositorioLeadCredenciamentoPosto;
 
     @Autowired
     private IPontoDeVendaDados repositorioPontoVenda;
+
+
     /**
      * Preenche o questionário do ponto de venda com as opções default caso não tenha respostas preenchidas
      *
@@ -231,34 +233,40 @@ public class PontoDeVendaSd {
 					return StatusCredenciamentoPosto.INICIADO_CREDENCIAMENTO_VALIDO;
 				} else {
 					return StatusCredenciamentoPosto.INICIADO_CREDENCIAMENTO_EXPIRADO;
-                }
-            }
-        }
+				}
+			}
+		}
 
-        if (!verificarMesmaRede(usuario, pontoDeVenda)) {
-            return StatusCredenciamentoPosto.OUTRA_REDE;
-        }
+    	if (!verificarMesmaRede(usuario, pontoDeVenda)) {
+    		return StatusCredenciamentoPosto.OUTRA_REDE;
+    	}
 
-        return StatusCredenciamentoPosto.INICIAR_CREDENCIAMENTO;
+		return StatusCredenciamentoPosto.INICIAR_CREDENCIAMENTO;
     }
 
     /**
      * Verifica se o ponto de venda pertence a mesma rede do usuário através da raiz do cnpj.
      *
-     * @param usuario      {@link Usuario} Usuário.
+     * @param usuario {@link Usuario} Usuário.
      * @param pontoDeVenda {@link PontoDeVenda} Ponto de venda.
      * @return true caso seja da mesma rede se não false.
      */
     private static boolean verificarMesmaRede(Usuario usuario, PontoDeVenda pontoDeVenda) {
-        if (usuario != null && !CollectionUtils.isNullOrEmpty(usuario.getPontosDeVenda())) {
-            if (usuario.getPontosDeVenda().get(0).getComponenteAreaAbastecimento().getCodigoPessoa().toString().substring(0, 8).
-                    equals(pontoDeVenda.getComponenteAreaAbastecimento().getCodigoPessoa().toString().substring(0, 8))) {
-                return true;
-            } else {
-                return false;
-            }
+    	if (usuario != null && !CollectionUtils.isNullOrEmpty(usuario.getPontosDeVenda())) {
+
+    	    Long usuarioPontoVendaCnpj = usuario.getPontosDeVenda().get(0).getComponenteAreaAbastecimento().getCodigoPessoa();
+    	    Long pontoVendaCnpj = pontoDeVenda.getComponenteAreaAbastecimento().getCodigoPessoa();
+
+                if (String.format("%014d",usuarioPontoVendaCnpj).substring(0, 8)
+                        .equals(String.format("%014d",pontoVendaCnpj).substring(0, 8))){
+                    return true;
+                }
+                else{
+                    return false;
+                }
+
     	}
-        return true;
+    	return true;
     }
 
     /**
@@ -269,12 +277,13 @@ public class PontoDeVendaSd {
      * @return true caso encontre um credenciamento pendente se não false.
      */
     private static boolean verificarCredenciamentoPendente(Usuario usuario, PontoDeVenda pontoDeVenda) {
+  
         if (usuario != null && !CollectionUtils.isNullOrEmpty(usuario.getPontosDeVenda()) && !usuario.getPontosDeVenda().contains(pontoDeVenda)
-    			&& usuario.getPontosDeVenda().stream().anyMatch(pv -> StatusHabilitacaoPontoVenda.PENDENTE_ACEITE.getValue()
-                .equals(pv.getStatusHabilitacao()) || pv.getTokenCredenciamento() != null)) {
-    		return true;
-    	}
-    	return false;
+                && (StatusHabilitacaoPontoVenda.PENDENTE_ACEITE.getValue().equals(pontoDeVenda.getStatusHabilitacao())
+                || pontoDeVenda.getTokenCredenciamento() != null )) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -290,13 +299,13 @@ public class PontoDeVendaSd {
 
     	if (!Strings.isNullOrEmpty(pontoDeVenda.getPerfilVenda())) {
     		if(PerfilPontoDeVenda.RODOVIA.name().equalsIgnoreCase(pontoDeVenda.getPerfilVenda())) {
-                return repositorioTaxaPerfil.obterPorTipo(PerfilPontoDeVenda.RODOVIA);
+    			return repositorioTaxaPerfil.obterPorTipo(PerfilPontoDeVenda.RODOVIA);
     		}
     		if(PerfilPontoDeVenda.URBANO.name().equalsIgnoreCase(pontoDeVenda.getPerfilVenda())) {
-                return repositorioTaxaPerfil.obterPorTipo(PerfilPontoDeVenda.URBANO);
-            }
-        }
-        return repositorioTaxaPerfil.obterPorTipo(PerfilPontoDeVenda.OUTROS);
+    			return repositorioTaxaPerfil.obterPorTipo(PerfilPontoDeVenda.URBANO);
+    		}
+    	}
+    	return repositorioTaxaPerfil.obterPorTipo(PerfilPontoDeVenda.OUTROS);
     }
 
     /**

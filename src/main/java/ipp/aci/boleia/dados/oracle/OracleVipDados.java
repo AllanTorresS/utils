@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
  * Repositório de entidades Vip
  */
 @Repository
-public class OracleVipDados extends OracleRepositorioBoleiaDados<Vip> implements IVipDados  {
+public class OracleVipDados extends OracleRepositorioBoleiaDados<Vip> implements IVipDados {
 
     /**
      * Instancia o repositorio

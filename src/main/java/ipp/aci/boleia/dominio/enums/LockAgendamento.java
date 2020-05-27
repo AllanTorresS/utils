@@ -37,9 +37,10 @@ public enum LockAgendamento {
     CONCILIACAO_REPASSE                             (ConstantesDuracao.CINCO_MINUTO, ConstantesDuracao.UM_SEGUNDO),
     ATUALIZACAO_STATUS_CAMPANHA                     (ConstantesDuracao.CINCO_MINUTO, ConstantesDuracao.UM_SEGUNDO),
     IMPORTACAO_EMAILS_NOTAS                         (ConstantesDuracao.UMA_HORA, ConstantesDuracao.UM_SEGUNDO),
-    IMPORTACAO_CONCILIACAO_AUTOMATICA_NOTAS_FISCAIS (ConstantesDuracao.DUAS_HORAS, ConstantesDuracao.DUAS_HORAS);
+    IMPORTACAO_CONCILIACAO_AUTOMATICA_NOTAS_FISCAIS (ConstantesDuracao.DUAS_HORAS, ConstantesDuracao.DUAS_HORAS),
+    EMAIL_MENSAL_KMV_DONO_FROTA                     (ConstantesDuracao.CINCO_MINUTO,ConstantesDuracao.UM_SEGUNDO);
 
-    private final long duracao;
+	private final long duracao;
     private final long duracaoMinima;
     /**
      * Construtor da enum

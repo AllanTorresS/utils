@@ -345,7 +345,8 @@ public class DispositivoMotoristaSd {
      * @return true se motorista possui dispositivo, false caso contrário
      */
     public boolean motoristaPossuiDispositivo(Long idMotorista) {
-        return repositorio.obterPorMotorista(idMotorista) != null;
+        List<DispositivoMotorista> dispositivoMotoristas = repositorio.obterPorMotorista(idMotorista);
+        return dispositivoMotoristas != null && !dispositivoMotoristas.isEmpty();
     }
 
     /**
@@ -355,8 +356,13 @@ public class DispositivoMotoristaSd {
      * @return true se motorista possui dispositivo, false caso contrário
      */
     public boolean motoristaPossuiDispositivoHabilitado(Long idMotorista) {
-        DispositivoMotorista dispositivo = repositorio.obterPorMotorista(idMotorista);
-        return dispositivo != null && StatusHabilitacao.HABILITADO.getValue().equals(dispositivo.getStatusHabilitacao());
+        List<DispositivoMotorista> dispositivoMotoristas = repositorio.obterPorMotorista(idMotorista);
+        for (DispositivoMotorista dispositivo : dispositivoMotoristas) {
+            if (StatusHabilitacao.HABILITADO.getValue().equals(dispositivo.getStatusHabilitacao())){
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

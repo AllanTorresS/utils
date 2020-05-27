@@ -1,11 +1,12 @@
 
 package ipp.aci.boleia.dados.servicos.ensemble.jde.contabancaria.jaxws;
 
+import java.math.BigDecimal;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import java.math.BigDecimal;
+
 
 
 @XmlAccessorType(XmlAccessType.FIELD)

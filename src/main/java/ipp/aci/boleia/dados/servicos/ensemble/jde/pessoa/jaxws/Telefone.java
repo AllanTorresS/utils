@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "telefone", propOrder = {
     "ddd",

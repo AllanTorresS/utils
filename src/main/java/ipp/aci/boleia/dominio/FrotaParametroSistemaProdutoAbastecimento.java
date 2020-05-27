@@ -60,16 +60,15 @@ public class FrotaParametroSistemaProdutoAbastecimento implements IPersistente, 
     /**
      * Construtor
      */
-    public FrotaParametroSistemaProdutoAbastecimento() {
+    public FrotaParametroSistemaProdutoAbastecimento(){
     }
 
     /**
      * Construtor
-     *
      * @param frotaParametroSistema frotaParametroSistema para o veiculo
-     * @param veiculo               veiculo do parametro do sistema
-     * @param tipoCombustivel       combustível  do veiculo
-     * @param permitido             informa se o combustível  é permitido ou não
+     * @param veiculo veiculo do parametro do sistema
+     * @param tipoCombustivel combustível  do veiculo
+     * @param permitido informa se o combustível  é permitido ou não
      */
     public FrotaParametroSistemaProdutoAbastecimento(FrotaParametroSistema frotaParametroSistema, Veiculo veiculo, TipoCombustivel tipoCombustivel, Boolean permitido) {
         this.frotaParametroSistema = frotaParametroSistema;

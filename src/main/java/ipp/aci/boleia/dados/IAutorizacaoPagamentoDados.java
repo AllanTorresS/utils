@@ -139,12 +139,13 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
     ResultadoPaginado<AutorizacaoPagamento> pesquisaPaginada(FiltroPesquisaAbastecimentoVo filtro);
 
     /**
-     * Obtem a lista de notas que ainda não acumularam Km de Vantagens
+     * Pesquisa AutorizacaoPagamento paginado a partir do filtro informado
      *
-     * @param numeroDeRegistros Limita o número de registros a serem retornados.
-     * @return A lista de notas que ainda não acumularam Km de Vantagens
+     * @param filtro O filtro da busca
+     * @param fetchCamposExportacao deve incluir dados para exportação
+     * @return Uma lista de ResultadoPaginado localizadas
      */
-    List<AutorizacaoPagamento> obterNotasSemAcumuloKmv(Integer numeroDeRegistros);
+    ResultadoPaginado<AutorizacaoPagamento> pesquisaPaginada(FiltroPesquisaAbastecimentoVo filtro, Boolean fetchCamposExportacao);
 
     /**
      * Obtem todas autorizações aguardando saldo da frota para Autorizar
@@ -249,6 +250,7 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
 
     /**
      * Obtem as autorizacoes referente a uma operação de estorno, sejam as negativas e as geradas para correcao
+     *
      * @param idAutorizacaoPagamentoCancelada O código identificador da autorizacao cancelada
      * @return As autorizacoes de estorno
      */
@@ -298,18 +300,16 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
 
     /**
      * Obtem a litragem do abastecimento anterior ao abastecimento parametrizado
-     *
-     * @param idAbastecimento   O id do abastecimento de referência
+     * @param idAbastecimento O id do abastecimento de referência
      * @param dataAbastecimento A data do abastecimento de referência
-     * @param placaVeiculo      A placa do veiculo do abastecimento de referência
-     * @param cnpjFrota         O cnpj da frota do veiculo
+     * @param placaVeiculo A placa do veiculo do abastecimento de referência
+     * @param cnpjFrota O cnpj da frota do veiculo
      * @return litros do abastecimento anterior, caso não encontrado retorna null
      */
     BigDecimal obterLitragemDoAbastecimentoAnterior(Long idAbastecimento, Date dataAbastecimento, String placaVeiculo, Long cnpjFrota);
 
     /**
      * Busca o estorno negativo associado a uma autorização de pagamento.
-     *
      * @param idAutorizacaoPagamento identificador da autorização de pagamento que deve ter o estorno localizado.
      * @return a autorização de pagamento referente a um estorno.
      */
@@ -317,6 +317,7 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
 
     /**
      * Obtém abastecimentos com o qual a nota pode ser consolidada
+     *
      * @param cnpjDest CPNJ do destinatário da nota
      * @param cnpjEmit CNPJ do emitente da nota
      * @param dataEmissao Data de emissão da nota

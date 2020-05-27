@@ -6,6 +6,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
 
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Response", namespace = "http://ipiranga.com.br/statusIntegracao", propOrder = {
     "e1MessageList",

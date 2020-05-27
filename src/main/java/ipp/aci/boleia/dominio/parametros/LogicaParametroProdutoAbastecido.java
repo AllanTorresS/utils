@@ -13,6 +13,7 @@ import ipp.aci.boleia.dominio.Veiculo;
 import ipp.aci.boleia.dominio.enums.StatusExecucaoParametroSistema;
 import ipp.aci.boleia.dominio.vo.ContextoExecucaoParametroSistemaVo;
 import ipp.aci.boleia.dominio.vo.ResultadoExecucaoParametroSistemaVo;
+import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.i18n.Mensagens;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -58,6 +59,7 @@ public class LogicaParametroProdutoAbastecido implements ILogicaParametroSistema
                     }
                     if (!abastecimentoValido) {
                         resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
+                        resultado.setCodigoErro(Erro.ERRO_AUTORIZACAO_PRODUTO_ABASTECIDO);
                         String nomeCombustivelInformado = obterNomeCombustivel(item.getCombustivel().getId(), item.getNome());
                         resultado.setMensagemErro(mensagens.obterMensagem("parametro.sistema.erro.abastecimento.produto.abastecido", autorizacao.getVeiculo().getPlaca(), nomeCombustivelInformado));
                         break;

@@ -941,4 +941,22 @@ public class PontoDeVenda implements IPersistente, IExclusaoLogica, IPertenceRev
         }
         return bandeira.getCodigoCorporativo().equals(TiposBandeiras.BANDEIRA_BRANCA.getCodigoCorporativo());
     }
+
+    /**
+     * Informa se o ponto de venda é ou não bandeira ipiranga
+     *
+     * @return se o ponto de venda é ou não bandeira ipiranga
+     */
+    public Boolean isBandeiraIpiranga() {
+        Componente areaDeAbastecimento = getComponenteAreaAbastecimento();
+        if (areaDeAbastecimento == null) {
+            return false;
+        }
+
+        Bandeira bandeira = areaDeAbastecimento.getBandeira();
+        if (bandeira == null) {
+            return false;
+        }
+        return bandeira.getCodigoCorporativo().equals(TiposBandeiras.IPIRANGA.getCodigoCorporativo());
+    }
 }

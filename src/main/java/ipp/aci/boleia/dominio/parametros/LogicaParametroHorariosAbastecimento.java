@@ -11,6 +11,7 @@ import ipp.aci.boleia.dominio.vo.ResultadoExecucaoParametroSistemaVo;
 import ipp.aci.boleia.util.DiaSemana;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioFormatacaoData;
+import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.i18n.Mensagens;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -45,12 +46,22 @@ public class LogicaParametroHorariosAbastecimento implements ILogicaParametroSis
                 .findFirst()
                 .ifPresent(h -> {
                     resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
+                    resultado.setCodigoErro(Erro.ERRO_AUTORIZACAO_DIAS_HORARIOS_PERMITIDOS);
                     resultado.setMensagemErro(obterMensagemErro(autorizacao, frotaParametroSistema.getHorarios(), tipoVeiculo, diaSemana));
                 });
         }
         return resultado;
     }
 
+    /**
+     * Retorna a mensagem de erro lançada pelo parametro de uso.
+     *
+     * @param autorizacaoPagamento Autorização de pagamento que foi verificada.
+     * @param horarios Lista de horários permitidos para abastecimento.
+     * @param tipoVeiculo Tipo de veículo que tentou realizar o abastecimento.
+     * @param diaSemana Dia da semana que ocorreu a tentativa de abastecimento.
+     * @return A mensagem lançada.
+     */
     private String obterMensagemErro(AutorizacaoPagamento autorizacaoPagamento, List<FrotaParametroSistemaHorario> horarios, TipoVeiculo tipoVeiculo, Integer diaSemana) {
         Veiculo veiculo = autorizacaoPagamento.getVeiculo();
         String mensagem = mensagens.obterMensagem(

@@ -10,6 +10,7 @@ import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
 
 
+
 @WebService(name = "contaBancariaSoap", targetNamespace = "http://ipiranga.com.br/dadosContaBancaria")
 @XmlSeeAlso({
     ObjectFactory.class
@@ -23,7 +24,7 @@ public interface ContaBancariaSoap {
     @RequestWrapper(localName = "dadosContaBancaria", targetNamespace = "http://ipiranga.com.br/dadosContaBancaria", className = "ipp.aci.boleia.dados.servicos.ensemble.jde.contabancaria.jaxws.DadosContaBancaria")
     @ResponseWrapper(localName = "dadosContaBancariaResponse", targetNamespace = "http://ipiranga.com.br/dadosContaBancaria", className = "ipp.aci.boleia.dados.servicos.ensemble.jde.contabancaria.jaxws.DadosContaBancariaResponse")
     public DadosContaBancariaResp dadosContaBancaria(
-            @WebParam(name = "pRequest", targetNamespace = "http://ipiranga.com.br/dadosContaBancaria")
-                    DadosContaBancariaReq pRequest);
+        @WebParam(name = "pRequest", targetNamespace = "http://ipiranga.com.br/dadosContaBancaria")
+        DadosContaBancariaReq pRequest);
 
 }

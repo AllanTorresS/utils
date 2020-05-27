@@ -6,6 +6,7 @@ import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 
 
+
 @XmlType(name = "tipoLayout")
 @XmlEnum
 public enum TipoLayout {

@@ -22,7 +22,7 @@ public interface IMotorGeracaoRelatoriosDados extends IRepositorioBoleiaDados<Mo
     /**
      * Verifica se já existe uma geração de relatório em andamento com base no filtro
      * e tipo de relatório informados.
-     *
+     * @param <F> O tipo genérico utilizado para o filtro
      * @param filtro Filtro de consulta utilizado
      * @param tipoRelatorio Tipo de relatório a ser consultado
      * @return true caso o relatório esteja sendo produzido.

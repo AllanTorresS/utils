@@ -16,6 +16,9 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "TIPO_CONDICAO_CAMPANHA", schema = "BOLEIA_CAMPANHA_SCHEMA")
 public class TipoCondicaoCampanha implements IPersistente {
+
+    private static final long serialVersionUID = 5683897906987027021L;
+
     @Id
     @Column(name = "CD_TIPO_CONDICAO")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_TIPO_CONDICAO")

@@ -18,7 +18,8 @@ public enum TipoTokenJwt {
     DOWNLOAD_ARQUIVO         (null,                                 1,  false),
     SISTEMA_EXTERNO          (TipoPerfilUsuario.SISTEMA_EXTERNO,  720,  false),
     PRE_CREDENCIAMENTO_POSTO (TipoPerfilUsuario.REVENDA,   		    1,  false, TipoTokenJwt.getPermissoesPreCredenciamentoPosto()),
-	CREDENCIAMENTO_POSTO     (TipoPerfilUsuario.REVENDA,           24,  false, TipoTokenJwt.getPermissoesCredenciamentoPosto());
+	CREDENCIAMENTO_POSTO     (TipoPerfilUsuario.REVENDA,           24,  false, TipoTokenJwt.getPermissoesCredenciamentoPosto()),
+    MODULO_INTERNO           (TipoPerfilUsuario.MODULO_INTERNO,     1,  false);
 
     private final int duracaoHoras;
     private final TipoPerfilUsuario tipoPerfil;

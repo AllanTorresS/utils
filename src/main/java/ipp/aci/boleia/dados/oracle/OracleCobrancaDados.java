@@ -109,7 +109,7 @@ public class OracleCobrancaDados extends OracleRepositorioBoleiaDados<Cobranca> 
 		parametros.add(new ParametroPesquisaIgual("transacoesConsolidadas.frotaPtov.frota.id", idFrota));
 		parametros.add(new ParametroPesquisaDiferente("status", StatusPagamentoCobranca.PAGO.getValue()));
 
-		return pesquisar(new ParametroOrdenacaoColuna("dataVencimentoPagto",Ordenacao.DECRESCENTE), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+		return pesquisar(new ParametroOrdenacaoColuna("dataVencimentoPagto", Ordenacao.DECRESCENTE), parametros.toArray(new ParametroPesquisa[parametros.size()]));
 	}
 
 	@Override
@@ -120,7 +120,7 @@ public class OracleCobrancaDados extends OracleRepositorioBoleiaDados<Cobranca> 
 			parametros.add(new ParametroPesquisaMaior("valorTotal", BigDecimal.ZERO));
 			parametros.add(new ParametroPesquisaDiferente("status", StatusPagamentoCobranca.PAGO.getValue()));
 
-			List<Cobranca> cobrancas = pesquisar(new ParametroOrdenacaoColuna("dataVencimentoPagto",Ordenacao.DECRESCENTE), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+			List<Cobranca> cobrancas = pesquisar(new ParametroOrdenacaoColuna("dataVencimentoPagto", Ordenacao.DECRESCENTE), parametros.toArray(new ParametroPesquisa[parametros.size()]));
 			return !cobrancas.isEmpty();
 		}
 
@@ -135,7 +135,7 @@ public class OracleCobrancaDados extends OracleRepositorioBoleiaDados<Cobranca> 
 			parametros.add(new ParametroPesquisaMaior("valorTotal", BigDecimal.ZERO));
 			parametros.add(new ParametroPesquisaIgual("status", StatusPagamentoCobranca.VENCIDO.getValue()));
 
-			List<Cobranca> cobrancas = pesquisar(new ParametroOrdenacaoColuna("dataVencimentoPagto",Ordenacao.DECRESCENTE), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+			List<Cobranca> cobrancas = pesquisar(new ParametroOrdenacaoColuna("dataVencimentoPagto", Ordenacao.DECRESCENTE), parametros.toArray(new ParametroPesquisa[parametros.size()]));
 			return !cobrancas.isEmpty();
 		}
 
@@ -144,7 +144,7 @@ public class OracleCobrancaDados extends OracleRepositorioBoleiaDados<Cobranca> 
 
 	@Override
 	public List<Cobranca> buscarCobrancasParaConsultarAvisoDebito() {
-		return pesquisar(new ParametroOrdenacaoColuna("dataVencimentoPagto",Ordenacao.DECRESCENTE),
+		return pesquisar(new ParametroOrdenacaoColuna("dataVencimentoPagto", Ordenacao.DECRESCENTE),
 				new ParametroPesquisaNulo("numeroDocumento", true),
 				new ParametroPesquisaNulo("tipoDocumento", true),
 				new ParametroPesquisaNulo("ciaDocumento", true),
@@ -158,7 +158,7 @@ public class OracleCobrancaDados extends OracleRepositorioBoleiaDados<Cobranca> 
 		InformacaoPaginacao paginacao = new InformacaoPaginacao();
 		paginacao.setPagina(1);
 		paginacao.setTamanhoPagina(1);
-		paginacao.getParametrosOrdenacaoColuna().add(new ParametroOrdenacaoColuna("id",Ordenacao.DECRESCENTE));
+		paginacao.getParametrosOrdenacaoColuna().add(new ParametroOrdenacaoColuna("id", Ordenacao.DECRESCENTE));
 		List<Cobranca> cobrancas = pesquisar(paginacao, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
 		if(cobrancas != null && !cobrancas.isEmpty()){
 			return cobrancas.get(0);
@@ -230,6 +230,11 @@ public class OracleCobrancaDados extends OracleRepositorioBoleiaDados<Cobranca> 
         parametros.add(new ParametroPesquisaMenor("numeroTentativasEnvio", new BigDecimal(numeroTentativas)));
         return pesquisar(new ParametroOrdenacaoColuna("dataFimPeriodo", Ordenacao.CRESCENTE), parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
+
+	@Override
+	public Cobranca desanexar(Cobranca cobranca) {
+		return super.desanexar(cobranca);
+	}
 
 	/**
 	 * Constroi um {@link ParametroPesquisa} para status de cobrança

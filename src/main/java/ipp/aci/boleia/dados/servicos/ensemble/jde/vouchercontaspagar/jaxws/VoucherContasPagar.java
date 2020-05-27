@@ -1,17 +1,18 @@
 
 package ipp.aci.boleia.dados.servicos.ensemble.jde.vouchercontaspagar.jaxws;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebEndpoint;
 import javax.xml.ws.WebServiceClient;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.WebServiceFeature;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 
-@WebServiceClient(name = "voucherContasPagar", targetNamespace = "http://tempuri.org", wsdlLocation = "file:/C:/Projetos/boleia/boleia/fonte/boleia/boleia-master/boleia-backend/src/main/resources/wsdl/jde/voucherContasPagar.wsdl")
+
+@WebServiceClient(name = "voucherContasPagar", targetNamespace = "http://tempuri.org", wsdlLocation = "file:/C:/Projetos/ProFrotas/boleia/boleia-master/boleia-backend/src/main/resources/wsdl/jde/voucherContasPagar.wsdl")
 public class VoucherContasPagar
     extends Service
 {
@@ -24,7 +25,7 @@ public class VoucherContasPagar
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("file:/C:/Projetos/boleia/boleia/fonte/boleia/boleia-master/boleia-backend/src/main/resources/wsdl/jde/voucherContasPagar.wsdl");
+            url = new URL("file:/C:/Projetos/ProFrotas/boleia/boleia-master/boleia-backend/src/main/resources/wsdl/jde/voucherContasPagar.wsdl");
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }

@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "v3", namespace = "http://ipiranga.com.br/statusIntegracao", propOrder = {
     "statusIntegracao"

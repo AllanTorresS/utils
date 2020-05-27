@@ -181,7 +181,7 @@ public class FrotaSd {
             motivo.setDataInativacao(dataAmbiente);
             motivo.setDescricaoInativacao(justificativa);
             motivo.setTipoMotivo(classificacao.getValue());
-            if(classificacao.getValue().equals(ClassificacaoStatusFrota.DEBITO_VENCIDO.getValue())) {
+            if (ambiente.getUsuarioLogado() != null || classificacao.getValue().equals(ClassificacaoStatusFrota.DEBITO_VENCIDO.getValue())) {
                 frota.setInicioAtivacaoTemporaria(null);
                 frota.setFimAtivacaoTemporaria(null);
             }
@@ -257,6 +257,7 @@ public class FrotaSd {
 
     /**
      * Dispara emails e notificações informando sobre a alteração de status de uma frota.
+     *
      * @param motivo o motivo da alteração de status
      */
     public void notificarAlteracaoFrota(MotivoInativacaoFrota motivo) {
@@ -287,7 +288,6 @@ public class FrotaSd {
 
     /**
      * Faz a pesquisa de frotas para exportação
-     *
      * @param filtro para a busca
      * @return os resultados da busca de acordo com o filtro
      */
@@ -302,12 +302,11 @@ public class FrotaSd {
 
     /**
      * Cria um novo parâmetro de ciclo para a frota.
-     *
-     * @param prazoCiclo     prazo do ciclo enviado pelo SalesForce.
+     * @param prazoCiclo prazo do ciclo enviado pelo SalesForce.
      * @param prazoPagamento prazo de pagamento enviado pelo SalesForce.
      * @return o parâmetro ciclo dcriado.
      */
-    public ParametroCiclo criarNovoCicloFrota(String prazoCiclo, String prazoPagamento) {
+    public ParametroCiclo criarNovoCicloFrota(String prazoCiclo, String prazoPagamento){
         ParametroCiclo novoParametroCiclo = new ParametroCiclo();
         novoParametroCiclo.setPrazoCiclo(Long.parseLong(prazoCiclo));
         novoParametroCiclo.setPrazoPagamento(Long.parseLong(prazoPagamento));
@@ -315,6 +314,24 @@ public class FrotaSd {
         novoParametroCiclo.setPrazoReembolsoDias(Long.parseLong(prazoPagamento) + 1);
         repositorioParametroCiclo.armazenar(novoParametroCiclo);
         return novoParametroCiclo;
+
+    }
+
+
+    /**
+     * Verifica o cpf dos participantes da administração da frota .
+     *
+     * @param cpfDonoFrota o cpf do Dono da frota.
+     * @param cpfResponsavelFrota o cpf do responsável da frota.
+     * @throws ExcecaoValidacao caso algum deles não possua cpf válido.
+     */
+    public void validarCpfEnvolvidosFrota(String cpfDonoFrota, String cpfResponsavelFrota) throws ExcecaoValidacao {
+        if (ValidadorCpf.invalidCPF(cpfDonoFrota)) {
+            throw new ExcecaoValidacao(mensagens.obterMensagem("frota.servico.cpfParticipanteDonoInvalido"));
+        }
+        if (ValidadorCpf.invalidCPF(cpfResponsavelFrota)) {
+            throw new ExcecaoValidacao(mensagens.obterMensagem("frota.servico.cpfParticipanteResponsavelInvalido"));
+        }
 
     }
 }

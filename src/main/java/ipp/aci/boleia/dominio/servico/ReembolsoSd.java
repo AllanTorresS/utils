@@ -50,7 +50,7 @@ public class ReembolsoSd {
         boolean possuiCicloPendente = transacoesConsolidadas
                 .stream()
                 .anyMatch(tc -> !tc.esta(FECHADA) || tc.pendenteNotaFiscal());
-        if (!possuiCicloPendente) {
+        if(!possuiCicloPendente){
             return APROVADO_PAGAMENTO;
         }
         return SUSPENSO_PAGAMENTO;
@@ -66,10 +66,10 @@ public class ReembolsoSd {
         List<TransacaoConsolidada> transacoesConsolidadas = reembolso.getTransacoesConsolidadas();
         Date dataHoraCorrente = utilitarioAmbiente.buscarDataAmbiente();
 
-        if (!reembolso.isPago()) {
-            if (reembolso.possuiPendenciaNotaFiscal()) {
+        if(!reembolso.isPago()) {
+            if(reembolso.possuiPendenciaNotaFiscal()) {
                 boolean possuiAtrasoEmissaoNota = transacoesConsolidadas.stream().anyMatch(tc -> !isHojeOuPosterior(dataHoraCorrente, tc.getDataPrazoEmissaoNfe()));
-                if (!possuiAtrasoEmissaoNota) {
+                if(!possuiAtrasoEmissaoNota) {
                     statusReembolso = AGUARDANDO_NF;
                 } else if (reembolso.getValorReembolso().compareTo(BigDecimal.ZERO) < 0) {
                     statusReembolso = DEBITO_EM_ABERTO;
@@ -77,9 +77,9 @@ public class ReembolsoSd {
                     statusReembolso = NF_ATRASADA;
                 }
             } else {
-                if (reembolso.getValorReembolso().compareTo(BigDecimal.ZERO) < 0) {
+                if(reembolso.getValorReembolso().compareTo(BigDecimal.ZERO) < 0) {
                     statusReembolso = DEBITO_EM_ABERTO;
-                } else if (reembolso.getDataVencimentoPagto().before(dataHoraCorrente)) {
+                } else if(reembolso.getDataVencimentoPagto().before(dataHoraCorrente)) {
                     statusReembolso = ATRASADO;
                 } else {
                     statusReembolso = EM_ABERTO;

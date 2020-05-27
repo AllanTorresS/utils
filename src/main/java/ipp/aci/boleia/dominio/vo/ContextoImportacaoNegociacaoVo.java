@@ -41,8 +41,8 @@ public class ContextoImportacaoNegociacaoVo implements IDadosIniciaisImportacaoL
      * @param frotaPtov a lista de frotaPtov
      * @return O indice
      */
-    private Map<String, FrotaPontoVenda> indexarFrotaPtov(List<FrotaPontoVenda> frotaPtov) {
-        Map<String, FrotaPontoVenda> indice = new HashMap<>();
+    private Map<String,FrotaPontoVenda> indexarFrotaPtov(List<FrotaPontoVenda> frotaPtov) {
+        Map<String,FrotaPontoVenda> indice = new HashMap<>();
         if(frotaPtov != null) {
             for(FrotaPontoVenda frotaPontoVenda : frotaPtov) {
                 if (frotaPontoVenda != null && frotaPontoVenda.getPontoVenda() != null && frotaPontoVenda.getPontoVenda().getComponenteAreaAbastecimento() != null &&  frotaPontoVenda.getPontoVenda().getComponenteAreaAbastecimento().getCodigoPessoa() != null ){

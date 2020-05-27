@@ -14,7 +14,8 @@ public enum TipoPerfilUsuario implements IEnumComLabel<TipoPerfilUsuario> {
     REVENDA(3L),
     PRECOS(4L),
     SISTEMA_EXTERNO(5L),
-    MOTORISTA(6L);
+    MOTORISTA(6L),
+    MODULO_INTERNO(7L);
 
     private final Long value;
 

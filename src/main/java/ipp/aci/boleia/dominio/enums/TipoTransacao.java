@@ -30,7 +30,8 @@ public enum TipoTransacao {
     ESTORNO_AUTORIZACAO_PAGAMENTO_PDV_WEB   (107, false,    OperacaoDeCredito.CONCESSAO_CREDITO_PRE_PAGO),
     ESTORNO_AUTORIZACAO_PAGAMENTO_POS       (108, false,    OperacaoDeCredito.CONCESSAO_CREDITO_PRE_PAGO),
     ESTORNO_AUTORIZACAO_PAGAMENTO_CTA_PLUS  (109, false,    OperacaoDeCredito.CONCESSAO_CREDITO_PRE_PAGO),
-    ESTORNO_AUTORIZACAO_PAGAMENTO_POS_FL    (110, false,    OperacaoDeCredito.CONCESSAO_CREDITO_PRE_PAGO);
+    ESTORNO_AUTORIZACAO_PAGAMENTO_POS_FL    (110, false,    OperacaoDeCredito.CONCESSAO_CREDITO_PRE_PAGO),
+    EDICAO_AUTORIZACAO_PAGAMENTO            (111, false,     OperacaoDeCredito.CONCESSAO_CREDITO_PRE_PAGO);
 
 
     private final Integer value;
@@ -109,7 +110,7 @@ public enum TipoTransacao {
      * @return tipos de transacao da operacao
      */
     public static List<TipoTransacao> obterPorTipoOperacao(OperacaoDeCredito operacaoDeCredito) {
-        return Arrays.asList(TipoTransacao.values()).stream().filter(t-> t.getTipoOperacao() != null && t.getTipoOperacao().equals(operacaoDeCredito)).collect(Collectors.toList());
+        return Arrays.stream(TipoTransacao.values()).filter(t-> t.getTipoOperacao() != null && t.getTipoOperacao().equals(operacaoDeCredito)).collect(Collectors.toList());
     }
 
 }

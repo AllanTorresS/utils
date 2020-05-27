@@ -679,6 +679,32 @@ public class NotificacaoUsuarioSd {
     }
 
     /**
+     * Envia uma notificação para todos os usuários que realizaram uma alteração em um abastecimento
+     * que foi expirada ao se fechar um ciclo
+     *
+     * @param usuariosResponsaveisEdicao Lista de usuários que realizaram as alterações nos abastecimentos
+     */
+    public void enviarNotificacaoEdicaoAbastecimentoExpirado(List<Usuario> usuariosResponsaveisEdicao) {
+        List<Usuario> usuarios = new ArrayList<>();
+        usuarios.addAll(usuariosResponsaveisEdicao);
+        usuarios.addAll(repositorioUsuarios.obterPorTipoPerfilPermissao(TipoPerfilUsuario.INTERNO.getValue(), ChavePermissao.ABASTECIMENTO_APROVAR_REPROVAR));
+
+        enviarNotificacao(TipoSubcategoriaNotificacao.ALTERACAO_ABASTECIMENTO_EXPIRADA, usuarios);
+    }
+
+    /**
+     * Envia uma notificação para um determinado grupo de usuários internos quando ocorre uma invalidação no saldo da frota,
+     * tanto na inclusão manual quanto na edição de um abastecimento
+     *
+     * @param frota Frota que teve saldo negativado na edição do abastecimento
+     */
+    public void enviarNotificacaoAbastecimentoInvalidarSaldoFrota(Frota frota) {
+        String chave = ChavePermissao.getChave(ChavePermissao.ABASTECIMENTO_AUTORIZAR);
+        List<Usuario> usuarios = repositorioUsuarios.obterPorTipoPerfilPermissao(TipoPerfilUsuario.INTERNO.getValue(), chave);
+        enviarNotificacao(TipoSubcategoriaNotificacao.ABASTECIMENTO_INVALIDAR_SALDO_FROTA, usuarios, frota.getRazaoSocial(), frota.getId().toString());
+    }
+
+    /**
      * Envia uma subcategoria de notificacao para determinados usuarios
      * @param subcategoria Subcategoria da notificacao
      * @param usuarios Usuarios a receber a notificacao
@@ -744,8 +770,7 @@ public class NotificacaoUsuarioSd {
         Boolean alteradoParaRascunho = StatusCampanha.RASCUNHO.equals(StatusCampanha.obterPorValor(campanha.getStatus()));
         if(!alteradoParaRascunho){
             enviarNotificacao(TipoSubcategoriaNotificacao.CAMPANHA_DISPONIVEL_APROVACAO, destinatariosComPermissaoDeAprovacao, campanha.getNome(), campanha.getId().toString());
-        }
-        else{
+        } else{
             Set<Usuario> usuariosCriadoresEAprovadores = new HashSet<>();
             usuariosCriadoresEAprovadores.addAll(destinatariosComPermissaoDeAprovacao);
             usuariosCriadoresEAprovadores.add(campanha.getUsuarioCriador());
@@ -758,7 +783,7 @@ public class NotificacaoUsuarioSd {
     /**
      * Excluí todas as notificações anteriores a uma data limite.
      *
-     * @param dataLimite  Data que representa o limite
+     * @param dataLimite Data que representa o limite
      */
     public void excluirNotificacoesPorDataLimite(Date dataLimite) {
         repositorio.excluirNotificacoesAteUmaDataLimite(dataLimite);

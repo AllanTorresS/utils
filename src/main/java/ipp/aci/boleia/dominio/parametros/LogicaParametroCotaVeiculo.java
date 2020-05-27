@@ -1,9 +1,11 @@
 package ipp.aci.boleia.dominio.parametros;
 
-import ipp.aci.boleia.dominio.SaldoVeiculo;
 import ipp.aci.boleia.dominio.Veiculo;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
 import ipp.aci.boleia.util.i18n.Mensagens;
+
+import java.math.BigDecimal;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,13 +19,9 @@ public class LogicaParametroCotaVeiculo extends BaseLogicaParametroSaldoVeiculo 
     private Mensagens mensagens;
 
     @Override
-    protected String obterMensagemRegraViolada(Veiculo veiculo, SaldoVeiculo saldoVeiculo, boolean cotaEmLitros, boolean cotaMensal) {
+    protected String obterMensagemRegraViolada(Veiculo veiculo, boolean cotaEmLitros, BigDecimal montante) {
         return mensagens.obterMensagem("parametro.sistema.erro.abastecimento.cota.veiculo", veiculo.getPlaca(),
-            cotaMensal ?
-                    (cotaEmLitros ? UtilitarioFormatacao.formatarLitros(saldoVeiculo.getCotaLitrosAbastecimento()) : UtilitarioFormatacao.formatarDecimalMoedaReal(saldoVeiculo.getCotaValorAbastecimento(), 2))
-                    :
-                    (cotaEmLitros ? UtilitarioFormatacao.formatarLitros(saldoVeiculo.getCotaLitros()) : UtilitarioFormatacao.formatarDecimalMoedaReal(saldoVeiculo.getCotaValor(), 2)));
-
+            cotaEmLitros ? UtilitarioFormatacao.formatarLitros(montante) : UtilitarioFormatacao.formatarDecimalMoedaReal(montante, 2));
     }
 
     @Override

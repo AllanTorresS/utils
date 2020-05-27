@@ -42,10 +42,12 @@ public enum TipoSubcategoriaNotificacao {
     RENEGOCIACAO_PRECO_REVENDA                          (32L, TipoCategoriaNotificacao.NEGOCIACOES),
     RENEGOCIACAO_PRECO_VIGENTE_REVENDA                  (33L, TipoCategoriaNotificacao.NEGOCIACOES),
     RENEGOCIACAO_PRECO_VIGENTE_SOLUCAO                  (34L, TipoCategoriaNotificacao.NEGOCIACOES),
-    RELATORIO_CONCLUIDO(35L, TipoCategoriaNotificacao.GERAIS),
-    ALERTA_AJUSTE_BOLETO(36L, TipoCategoriaNotificacao.FINANCEIRAS),
-    CAMPANHA_DISPONIVEL_APROVACAO(37L, TipoCategoriaNotificacao.GERAIS),
-    CAMPANHA_REJEITADA(38L, TipoCategoriaNotificacao.GERAIS);
+    RELATORIO_CONCLUIDO                                 (35L, TipoCategoriaNotificacao.GERAIS),
+    ALERTA_AJUSTE_BOLETO                                (36L, TipoCategoriaNotificacao.FINANCEIRAS),
+    CAMPANHA_DISPONIVEL_APROVACAO                       (37L, TipoCategoriaNotificacao.GERAIS),
+    CAMPANHA_REJEITADA                                  (38L, TipoCategoriaNotificacao.GERAIS),
+    ALTERACAO_ABASTECIMENTO_EXPIRADA                    (39L, TipoCategoriaNotificacao.FINANCEIRAS),
+    ABASTECIMENTO_INVALIDAR_SALDO_FROTA                 (40L, TipoCategoriaNotificacao.FINANCEIRAS);
 
     private final Long value;
     private final TipoCategoriaNotificacao categoria;

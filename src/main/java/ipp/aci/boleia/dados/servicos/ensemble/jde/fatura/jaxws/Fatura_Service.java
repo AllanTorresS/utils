@@ -1,17 +1,18 @@
 
 package ipp.aci.boleia.dados.servicos.ensemble.jde.fatura.jaxws;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebEndpoint;
 import javax.xml.ws.WebServiceClient;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.WebServiceFeature;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 
-@WebServiceClient(name = "Fatura", targetNamespace = "http://tempuri.org", wsdlLocation = "file:/C:/Projetos/boleia/boleia/fonte/boleia/boleia-master/boleia-backend/src/main/resources/wsdl/jde/fatura.wsdl")
+
+@WebServiceClient(name = "Fatura", targetNamespace = "http://tempuri.org", wsdlLocation = "file:/C:/Projetos/ProFrotas/boleia/boleia-master/boleia-backend/src/main/resources/wsdl/jde/fatura.wsdl")
 public class Fatura_Service
     extends Service
 {
@@ -24,7 +25,7 @@ public class Fatura_Service
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("file:/C:/Projetos/boleia/boleia/fonte/boleia/boleia-master/boleia-backend/src/main/resources/wsdl/jde/fatura.wsdl");
+            url = new URL("file:/C:/Projetos/ProFrotas/boleia/boleia-master/boleia-backend/src/main/resources/wsdl/jde/fatura.wsdl");
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }

@@ -19,6 +19,15 @@ public interface IEmailRecebimentoDados {
     ImportacaoNfeArmazemVo obterEmailsAPartirDe(ConfiguracaoLeitorEmailVo config, Date dataInicio);
 
     /**
+     * Conecta ao e-mail, Obtém todos os e-mails entre uma determinada data e hora até uma data e hora final
+     * @param config Objeto de configuração da conexão ao e-mail
+     * @param dataInicio Data de início da busca
+     * @param dataFinal Data de Fim da busca
+     * @return Objeto contendo os e-mails encontrados
+     */
+    ImportacaoNfeArmazemVo obterEmailsEntre(ConfiguracaoLeitorEmailVo config, Date dataInicio, Date dataFinal);
+
+    /**
      * Conecta ao e-mail e obtém todos os e-mails
      * @param config Objeto de configuração da conexão ao e-mail
      * @return Objeto contendo os e-mails encontrados

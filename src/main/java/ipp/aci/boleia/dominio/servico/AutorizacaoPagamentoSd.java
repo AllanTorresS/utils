@@ -1,10 +1,19 @@
 package ipp.aci.boleia.dominio.servico;
 
 import ipp.aci.boleia.dados.IAutorizacaoPagamentoDados;
+import ipp.aci.boleia.dados.IAutorizacaoPagamentoEdicaoDados;
 import ipp.aci.boleia.dominio.AutorizacaoPagamento;
+import ipp.aci.boleia.dominio.AutorizacaoPagamentoEdicao;
+import ipp.aci.boleia.dominio.NotaFiscal;
+import ipp.aci.boleia.dominio.TransacaoConsolidada;
+import ipp.aci.boleia.dominio.enums.StatusAutorizacao;
+import ipp.aci.boleia.dominio.enums.StatusEdicao;
+import ipp.aci.boleia.dominio.enums.StatusNotaFiscalAbastecimento;
+import ipp.aci.boleia.dominio.enums.TipoPerfilUsuario;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaAbastecimentoVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaAutorizacaoPagamentoEdicaoVo;
 import ipp.aci.boleia.util.Ordenacao;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.excecao.Erro;
@@ -13,8 +22,10 @@ import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import static ipp.aci.boleia.util.UtilitarioCalculoData.adicionarMinutosData;
 
@@ -28,7 +39,13 @@ public class AutorizacaoPagamentoSd {
     private UtilitarioAmbiente ambiente;
 
     @Autowired
+    private NotificacaoUsuarioSd notificacaoUsuarioSd;
+
+    @Autowired
     private IAutorizacaoPagamentoDados repositorioAutorizacaoPagamento;
+
+    @Autowired
+    private IAutorizacaoPagamentoEdicaoDados repositorioAutorizacaoPagamentoEdicao;
 
     /**
      * Obtem lista de abastecimentos para exportação de acordo com o filtro informado.
@@ -38,8 +55,8 @@ public class AutorizacaoPagamentoSd {
      */
     public ResultadoPaginado<AutorizacaoPagamento> pesquisarAbastecimentosParaExportacao(FiltroPesquisaAbastecimentoVo filtro) {
         filtro.getPaginacao().setTamanhoPagina(null);
-        filtro.getPaginacao().setParametrosOrdenacaoColuna(Arrays.asList(new ParametroOrdenacaoColuna("dataProcessamento", Ordenacao.DECRESCENTE)));
-        return repositorioAutorizacaoPagamento.pesquisaPaginada(filtro);
+        filtro.getPaginacao().setParametrosOrdenacaoColuna(Collections.singletonList(new ParametroOrdenacaoColuna("dataProcessamento", Ordenacao.DECRESCENTE)));
+        return repositorioAutorizacaoPagamento.pesquisaPaginada(filtro, true);
     }
 
     /**
@@ -62,7 +79,7 @@ public class AutorizacaoPagamentoSd {
      * @return true caso esteja na tolerância
      */
     public Boolean validarHorarioAbastecimentoFrotaLeve(Date dataRequisicao){
-        final Long TEMPO_MAX_REQUISICAO = 5L;
+        final long TEMPO_MAX_REQUISICAO = 5L;
 
         return UtilitarioCalculoData.diferencaEmMinutos(dataRequisicao,ambiente.buscarDataAmbiente()) < TEMPO_MAX_REQUISICAO;
     }
@@ -75,5 +92,80 @@ public class AutorizacaoPagamentoSd {
     private boolean isPrazoAutorizacaoPendenteExpirado(AutorizacaoPagamento autorizacaoPagamento) {
         Date dataExpiracao = adicionarMinutosData(autorizacaoPagamento.getDataRequisicao(), 20);
         return ambiente.buscarDataAmbiente().after(dataExpiracao);
+    }
+
+    /**
+     * Retorna lista de Autorizacao Pagamento Edicao que tem a necessidade de alterar o status
+     * de edição de cada registro de Autorizacao Pagamento se o mesmo teve alguma alteracao
+     *
+     * @param transacaoConsolidada Consolidado com os registros de Autorizacao Pagamento
+     * @return Lista de AutorizacaoPagamentoEdicao que precisam ser alteradas
+     */
+    public List<AutorizacaoPagamentoEdicao> obtemAutorizacoesPendentesDeUmConsolidado(TransacaoConsolidada transacaoConsolidada) {
+        List<AutorizacaoPagamentoEdicao> autorizacoesPendentes = new ArrayList<>();
+
+        for (AutorizacaoPagamento autorizacaoPagamento: transacaoConsolidada.getAutorizacaoPagamentos()) {
+            List<AutorizacaoPagamentoEdicao> edicoesPendentesAbastecimento = repositorioAutorizacaoPagamentoEdicao.pesquisar(
+                            new FiltroPesquisaAutorizacaoPagamentoEdicaoVo(autorizacaoPagamento.getId(), StatusEdicao.PENDENTE, new ParametroOrdenacaoColuna[] {
+                                    new ParametroOrdenacaoColuna("dataEdicao", Ordenacao.DECRESCENTE),
+                            }))
+                            .getRegistros();
+
+            if (!edicoesPendentesAbastecimento.isEmpty()) {
+                autorizacoesPendentes.add(edicoesPendentesAbastecimento.get(0));
+            }
+        }
+
+        return autorizacoesPendentes;
+    }
+
+    /**
+     * Recebe uma AutorizacaoPagamentoEdicao e troca seu status para expirado, em seguida, aramazena
+     *
+     * @param autorizacaoPagamentoEdicao AutorizacaoPagamentoEdicao a ser expirada
+     */
+    public void expirarEdicaoAbastecimento(AutorizacaoPagamentoEdicao autorizacaoPagamentoEdicao) {
+        autorizacaoPagamentoEdicao.setStatusEdicao(StatusEdicao.EXPIRADO.getValue());
+        repositorioAutorizacaoPagamentoEdicao.armazenar(autorizacaoPagamentoEdicao);
+    }
+
+    /**
+     * Reverte o status de edição de autorizações de PENDENTE para NAO_EDITADO.
+     * @param abastecimentos a lista de autorizações que terão status revertidos.
+     * @return a lista de abastecimentos atualizada.
+     */
+    public List<AutorizacaoPagamento> reverterStatusEdicao(List<AutorizacaoPagamento> abastecimentos) {
+        abastecimentos.forEach(abastecimento ->
+                abastecimento.setStatusEdicao(StatusEdicao.PENDENTE.getValue().equals(abastecimento.getStatusEdicao()) ?
+                        StatusEdicao.EXPIRADO.getValue() : abastecimento.getStatusEdicao()));
+        repositorioAutorizacaoPagamento.armazenarLista(abastecimentos);
+        return abastecimentos;
+    }
+
+    /**
+     * Obtém o status de um abastecimento.
+     *
+     * @param autorizacao Um abastecimento
+     * @param tipoPerfilUsuario O tipo perfil do usuário
+     * @return O código de status de abastecimento
+     */
+    public Integer obtemStatusAbastecimento(AutorizacaoPagamento autorizacao, TipoPerfilUsuario tipoPerfilUsuario) {
+        return tipoPerfilUsuario.equals(TipoPerfilUsuario.INTERNO) &&
+                StatusAutorizacao.AUTORIZADO.getValue().equals(autorizacao.getStatus()) &&
+                StatusEdicao.PENDENTE.getValue().equals(autorizacao.getStatusEdicao()) ?
+                StatusAutorizacao.AGUARDANDO_APROVACAO_SOLUCAO.getValue() :
+                autorizacao.getStatus();
+    }
+
+    /**
+     * Define o status de emissão de um abastecimento para emitido.
+     *
+     * @param autorizacao Abastecimento que ficará como emitido.
+     * @param notaFiscal Nota fiscal emitida para o abastecimento.
+     */
+    public void definirAbastecimentoEmitido(AutorizacaoPagamento autorizacao, NotaFiscal notaFiscal) {
+        autorizacao.setStatusNotaFiscal(StatusNotaFiscalAbastecimento.EMITIDA.getValue());
+        autorizacao = repositorioAutorizacaoPagamento.armazenar(autorizacao);
+        notificacaoUsuarioSd.enviarNotificacaoNotaFiscalEmitida(autorizacao, notaFiscal);
     }
 }

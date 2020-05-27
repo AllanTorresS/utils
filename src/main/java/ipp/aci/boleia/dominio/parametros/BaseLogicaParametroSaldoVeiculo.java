@@ -30,7 +30,7 @@ public abstract class BaseLogicaParametroSaldoVeiculo implements ILogicaParametr
             BigDecimal montante = cotaEmLitros ? autorizacao.getTotalLitrosAbastecimento() : autorizacao.getValorTotalAbastecimento();
             if (saldoVeiculo != null && !saldoVeiculo.isSaldoSuficienteParaAutorizar(montante, cotaEmLitros, cotaMensal)) {
                 resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
-                resultado.setMensagemErro(obterMensagemRegraViolada(veiculo, saldoVeiculo, cotaEmLitros, cotaMensal));
+                resultado.setMensagemErro(obterMensagemRegraViolada(veiculo, cotaEmLitros, montante));
             }
         }
 
@@ -40,12 +40,11 @@ public abstract class BaseLogicaParametroSaldoVeiculo implements ILogicaParametr
     /**
      * Obtem a mensagem de erro em caso de violacao da regra
      * @param veiculo O veiculo
-     * @param saldoVeiculo O saldo
      * @param cotaEmLitros Se a cota esta sendo calculada em litros
-     * @param cotaMensal A conta mensal do veiculo
+     * @param montante O montante abastecido
      * @return A mensagem de erro
      */
-    protected abstract String obterMensagemRegraViolada(Veiculo veiculo, SaldoVeiculo saldoVeiculo, boolean cotaEmLitros, boolean cotaMensal);
+    protected abstract String obterMensagemRegraViolada(Veiculo veiculo, boolean cotaEmLitros, BigDecimal montante);
 
     /**
      * Determina se a regra se aplica ao veiculo

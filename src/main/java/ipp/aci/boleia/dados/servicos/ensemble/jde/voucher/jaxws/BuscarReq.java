@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "buscarReq", propOrder = {
     "codigoFornecedor",

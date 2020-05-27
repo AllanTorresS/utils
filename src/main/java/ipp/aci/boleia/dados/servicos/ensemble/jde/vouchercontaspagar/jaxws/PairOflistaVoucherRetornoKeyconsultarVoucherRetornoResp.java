@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
 
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PairOflistaVoucherRetornoKeyconsultarVoucherRetornoResp")
 public class PairOflistaVoucherRetornoKeyconsultarVoucherRetornoResp

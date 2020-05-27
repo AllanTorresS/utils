@@ -180,7 +180,7 @@ public class CampanhaSd {
         if (this.parametrosOrdenacaoCampanhas == null) {
             this.parametrosOrdenacaoCampanhas = new HashMap<>();
         }
-        repositorioParametroCampanha.obterTodos(null).stream().forEach(p ->
+        repositorioParametroCampanha.obterTodos(null).forEach(p ->
                 this.parametrosOrdenacaoCampanhas
                         .put(
                                 TipoParametroCampanha.obterPorValor(p.getTipo()).getValue(),
@@ -363,7 +363,7 @@ public class CampanhaSd {
      */
     private void armazenarCondicao(CondicaoCampanha condicao) {
         repositorioCondicoes.armazenar(condicao);
-        condicao.getValores().stream().forEach(v -> this.armazenarValorCondicao(v, condicao));
+        condicao.getValores().forEach(v -> this.armazenarValorCondicao(v, condicao));
     }
 
     /**
@@ -374,7 +374,7 @@ public class CampanhaSd {
      */
     public void cadastrarCondicoes(Campanha campanha, Set<CondicaoCampanha> condicoes) {
         if (condicoes != null) {
-            condicoes.stream().forEach(c -> armazenarCondicao(c));
+            condicoes.forEach(c -> armazenarCondicao(c));
         }
         repositorio.armazenar(campanha);
     }
@@ -443,10 +443,10 @@ public class CampanhaSd {
      */
     public BigDecimal obterDescontoNominalEmRelacaoItemAutorizacaoPagamento(Campanha campanha, ItemAutorizacaoPagamento itemAutorizacaoPagamento) {
 
-        BigDecimal descontoPercentualMaximo = new BigDecimal(100.00d);
         if (campanha == null) {
             return BigDecimal.ZERO;
         }
+        BigDecimal descontoPercentualMaximo = BigDecimal.valueOf(100.00d);
         Boolean isDescontoEmMoeda = TipoDesconto.MOEDA.getValue().equals(campanha.getTipoDesconto());
 
         return itemAutorizacaoPagamento.getValorTotal().min(isDescontoEmMoeda ? campanha.getValorTotal() : itemAutorizacaoPagamento.getValorTotal().multiply(campanha.getValorTotal().divide(descontoPercentualMaximo,3,RoundingMode.HALF_UP)));
@@ -459,16 +459,16 @@ public class CampanhaSd {
      * @return O valor percentual do desconto do item a partir da campanha
      */
     public BigDecimal obterDescontoPercentualEmRelacaoItemAutorizacaoPagamento(Campanha campanha, ItemAutorizacaoPagamento itemAutorizacaoPagamento) {
-
-        BigDecimal descontoPercentualMaximo = new BigDecimal(100.00d);
-
         if (campanha == null) {
             return BigDecimal.ZERO;
         }
 
-        Boolean isDescontoPercentual = TipoDesconto.PERCENTUAL.getValue().equals(campanha.getTipoDesconto());
-
-        return descontoPercentualMaximo.min(isDescontoPercentual ? campanha.getValorTotal() : campanha.getValorTotal().divide(itemAutorizacaoPagamento.getValorTotal(),2,RoundingMode.HALF_UP).multiply(descontoPercentualMaximo));
+        BigDecimal descontoPercentualMaximo = BigDecimal.valueOf(100.00d);
+        boolean isDescontoPercentual = TipoDesconto.PERCENTUAL.getValue().equals(campanha.getTipoDesconto());
+        return descontoPercentualMaximo.min(
+                isDescontoPercentual ? campanha.getValorTotal() : campanha.getValorTotal().divide(
+                        itemAutorizacaoPagamento.getValorTotal(),2, RoundingMode.HALF_UP).multiply(descontoPercentualMaximo).setScale(2, RoundingMode.UNNECESSARY)
+        );
     }
 
 
@@ -499,4 +499,31 @@ public class CampanhaSd {
             throw new ExcecaoValidacao(mensagens.obterMensagem("Erro.STATUS_CAMPANHA_APROVACAO_INVALIDO", campanha.getNome(), StatusCampanha.RASCUNHO.getLabel()));
         }
     }
+
+    /**
+     * Obtém desconto, conforme campanha ou zero se não houver campanha, de uma autorizção pagamento (abastecimento)
+     * @param autorizacaoPagamento de um  abastecimento
+     * @return valor do desconto
+     */
+    public BigDecimal obterDescontoNominalEmRelacaoAutorizacaoPagamento(AutorizacaoPagamento autorizacaoPagamento) {
+        BigDecimal descontoTotal = BigDecimal.ZERO;
+        for (ItemAutorizacaoPagamento item : autorizacaoPagamento.getItems()) {
+            descontoTotal = descontoTotal.add(this.obterDescontoNominalEmRelacaoItemAutorizacaoPagamento(item.getCampanha(), item));
+        }
+        return descontoTotal;
+    }
+
+    /**
+     * Obtém o percentual de desconto, conforme campanha ou zero se não houver campanha, de uma autorizção pagamento (abastecimento)
+     * @param autorizacaoPagamento de um  abastecimento
+     * @return valor percentual do desconto
+     */
+    public BigDecimal obterDescontoPercentualEmRelacaoAutorizacaoPagamento(AutorizacaoPagamento autorizacaoPagamento) {
+        BigDecimal descontoPercentualTotal = BigDecimal.ZERO;
+        for (ItemAutorizacaoPagamento item : autorizacaoPagamento.getItems()) {
+            descontoPercentualTotal = descontoPercentualTotal.add(this.obterDescontoPercentualEmRelacaoItemAutorizacaoPagamento(item.getCampanha(), item));
+        }
+        return descontoPercentualTotal;
+    }
+
 }

@@ -5,7 +5,7 @@ import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 /**
  * Evita a execução de novas consultas para campos lazy da entidade
  */
-public class ParametroPesquisaFetch extends ParametroPesquisa {
+public class ParametroPesquisaFetch extends ParametroPesquisa{
 
     /**
      * Construtor
