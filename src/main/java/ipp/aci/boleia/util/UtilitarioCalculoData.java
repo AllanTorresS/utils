@@ -444,4 +444,21 @@ public final class UtilitarioCalculoData {
 	public static Boolean isPosterior(Date dataAtual, Date data) {
     	return obterPrimeiroInstanteDia(data).after(obterPrimeiroInstanteDia(dataAtual));
 	}
+
+	/**
+	 * Calcula a diferença em dias da semana entre duas datas
+	 * @param dataInicial Início do intervalo de tempo
+	 * @param dataFinal Final do intervalo de tempo
+	 * @return Diferença entre os dias da semana
+	 */
+	public static Integer diferencaDiasDeSemana(Date dataInicial, Date dataFinal){
+		Calendar calendarioDataInicial = Calendar.getInstance();
+		Calendar calendarioDataFinal = Calendar.getInstance();
+		calendarioDataFinal.setTime(dataFinal);
+		calendarioDataInicial.setTime(dataInicial);
+
+		int diferenca = calendarioDataFinal.get(Calendar.DAY_OF_WEEK) - calendarioDataInicial.get(Calendar.DAY_OF_WEEK);
+
+		return Math.abs(diferenca);
+	}
 }

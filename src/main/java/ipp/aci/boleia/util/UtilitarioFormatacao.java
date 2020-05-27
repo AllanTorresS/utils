@@ -17,6 +17,8 @@ import java.util.stream.Collectors;
  */
 public final class UtilitarioFormatacao {
 
+    public static final int TAMANHO_CPF = 11;
+
     /**
      * Impede a instanciacao e a heranca
      */
@@ -199,7 +201,7 @@ public final class UtilitarioFormatacao {
 
     /**
      * Formata um decimal para apresentação na tela com prefixo do Real (R$)
-     * definindo a escala utilizada e arredondamento {@link BigDecimal#ROUND_HALF_UP}.
+     * definindo a escala utilizada e arredondamento {@link java.math.BigDecimal#ROUND_HALF_UP}.
      *
      * @param decimal valor decimal
      * @param scale   valor do número de casas decimais

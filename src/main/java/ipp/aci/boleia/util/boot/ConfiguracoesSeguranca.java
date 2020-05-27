@@ -140,6 +140,8 @@ public class ConfiguracoesSeguranca extends WebSecurityConfigurerAdapter {
                 .httpStrictTransportSecurity();
 
         http
+            .cors()
+            .and()
             .sessionManagement()
                 .maximumSessions(maximoSessoesPorUsuario)
                 .expiredSessionStrategy(sessionExpiredStrategy())

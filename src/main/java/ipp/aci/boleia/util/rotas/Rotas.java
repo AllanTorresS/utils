@@ -24,6 +24,7 @@ public final  class Rotas {
     public static final  String API_PUBLICA_USUARIO_MOTORISTA         = BASE_API_PUBLICA + "/usuarioMotorista";
     public static final  String SISTEMA_EXTERNO_ACESSO_API            = BASE_API_PUBLICA + "/externo/acesso";
     public static final  String CREDENCIAMENT0_POSTO_ACESSO_API       = BASE_API_PUBLICA + "/credenciamentoPosto/acesso";
+    public static final  String MODULO_INTERNO_ACESSO_API             = BASE_API_PUBLICA + "/moduloInterno/acesso";
 
     // APIs estaticas
     public static final  String API_ESTATICA_MOTORISTA       = BASE_API_ESTATICA + "/motorista";

@@ -264,11 +264,15 @@ public class FiltroAutenticacaoJwt implements Filter {
              */
             usuario.setPermissoes(new HashSet<>());
             usuario.getPermissoes().addAll(servicoPermissoes.obterPermissoes(TipoPerfilUsuario.FROTA));
-        } else {
+        } else if (utilitarioJwt.isTokenUsuarioBoleia(token)) {
             usuario = servicosDeUsuario.obterPorIdComPermissoes(utilitarioJwt.getIdentificadorUsuario(token));
-            if (usuario == null){
+            if (usuario != null){
+                servicosDeUsuario.povoarPermissoesUsuario(usuario);
+            }else{
                 usuario = utilitarioJwt.montarUsuarioJwt(token, strToken);
             }
+        } else {
+            usuario = utilitarioJwt.montarUsuarioJwt(token, strToken);
         }
         usuario.setTokenJWT(strToken);
         usuario.setTipoTokenJwt(utilitarioJwt.getTipoToken(token));

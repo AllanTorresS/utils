@@ -55,7 +55,7 @@ public final class UtilitarioCalculo {
      * Aceita como parâmetro uma função que será utilizada para obter de cada objeto o valor que deve ser somado.<br>
      * Se os objetos da lista já são do tipo {@link BigDecimal}, pode-se utilizar a função {@link Function#identity()}.<br>
      * <br>
-     * Utiliza o método {@link Stream#reduce(Object, BinaryOperator)} para fazer a soma.
+     * Utiliza o método {@link java.util.stream.Stream#reduce(Object, BinaryOperator)} para fazer a soma.
      *
      * @param listaObjetos lista de objetos
      * @param funcaoMapeadora função que extrai do objeto o valor a ser somado

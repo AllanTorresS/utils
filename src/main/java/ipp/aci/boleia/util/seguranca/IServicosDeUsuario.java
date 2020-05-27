@@ -11,5 +11,6 @@ public interface IServicosDeUsuario {
     Boolean registrarSucessoAutenticacao(Long idUsuario);
     boolean registrarErroAutenticacao(Long idUsuario);
     Usuario obterPorIdComPermissoes(long id);
+    Usuario povoarPermissoesUsuario(Usuario usuario);
 
 }

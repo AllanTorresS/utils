@@ -179,5 +179,6 @@
     <orderEntry type="library" name="Maven: com.amazonaws:aws-java-sdk-sns:1.11.218" level="project" />
     <orderEntry type="library" name="Maven: com.amazonaws:aws-java-sdk-ses:1.11.218" level="project" />
     <orderEntry type="library" name="Maven: com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20171016.1" level="project" />
+    <orderEntry type="library" name="Maven: com.rabbitmq:amqp-client:5.8.0" level="project" />
   </component>
 </module>

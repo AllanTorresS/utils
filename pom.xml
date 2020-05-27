@@ -6,7 +6,7 @@
 
     <groupId>ipp.aci.boleia</groupId>
     <artifactId>boleia-dominioUtil</artifactId>
-    <version>3.29.2-SNAPSHOT</version>
+    <version>3.32.4-SNAPSHOT</version>
 
     <properties>
         <main.basedir>${project.basedir}</main.basedir>
@@ -35,6 +35,7 @@
         <versions.plugins.maven.resources>3.0.2</versions.plugins.maven.resources>
         <versions.libs.jasperreports>6.5.1</versions.libs.jasperreports>
         <versions.libs.jasperreports-fonts>6.0.0</versions.libs.jasperreports-fonts>
+        <versions.libs.com.rabbitmq>5.8.0</versions.libs.com.rabbitmq>
     </properties>
 
 
@@ -215,6 +216,16 @@
             <groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
             <artifactId>owasp-java-html-sanitizer</artifactId>
             <version>${versions.libs.owasp.java.html.sanitizer}</version>
+        </dependency>
+        <!--
+        ============================================
+        RabbitMQ
+        ============================================
+        -->
+        <dependency>
+            <groupId>com.rabbitmq</groupId>
+            <artifactId>amqp-client</artifactId>
+            <version>${versions.libs.com.rabbitmq}</version>
         </dependency>
     </dependencies>
 

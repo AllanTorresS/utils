@@ -3,7 +3,7 @@ package ipp.aci.boleia.util.validador.inscricaoestadual;
 /**
  * Validador de inscrição estadual
  */
-public class ValidadorInscricaoPernambuco extends ValidadorInscricaoEstadualGenerico {
+public class ValidadorInscricaoPernambuco extends ValidadorInscricaoEstadualGenerico  {
 
     @Override
     public boolean validar(String ie) {

@@ -326,7 +326,7 @@ public final class UtilitarioFormatacaoData {
      * Formata um período de dias entre duas datas
      *
      * @param dataInicio Data de início do período
-     * @param dataFim    Data de fim do período
+     * @param dataFim Data de fim do período
      * @param abreviacao A opcao de abreviar ou nao o nome do mes
      * @return Período formatado
      */
@@ -365,7 +365,7 @@ public final class UtilitarioFormatacaoData {
      * Formata um período de dias entre duas datas
      *
      * @param dataInicio Data de início do período
-     * @param dataFim    Data de fim do período
+     * @param dataFim Data de fim do período
      * @return Período formatado
      */
     public static String formatarPeriodoDias(Date dataInicio, Date dataFim) {
@@ -480,8 +480,7 @@ public final class UtilitarioFormatacaoData {
             return formatarDataCurta(data);
         } else if (padrao.equals(ConstantesFormatacao.FORMATO_HORA_MINUTOS_SEGUNDOS)) {
             return formatarHoraMinutosSegundos(data);
-        }
-        else if (padrao.equals(ConstantesFormatacao.FORMATO_DATA_HORA_MINUTOS_SEGUNDOS)) {
+        } else if (padrao.equals(ConstantesFormatacao.FORMATO_DATA_HORA_MINUTOS_SEGUNDOS)) {
             return formatarDataHoraMinutosSegundos(data);
         }
         return null;
@@ -499,9 +498,8 @@ public final class UtilitarioFormatacaoData {
 
     /**
      * Formata um período (dentro de um mês) na forma DD-DD/MM
-     *
      * @param dataInicio a data de inicio
-     * @param dataFim    a data de fim
+     * @param dataFim a data de fim
      * @return a data formatada
      */
     public static String formatarDataPeriodoMes(Date dataInicio, Date dataFim) {

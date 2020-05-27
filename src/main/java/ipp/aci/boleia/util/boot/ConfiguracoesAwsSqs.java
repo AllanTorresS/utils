@@ -6,20 +6,27 @@ import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
 import com.amazonaws.services.sqs.AmazonSQSAsync;
 import com.amazonaws.services.sqs.AmazonSQSAsyncClient;
 import com.amazonaws.services.sqs.buffered.AmazonSQSBufferedAsyncClient;
+import com.amazonaws.services.sqs.model.CreateQueueRequest;
 import com.amazonaws.services.sqs.model.ListQueuesRequest;
 import com.amazonaws.services.sqs.model.ListQueuesResult;
+import com.amazonaws.services.sqs.model.QueueAttributeName;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import ipp.aci.boleia.util.i18n.Mensagens;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.cloud.aws.messaging.config.QueueMessageHandlerFactory;
 import org.springframework.cloud.aws.messaging.core.QueueMessagingTemplate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.handler.annotation.support.PayloadArgumentResolver;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -29,6 +36,8 @@ import java.util.List;
 public class ConfiguracoesAwsSqs {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfiguracoesAwsSqs.class);
+    
+    private static final String RECEIVE_MESSAGE_WAIT_TIME_PADRAO = "20";
 
     @Value("${aws.sqs.local.endpoint}")
     private String sqsLocalEndpoint;
@@ -87,6 +96,18 @@ public class ConfiguracoesAwsSqs {
     @Value("${aws.sqs.ciclo-repasse.autorizacao-pagamento.erro-validacao-ciclo}")
     private String nomeFilaErroCicloRepasseValidacaoTransConsol;
 
+    @Value("${aws.sqs.cobranca.requisicao-incluir-fatura}")
+    private String nomeFilaCobrancaRequisicaoIncluirFatura;
+
+    @Value("${aws.sqs.cobranca.resposta-incluir-fatura}")
+    private String nomeFilaCobrancaRespostaIncluirFatura;
+
+    /**
+     * Nome da fila que aplica novo parâmetro de ciclo na frota
+     */
+    @Value("${aws.sqs.frota-param-ciclo.aplica-novo-ciclo}")
+    private String nomeFilaFrotaParamCiclo;
+
     /**
      * Carrega as mensagens do sistema
      */
@@ -118,24 +139,43 @@ public class ConfiguracoesAwsSqs {
      */
     @Bean
     public QueueMessagingTemplate queueMessagingTemplate(AmazonSQSAsync amazonSQSAsync) {
-        ArrayList<String> nomeFilas = new ArrayList<>(2);
-        nomeFilas.add(nomeFilaAutorizacaoPagamentoConsolidacao);
-        nomeFilas.add(nomeFilaTransacaoConsolidacao);
-        nomeFilas.add(nomeFilaAutorizacaoPagamentoRepasse);
-        nomeFilas.add(nomeFilaCicloRepasse);
-        nomeFilas.add(nomeFilaGeradorCampanha);
-        nomeFilas.add(nomeFilaErroTransConsolValidacaoCampanha);
-        nomeFilas.add(nomeFilaErroCicloRepasseValidacaoCampanha);
-        nomeFilas.add(nomeFilaErroCicloRepasseValidacaoTransConsol);
+        List<String> nomeFilas = Arrays.asList(
+                         nomeFilaAutorizacaoPagamentoConsolidacao
+                        ,nomeFilaTransacaoConsolidacao
+                        ,nomeFilaAutorizacaoPagamentoRepasse
+                        ,nomeFilaCicloRepasse
+                        ,nomeFilaGeradorCampanha
+                        ,nomeFilaErroTransConsolValidacaoCampanha
+                        ,nomeFilaErroCicloRepasseValidacaoCampanha
+                        ,nomeFilaErroCicloRepasseValidacaoTransConsol
+                        ,nomeFilaCobrancaRequisicaoIncluirFatura
+                        ,nomeFilaCobrancaRespostaIncluirFatura
+                        ,nomeFilaFrotaParamCiclo);
         criaFilaSeNaoExistem(amazonSQSAsync, nomeFilas);
         return new QueueMessagingTemplate(amazonSQSAsync);
     }
 
     /**
+     * Cria o QueueMessageHandlerFactory para a serialização de mensagens das fila
+     * @param objectMapper Serializador Json
+     * @return o QueueMessageHandlerFactory configurado
+     */
+    @Bean
+    public QueueMessageHandlerFactory queueMessageHandlerFactory(ObjectMapper objectMapper) {
+        MappingJackson2MessageConverter mappingJackson2MessageConverter = new MappingJackson2MessageConverter();
+        mappingJackson2MessageConverter.setSerializedPayloadClass(String.class);
+        mappingJackson2MessageConverter.setObjectMapper(objectMapper);
+        mappingJackson2MessageConverter.setStrictContentTypeMatch(false);
+        QueueMessageHandlerFactory factory = new QueueMessageHandlerFactory();
+        factory.setArgumentResolvers(Collections.singletonList(new PayloadArgumentResolver(mappingJackson2MessageConverter)));
+        return factory;
+    }
+
+    /**
      * Cria todas as filas necessarias caso não exista
      *
-     * @param amazonSQSAsync
-     * @param nomeFilas
+     * @param amazonSQSAsync client de acesso ao serviço da aws
+     * @param nomeFilas Lista dos nomes das filas usadas na aplicação
      */
     private void criaFilaSeNaoExistem(AmazonSQSAsync amazonSQSAsync, List<String> nomeFilas) {
         ListQueuesResult listQueuesResult = amazonSQSAsync.listQueues(new ListQueuesRequest(prefixoFilas));
@@ -145,9 +185,9 @@ public class ConfiguracoesAwsSqs {
     /**
      * Cria a fila caso não exista
      *
-     * @param amazonSQSAsync
-     * @param listQueuesResult
-     * @param nomeFila
+     * @param amazonSQSAsync client de acesso ao serviço da aws
+     * @param listQueuesResult lista de filas existentes na aws
+     * @param nomeFila nome da fila que precisa ser verificada
      */
     private void criaFilaSeNaoExistem(AmazonSQSAsync amazonSQSAsync, ListQueuesResult listQueuesResult, String nomeFila) {
         if(!filaExiste(listQueuesResult, nomeFila)){
@@ -162,19 +202,24 @@ public class ConfiguracoesAwsSqs {
     /**
      * Cria a fila na aws
      *
-     * @param amazonSQSAsync
-     * @param nomeFila
+     * @param amazonSQSAsync client de acesso ao serviço da aws
+     * @param nomeFila nome da fila que precisa ser criada
      */
     private void criarFila(AmazonSQSAsync amazonSQSAsync, String nomeFila) {
-        amazonSQSAsync.createQueue(nomeFila);
+        final CreateQueueRequest createQueueRequest = new CreateQueueRequest()
+                    .withQueueName(nomeFila)
+                    .addAttributesEntry(
+                            QueueAttributeName.ReceiveMessageWaitTimeSeconds.toString()
+                            , RECEIVE_MESSAGE_WAIT_TIME_PADRAO);
+        amazonSQSAsync.createQueue(createQueueRequest);
     }
 
     /**
      * Verifica se a fila existe na aws
      *
-     * @param listQueuesResult
-     * @param nomeFila
-     * @return
+     * @param listQueuesResult lista de filas na aws
+     * @param nomeFila nome da fila que precisa ser verificada
+     * @return true caso a fila exista na lista de filas na aws
      */
     private boolean filaExiste(ListQueuesResult listQueuesResult, String nomeFila) {
         return listQueuesResult.getQueueUrls().stream().anyMatch(x -> x.contains(nomeFila));

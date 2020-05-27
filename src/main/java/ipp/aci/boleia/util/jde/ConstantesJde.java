@@ -1,5 +1,7 @@
 package ipp.aci.boleia.util.jde;
 
+import java.math.BigDecimal;
+
 /**
  * Enumera as constantes utilizadas pelos serviços de integração com o JDE
  */
@@ -81,6 +83,10 @@ public final class ConstantesJde {
     public static final String BOLETO_NUMERO_PARCELA = "001";
 
     public static final String CONDICAO_PGTO_REPASSE = "015";
+
+    public static final String SUFIXO_PRORROGAR_VENCIMENTO = "001";
+    public static final BigDecimal ACRECIMO_PRORROGAR_VENCIMENTO = new BigDecimal(0);
+    public static final String ALTERACAO_PRORROGAR_VENCIMENTO = "03";
 
     /**
      * Impede instanciacao e heranca

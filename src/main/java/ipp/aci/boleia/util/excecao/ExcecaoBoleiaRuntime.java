@@ -8,7 +8,7 @@ import java.io.Serializable;
  *  1) nao deve ser tratada, mas apenas apresentada
  *  2) garante rollbak da tranacao subjacente.
  */
-public class ExcecaoBoleiaRuntime extends RuntimeException implements IExcecaoBoleia {
+public class ExcecaoBoleiaRuntime extends RuntimeException implements IExcecaoBoleia{
 
     private final Erro erro;
     private final Serializable[] args;

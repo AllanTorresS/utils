@@ -112,6 +112,19 @@ public final class UtilitarioLambda {
     }
 
     /**
+     * Converte uma collection em Stream retornado uma stream vazia, caso seja null
+     *
+     * @param conjunto Collection a ser convertido para Stream.
+     * @param <T> Tipo de origem da lista
+     * @return Lista unificada
+     */
+    public static <T> Stream<T> obterStream(Collection<T> conjunto) {
+        return conjunto == null
+                ? Stream.empty()
+                : conjunto.stream();
+    }
+
+    /**
      * Filtra uma lista removendo duplicadas de acordo com uma propriedade do objeto
      * @param lista a lista a ser filtrada
      * @param extratorChave a propriedade a ser utilizada como chave

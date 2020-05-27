@@ -56,8 +56,8 @@ public class UtilitarioNotificacaoPushMotorista extends UtilitarioNotificacaoPus
     @Async
     public void enviarNotificacaoPagamentoMotorista(Long idPedido, Long idMotorista, Long idNota, String nomePontoVenda, Long idAbastecimento) {
         if (idPedido != null) {
-            DispositivoMotoristaPedido pedido = repositorioDispositivoMotoristaPedido.obterPorId(idPedido);
-            DispositivoMotorista dispositivoMotorista = pedido.getDispositivoMotorista();
+            final DispositivoMotoristaPedido pedido = repositorioDispositivoMotoristaPedido.obterPorId(idPedido);
+            final DispositivoMotorista dispositivoMotorista = pedido.getDispositivoMotorista();
 
             NotificacaoPushPagamentoMotoristaVo vo = new NotificacaoPushPagamentoMotoristaVo();
             vo.setIdNota(idNota);
@@ -85,14 +85,14 @@ public class UtilitarioNotificacaoPushMotorista extends UtilitarioNotificacaoPus
     @Async
     public void enviarNotificacaoAcumuloKMVMotorista(Long idPedido, Long idMotorista, INotaMotoristaDTO notaAutorizada, Integer pontosAcumuladosKmv) {
         if (idPedido != null) {
-            DispositivoMotoristaPedido pedido = repositorioDispositivoMotoristaPedido.obterPorId(idPedido);
-            DispositivoMotorista dispositivoMotorista = pedido.getDispositivoMotorista();
+            final DispositivoMotoristaPedido pedido = repositorioDispositivoMotoristaPedido.obterPorId(idPedido);
+            final DispositivoMotorista dispositivoMotorista = pedido.getDispositivoMotorista();
 
             NotificacaoPushAcumuloMotoristaVo vo = new NotificacaoPushAcumuloMotoristaVo();
             vo.setNotaMotoristaDTO(criarNotaMotoristaVo(notaAutorizada));
             vo.setTipoNotificacao(TipoNotificacaoPush.KMV_ACUMULADO);
             if (permiteNotificacaoAcumulo(dispositivoMotorista)) {
-                String mensagemCorpo  = mensagens.obterMensagem("motorista.servico.push.acumuladoKmv.mensagem", pontosAcumuladosKmv.toString());
+                String mensagemCorpo = mensagens.obterMensagem("motorista.servico.push.acumuladoKmv.mensagem", pontosAcumuladosKmv.toString());
                 enviarNotificacaoPush(idMotorista, vo, dispositivoMotorista, mensagemCorpo);
             }
         }

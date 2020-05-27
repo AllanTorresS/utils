@@ -67,7 +67,7 @@ public class ParametrosPesquisaBuilder {
      * 
      * @return O próprio builder.
      */
-    public ParametrosPesquisaBuilder adicionarParametros(ParametroPesquisa... params) {
+    public ParametrosPesquisaBuilder adicionarParametros(ParametroPesquisa ... params) {
         Collections.addAll(parametros, params);
         return this;
     }

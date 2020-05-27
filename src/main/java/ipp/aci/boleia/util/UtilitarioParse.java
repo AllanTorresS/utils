@@ -10,13 +10,12 @@ public final class UtilitarioParse {
     /**
      * Impede instanciação
      */
-    private UtilitarioParse() {
-    }
+    private UtilitarioParse() { }
 
     /**
      * Converte uma String para Long e caso a string esteja fora de formato é retornado um valor default.
      *
-     * @param valor        String a ser convertida para Long
+     * @param valor String a ser convertida para Long
      * @param valorDefault Valor a ser retornado em caso de string fora de formato
      * @return O valor Long convertido
      */
@@ -34,13 +33,12 @@ public final class UtilitarioParse {
      * @param valor String a ser convertida para Long
      * @return O valor Long convertido
      */
-    public static Long tryParseLong(String valor) {
+    public static Long tryParseLong(String valor){
         return tryParseLong(valor, null);
     }
 
     /**
      * Converte uma String no formato numerico (1 = true ou false) em um valor booleano
-     *
      * @param parametro String a ser convertida
      * @return O valor booleano resultante
      */
