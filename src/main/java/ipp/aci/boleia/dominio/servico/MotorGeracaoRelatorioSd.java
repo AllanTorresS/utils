@@ -11,12 +11,9 @@ import ipp.aci.boleia.dominio.enums.TipoSubcategoriaNotificacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.BaseFiltroPaginado;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioJson;
-import ipp.aci.boleia.util.mensageria.UtilitarioEnvioMensagens;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 import java.io.IOException;
 import java.util.Date;
 
@@ -38,12 +35,6 @@ public class MotorGeracaoRelatorioSd {
     @Autowired
     private  NotificacaoUsuarioSd notificacaoUsuarioSd;
 
-    @Autowired
-    private UtilitarioEnvioMensagens utilitarioEnvioMensagens;
-
-    @Value("${rabbitmq.prefixo.chave-rota}")
-    private String prefixoChaveRotaRelatorio;
-
     /**
      * Inclusão de relatório no motor de geração de relatórios
      * e envio para o listener
@@ -62,21 +53,7 @@ public class MotorGeracaoRelatorioSd {
     public MotorGeracaoRelatorios incluir(Date dataPeriodoFiltradoInicial, Date dataPeriodoFiltradoFinal,
                                           BaseFiltroPaginado filtroRelatorio, TipoRelatorioMotorGerador tipoRelatorioMotorGerador, TipoExtensaoArquivo tipoExtensaoArquivo, Usuario usuarioLogado, Date hoje) throws IOException {
         MotorGeracaoRelatorios m = this.salvarNovoRelatorio(dataPeriodoFiltradoInicial, dataPeriodoFiltradoFinal, filtroRelatorio, tipoRelatorioMotorGerador, tipoExtensaoArquivo, usuarioLogado, hoje);
-
-        enviarRelatorioParaProcessamento(m.getId(), tipoRelatorioMotorGerador);
-
         return m;
-    }
-
-    /**
-     * Envia um relatório para ser processado no módulo de relatórios
-     *
-     * @param idRelatorio O identificador da solicitação de relatório
-     * @param tipoRelatorioMotorGerador O tipo do relatório a ser emitido
-     * @throws IOException Exceção lançada haja um erro no envio do relatório para a fila.
-     */
-    private void enviarRelatorioParaProcessamento(Long idRelatorio, TipoRelatorioMotorGerador tipoRelatorioMotorGerador) throws IOException {
-        utilitarioEnvioMensagens.enviarMensagem(idRelatorio.toString(), tipoRelatorioMotorGerador.name());
     }
 
     /**
