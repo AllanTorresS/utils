@@ -29,4 +29,11 @@ public class OracleModuloInternoDados extends OracleRepositorioBoleiaDados<Modul
         parametros.add(new ParametroPesquisaIgual("secret", secret));
         return pesquisarUnico(parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
+
+    @Override
+    public ModuloInterno obterPorNome(String nome) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaIgual("nomeModulo", nome));
+        return pesquisarUnico(parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
 }

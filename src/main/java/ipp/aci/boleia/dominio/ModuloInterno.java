@@ -48,8 +48,18 @@ public class ModuloInterno implements IPersistente, IExclusaoLogica {
 
     @NotNull
     @Size(max=250)
+    @Column(name = "DS_CLIENT_SALT")
+    private String clientSalt;
+
+    @NotNull
+    @Size(max=250)
     @Column(name = "DS_SECRET")
     private String secret;
+
+    @NotNull
+    @Size(max=250)
+    @Column(name = "DS_SECRET_SALT")
+    private String secretSalt;
 
     @NotNull
     @Column(name = "ID_STATUS")
@@ -141,5 +151,21 @@ public class ModuloInterno implements IPersistente, IExclusaoLogica {
 
     public void setStatusConvertido(String statusConvertido) {
         this.statusConvertido = statusConvertido;
+    }
+
+    public String getClientSalt() {
+        return clientSalt;
+    }
+
+    public void setClientSalt(String clientSalt) {
+        this.clientSalt = clientSalt;
+    }
+
+    public String getSecretSalt() {
+        return secretSalt;
+    }
+
+    public void setSecretSalt(String secretSalt) {
+        this.secretSalt = secretSalt;
     }
 }
