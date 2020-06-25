@@ -3,6 +3,8 @@ package ipp.aci.boleia.dominio.enums;
 
 import ipp.aci.boleia.util.i18n.IEnumComLabel;
 
+import java.util.Arrays;
+
 /**
  * Indica as rotinas implementadas no sistema
  */
@@ -67,5 +69,17 @@ public enum Rotina implements IEnumComLabel<Rotina> {
             }
         }
         return null;
+    }
+
+    /**
+     * Obtém o enumerado referente ao parâmetro fornecido
+     *
+     * @param nome nome da rotina
+     * @return enumerado ou nulo
+     */
+    public static Rotina obterPorNome(String nome) {
+        return Arrays.stream(Rotina.values())
+                .filter(t -> t.name().equalsIgnoreCase(nome))
+                .findFirst().orElse(null);
     }
 }
