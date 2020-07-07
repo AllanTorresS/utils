@@ -42,8 +42,12 @@ public class FrotaParametroSistemaConsumo implements IPersistente, IPertenceFrot
     private FrotaParametroSistema frotaParametroSistema;
 
     @NotNull
-    @Column(name = "VA_PORCENTAGEM")
-    private BigDecimal porcentagemLimite;
+    @Column(name= "VA_PORCENTAGEM_LIMITE_MINIMO")
+    private BigDecimal porcentagemLimiteMinimo;
+
+    @NotNull
+    @Column(name= "VA_PORCENTAGEM_LIMITE_MAXIMO")
+    private BigDecimal porcentagemLimiteMaximo;
 
     @Column(name = "NO_VERSAO")
     @Version
@@ -67,13 +71,7 @@ public class FrotaParametroSistemaConsumo implements IPersistente, IPertenceFrot
         this.frotaParametroSistema = frotaParametroSistema;
     }
 
-    public BigDecimal getPorcentagemLimite() {
-        return porcentagemLimite;
-    }
 
-    public void setPorcentagemLimite(BigDecimal porcentagemLimite) {
-        this.porcentagemLimite = porcentagemLimite;
-    }
 
     public Long getVersao() {
         return versao;
@@ -86,5 +84,21 @@ public class FrotaParametroSistemaConsumo implements IPersistente, IPertenceFrot
     @Override
     public List<Frota> getFrotas() {
         return frotaParametroSistema != null ? frotaParametroSistema.getFrotas() : null;
+    }
+
+    public BigDecimal getPorcentagemLimiteMinimo() {
+        return porcentagemLimiteMinimo;
+    }
+
+    public void setPorcentagemLimiteMinimo(BigDecimal porcentagemLimiteMinimo) {
+        this.porcentagemLimiteMinimo = porcentagemLimiteMinimo;
+    }
+
+    public BigDecimal getPorcentagemLimiteMaximo() {
+        return porcentagemLimiteMaximo;
+    }
+
+    public void setPorcentagemLimiteMaximo(BigDecimal porcentagemLimiteMaximo) {
+        this.porcentagemLimiteMaximo = porcentagemLimiteMaximo;
     }
 }
