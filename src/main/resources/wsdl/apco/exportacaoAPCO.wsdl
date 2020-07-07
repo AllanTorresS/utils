@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:ns2="http://ipiranga.com.br/importacaoDadosProFrotas/clienteProFrota" xmlns:ns3="http://profrotas.servico.visao.apco.aci.ipp/" xmlns:ns4="http://ipiranga.com.br/statusIntegracao" xmlns:ns5="http://ipiranga.com.br/importacaoDadosProFrotas/frotaPosto" xmlns:ns6="http://ipiranga.com.br/importacaoDadosProFrotas/volumeVendasClienteProFrota" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:s0="http://ipiranga.com.br/importacaoDadosProFrotas" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" targetNamespace="http://ipiranga.com.br/importacaoDadosProFrotas">
+    <types>
+        <s:schema elementFormDefault="qualified" targetNamespace="http://ipiranga.com.br/importacaoDadosProFrotas">
+            <s:import namespace="http://ipiranga.com.br/importacaoDadosProFrotas/clienteProFrota"/>
+            <s:import namespace="http://ipiranga.com.br/importacaoDadosProFrotas/frotaPosto"/>
+            <s:import namespace="http://ipiranga.com.br/importacaoDadosProFrotas/volumeVendasClienteProFrota"/>
+            <s:import namespace="http://ipiranga.com.br/statusIntegracao"/>
+            <s:element name="clienteProFrota">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" name="pRequest" type="ns2:ClientesProfrotasRequest"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="Ens_Request">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Messagebody"/>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="Ens_Messagebody">
+                <s:annotation>
+                    <s:documentation>Base class for simple Ensemble message classes, and for the sub- base classes Ens.Request and Ens.Response.
+                        Note however that any persistent or serial object can be sent as a message body. It is not required that all message body
+                        object classes to be derived from this class.  Also note that all message classes derived from this class will share the
+                        same storage extent in the database.</s:documentation>
+                </s:annotation>
+            </s:complexType>
+            <s:element name="clienteProFrotaResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element name="clienteProFrotaResult" type="ns2:ClientesProfrotasResponse"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="Ens_Response">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Messagebody"/>
+                </s:complexContent>
+            </s:complexType>
+            <s:element name="frotaPosto">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" name="pRequest" type="ns5:FrotasPostosRequest"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="frotaPostoResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element name="frotaPostoResult" type="ns5:FrotasPostosResponse"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="volumeVendasClienteProFrota">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" name="pRequest" type="ns6:VendasConsolidadasRequest"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="volumeVendasClienteProFrotaResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element name="volumeVendasClienteProFrotaResult" type="ns4:VendasConsolidadasResponse"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+        </s:schema>
+        <s:schema elementFormDefault="qualified" targetNamespace="http://ipiranga.com.br/importacaoDadosProFrotas/clienteProFrota">
+            <s:import namespace="http://ipiranga.com.br/importacaoDadosProFrotas"/>
+            <s:import namespace="http://ipiranga.com.br/statusIntegracao"/>
+            <s:import namespace="http://profrotas.servico.visao.apco.aci.ipp/"/>
+            <s:complexType name="ClientesProfrotasRequest">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Request">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="clientes" type="ns2:ArrayOfclienteProFrotaDto"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="ArrayOfclienteProFrotaDto">
+                <s:sequence>
+                    <s:element maxOccurs="unbounded" minOccurs="0" name="clienteProFrotaDto" nillable="true" type="ns3:clienteProFrotaDto"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="ClientesProfrotasResponse">
+                <s:complexContent>
+                    <s:extension base="ns4:v3">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="return" type="ns3:responseDtoCliente"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+        </s:schema>
+        <s:schema targetNamespace="http://profrotas.servico.visao.apco.aci.ipp/">
+            <s:complexType name="clienteProFrotaDto">
+                <s:sequence>
+                    <s:element minOccurs="0" name="codigoDigitoVerificador" type="s:string"/>
+                    <s:element minOccurs="0" name="codigoPessoa" type="s:string"/>
+                    <s:element minOccurs="0" name="codigoTipoPessoa" type="s:string"/>
+                    <s:element minOccurs="0" name="dataInativacao" type="s:string"/>
+                    <s:element minOccurs="0" name="noSeqCliProFrota" type="s:int"/>
+                    <s:element minOccurs="0" name="nomePessoa" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="responseDtoCliente">
+                <s:sequence>
+                    <s:element minOccurs="0" name="msgErro" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="frotasDto">
+                <s:sequence>
+                    <s:element minOccurs="0" name="codComponente" type="s:int"/>
+                    <s:element minOccurs="0" name="dataInativacao" type="s:string"/>
+                    <s:element minOccurs="0" name="noSeqCliProFrota" type="s:int"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="responseDto">
+                <s:sequence>
+                    <s:element minOccurs="0" name="msgErro" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="volumeVendasClienteProFrotaDto">
+                <s:sequence>
+                    <s:element minOccurs="0" name="codComponente" type="s:int"/>
+                    <s:element minOccurs="0" name="codigoProduto" type="s:int"/>
+                    <s:element minOccurs="0" name="dataVendaRealizada" type="s:string"/>
+                    <s:element minOccurs="0" name="noSeqCliProFrota" type="s:int"/>
+                    <s:element minOccurs="0" name="volumeVenda" type="s:decimal"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="responseDtoVendas">
+                <s:sequence>
+                    <s:element minOccurs="0" name="msgErro" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+        </s:schema>
+        <s:schema elementFormDefault="qualified" targetNamespace="http://ipiranga.com.br/statusIntegracao">
+            <s:import namespace="http://ipiranga.com.br/importacaoDadosProFrotas"/>
+            <s:import namespace="http://profrotas.servico.visao.apco.aci.ipp/"/>
+            <s:complexType name="v3">
+                <s:annotation>
+                    <s:documentation>&lt;!-- ;vc;-
+                        ;vc;    Object: canonico.responseIntegracao.v3.CLS/ENSINFRA.0
+                        ;vc; Component: CLS.canonico.responseIntegracao.v3
+                        ;vc;  Location: ENSINFRA-HML
+                        ;vc; Date/Time: 30-Jul-19 15:49
+                        ;vc;      User: carlosca
+                        ;vc; --&gt;&lt;p&gt;Deltanji status:&lt;table id='vcm' border='1' style='{font-size: 0.7em;}'&gt;&lt;tr&gt;&lt;td&gt;Object&lt;/td&gt;&lt;td&gt;canonico.responseIntegracao.v3.CLS/ENSINFRA.0&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Component&lt;/td&gt;&lt;td&gt;CLS.canonico.responseIntegracao.v3&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Location&lt;/td&gt;&lt;td&gt;ENSINFRA-HML&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Date/Time&lt;/td&gt;&lt;td style='white-space: nowrap;'&gt;30-Jul-19 15:49&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;User&lt;/td&gt;&lt;td&gt;carlosca&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                    </s:documentation>
+                </s:annotation>
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Response">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="statusIntegracao" type="ns4:statusIntegracao"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="statusIntegracao">
+                <s:annotation>
+                    <s:documentation>&lt;!-- ;vc;-
+                        ;vc;    Object: canonico.responseIntegracao.v3.statusIntegracao.CLS/ENSINFRA.0
+                        ;vc; Component: CLS.canonico.responseIntegracao.v3.statusIntegracao
+                        ;vc;  Location: ENSINFRA-HML
+                        ;vc; Date/Time: 30-Jul-19 15:49
+                        ;vc;      User: carlosca
+                        ;vc; --&gt;&lt;p&gt;Deltanji status:&lt;table id='vcm' border='1' style='{font-size: 0.7em;}'&gt;&lt;tr&gt;&lt;td&gt;Object&lt;/td&gt;&lt;td&gt;canonico.responseIntegracao.v3.statusIntegracao.CLS/ENSINFRA.0&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Component&lt;/td&gt;&lt;td&gt;CLS.canonico.responseIntegracao.v3.statusIntegracao&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Location&lt;/td&gt;&lt;td&gt;ENSINFRA-HML&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Date/Time&lt;/td&gt;&lt;td style='white-space: nowrap;'&gt;30-Jul-19 15:49&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;User&lt;/td&gt;&lt;td&gt;carlosca&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                    </s:documentation>
+                </s:annotation>
+                <s:sequence>
+                    <s:element minOccurs="0" name="status" type="s:boolean"/>
+                    <s:element minOccurs="0" name="codigo" type="s:string"/>
+                    <s:element minOccurs="0" name="mensagem" type="s:string"/>
+                    <s:element minOccurs="0" name="sessionId" type="s:long"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="VendasConsolidadasResponse">
+                <s:complexContent>
+                    <s:extension base="ns4:v3">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="return" type="ns3:responseDtoVendas"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+        </s:schema>
+        <s:schema elementFormDefault="qualified" targetNamespace="http://ipiranga.com.br/importacaoDadosProFrotas/frotaPosto">
+            <s:import namespace="http://ipiranga.com.br/importacaoDadosProFrotas"/>
+            <s:import namespace="http://ipiranga.com.br/statusIntegracao"/>
+            <s:import namespace="http://profrotas.servico.visao.apco.aci.ipp/"/>
+            <s:complexType name="FrotasPostosRequest">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Request">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="frotas" type="ns5:ArrayOffrotaPostoDtofrotasDto"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="ArrayOffrotaPostoDtofrotasDto">
+                <s:sequence>
+                    <s:element maxOccurs="unbounded" minOccurs="0" name="frotaPostoDto" nillable="true" type="ns3:frotasDto"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="FrotasPostosResponse">
+                <s:complexContent>
+                    <s:extension base="ns4:v3">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="return" type="ns3:responseDto"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+        </s:schema>
+        <s:schema elementFormDefault="qualified" targetNamespace="http://ipiranga.com.br/importacaoDadosProFrotas/volumeVendasClienteProFrota">
+            <s:import namespace="http://ipiranga.com.br/importacaoDadosProFrotas"/>
+            <s:import namespace="http://profrotas.servico.visao.apco.aci.ipp/"/>
+            <s:complexType name="VendasConsolidadasRequest">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Request">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="volumes" type="ns6:ArrayOfvolumeVendasClienteProFrotaDto"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="ArrayOfvolumeVendasClienteProFrotaDto">
+                <s:sequence>
+                    <s:element maxOccurs="unbounded" minOccurs="0" name="volumeVendasClienteProFrotaDto" nillable="true" type="ns3:volumeVendasClienteProFrotaDto"/>
+                </s:sequence>
+            </s:complexType>
+        </s:schema>
+    </types>
+    <message name="clienteProFrotaSoapIn">
+        <part name="parameters" element="s0:clienteProFrota"/>
+    </message>
+    <message name="clienteProFrotaSoapOut">
+        <part name="parameters" element="s0:clienteProFrotaResponse"/>
+    </message>
+    <message name="frotaPostoSoapIn">
+        <part name="parameters" element="s0:frotaPosto"/>
+    </message>
+    <message name="frotaPostoSoapOut">
+        <part name="parameters" element="s0:frotaPostoResponse"/>
+    </message>
+    <message name="volumeVendasClienteProFrotaSoapIn">
+        <part name="parameters" element="s0:volumeVendasClienteProFrota"/>
+    </message>
+    <message name="volumeVendasClienteProFrotaSoapOut">
+        <part name="parameters" element="s0:volumeVendasClienteProFrotaResponse"/>
+    </message>
+    <portType name="importacaoDadosProFrotasSoap">
+        <operation name="clienteProFrota">
+            <input message="s0:clienteProFrotaSoapIn"/>
+            <output message="s0:clienteProFrotaSoapOut"/>
+        </operation>
+        <operation name="frotaPosto">
+            <input message="s0:frotaPostoSoapIn"/>
+            <output message="s0:frotaPostoSoapOut"/>
+        </operation>
+        <operation name="volumeVendasClienteProFrota">
+            <input message="s0:volumeVendasClienteProFrotaSoapIn"/>
+            <output message="s0:volumeVendasClienteProFrotaSoapOut"/>
+        </operation>
+    </portType>
+    <binding name="importacaoDadosProFrotasSoap" type="s0:importacaoDadosProFrotasSoap">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="clienteProFrota">
+            <soap:operation soapAction="http://ipiranga.com.br/importacaoDadosProFrotas/ws.apco.importacaoDados.proFrotas.Service.clienteProFrota" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="frotaPosto">
+            <soap:operation soapAction="http://ipiranga.com.br/importacaoDadosProFrotas/ws.apco.importacaoDados.proFrotas.Service.frotaPosto" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="volumeVendasClienteProFrota">
+            <soap:operation soapAction="http://ipiranga.com.br/importacaoDadosProFrotas/ws.apco.importacaoDados.proFrotas.Service.volumeVendasClienteProFrota" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="importacaoDadosProFrotas">
+        <port name="importacaoDadosProFrotasSoap" binding="s0:importacaoDadosProFrotasSoap">
+            <soap:address location="${settings.apco.soap.address}"/>
+        </port>
+    </service>
+</definitions>

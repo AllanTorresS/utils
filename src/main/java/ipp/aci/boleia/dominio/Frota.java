@@ -1,6 +1,7 @@
 package ipp.aci.boleia.dominio;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import ipp.aci.boleia.dominio.enums.ModalidadePagamento;
 import ipp.aci.boleia.dominio.enums.StatusContrato;
 import ipp.aci.boleia.dominio.enums.StatusFrota;
@@ -128,6 +129,11 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @Size(max=250)
     @Column(name = "NM_ASSESSOR_RESP")
     private String assessorResponsavel;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_USUARIO_ASSESSOR_RESP")
+    @JsonIgnoreProperties("frotasAssessoradas")
+    private Usuario usuarioAssessorResponsavel;
 
     @Max(99)
     @NotNull
@@ -397,6 +403,7 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
      * @param municipio Município
      * @param unidadeFederativa Unidade federativa da frota
      * @param assessorResponsavel Assessor responsável pela frota
+     * @param usuarioAssessorResponsavel Usuario assessor responsavel pela frota
      * @param dddTelefone DDD do telefone da frota
      * @param telefone Telefone da frota
      * @param email Email da frota
@@ -447,7 +454,7 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
      * @param dataAtualizacao Data de atualização da frota
      * @param connectCTAToken Token do connect
      */
-    public Frota(Long id, Long cnpj, Integer status, String nomeRazaoFrota, String statusConvertido, String razaoSocial, String nomeFantasia, Long inscricaoEstadual, Long inscricaoMunicipal, Integer cep, String logradouro, Integer numero, String complemento, String bairro, String municipio, String unidadeFederativa, String assessorResponsavel, Integer dddTelefone, Long telefone, String email, String nomeResponsavelFrota, Long cpfResponsavelFrota, String cargoResponsavelFrota, Integer dddTelefoneResponsavelFrota, Long telefoneResponsavelFrota, String emailResponsavelFrota, Integer faixaQtdVeicPesados, Integer faixaQtdVeicLeves, Long volumeEstimadoDiesel, Long volumeEstimadoCicloOtto, Integer modoPagamento, Integer porte, Integer segmentoAtuacao, Integer statusContrato, String statusContratoConvertido, Date inicioContrato, Integer prazoContrato, Date dataHabilitacao, Date dataSaldoZerado, Boolean permiteAcordoEspecial, Boolean excluido, String codigoIBGE, String codCatBeneficioFiscal, Integer numeroJdeInterno, List<GrupoOperacional> gruposOperacionais, List<Veiculo> veiculos, List<Motorista> motoristas, List<Unidade> unidades, List<FrotaPontoVenda> negociacoes, ParametroCiclo parametroCiclo, SaldoFrota saldo, List<ApiToken> apiTokens, Long versao, Boolean postoInterno, Long numeroSequencialJde, Date inicioAtivacaoTemporaria, Date fimAtivacaoTemporaria, List<FrotaParametroSistema> parametrosSistema, Boolean semNotaFiscal, Date dataAceiteTermos, Boolean primeiraCompra, List<EmpresaAgregada> empresasAgregadas, List<Permissao> permissoes, Date dataCriacao, Date dataAtualizacao, String connectCTAToken) {
+    public Frota(Long id, Long cnpj, Integer status, String nomeRazaoFrota, String statusConvertido, String razaoSocial, String nomeFantasia, Long inscricaoEstadual, Long inscricaoMunicipal, Integer cep, String logradouro, Integer numero, String complemento, String bairro, String municipio, String unidadeFederativa, String assessorResponsavel, Usuario usuarioAssessorResponsavel, Integer dddTelefone, Long telefone, String email, String nomeResponsavelFrota, Long cpfResponsavelFrota, String cargoResponsavelFrota, Integer dddTelefoneResponsavelFrota, Long telefoneResponsavelFrota, String emailResponsavelFrota, Integer faixaQtdVeicPesados, Integer faixaQtdVeicLeves, Long volumeEstimadoDiesel, Long volumeEstimadoCicloOtto, Integer modoPagamento, Integer porte, Integer segmentoAtuacao, Integer statusContrato, String statusContratoConvertido, Date inicioContrato, Integer prazoContrato, Date dataHabilitacao, Date dataSaldoZerado, Boolean permiteAcordoEspecial, Boolean excluido, String codigoIBGE, String codCatBeneficioFiscal, Integer numeroJdeInterno, List<GrupoOperacional> gruposOperacionais, List<Veiculo> veiculos, List<Motorista> motoristas, List<Unidade> unidades, List<FrotaPontoVenda> negociacoes, ParametroCiclo parametroCiclo, SaldoFrota saldo, List<ApiToken> apiTokens, Long versao, Boolean postoInterno, Long numeroSequencialJde, Date inicioAtivacaoTemporaria, Date fimAtivacaoTemporaria, List<FrotaParametroSistema> parametrosSistema, Boolean semNotaFiscal, Date dataAceiteTermos, Boolean primeiraCompra, List<EmpresaAgregada> empresasAgregadas, List<Permissao> permissoes, Date dataCriacao, Date dataAtualizacao, String connectCTAToken) {
         this.id = id;
         this.cnpj = cnpj;
         this.status = status;
@@ -465,6 +472,7 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
         this.municipio = municipio;
         this.unidadeFederativa = unidadeFederativa;
         this.assessorResponsavel = assessorResponsavel;
+        this.usuarioAssessorResponsavel = usuarioAssessorResponsavel;
         this.dddTelefone = dddTelefone;
         this.telefone = telefone;
         this.email = email;
@@ -649,11 +657,19 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     }
 
     public String getAssessorResponsavel() {
-        return assessorResponsavel;
+        return this.usuarioAssessorResponsavel == null ? assessorResponsavel : this.usuarioAssessorResponsavel.getNome();
     }
 
     public void setAssessorResponsavel(String assessorResponsavel) {
         this.assessorResponsavel = assessorResponsavel;
+    }
+
+    public Usuario getUsuarioAssessorResponsavel() {
+        return usuarioAssessorResponsavel;
+    }
+
+    public void setUsuarioAssessorResponsavel(Usuario usuarioAssessorResponsavel) {
+        this.usuarioAssessorResponsavel = usuarioAssessorResponsavel;
     }
 
     public Integer getDddTelefone() {
@@ -1031,7 +1047,7 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
 
     @Transient
     public String getLogradouroENumero() {
-        return this.logradouro + ", " + this.numero;
+        return this.logradouro + (this.numero  != null ? ", " + this.numero : "");
     }
 
     @Transient
@@ -1235,18 +1251,25 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
         return semNotaFiscal == null || !semNotaFiscal;
     }
 
+
     /**
-     * Atualiza parametro ciclo com novo parametro ciclo agendado e remove o agendamento
-     * @return true caso a operação seja realizada com sucesso
+     * Verifica se frota tem parametro de ciclo para atualizar
+     * @return true caso tenha novo parâmetro de ciclo
      */
     @Transient
-    public boolean atualizaParametroDeCicloConformeNovoCiclo() {
-        if (this.getNovoParametroCiclo() != null) {
+    public boolean temParametroDeCicloNovoParaAtualizar() {
+        return this.getNovoParametroCiclo() != null;
+    }
+
+    /**
+     * Atualiza parametro ciclo com novo parametro ciclo agendado e remove o agendamento
+     */
+    @Transient
+    public void atualizaParametroDeCicloConformeNovoCiclo() {
+        if (this.temParametroDeCicloNovoParaAtualizar()) {
             this.setParametroCiclo(this.getNovoParametroCiclo());
             this.setNovoParametroCiclo(null);
             this.setDataAlteracaoCiclo(null);
-            return true;
         }
-        return false;
     }
 }

@@ -172,14 +172,14 @@ public class OraclePrecoBaseDados extends OracleOrdenacaoPrecosDados<PrecoBase> 
         paginacao.setPagina(1);
         paginacao.setTamanhoPagina(1);
         paginacao.setParametrosOrdenacaoColuna(
-                Arrays.asList(new ParametroOrdenacaoColuna("dataAtualizacao", Ordenacao.DECRESCENTE), new ParametroOrdenacaoColuna("status", Ordenacao.CRESCENTE))
+                Arrays.asList(new ParametroOrdenacaoColuna("dataAtualizacao", Ordenacao.DECRESCENTE), new ParametroOrdenacaoColuna("status",Ordenacao.CRESCENTE))
         );
 
         List<Integer> statusValidos = new ArrayList<>();
         statusValidos.add(StatusAlteracaoPrecoPosto.VIGENTE.getValue());
         statusValidos.add(StatusAlteracaoPrecoPosto.EXPIRADO.getValue());
 
-        ResultadoPaginado<PrecoBase> result =  pesquisar(paginacao,
+        ResultadoPaginado<PrecoBase>  result =  pesquisar(paginacao,
                 new ParametroPesquisaIgual("pontoVenda.id",idPtov),
                 new ParametroPesquisaIgual("precoMicromercado.tipoCombustivel.id",idTipoCombustivel),
                 new ParametroPesquisaDataMenorOuIgual("dataAtualizacao", dataAbastecimento),

@@ -2,6 +2,8 @@ package ipp.aci.boleia.dominio.vo;
 
 import ipp.aci.boleia.dominio.pesquisa.comum.BaseFiltroPaginado;
 
+import java.util.List;
+
 /**
  * Filtro para pesquisa de SaldoFrota
  */
@@ -11,6 +13,8 @@ public class FiltroPesquisaSaldoFrotaVo extends BaseFiltroPaginado {
     private EnumVo status;
     private EnumVo uf;
     private String cidade;
+    private Boolean possuiLimite;
+    private List<Long> idsFrotas;
 
     public EntidadeVo getFrota() {
         return frota;
@@ -50,5 +54,21 @@ public class FiltroPesquisaSaldoFrotaVo extends BaseFiltroPaginado {
 
     public void setCidade(String cidade) {
         this.cidade = cidade;
+    }
+
+    public Boolean isPossuiLimite() {
+        return possuiLimite;
+    }
+
+    public void setPossuiLimite(Boolean possuiLimite) {
+        this.possuiLimite = possuiLimite;
+    }
+
+    public List<Long> getIdsFrotas() {
+        return idsFrotas;
+    }
+
+    public void setIdsFrotas(List<Long> idsFrotas) {
+        this.idsFrotas = idsFrotas;
     }
 }

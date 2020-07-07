@@ -3,8 +3,8 @@ package ipp.aci.boleia.dados.oracle;
 import ipp.aci.boleia.dados.IAutorizacaoPagamentoEdicaoDados;
 import ipp.aci.boleia.dominio.AutorizacaoPagamento;
 import ipp.aci.boleia.dominio.AutorizacaoPagamentoEdicao;
-import ipp.aci.boleia.dominio.enums.StatusEdicao;
 import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
+import ipp.aci.boleia.dominio.enums.StatusEdicao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
@@ -70,7 +70,7 @@ public class OracleAutorizacaoPagamentoEdicaoDados extends OracleRepositorioBole
         parametros.add(new ParametroPesquisaIgual("autorizacaoPagamento.id", idAbastecimento));
         parametros.add(new ParametroPesquisaIgual("statusEdicao", StatusEdicao.REJEITADO.getValue()));
 
-        return pesquisar(new InformacaoPaginacao(1,1,"dataEdicao", Ordenacao.DECRESCENTE),
+        return pesquisar(new InformacaoPaginacao(1,1,"dataEdicao",Ordenacao.DECRESCENTE),
                 parametros.toArray(new ParametroPesquisa[parametros.size()]))
                 .getRegistros().stream().findFirst().orElse(null);
     }

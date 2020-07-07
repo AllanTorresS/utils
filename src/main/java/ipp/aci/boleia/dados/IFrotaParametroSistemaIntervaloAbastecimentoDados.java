@@ -5,5 +5,5 @@ import ipp.aci.boleia.dominio.FrotaParametroSistemaIntervaloAbastecimento;
 /**
  * Repositório da entidade {@link FrotaParametroSistemaIntervaloAbastecimento}
  */
-public interface IFrotaParametroSistemaIntervaloAbastecimentoDados extends IRepositorioBoleiaDados<FrotaParametroSistemaIntervaloAbastecimento> {
+public interface IFrotaParametroSistemaIntervaloAbastecimentoDados extends  IRepositorioBoleiaDados<FrotaParametroSistemaIntervaloAbastecimento> {
 }

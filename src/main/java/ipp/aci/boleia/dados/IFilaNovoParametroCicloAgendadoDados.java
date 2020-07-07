@@ -3,7 +3,7 @@ package ipp.aci.boleia.dados;
 import ipp.aci.boleia.dominio.Frota;
 
 /**
- * Contrato para envio de {@link Frota} para alteração de parâmetro de ciclo
+ * Contrato para envio de {@link ipp.aci.boleia.dominio.Frota} para alteração de parâmetro de ciclo
  */
 public interface IFilaNovoParametroCicloAgendadoDados {
 

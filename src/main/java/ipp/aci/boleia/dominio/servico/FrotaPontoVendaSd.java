@@ -9,6 +9,7 @@ import ipp.aci.boleia.dominio.enums.StatusBloqueio;
 import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.excecao.ExcecaoValidacao;
 import ipp.aci.boleia.util.i18n.Mensagens;
+import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +29,9 @@ public class FrotaPontoVendaSd {
 
     @Autowired
     protected Mensagens mensagens;
+
+    @Autowired
+    protected UtilitarioAmbiente ambiente;
 
     /**
      * Cria um novo registro de {@link FrotaPontoVenda}.
@@ -54,6 +58,7 @@ public class FrotaPontoVendaSd {
         frotaPontoVenda.setPontoVenda(pontoVenda);
         frotaPontoVenda.setStatusBloqueio(StatusBloqueio.DESBLOQUEADO.getValue());
         frotaPontoVenda.setVersao(0L);
+        frotaPontoVenda.setDataAtualizacao(ambiente.buscarDataAmbiente());
         if(semIsolamento) {
             return frotaPontoVendaDados.armazenarSemIsolamentoDeDados(frotaPontoVenda);
         }

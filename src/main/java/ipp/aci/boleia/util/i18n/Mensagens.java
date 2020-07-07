@@ -26,7 +26,7 @@ public class Mensagens {
 
     /**
      * Cria uma referencia estatica ao message source, para que a internacionalizacao das enums
-     * possa ser invocada por objetos que nao possam ter o componente {@link Mensagens} injetado
+     * possa ser invocada por objetos que nao possam ter o componente  injetado
      * (objetos que nao sao beans spring, como DTOs, por exemplo).
      */
     @PostConstruct
@@ -55,6 +55,16 @@ public class Mensagens {
     public static <E extends Enum<E>> String obterLabelEnum(IEnumComLabel<E> e) {
         return obterLabelEnum(e.getClass().getSimpleName(), ((Enum) e).name());
     }
+    /**
+     * Obtem o label mapeado com o utilizado na base do corporativo para uma enumeracao
+     * @param e O valor da enumeracao
+     * @param <E> O tipo da enumeracao
+     * @return O label internacionalizado da enumeracao
+     */
+    public static <E extends Enum<E>> String obterLabelValorIpiranga(IEnumComLabel<E> e) {
+        return obterLabelEnum(e.getClass().getSimpleName(), ((Enum) e).name()+".valorIpiranga");
+    }
+
 
     /**
      * Obtem o label de uma enumeracao

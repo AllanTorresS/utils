@@ -40,9 +40,9 @@ public class OracleAcumuloKmvDados extends OracleRepositorioBoleiaDados<AcumuloK
 
 		List<AcumuloKmv> acumulosDoMes = pesquisar((ParametroOrdenacaoColuna) null,
 				new ParametroPesquisaIgual("frota.cpfDonoFrota", cpfDono),
-				new ParametroPesquisaDataMaiorOuIgual("dataEnvio", UtilitarioCalculoData.obterPrimeiroDiaMes(dataProcessamento)),
-				new ParametroPesquisaDataMenorOuIgual("dataEnvio", UtilitarioCalculoData.obterUltimoDiaMes(dataProcessamento)),
-				new ParametroPesquisaIgual("statusAcumulo", StatusAcumuloKmv.ACUMULADO.getValue()),
+				new ParametroPesquisaDataMaiorOuIgual("dataEnvio",UtilitarioCalculoData.obterPrimeiroDiaMes(dataProcessamento)),
+				new ParametroPesquisaDataMenorOuIgual("dataEnvio",UtilitarioCalculoData.obterUltimoDiaMes(dataProcessamento)),
+				new ParametroPesquisaIgual("statusAcumulo",StatusAcumuloKmv.ACUMULADO.getValue()),
 				new ParametroPesquisaIgual("tipoAcumulo", TipoAcumuloKmv.DONO_FROTA.getValue())
 		);
 		if(acumulosDoMes.isEmpty()){
@@ -58,9 +58,9 @@ public class OracleAcumuloKmvDados extends OracleRepositorioBoleiaDados<AcumuloK
 		List<AcumuloKmv> acumulosDoMes = pesquisar((ParametroOrdenacaoColuna) null,
 				new ParametroPesquisaIgual("frota.cpfDonoFrota", cpfDono),
 				new ParametroPesquisaIgual("frota.id", idFrota),
-				new ParametroPesquisaDataMaiorOuIgual("dataEnvio", UtilitarioCalculoData.obterPrimeiroDiaMes(dataProcessamento)),
-				new ParametroPesquisaDataMenorOuIgual("dataEnvio", UtilitarioCalculoData.obterUltimoDiaMes(dataProcessamento)),
-				new ParametroPesquisaIgual("statusAcumulo", StatusAcumuloKmv.ACUMULADO.getValue()),
+				new ParametroPesquisaDataMaiorOuIgual("dataEnvio",UtilitarioCalculoData.obterPrimeiroDiaMes(dataProcessamento)),
+				new ParametroPesquisaDataMenorOuIgual("dataEnvio",UtilitarioCalculoData.obterUltimoDiaMes(dataProcessamento)),
+				new ParametroPesquisaIgual("statusAcumulo",StatusAcumuloKmv.ACUMULADO.getValue()),
 				new ParametroPesquisaIgual("tipoAcumulo", TipoAcumuloKmv.DONO_FROTA.getValue())
 		);
 		if(acumulosDoMes.isEmpty()){
@@ -71,7 +71,7 @@ public class OracleAcumuloKmvDados extends OracleRepositorioBoleiaDados<AcumuloK
 	}
 
 	@Override
-	public AcumuloKmv recuperarAcumuloPendentePorAbastecimento(Long idAbastecimento, Integer tipoAcumulo) {
+	public AcumuloKmv recuperarAcumuloPendentePorAbastecimento(Long idAbastecimento,Integer tipoAcumulo) {
 		return pesquisarUnico(  new ParametroPesquisaIgual("autorizacaoPagamento.id", idAbastecimento),
 				new ParametroPesquisaIgual("statusAcumulo", StatusAcumuloKmv.PENDENTE.getValue()),
 				new ParametroPesquisaIgual("tipoAcumulo", tipoAcumulo));
@@ -95,7 +95,7 @@ public class OracleAcumuloKmvDados extends OracleRepositorioBoleiaDados<AcumuloK
 		List<ParametroPesquisa> parametros = new ArrayList<>();
 		parametros.add(new ParametroPesquisaIgual("statusAcumulo", StatusAcumuloKmv.PENDENTE.getValue()));
 		parametros.add(new ParametroPesquisaMaior("autorizacaoPagamento.valorUnitarioAbastecimento", BigDecimal.ZERO));
-		parametros.add(new ParametroPesquisaMaior("autorizacaoPagamento.totalLitrosAbastecimento", BigDecimal.ZERO));
+		parametros.add(new ParametroPesquisaMaior("autorizacaoPagamento.totalLitrosAbastecimento",BigDecimal.ZERO));
 		parametros.add(new ParametroPesquisaIgual("autorizacaoPagamento.status", StatusAutorizacao.AUTORIZADO.getValue()));
 		InformacaoPaginacao paginacao = new InformacaoPaginacao();
 		paginacao.setPagina(1);

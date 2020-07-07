@@ -25,7 +25,7 @@ public class DetalheCicloRepasseSd {
      * Gera os agrupamentos de produto por Ponto de Venda
      * dentro de um mesmo ciclo.
      * @param  repasses lista de repasses
-     * @return Lista de detalhes de ciclos de repasse
+     * @return Lista dos detalhes do ciclo de repasse
      */
     public ResultadoPaginado<DetalheCicloRepasseVo> agruparPorPvProduto(List<CicloRepasse> repasses) {
         List<DetalheCicloRepasseVo> detalhesDeRepasses = new ArrayList<>();

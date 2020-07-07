@@ -12,7 +12,9 @@ import ipp.aci.boleia.dominio.enums.StatusAutorizacao;
 import ipp.aci.boleia.dominio.enums.StatusConfirmacaoTransacao;
 import ipp.aci.boleia.dominio.enums.StatusEdicao;
 import ipp.aci.boleia.dominio.enums.StatusNotaFiscalAbastecimento;
+import ipp.aci.boleia.dominio.enums.TipoAtividadeComponente;
 import ipp.aci.boleia.dominio.enums.TipoAutorizacaoPagamento;
+import ipp.aci.boleia.dominio.enums.TiposBandeiras;
 import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
@@ -34,6 +36,7 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaAbastecimentoVo;
 import ipp.aci.boleia.dominio.vo.QuantidadeAbastecidaVeiculoVo;
 import ipp.aci.boleia.dominio.vo.TransacaoPendenteVo;
+import ipp.aci.boleia.dominio.vo.apco.VolumeVendasClienteProFrotaVo;
 import ipp.aci.boleia.dominio.vo.frotista.FiltroPesquisaAbastecimentoFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.InformacaoPaginacaoFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.ResultadoPaginadoFrtVo;
@@ -108,18 +111,6 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         "   ) " +
         " ORDER BY a.dataRequisicao ASC ";
 
-    private static final String QUERY_LITRAGEM_ULTIMO_ABASTECIMENTO =
-            "SELECT a.totalLitrosAbastecimento " +
-                    "FROM " +
-                    "AutorizacaoPagamento a " +
-                    "WHERE a.status = " + StatusAutorizacao.AUTORIZADO.getValue() +
-                    " AND a.totalLitrosAbastecimento > 0 " +
-                    " AND a.veiculo.placa = :placaVeiculo " +
-                    " AND a.dataRequisicao <= :dataAbastecimento " +
-                    " AND a.cnpjFrota = :cnpjFrota " +
-                    " AND a.id <> :idAbastecimento " +
-                    " ORDER BY a.dataRequisicao DESC";
-
     private static final String QUERY_ABASTECIMENTOS_AUTORIZADOS_PENDENTES_CONFIRMACAO =
             "SELECT new ipp.aci.boleia.dominio.vo.TransacaoPendenteVo(" +
                     "abast.id, " +
@@ -131,6 +122,25 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                     "WHERE abast.status = " + StatusAutorizacao.AUTORIZADO.getValue() +
                     " AND tfl.statusConfirmacao = " + StatusConfirmacaoTransacao.NAO_CONFIRMADO.getValue() +
                     " AND tfl.dataRequisicao BETWEEN :limiteInferiorData AND :limiteSuperiorData";
+
+
+    private static final String CONSULTA_VENDA_PROFROTAS = "SELECT new ipp.aci.boleia.dominio.vo.apco.VolumeVendasClienteProFrotaVo(" +
+            "c.codigoCorporativo, " +
+            "a.frota.id, " +
+            "i.combustivel.codigoCombustivelCorporativo, " +
+            "TRUNC(a.dataRequisicao), SUM(a.totalLitrosAbastecimento)) " +
+            "FROM AutorizacaoPagamento AS a " +
+            "INNER JOIN  a.pontoVenda AS p " +
+            "INNER JOIN p.componentes AS c " +
+            "INNER JOIN a.items AS i " +
+            "INNER JOIN c.atividadeComponente ac " +
+            "WHERE i.combustivel IS NOT NULL AND i.combustivel.codigoCombustivelCorporativo IS NOT NULL AND " +
+            "(ac.codigoCorporativo = " + TipoAtividadeComponente.AREA_ABASTECIMENTO.getCodigoCorporativo() + " OR ac.codigoCorporativo = "
+            + TipoAtividadeComponente.AREA_ABASTECIMENTO_OUTRA.getCodigoCorporativo() + " ) AND " +
+            "a.status = "+ StatusAutorizacao.AUTORIZADO.getValue() + " AND c.bandeira.codigoCorporativo !=  " + TiposBandeiras.BANDEIRA_BRANCA.getCodigoCorporativo() +
+            " AND a.dataRequisicao BETWEEN :dataInicial AND :dataFinal" +
+            " GROUP BY c.codigoCorporativo, a.frota.id, i.combustivel.codigoCombustivelCorporativo, TRUNC(a.dataRequisicao)";
+
 
     /**
      * Instancia o repositorio
@@ -379,7 +389,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         }
 
         if(filtro.getPaginacao() != null && filtro.getPaginacao().getParametrosOrdenacaoColuna().isEmpty()) {
-            filtro.getPaginacao().getParametrosOrdenacaoColuna().add(new ParametroOrdenacaoColuna("dataProcessamento", Ordenacao.DECRESCENTE));
+            filtro.getPaginacao().getParametrosOrdenacaoColuna().add(new ParametroOrdenacaoColuna("dataProcessamento",Ordenacao.DECRESCENTE));
         }
         return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
@@ -405,7 +415,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     @Override
     public List<AutorizacaoPagamento> obterAbastecimentosCanceladosNoPeriodo(Long codigoFrota, Long codigoPV, Date dataInicioPeriodo, Date dataFimPeriodo) {
         List<ParametroPesquisa> params = new ArrayList<>();
-        params.add(new ParametroPesquisaIgual("status", StatusAutorizacao.CANCELADO.getValue()));
+        params.add(new ParametroPesquisaIgual("status",StatusAutorizacao.CANCELADO.getValue()));
         params.add(new ParametroPesquisaIgual("transacaoFrota.frota.id", codigoFrota));
         params.add(new ParametroPesquisaIgual("pontoVenda.id", codigoPV));
         params.add(new ParametroPesquisaDataMaiorOuIgual("dataProcessamento", dataInicioPeriodo));
@@ -415,7 +425,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
 
     @Override
     public List<AutorizacaoPagamento> obterAbastecimentosPendenteAutorizacao(Date dataExpiracao) {
-        return pesquisar(new ParametroOrdenacaoColuna("dataRequisicao", Ordenacao.DECRESCENTE), new ParametroPesquisaIgual("status", StatusAutorizacao.PENDENTE_AUTORIZACAO.getValue()), new ParametroPesquisaDataMenorOuIgual("dataRequisicao", dataExpiracao));
+        return pesquisar(new ParametroOrdenacaoColuna("dataRequisicao",Ordenacao.DECRESCENTE), new ParametroPesquisaIgual("status", StatusAutorizacao.PENDENTE_AUTORIZACAO.getValue()), new ParametroPesquisaDataMenorOuIgual("dataRequisicao", dataExpiracao));
     }
 
     @Override
@@ -429,7 +439,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     @Override
     public List<AutorizacaoPagamento> obterAbastecimentosParaNotaFiscal(Long codigoFrota, Long codigoPV, EmpresaAgregada empresaAgregada, Unidade unidade, Date dataInicioPeriodo, Date dataFimPeriodo, Boolean prePago) {
         List<ParametroPesquisa> params = new ArrayList<>();
-        params.add(new ParametroPesquisaIgual("status", StatusAutorizacao.AUTORIZADO.getValue()));
+        params.add(new ParametroPesquisaIgual("status",StatusAutorizacao.AUTORIZADO.getValue()));
         params.add(new ParametroPesquisaMaior("valorTotal", BigDecimal.ZERO));
         params.add(new ParametroPesquisaIgual("transacaoFrota.frota.id", codigoFrota));
         params.add(new ParametroPesquisaNulo("transacaoFrota.frota.numeroJdeInterno", true));
@@ -494,7 +504,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         List<ParametroPesquisa> parametros = new ArrayList<>();
         parametros.add(new ParametroPesquisaIgual("idAutorizacaoEstorno", idAutorizacaoPagamentoCancelada));
         parametros.add(new ParametroPesquisaMenor("valorTotal", BigDecimal.ZERO));
-        parametros.add(new ParametroPesquisaIgual("status", StatusAutorizacao.AUTORIZADO.getValue()));
+        parametros.add(new ParametroPesquisaIgual("status",StatusAutorizacao.AUTORIZADO.getValue()));
         return pesquisarUnico(parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
@@ -502,7 +512,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     public List<AutorizacaoPagamento> obterEstornosPorIdAutorizacaoCancelada(Long idAutorizacaoPagamentoCancelada){
         List<ParametroPesquisa> parametros = new ArrayList<>();
         parametros.add(new ParametroPesquisaIgual("idAutorizacaoEstorno", idAutorizacaoPagamentoCancelada));
-        parametros.add(new ParametroPesquisaIgual("status", StatusAutorizacao.AUTORIZADO.getValue()));
+        parametros.add(new ParametroPesquisaIgual("status",StatusAutorizacao.AUTORIZADO.getValue()));
         return pesquisar((ParametroOrdenacaoColuna) null, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
@@ -513,7 +523,11 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         parametros.add(new ParametroPesquisaIgual("status", StatusAutorizacao.PENDENTE_AUTORIZACAO.getValue()));
         parametros.add(new ParametroPesquisaIgual("motorista.id", idMotorista));
         parametros.add(new ParametroPesquisaIgual("veiculo.id", idVeiculo));
-        parametros.add(new ParametroPesquisaIgual("pontoVenda.id", idPontoVenda));
+        if (idPontoVenda != null) {
+            parametros.add(new ParametroPesquisaIgual("pontoVenda.id", idPontoVenda));
+        } else {
+            parametros.add(new ParametroPesquisaNulo("pontoVenda"));
+        }
         return pesquisar((ParametroOrdenacaoColuna) null, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
@@ -544,21 +558,6 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                 new ParametroPesquisaIgual("limiteInferiorData", limiteInferior),
                 new ParametroPesquisaIgual("limiteSuperiorData", limiteSuperior)
         ).getRegistros();
-    }
-
-    @Override
-    public BigDecimal obterLitragemDoAbastecimentoAnterior(Long idAbastecimento, Date dataAbastecimento, String placaVeiculo, Long cnpjFrota) {
-
-        List<BigDecimal> litragem = this.pesquisar(new InformacaoPaginacao(1,1),
-                QUERY_LITRAGEM_ULTIMO_ABASTECIMENTO,
-                BigDecimal.class,
-                new ParametroPesquisaIgual("idAbastecimento", idAbastecimento),
-                new ParametroPesquisaIgual("dataAbastecimento", dataAbastecimento),
-                new ParametroPesquisaIgual("placaVeiculo", placaVeiculo),
-                new ParametroPesquisaIgual("cnpjFrota", cnpjFrota)
-        ).getRegistros();
-
-        return litragem.isEmpty() ? null : litragem.get(0);
     }
 
     @Override
@@ -674,10 +673,10 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
             new ParametroPesquisaAnd(
                 new ParametroPesquisaIgual("frota.cnpj", cnpjRevenda),
                 new ParametroPesquisaNulo("unidade", false),
-                new ParametroPesquisaNulo("pontoVenda", false)
+                new ParametroPesquisaNulo("pontoVenda", false)    
             ),
             new ParametroPesquisaNulo("unidade", true),
-            new ParametroPesquisaNulo("pontoVenda", true)
+            new ParametroPesquisaNulo("pontoVenda", true)    
         );
     }
 
@@ -847,6 +846,11 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
             parametros.add(new ParametroPesquisaNulo("idAutorizacaoEstorno", true));
             parametros.add(new ParametroPesquisaMaior("valorTotal", BigDecimal.ZERO));
         }
+    }
+
+    @Override
+    public List<VolumeVendasClienteProFrotaVo> obterVendasProfrotasAPCO(Date dataInicial, Date dataFinal) {
+        return pesquisar(null, CONSULTA_VENDA_PROFROTAS, VolumeVendasClienteProFrotaVo.class, new ParametroPesquisaIgual("dataInicial", dataInicial), new ParametroPesquisaIgual("dataFinal", dataFinal)).getRegistros();
     }
 
 }

@@ -169,7 +169,7 @@ public class AllowMeVerificacaoDispositivoDados implements IVerificacaoDispositi
     /**
      * Cadastra o username do allow me do motorista
      *
-     * @param motoristaUsername
+     * @param motoristaUsername nome do usuario motorista
      */
     private void cadastrarUsername(String motoristaUsername) {
         String endereco = url + USERS_API_PATH + motoristaUsername;
@@ -184,8 +184,8 @@ public class AllowMeVerificacaoDispositivoDados implements IVerificacaoDispositi
     /**
      * Cadastra o token allow me do motorista
      *
-     * @param dispositivo
-     * @param endereco
+     * @param dispositivo dispositivo motorista
+     * @param endereco endereço do token
      */
     private void cadastrarToken(DispositivoMotorista dispositivo, String endereco) {
         DispositivoAllowMeVo body = new DispositivoAllowMeVo();
@@ -203,9 +203,9 @@ public class AllowMeVerificacaoDispositivoDados implements IVerificacaoDispositi
     /**
      * Cadastra o token allow me para um usuário motorista
      *
-     * @param usuarioMotorista
-     * @param motorista
-     * @param endereco
+     * @param usuarioMotorista usuario Motorista
+     * @param motorista motorista
+     * @param endereco endereço do serviço
      */
     private void cadastrarToken(UsuarioMotorista usuarioMotorista, Motorista motorista, String endereco) {
         DispositivoAllowMeVo body = new DispositivoAllowMeVo();

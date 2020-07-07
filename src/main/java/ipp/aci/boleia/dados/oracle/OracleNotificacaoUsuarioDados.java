@@ -69,17 +69,17 @@ public class OracleNotificacaoUsuarioDados extends OracleRepositorioBoleiaDados<
         parametros.add(new ParametroPesquisaIgual("notificacao.subcategoria.categoria", categoria.getValue()));
 
         if(filtro.getAte()!=null) {
-            parametros.add(new ParametroPesquisaDataMenorOuIgual("notificacao.dataEnvio", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte())));
+            parametros.add(new ParametroPesquisaDataMenorOuIgual("notificacao.dataEnvio",UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte())));
         }
         if(filtro.getDe()!=null) {
-            parametros.add(new ParametroPesquisaDataMaiorOuIgual("notificacao.dataEnvio", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe())));
+            parametros.add(new ParametroPesquisaDataMaiorOuIgual("notificacao.dataEnvio",UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe())));
         }
         if(StringUtils.isNotBlank(filtro.getTitulo())) {
             parametros.add(new ParametroPesquisaLike("notificacao.titulo",filtro.getTitulo()));
         }
         if(filtro.getStatus()!=null && filtro.getStatus().getName()!=null) {
             StatusLeitura statusLeitura = StatusLeitura.valueOf(filtro.getStatus().getName());
-            parametros.add(new ParametroPesquisaNulo("dataLeitura", StatusLeitura.LIDO.equals(statusLeitura)));
+            parametros.add(new ParametroPesquisaNulo("dataLeitura",StatusLeitura.LIDO.equals(statusLeitura)));
         }
 
         List<ParametroOrdenacaoColuna> ordenacao = Collections.singletonList(new ParametroOrdenacaoColuna("notificacao.dataEnvio", Ordenacao.DECRESCENTE));

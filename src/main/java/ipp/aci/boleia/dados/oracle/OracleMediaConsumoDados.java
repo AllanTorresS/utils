@@ -159,7 +159,7 @@ public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<Autori
                     "ORDER BY  ";
 
 
-    private static final String QUERY_PESQUISAR_ULTIMO_ABASTECIMENTO_MEDIA_CONSUMO_VEICULO =
+    private static final String QUERY_PESQUISAR_PRIMEIRO_ABASTECIMENTO_MEDIA_CONSUMO_VEICULO =
             "FROM AutorizacaoPagamento a " +
                     "WHERE a.status = " + StatusAutorizacao.AUTORIZADO.getValue() + " AND " +
                     "(a.valorTotal IS NULL or a.valorTotal >= 0) AND " +
@@ -174,7 +174,7 @@ public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<Autori
                     "( :codigoGrupoVeiculo IS NULL OR a.codigoGrupoVeiculo = :codigoGrupoVeiculo) AND " +
                     "( :razaoSocialEmpresaVeiculo IS NULL OR a.razaoSocialEmpresaVeiculo = :razaoSocialEmpresaVeiculo) " +
                     " %s " +
-                    " ORDER BY a.dataRequisicao DESC ";
+                    " ORDER BY a.dataRequisicao ASC ";
 
     private static final String QUERY_PESQUISAR_MEDIA_CONSUMO_MOTORISTA_VEICULO =
             "SELECT new ipp.aci.boleia.dominio.vo.MediaConsumoVo(" +
@@ -435,15 +435,15 @@ public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<Autori
 
         InformacaoPaginacao infoPag=new InformacaoPaginacao();
         infoPag.setTamanhoPagina(1);
-        ResultadoPaginado<AutorizacaoPagamento> ultimosAbastecimentos = pesquisar(infoPag, String.format(QUERY_PESQUISAR_ULTIMO_ABASTECIMENTO_MEDIA_CONSUMO_VEICULO, outrasClausulas), AutorizacaoPagamento.class, builder.buildArray());
-        if(ultimosAbastecimentos.getRegistros() == null || ultimosAbastecimentos.getTotalItems() < 1
+        ResultadoPaginado<AutorizacaoPagamento> primeiroAbastecimento = pesquisar(infoPag, String.format(QUERY_PESQUISAR_PRIMEIRO_ABASTECIMENTO_MEDIA_CONSUMO_VEICULO, outrasClausulas), AutorizacaoPagamento.class, builder.buildArray());
+        if(primeiroAbastecimento.getRegistros() == null || primeiroAbastecimento.getTotalItems() < 1
                 || vo.getMediaTotalLitrosAbastecimento().compareTo(BigDecimal.ZERO) == 0
-                ||vo.getMediaTotalLitrosAbastecimento().subtract(ultimosAbastecimentos.getRegistros().get(0).getTotalLitrosAbastecimento()).compareTo(BigDecimal.ZERO) == 0){
+                ||vo.getMediaTotalLitrosAbastecimento().subtract(primeiroAbastecimento.getRegistros().get(0).getTotalLitrosAbastecimento()).compareTo(BigDecimal.ZERO) == 0){
             return  null;
         }
         vo.setMedia(BigDecimal.valueOf(vo.getMediaHorHod())
                 .divide((vo.getMediaTotalLitrosAbastecimento()
-                        .subtract(ultimosAbastecimentos.getRegistros().get(0).getTotalLitrosAbastecimento())), 3, RoundingMode.HALF_EVEN));
+                        .subtract(primeiroAbastecimento.getRegistros().get(0).getTotalLitrosAbastecimento())), 3, RoundingMode.HALF_EVEN));
 
         return vo;
     }

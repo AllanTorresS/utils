@@ -62,6 +62,10 @@ public class Permissao implements IPersistente {
     @Column(name = "ID_PERMISSAO_FROTA")
     private boolean permissaoFrota;
 
+    @NotNull
+    @Column(name = "ID_MODULO_INTERNO")
+    private boolean moduloInterno;
+
 	@Override
     public Long getId() {
         return id;
@@ -143,6 +147,14 @@ public class Permissao implements IPersistente {
 	public void setPermissaoFrota(boolean permissaoFrota) {
 		this.permissaoFrota = permissaoFrota;
 	}
+
+    public boolean isModuloInterno() {
+        return moduloInterno;
+    }
+
+    public void setModuloInterno(boolean moduloInterno) {
+        this.moduloInterno = moduloInterno;
+    }
 
     @Override
 	public int hashCode() {

@@ -55,7 +55,7 @@ public class ConfiguracoesRedis {
     /**
      * Cria o endpoint com o protocolo do redis
      *
-     * @return
+     * @return url completa do host redis
      */
     private String getUrlRedis() {
         return String.format("redis://%s:%s", redisHost, redisPorta);

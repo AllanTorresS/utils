@@ -66,16 +66,17 @@ public class ImapsEmailRecebimentoDados implements IEmailRecebimentoDados {
         List<Message> mensagens = new ArrayList<>();
         for (String nomeDiretorio: config.getDiretorios()) {
 
-            Folder diretorio = obterDiretorio(config, emailStore, nomeDiretorio );
-
-            if (dataInicio != null) {
-                if (dataFinal != null) {
-                    mensagens.addAll(buscarMensagensRecebidasEmIntervalo(diretorio, dataInicio, dataFinal));
+            Folder diretorio = obterDiretorio(emailStore, nomeDiretorio );
+            if (diretorio != null) {
+                if (dataInicio != null) {
+                    if (dataFinal != null) {
+                        mensagens.addAll(buscarMensagensRecebidasEmIntervalo(diretorio, dataInicio, dataFinal));
+                    } else {
+                        mensagens.addAll(buscarMensagensRecebidasAPartirDe(diretorio, dataInicio));
+                    }
                 } else {
-                    mensagens.addAll(buscarMensagensRecebidasAPartirDe(diretorio, dataInicio));
+                    mensagens.addAll(buscarMensagens(diretorio));
                 }
-            } else {
-                mensagens.addAll(buscarMensagens(diretorio));
             }
         }
 
@@ -90,12 +91,9 @@ public class ImapsEmailRecebimentoDados implements IEmailRecebimentoDados {
 
                     if (possuiAnexos(mensagem)) {
                         montarObjetoArmazem(config.getMimeTypeAnexo(), emails, mensagem);
-
-                    } else {
-                        continue;
                     }
                 }
-            } catch(MessagingException | ExcecaoBoleiaRuntime e) {
+            } catch(MessagingException | RuntimeException e) {
                 LOGGER.error(e.getMessage(), e);
             }
         }
@@ -103,12 +101,24 @@ public class ImapsEmailRecebimentoDados implements IEmailRecebimentoDados {
         resultadoLeitura.setDataLeitura(dataInicioLeitura);
         arquivarMensagens(config, emailStore, mensagensProcessadas);
 
+        try {
+            emailStore.close();
+        } catch(MessagingException | ExcecaoBoleiaRuntime e) {
+            LOGGER.error(e.getMessage(), e);
+        }
         return resultadoLeitura;
     }
 
+    /**
+     * Copia as mensagens para a pasta de arquivo morto do email e apaga da pasta de origem
+     *
+     * @param config Objeto contendo as configurações para a sessão
+     * @param emailStore conexão IMAP com a conta de e-mail
+     * @param mensagens Lista de mensagens a arquivar
+     */
     private void arquivarMensagens(ConfiguracaoLeitorEmailVo config, IMAPStore emailStore, List<Message> mensagens) {
         try{
-            if (mensagens.size() <= 0) {
+            if (mensagens.isEmpty()) {
                 return;
             }
             Folder diretorioArquivamento = emailStore.getFolder(config.getDiretorioArquivamento());
@@ -116,13 +126,14 @@ public class ImapsEmailRecebimentoDados implements IEmailRecebimentoDados {
                 diretorioArquivamento.create(Folder.HOLDS_MESSAGES);
 
             for (String nomeDiretorio: config.getDiretorios()) {
-                Folder diretorioOrigem = obterDiretorio(config, emailStore, nomeDiretorio );
+                Folder diretorioOrigem = obterDiretorio(emailStore, nomeDiretorio );
 
                 List<Message> mensagensOrigem = new ArrayList<>();
                 for (Message mensagem : mensagens) {
                     if (mensagem.getFolder().getName().equals(diretorioOrigem.getName()))
                         mensagensOrigem.add(mensagem);
                 }
+
                 Message[] listaMensagens = new Message[mensagensOrigem.size()];
                 mensagens.toArray(listaMensagens);
                 diretorioOrigem.copyMessages(listaMensagens, diretorioArquivamento);
@@ -130,7 +141,7 @@ public class ImapsEmailRecebimentoDados implements IEmailRecebimentoDados {
                 diretorioOrigem.close(true);
             }
 
-        } catch(MessagingException me) {
+        } catch(Exception me) {
             LOGGER.error(me.getMessage(), me);
         }
     }
@@ -186,11 +197,11 @@ public class ImapsEmailRecebimentoDados implements IEmailRecebimentoDados {
 
     /**
      * Retorna o diretório escolhido pela configuração, a partir da conexão passada
-     * @param config Objeto contendo as configurações para a sessão
      * @param emailStore conexão IMAP com a conta de e-mail
+     * @param nomeDiretorio  nome do diretório a ser aberto para leitura dos e-mails
      * @return O diretório escolhido da conta de e-mail
      */
-    private Folder obterDiretorio(ConfiguracaoLeitorEmailVo config, IMAPStore emailStore, String nomeDiretorio) {
+    private Folder obterDiretorio(IMAPStore emailStore, String nomeDiretorio) {
         try {
             Folder diretorio = emailStore.getFolder(nomeDiretorio);
             diretorio.open(Folder.READ_WRITE);
@@ -198,7 +209,7 @@ public class ImapsEmailRecebimentoDados implements IEmailRecebimentoDados {
 
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-            throw new ExcecaoBoleiaRuntime(Erro.ERRO_CONEXAO_LEITOR_EMAIL);
+            return null;
         }
     }
 
@@ -275,8 +286,8 @@ public class ImapsEmailRecebimentoDados implements IEmailRecebimentoDados {
                 for (int i = 0; i < multipart.getCount(); i++) {
                     try {
                         resultado.addAll(obterAnexos(multipart.getBodyPart(i), mimeType));
-                    } catch(ExcecaoBoleiaRuntime e) {
-                        continue;
+                    } catch (MessagingException | IOException | RuntimeException e) {
+                        LOGGER.error(e.getMessage(), e);
                     }
                 }
                 return resultado;
@@ -296,33 +307,28 @@ public class ImapsEmailRecebimentoDados implements IEmailRecebimentoDados {
      * @param mimeType O Mime Type sendo buscado
      * @return Lista de anexos em formato de InputStream
      */
-    private List<InputStream> obterAnexos(BodyPart parte, String mimeType) {
-        try {
-            List<InputStream> resultado = new ArrayList<>();
-            Object conteudo = parte.getInputStream();
-            if (conteudo instanceof InputStream || conteudo instanceof String) {
-                if ((Part.ATTACHMENT.equalsIgnoreCase(parte.getDisposition()) ||
-                        StringUtils.isNotBlank(parte.getFileName())) &&
-                            parte.getFileName().toLowerCase().endsWith(EXTENSAO_XML)
-                ) {
-                    resultado.add(parte.getInputStream());
-                    return resultado;
-                } else {
-                    return new ArrayList<>();
-                }
+    private List<InputStream> obterAnexos(BodyPart parte, String mimeType) throws IOException, MessagingException {
+        List<InputStream> resultado = new ArrayList<>();
+        Object conteudo = parte.getInputStream();
+        if (conteudo instanceof InputStream || conteudo instanceof String) {
+            if (Part.ATTACHMENT.equalsIgnoreCase(parte.getDisposition()) &&
+                    StringUtils.isNotBlank(parte.getFileName()) &&
+                        parte.getFileName().toLowerCase().endsWith(EXTENSAO_XML)
+            ) {
+                resultado.add(parte.getInputStream());
+                return resultado;
+            } else {
+                return new ArrayList<>();
             }
-            if (conteudo instanceof Multipart) {
-                Multipart multipart = (Multipart) conteudo;
-                for (int i = 0; i < multipart.getCount(); i++) {
-                    BodyPart bodyPart = multipart.getBodyPart(i);
-                    resultado.addAll(obterAnexos(bodyPart, mimeType));
-                }
-            }
-            return resultado;
-        } catch (MessagingException | IOException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new ExcecaoBoleiaRuntime(Erro.ERRO_OBTER_ANEXOS_LEITOR_EMAIL);
         }
+        if (conteudo instanceof Multipart) {
+            Multipart multipart = (Multipart) conteudo;
+            for (int i = 0; i < multipart.getCount(); i++) {
+                BodyPart bodyPart = multipart.getBodyPart(i);
+                resultado.addAll(obterAnexos(bodyPart, mimeType));
+            }
+        }
+        return resultado;
     }
 
     /**

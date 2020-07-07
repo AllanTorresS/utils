@@ -23,6 +23,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -66,6 +67,9 @@ public class FrotaPontoVenda implements IPersistente, IPertenceFrota, IPertenceR
     @Version
     @Column(name = "NO_VERSAO")
     private Long versao;
+
+    @Column(name ="DT_ATUALIZACAO")
+    private Date dataAtualizacao;
 
     @Override
     public Long getId() {
@@ -153,4 +157,11 @@ public class FrotaPontoVenda implements IPersistente, IPertenceFrota, IPertenceR
         return statusBloqueio != null && StatusBloqueio.obterPorValor(statusBloqueio).isBloqueado();
     }
 
+    public Date getDataAtualizacao() {
+        return dataAtualizacao;
+    }
+
+    public void setDataAtualizacao(Date dataAtualizacao) {
+        this.dataAtualizacao = dataAtualizacao;
+    }
 }

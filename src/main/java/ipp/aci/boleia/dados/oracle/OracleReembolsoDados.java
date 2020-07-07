@@ -83,7 +83,7 @@ public class OracleReembolsoDados extends OracleRepositorioBoleiaDados<Reembolso
 	public List<Reembolso> pesquisarParaExportacao(FiltroPesquisaReembolsoVo filtro) {
 		List<ParametroPesquisa> parametros = criarParametrosPesquisa(filtro);
 		return pesquisar(
-				new ParametroOrdenacaoColuna("dataVencimentoPagto", Ordenacao.DECRESCENTE),
+				new ParametroOrdenacaoColuna("dataVencimentoPagto",Ordenacao.DECRESCENTE),
 				parametros.toArray(new ParametroPesquisa[parametros.size()]));
 	}
 
@@ -147,7 +147,7 @@ public class OracleReembolsoDados extends OracleRepositorioBoleiaDados<Reembolso
 	 */
 	private void povoarParametroStatusPagamento(List<ParametroPesquisa> parametrosOr, StatusPagamentoReembolso status) {
 		if (status.equals(StatusPagamentoReembolso.ATRASADO)) {
-			parametrosOr.add(new ParametroPesquisaIgual("status", StatusPagamentoReembolso.ATRASADO.getValue()));
+			parametrosOr.add(new ParametroPesquisaIgual("status",StatusPagamentoReembolso.ATRASADO.getValue()));
 			parametrosOr.add(new ParametroPesquisaAnd(
 					new ParametroPesquisaDataMenor("dataVencimentoPagto", ambiente.buscarDataAmbiente()),
 					new ParametroPesquisaIgual("status", StatusPagamentoReembolso.EM_ABERTO.getValue())));
@@ -178,7 +178,7 @@ public class OracleReembolsoDados extends OracleRepositorioBoleiaDados<Reembolso
 
 	@Override
 	public List<Reembolso> buscarReembolsosParaConsultarAvisoCredito() {
-		return pesquisar(new ParametroOrdenacaoColuna("dataVencimentoPagto", Ordenacao.DECRESCENTE),
+		return pesquisar(new ParametroOrdenacaoColuna("dataVencimentoPagto",Ordenacao.DECRESCENTE),
 				new ParametroPesquisaNulo("numeroDocumento", true),
 				new ParametroPesquisaDiferente("status", StatusPagamentoReembolso.PAGO.getValue()),
 				new ParametroPesquisaEmpty("transacoesConsolidadas", true));
@@ -191,7 +191,7 @@ public class OracleReembolsoDados extends OracleRepositorioBoleiaDados<Reembolso
 		InformacaoPaginacao paginacao = new InformacaoPaginacao();
 		paginacao.setPagina(1);
 		paginacao.setTamanhoPagina(1);
-		paginacao.getParametrosOrdenacaoColuna().add(new ParametroOrdenacaoColuna("id", Ordenacao.DECRESCENTE));
+		paginacao.getParametrosOrdenacaoColuna().add(new ParametroOrdenacaoColuna("id",Ordenacao.DECRESCENTE));
 		List<Reembolso> reembolsos = pesquisar(paginacao, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
 		if(reembolsos != null && !reembolsos.isEmpty()){
 			return reembolsos.get(0);

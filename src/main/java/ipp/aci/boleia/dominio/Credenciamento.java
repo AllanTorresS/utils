@@ -1,9 +1,6 @@
 package ipp.aci.boleia.dominio;
 
 
-import ipp.aci.boleia.dominio.interfaces.IPersistente;
-import org.hibernate.envers.Audited;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,6 +10,10 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
+
+import org.hibernate.envers.Audited;
+
+import ipp.aci.boleia.dominio.interfaces.IPersistente;
 
 /**
  * Representa a tabela de Taxa do perfil.

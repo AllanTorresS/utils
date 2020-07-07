@@ -23,6 +23,7 @@ public class FiltroPesquisaUsuarioVo extends BaseFiltroPaginado {
     private EntidadeVo perfil;
     private EntidadeVo tipoPerfil;
     private List<Long> pontosDeVenda;
+    private EntidadeVo coordenadoria;
 
     public String getCpf() {
         return cpf;
@@ -134,5 +135,13 @@ public class FiltroPesquisaUsuarioVo extends BaseFiltroPaginado {
 
     public void setPontosDeVenda(List<Long> pontosDeVenda) {
         this.pontosDeVenda = pontosDeVenda;
+    }
+
+    public EntidadeVo getCoordenadoria() {
+        return coordenadoria;
+    }
+
+    public void setCoordenadoria(EntidadeVo coordenadoria) {
+        this.coordenadoria = coordenadoria;
     }
 }

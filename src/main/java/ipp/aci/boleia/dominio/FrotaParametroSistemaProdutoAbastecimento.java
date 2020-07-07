@@ -60,7 +60,7 @@ public class FrotaParametroSistemaProdutoAbastecimento implements IPersistente, 
     /**
      * Construtor
      */
-    public FrotaParametroSistemaProdutoAbastecimento(){
+    public FrotaParametroSistemaProdutoAbastecimento() {
     }
 
     /**

@@ -2,6 +2,8 @@ package ipp.aci.boleia.dominio.vo;
 
 import ipp.aci.boleia.dominio.pesquisa.comum.BaseFiltroPaginado;
 
+import java.util.List;
+
 
 /**
  * Filtro para pesquisa de cobrancas
@@ -10,7 +12,7 @@ public class FiltroPesquisaCobrancaVo extends BaseFiltroPaginado {
 
     private String de;
     private String ate;
-    private EnumVo statusPagamento;
+    private List<EnumVo> statusPagamento;
     private EnumVo statusIntegracao;
     private String numeroDocumento;
     private EntidadeVo frota;
@@ -32,11 +34,11 @@ public class FiltroPesquisaCobrancaVo extends BaseFiltroPaginado {
         this.ate = ate;
     }
 
-    public EnumVo getStatusPagamento() {
+    public List<EnumVo> getStatusPagamento() {
         return statusPagamento;
     }
 
-    public void setStatusPagamento(EnumVo statusPagamento) {
+    public void setStatusPagamento(List<EnumVo> statusPagamento) {
         this.statusPagamento = statusPagamento;
     }
 

@@ -406,7 +406,7 @@
     </binding>
     <service name="Boleto">
         <port name="BoletoSoap" binding="s0:BoletoSoap">
-            <soap:address location="http://ensemdes.ipiranga.com.br:7070/csp/enscrmws/ws.boleto.Service.CLS"/>
+            <soap:address location="${settings.jde.boleto.soap.address}"/>
         </port>
     </service>
 </definitions>

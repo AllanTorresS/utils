@@ -1,15 +1,28 @@
 package ipp.aci.boleia.dominio.servico;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.auth0.jwt.interfaces.DecodedJWT;
+
 import ipp.aci.boleia.dados.IEmailEnvioDados;
 import ipp.aci.boleia.dados.IFrotaDados;
+import ipp.aci.boleia.dados.ILeadCredenciamentoDados;
 import ipp.aci.boleia.dados.IMotivoInativacaoFrotaDados;
 import ipp.aci.boleia.dados.IParametroCicloDados;
 import ipp.aci.boleia.dados.IUsuarioDados;
+import ipp.aci.boleia.dominio.Credenciamento;
 import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.MotivoInativacaoFrota;
 import ipp.aci.boleia.dominio.ParametroCiclo;
 import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.enums.ClassificacaoStatusFrota;
+import ipp.aci.boleia.dominio.enums.StatusCredenciamentoFrota;
 import ipp.aci.boleia.dominio.enums.StatusFrota;
 import ipp.aci.boleia.dominio.enums.TipoPerfilUsuario;
 import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
@@ -20,20 +33,15 @@ import ipp.aci.boleia.util.UtilitarioFormatacao;
 import ipp.aci.boleia.util.UtilitarioFormatacaoData;
 import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
+import ipp.aci.boleia.util.excecao.ExcecaoTokenJwtExpirado;
 import ipp.aci.boleia.util.excecao.ExcecaoValidacao;
 import ipp.aci.boleia.util.i18n.Mensagens;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import ipp.aci.boleia.util.negocio.ValidadorInscricaoEstadual;
+import ipp.aci.boleia.util.seguranca.UtilitarioJwt;
 import ipp.aci.boleia.util.validador.ValidadorAlfanumerico;
 import ipp.aci.boleia.util.validador.ValidadorCnpj;
 import ipp.aci.boleia.util.validador.ValidadorCpf;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * Implementa as regras de negocio relacionadas a entidade Frota
@@ -64,6 +72,12 @@ public class FrotaSd {
 
     @Autowired
     private UtilitarioAmbiente ambiente;
+    
+    @Autowired
+    private UtilitarioJwt utilitarioJwt;
+    
+    @Autowired
+	private ILeadCredenciamentoDados repositorioLeadCredenciamento;
 
     /**
      * Prepara uma frota para realizar pre cadastro
@@ -285,6 +299,63 @@ public class FrotaSd {
         return motivo != null && motivo.getTipoMotivo().equals(ClassificacaoStatusFrota.OUTROS.getValue()) &&
                 frota.getStatus().equals(StatusFrota.INATIVO.getValue()) && frota.getDataSaldoZerado() != null;
     }
+    
+    /**
+     * Prepara uma frota para realizar pre cadastro
+     *
+     * @param frota A frota.
+     * @param credenciamento O credenciamento.
+     * @param cnpj Número do cnpj da frota.
+     * @param cpf Número do CPF do responsável pela frota.
+     * @return Status do credenciamento da Frota
+     */
+    public StatusCredenciamentoFrota obterStatusCredenciamento(Frota frota, Credenciamento credenciamento, String cnpj, Long cpf) {
+    	if (frota != null) {
+    		if(frota.getStatus().equals(StatusFrota.PRE_CADASTRO.getValue())) {
+    			return StatusCredenciamentoFrota.AGUARDANDO_HABILITACAO;
+    		}
+    		return StatusCredenciamentoFrota.HABILITADO;
+    	} else {
+    		if (credenciamento == null) {
+    			if (Boolean.TRUE.equals(repositorioLeadCredenciamento.validarLeadExistente(cnpj))) {
+        			return StatusCredenciamentoFrota.INICIADO_SALESFORCE;
+        		}
+    			return StatusCredenciamentoFrota.INICIAR;
+    		}
+    		
+    		if (Boolean.TRUE.equals(credenciamento.getFinalizado())) {
+    			return StatusCredenciamentoFrota.FINALIZADO;
+    		}
+    		
+    		if (!credenciamento.getCpf().equals(cpf)) {
+    			return StatusCredenciamentoFrota.CREDENCIAMENTO_PENDENTE;
+    		}
+    		
+    		if (isTokenValido(credenciamento.getTokenJWT())) {
+    			return StatusCredenciamentoFrota.CONTINUAR_VALIDO;
+    		} else {
+    			return StatusCredenciamentoFrota.CONTINUAR_EXPIRADO;
+    		}
+    	}
+    }
+    
+    /**
+     * Valida a expiração do token. 
+     * 
+     * @param token Json web token codificado.
+     * @return Caso valido true, se não false. 
+     */
+    private boolean isTokenValido(String token) {
+    	try {
+    		DecodedJWT decodedJWT = utilitarioJwt.validarTokenAutenticacao(token, null);
+    		if (decodedJWT != null && !utilitarioJwt.isTokenExpirado(decodedJWT)) {
+    			return true;
+    		}
+    	} catch (ExcecaoTokenJwtExpirado e) {
+    		return false;
+    	}
+    	return false;
+    }
 
     /**
      * Faz a pesquisa de frotas para exportação
@@ -314,7 +385,6 @@ public class FrotaSd {
         novoParametroCiclo.setPrazoReembolsoDias(Long.parseLong(prazoPagamento) + 1);
         repositorioParametroCiclo.armazenar(novoParametroCiclo);
         return novoParametroCiclo;
-
     }
 
 
@@ -333,5 +403,24 @@ public class FrotaSd {
             throw new ExcecaoValidacao(mensagens.obterMensagem("frota.servico.cpfParticipanteResponsavelInvalido"));
         }
 
+    }
+
+    /**
+     * Verifica se o email do assessor responsavel da frota eh valido.
+     *
+     * @param emailAssessorResponsavel email do assessor responsavel da frota
+     * @throws ExcecaoValidacao caso o email do assessor responsavel da frota nao seja valido.
+     */
+    public void validarAssessorResponsavel(final String emailAssessorResponsavel) throws ExcecaoValidacao {
+        if (emailAssessorResponsavel == null) {
+            throw new ExcecaoValidacao(Erro.ERRO_VALIDACAO_OBRIGATORIO, "emailAssessorResponsavel");
+        }
+        final Usuario usuario = repositorioUsuario.obterPorEmail(emailAssessorResponsavel);
+        if (usuario == null) {
+            throw new ExcecaoValidacao(mensagens.obterMensagem("frota.servico.preCadastro.emailAssessorResponsavel.invalido", emailAssessorResponsavel));
+        }
+        if (!usuario.isInterno()) {
+            throw new ExcecaoValidacao(mensagens.obterMensagem("frota.servico.preCadastro.emailAssessorResponsavel.usuarioNaoInterno"));
+        }
     }
 }

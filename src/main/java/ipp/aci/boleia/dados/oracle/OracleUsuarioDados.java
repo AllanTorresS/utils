@@ -68,6 +68,12 @@ public class OracleUsuarioDados extends OracleRepositorioBoleiaDados<Usuario> im
     }
 
     @Override
+    public Usuario obterPorEmailTipoPerfil(String email, TipoPerfilUsuario tipoPerfil) {
+        return pesquisarUnicoSemIsolamentoDados(new ParametroPesquisaIgual("email", email),
+                new ParametroPesquisaIgual("tipoPerfil.id", tipoPerfil.getValue()));
+    }
+
+    @Override
     public Usuario obterPorToken(String token) {
         return pesquisarUnicoSemIsolamentoDados(new ParametroPesquisaIgual("token", token));
     }
@@ -123,8 +129,8 @@ public class OracleUsuarioDados extends OracleRepositorioBoleiaDados<Usuario> im
     @Override
     public Usuario obterPorCpf(Long cpf, Boolean usuarioMotorista) {
         ParametroPesquisa parametroPesquisaUsuarioMotorista = usuarioMotorista ?
-                new ParametroPesquisaIgual("tipoPerfil.id", TipoPerfilUsuario.MOTORISTA.getValue())
-                : new ParametroPesquisaDiferente("tipoPerfil.id", TipoPerfilUsuario.MOTORISTA.getValue());
+                new ParametroPesquisaIgual("tipoPerfil.id",TipoPerfilUsuario.MOTORISTA.getValue())
+                : new ParametroPesquisaDiferente("tipoPerfil.id",TipoPerfilUsuario.MOTORISTA.getValue());
         return pesquisarUnicoSemIsolamentoDados(new ParametroPesquisaIgual("cpf", cpf), parametroPesquisaUsuarioMotorista);
     }
 
@@ -220,6 +226,11 @@ public class OracleUsuarioDados extends OracleRepositorioBoleiaDados<Usuario> im
                 new ParametroPesquisaIgual("frota", idFrota));
     }
 
+    @Override
+    public List<Usuario> obterPorCoordenadoria(final Long id) {
+        return pesquisarSemIsolamentoDados((ParametroOrdenacaoColuna) null, new ParametroPesquisaIgual("coordenadoria.id", id));
+    }
+
     /**
      * Monta os parametros de pesquisa de acordo com o filtro informado
      * @param filtro O filtro de pesquisa
@@ -251,6 +262,10 @@ public class OracleUsuarioDados extends OracleRepositorioBoleiaDados<Usuario> im
             } else {
                 parametros.put(" AND u.unidade IS NULL ", null);
             }
+        }
+        if (filtro.getCoordenadoria() != null && filtro.getCoordenadoria().getId() != null) {
+            parametros.put(" AND u.coordenadoria.id = :coordenadoria ",
+                    new ParametroPesquisaIgual("coordenadoria", filtro.getCoordenadoria().getId()));
         }
 
         return parametros;

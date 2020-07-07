@@ -102,14 +102,12 @@
                     </s:documentation>
                 </s:annotation>
                 <s:sequence>
-                    <s:element maxOccurs="unbounded" minOccurs="0" name="E1Messages" nillable="true"
-                               type="ns3:E1Message"/>
+                    <s:element maxOccurs="unbounded" minOccurs="0" name="E1Messages" nillable="true" type="ns3:E1Message"/>
                 </s:sequence>
             </s:complexType>
             <s:complexType name="ArrayOfE1Message">
                 <s:sequence>
-                    <s:element maxOccurs="unbounded" minOccurs="0" name="E1Message" nillable="true"
-                               type="ns3:E1Message"/>
+                    <s:element maxOccurs="unbounded" minOccurs="0" name="E1Message" nillable="true" type="ns3:E1Message"/>
                 </s:sequence>
             </s:complexType>
             <s:complexType name="E1Message">
@@ -140,9 +138,7 @@
     <binding name="vincularJurosBoletoSoap" type="s0:vincularJurosBoletoSoap">
         <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
         <operation name="vincular">
-            <soap:operation
-                    soapAction="http://ipiranga.com.br/vincularJurosBoleto/ws.vincularJurosBoleto.Service.vincular"
-                    style="document"/>
+            <soap:operation soapAction="http://ipiranga.com.br/vincularJurosBoleto/ws.vincularJurosBoleto.Service.vincular" style="document"/>
             <input>
                 <soap:body use="literal"/>
             </input>
@@ -153,7 +149,7 @@
     </binding>
     <service name="vincularJurosBoleto">
         <port name="vincularJurosBoletoSoap" binding="s0:vincularJurosBoletoSoap">
-            <soap:address location="http://ensemdes.ipiranga.com.br:7070/csp/ipirangaws/ws.vincularJurosBoleto.Service.CLS"/>
+            <soap:address location="${settings.jde.vincularjurosboleto.soap.address}"/>
         </port>
     </service>
 </definitions>

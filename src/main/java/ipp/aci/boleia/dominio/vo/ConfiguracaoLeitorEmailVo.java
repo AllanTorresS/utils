@@ -29,7 +29,7 @@ public class ConfiguracaoLeitorEmailVo {
      * @param senha A senha
      * @param diretorios O diretório do e-mail
      * @param mimeTypeAnexo Mime Type do anexo
-     * @param diretorioArquivamento Diretório onde os e-mails serão arquivados
+     * @param diretorioArquivamento O diretório para arquivamento
      */
     public ConfiguracaoLeitorEmailVo(String host, String porta, String usuario, String senha, String diretorios, String mimeTypeAnexo, String diretorioArquivamento) {
         this.host = host;
@@ -38,7 +38,7 @@ public class ConfiguracaoLeitorEmailVo {
         this.senha = senha;
         this.diretorios = diretorios.replaceAll("\"","").split(",");
         this.mimeTypeAnexo = mimeTypeAnexo;
-        this.diretorioArquivamento = diretorioArquivamento;
+        this.diretorioArquivamento = diretorioArquivamento.replaceAll("\"","");
     }
 
     public String getHost() {

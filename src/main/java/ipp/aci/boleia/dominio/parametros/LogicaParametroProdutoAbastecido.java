@@ -48,7 +48,7 @@ public class LogicaParametroProdutoAbastecido implements ILogicaParametroSistema
         if (combustiveisPermitidos != null && !combustiveisPermitidos.isEmpty()) {
             combustiveisPermitidos = combustiveisPermitidos.stream().filter(c -> c.getPermitido().equals(true)).collect(Collectors.toList());
         }
-        if(veiculo.isProprio()) {
+        if(veiculo.isProprio() || veiculo.isAgregado()) {
             for (ItemAutorizacaoPagamento item : autorizacao.getItems()) {
                 if (item.isAbastecimento()) {
                     boolean abastecimentoValido;

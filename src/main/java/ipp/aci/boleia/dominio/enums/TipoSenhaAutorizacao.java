@@ -12,7 +12,8 @@ public enum TipoSenhaAutorizacao implements IEnumComLabel<TipoSenhaAutorizacao> 
     CODIGO_ABASTECIMENTO_SMS(3),
     INCLUSAO_MANUAL(4),
     SENHA_MOTORISTA(5),
-    CODIGO_ABASTECIMENTO_POS(6);
+    CODIGO_ABASTECIMENTO_POS(6),
+    SEM_SENHA_OU_CODIGO(7);
 
     private final Integer value;
 

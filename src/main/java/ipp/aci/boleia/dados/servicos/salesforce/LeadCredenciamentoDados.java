@@ -1,17 +1,8 @@
 package ipp.aci.boleia.dados.servicos.salesforce;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import ipp.aci.boleia.dados.IClienteHttpDados;
-import ipp.aci.boleia.dados.ILeadCredenciamentoDados;
-import ipp.aci.boleia.dominio.enums.EtapaCredenciamentoFrota;
-import ipp.aci.boleia.dominio.vo.LeadCredenciamentoFrotaIntegradorVo;
-import ipp.aci.boleia.dominio.vo.LeadCredenciamentoPostoIntegradorVo;
-import ipp.aci.boleia.util.UtilitarioJson;
-import ipp.aci.boleia.util.excecao.Erro;
-import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
-import ipp.aci.boleia.util.excecao.ExcecaoValidacao;
-import ipp.aci.boleia.util.i18n.Mensagens;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.apache.http.Header;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.message.BasicHeader;
@@ -22,8 +13,19 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import ipp.aci.boleia.dados.IClienteHttpDados;
+import ipp.aci.boleia.dados.ILeadCredenciamentoDados;
+import ipp.aci.boleia.dominio.enums.EtapaCredenciamentoFrota;
+import ipp.aci.boleia.dominio.vo.LeadCredenciamentoFrotaIntegradorVo;
+import ipp.aci.boleia.dominio.vo.LeadCredenciamentoPostoIntegradorVo;
+import ipp.aci.boleia.util.UtilitarioJson;
+import ipp.aci.boleia.util.excecao.Erro;
+import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
+import ipp.aci.boleia.util.excecao.ExcecaoValidacao;
+import ipp.aci.boleia.util.i18n.Mensagens;
 
 /**
  * Respositório dos serviços de integração dos dados de lead do credenciamento com o sistema externo.

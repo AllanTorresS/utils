@@ -8,7 +8,16 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import ipp.aci.boleia.dominio.*;
+import ipp.aci.boleia.dominio.ComandaDigital;
+import ipp.aci.boleia.dominio.DispositivoMotorista;
+import ipp.aci.boleia.dominio.Frota;
+import ipp.aci.boleia.dominio.ModuloInterno;
+import ipp.aci.boleia.dominio.Motorista;
+import ipp.aci.boleia.dominio.Permissao;
+import ipp.aci.boleia.dominio.PontoDeVenda;
+import ipp.aci.boleia.dominio.Rede;
+import ipp.aci.boleia.dominio.SistemaExterno;
+import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.enums.StatusAtivacao;
 import ipp.aci.boleia.dominio.enums.TipoPerfilUsuario;
 import ipp.aci.boleia.dominio.enums.TipoTokenJwt;
@@ -424,7 +433,7 @@ public class UtilitarioJwt {
             throw new ExcecaoBoleiaRuntime(e);
         }
     }
-
+    
     /**
      * Cria um token JWT de acordo com os parametros informados
      *
@@ -1031,6 +1040,54 @@ public class UtilitarioJwt {
             null,
             null,
             new Long[]{pontoDeVenda.getId()},
+            null);
+    }
+    
+    /**
+     * Cria um token para o pré credenciamento de postos.
+     *
+     * @param cnpj O CNPJ da possível frota.
+     * @param cpf O CPF do possível usuário.
+     * @return O token gerado.
+     */
+    public String criarTokenPreCredenciamentoFrota(Long cnpj, Long cpf) {
+        return criarTokenJWT (
+            TipoTokenJwt.PRE_CREDENCIAMENTO_FROTA,
+            null,
+            TipoTokenJwt.PRE_CREDENCIAMENTO_FROTA.getTipoPerfil(),
+            cpf,
+            "Site Pró-frotas",
+            null,
+            null,
+            TipoTokenJwt.PRE_CREDENCIAMENTO_FROTA.getPermissoes(),
+            cnpj,
+            null,
+            null,
+            null,
+            null);
+    }
+    
+    /**
+     * Cria um token para o pré credenciamento de postos.
+     *
+     * @param cnpj O CNPJ da possível frota.
+     * @param cpf O CPF do possível usuário.
+     * @return O token gerado.
+     */
+    public String criarTokenCredenciamentoFrota(Long cnpj, Long cpf) {
+        return criarTokenJWT (
+            TipoTokenJwt.CREDENCIAMENTO_FROTA,
+            null,
+            TipoTokenJwt.CREDENCIAMENTO_FROTA.getTipoPerfil(),
+            cpf,
+            "Site Pró-frotas",
+            null,
+            null,
+            TipoTokenJwt.CREDENCIAMENTO_FROTA.getPermissoes(),
+            cnpj,
+            null,
+            null,
+            null,
             null);
     }
 }

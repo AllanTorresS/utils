@@ -441,7 +441,6 @@ public class UsuarioSd {
             	usuario.getPontosDeVenda().set(posicao, pontoDeVenda);
             } else {
             	usuario.getPontosDeVenda().add(pontoDeVenda);
-            	usuario.setRede(pontoDeVenda.getRede());
             }
         }
         return usuario;

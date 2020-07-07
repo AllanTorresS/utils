@@ -1,13 +1,15 @@
 package ipp.aci.boleia.dados.oracle;
 
+import java.util.List;
+
+import org.springframework.stereotype.Repository;
+
 import com.amazonaws.util.CollectionUtils;
+
 import ipp.aci.boleia.dados.ITermosContratoDados;
 import ipp.aci.boleia.dominio.TermosContrato;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.util.Ordenacao;
-import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 
 /**

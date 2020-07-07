@@ -62,8 +62,7 @@ public class OracleMotorGeracaoRelatorioDados extends OracleRepositorioBoleiaDad
 
     @Override
     public <F extends BaseFiltroPaginado> Boolean pesquisarGeracaoRelatorioEmAndamento(F filtro, TipoRelatorioMotorGerador tipoRelatorio) {
-        List<Integer> listaStatus = Arrays.asList(StatusMotorGeradorRelatorio.EM_ANDAMENTO_AGUARDANDO.getValue(),
-                StatusMotorGeradorRelatorio.EM_ANDAMENTO_PROCESSANDO.getValue());
+        List<Integer> listaStatus = Arrays.asList(StatusMotorGeradorRelatorio.EM_ANDAMENTO.getValue());
         List<MotorGeracaoRelatorios> resposta = pesquisar((ParametroOrdenacaoColuna) null,
                 new ParametroPesquisaIn("status", listaStatus),
                 new ParametroPesquisaIgual("usuario", ambiente.getUsuarioLogado()),

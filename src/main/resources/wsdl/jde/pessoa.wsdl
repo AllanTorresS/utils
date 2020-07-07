@@ -1950,7 +1950,7 @@
     </binding>
     <service name="pessoa">
         <port name="pessoaSoap" binding="s0:pessoaSoap">
-            <soap:address location="http://ensemdes.ipiranga.com.br:7070/csp/enscorpws/cbpi.bs.pessoa.Service.CLS"/>
+            <soap:address location="${settings.jde.pessoa.soap.address}"/>
         </port>
     </service>
 </definitions>

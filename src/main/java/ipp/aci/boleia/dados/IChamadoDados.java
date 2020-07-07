@@ -19,5 +19,5 @@ public interface IChamadoDados {
      * @param description do chamado
      * @return true se o chamado for enviado para o SalesForce, false caso contrário
      */
-    boolean abrirChamado(String company , String name, String email, String phone, Long idReason, String subject, String description);
+    boolean abrirChamado(String company ,String name, String email, String phone, Long idReason, String subject, String description);
 }

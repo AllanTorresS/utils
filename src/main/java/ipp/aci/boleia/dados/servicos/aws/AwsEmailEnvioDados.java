@@ -32,6 +32,7 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import java.io.ByteArrayOutputStream;
+import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Properties;
@@ -70,6 +71,9 @@ public class AwsEmailEnvioDados implements InitializingBean, IEmailEnvioDados {
 
     @Value("${aws.ses.maxSendRateRetryLimit}")
     private Integer tentativasAposAtingirLimitDeRequestSES;
+
+    @Value("${aws.ses.blacklist}")
+    private String blacklist;
 
     private AmazonSimpleEmailServiceAsync clienteSES;
 
@@ -116,46 +120,48 @@ public class AwsEmailEnvioDados implements InitializingBean, IEmailEnvioDados {
                 MimeMessage message = construirMensagemEmail(assunto, corpo, anexo, nomeAnexo);
                 for (String destinatario : destinatarios) {
                     int tentativas = tentativasAposAtingirLimitDeRequestSES;
-                    while (tentativas --> 0){
-                        try{
-                            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                            message.setRecipient(Message.RecipientType.TO, new InternetAddress(destinatario));
-                            message.writeTo(outputStream);
+                    if ((destinatario != null) && !(destinatarioInBlacklist(destinatario))) {
+                        while (tentativas-- >  BigDecimal.ZERO.intValue()) {
+                            try {
+                                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                                message.setRecipient(Message.RecipientType.TO, new InternetAddress(destinatario));
+                                message.writeTo(outputStream);
 
-                            RawMessage rawMessage = new RawMessage(ByteBuffer.wrap(outputStream.toByteArray()));
-                            SendRawEmailRequest rawEmailRequest = new SendRawEmailRequest(rawMessage);
+                                RawMessage rawMessage = new RawMessage(ByteBuffer.wrap(outputStream.toByteArray()));
+                                SendRawEmailRequest rawEmailRequest = new SendRawEmailRequest(rawMessage);
 
-                            //Esperar pela permissão estar disponivel para enviar
-                            limitadorDeTaxa.acquire();
+                                //Esperar pela permissão estar disponivel para enviar
+                                limitadorDeTaxa.acquire();
 
-                            SendRawEmailResult sendResult = clienteSES.sendRawEmail(rawEmailRequest);
-                            LOGGER.info(mensagens.obterMensagem("envio.email.tentativa.sucesso"), assunto, ambiente.getIdentificadorAmbiente(), destinatario);
-                            break;
-                        } catch (AmazonServiceException e) {
-                            if (THROTTLING.equals(e.getErrorCode()) && MAXIMUM_SENDING_RATE_EXCEEDED.equals(e.getMessage())) {
-                                long tempoDeEsperaDeTentativa = obterTempoDeEspera(tentativas, TEMPO_ESPERA_MINIMO_MILISSEGUNDOS, TEMPO_ESPERA_MAXIMO_MILISSEGUNDOS);
-                                if (tentativas > 0) {
-                                    LOGGER.warn(mensagens.obterMensagem("envio.email.tentativa.falha"), destinatario);
+                                SendRawEmailResult sendResult = clienteSES.sendRawEmail(rawEmailRequest);
+                                LOGGER.info(mensagens.obterMensagem("envio.email.tentativa.sucesso"), assunto, ambiente.getIdentificadorAmbiente(), destinatario);
+                                break;
+                            } catch (AmazonServiceException e) {
+                                if (THROTTLING.equals(e.getErrorCode()) && MAXIMUM_SENDING_RATE_EXCEEDED.equals(e.getMessage())) {
+                                    long tempoDeEsperaDeTentativa = obterTempoDeEspera(tentativas, TEMPO_ESPERA_MINIMO_MILISSEGUNDOS, TEMPO_ESPERA_MAXIMO_MILISSEGUNDOS);
+                                    if (tentativas >  BigDecimal.ZERO.intValue()) {
+                                        LOGGER.warn(mensagens.obterMensagem("envio.email.tentativa.falha"), destinatario);
+                                    } else {
+                                        LOGGER.error(mensagens.obterMensagem("envio.email.erro.maximo.tentativas"), destinatario, e);
+                                    }
+
+                                    try {
+                                        Thread.sleep(tempoDeEsperaDeTentativa);
+                                    } catch (InterruptedException e1) {
+                                        return;
+                                    }
                                 } else {
-                                    LOGGER.error(mensagens.obterMensagem("envio.email.erro.maximo.tentativas"), destinatario, e);
+                                    LOGGER.error(mensagens.obterMensagem("envio.email.erro.amazon"), e.getErrorCode(), destinatario, e);
+                                    break;
                                 }
 
-                                try {
-                                    Thread.sleep(tempoDeEsperaDeTentativa);
-                                } catch (InterruptedException e1) {
-                                    return;
-                                }
-                            } else {
-                                LOGGER.error(mensagens.obterMensagem("envio.email.erro.amazon"), e.getErrorCode(), destinatario, e);
+                            } catch (AddressException e) {
+                                LOGGER.error(mensagens.obterMensagem("envio.email.erro.formato.invalido"), destinatario, e);
+                                break;
+                            } catch (Exception e) {
+                                LOGGER.error(mensagens.obterMensagem("envio.email.erro.inesperado"), destinatario, e);
                                 break;
                             }
-
-                        } catch (AddressException e) {
-                            LOGGER.error(mensagens.obterMensagem("envio.email.erro.formato.invalido"), destinatario, e);
-                            break;
-                        } catch(Exception e) {
-                            LOGGER.error(mensagens.obterMensagem("envio.email.erro.inesperado"), destinatario, e);
-                            break;
                         }
                     }
                 }
@@ -163,6 +169,25 @@ public class AwsEmailEnvioDados implements InitializingBean, IEmailEnvioDados {
             } catch (Exception e){
                 LOGGER.error(mensagens.obterMensagem("envio.email.erro.inesperado.lote"), e);
             }
+    }
+
+    /**
+     * Verifica se o final do e-mail do destinatário está na blacklist dos e-mails que não devem ser enviados
+     * A lista é parametrizada e definida por uma string separada por vírgula
+     *
+     * @param destinatario e-mail a ser verificado na lista negra
+     * @return TRUE, se o final do e-mail for encontrado na lista negra, de outra forma, retorna FALSE
+     */
+    private boolean destinatarioInBlacklist(String destinatario) {
+        if (destinatario != null && blacklist != null) {
+            String[] listaNegra = blacklist.split(",");
+            for (String item : listaNegra) {
+                if (destinatario.endsWith(item)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 

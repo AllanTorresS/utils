@@ -52,7 +52,7 @@ public interface IVeiculoDados extends IRepositorioBoleiaDados<Veiculo> {
 	 * @param identificadorInterno código do identificador Interno
 	 * @return O veiculo localizado ou nulo
 	 */
-	Veiculo buscarPorVeiculoIdentificadorInterno(Long idFrota, String identificadorInterno);
+	Veiculo buscarPorVeiculoIdentificadorInterno(Long idFrota,String identificadorInterno);
 
 	/**
 	 * Encontra veiculos pela placa em qualquer frota cadastrada.

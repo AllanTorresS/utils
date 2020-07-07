@@ -329,7 +329,7 @@ public class OracleMotoristaDados extends OracleRepositorioBoleiaDados<Motorista
     }
 
     @Override
-    public Motorista obterPorIdentificadorPadrao(String identificador) {
+    public Motorista  obterPorIdentificadorPadrao(String identificador) {
         FiltroPesquisaMotoristaVo filtro = new FiltroPesquisaMotoristaVo();
         filtro.setCpf(identificador);
         ResultadoPaginado<Motorista> resultadoBusca = pesquisar(filtro);

@@ -13,5 +13,4 @@ public interface IEnumComLabel<E extends Enum<E>> {
     default String getLabel() {
         return Mensagens.obterLabelEnum(this);
     }
-
 }

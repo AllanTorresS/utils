@@ -15,6 +15,7 @@ public final class ConstantesCta {
     public static final String ERRO_FRENTISTA_NAO_ENCONTRADO = "Frentista não encontrado";
     public static final String ERRO_FRENTISTA_CPF_INVALIDO = "Frentista não possui CPF válido";
     public static final String ERRO_FROTA_NAO_ENCONTRADA = "Frota não encontrada";
+    public static final String ERRO_UNIDADE_EMPR_AGREG_NAO_ENCONTRADA = "Frota, Unidade e Empresa Agregada não encontradas";
     public static final String ERRO_TIPO_COMBUSTIVEL_NAO_ENCONTRADO = "Tipo Combustível não encontrado";
     public static final String ERRO_VEICULO_INVALIDO = "Veiculo inválido";
     public static final String ERRO_EMPRESA_INVALIDA = "Empresa inválida";

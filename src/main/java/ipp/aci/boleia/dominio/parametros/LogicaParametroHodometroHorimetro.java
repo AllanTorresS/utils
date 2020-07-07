@@ -39,7 +39,7 @@ public class LogicaParametroHodometroHorimetro implements ILogicaParametroSistem
         ResultadoExecucaoParametroSistemaVo<AutorizacaoPagamento> resultado = new ResultadoExecucaoParametroSistemaVo<>(autorizacao);
 
         Veiculo veiculo = autorizacao.getVeiculo();
-        if(veiculo.isProprio()) {
+        if(veiculo.isProprio() || veiculo.isAgregado()) {
             Integer capacidade = veiculo.getCapacidadeTanque();
             BigDecimal consumoEstimado = veiculo.getConsumoEstimadoLitro();
             BigDecimal tolerancia = new BigDecimal(configs.buscarConfiguracoes(ChaveConfiguracaoSistema.TOLERANCIA_HODOMETRO_HORIMETRO).getParametro());

@@ -121,9 +121,9 @@ public class FiltroAutenticacaoJwt implements Filter {
      * @param response a resposta HTTP
      * @param encodedJwtToken o token jwt
      * @param fingerprint a string que representa o fingerprint
-     * @return <b>true</b> para encerrar a execução do {@link FiltroAutenticacaoJwt} e retornar ao cliente
+     * @return <b>true</b> para encerrar a execução do  e retornar ao cliente
      *     a resposta de erro que já foi escrita no parâmetro {@link HttpServletResponse}.
-     *     <br><b>false</b> para prosseguir com a execução do {@link FiltroAutenticacaoJwt}.
+     *     <br><b>false</b> para prosseguir com a execução do .
      * @throws IOException excecao de entrada e saida
      */
     private boolean deveInterromperFiltroSessaoOuTokenInvalido(HttpServletResponse response, String encodedJwtToken, String fingerprint) throws IOException {
@@ -259,8 +259,8 @@ public class FiltroAutenticacaoJwt implements Filter {
         } else if(utilitarioJwt.isTokenDispositivoFrotista(token)) {
             usuario = servicosDeUsuario.obterPorEmailComPermissoes(utilitarioJwt.getNomeUsuario(token));
 
-            /**
-             * Usuário gestor não possui perfil de usuário. Portanto, as permissões devem ser carregadas separadamente.
+            /*
+              Usuário gestor não possui perfil de usuário. Portanto, as permissões devem ser carregadas separadamente.
              */
             usuario.setPermissoes(new HashSet<>());
             usuario.getPermissoes().addAll(servicoPermissoes.obterPermissoes(TipoPerfilUsuario.FROTA));

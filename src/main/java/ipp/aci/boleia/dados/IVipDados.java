@@ -5,7 +5,7 @@ import ipp.aci.boleia.dominio.Vip;
 /**
  * Contrato para implementacao de repositorios de entidades Vip
  */
-public interface IVipDados extends IRepositorioBoleiaDados<Vip> {
+public interface IVipDados extends IRepositorioBoleiaDados<Vip>{
 
     /**
      * Localiza um Vip a partir do seu codigoVip

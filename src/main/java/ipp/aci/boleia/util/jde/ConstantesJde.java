@@ -39,7 +39,7 @@ public final class ConstantesJde {
     public static final String CREDITO_FROTA_TIPO_DOCUMENTO = "D4";
     public static final String CREDITO_FROTA_OBSERVACAO = "CRÉDITO PRÉ PAGO";
 
-
+    public static final String FATURA_CIA_DOCUMENTO = "74090";
     public static final String FATURA_TIPO_DOCUMENTO = "D3";
     public static final String FATURA_REPASSE_TIPO_DOCUMENTO = "DB";
     public static final String FATURA_CENARIO = "140";

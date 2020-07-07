@@ -5,7 +5,7 @@ import ipp.aci.boleia.dominio.campanha.TipoCondicaoCampanha;
 import org.springframework.stereotype.Repository;
 
 /**
- * Repositório para a entidade {@link TipoCondicaoCampanha}
+ * Repositório para a entidade {@link ipp.aci.boleia.dominio.campanha.TipoCondicaoCampanha}
  */
 @Repository
 public class OracleTipoCondicaoCampanhaDados extends OracleRepositorioBoleiaDados<TipoCondicaoCampanha> implements ITipoCondicaoCampanhaDados {

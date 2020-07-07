@@ -28,7 +28,6 @@ public final class UtilitarioCalculo {
      * @param <T> Tipo de retorno
      * @param streamValores Stream com os valores a serem somados
      * @param funcaoMapeadora Função mapeadora que será usado no map-reduce.
-     * @param <T> Tipo das valores presentes no stream
      * @return O resultado da soma
      */
     public static <T> BigDecimal somarValoresLista(Stream<T> streamValores, Function<T, BigDecimal> funcaoMapeadora) {

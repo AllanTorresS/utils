@@ -55,6 +55,10 @@ public class NotaFiscal implements IPersistente, IPertenceRevendedor, IPertenceF
     @Column(name = "NO_NUMERO_SERIE")
     private String numeroSerie;
 
+    @Size(max=14)
+    @Column(name = "NO_CNPJ_EMIT")
+    private String cnpjEmitente;
+
     @NotNull
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_ARQUIVO")
@@ -124,6 +128,14 @@ public class NotaFiscal implements IPersistente, IPertenceRevendedor, IPertenceF
 
     public void setNumeroSerie(String numeroSerie) {
         this.numeroSerie = numeroSerie;
+    }
+
+    public String getCnpjEmitente() {
+        return cnpjEmitente;
+    }
+
+    public void setCnpjEmitente(String cnpjEmitente) {
+        this.cnpjEmitente = cnpjEmitente;
     }
 
     public Arquivo getArquivo() {

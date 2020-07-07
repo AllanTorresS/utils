@@ -26,8 +26,8 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMenor;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
 import ipp.aci.boleia.dominio.vo.EntidadeVo;
-import ipp.aci.boleia.dominio.vo.FiltroPesquisaLocalizacaoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialPtovVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaLocalizacaoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaPontoDeVendaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaRotaPontoVendaServicosVo;
 import ipp.aci.boleia.util.Ordenacao;
@@ -277,14 +277,14 @@ public class OraclePontoDeVendaDados extends OracleRepositorioBoleiaDados<PontoD
     
     @Override
     public PontoDeVenda obterPorCnpj(Long cnpj) {
-    	List<PontoDeVenda> pdvs = pesquisarSemIsolamentoDados(
-    			new ParametroOrdenacaoColuna("componentes.codigoCorporativo", Ordenacao.DECRESCENTE),
-    			new ParametroPesquisaIgual("componentes.codigoPessoa", cnpj),
-    			new ParametroPesquisaIn("componentes.atividadeComponente.codigoCorporativo",  AtividadeComponente.obterCodigosAreaAbastecimento()));
-    	if (CollectionUtils.isNotEmpty(pdvs)) {
-    		return pdvs.get(0);
-    	}
-    	return null;
+        List<PontoDeVenda> pdvs = pesquisarSemIsolamentoDados(
+                new ParametroOrdenacaoColuna("componentes.codigoCorporativo", Ordenacao.DECRESCENTE),
+                new ParametroPesquisaIgual("componentes.codigoPessoa", cnpj),
+                new ParametroPesquisaIn("componentes.atividadeComponente.codigoCorporativo", AtividadeComponente.obterCodigosAreaAbastecimento()));
+        if (CollectionUtils.isNotEmpty(pdvs)) {
+            return pdvs.get(0);
+        }
+        return null;
     }
 
     @Override

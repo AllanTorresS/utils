@@ -8,9 +8,11 @@ import ipp.aci.boleia.dominio.enums.StatusHabilitacaoPontoVenda;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaior;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.vo.AutorizacaoPagamentoOrfaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaPostoCredenciadoVo;
+import ipp.aci.boleia.util.Ordenacao;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.Query;
@@ -105,5 +107,12 @@ public class OracleFrotaPontoVendaDados extends OracleRepositorioBoleiaDados<Fro
 			}
 		}
 		return armazenados;
+	}
+
+	@Override
+	public List<FrotaPontoVenda> buscarPorDataMaisRecente(Date dataReferencia){
+		List<ParametroPesquisa> parametros = new ArrayList<>();
+		parametros.add(new ParametroPesquisaDataMaior("dataAtualizacao", dataReferencia));
+		return pesquisar(new ParametroOrdenacaoColuna("dataAtualizacao", Ordenacao.CRESCENTE), parametros.toArray(new ParametroPesquisa[parametros.size()]));
 	}
 }

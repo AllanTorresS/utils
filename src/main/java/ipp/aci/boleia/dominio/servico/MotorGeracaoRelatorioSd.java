@@ -14,7 +14,7 @@ import ipp.aci.boleia.util.UtilitarioJson;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import java.io.IOException;
+
 import java.util.Date;
 
 import static ipp.aci.boleia.util.UtilitarioCalculoData.adicionarMinutosData;
@@ -37,7 +37,6 @@ public class MotorGeracaoRelatorioSd {
 
     /**
      * Inclusão de relatório no motor de geração de relatórios
-     * e envio para o listener
      *
      * @param dataPeriodoFiltradoInicial Data inicial do filtro do relatório
      * @param dataPeriodoFiltradoFinal Data final do filtro do relatório
@@ -48,28 +47,10 @@ public class MotorGeracaoRelatorioSd {
      * @param hoje Data de hoje
      *
      * @return MotorGeracaoRelatorios Retorna o registro criado para o relatório no motor de geração de relatórios
-     * @throws IOException Exceção lançada haja um erro no envio do relatório para a fila.
      */
     public MotorGeracaoRelatorios incluir(Date dataPeriodoFiltradoInicial, Date dataPeriodoFiltradoFinal,
-                                          BaseFiltroPaginado filtroRelatorio, TipoRelatorioMotorGerador tipoRelatorioMotorGerador, TipoExtensaoArquivo tipoExtensaoArquivo, Usuario usuarioLogado, Date hoje) throws IOException {
-        MotorGeracaoRelatorios m = this.salvarNovoRelatorio(dataPeriodoFiltradoInicial, dataPeriodoFiltradoFinal, filtroRelatorio, tipoRelatorioMotorGerador, tipoExtensaoArquivo, usuarioLogado, hoje);
-        return m;
-    }
+                                          BaseFiltroPaginado filtroRelatorio, TipoRelatorioMotorGerador tipoRelatorioMotorGerador, TipoExtensaoArquivo tipoExtensaoArquivo, Usuario usuarioLogado, Date hoje) {
 
-    /**
-     * Inclusão de relatório no motor de geração de relatórios
-     *
-     * @param dataPeriodoFiltradoInicial Data inicial do filtro do relatório
-     * @param dataPeriodoFiltradoFinal Data final do filtro do relatório
-     * @param filtroRelatorio Filtro usado para emissão do relatório
-     * @param tipoRelatorioMotorGerador Tipo do relatório emitido
-     * @param tipoExtensaoArquivo Tipo da Extensao do arquivo a ser armazenado
-     * @param usuarioLogado Usuario logado no sistema
-     * @param hoje Data de hoje
-     * @return MotorGeracaoRelatorios Retorna o registro criado para o relatório no motor de geração de relatórios
-     */
-    private MotorGeracaoRelatorios salvarNovoRelatorio(Date dataPeriodoFiltradoInicial, Date dataPeriodoFiltradoFinal,
-                                                       BaseFiltroPaginado filtroRelatorio, TipoRelatorioMotorGerador tipoRelatorioMotorGerador, TipoExtensaoArquivo tipoExtensaoArquivo, Usuario usuarioLogado, Date hoje) {
         Date dataDescarte = UtilitarioCalculoData.adicionarDiasData(hoje, 2);
         MotorGeracaoRelatorios m = new MotorGeracaoRelatorios();
         m.setDataRequisicao(hoje);
@@ -77,7 +58,7 @@ public class MotorGeracaoRelatorioSd {
 
         m.setDataPeriodoFiltradoInicial( dataPeriodoFiltradoInicial );
         m.setDataPeriodoFiltradoFinal( dataPeriodoFiltradoFinal );
-        m.setStatus(StatusMotorGeradorRelatorio.EM_ANDAMENTO_AGUARDANDO.getValue());
+        m.setStatus( StatusMotorGeradorRelatorio.EM_ANDAMENTO.getValue() );
 
         m.setUsuario(usuarioLogado);
         m.setFiltro( UtilitarioJson.toJSON( filtroRelatorio ) );
@@ -85,6 +66,7 @@ public class MotorGeracaoRelatorioSd {
 
         m.setArquivo( null );
         m.setDataDescarte( dataDescarte );
+
         m = repositorio.armazenar( m );
 
         return m;

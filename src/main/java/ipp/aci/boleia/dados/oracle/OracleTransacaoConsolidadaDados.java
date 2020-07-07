@@ -235,6 +235,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
 
     /**
      * Realiza a pesquisa de Transacoes Consolidadas através de um filtor
+     * 
      * @param filtro parâmetros utilizados na consulta
      * @param usuarioLogado usuário que está realizando a consulta
      * @return retorna o resultado paginado da consulta
@@ -394,7 +395,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
     public List<TransacaoConsolidada> obterConsolidacoesSemNotaFiscalEntreDatas(
             Date dataIntervaloMin, Date dataIntervaloMax) {
         ParametroPesquisa[] parametros = new ParametroPesquisa[] {
-                new ParametroPesquisaIgual("statusNotaFiscal", StatusNotaFiscal.PENDENTE.getValue()),
+                new ParametroPesquisaIgual("statusNotaFiscal",StatusNotaFiscal.PENDENTE.getValue()),
                 new ParametroPesquisaDataMaiorOuIgual("dataPrazoEmissaoNfe", dataIntervaloMin),
                 new ParametroPesquisaDataMenorOuIgual("dataPrazoEmissaoNfe", dataIntervaloMax)
         };

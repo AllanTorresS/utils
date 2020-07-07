@@ -24,6 +24,7 @@ import ipp.aci.boleia.dominio.vo.FiltroPesquisaFrotaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialFrotaVo;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
+import ipp.aci.boleia.dominio.vo.apco.ClienteProFrotaVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -65,6 +66,13 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
             "JOIN tc.frotaPtov.frota f " +
             "WHERE tc.cobranca.id = :idCobranca " +
             "     AND f.excluido = 0";
+
+
+    private static final String CONSULTA_CLIENTE_PROFROTAS =
+            "SELECT new ipp.aci.boleia.dominio.vo.apco.ClienteProFrotaVo(" +
+                    "f.id, f.cnpj, f.razaoSocial, f.status, MAX(m.dataInativacao)) " +
+                    "FROM MotivoInativacaoFrota AS m " +
+                    "RIGHT JOIN m.frota AS f ";
 
     /**
      * Instancia o repositorio
@@ -152,7 +160,7 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
         }
         return pesquisarUnico(new ParametroPesquisaIgual("cnpj", cnpj));
     }
-
+    
     @Override
     public List<Frota> pesquisarPorCnpjSemIsolamento(Long cnpj) {
         if(cnpj == null) {
@@ -333,7 +341,12 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
         }
         return pesquisar(null, consulta, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
-
+    
+    @Override
+    public Frota obterPorCnpj(Long cnpj) {
+        return pesquisarUnicoSemIsolamentoDados(new ParametroPesquisaIgual("cnpj", cnpj));
+    }
+    
     @Override
     public List<Frota> buscarFrotaComKmvAcumuladosParaDonoDaFrota(Date dataInicio, Date dataFim) {
         return pesquisar(null, CONSULTA_DONO_FROTA_COM_ACUMULO,new ParametroPesquisaIgual("dataInicial", dataInicio), new ParametroPesquisaIgual("dataFinal", dataFim)).getRegistros();
@@ -342,5 +355,24 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
     @Override
     public Frota obterPorCobranca(Long idCobranca) {
         return pesquisarUnico(CONSULTA_FROTA_POR_COBRANCA, new ParametroPesquisaIgual("idCobranca", idCobranca));
+    }
+
+    @Override
+    public List<ClienteProFrotaVo> obterClienteFrotaAPCO(Date dataUltimoEnvio){
+
+        String consulta = CONSULTA_CLIENTE_PROFROTAS;
+        if(dataUltimoEnvio != null){
+            consulta += "WHERE f.dataAtualizacao >= :dataUltimoEnvio GROUP BY f.id, f.cnpj, f.razaoSocial, f.status";
+            return pesquisar(null, consulta, ClienteProFrotaVo.class, new ParametroPesquisaIgual("dataUltimoEnvio", dataUltimoEnvio) ).getRegistros();
+        }
+        else {
+            consulta += " GROUP BY f.id, f.cnpj, f.razaoSocial, f.status";
+            return pesquisar(null, consulta, ClienteProFrotaVo.class).getRegistros();
+        }
+    }
+    
+    @Override
+    public Frota desanexar(Frota frota) {
+        return super.desanexar(frota);
     }
 }

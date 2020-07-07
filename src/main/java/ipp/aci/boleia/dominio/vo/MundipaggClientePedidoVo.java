@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 public class MundipaggClientePedidoVo {
 
     private static final String COMPANY_CUSTOMER_TYPE = "company";
+    private static final int LIMITE_NOME_CLIENTE = 64;
 
     private String name;
     private String email;
@@ -24,7 +25,9 @@ public class MundipaggClientePedidoVo {
      * @param frota A frota com pedido
      */
     public MundipaggClientePedidoVo(Frota frota) {
-        name = frota.getRazaoSocial();
+        name = frota.getRazaoSocial().length() > LIMITE_NOME_CLIENTE
+                ? frota.getRazaoSocial().substring(0,LIMITE_NOME_CLIENTE)
+                : frota.getRazaoSocial();
         email = frota.getEmail();
         document = StringUtils.leftPad(frota.getCnpj().toString(), 14, "0");
         code = frota.getId().toString();
@@ -71,4 +74,3 @@ public class MundipaggClientePedidoVo {
         this.type = type;
     }
 }
- 

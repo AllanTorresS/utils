@@ -24,6 +24,7 @@ public final  class Rotas {
     public static final  String API_PUBLICA_USUARIO_MOTORISTA         = BASE_API_PUBLICA + "/usuarioMotorista";
     public static final  String SISTEMA_EXTERNO_ACESSO_API            = BASE_API_PUBLICA + "/externo/acesso";
     public static final  String CREDENCIAMENT0_POSTO_ACESSO_API       = BASE_API_PUBLICA + "/credenciamentoPosto/acesso";
+    public static final  String CREDENCIAMENT0_FROTA_ACESSO_API       = BASE_API_PUBLICA + "/credenciamentoFrota/acesso";
     public static final  String MODULO_INTERNO_ACESSO_API             = BASE_API_PUBLICA + "/moduloInterno/acesso";
 
     // APIs estaticas
@@ -105,18 +106,21 @@ public final  class Rotas {
     public static final  String PEDIDO_CREDITO_FROTA_API             = BASE_API + "/pedidoCreditoFrota";
     public static final  String CONFIGURACAO_API                     = BASE_API + "/configuracao";
     public static final  String SISTEMA_EXTERNO_API                  = BASE_API + "/sistemaExterno";
+    public static final  String MODULO_INTERNO_API                   = BASE_API + "/moduloInterno";
     public static final  String INTEGRADOR_API                       = BASE_API + "/integrador";
     public static final  String SALDO_FROTA_API                      = BASE_API + "/saldoFrota";
     public static final  String CONFIGURACAO_ROTINA_AVISO_DEBITO     = BASE_API + "/configuracaoRotinaAvisoDebito";
     public static final  String MOTOR_GERACAO_RELATORIO              = BASE_API + "/motorGeracaoRelatorio";
     public static final  String CREDENCIAMENTO_POSTO_API             = BASE_API + "/credenciamentoPosto";
     public static final  String POSTO_CREDENCIADO_API                = BASE_API + "/postoCredenciado";
+    public static final  String CREDENCIAMENTO_FROTA_API             = BASE_API + "/credenciamentoFrota";
 
     public static final String CAMPANHA_API                          = BASE_API + "/campanha";
     public static final String BANDEIRA_API                          = BASE_API + "/bandeira";
     public static final String GRUPO_ECONOMICO_API                   = BASE_API + "/grupoEconomico";
     public static final String MUNICIPIO_API                         = BASE_API + "/municipio";
     public static final String PARAMETRO_CAMPANHA_API                = BASE_API + "/parametroCampanha";
+    public static final String COORDENADORIA_API                     = BASE_API + "/coordenadoria";
 
     /**
      * Construtor privado, impede instanciacao e heranca

@@ -1560,7 +1560,7 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     public BigDecimal obterConsumo() {
         final BigDecimal diferencaHodometroHorimetro = obterDiferencaHodometroHorimetro();
         return diferencaHodometroHorimetro == null || totalLitrosAbastecimento == null ? null :
-                diferencaHodometroHorimetro.divide(totalLitrosAbastecimento, 3, BigDecimal.ROUND_HALF_UP);
+            diferencaHodometroHorimetro.divide(totalLitrosAbastecimento, 3, BigDecimal.ROUND_HALF_UP);
     }
 
     /**
@@ -1580,23 +1580,5 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
             }
         }
         return null;
-    }
-
-    /**
-     * Obtem o hoddometro anterior do veiculo.
-     * @return o hoddometro anterior do veiculo.
-     */
-    @JsonIgnore
-    private Long obterHodometroAnterior() {
-        return hodometroAnterior != null ? hodometroAnterior : veiculo.getHodometro();
-    }
-
-    /**
-     * Obtem o horimetro anterior do veiculo.
-     * @return o horimetro anterior do veiculo.
-     */
-    @JsonIgnore
-    private BigDecimal obterHorimetroAnterior() {
-        return horimetroAnterior != null ? horimetroAnterior : veiculo.getHorimetro();
     }
 }

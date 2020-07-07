@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Repositório da entidade {@link FrotaParametroSistemaIntervaloAbastecimento}
  */
-public interface IFrotaParametroSistemaPostoAutorizadoAbastecimentoDados extends IRepositorioBoleiaDados<FrotaParametroSistemaPostoAutorizadoAbastecimento> {
+public interface IFrotaParametroSistemaPostoAutorizadoAbastecimentoDados extends  IRepositorioBoleiaDados<FrotaParametroSistemaPostoAutorizadoAbastecimento> {
 
     /**
      * Obtém uma lista com todos os postos autorizados para abastecimento dado um parametro de uso.

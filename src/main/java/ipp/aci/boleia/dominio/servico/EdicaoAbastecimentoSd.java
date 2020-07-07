@@ -10,6 +10,7 @@ import ipp.aci.boleia.dominio.enums.CampoItemAbastecimento;
 import ipp.aci.boleia.dominio.vo.EdicaoAbastecimentoVo;
 import ipp.aci.boleia.dominio.vo.EdicaoCampoAbastecimentoVo;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -63,7 +64,7 @@ public class EdicaoAbastecimentoSd {
             camposEditados.add(new EdicaoCampoAbastecimentoVo(CampoEdicaoAbastecimento.PONTO_VENDA, autorizacaoPagamento.getPontoVenda().getNomeApresentacao(), autorizacaoPagamentoEdicao.getPontoVenda().getNomeApresentacao()));
         }
 
-        if(!autorizacaoPagamento.getCodigoVip().equals(autorizacaoPagamentoEdicao.getCodigoVip())) {
+        if(!StringUtils.equals(autorizacaoPagamento.getCodigoVip(),autorizacaoPagamentoEdicao.getCodigoVip())) {
             camposEditados.add(new EdicaoCampoAbastecimentoVo(CampoEdicaoAbastecimento.CODIGO_VIP, autorizacaoPagamento.getCodigoVip(), autorizacaoPagamentoEdicao.getCodigoVip()));
         }
 

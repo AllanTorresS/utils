@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 public final class UtilitarioFormatacao {
 
     public static final int TAMANHO_CPF = 11;
+    public static final int TAMANHO_CNPJ = 14;
 
     /**
      * Impede a instanciacao e a heranca

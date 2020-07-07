@@ -179,6 +179,7 @@ public class NotaFiscalSd {
         try {
             return armazenamentoArquivosSd.obterArquivo(TipoArquivo.NOTA_FISCAL, null, nota.getId());
         } catch (ExcecaoArquivoNaoEncontrado e) {
+            LOG.error(mensagens.obterMensagem("notafiscal.arquivo.naoencontrado", nota.getNumero()), e);
             throw new ExcecaoBoleiaRuntime(e);
         }
     }
@@ -308,7 +309,7 @@ public class NotaFiscalSd {
         List<NotaFiscal> notasFiscais = repositorio.obterNotaPorNumero(ConstantesNotaFiscal.NOTA_FISCAL_PREFIX + notaFiscalParserSd.getString(documento, ConstantesNotaFiscalParser.NUMERO));
         if (notasFiscais != null && !notasFiscais.isEmpty()) {
             NotaFiscal notaFiscal = notasFiscais.stream()
-                                                .filter(nf -> possuiMesmoNumeroSerie(obterNumeroSerieNota(nf), documento))
+                                                .filter(nf -> possuiSerieCnpjEmitenteIguais(nf, documento))
                                                 .findFirst()
                                                 .orElse(null);
 
@@ -324,6 +325,43 @@ public class NotaFiscalSd {
     }
 
     /**
+     * Verifica se duas notas fiscais possuem os mesmos número de série e CNPJ do emitente
+     * @param nf a nota fiscal existente a ser verificada
+     * @param documento o documento sendo processado
+     * @return true caso as duas notas possuam o mesmo CNPJ do emitente e número de série, false caso contrário
+     */
+    private boolean possuiSerieCnpjEmitenteIguais(NotaFiscal nf, Document documento) {
+        recuperarCnpjEmitenteSerie(nf);
+        return possuiMesmoNumeroSerie(nf.getNumeroSerie(), documento)
+                && possuiMesmoCnpjEmitente(nf.getCnpjEmitente(), documento);
+    }
+
+    /**
+     * Recupera os campos CNPJ do emitente e série a partir do arquivo no S3, caso não estejam preenchidos.
+     * @param nf a nota fiscal que terá os campos recuperados
+     */
+    private void recuperarCnpjEmitenteSerie(NotaFiscal nf) {
+        if (nf.getNumeroSerie() == null || nf.getCnpjEmitente() == null) {
+            Document documentoBase = UtilitarioXml.lerXml(UtilitarioStreams.carregarEmMemoria(obterXmlNotaFiscal(nf)));
+            nf.setNumeroSerie(UtilitarioXml.getString(documentoBase, ConstantesNotaFiscalParser.SERIE));
+            nf.setCnpjEmitente(UtilitarioXml.getString(documentoBase, ConstantesNotaFiscalParser.EMIT_CNPJ));
+            repositorio.armazenar(nf);
+        }
+    }
+
+    /**
+     * Verifica se um documento possui o mesmo CNPJ do emitente que uma NF existente
+     * na base com o mesmo número de documento.
+     *
+     * @param cnpjEmitente Número do CNPJ
+     * @param documento Documento usado na verificação
+     * @return True, caso possuam o mesmo CNPJ
+     */
+    private boolean possuiMesmoCnpjEmitente(String cnpjEmitente, Document documento) {
+        return cnpjEmitente.equals(UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.EMIT_CNPJ));
+    }
+
+    /**
      * Verifica se um documento possui o mesmo número de série de uma NF existente
      * na base com o mesmo número de documento.
      *
@@ -333,42 +371,6 @@ public class NotaFiscalSd {
      */
     private boolean possuiMesmoNumeroSerie(String numeroSerie, Document documento) {
         return numeroSerie.equals(UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.SERIE));
-    }
-
-    /**
-     * Retorna o número de série de uma nota fiscal.
-     * Caso se trate de dado legado, a nota não terá numero de série persistido. Nesse caso,
-     * o número de série da nota será obtido por meio do arquivo xml da nf existente no S3 e armazenado no banco.
-     *
-     * @param notaFiscal Nota fiscal utilizada na busca.
-     * @return O número de série da nota.
-     */
-    private String obterNumeroSerieNota(NotaFiscal notaFiscal) {
-        String numeroSerie = notaFiscal.getNumeroSerie();
-        if(numeroSerie == null) {
-            numeroSerie = buscarNumeroSerieNoRepositorio(notaFiscal);
-            notaFiscal.setNumeroSerie(numeroSerie);
-            repositorio.armazenar(notaFiscal);
-        }
-        return numeroSerie;
-    }
-
-    /**
-     * Busca no S3 o número de série de uma nota fiscal.
-     *
-     * @param notaFiscal Nota fiscal utilizada na busca.
-     * @return O número de série da NF.
-     */
-    private String buscarNumeroSerieNoRepositorio(NotaFiscal notaFiscal) {
-        try {
-            InputStream inputStream = armazenamentoArquivosSd.obterArquivo(TipoArquivo.NOTA_FISCAL, null, notaFiscal.getId());
-            byte[] xml = UtilitarioStreams.carregarEmMemoria(inputStream);
-            Document documento = UtilitarioXml.lerXml(xml);
-            return UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.SERIE);
-        } catch (ExcecaoArquivoNaoEncontrado e) {
-            LOG.error(mensagens.obterMensagem("notafiscal.arquivo.naoencontrado", notaFiscal.getNumero()), e);
-            throw new ExcecaoBoleiaRuntime(Erro.ERRO_GENERICO);
-        }
     }
 
     /**

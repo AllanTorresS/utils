@@ -4,8 +4,8 @@ package ipp.aci.boleia.dados;
 import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
-import ipp.aci.boleia.dominio.vo.FiltroPesquisaLocalizacaoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialPtovVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaLocalizacaoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaPontoDeVendaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaRotaPontoVendaServicosVo;
 

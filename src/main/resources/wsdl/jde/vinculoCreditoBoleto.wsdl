@@ -87,14 +87,12 @@
         <s:schema elementFormDefault="qualified" targetNamespace="java:oracle.e1.bssvfoundation.util">
             <s:complexType name="E1MessageList">
                 <s:sequence>
-                    <s:element maxOccurs="unbounded" minOccurs="0" name="E1Messages" nillable="true"
-                               type="ns2:E1Message"/>
+                    <s:element maxOccurs="unbounded" minOccurs="0" name="E1Messages" nillable="true" type="ns2:E1Message"/>
                 </s:sequence>
             </s:complexType>
             <s:complexType name="ArrayOfE1Message">
                 <s:sequence>
-                    <s:element maxOccurs="unbounded" minOccurs="0" name="E1Message" nillable="true"
-                               type="ns2:E1Message"/>
+                    <s:element maxOccurs="unbounded" minOccurs="0" name="E1Message" nillable="true" type="ns2:E1Message"/>
                 </s:sequence>
             </s:complexType>
             <s:complexType name="E1Message">
@@ -149,9 +147,7 @@
     <binding name="vinculoCreditoBoletoSoap" type="s0:vinculoCreditoBoletoSoap">
         <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
         <operation name="vincular">
-            <soap:operation
-                    soapAction="http://ipiranga.com.br/vinculoCreditoBoleto/ws.vinculoCreditoBoleto.Service.vincular"
-                    style="document"/>
+            <soap:operation soapAction="http://ipiranga.com.br/vinculoCreditoBoleto/ws.vinculoCreditoBoleto.Service.vincular" style="document"/>
             <input>
                 <soap:body use="literal"/>
             </input>
@@ -162,7 +158,7 @@
     </binding>
     <service name="vinculoCreditoBoleto">
         <port name="vinculoCreditoBoletoSoap" binding="s0:vinculoCreditoBoletoSoap">
-            <soap:address location="http://ensemdes.ipiranga.com.br:7070/csp/ipirangaws/ws.vinculoCreditoBoleto.Service.CLS"/>
+            <soap:address location="${settings.jde.vinculocreditoboleto.soap.address}"/>
         </port>
     </service>
 </definitions>

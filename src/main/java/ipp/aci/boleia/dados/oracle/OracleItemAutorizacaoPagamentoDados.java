@@ -38,7 +38,7 @@ public class OracleItemAutorizacaoPagamentoDados extends OracleRepositorioBoleia
     @Override
     public List<ItemAutorizacaoPagamento> obterItensParaConsolidacao(Long codigoFrota, Long codigoPV, Long codigoEmpresaAgregadaQueExigeNF, Date dataInicioPeriodo, Date dataFimPeriodo, boolean prePago) {
         List<ParametroPesquisa> params = new ArrayList<>();
-        params.add(new ParametroPesquisaIn("autorizacaoPagamento.status", Arrays.asList(StatusAutorizacao.AUTORIZADO.getValue(), StatusAutorizacao.CANCELADO.getValue())));
+        params.add(new ParametroPesquisaIn("autorizacaoPagamento.status", Arrays.asList(StatusAutorizacao.AUTORIZADO.getValue(),StatusAutorizacao.CANCELADO.getValue())));
         params.add(new ParametroPesquisaIgual("autorizacaoPagamento.transacaoFrota.frota.id", codigoFrota));
         params.add(new ParametroPesquisaIgual("autorizacaoPagamento.pontoVenda.id", codigoPV));
         params.add(new ParametroPesquisaDataMaiorOuIgual("autorizacaoPagamento.dataProcessamento", dataInicioPeriodo));

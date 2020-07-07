@@ -33,7 +33,7 @@ public class LogicaParametroIntervaloAbastecimento implements ILogicaParametroSi
         AutorizacaoPagamento autorizacao = contexto.getDados();
         ResultadoExecucaoParametroSistemaVo<AutorizacaoPagamento> resultado = new ResultadoExecucaoParametroSistemaVo<>(autorizacao);
         Veiculo veiculo = autorizacao.getVeiculo();
-        if(veiculo.isProprio()) {
+        if(veiculo.isProprio() || veiculo.isAgregado()) {
             boolean ativoParaTodos = frotaParam.getVerificarIntervaloAbastecimentoTodosVeiculos() != null && frotaParam.getVerificarIntervaloAbastecimentoTodosVeiculos();
             FrotaParametroSistemaIntervaloAbastecimento intervalo = getConfiguracaoVeiculo(frotaParam, veiculo);
             if (ativoParaTodos || (intervalo != null && intervalo.isAtivo())) {

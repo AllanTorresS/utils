@@ -1,7 +1,10 @@
 package ipp.aci.boleia.dominio;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import ipp.aci.boleia.dominio.enums.StatusAtivacao;
+import ipp.aci.boleia.dominio.enums.TipoDashboard;
 import ipp.aci.boleia.dominio.enums.TipoPerfilUsuario;
 import ipp.aci.boleia.dominio.enums.TipoTokenJwt;
 import ipp.aci.boleia.dominio.interfaces.IExclusaoLogica;
@@ -25,6 +28,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -41,6 +45,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Representa a tabela de Usuario
@@ -158,6 +163,13 @@ public class Usuario implements IPersistente, IExclusaoLogica, IPertenceFrota, I
     @Column(name = "ID_GESTOR")
     private Boolean gestor;
 
+    @Column(name = "ID_TIPO_DASHBOARD")
+    private Integer tipoDashboard;
+
+    @NotAudited
+    @Formula(TipoDashboard.DECODE_FORMULA)
+    private String tipoDashboardConvertido;
+
     @Column(name = "ID_EXCLUIDO")
     private Boolean excluido;
 
@@ -167,6 +179,14 @@ public class Usuario implements IPersistente, IExclusaoLogica, IPertenceFrota, I
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "usuario")
     private CodigoValidacaoTokenJwt codigoValidacaoTokenJwt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_COORDENADORIA")
+    private Coordenadoria coordenadoria;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "usuarioAssessorResponsavel")
+    @JsonIgnoreProperties("usuarioAssessorResponsavel")
+    private List<Frota> frotasAssessoradas;
 
     @Transient
     private Set<Permissao> permissoes;
@@ -355,6 +375,22 @@ public class Usuario implements IPersistente, IExclusaoLogica, IPertenceFrota, I
         this.gestor = gestor;
     }
 
+    public Integer getTipoDashboard() {
+        return tipoDashboard;
+    }
+
+    public void setTipoDashboard(Integer tipoDashboard) {
+        this.tipoDashboard = tipoDashboard;
+    }
+
+    public String getTipoDashboardConvertido() {
+        return tipoDashboardConvertido;
+    }
+
+    public void setTipoDashboardConvertido(String tipoDashboardConvertido) {
+        this.tipoDashboardConvertido = tipoDashboardConvertido;
+    }
+
     public String getSenhaHash() {
         return senhaHash;
     }
@@ -395,6 +431,22 @@ public class Usuario implements IPersistente, IExclusaoLogica, IPertenceFrota, I
 
     public void setCodigoValidacaoTokenJwt(CodigoValidacaoTokenJwt codigoValidacaoTokenJwt) {
         this.codigoValidacaoTokenJwt = codigoValidacaoTokenJwt;
+    }
+
+    public Coordenadoria getCoordenadoria() {
+        return coordenadoria;
+    }
+
+    public void setCoordenadoria(Coordenadoria coordenadoria) {
+        this.coordenadoria = coordenadoria;
+    }
+
+    public List<Frota> getFrotasAssessoradas() {
+        return frotasAssessoradas;
+    }
+
+    public void setFrotasAssessoradas(List<Frota> frotasAssessoradas) {
+        this.frotasAssessoradas = frotasAssessoradas;
     }
 
     public Date getBloqueioTemporario() {
@@ -586,5 +638,26 @@ public class Usuario implements IPersistente, IExclusaoLogica, IPertenceFrota, I
         return this.isInterno() ||
                 (this.isFrotista() &&
                         this.getFrota() != null);
+    }
+
+    /**
+     * Remove a visao comercial do usuario, desassociando de sua coordenadoria.
+     */
+    @JsonIgnore
+    public void removerVisaoComercial() {
+        coordenadoria = null;
+        tipoDashboard = TipoDashboard.INTERNO_SIMPLES.getValue();
+    }
+
+    /**
+     * Lista os ids das frotas assessoradas pelo usuario.
+     * @return lista com  os ids das frotas assessoradas pelo usuario.
+     */
+    @JsonIgnore
+    public List<Long> listarIdsFrotasAssessoradas() {
+        if (this.frotasAssessoradas == null) {
+            return Collections.emptyList();
+        }
+        return this.frotasAssessoradas.stream().map(Frota::getId).collect(Collectors.toList());
     }
 }

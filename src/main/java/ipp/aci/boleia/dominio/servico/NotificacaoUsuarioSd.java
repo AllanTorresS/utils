@@ -746,7 +746,7 @@ public class NotificacaoUsuarioSd {
     /**
      * Envia uma notificação push com a notificação, caso o usuário seja gestor da frota.
      *
-     * @param notificacaoUsuario
+     * @param notificacaoUsuario notificação enviada
      */
     private void enviarNotificacaoPushGestorFrota(NotificacaoUsuario notificacaoUsuario) {
         Usuario usuario = notificacaoUsuario.getUsuario();

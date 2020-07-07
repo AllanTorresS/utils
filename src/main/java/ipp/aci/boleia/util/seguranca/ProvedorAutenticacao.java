@@ -62,10 +62,10 @@ public class ProvedorAutenticacao implements AuthenticationProvider {
     private IServicosDeUsuario servicoUsuario;
 
     @Autowired
-    private IUsuarioMotoristaDados repositorioUsuarioMotorista;
+    private IServicosDeControleAcessoPortal servicosDeControleAcessoPortal;
 
     @Autowired
-    private IServicosDePermissao servicoPermissoes;
+    private IUsuarioMotoristaDados repositorioUsuarioMotorista;
 
     @Autowired
     private IServicosDeCodigoValidacaoTokenJwt servicosDeCodigoValidacaoTokenJwt;
@@ -84,9 +84,6 @@ public class ProvedorAutenticacao implements AuthenticationProvider {
 
     @Autowired
     private IConfiguracaoSistemaDados configuracaoSistema;
-
-    @Autowired
-    private IServicosDeControleAcessoPortal servicosDeControleAcessoPortal;
 
     @Override
     public Authentication authenticate(Authentication auth) throws AuthenticationException {
