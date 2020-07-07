@@ -6,7 +6,7 @@
 
     <groupId>ipp.aci.boleia</groupId>
     <artifactId>boleia-dominioUtil</artifactId>
-    <version>3.32.4.14-Modularizacao-SNAPSHOT</version>
+    <version>3.32.4.16-Modularizacao-SNAPSHOT</version>
 
     <properties>
         <main.basedir>${project.basedir}</main.basedir>

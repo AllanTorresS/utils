@@ -178,6 +178,9 @@ public final class ChavePermissao {
     public static final String CAMPANHA_ALTERAR                             = SPRING_ROLE_PREFIX + "CAMPANHA_ALTERAR" + SPRING_ROLE_SUFFIX;
     public static final String CAMPANHA_APROVAR                             = SPRING_ROLE_PREFIX + "CAMPANHA_APROVAR" + SPRING_ROLE_SUFFIX;
     public static final String CAMPANHA_CONFIGURAR                          = SPRING_ROLE_PREFIX + "CAMPANHA_CONFIGURAR" + SPRING_ROLE_SUFFIX;
+    public static final String COORDENADORIA_CONSULTAR_E_VISUALIZAR         = SPRING_ROLE_PREFIX + "COORDENADORIA_CONSULTAR_E_VISUALIZAR" + SPRING_ROLE_SUFFIX;
+    public static final String COORDENADORIA_INCLUIR                        = SPRING_ROLE_PREFIX + "COORDENADORIA_INCLUIR" + SPRING_ROLE_SUFFIX;
+    public static final String COORDENADORIA_ALTERAR                        = SPRING_ROLE_PREFIX + "COORDENADORIA_ALTERAR" + SPRING_ROLE_SUFFIX;
 
     public static final String MOTOR_GERACAO_RELATORIO_CONSULTAR_E_VISUALIZAR = SPRING_ROLE_PREFIX + "MOTOR_GERACAO_RELATORIO_CONSULTAR_E_VISUALIZAR" + SPRING_ROLE_SUFFIX;
 
@@ -202,6 +205,12 @@ public final class ChavePermissao {
     public static final String API_EXTERNO_TELEMETRIA_INCLUIR                       = API_EXTERNO_PREFIX + "API_EXTERNO_TELEMETRIA_INCLUIR" + SPRING_ROLE_SUFFIX;
     public static final String API_EXTERNO_CONSULTAR_MOTORISTA                      = API_EXTERNO_PREFIX + "API_EXTERNO_CONSULTAR_MOTORISTA" + SPRING_ROLE_SUFFIX;
 
+    // Permissão da API de Módulos Internos.
+    public static final String API_MODULO_INTERNO                                   = SPRING_ROLE_PREFIX + "API_MODULO_INTERNO" + SPRING_ROLE_SUFFIX;
+    public static final String API_MODULO_INTERNO_PREFIX                            = API_MODULO_INTERNO + " or " + SPRING_ROLE_PREFIX;
+    public static final String API_MODULO_INTERNO_INCLUIR                           = API_MODULO_INTERNO_PREFIX + "API_MODULO_INTERNO_INCLUIR" + SPRING_ROLE_SUFFIX;
+    public static final String API_MODULO_INTERNO_EXCLUIR                           = API_MODULO_INTERNO_PREFIX + "API_MODULO_INTERNO_EXCLUIR" + SPRING_ROLE_SUFFIX;
+    public static final String API_MODULO_INTERNO_EDITAR                            = API_MODULO_INTERNO_PREFIX + "API_MODULO_INTERNO_EDITAR" + SPRING_ROLE_SUFFIX;
 
     // Permissão da API de Sistemas Externos POS.
     public static final String API_EXTERNO_CONSULTAR_POSTO_ABADI                = SPRING_ROLE_PREFIX + "API_EXTERNO_CONSULTAR_POSTO_ABADI"               + SPRING_ROLE_SUFFIX;
@@ -234,6 +243,17 @@ public final class ChavePermissao {
     public static final String API_CREDENCIAMENTO_PDV_PESQUISAR_BANCO          = SPRING_ROLE_PREFIX + "API_CREDENCIAMENTO_PDV_PESQUISAR_BANCO"         + SPRING_ROLE_SUFFIX;
     public static final String API_CREDENCIAMENTO_PDV_OBTER_COMBUSTIVEIS       = SPRING_ROLE_PREFIX + "API_CREDENCIAMENTO_PDV_OBTER_COMBUSTIVEIS"      + SPRING_ROLE_SUFFIX;
     public static final String API_CREDENCIAMENTO_PDV_HABILITAR                = SPRING_ROLE_PREFIX + "API_CREDENCIAMENTO_PDV_HABILITAR"               + SPRING_ROLE_SUFFIX;
+    
+    // Permissão da API do credenciamento de frotas
+    public static final String API_CREDENCIAMENTO_FROTA_CONSULTAR_STATUS       = SPRING_ROLE_PREFIX + "API_CREDENCIAMENTO_FROTA_CONSULTAR_STATUS"      + SPRING_ROLE_SUFFIX;
+    public static final String API_CREDENCIAMENTO_FROTA_ENVIAR_LEAD            = SPRING_ROLE_PREFIX + "API_CREDENCIAMENTO_FROTA_ENVIAR_LEAD"           + SPRING_ROLE_SUFFIX;
+    public static final String API_CREDENCIAMENTO_FROTA_ATUALIZAR_LEAD         = SPRING_ROLE_PREFIX + "API_CREDENCIAMENTO_FROTA_ATUALIZAR_LEAD"        + SPRING_ROLE_SUFFIX;
+    public static final String API_CREDENCIAMENTO_FROTA_CONSULTAR_LEAD         = SPRING_ROLE_PREFIX + "API_CREDENCIAMENTO_FROTA_CONSULTAR_LEAD"        + SPRING_ROLE_SUFFIX;
+    public static final String API_CREDENCIAMENTO_FROTA_PESQUISAR_CEP          = SPRING_ROLE_PREFIX + "API_CREDENCIAMENTO_FROTA_PESQUISAR_CEP"         + SPRING_ROLE_SUFFIX;
+
+    // Permissão da API de Sistema
+    public static final String API_SISTEMA_EXECUTAR_ROTINA                     = SPRING_ROLE_PREFIX + "API_SISTEMA_EXECUTAR_ROTINA"                    + SPRING_ROLE_SUFFIX;
+    public static final String API_SISTEMA_OBTER_ROTINAS                       = SPRING_ROLE_PREFIX + "API_SISTEMA_OBTER_ROTINAS"                      + SPRING_ROLE_SUFFIX;
     
     /**
      * Impede instanciacao e heranca
