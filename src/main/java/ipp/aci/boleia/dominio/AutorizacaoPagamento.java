@@ -1,5 +1,6 @@
 package ipp.aci.boleia.dominio;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import ipp.aci.boleia.dominio.enums.ClassificacaoAgregado;
 import ipp.aci.boleia.dominio.enums.StatusAutorizacao;
 import ipp.aci.boleia.dominio.enums.StatusEdicao;
@@ -62,7 +63,7 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     private static final long serialVersionUID = 5442724833587865453L;
 
     /**
-     * @Formula necessária para que seja possível realizar a ordenação paginada
+     * <i>@Formula</i> necessária para que seja possível realizar a ordenação paginada
      * dos estornos por preço total de abastecimeto sem grandes mudanças na estrutura de pesquisa.
      */
     private static final String PRECOCOMBUSTIVEL_FORMULA = "QT_TOTAL_LIT_ABAS * VA_UNITARIO_ABAS";
@@ -345,6 +346,9 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     @Max(999)
     @Column(name = "ID_TIPO_SENHA_AUTO")
     private Integer tipoSenhaAutorizacao;
+
+    @Column(name = "ID_MOTIVO_SEM_SENHA_OU_CODIGO")
+    private Integer codigoMotivoSemSenhaOuCodigo;
 
     @NotAudited
     @Formula(StatusAutorizacao.DECODE_FORMULA)
@@ -951,6 +955,14 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
         this.tipoSenhaAutorizacao = tipoSenhaAutorizacao;
     }
 
+    public Integer getCodigoMotivoSemSenhaOuCodigo() {
+        return codigoMotivoSemSenhaOuCodigo;
+    }
+
+    public void setCodigoMotivoSemSenhaOuCodigo(Integer codigoMotivoSemSenhaOuCodigo) {
+        this.codigoMotivoSemSenhaOuCodigo = codigoMotivoSemSenhaOuCodigo;
+    }
+
     public ComandaDigital getComandaDigital() {
         return comandaDigital;
     }
@@ -1538,5 +1550,53 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     @Transient
     public boolean possuiNotasFiscaisComJustificativa() {
         return notasFiscais != null && !getNotasFiscaisComJustificativa().isEmpty();
+    }
+
+    /**
+     * Calcula o consumo relativo a autorizacao de pagamento.
+     * @return consumo relativo a autorizacao de pagamento.
+     */
+    @JsonIgnore
+    public BigDecimal obterConsumo() {
+        final BigDecimal diferencaHodometroHorimetro = obterDiferencaHodometroHorimetro();
+        return diferencaHodometroHorimetro == null || totalLitrosAbastecimento == null ? null :
+                diferencaHodometroHorimetro.divide(totalLitrosAbastecimento, 3, BigDecimal.ROUND_HALF_UP);
+    }
+
+    /**
+     * Obtem a diferenca de hodometro ou horimetro da autorizacao de pagamento.
+     * @return a diferenca de hodometro ou horimetro da autorizacao de pagamento.
+     */
+    @JsonIgnore
+    private BigDecimal obterDiferencaHodometroHorimetro() {
+        if (hodometro != null) {
+            if (hodometroAnterior != null && hodometroAnterior != BigDecimal.ZERO.longValue()) {
+                return new BigDecimal(hodometro - hodometroAnterior);
+            }
+        }
+        if (horimetro != null) {
+            if (horimetroAnterior != null && !horimetroAnterior.equals(BigDecimal.ZERO)) {
+                return horimetro.subtract(horimetroAnterior);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Obtem o hoddometro anterior do veiculo.
+     * @return o hoddometro anterior do veiculo.
+     */
+    @JsonIgnore
+    private Long obterHodometroAnterior() {
+        return hodometroAnterior != null ? hodometroAnterior : veiculo.getHodometro();
+    }
+
+    /**
+     * Obtem o horimetro anterior do veiculo.
+     * @return o horimetro anterior do veiculo.
+     */
+    @JsonIgnore
+    private BigDecimal obterHorimetroAnterior() {
+        return horimetroAnterior != null ? horimetroAnterior : veiculo.getHorimetro();
     }
 }
