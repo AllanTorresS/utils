@@ -19,6 +19,9 @@ import java.util.Date;
 @Audited
 @Table(name = "FREQUENCIA_TAREFA")
 public class FrequenciaTarefa implements IPersistente {
+
+    private static final long serialVersionUID = 2845301612562639917L;
+
     @Id
     @Column(name = "CD_FREQUENCIA_TAREFA")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_FREQUENCIA_TAREFA")
@@ -58,12 +61,12 @@ public class FrequenciaTarefa implements IPersistente {
 
     @Override
     public Long getId() {
-        return null;
+        return id;
     }
 
     @Override
     public void setId(Long id) {
-
+        this.id = id;
     }
 
     public Integer getStatusFrequencia() {
