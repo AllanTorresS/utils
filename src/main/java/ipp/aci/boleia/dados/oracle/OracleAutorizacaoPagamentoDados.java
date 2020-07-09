@@ -65,12 +65,6 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
 
     private static final Integer LIMITE_SUPERIOR_CONCILIACAO = -48;
 
-    private static final String REMOVER_ACENTO = "TRANSLATE( %s, " +
-            "'âãäåāăąÁÂÃÄÅĀĂĄèééêëēĕėęěĒĔĖĘĚìíîïìĩīĭÌÍÎÏÌĨĪĬóôõöōŏőÒÓÔÕÖŌŎŐùúûüũūŭůÙÚÛÜŨŪŬŮ'," +
-            "'aaaaaaaaaaaaaaaeeeeeeeeeeeeeeeiiiiiiiiiiiiiiiiooooooooooooooouuuuuuuuuuuuuuuu')";
-
-    private static final String TO_LOWER = "LOWER(%s)";
-
     private static final String QUERY_ATUALIZACAO_COTA_VEICULO =
         " SELECT new ipp.aci.boleia.dominio.vo.QuantidadeAbastecidaVeiculoVo(" +
         "   a.id, " +

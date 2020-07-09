@@ -254,6 +254,14 @@ public final class ChavePermissao {
     // Permissão da API de Sistema
     public static final String API_SISTEMA_EXECUTAR_ROTINA                     = SPRING_ROLE_PREFIX + "API_SISTEMA_EXECUTAR_ROTINA"                    + SPRING_ROLE_SUFFIX;
     public static final String API_SISTEMA_OBTER_ROTINAS                       = SPRING_ROLE_PREFIX + "API_SISTEMA_OBTER_ROTINAS"                      + SPRING_ROLE_SUFFIX;
+
+    //Permissão da API do Agendador
+    public static final String API_AGENDADOR_COMUNICAR_FIM_EXECUCAO            = SPRING_ROLE_PREFIX + "API_AGENDADOR_COMUNICAR_FIM_EXECUCAO"           + SPRING_ROLE_SUFFIX;
+    public static final String API_AGENDADOR_PAUSAR_TAREFA                     = SPRING_ROLE_PREFIX + "API_AGENDADOR_PAUSAR_TAREFA"                    + SPRING_ROLE_SUFFIX;
+    public static final String API_AGENDADOR_RETOMAR_TAREFA                    = SPRING_ROLE_PREFIX + "API_AGENDADOR_RETOMAR_TAREFA"                   + SPRING_ROLE_SUFFIX;
+    public static final String API_AGENDADOR_EXECUTAR_ROTINA_MANUALMENTE       = SPRING_ROLE_PREFIX + "API_AGENDADOR_EXECUTAR_ROTINA_MANUALMENTE"      + SPRING_ROLE_SUFFIX;
+    public static final String API_AGENDADOR_OBTER_TAREFAS_AGENDADAS           = SPRING_ROLE_PREFIX + "API_AGENDADOR_OBTER_TAREFAS_AGENDADAS"          + SPRING_ROLE_SUFFIX;
+
     
     /**
      * Impede instanciacao e heranca

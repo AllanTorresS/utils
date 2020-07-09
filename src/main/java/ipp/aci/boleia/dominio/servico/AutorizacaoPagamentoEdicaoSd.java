@@ -182,16 +182,6 @@ public class AutorizacaoPagamentoEdicaoSd {
     }
 
     /**
-     * Reprocessa o status de nota fiscal de uma nota inválida para todos os abastecimentos.
-     * @param autorizacaoPagamento o abastecimento que terá as notas fiscais alteradas.
-     */
-    private void atualizarStatusNfNaoEmitida(AutorizacaoPagamento autorizacaoPagamento) {
-        autorizacaoPagamento.setStatusNotaFiscal(StatusNotaFiscal.PENDENTE.getValue());
-        repositorioAutorizacaoPagamento.armazenar(autorizacaoPagamento);
-    }
-
-
-    /**
      * Obtém a última autorização pagamento edição.
      * @param autorizacaoPagamento o abastecimento atual.
      * @return AutorizacaoPagamentoEdicao edição de abastecimento concluída ou pendente caso o ciclo esteja em aberto.
