@@ -6,11 +6,8 @@ package ipp.aci.boleia.dominio.enums;
 public enum StatusTarefa {
 
     AGENDADA(0, 1),
-    EM_EXECUCAO(1, 2),
-    PAUSADA(2, 99),
-    AGUARDANDO_CONCORRENCIA(3, 0),
-    EXECUCAO_MANUAL(4, 0),
-    EXECUCAO_MANUAL_TAREFA_PAUSADA(5, 0);
+    EM_EXECUCAO(1, 99),
+    AGUARDANDO_CONCORRENCIA(3, 0);
 
     private final Integer value;
     private final Integer prioridadeExecucao;
