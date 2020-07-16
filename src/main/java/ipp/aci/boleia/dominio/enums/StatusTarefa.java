@@ -5,9 +5,9 @@ package ipp.aci.boleia.dominio.enums;
  */
 public enum StatusTarefa {
 
-    AGENDADA(0, 1),
+    AGUARDANDO(0, 1),
     EM_EXECUCAO(1, 99),
-    AGUARDANDO_CONCORRENCIA(3, 0);
+    AGUARDANDO_CONCORRENCIA(2, 0);
 
     private final Integer value;
     private final Integer prioridadeExecucao;
