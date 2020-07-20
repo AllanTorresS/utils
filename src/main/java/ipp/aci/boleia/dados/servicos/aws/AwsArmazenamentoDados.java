@@ -1,10 +1,12 @@
 package ipp.aci.boleia.dados.servicos.aws;
 
 import com.amazonaws.AmazonClientException;
+import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.BucketLifecycleConfiguration;
+import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
@@ -14,10 +16,12 @@ import com.amazonaws.util.IOUtils;
 import ipp.aci.boleia.dados.IArmazenamentoDados;
 import ipp.aci.boleia.dominio.enums.TipoArquivo;
 import ipp.aci.boleia.dominio.vo.CredenciaisAwsVo;
+import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioStreams;
 import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.excecao.ExcecaoArquivoNaoEncontrado;
 import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
+import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -30,7 +34,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -40,6 +46,9 @@ import java.util.List;
 public class AwsArmazenamentoDados implements InitializingBean, IArmazenamentoDados {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AwsArmazenamentoDados.class);
+
+    @Autowired
+    private UtilitarioAmbiente utilitarioAmbiente;
 
     @Autowired
     private CredenciaisAwsVo credenciais;
@@ -169,6 +178,26 @@ public class AwsArmazenamentoDados implements InitializingBean, IArmazenamentoDa
         } catch(AmazonClientException ace) {
             throw new ExcecaoBoleiaRuntime(Erro.ERRO_INTEGRACAO,ace,this.getClass().getName());
         }
+    }
+
+    @Override
+    public String obterUrlArquivo(TipoArquivo tipo, Long id) throws ExcecaoArquivoNaoEncontrado {
+        if (id < 0L) {
+            throw new ExcecaoArquivoNaoEncontrado();
+        }
+
+        //Expiração da url de download em x minutos, de acordo com o tipo de arquivo
+        Date expiration = UtilitarioCalculoData.adicionarMinutosData(utilitarioAmbiente.buscarDataAmbiente(),
+                tipo.getTempoMinutosUrl());
+        String caminhoArquivo = tipo.montarCaminhoAcesso(id.toString());
+
+        GeneratePresignedUrlRequest generatePresignedUrlRequest =
+                new GeneratePresignedUrlRequest(bucketName, caminhoArquivo)
+                        .withMethod(HttpMethod.GET)
+                        .withExpiration(expiration);
+        URL url = clienteS3.generatePresignedUrl(generatePresignedUrlRequest);
+
+        return url.toString();
     }
 
     @Override

@@ -46,4 +46,14 @@ public interface IArmazenamentoDados {
      * @param idDestino Identificador do arquivo de destino
      */
     void moverArquivo(TipoArquivo origem, Long idOrigem, TipoArquivo destino, Long idDestino);
+
+    /**
+     * Obtem o link para o download de um arquivo no bucket do boleia amazon
+     *
+     * @param tipo  tipo arquivo
+     * @param id    id
+     * @return String com a url pré-assinada do arquivo, com tempo de expiração de acordo com o tipo de arquivo
+     * @throws ExcecaoArquivoNaoEncontrado Quando o arquivo não existe no storage
+     */
+    String obterUrlArquivo(TipoArquivo tipo, Long id) throws ExcecaoArquivoNaoEncontrado;
 }

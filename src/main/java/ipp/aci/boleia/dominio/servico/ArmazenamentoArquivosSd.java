@@ -89,6 +89,25 @@ public class ArmazenamentoArquivosSd {
     }
 
     /**
+     * Obtem o link para o download de um arquivo no bucket do boleia amazon
+     *
+     * @param tipoArquivo tipo arquivo
+     * @param idArquivo id
+     * @param idEntidadeRelacionada identificador da entidade que contem o arquivo
+     * @return String com a url pré-assinada do arquivo, com tempo de expiração de acordo com o tipo de arquivo
+     */
+    public String obterUrlArquivo(TipoArquivo tipoArquivo, Long idArquivo, Long idEntidadeRelacionada) {
+        try {
+            exigirPermissaoAcesso(tipoArquivo, idEntidadeRelacionada);
+            Long id = tipoArquivo.isNomeArquivoAutoContido() ? idArquivo : idEntidadeRelacionada;
+            return armazenamentoArquivos.obterUrlArquivo(tipoArquivo, id);
+        } catch (ExcecaoArquivoNaoEncontrado e) {
+            LOGGER.debug("Arquivo nao encontrado na AWS S3", e);
+            return "";
+        }
+    }
+
+    /**
      * Obtem o stream do arquivo presente no bucket do Boleia na AWS (S3)
      *
      * @param tipoArquivo tipo arquivo
