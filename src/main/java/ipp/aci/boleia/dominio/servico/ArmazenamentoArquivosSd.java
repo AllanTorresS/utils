@@ -1,6 +1,7 @@
 package ipp.aci.boleia.dominio.servico;
 
 import ipp.aci.boleia.dados.IArmazenamentoDados;
+import ipp.aci.boleia.dados.IArquivoDados;
 import ipp.aci.boleia.dados.IDispositivoMotoristaPedidoDados;
 import ipp.aci.boleia.dados.IMotorGeracaoRelatoriosDados;
 import ipp.aci.boleia.dados.IMotoristaDados;
@@ -49,6 +50,9 @@ public class ArmazenamentoArquivosSd {
     @Autowired
     private IMotorGeracaoRelatoriosDados motorGeracaoRelatorios;
 
+    @Autowired
+    private IArquivoDados arquivoDados;
+
     private Map<TipoArquivo, IRepositorioBoleiaDados> repositoriosPorTipoArquivo;
 
     /**
@@ -64,6 +68,8 @@ public class ArmazenamentoArquivosSd {
         repositoriosPorTipoArquivo.put(TipoArquivo.JUSTIFICATIVA_NOTA, notaFiscalDados);
         repositoriosPorTipoArquivo.put(TipoArquivo.RELATORIO_48_HORAS_XLSX, motorGeracaoRelatorios);
         repositoriosPorTipoArquivo.put(TipoArquivo.RELATORIO_48_HORAS_TXT, motorGeracaoRelatorios);
+        repositoriosPorTipoArquivo.put(TipoArquivo.DOWNLOAD_PRESIGNED_NOTA_FISCAL_PDF, arquivoDados);
+        repositoriosPorTipoArquivo.put(TipoArquivo.DOWNLOAD_PRESIGNED_NOTA_FISCAL_XML, arquivoDados);
     }
 
     /**
@@ -103,7 +109,7 @@ public class ArmazenamentoArquivosSd {
             return armazenamentoArquivos.obterUrlArquivo(tipoArquivo, id);
         } catch (ExcecaoArquivoNaoEncontrado e) {
             LOGGER.debug("Arquivo nao encontrado na AWS S3", e);
-            return "";
+            return null;
         }
     }
 
@@ -148,6 +154,18 @@ public class ArmazenamentoArquivosSd {
         exigirPermissaoAcesso(tipoArquivo, idEntidadeRelacionada);
         Long id = tipoArquivo.isNomeArquivoAutoContido() ? idArquivo : idEntidadeRelacionada;
         armazenamentoArquivos.removerArquivo(tipoArquivo, id);
+    }
+
+    /**
+     * Copia um arquivo de um diretório para outro em um bucket AWS S3
+     *
+     * @param origem Arquivo de origem
+     * @param idOrigem Identificador do arquivo de origem
+     * @param destino Arquivo de destino
+     * @param idDestino Origem do arquivo de destino
+     */
+    public void copiarArquivo(TipoArquivo origem, Long idOrigem, TipoArquivo destino, Long idDestino) {
+        armazenamentoArquivos.copiarArquivo(origem, idOrigem, destino, idDestino);
     }
 
     /**
