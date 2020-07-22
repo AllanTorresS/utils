@@ -62,6 +62,10 @@ public class NfeAnexosArmazem implements IPersistente {
     @Size(max = 50)
     private String serieNota;
 
+    @Column(name = "NO_CHAVE_ACESSO")
+    @Size(min = 44, max = 44)
+    private String chaveAcesso;
+
     @Digits(integer = 12, fraction = 4)
     @Column(name = "VR_TOTAL_NOTA")
     private BigDecimal valorTotalNota;
@@ -214,5 +218,13 @@ public class NfeAnexosArmazem implements IPersistente {
 
     public void setNumeroTentativasAtualizacao(Integer numeroTentativasAtualizacao) {
         this.numeroTentativasAtualizacao = numeroTentativasAtualizacao;
+    }
+
+    public String getChaveAcesso() {
+        return chaveAcesso;
+    }
+
+    public void setChaveAcesso(String chaveAcesso) {
+        this.chaveAcesso = chaveAcesso;
     }
 }
