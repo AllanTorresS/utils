@@ -17,6 +17,8 @@ public final class ConstantesNotaFiscal {
     public static final String TERCEIROS = "2 - TERCEIROS";
     public static final String SEM_FRETE = "9 - SEM FRETE";
 
+    public static final int TAMANHO_CHAVE_ACESSO = 44;
+
     /**
      * Impede instanciacao
      */

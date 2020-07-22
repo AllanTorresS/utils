@@ -104,6 +104,10 @@ public class NotaFiscal implements IPersistente, IPertenceRevendedor, IPertenceF
     @Size(max = 200)
     private String motivoFalhaConciliacao;
 
+    @Column(name = "NO_CHAVE_ACESSO")
+    @Size(min = 44, max = 44)
+    private String chaveAcesso;
+
     @Override
     public Long getId() {
         return id;
@@ -234,6 +238,14 @@ public class NotaFiscal implements IPersistente, IPertenceRevendedor, IPertenceF
 
     public void setMotivoFalhaConciliacao(String motivoFalhaConciliacao) {
         this.motivoFalhaConciliacao = motivoFalhaConciliacao;
+    }
+
+    public String getChaveAcesso() {
+        return chaveAcesso;
+    }
+
+    public void setChaveAcesso(String chaveAcesso) {
+        this.chaveAcesso = chaveAcesso;
     }
 
     /**
