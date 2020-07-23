@@ -106,7 +106,7 @@ public class ArmazenamentoArquivosSd {
         try {
             exigirPermissaoAcesso(tipoArquivo, idEntidadeRelacionada);
             Long id = tipoArquivo.isNomeArquivoAutoContido() ? idArquivo : idEntidadeRelacionada;
-            return armazenamentoArquivos.obterUrlArquivo(tipoArquivo, id);
+            return "{ \"url\": \"" + armazenamentoArquivos.obterUrlArquivo(tipoArquivo, id) + "\"}";
         } catch (ExcecaoArquivoNaoEncontrado e) {
             LOGGER.debug("Arquivo nao encontrado na AWS S3", e);
             return null;
