@@ -9,6 +9,7 @@ import ipp.aci.boleia.dados.INotaFiscalDados;
 import ipp.aci.boleia.dados.IPontoDeVendaDados;
 import ipp.aci.boleia.dados.IRepositorioBoleiaDados;
 import ipp.aci.boleia.dominio.enums.TipoArquivo;
+import ipp.aci.boleia.dominio.vo.UrlS3PreAssinadaVo;
 import ipp.aci.boleia.util.UtilitarioStreams;
 import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.excecao.ExcecaoArquivoNaoEncontrado;
@@ -102,11 +103,11 @@ public class ArmazenamentoArquivosSd {
      * @param idEntidadeRelacionada identificador da entidade que contem o arquivo
      * @return String com a url pré-assinada do arquivo, com tempo de expiração de acordo com o tipo de arquivo
      */
-    public String obterUrlArquivo(TipoArquivo tipoArquivo, Long idArquivo, Long idEntidadeRelacionada) {
+    public UrlS3PreAssinadaVo obterUrlArquivo(TipoArquivo tipoArquivo, Long idArquivo, Long idEntidadeRelacionada) {
         try {
             exigirPermissaoAcesso(tipoArquivo, idEntidadeRelacionada);
             Long id = tipoArquivo.isNomeArquivoAutoContido() ? idArquivo : idEntidadeRelacionada;
-            return "{ \"url\": \"" + armazenamentoArquivos.obterUrlArquivo(tipoArquivo, id) + "\"}";
+            return new UrlS3PreAssinadaVo(armazenamentoArquivos.obterUrlArquivo(tipoArquivo, id));
         } catch (ExcecaoArquivoNaoEncontrado e) {
             LOGGER.debug("Arquivo nao encontrado na AWS S3", e);
             return null;
