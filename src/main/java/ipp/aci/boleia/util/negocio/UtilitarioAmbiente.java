@@ -131,19 +131,7 @@ public class UtilitarioAmbiente {
      * @return URL de contexto da aplicação
      */
     public String getURLContextoAplicacao() {
-        try {
-            StringBuffer sb = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getRequestURL();
-            String url = sb.toString();
-            String marcadorProtocolo = SEPARADOR_PROTOCOLO;
-            int idxProtocolo = url.indexOf(marcadorProtocolo);
-            int idxContexto = url.indexOf(SEPARADOR_URL, idxProtocolo + marcadorProtocolo.length());
-            url = url.substring(0, idxContexto);
-            url = url.replace(MARCADOR_PROTOCOLO_HTTP, MARCADOR_PROTOCOLO_HTTPS);
-            return url;
-        } catch (Exception ex) {
-            LOGGER.info(ex.getMessage(),ex);
-            return urlSistema;
-        }
+        return urlSistema;
     }
 
     /**
