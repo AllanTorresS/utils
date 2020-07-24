@@ -59,6 +59,9 @@ public class FrotaPontoVenda implements IPersistente, IPertenceFrota, IPertenceR
 
     @Column(name = "ID_BLOQUEADO")
     private Integer statusBloqueio;
+    
+    @Column(name = "ID_STATUS")
+    private Integer statusVinculo;
 
     @NotAudited
     @Formula(StatusBloqueio.DECODE_FORMULA)
@@ -155,6 +158,14 @@ public class FrotaPontoVenda implements IPersistente, IPertenceFrota, IPertenceR
     @Transient
     public boolean isBloqueado() {
         return statusBloqueio != null && StatusBloqueio.obterPorValor(statusBloqueio).isBloqueado();
+    }
+
+    public Integer getStatusVinculo() {
+        return statusVinculo;
+    }
+
+    public void setStatusVinculo(Integer statusVinculo) {
+        this.statusVinculo = statusVinculo;
     }
 
     public Date getDataAtualizacao() {
