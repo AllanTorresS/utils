@@ -69,7 +69,7 @@ public class PontoDeVenda implements IPersistente, IExclusaoLogica, IPertenceRev
             " 		ID_STATUS_CORP DESC," +
             " 		DT_CRIACAO DESC" +
             " 	)" +
-            " 	WHERE rownum = 1)";;
+            " 	WHERE rownum = 1)";
 
     private static final long serialVersionUID = -6358128598442202483L;
 
@@ -320,6 +320,9 @@ public class PontoDeVenda implements IPersistente, IExclusaoLogica, IPertenceRev
 
     @Column(name = "NO_TELEFONE_RESP_LEGAL")
     private String telefoneResponsavelLegal;
+
+    @Column(name = "ID_RESTRICAO_VISIBILIDADE")
+    private Integer restricaoVisibilidade;
     
     public PontoDeVenda() {
         // construtor default
@@ -828,6 +831,14 @@ public class PontoDeVenda implements IPersistente, IExclusaoLogica, IPertenceRev
 	public void setTelefoneResponsavelLegal(String telefoneResponsavelLegal) {
 		this.telefoneResponsavelLegal = telefoneResponsavelLegal;
 	}
+
+    public Integer getRestricaoVisibilidade() {
+        return restricaoVisibilidade;
+    }
+
+    public void setRestricaoVisibilidade(Integer restricaoVisibilidade) {
+        this.restricaoVisibilidade = restricaoVisibilidade;
+    }
 
 	/**
      * @return componente que representa a area de abastecimento
