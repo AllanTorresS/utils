@@ -244,6 +244,7 @@ public class ConfiguracoesSeguranca extends WebSecurityConfigurerAdapter {
     private void preencherCabecalhosResposta(HttpServletResponse response) {
         if (allowedOrigins != null) {
             response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, String.join(" ", allowedOrigins));
+            response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
         }
     }
 

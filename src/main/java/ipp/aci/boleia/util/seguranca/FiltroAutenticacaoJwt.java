@@ -337,6 +337,7 @@ public class FiltroAutenticacaoJwt implements Filter {
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         if (allowedOrigins != null) {
             response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, String.join(" ", allowedOrigins));
+            response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
         }
         byte[] bytes = UtilitarioJson.toJSON(msgVo).getBytes(StandardCharsets.UTF_8);
         ServletOutputStream out = response.getOutputStream();
