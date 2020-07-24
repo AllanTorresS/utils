@@ -17,6 +17,6 @@ public interface IHistoricoPontoVendaDados extends IRepositorioBoleiaDados<Histo
      * @param data Data a ser verificada.
      * @return O histórico encontrado.
      */
-    HistoricoPontoVenda obterPontoDeVendaPorData(Long cdPontoDeVenda, Date data);
+    HistoricoPontoVenda obterHistoricoPontoVendaPorData(Long cdPontoDeVenda, Date data);
     
 }

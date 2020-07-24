@@ -29,7 +29,7 @@ public class OracleHistoricoPontoVendaDados extends OracleRepositorioBoleiaDados
     }
 
     @Override
-    public HistoricoPontoVenda obterPontoDeVendaPorData(Long cdPontoDeVenda, Date data) {
+    public HistoricoPontoVenda obterHistoricoPontoVendaPorData(Long cdPontoDeVenda, Date data) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
         parametros.add(new ParametroPesquisaIgual("pontoDeVenda.id", cdPontoDeVenda));
         parametros.add(new ParametroPesquisaDataMenorOuIgual("dataHistorico", data));
