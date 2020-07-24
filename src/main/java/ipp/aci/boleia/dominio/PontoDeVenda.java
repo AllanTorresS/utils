@@ -1,6 +1,7 @@
 package ipp.aci.boleia.dominio;
 
 
+import ipp.aci.boleia.dominio.enums.RestricaoVisibilidadePontoVenda;
 import ipp.aci.boleia.dominio.enums.StatusAtivacao;
 import ipp.aci.boleia.dominio.enums.StatusHabilitacaoPontoVenda;
 import ipp.aci.boleia.dominio.enums.TiposBandeiras;
@@ -981,5 +982,15 @@ public class PontoDeVenda implements IPersistente, IExclusaoLogica, IPertenceRev
             return false;
         }
         return bandeira.getCodigoCorporativo().equals(TiposBandeiras.IPIRANGA.getCodigoCorporativo());
+    }
+
+    /**
+     * Informa se um ponto de venda deve ser visivel apenas para frotas com vinculo ativo.
+     * 
+     * @return se um ponto de venda deve ser visivel apenas para frotas com vinculo ativo.
+     */
+    @Transient
+    public boolean isVisivelApenasParaFrotasVinculadas() {
+        return RestricaoVisibilidadePontoVenda.VISIVEL_APENAS_PARA_FROTAS_COM_VINCULO_ATIVO.getValue().equals( this.getRestricaoVisibilidade());
     }
 }
