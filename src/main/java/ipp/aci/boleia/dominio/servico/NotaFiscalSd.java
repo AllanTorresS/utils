@@ -341,7 +341,8 @@ public class NotaFiscalSd {
      * @param nf a nota fiscal que terá os campos recuperados
      */
     public void recuperarCamposNulos(NotaFiscal nf) {
-        if (nf.getNumeroSerie() == null || nf.getCnpjEmitente() == null || nf.getChaveAcesso() == null) {
+        if (!nf.getIsJustificativa() &&
+                (nf.getNumeroSerie() == null || nf.getCnpjEmitente() == null || nf.getChaveAcesso() == null)) {
             Document documentoBase = UtilitarioXml.lerXml(UtilitarioStreams.carregarEmMemoria(obterXmlNotaFiscal(nf)));
             nf.setNumeroSerie(UtilitarioXml.getString(documentoBase, ConstantesNotaFiscalParser.SERIE));
             nf.setCnpjEmitente(UtilitarioXml.getString(documentoBase, ConstantesNotaFiscalParser.EMIT_CNPJ));
