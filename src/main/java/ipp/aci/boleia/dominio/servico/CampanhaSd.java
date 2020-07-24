@@ -306,9 +306,6 @@ public class CampanhaSd {
      * @param autorizacaoPagamento A autorização de pagamento a ser utilizada
      * @param condicaoCampanha     A condição de campanha a ser verificada
      * @return true se a condição for satisfeita, false caso contrário
-     * @throws NoSuchMethodException     Caso um método utilizado pela api de reflexão não seja encontrado
-     * @throws InvocationTargetException Caso haja um erro na invocação de um método via reflexão
-     * @throws IllegalAccessException    Caso haja um erro de permissão ao acessar um método via reflexão
      */
     private Boolean condicaoCampanhaSemReflexaoAtendida(AutorizacaoPagamento autorizacaoPagamento, CondicaoCampanha condicaoCampanha) {
         return this.mapeamentoValidadoresSemReflexao.get(condicaoCampanha.getTipoCondicaoCampanha().getNomeEntidade()).apply(autorizacaoPagamento, condicaoCampanha);
