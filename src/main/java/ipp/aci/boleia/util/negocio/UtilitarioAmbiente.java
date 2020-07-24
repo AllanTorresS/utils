@@ -35,13 +35,8 @@ import java.util.Map;
 @Component
 public class UtilitarioAmbiente {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UtilitarioAmbiente.class);
     private static final String URL_VERIFICACAO_RECAPTCHA = "https://www.google.com/recaptcha/api/siteverify?secret=%s&response=%s";
 
-    private static final String MARCADOR_PROTOCOLO_HTTP = "http:";
-    private static final String MARCADOR_PROTOCOLO_HTTPS = "https:";
-    private static final String SEPARADOR_PROTOCOLO = "://";
-    private static final String SEPARADOR_URL = "/";
     private static final String RESPOSTA_SUCESSO_RECAPTCHA = "success";
 
     private static final String AMBIENTE_PRODUCAO = "prd";
