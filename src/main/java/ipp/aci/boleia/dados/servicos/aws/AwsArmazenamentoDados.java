@@ -178,13 +178,17 @@ public class AwsArmazenamentoDados implements InitializingBean, IArmazenamentoDa
             }
         }
     }
-
     @Override
     public void armazenarArquivo(TipoArquivo tipo, Long id, byte[] conteudo) {
+        armazenarArquivo(tipo, id.toString(), conteudo);
+    }
+
+    @Override
+    public void armazenarArquivo(TipoArquivo tipo, String nome, byte[] conteudo) {
         try {
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentLength(conteudo.length);
-            clienteS3.putObject(bucketName, tipo.montarCaminhoAcesso(id.toString()), new ByteArrayInputStream(conteudo), metadata);
+            clienteS3.putObject(bucketName, tipo.montarCaminhoAcesso(nome), new ByteArrayInputStream(conteudo), metadata);
         } catch(AmazonClientException ace) {
             throw new ExcecaoBoleiaRuntime(Erro.ERRO_INTEGRACAO,ace,this.getClass().getName());
         }
@@ -204,11 +208,16 @@ public class AwsArmazenamentoDados implements InitializingBean, IArmazenamentoDa
         if (id < 0L) {
             throw new ExcecaoArquivoNaoEncontrado();
         }
+        return obterUrlArquivo(tipo, id.toString());
+    }
+
+    @Override
+    public String obterUrlArquivo(TipoArquivo tipo, String nome) {
 
         //Expiração da url de download em x minutos, de acordo com o tipo de arquivo
         Date expiration = UtilitarioCalculoData.adicionarMinutosData(utilitarioAmbiente.buscarDataAmbiente(),
                 tipo.getTempoMinutosUrl());
-        String caminhoArquivo = tipo.montarCaminhoAcesso(id.toString());
+        String caminhoArquivo = tipo.montarCaminhoAcesso(nome);
 
         GeneratePresignedUrlRequest generatePresignedUrlRequest =
                 new GeneratePresignedUrlRequest(bucketName, caminhoArquivo)
@@ -243,12 +252,17 @@ public class AwsArmazenamentoDados implements InitializingBean, IArmazenamentoDa
 
     @Override
     public void copiarArquivo(TipoArquivo origem, Long idOrigem, TipoArquivo destino, Long idDestino) {
-        copiarArquivo(origem, idOrigem, destino, idDestino, false);
+        copiarArquivo(origem, idOrigem, destino, idDestino, false, null);
+    }
+
+    @Override
+    public void copiarArquivo(TipoArquivo origem, Long idOrigem, TipoArquivo destino, String nomeDestino) {
+        copiarArquivo(origem, idOrigem, destino, null, false, nomeDestino);
     }
 
     @Override
     public void moverArquivo(TipoArquivo origem, Long idOrigem, TipoArquivo destino, Long idDestino) {
-        copiarArquivo(origem, idOrigem, destino, idDestino, true);
+        copiarArquivo(origem, idOrigem, destino, idDestino, true, null);
     }
 
     /**
@@ -260,12 +274,13 @@ public class AwsArmazenamentoDados implements InitializingBean, IArmazenamentoDa
      * @param idDestino Identificador do arquivo de destino
      * @param removerOrigem Remove o arquivo de origem caso true, e não remove caso contrário
      */
-    private void copiarArquivo(TipoArquivo origem, Long idOrigem, TipoArquivo destino, Long idDestino, Boolean removerOrigem) {
+    private void copiarArquivo(TipoArquivo origem, Long idOrigem, TipoArquivo destino, Long idDestino, Boolean removerOrigem, String nomeDestino) {
         try {
             InputStream arquivoOrigem = obterArquivo(origem, idOrigem);
-            armazenarArquivo(destino, idDestino, IOUtils.toByteArray(arquivoOrigem));
+            String nome = nomeDestino != null ? nomeDestino : idOrigem.toString();
+            armazenarArquivo(destino, nome, IOUtils.toByteArray(arquivoOrigem));
             if (removerOrigem)
-                removerArquivo(origem, idDestino);
+                removerArquivo(origem, idOrigem);
         } catch (IOException | ExcecaoArquivoNaoEncontrado ioe) {
             throw new ExcecaoBoleiaRuntime(Erro.ERRO_INTEGRACAO, ioe, this.getClass().getName());
         }

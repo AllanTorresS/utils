@@ -104,16 +104,29 @@ public class ArmazenamentoArquivosSd {
      * @return String com a url pré-assinada do arquivo, com tempo de expiração de acordo com o tipo de arquivo
      */
     public UrlS3PreAssinadaVo obterUrlArquivo(TipoArquivo tipoArquivo, Long idArquivo, Long idEntidadeRelacionada) {
+        return obterUrlArquivo(tipoArquivo, idArquivo, idEntidadeRelacionada, idEntidadeRelacionada.toString());
+    }
+
+    /**
+     * Obtem o link para o download de um arquivo no bucket do boleia amazon
+     *
+     * @param tipoArquivo tipo arquivo
+     * @param idArquivo id
+     * @param idEntidadeRelacionada identificador da entidade que contem o arquivo
+     * @param nome nome do arquivo para a url
+     * @return String com a url pré-assinada do arquivo, com tempo de expiração de acordo com o tipo de arquivo
+     */
+    public UrlS3PreAssinadaVo obterUrlArquivo(TipoArquivo tipoArquivo, Long idArquivo, Long idEntidadeRelacionada,
+                                              String nome) {
         try {
             exigirPermissaoAcesso(tipoArquivo, idEntidadeRelacionada);
-            Long id = tipoArquivo.isNomeArquivoAutoContido() ? idArquivo : idEntidadeRelacionada;
+            String id = tipoArquivo.isNomeArquivoAutoContido() ? idArquivo.toString() : nome;
             return new UrlS3PreAssinadaVo(armazenamentoArquivos.obterUrlArquivo(tipoArquivo, id));
         } catch (ExcecaoArquivoNaoEncontrado e) {
             LOGGER.debug("Arquivo nao encontrado na AWS S3", e);
             return null;
         }
     }
-
     /**
      * Obtem o stream do arquivo presente no bucket do Boleia na AWS (S3)
      *
@@ -128,6 +141,20 @@ public class ArmazenamentoArquivosSd {
         exigirPermissaoAcesso(tipoArquivo, idEntidadeRelacionada);
         Long id = tipoArquivo.isNomeArquivoAutoContido() ? idArquivo : idEntidadeRelacionada;
         return armazenamentoArquivos.obterArquivo(tipoArquivo, id);
+    }
+
+    /**
+     * Armazena um arquivo no bucket do boleia amazon
+     *
+     * @param tipoArquivo tipo arquivo
+     * @param idArquivo identificador da entidade que representa o arquivo
+     * @param idEntidadeRelacionada identificador da entidade que contem o arquivo
+     * @param nome nome do arquivo a ser armazenado
+     * @param conteudo  conteudo arquivo
+     */
+    public void armazenarArquivo(TipoArquivo tipoArquivo, Long idArquivo, Long idEntidadeRelacionada, String nome, byte[] conteudo) {
+        exigirPermissaoAcesso(tipoArquivo, idEntidadeRelacionada);
+        armazenamentoArquivos.armazenarArquivo(tipoArquivo, nome, conteudo);
     }
 
     /**
@@ -167,6 +194,18 @@ public class ArmazenamentoArquivosSd {
      */
     public void copiarArquivo(TipoArquivo origem, Long idOrigem, TipoArquivo destino, Long idDestino) {
         armazenamentoArquivos.copiarArquivo(origem, idOrigem, destino, idDestino);
+    }
+
+    /**
+     * Copia um arquivo de um diretório para outro em um bucket AWS S3
+     *
+     * @param origem Arquivo de origem
+     * @param idOrigem Identificador do arquivo de origem
+     * @param destino Arquivo de destino
+     * @param nomeDestino nome do arquivo de destino
+     */
+    public void copiarArquivo(TipoArquivo origem, Long idOrigem, TipoArquivo destino, String nomeDestino) {
+        armazenamentoArquivos.copiarArquivo(origem, idOrigem, destino, nomeDestino);
     }
 
     /**
