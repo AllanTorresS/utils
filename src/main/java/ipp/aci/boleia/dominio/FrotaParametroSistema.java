@@ -69,6 +69,9 @@ public class FrotaParametroSistema implements IPersistente, IPertenceFrota {
     @Column(name = "VA_MINS_INTRV_ABAST_TODOS_VEIC")
     private Integer minutosIntervaloAbastecimentoTodosVeiculos;
 
+    @Column(name = "VA_KM_INTRV_ABAST_TODOS_VEIC")
+    private Long quilometrosIntervaloAbastecimentoTodosVeiculos;
+
     @Column(name = "ID_HODOM_HORIM_TODOS_VEICULOS")
     private Boolean verificarHodometroHorimetroTodosVeiculos;
 
@@ -396,6 +399,14 @@ public class FrotaParametroSistema implements IPersistente, IPertenceFrota {
 
     public void setCombustiveisPermitidos(List<FrotaParametroSistemaProdutoAbastecimento> combustiveisPermitidos) {
         this.combustiveisPermitidos = combustiveisPermitidos;
+    }
+
+    public Long getQuilometrosIntervaloAbastecimentoTodosVeiculos() {
+        return quilometrosIntervaloAbastecimentoTodosVeiculos;
+    }
+
+    public void setQuilometrosIntervaloAbastecimentoTodosVeiculos(Long quilometrosIntervaloAbastecimentoTodosVeiculos) {
+        this.quilometrosIntervaloAbastecimentoTodosVeiculos = quilometrosIntervaloAbastecimentoTodosVeiculos;
     }
 
     @Transient

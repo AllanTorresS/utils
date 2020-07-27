@@ -39,14 +39,27 @@ public class LogicaParametroIntervaloAbastecimento implements ILogicaParametroSi
             if (ativoParaTodos || (intervalo != null && intervalo.isAtivo())) {
                 AutorizacaoPagamento ultimo = repositorioAutorizacao.obterUltimoAbastecimentoVeiculo(veiculo.getId());
                 if (ultimo != null) {
-                    int minimoMinutos = ativoParaTodos ? frotaParam.getMinutosIntervaloAbastecimentoTodosVeiculos() : intervalo.getMinutosIntervaloAbastecimento();
-                    Date dataUltimo = ultimo.getDataRequisicao();
-                    Date dataCorrente = autorizacao.getDataRequisicao();
-                    long decorrido = (dataCorrente.getTime() - dataUltimo.getTime()) / 1000 / 60;
-                    if (decorrido < minimoMinutos) {
-                        resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
-                        resultado.setCodigoErro(Erro.ERRO_AUTORIZACAO_INTERVALO_PERMITIDO);
-                        resultado.setMensagemErro(mensagens.obterMensagem("parametro.sistema.erro.abastecimento.intervalo", UtilitarioFormatacao.formatarPlacaVeiculo(veiculo.getPlaca())));
+                    if (veiculo.getHodometro() != null && (intervalo.getQuilometrosIntervaloAbastecimento() != null || frotaParam.getQuilometrosIntervaloAbastecimentoTodosVeiculos() != null)) {
+                        Long minimoKm = ativoParaTodos ? frotaParam.getQuilometrosIntervaloAbastecimentoTodosVeiculos() : intervalo.getQuilometrosIntervaloAbastecimento();
+                        Long ultimoHodometro = ultimo.getHodometro();
+                        Long hodometroAtual = autorizacao.getHodometro();
+                        Long diferenca = hodometroAtual - ultimoHodometro;
+                        if (diferenca < minimoKm) {
+                            resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
+                            resultado.setCodigoErro(Erro.ERRO_AUTORIZACAO_INTERVALO_PERMITIDO);
+                            resultado.setMensagemErro(mensagens.obterMensagem("parametro.sistema.erro.abastecimento.intervalo", UtilitarioFormatacao.formatarPlacaVeiculo(veiculo.getPlaca())));
+                        }
+                    }
+                    else {
+                        int minimoMinutos = ativoParaTodos ? frotaParam.getMinutosIntervaloAbastecimentoTodosVeiculos() : intervalo.getMinutosIntervaloAbastecimento();
+                        Date dataUltimo = ultimo.getDataRequisicao();
+                        Date dataCorrente = autorizacao.getDataRequisicao();
+                        long decorrido = (dataCorrente.getTime() - dataUltimo.getTime()) / 1000 / 60;
+                        if (decorrido < minimoMinutos) {
+                            resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
+                            resultado.setCodigoErro(Erro.ERRO_AUTORIZACAO_INTERVALO_PERMITIDO);
+                            resultado.setMensagemErro(mensagens.obterMensagem("parametro.sistema.erro.abastecimento.intervalo", UtilitarioFormatacao.formatarPlacaVeiculo(veiculo.getPlaca())));
+                        }
                     }
                 }
             }
