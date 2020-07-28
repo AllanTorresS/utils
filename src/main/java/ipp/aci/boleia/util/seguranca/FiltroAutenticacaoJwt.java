@@ -73,9 +73,6 @@ public class FiltroAutenticacaoJwt implements Filter {
     @Autowired
     private RenovadorTokenJwt renovadorTokenJwt;
 
-    @Value("${cors.allowed.origins}")
-    private String[] allowedOrigins;
-
     @Override
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
 
