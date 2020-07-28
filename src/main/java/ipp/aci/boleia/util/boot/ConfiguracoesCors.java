@@ -27,5 +27,11 @@ public class ConfiguracoesCors extends WebMvcConfigurerAdapter {
                 .allowedOrigins("*")
                 .allowedMethods("*")
                 .allowCredentials(false).maxAge(3600);
+
+        registry
+                .addMapping("/api/externo/**")
+                .allowedOrigins("*")
+                .allowedMethods("*")
+                .allowCredentials(false).maxAge(3600);
     }
 }
