@@ -52,9 +52,8 @@ public interface IArmazenamentoDados {
      * @param origem Tipo de arquivo de origem
      * @param idOrigem Identificador do arquivo de origem
      * @param destino Tipo de arquivo de destino
-     * @param idDestino Identificador do arquivo de destino
      */
-    void moverArquivo(TipoArquivo origem, Long idOrigem, TipoArquivo destino, Long idDestino);
+    void moverArquivo(TipoArquivo origem, Long idOrigem, TipoArquivo destino);
 
     /**
      * Obtem o link para o download de um arquivo no bucket do boleia amazon
@@ -75,16 +74,6 @@ public interface IArmazenamentoDados {
      * @throws ExcecaoArquivoNaoEncontrado Quando o arquivo não existe no storage
      */
     String obterUrlArquivo(TipoArquivo tipo, String nome) throws ExcecaoArquivoNaoEncontrado;
-
-    /**
-     * Copia um arquivo de um diretório para outro de um bucket S3
-     *
-     * @param origem Tipo de arquivo de origem
-     * @param idOrigem Identificador do arquivo de origem
-     * @param destino Tipo de arquivo de destino
-     * @param idDestino Identificador do arquivo de destino
-     */
-    void copiarArquivo(TipoArquivo origem, Long idOrigem, TipoArquivo destino, Long idDestino);
 
     /**
      * Copia um arquivo de um diretório para outro de um bucket S3
