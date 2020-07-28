@@ -21,5 +21,11 @@ public class ConfiguracoesCors extends WebMvcConfigurerAdapter {
                 .allowedOrigins(allowedOrigins)
                 .allowedMethods("*")
                 .allowCredentials(true).maxAge(3600);
+
+        registry
+                .addMapping("/api/frotista/**")
+                .allowedOrigins("*")
+                .allowedMethods("*")
+                .allowCredentials(false).maxAge(3600);
     }
 }
