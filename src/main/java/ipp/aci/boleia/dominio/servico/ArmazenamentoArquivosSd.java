@@ -190,18 +190,6 @@ public class ArmazenamentoArquivosSd {
      * @param origem Arquivo de origem
      * @param idOrigem Identificador do arquivo de origem
      * @param destino Arquivo de destino
-     * @param idDestino Origem do arquivo de destino
-     */
-    public void copiarArquivo(TipoArquivo origem, Long idOrigem, TipoArquivo destino, Long idDestino) {
-        armazenamentoArquivos.copiarArquivo(origem, idOrigem, destino, idDestino);
-    }
-
-    /**
-     * Copia um arquivo de um diretório para outro em um bucket AWS S3
-     *
-     * @param origem Arquivo de origem
-     * @param idOrigem Identificador do arquivo de origem
-     * @param destino Arquivo de destino
      * @param nomeDestino nome do arquivo de destino
      */
     public void copiarArquivo(TipoArquivo origem, Long idOrigem, TipoArquivo destino, String nomeDestino) {

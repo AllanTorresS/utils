@@ -251,18 +251,13 @@ public class AwsArmazenamentoDados implements InitializingBean, IArmazenamentoDa
     }
 
     @Override
-    public void copiarArquivo(TipoArquivo origem, Long idOrigem, TipoArquivo destino, Long idDestino) {
-        copiarArquivo(origem, idOrigem, destino, idDestino, false, null);
-    }
-
-    @Override
     public void copiarArquivo(TipoArquivo origem, Long idOrigem, TipoArquivo destino, String nomeDestino) {
-        copiarArquivo(origem, idOrigem, destino, null, false, nomeDestino);
+        copiarArquivo(origem, idOrigem, destino, false, nomeDestino);
     }
 
     @Override
-    public void moverArquivo(TipoArquivo origem, Long idOrigem, TipoArquivo destino, Long idDestino) {
-        copiarArquivo(origem, idOrigem, destino, idDestino, true, null);
+    public void moverArquivo(TipoArquivo origem, Long idOrigem, TipoArquivo destino) {
+        copiarArquivo(origem, idOrigem, destino, true, null);
     }
 
     /**
@@ -271,10 +266,10 @@ public class AwsArmazenamentoDados implements InitializingBean, IArmazenamentoDa
      * @param origem Tipo de arquivo de origem
      * @param idOrigem Identificador do arquivo de origem
      * @param destino Tipo de arquivo de destino
-     * @param idDestino Identificador do arquivo de destino
      * @param removerOrigem Remove o arquivo de origem caso true, e não remove caso contrário
+     * @param nomeDestino O nome
      */
-    private void copiarArquivo(TipoArquivo origem, Long idOrigem, TipoArquivo destino, Long idDestino, Boolean removerOrigem, String nomeDestino) {
+    private void copiarArquivo(TipoArquivo origem, Long idOrigem, TipoArquivo destino, Boolean removerOrigem, String nomeDestino) {
         try {
             InputStream arquivoOrigem = obterArquivo(origem, idOrigem);
             String nome = nomeDestino != null ? nomeDestino : idOrigem.toString();
