@@ -46,8 +46,8 @@ public class LogicaParametroIntervaloAbastecimento implements ILogicaParametroSi
                         Long diferenca = hodometroAtual - ultimoHodometro;
                         if (diferenca < minimoKm) {
                             resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
-                            resultado.setCodigoErro(Erro.ERRO_AUTORIZACAO_INTERVALO_PERMITIDO);
-                            resultado.setMensagemErro(mensagens.obterMensagem("parametro.sistema.erro.abastecimento.intervalo", UtilitarioFormatacao.formatarPlacaVeiculo(veiculo.getPlaca())));
+                            resultado.setCodigoErro(Erro.ERRO_AUTORIZACAO_INTERVALO_PERMITIDO_KM);
+                            resultado.setMensagemErro(mensagens.obterMensagem("parametro.sistema.erro.abastecimento.intervaloKm", UtilitarioFormatacao.formatarPlacaVeiculo(veiculo.getPlaca())));
                         }
                     }
                     else {
@@ -57,7 +57,7 @@ public class LogicaParametroIntervaloAbastecimento implements ILogicaParametroSi
                         long decorrido = (dataCorrente.getTime() - dataUltimo.getTime()) / 1000 / 60;
                         if (decorrido < minimoMinutos) {
                             resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
-                            resultado.setCodigoErro(Erro.ERRO_AUTORIZACAO_INTERVALO_PERMITIDO);
+                            resultado.setCodigoErro(Erro.ERRO_AUTORIZACAO_INTERVALO_PERMITIDO_HORAS);
                             resultado.setMensagemErro(mensagens.obterMensagem("parametro.sistema.erro.abastecimento.intervalo", UtilitarioFormatacao.formatarPlacaVeiculo(veiculo.getPlaca())));
                         }
                     }
