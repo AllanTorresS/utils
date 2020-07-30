@@ -62,6 +62,9 @@ public class FrotaPontoVenda implements IPersistente, IPertenceFrota, IPertenceR
     
     @Column(name = "ID_STATUS")
     private Integer statusVinculo;
+    
+    @Column(name = "DS_JUSTIFICATIVA_VINCULO")
+    private String justificativaVinculo;
 
     @NotAudited
     @Formula(StatusBloqueio.DECODE_FORMULA)
@@ -166,6 +169,14 @@ public class FrotaPontoVenda implements IPersistente, IPertenceFrota, IPertenceR
 
     public void setStatusVinculo(Integer statusVinculo) {
         this.statusVinculo = statusVinculo;
+    }
+
+    public String getJustificativaVinculo() {
+        return justificativaVinculo;
+    }
+
+    public void setJustificativaVinculo(String justificativaVinculo) {
+        this.justificativaVinculo = justificativaVinculo;
     }
 
     public Date getDataAtualizacao() {

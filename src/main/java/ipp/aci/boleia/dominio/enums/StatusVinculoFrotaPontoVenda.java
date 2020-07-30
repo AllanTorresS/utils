@@ -1,5 +1,6 @@
 package ipp.aci.boleia.dominio.enums;
 
+import ipp.aci.boleia.util.i18n.IEnumComLabel;
 import java.util.Arrays;
 
 /**
@@ -7,7 +8,7 @@ import java.util.Arrays;
  * 
  * @author Rodrigo Salvatore
  */
-public enum StatusVinculoFrotaPontoVenda {
+public enum StatusVinculoFrotaPontoVenda implements IEnumComLabel<StatusBloqueio> {
     INATIVO(0),
     ATIVO(1);
 
