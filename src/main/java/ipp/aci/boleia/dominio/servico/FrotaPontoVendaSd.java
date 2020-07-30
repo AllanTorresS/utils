@@ -2,10 +2,14 @@ package ipp.aci.boleia.dominio.servico;
 
 import ipp.aci.boleia.dados.IFrotaPontoVendaDados;
 import ipp.aci.boleia.dados.IHistoricoBloqueioFrotaPontoVendaDados;
+import ipp.aci.boleia.dados.IHistoricoFrotaPontoVendaDados;
 import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.FrotaPontoVenda;
+import ipp.aci.boleia.dominio.HistoricoFrotaPontoVenda;
 import ipp.aci.boleia.dominio.PontoDeVenda;
+import ipp.aci.boleia.dominio.enums.RestricaoVisibilidadePontoVenda;
 import ipp.aci.boleia.dominio.enums.StatusBloqueio;
+import ipp.aci.boleia.dominio.enums.StatusVinculoFrotaPontoVenda;
 import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.excecao.ExcecaoValidacao;
 import ipp.aci.boleia.util.i18n.Mensagens;
@@ -14,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Serviços de domínio da entidade {@link FrotaPontoVenda}.
@@ -32,6 +37,12 @@ public class FrotaPontoVendaSd {
 
     @Autowired
     protected UtilitarioAmbiente ambiente;
+    
+    @Autowired
+    private IHistoricoFrotaPontoVendaDados historicoFrotaPontoVendaDados;
+    
+    @Autowired
+    private PontoDeVendaSd pontoDeVendaSd;
 
     /**
      * Cria um novo registro de {@link FrotaPontoVenda}.
@@ -57,12 +68,33 @@ public class FrotaPontoVendaSd {
         frotaPontoVenda.setFrota(frota);
         frotaPontoVenda.setPontoVenda(pontoVenda);
         frotaPontoVenda.setStatusBloqueio(StatusBloqueio.DESBLOQUEADO.getValue());
+        frotaPontoVenda.setStatusVinculo(StatusVinculoFrotaPontoVenda.ATIVO.getValue());
         frotaPontoVenda.setVersao(0L);
         frotaPontoVenda.setDataAtualizacao(ambiente.buscarDataAmbiente());
+        FrotaPontoVenda retorno;
         if(semIsolamento) {
-            return frotaPontoVendaDados.armazenarSemIsolamentoDeDados(frotaPontoVenda);
-        }
-        return frotaPontoVendaDados.armazenar(frotaPontoVenda);
+            retorno = frotaPontoVendaDados.armazenarSemIsolamentoDeDados(frotaPontoVenda);
+        } else{
+            retorno = frotaPontoVendaDados.armazenar(frotaPontoVenda);            
+        }        
+        armazenarHistoricoFrotaPontoVenda(frotaPontoVenda);
+        
+        return retorno;
+    }
+    
+    /**
+     * Preenche e armazena o historico de um {@link FrotaPontoVenda}.
+     * 
+     * @param entidade o {@link FrotaPontoVenda} que o historico sera salvo
+     */
+    public void armazenarHistoricoFrotaPontoVenda(FrotaPontoVenda entidade) {
+        HistoricoFrotaPontoVenda historicoFrotaPontoVenda = new HistoricoFrotaPontoVenda();
+        historicoFrotaPontoVenda.setFrotaPontoVenda(entidade);
+        historicoFrotaPontoVenda.setUsuario(ambiente.getUsuarioLogado());
+        historicoFrotaPontoVenda.setDataHistorico(ambiente.buscarDataAmbiente());
+        historicoFrotaPontoVenda.setStatusVinculo(entidade.getStatusVinculo());
+        historicoFrotaPontoVenda.setJustificativaVinculo(entidade.getJustificativaVinculo());
+        historicoFrotaPontoVendaDados.armazenar(historicoFrotaPontoVenda);
     }
 
     /**
@@ -93,5 +125,30 @@ public class FrotaPontoVendaSd {
                 throw new ExcecaoValidacao(Erro.FROTA_PONTO_VENDA_BLOQUEADO);
             }
         }
+    }        
+    
+    /**
+     * Aplica a regra de alteracao da flag de visibilidade do ponto de venda.
+     * O historico tambem e gerado caso necessario.
+     * 
+     * @param pontoDeVenda o ponto de venda para qual a regra deve ser aplicada
+     * @param desativando se esta sendo feita uma desativacao
+     */
+    public void aplicarRegraAlteracaoFlagVisibilidadePontoVenda(PontoDeVenda pontoDeVenda, boolean desativando){
+        if (desativando){
+            List<FrotaPontoVenda> relacionados = frotaPontoVendaDados.buscarPorPontoVenda(pontoDeVenda.getId());
+            boolean nenhumVinculoAtivo = !relacionados.stream().anyMatch(r -> StatusVinculoFrotaPontoVenda.ATIVO.getValue().equals(r.getStatusVinculo()));
+            if (nenhumVinculoAtivo){
+                if (pontoDeVenda.isVisivelApenasParaFrotasVinculadas()){
+                    pontoDeVenda.setRestricaoVisibilidade(RestricaoVisibilidadePontoVenda.SEM_RESTRICAO.getValue());
+                    pontoDeVendaSd.armazenarHistorico(pontoDeVenda);                    
+                }
+                return;
+            }
+        }
+        if (!pontoDeVenda.isVisivelApenasParaFrotasVinculadas()){
+            pontoDeVenda.setRestricaoVisibilidade(RestricaoVisibilidadePontoVenda.VISIVEL_APENAS_PARA_FROTAS_COM_VINCULO_ATIVO.getValue());
+            pontoDeVendaSd.armazenarHistorico(pontoDeVenda);
+        }    
     }
 }
