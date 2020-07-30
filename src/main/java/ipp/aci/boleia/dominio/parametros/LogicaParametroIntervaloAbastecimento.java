@@ -47,7 +47,7 @@ public class LogicaParametroIntervaloAbastecimento implements ILogicaParametroSi
                         if (diferenca < minimoKm) {
                             resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
                             resultado.setCodigoErro(Erro.ERRO_AUTORIZACAO_INTERVALO_PERMITIDO);
-                            resultado.setMensagemErro(mensagens.obterMensagem("parametro.sistema.erro.abastecimento.intervalo", UtilitarioFormatacao.formatarPlacaVeiculo(veiculo.getPlaca())));
+                            resultado.setMensagemErro(mensagens.obterMensagem("parametro.sistema.erro.abastecimento.intervaloKm", UtilitarioFormatacao.formatarPlacaVeiculo(veiculo.getPlaca())));
                         }
                     }
                     else {
