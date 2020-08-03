@@ -134,10 +134,6 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     @Column(name = "CD_VIP")
     private String codigoVip;
 
-    @Size(max=250)
-    @Column(name = "NM_VIP")
-    private String nomeVip;
-
     @NotNull
     @Size(max=15)
     @Column(name = "CD_IP_ORIGEM")
@@ -346,9 +342,6 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     @Max(999)
     @Column(name = "ID_TIPO_SENHA_AUTO")
     private Integer tipoSenhaAutorizacao;
-
-    @Column(name = "ID_MOTIVO_SEM_SENHA_OU_CODIGO")
-    private Integer codigoMotivoSemSenhaOuCodigo;
 
     @NotAudited
     @Formula(StatusAutorizacao.DECODE_FORMULA)
@@ -955,14 +948,6 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
         this.tipoSenhaAutorizacao = tipoSenhaAutorizacao;
     }
 
-    public Integer getCodigoMotivoSemSenhaOuCodigo() {
-        return codigoMotivoSemSenhaOuCodigo;
-    }
-
-    public void setCodigoMotivoSemSenhaOuCodigo(Integer codigoMotivoSemSenhaOuCodigo) {
-        this.codigoMotivoSemSenhaOuCodigo = codigoMotivoSemSenhaOuCodigo;
-    }
-
     public ComandaDigital getComandaDigital() {
         return comandaDigital;
     }
@@ -1121,14 +1106,6 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
 
     public void setPedido(DispositivoMotoristaPedido pedido) {
         this.pedido = pedido;
-    }
-
-    public String getNomeVip() {
-        return nomeVip;
-    }
-
-    public void setNomeVip(String nomeVip) {
-        this.nomeVip = nomeVip;
     }
 
     public AvaliacaoAbastecimento getAvaliacaoAbastecimento() {
@@ -1366,7 +1343,7 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
      */
     @Transient
     public List<NotaFiscal> getNotasFiscaisComJustificativa() {
-        return notasFiscais.stream().filter(nota -> nota.getIsJustificativa()).collect(Collectors.toList());
+        return notasFiscais.stream().filter(NotaFiscal::getIsJustificativa).collect(Collectors.toList());
     }
 
     /**
@@ -1488,7 +1465,7 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
         int cicloDoAbast = (diaAbast/numDiasDoCiclo) + ((diaAbast%numDiasDoCiclo > 0) ? 1 : 0);
         int ultimoDiaMesDoMes = UtilitarioCalculoData.obterUltimoValorCampo(getDataProcessamento(), Calendar.DAY_OF_MONTH);
         int diasEmRelacaoAcicloAtual = (cicloDoAbast * numDiasDoCiclo);
-        int diaDebito = diasEmRelacaoAcicloAtual > ultimoDiaMesDoMes ? ultimoDiaMesDoMes : diasEmRelacaoAcicloAtual;
+        int diaDebito = Math.min(diasEmRelacaoAcicloAtual, ultimoDiaMesDoMes);
         Date dataDeDebito = UtilitarioCalculoData.obterData((diaDebito + prazoPagamento), mesAbast, anoAbast);
 
         return UtilitarioCalculoData.obterProximoDiaUtilSemFeriado(dataDeDebito);
@@ -1500,7 +1477,7 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
      * @return O item da autorização que representa o abastecimento
      */
     public ItemAutorizacaoPagamento obterItemAbastecimento() {
-        return this.getItems().stream().filter(i -> i.isAbastecimento()).findFirst().get();
+        return this.getItems().stream().filter(ItemAutorizacaoPagamento::isAbastecimento).findFirst().get();
     }
 
     public Long getCodigoAbastecimentoCTA() {

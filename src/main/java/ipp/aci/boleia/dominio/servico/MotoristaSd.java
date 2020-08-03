@@ -31,6 +31,7 @@ import java.util.concurrent.locks.Lock;
 
 import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarCnpjApresentacao;
 import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarCpfApresentacao;
+import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarCpfOcultoApresentacao;
 
 /**
  * Implementa as regras de negocio relacionadas a entiadade Motorista
@@ -234,10 +235,11 @@ public class MotoristaSd {
         Motorista motorista = repositorio.obterPorCpfFrotaSemIsolamento(cpfLong, frota.getId());
 
         if (motorista == null || !motorista.getFrota().getId().equals(idFrota)) {
-            throw new ExcecaoValidacao(mensagens.obterMensagem("motorista.servico.pagamento.contingencia.erro.cadastro", formatarCpfApresentacao(cpfLong), formatarCnpjApresentacao(frota.getCnpj()), frota.getNomeFantasia()));
+            throw new ExcecaoValidacao(mensagens.obterMensagem("motorista.servico.pagamento.contingencia.erro.cadastro", formatarCpfOcultoApresentacao(cpfLong), formatarCnpjApresentacao(frota.getCnpj()), frota.getNomeFantasia()));
         } else if (motorista.getStatus().equals(StatusAtivacao.INATIVO.getValue())) {
-            throw new ExcecaoValidacao(mensagens.obterMensagem("motorista.servico.pagamento.contingencia.inativo", formatarCpfApresentacao(cpfLong), motorista.getNome(), formatarCnpjApresentacao(frota.getCnpj()), frota.getNomeFantasia()));
+            throw new ExcecaoValidacao(mensagens.obterMensagem("motorista.servico.pagamento.contingencia.inativo", formatarCpfOcultoApresentacao(cpfLong), motorista.getNome(), formatarCnpjApresentacao(frota.getCnpj()), frota.getNomeFantasia()));
         }
+
 
         return motorista;
     }

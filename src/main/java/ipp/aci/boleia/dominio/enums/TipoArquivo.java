@@ -5,7 +5,6 @@ package ipp.aci.boleia.dominio.enums;
  */
 public enum TipoArquivo {
 
-    FOTO_MOTORISTA("foto_motorista/",".jpg", "image/jpeg", false, 30),
     FOTO_PONTO_VENDA("foto_ponto_venda/",".jpg", "image/jpeg", true, 30),
     FOTO_HODOMETRO_HORIMETRO("foto_hodometro_horimetro/",".jpg", "image/jpeg", false, 30),
     NOTA_FISCAL("nota_fiscal/",".xml", "text/xml", false, 120),

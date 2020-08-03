@@ -153,9 +153,28 @@ public interface IUsuarioDados extends IRepositorioBoleiaDados<Usuario> {
     List<Usuario> obterPorFrota(Long id);
 
     /**
+     * Obtem quantidade total de usuarios ativos
+     * @return Quantidade total
+     */
+    Long obterQuantidadeTotal();
+
+    /**
+     * Obtem quantidade total de usuarios ativos de um tipo de perfil
+     * @return Quantidade total
+     */
+    Long obterQuantidadeTotalAtivosDeTipoPerfil(TipoPerfilUsuario tipoPerfilUsuario);
+
+    /**
      * Obtem todos os asessores de uma coordenadoria.
      * @param id da coordenadoria
      * @return Assessores da coordenadoria
      */
     List<Usuario> obterPorCoordenadoria(final Long id);
+
+    /**
+     * Obtém o total de usuários que são donos de frota
+     *
+     * @return Quantidade total de usuários
+     */
+    Long obterTotalUsuariosDonosFrota();
 }

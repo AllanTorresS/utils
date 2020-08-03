@@ -15,6 +15,7 @@ import ipp.aci.boleia.dominio.SubTipoVeiculo;
 import ipp.aci.boleia.dominio.Unidade;
 import ipp.aci.boleia.dominio.Veiculo;
 import ipp.aci.boleia.dominio.enums.StatusEdicao;
+import ipp.aci.boleia.dominio.enums.StatusNotaFiscal;
 import ipp.aci.boleia.dominio.enums.TipoItemAutorizacaoPagamento;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -162,7 +163,7 @@ public class AutorizacaoPagamentoEdicaoSd {
             } else {
                 quantidadeItensAdicionais++;
             }
-            valorTotal = valorTotal.add(item.getValorTotal());
+            valorTotal = abastecimento.isPostoInterno()? null : valorTotal.add(item.getValorTotal());
             item.setAutorizacaoPagamento(abastecimento);
             item.removeCampanha();
         }
@@ -177,8 +178,18 @@ public class AutorizacaoPagamentoEdicaoSd {
      * @param codigoVip o codigo vip a ser editado
      */
     public void alterarDadosVip(AutorizacaoPagamento abastecimento, String codigoVip) {
-            abastecimento.setCodigoVip(codigoVip);
+        abastecimento.setCodigoVip(codigoVip);
     }
+
+    /**
+     * Reprocessa o status de nota fiscal de uma nota inválida para todos os abastecimentos.
+     * @param autorizacaoPagamento o abastecimento que terá as notas fiscais alteradas.
+     */
+    private void atualizarStatusNfNaoEmitida(AutorizacaoPagamento autorizacaoPagamento) {
+        autorizacaoPagamento.setStatusNotaFiscal(StatusNotaFiscal.PENDENTE.getValue());
+        repositorioAutorizacaoPagamento.armazenar(autorizacaoPagamento);
+    }
+
 
     /**
      * Obtém a última autorização pagamento edição.
