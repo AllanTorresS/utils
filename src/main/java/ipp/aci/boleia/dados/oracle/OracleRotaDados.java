@@ -30,6 +30,17 @@ public class OracleRotaDados extends OracleRepositorioBoleiaDados<Rota> implemen
     private UtilitarioAmbiente ambiente;
 
     private static final String COUNT_PVS      = " (SELECT COUNT(ponto) FROM PontoRota ponto JOIN ponto.rota rota WHERE ponto.pontoVenda IS NOT NULL AND rota.id = r.id) ";
+    
+    private static final String COUNT_ROTAS_COM_PV = 
+            " SELECT " +
+            "     COUNT(rota) " +
+            " FROM PontoRota ponto " + 
+            " JOIN ponto.rota rota " + 
+            " JOIN ponto.pontoVenda pontoVenda " +
+            " JOIN rota.frota frota " +
+            " WHERE " + 
+            "     pontoVenda.id = :idPontoVenda " + 
+            "     AND frota.id = :idFrota";
 
     private static final String CONSULTA_ROTAS =
      " SELECT " +
@@ -146,5 +157,18 @@ public class OracleRotaDados extends OracleRepositorioBoleiaDados<Rota> implemen
             rotas.add(rota);
         });
         return new ResultadoPaginado<>(rotas, resultadoBruto.getTotalItems());
+    }
+    
+    @Override
+    public Long obterQuantidadeDeRotasQueContemPontoDeVenda(long idFrota, long idPontoDeVenda){
+        Long result = pesquisarUnicoSemIsolamentoDados(
+                COUNT_ROTAS_COM_PV
+                , new ParametroPesquisaIgual("idFrota", idFrota)
+                , new ParametroPesquisaIgual("idPontoVenda", idPontoDeVenda)
+        );
+        if (result == null) {
+            return 0L;
+        }
+        return result;
     }
 }
