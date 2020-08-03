@@ -65,45 +65,46 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
 
     private static final Integer LIMITE_SUPERIOR_CONCILIACAO = -48;
 
+
     private static final String QUERY_ATUALIZACAO_COTA_VEICULO =
-        " SELECT new ipp.aci.boleia.dominio.vo.QuantidadeAbastecidaVeiculoVo(" +
-        "   a.id, " +
-        "   a.veiculo.id, " +
-        "   a.totalLitrosAbastecimento, " +
-        "   a.valorUnitarioAbastecimento, " +
-        "   a.dataRequisicao, " +
-        "   a.hodometro, " +
-        "   a.horimetro, " +
-        "   a.hodometroAnterior, " +
-        "   a.horimetroAnterior)" +
-        " FROM AutorizacaoPagamento a " +
-        " JOIN a.veiculo v " +
-        " WHERE " +
-        "   v.excluido = 0 " +
-        "   AND a.frota.id = :idFrota " +
-        "   AND a.tipoAutorizacaoPagamento != " + TipoAutorizacaoPagamento.ACPI.getValue() +
-        "   AND a.status = " + StatusAutorizacao.AUTORIZADO.getValue() +
-        "   AND a.valorTotal >= 0 " +
-        "   AND a.valorUnitarioAbastecimento >= 0 " +
-        "   AND a.dataRequisicao BETWEEN :dataInicial AND :dataFinal " +
-        "   AND a.idAutorizacaoEstorno IS NULL";
+            " SELECT new ipp.aci.boleia.dominio.vo.QuantidadeAbastecidaVeiculoVo(" +
+                    "   a.id, " +
+                    "   a.veiculo.id, " +
+                    "   a.totalLitrosAbastecimento, " +
+                    "   a.valorUnitarioAbastecimento, " +
+                    "   a.dataRequisicao, " +
+                    "   a.hodometro, " +
+                    "   a.horimetro, " +
+                    "   a.hodometroAnterior, " +
+                    "   a.horimetroAnterior)" +
+                    " FROM AutorizacaoPagamento a " +
+                    " JOIN a.veiculo v " +
+                    " WHERE " +
+                    "   v.excluido = 0 " +
+                    "   AND a.frota.id = :idFrota " +
+                    "   AND a.tipoAutorizacaoPagamento != " + TipoAutorizacaoPagamento.ACPI.getValue() +
+                    "   AND a.status = " + StatusAutorizacao.AUTORIZADO.getValue() +
+                    "   AND a.valorTotal >= 0 " +
+                    "   AND a.valorUnitarioAbastecimento >= 0 " +
+                    "   AND a.dataRequisicao BETWEEN :dataInicial AND :dataFinal " +
+                    "   AND a.idAutorizacaoEstorno IS NULL";
 
     private static final String QUERY_AUTORIZACOES_AVISO_DEBITO =
-        " SELECT a " +
-        " FROM AutorizacaoPagamento a " +
-        " JOIN a.transacaoFrota tf " +
-        " WHERE " +
-        "   (a.status = " + StatusAutorizacao.AUTORIZADO.getValue() + " OR a.status = " + StatusAutorizacao.CANCELADO.getValue() + ") " +
-        "   AND tf.consumiuCreditoPrePago = false " +
-        "   AND EXISTS ( " +
-        "      SELECT 1 " +
-        "      FROM TransacaoConsolidada tc " +
-        "      JOIN tc.frotaPtov fpv " +
-        "      WHERE " +
-        "           tc.id = a.transacaoConsolidada.id " +
-        "           AND tc.cobranca.id = :idCobranca " +
-        "   ) " +
-        " ORDER BY a.dataRequisicao ASC ";
+            " SELECT a " +
+                    " FROM AutorizacaoPagamento a " +
+                    " JOIN a.transacaoFrota tf " +
+                    " WHERE " +
+                    "   (a.status = " + StatusAutorizacao.AUTORIZADO.getValue() + " OR a.status = " + StatusAutorizacao.CANCELADO.getValue() + ") " +
+                    "   AND tf.consumiuCreditoPrePago = false " +
+                    "   AND EXISTS ( " +
+                    "      SELECT 1 " +
+                    "      FROM TransacaoConsolidada tc " +
+                    "      JOIN tc.frotaPtov fpv " +
+                    "      WHERE " +
+                    "           tc.id = a.transacaoConsolidada.id " +
+                    "           AND tc.cobranca.id = :idCobranca " +
+                    "   ) " +
+                    " ORDER BY a.dataRequisicao ASC ";
 
     private static final String QUERY_ABASTECIMENTOS_AUTORIZADOS_PENDENTES_CONFIRMACAO =
             "SELECT new ipp.aci.boleia.dominio.vo.TransacaoPendenteVo(" +
@@ -131,7 +132,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
             "WHERE i.combustivel IS NOT NULL AND i.combustivel.codigoCombustivelCorporativo IS NOT NULL AND " +
             "(ac.codigoCorporativo = " + TipoAtividadeComponente.AREA_ABASTECIMENTO.getCodigoCorporativo() + " OR ac.codigoCorporativo = "
             + TipoAtividadeComponente.AREA_ABASTECIMENTO_OUTRA.getCodigoCorporativo() + " ) AND " +
-            "a.status = "+ StatusAutorizacao.AUTORIZADO.getValue() + " AND c.bandeira.codigoCorporativo !=  " + TiposBandeiras.BANDEIRA_BRANCA.getCodigoCorporativo() +
+            "a.status = "+ StatusAutorizacao.AUTORIZADO.getValue() + " AND c.bandeira.codigoCorporativo =  " + TiposBandeiras.IPIRANGA.getCodigoCorporativo() +
             " AND a.dataRequisicao BETWEEN :dataInicial AND :dataFinal" +
             " GROUP BY c.codigoCorporativo, a.frota.id, i.combustivel.codigoCombustivelCorporativo, TRUNC(a.dataRequisicao)";
 
@@ -162,11 +163,11 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     @Override
     public List<AutorizacaoPagamento> obterAutorizadasPorFrotaDataMinima(Long idFrota, Date dataMinima) {
         return pesquisar(
-            new ParametroOrdenacaoColuna("dataProcessamento", Ordenacao.DECRESCENTE),
-            new ParametroPesquisaIgual("transacaoFrota.frota.id", idFrota),
-            new ParametroPesquisaIgual("status", StatusAutorizacao.AUTORIZADO.getValue()),
-            new ParametroPesquisaDiferente("tipoAutorizacaoPagamento", TipoAutorizacaoPagamento.ACPI.getValue()),
-            new ParametroPesquisaDataMaiorOuIgual("dataProcessamento",dataMinima));
+                new ParametroOrdenacaoColuna("dataProcessamento", Ordenacao.DECRESCENTE),
+                new ParametroPesquisaIgual("transacaoFrota.frota.id", idFrota),
+                new ParametroPesquisaIgual("status", StatusAutorizacao.AUTORIZADO.getValue()),
+                new ParametroPesquisaDiferente("tipoAutorizacaoPagamento", TipoAutorizacaoPagamento.ACPI.getValue()),
+                new ParametroPesquisaDataMaiorOuIgual("dataProcessamento",dataMinima));
     }
 
     @Override
@@ -177,9 +178,9 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     @Override
     public AutorizacaoPagamento obterSimilarAutorizada(Long idMotorista, Long idVeiculo, Long idPv, Long idFrota, BigDecimal valorTotal, Date dataLimite) {
         return pesquisarUnico(  new ParametroPesquisaIgual("status", StatusAutorizacao.AUTORIZADO.getValue()), new ParametroPesquisaIgual("motorista.id", idMotorista),
-                                new ParametroPesquisaIgual("veiculo.id", idVeiculo), new ParametroPesquisaIgual("pontoVenda.id", idPv),
-                                new ParametroPesquisaIgual("transacaoFrota.frota.id", idFrota), new ParametroPesquisaIgual("transacaoFrota.valorTotal", valorTotal.negate()),
-                                new ParametroPesquisaDataMaiorOuIgual("transacaoFrota.dataTransacao", dataLimite));
+                new ParametroPesquisaIgual("veiculo.id", idVeiculo), new ParametroPesquisaIgual("pontoVenda.id", idPv),
+                new ParametroPesquisaIgual("transacaoFrota.frota.id", idFrota), new ParametroPesquisaIgual("transacaoFrota.valorTotal", valorTotal.negate()),
+                new ParametroPesquisaDataMaiorOuIgual("transacaoFrota.dataTransacao", dataLimite));
     }
 
     @Override
@@ -217,7 +218,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         paginacao.setTamanhoPagina(3);
         paginacao.setParametrosOrdenacaoColuna(
                 Arrays.asList(new ParametroOrdenacaoColuna("dataRequisicao", Ordenacao.DECRESCENTE),
-                              new ParametroOrdenacaoColuna("id", Ordenacao.DECRESCENTE))
+                        new ParametroOrdenacaoColuna("id", Ordenacao.DECRESCENTE))
         );
 
         ResultadoPaginado<AutorizacaoPagamento> notas = pesquisar(paginacao,
@@ -425,8 +426,8 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     @Override
     public AutorizacaoPagamento buscarEstornoNegativoAbastecimento(Long idAutorizacaoPagamento) {
         return pesquisarUnico(
-            new ParametroPesquisaIgual("idAutorizacaoEstorno", idAutorizacaoPagamento),
-            new ParametroPesquisaMenor("valorTotal", BigDecimal.ZERO)
+                new ParametroPesquisaIgual("idAutorizacaoEstorno", idAutorizacaoPagamento),
+                new ParametroPesquisaMenor("valorTotal", BigDecimal.ZERO)
         );
     }
 
@@ -468,9 +469,9 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     public ResultadoPaginadoFrtVo<AutorizacaoPagamento> pesquisar(FiltroPesquisaAbastecimentoFrtVo filtro) {
         List<ParametroPesquisa> parametros = criarParametrosPesquisa(filtro);
         InformacaoPaginacaoFrtVo paginacao = new InformacaoPaginacaoFrtVo(
-            filtro.getPagina(),
-            new ParametroOrdenacaoColuna("dataRequisicao"),
-            new ParametroOrdenacaoColuna("id")
+                filtro.getPagina(),
+                new ParametroOrdenacaoColuna("dataRequisicao"),
+                new ParametroOrdenacaoColuna("id")
         );
         ResultadoPaginado<AutorizacaoPagamento> resultadoPaginado = pesquisar(paginacao, parametros.toArray(new ParametroPesquisa[parametros.size()]));
         return new ResultadoPaginadoFrtVo<>(resultadoPaginado, paginacao.getPagina(), paginacao.getTamanhoPagina());
@@ -582,44 +583,44 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
      */
     private List<ParametroPesquisa> criarParametrosPesquisa(FiltroPesquisaAbastecimentoFrtVo filtro) {
         return new ParametrosPesquisaBuilder()
-            .adicionarParametros(
-                    new ParametroPesquisaIgual("id", filtro.getIdentificador())
-            )
-            .adicionarParametros(
-                    new ParametroPesquisaDataMaiorOuIgual("dataProcessamento", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDataInicial())),
-                    new ParametroPesquisaDataMenorOuIgual("dataProcessamento", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getDataFinal()))
-            )
-            .adicionarParametros(
-                    filtro.getCnpjRevenda(),
-                    this::criarParametroFiltroFrotistaCnpjRevendaPV,
-                    this::criarParametroFiltroFrotistaCnpjRevendaUnidade,
-                    this::criarParametroFiltroFrotistaCnpjRevendaFrota
-            )
-            .adicionarParametros(filtro.getPostoInterno(), valor -> new ParametroPesquisaNulo("pontoVenda", !((Boolean) valor)))
-            .adicionarParametros(filtro.getPlacaVeiculo(), valor -> new ParametroPesquisaIgual("veiculo.placa", valor))
-            .adicionarParametros(
-                    filtro.getTipoVeiculo(),
-                    valor -> new ParametroPesquisaIgual("veiculo.subtipoVeiculo.tipoVeiculo.id", valor)
-            )
-            .adicionarParametros(filtro.getSubtipoVeiculo(), valor -> new ParametroPesquisaIgual("veiculo.subtipoVeiculo.id", valor))
-            .adicionarParametros(
-                    filtro.getCpfMotorista(),
-                    valor -> new ParametroPesquisaIgual("motorista.cpf", valor)
-            )
-            .adicionarParametros(filtro.getCnpjUnidade(), this::criarParametroFiltroFrotistaCnpjUnidade)
-            .adicionarParametros(filtro.getCnpjEmpresaAgregada(), this::criarParametroFiltroFrotistaCnpjEmpresaAgregada)
-            .adicionarParametros(filtro.getNumeroNotaFiscal(), valor -> new ParametroPesquisaIgual("notasFiscais.numero", valor))
-            .adicionarParametros(filtro.getStatusEmissaoNotaFiscal(), valor ->  new ParametroPesquisaIgual("statusNotaFiscal", valor))
-            .adicionarParametros( filtro.getStatusAutorizacaoPagamento() != null ?
-                    criarParametroFiltroFrotistaStatusPagamentoIgual(filtro.getStatusAutorizacaoPagamento()) :
-                    criarParametroFiltroFrotistaStatusPagamentoTodos()
-            )
-            .adicionarParametros(filtro.getPagamentoEmContingencia(), this::criarParametroFiltroFrotistaPagementoContigencia)
-            .adicionarParametros(
-                    filtro.getPagamentoSemEstorno(),
-                    valor -> new ParametroPesquisaNulo("idAutorizacaoEstorno", !((Boolean) valor))
-            )
-            .build();
+                .adicionarParametros(
+                        new ParametroPesquisaIgual("id", filtro.getIdentificador())
+                )
+                .adicionarParametros(
+                        new ParametroPesquisaDataMaiorOuIgual("dataProcessamento", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDataInicial())),
+                        new ParametroPesquisaDataMenorOuIgual("dataProcessamento", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getDataFinal()))
+                )
+                .adicionarParametros(
+                        filtro.getCnpjRevenda(),
+                        this::criarParametroFiltroFrotistaCnpjRevendaPV,
+                        this::criarParametroFiltroFrotistaCnpjRevendaUnidade,
+                        this::criarParametroFiltroFrotistaCnpjRevendaFrota
+                )
+                .adicionarParametros(filtro.getPostoInterno(), valor -> new ParametroPesquisaNulo("pontoVenda", !((Boolean) valor)))
+                .adicionarParametros(filtro.getPlacaVeiculo(), valor -> new ParametroPesquisaIgual("veiculo.placa", valor))
+                .adicionarParametros(
+                        filtro.getTipoVeiculo(),
+                        valor -> new ParametroPesquisaIgual("veiculo.subtipoVeiculo.tipoVeiculo.id", valor)
+                )
+                .adicionarParametros(filtro.getSubtipoVeiculo(), valor -> new ParametroPesquisaIgual("veiculo.subtipoVeiculo.id", valor))
+                .adicionarParametros(
+                        filtro.getCpfMotorista(),
+                        valor -> new ParametroPesquisaIgual("motorista.cpf", valor)
+                )
+                .adicionarParametros(filtro.getCnpjUnidade(), this::criarParametroFiltroFrotistaCnpjUnidade)
+                .adicionarParametros(filtro.getCnpjEmpresaAgregada(), this::criarParametroFiltroFrotistaCnpjEmpresaAgregada)
+                .adicionarParametros(filtro.getNumeroNotaFiscal(), valor -> new ParametroPesquisaIgual("notasFiscais.numero", valor))
+                .adicionarParametros(filtro.getStatusEmissaoNotaFiscal(), valor ->  new ParametroPesquisaIgual("statusNotaFiscal", valor))
+                .adicionarParametros( filtro.getStatusAutorizacaoPagamento() != null ?
+                        criarParametroFiltroFrotistaStatusPagamentoIgual(filtro.getStatusAutorizacaoPagamento()) :
+                        criarParametroFiltroFrotistaStatusPagamentoTodos()
+                )
+                .adicionarParametros(filtro.getPagamentoEmContingencia(), this::criarParametroFiltroFrotistaPagementoContigencia)
+                .adicionarParametros(
+                        filtro.getPagamentoSemEstorno(),
+                        valor -> new ParametroPesquisaNulo("idAutorizacaoEstorno", !((Boolean) valor))
+                )
+                .build();
     }
 
     /**
@@ -646,14 +647,14 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
      */
     private <T> ParametroPesquisa criarParametroFiltroFrotistaCnpjRevendaUnidade(T cnpjRevenda) {
         return new ParametroPesquisaOr(
-            new ParametroPesquisaNulo("pontoVenda", true),
-            new ParametroPesquisaAnd(
-                new ParametroPesquisaOr(
-                    new ParametroPesquisaIgual("unidade.cnpj", cnpjRevenda),
-                    new ParametroPesquisaNulo("unidade", false)
-                ),
-                new ParametroPesquisaNulo("pontoVenda", false)
-            )
+                new ParametroPesquisaNulo("pontoVenda", true),
+                new ParametroPesquisaAnd(
+                        new ParametroPesquisaOr(
+                                new ParametroPesquisaIgual("unidade.cnpj", cnpjRevenda),
+                                new ParametroPesquisaNulo("unidade", false)
+                        ),
+                        new ParametroPesquisaNulo("pontoVenda", false)
+                )
         );
     }
 
@@ -664,13 +665,13 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
      */
     private ParametroPesquisa criarParametroFiltroFrotistaCnpjRevendaFrota(Object cnpjRevenda) {
         return new ParametroPesquisaOr(
-            new ParametroPesquisaAnd(
-                new ParametroPesquisaIgual("frota.cnpj", cnpjRevenda),
-                new ParametroPesquisaNulo("unidade", false),
-                new ParametroPesquisaNulo("pontoVenda", false)    
-            ),
-            new ParametroPesquisaNulo("unidade", true),
-            new ParametroPesquisaNulo("pontoVenda", true)    
+                new ParametroPesquisaAnd(
+                        new ParametroPesquisaIgual("frota.cnpj", cnpjRevenda),
+                        new ParametroPesquisaNulo("unidade", false),
+                        new ParametroPesquisaNulo("pontoVenda", false)
+                ),
+                new ParametroPesquisaNulo("unidade", true),
+                new ParametroPesquisaNulo("pontoVenda", true)
         );
     }
 
@@ -683,7 +684,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         return new ParametroPesquisaOr(
                 new ParametroPesquisaIgual("motorista.unidade.cnpj", valor),
                 new ParametroPesquisaIgual("veiculo.unidade.cnpj", valor)
-            );
+        );
     }
 
     /**
@@ -693,8 +694,8 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
      */
     private ParametroPesquisa criarParametroFiltroFrotistaCnpjEmpresaAgregada(Object valor) {
         return new ParametroPesquisaOr(
-            new ParametroPesquisaIgual("motorista.empresaAgregada.cnpj", valor),
-            new ParametroPesquisaIgual("empresaAgregada.cnpj", valor)
+                new ParametroPesquisaIgual("motorista.empresaAgregada.cnpj", valor),
+                new ParametroPesquisaIgual("empresaAgregada.cnpj", valor)
         );
     }
 
@@ -713,10 +714,10 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
      */
     private ParametroPesquisa criarParametroFiltroFrotistaStatusPagamentoTodos() {
         return new ParametroPesquisaIn("status", Arrays.asList(
-            StatusAutorizacao.CANCELADO.getValue(),
-            StatusAutorizacao.NAO_AUTORIZADO.getValue(),
-            StatusAutorizacao.AUTORIZADO.getValue(),
-            StatusAutorizacao.PENDENTE_AUTORIZACAO.getValue()
+                StatusAutorizacao.CANCELADO.getValue(),
+                StatusAutorizacao.NAO_AUTORIZADO.getValue(),
+                StatusAutorizacao.AUTORIZADO.getValue(),
+                StatusAutorizacao.PENDENTE_AUTORIZACAO.getValue()
         ));
     }
 
@@ -728,10 +729,10 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     private ParametroPesquisa criarParametroFiltroFrotistaPagementoContigencia(Object valor) {
         if((Boolean) valor) {
             return new ParametroPesquisaIgual("tipoAutorizacaoPagamento", TipoAutorizacaoPagamento.PCC.getValue());
-        } 
+        }
         return new ParametroPesquisaOr(
-            new ParametroPesquisaNulo("tipoAutorizacaoPagamento", false),
-            new ParametroPesquisaDiferente("tipoAutorizacaoPagamento", TipoAutorizacaoPagamento.PCC.getValue())
+                new ParametroPesquisaNulo("tipoAutorizacaoPagamento", false),
+                new ParametroPesquisaDiferente("tipoAutorizacaoPagamento", TipoAutorizacaoPagamento.PCC.getValue())
         );
     }
 

@@ -68,7 +68,6 @@ public class ConfiguracoesExpiracaoSessao extends WebMvcConfigurerAdapter {
                 HttpSession sessao = request.getSession(false);
                 if (sessao != null) {
                     if (tempoSessaoExpirou(sessao) && !ignorarHandler(handler)) {
-                        sessao.invalidate();
                         enviarErroAutenticacao(response);
                         return false;
                     } else if (request.getQueryString() == null || !request.getQueryString().contains("hsr=false")) {

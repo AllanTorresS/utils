@@ -14,15 +14,11 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.json.JsonParserFactory;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -37,13 +33,8 @@ import java.util.Map;
 @Component
 public class UtilitarioAmbiente {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UtilitarioAmbiente.class);
     private static final String URL_VERIFICACAO_RECAPTCHA = "https://www.google.com/recaptcha/api/siteverify?secret=%s&response=%s";
 
-    private static final String MARCADOR_PROTOCOLO_HTTP = "http:";
-    private static final String MARCADOR_PROTOCOLO_HTTPS = "https:";
-    private static final String SEPARADOR_PROTOCOLO = "://";
-    private static final String SEPARADOR_URL = "/";
     private static final String RESPOSTA_SUCESSO_RECAPTCHA = "success";
 
     private static final String AMBIENTE_PRODUCAO = "prd";
@@ -131,19 +122,7 @@ public class UtilitarioAmbiente {
      * @return URL de contexto da aplicação
      */
     public String getURLContextoAplicacao() {
-        try {
-            StringBuffer sb = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getRequestURL();
-            String url = sb.toString();
-            String marcadorProtocolo = SEPARADOR_PROTOCOLO;
-            int idxProtocolo = url.indexOf(marcadorProtocolo);
-            int idxContexto = url.indexOf(SEPARADOR_URL, idxProtocolo + marcadorProtocolo.length());
-            url = url.substring(0, idxContexto);
-            url = url.replace(MARCADOR_PROTOCOLO_HTTP, MARCADOR_PROTOCOLO_HTTPS);
-            return url;
-        } catch (Exception ex) {
-            LOGGER.info(ex.getMessage(),ex);
-            return urlSistema;
-        }
+        return urlSistema;
     }
 
     /**

@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -81,9 +80,6 @@ public class ConfiguracoesSeguranca extends WebSecurityConfigurerAdapter {
 
     @Value("${max.sessions.per.user}")
     private Integer maximoSessoesPorUsuario;
-
-    @Value("${cors.allowed.origins}")
-    private String[] allowedOrigins;
 
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -191,7 +187,6 @@ public class ConfiguracoesSeguranca extends WebSecurityConfigurerAdapter {
             public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException, ServletException {
                 httpServletResponse.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
                 httpServletResponse.setStatus(HttpStatus.OK.value());
-                preencherCabecalhosResposta(httpServletResponse);
                 InformacoesAutenticacao info = (InformacoesAutenticacao) authentication;
                 ServletOutputStream out = httpServletResponse.getOutputStream();
                 out.write(utilitarioJwt.montarRespostaTokenJWT(info.getUsuario().getTokenJWT()));
@@ -209,7 +204,6 @@ public class ConfiguracoesSeguranca extends WebSecurityConfigurerAdapter {
         return (httpServletRequest, httpServletResponse, e) -> {
             httpServletResponse.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
             httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
-            preencherCabecalhosResposta(httpServletResponse);
             String content = criarMensagemErro(e);
             httpServletResponse.getWriter().append(content);
         };
@@ -235,16 +229,6 @@ public class ConfiguracoesSeguranca extends WebSecurityConfigurerAdapter {
 
         MensagemErro msg = new MensagemErro(tipoErro, Collections.singletonList(mensagemErro));
         return UtilitarioJson.toJSON(msg);
-    }
-
-    /**
-     * Preenche cabeçalhos que devem ser enviados na resposta
-     * @param response a resposta HTTP
-     */
-    private void preencherCabecalhosResposta(HttpServletResponse response) {
-        if (allowedOrigins != null) {
-            response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, String.join(" ", allowedOrigins));
-        }
     }
 
     /**

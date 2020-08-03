@@ -331,20 +331,24 @@ public class NotaFiscalSd {
      * @return true caso as duas notas possuam o mesmo CNPJ do emitente e número de série, false caso contrário
      */
     private boolean possuiSerieCnpjEmitenteIguais(NotaFiscal nf, Document documento) {
-        recuperarCnpjEmitenteSerie(nf);
+        recuperarCamposNulos(nf);
         return possuiMesmoNumeroSerie(nf.getNumeroSerie(), documento)
                 && possuiMesmoCnpjEmitente(nf.getCnpjEmitente(), documento);
     }
 
     /**
-     * Recupera os campos CNPJ do emitente e série a partir do arquivo no S3, caso não estejam preenchidos.
+     * Recupera campos da nota a partir do arquivo no S3, caso não estejam preenchidos no banco.
      * @param nf a nota fiscal que terá os campos recuperados
      */
-    private void recuperarCnpjEmitenteSerie(NotaFiscal nf) {
-        if (nf.getNumeroSerie() == null || nf.getCnpjEmitente() == null) {
+    public void recuperarCamposNulos(NotaFiscal nf) {
+        if (!nf.getIsJustificativa() &&
+                (nf.getNumeroSerie() == null || nf.getCnpjEmitente() == null || nf.getChaveAcesso() == null)) {
             Document documentoBase = UtilitarioXml.lerXml(UtilitarioStreams.carregarEmMemoria(obterXmlNotaFiscal(nf)));
             nf.setNumeroSerie(UtilitarioXml.getString(documentoBase, ConstantesNotaFiscalParser.SERIE));
             nf.setCnpjEmitente(UtilitarioXml.getString(documentoBase, ConstantesNotaFiscalParser.EMIT_CNPJ));
+            nf.setChaveAcesso(UtilitarioFormatacao.formatarNumeroZerosEsquerda(
+                    UtilitarioXml.getString(documentoBase, ConstantesNotaFiscalParser.CHAVE_ACESSO),
+                    ConstantesNotaFiscal.TAMANHO_CHAVE_ACESSO));
             repositorio.armazenar(nf);
         }
     }
