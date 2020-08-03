@@ -26,4 +26,13 @@ public interface IRotaDados extends IRepositorioBoleiaDados<Rota> {
      */
     Rota buscarPorNome(String nome, Long idFrota);
 
+    /**
+     * Obtem a quantidade de rotas de uma frota que contem um determinado ponto de venda.
+     * 
+     * @param idFrota o id da frota a qual a rota pertence
+     * @param idPontoDeVenda o id do ponto de venda que deve estar contido nas rotas
+     * @return a quantidade de rotas encontradas
+     */
+    Long obterQuantidadeDeRotasQueContemPontoDeVenda(long idFrota, long idPontoDeVenda);
+
 }
