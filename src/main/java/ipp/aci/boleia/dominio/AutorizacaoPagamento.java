@@ -343,6 +343,9 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     @Column(name = "ID_TIPO_SENHA_AUTO")
     private Integer tipoSenhaAutorizacao;
 
+    @Column(name = "ID_MOTIVO_SEM_SENHA_OU_CODIGO")
+    private Integer codigoMotivoSemSenhaOuCodigo;
+
     @NotAudited
     @Formula(StatusAutorizacao.DECODE_FORMULA)
     private String statusAutorizacaoConvertido;
@@ -946,6 +949,14 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
 
     public void setTipoSenhaAutorizacao(Integer tipoSenhaAutorizacao) {
         this.tipoSenhaAutorizacao = tipoSenhaAutorizacao;
+    }
+
+    public Integer getCodigoMotivoSemSenhaOuCodigo() {
+        return codigoMotivoSemSenhaOuCodigo;
+    }
+
+    public void setCodigoMotivoSemSenhaOuCodigo(Integer codigoMotivoSemSenhaOuCodigo) {
+        this.codigoMotivoSemSenhaOuCodigo = codigoMotivoSemSenhaOuCodigo;
     }
 
     public ComandaDigital getComandaDigital() {
