@@ -311,7 +311,7 @@ public class NotificacaoUsuarioSd {
         Long idFrota = autorizacaoPagamento.getFrota().getId();
         List<Usuario> usuarioFrota = repositorioUsuarios.obterGestorPorFrota(idFrota);
         String numeroNfe = notaFiscal.getNumero();
-        TransacaoConsolidada transacaoConsolidada = transacaoConsolidadaDados.obterConsolidadoPorAbastecimento(autorizacaoPagamento.getId());
+        TransacaoConsolidada transacaoConsolidada = transacaoConsolidadaDados.obterConsolidadoParaAbastecimento(autorizacaoPagamento.getId());
         Date dataInicioPeriodo = transacaoConsolidada.getDataInicioPeriodo();
         Date dataFimPeriodo = transacaoConsolidada.getDataFimPeriodo();
         String mes = UtilitarioFormatacaoData.formatarDataMes(dataInicioPeriodo);
@@ -355,7 +355,7 @@ public class NotificacaoUsuarioSd {
      * @param usuario usuario que deve receber a notificação
      */
     public void enviarNotificacaoRelatorioConcluido(Usuario usuario){
-        List <Usuario> usuarios = new ArrayList<Usuario>();
+        List <Usuario> usuarios = new ArrayList<>();
         usuarios.add(usuario);
         enviarNotificacao(TipoSubcategoriaNotificacao.RELATORIO_CONCLUIDO,usuarios);
     }
@@ -770,7 +770,7 @@ public class NotificacaoUsuarioSd {
         Boolean alteradoParaRascunho = StatusCampanha.RASCUNHO.equals(StatusCampanha.obterPorValor(campanha.getStatus()));
         if(!alteradoParaRascunho){
             enviarNotificacao(TipoSubcategoriaNotificacao.CAMPANHA_DISPONIVEL_APROVACAO, destinatariosComPermissaoDeAprovacao, campanha.getNome(), campanha.getId().toString());
-        } else{
+        } else {
             Set<Usuario> usuariosCriadoresEAprovadores = new HashSet<>();
             usuariosCriadoresEAprovadores.addAll(destinatariosComPermissaoDeAprovacao);
             usuariosCriadoresEAprovadores.add(campanha.getUsuarioCriador());

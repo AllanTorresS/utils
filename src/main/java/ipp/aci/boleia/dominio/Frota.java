@@ -1203,7 +1203,7 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
      * @return se é pre paga ou não
      */
     @Transient
-    public boolean isPrePago() {
+    public boolean isPrePaga() {
         return this.modoPagamento != null && ModalidadePagamento.obterPorValor(this.modoPagamento).equals(ModalidadePagamento.PRE_PAGO);
     }
 

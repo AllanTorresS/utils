@@ -184,7 +184,11 @@ public final class ChavePermissao {
 
     public static final String MOTOR_GERACAO_RELATORIO_CONSULTAR_E_VISUALIZAR = SPRING_ROLE_PREFIX + "MOTOR_GERACAO_RELATORIO_CONSULTAR_E_VISUALIZAR" + SPRING_ROLE_SUFFIX;
 
-    public static final String PARCERIAS_VISUALIZAR = SPRING_ROLE_PREFIX + "PARCERIAS_VISUALIZAR" + SPRING_ROLE_SUFFIX;
+    public static final String PARCERIAS_VISUALIZAR                         = SPRING_ROLE_PREFIX + "PARCERIAS_VISUALIZAR" + SPRING_ROLE_SUFFIX;
+
+    public static final String FINANCEIRO_CONSULTAR                         = SPRING_ROLE_PREFIX + "FINANCEIRO_CONSULTAR" + SPRING_ROLE_SUFFIX;
+    public static final String FINANCEIRO_EXPORTAR_XLS                      = SPRING_ROLE_PREFIX + "FINANCEIRO_EXPORTAR_XLS" + SPRING_ROLE_SUFFIX;
+    public static final String FINANCEIRO_EXPORTAR_PDF                      = SPRING_ROLE_PREFIX + "FINANCEIRO_EXPORTAR_PDF" + SPRING_ROLE_SUFFIX;
 
     // Permissão da API de Frotistas.
     public static final String API_FROTISTA                                         = SPRING_ROLE_PREFIX + "API_FROTISTA" + SPRING_ROLE_SUFFIX;
@@ -232,7 +236,7 @@ public final class ChavePermissao {
     // Permissão da API do Integrador
     public static final String API_INTEGRADOR_CONSULTAR_BICOS                   = SPRING_ROLE_PREFIX + "API_INTEGRADOR_CONSULTAR_BICOS"                  + SPRING_ROLE_SUFFIX;
     public static final String API_INTEGRADOR_CONSULTAR_ABASTECIMENTOS          = SPRING_ROLE_PREFIX + "API_INTEGRADOR_CONSULTAR_ABASTECIMENTOS"         + SPRING_ROLE_SUFFIX;
-    
+
     // Permissão da API do credenciamento de postos
     public static final String API_CREDENCIAMENTO_PDV_CONSULTAR_STATUS         = SPRING_ROLE_PREFIX + "API_CREDENCIAMENTO_PDV_CONSULTAR_STATUS"        + SPRING_ROLE_SUFFIX;
     public static final String API_CREDENCIAMENTO_PDV_LISTAR_BANDEIRA          = SPRING_ROLE_PREFIX + "API_CREDENCIAMENTO_PDV_LISTAR_BANDEIRA"         + SPRING_ROLE_SUFFIX;
@@ -243,7 +247,7 @@ public final class ChavePermissao {
     public static final String API_CREDENCIAMENTO_PDV_PESQUISAR_BANCO          = SPRING_ROLE_PREFIX + "API_CREDENCIAMENTO_PDV_PESQUISAR_BANCO"         + SPRING_ROLE_SUFFIX;
     public static final String API_CREDENCIAMENTO_PDV_OBTER_COMBUSTIVEIS       = SPRING_ROLE_PREFIX + "API_CREDENCIAMENTO_PDV_OBTER_COMBUSTIVEIS"      + SPRING_ROLE_SUFFIX;
     public static final String API_CREDENCIAMENTO_PDV_HABILITAR                = SPRING_ROLE_PREFIX + "API_CREDENCIAMENTO_PDV_HABILITAR"               + SPRING_ROLE_SUFFIX;
-    
+
     // Permissão da API do credenciamento de frotas
     public static final String API_CREDENCIAMENTO_FROTA_CONSULTAR_STATUS       = SPRING_ROLE_PREFIX + "API_CREDENCIAMENTO_FROTA_CONSULTAR_STATUS"      + SPRING_ROLE_SUFFIX;
     public static final String API_CREDENCIAMENTO_FROTA_ENVIAR_LEAD            = SPRING_ROLE_PREFIX + "API_CREDENCIAMENTO_FROTA_ENVIAR_LEAD"           + SPRING_ROLE_SUFFIX;
@@ -262,7 +266,7 @@ public final class ChavePermissao {
     public static final String API_AGENDADOR_EXECUTAR_ROTINA_MANUALMENTE       = SPRING_ROLE_PREFIX + "API_AGENDADOR_EXECUTAR_ROTINA_MANUALMENTE"      + SPRING_ROLE_SUFFIX;
     public static final String API_AGENDADOR_OBTER_TAREFAS_AGENDADAS           = SPRING_ROLE_PREFIX + "API_AGENDADOR_OBTER_TAREFAS_AGENDADAS"          + SPRING_ROLE_SUFFIX;
 
-    
+
     /**
      * Impede instanciacao e heranca
      */

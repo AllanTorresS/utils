@@ -57,6 +57,11 @@ public class LogicaParametroPrecoMaximo implements ILogicaParametroSistema<Autor
         return resultado;
     }
 
+    /**
+     * Obtém um mapa que relaciona o id de cada preço máximo de um produto com seu respectivo preço permitido
+     * @param precoMaximoProdutos Lista de entidades de preço máximo produto
+     * @return retorna um mapa de id e preço máximo permitido por produto
+     */
     private Map<Long,BigDecimal> obterMapaProdutos(List<FrotaParametroSistemaPrecoMaximoProduto> precoMaximoProdutos) {
         Map<Long,BigDecimal> resultado = new HashMap<>();
         precoMaximoProdutos.forEach(precoMaximo ->
@@ -65,6 +70,11 @@ public class LogicaParametroPrecoMaximo implements ILogicaParametroSistema<Autor
         return resultado;
     }
 
+    /**
+     * Obtém um mapa que relaciona o id de cada preço máximo de um abastecimento com seu respectivo preço permitido
+     * @param precoMaximoCombustiveis Lista de entidades de preço máximo abastecimento
+     * @return retorna um mapa de id e preço máximo permitido por abastecimento
+     */
     private Map<Long,BigDecimal> obterMapaCombustiveis(List<FrotaParametroSistemaPrecoMaximoAbastecimento> precoMaximoCombustiveis) {
         Map<Long,BigDecimal> resultado = new HashMap<>();
         precoMaximoCombustiveis.forEach(precoMaximo ->

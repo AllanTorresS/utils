@@ -3,6 +3,7 @@ package ipp.aci.boleia.dados;
 
 import ipp.aci.boleia.dominio.AutorizacaoPagamento;
 import ipp.aci.boleia.dominio.EmpresaAgregada;
+import ipp.aci.boleia.dominio.TransacaoConsolidada;
 import ipp.aci.boleia.dominio.Unidade;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaAbastecimentoVo;
@@ -325,5 +326,21 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
      * @param  dataFinal data final do período de exportação
      * @return a lista de abastecimentos agrupados do período.
      */
-     List<VolumeVendasClienteProFrotaVo> obterVendasProfrotasAPCO(Date dataInicial, Date dataFinal);
+    List<VolumeVendasClienteProFrotaVo> obterVendasProfrotasAPCO(Date dataInicial, Date dataFinal);
+
+    /**
+     * Retorna uma lista de abastecimentos que foram postergados para um determinado ciclo.
+     *
+     * @param transacaoConsolidada Ciclo para o qual os abastecimentos foram postergados.
+     * @return A lista de abastecimentos postergados
+     */
+    List<AutorizacaoPagamento> obterAbastecimentosPostergadosParaCiclo(TransacaoConsolidada transacaoConsolidada);
+
+    /**
+     * Retorna uma lista com os abastecimentos de um ciclo que tem justificativa associada
+     *
+     * @param idsAutorizacoes Lista que contem os identificadores dos abastecimentos de um determinado ciclo.
+     * @return Lista de abastecimentos de um ciclo que tem justificativa associada
+     */
+    List<AutorizacaoPagamento> obterAbastecimentosComJustificativaAssociadaPorAbastecimentos(List<Long> idsAutorizacoes);
 }

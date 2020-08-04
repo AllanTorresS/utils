@@ -135,7 +135,7 @@ public class ValidadorAbastecimentoSd {
             throw new ExcecaoValidacao(Erro.ERRO_EDICAO_FROTA_INATIVA,
                     mensagens.obterMensagem(Erro.ERRO_EDICAO_FROTA_INATIVA.getChaveMensagem(), frotaApresentacao));
         }
-        if (frota.isPrePago()) {
+        if (frota.isPrePaga()) {
             throw new ExcecaoValidacao(Erro.ERRO_EDICAO_FROTA_PREPAGA,
                     mensagens.obterMensagem(Erro.ERRO_EDICAO_FROTA_PREPAGA.getChaveMensagem()));
         }

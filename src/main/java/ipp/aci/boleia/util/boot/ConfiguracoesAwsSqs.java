@@ -108,6 +108,12 @@ public class ConfiguracoesAwsSqs {
     @Value("${aws.sqs.frota-param-ciclo.aplica-novo-ciclo}")
     private String nomeFilaFrotaParamCiclo;
 
+    @Value("${aws.sqs.transacao-consolidada.definir-ciclo-postergacao}")
+    private String nomeFilaObterCicloPostergacao;
+
+    @Value("${aws.sqs.transacao-consolidada.processar-ciclo-postergacao}")
+    private String nomeFilaProcessarCicloPostergacao;
+
     /**
      * Carrega as mensagens do sistema
      */
@@ -150,7 +156,9 @@ public class ConfiguracoesAwsSqs {
                         ,nomeFilaErroCicloRepasseValidacaoTransConsol
                         ,nomeFilaCobrancaRequisicaoIncluirFatura
                         ,nomeFilaCobrancaRespostaIncluirFatura
-                        ,nomeFilaFrotaParamCiclo);
+                        ,nomeFilaFrotaParamCiclo
+                        ,nomeFilaObterCicloPostergacao
+                        ,nomeFilaProcessarCicloPostergacao);
         criaFilaSeNaoExistem(amazonSQSAsync, nomeFilas);
         return new QueueMessagingTemplate(amazonSQSAsync);
     }

@@ -53,8 +53,9 @@ public class EdicaoAbastecimentoSd {
     /**
      * Preenche o {@link EdicaoAbastecimentoVo} com os campos que foram editados em uma Autorização de Pagamento.
      *
-     * @param autorizacaoPagamento autorizacao de pagamento original
-     * @param autorizacaoPagamentoEdicao autorizacao de pagamento editada
+     * @param edicaoAbastecimentoVo {@link EdicaoAbastecimentoVo} a ser preenchido
+     * @param autorizacaoPagamento autorização de pagamento original
+     * @param autorizacaoPagamentoEdicao autorização de pagamento editada
      */
     private void preencherAbastecimentoEdicao(EdicaoAbastecimentoVo edicaoAbastecimentoVo, AutorizacaoPagamento autorizacaoPagamento, AutorizacaoPagamentoEdicao autorizacaoPagamentoEdicao) {
 
@@ -93,6 +94,7 @@ public class EdicaoAbastecimentoSd {
 
     /**
      * Preenche o {@link EdicaoAbastecimentoVo} com os campos que foram editados em uma lista de itens de uma Autorização de Pagamento.
+     * @param edicaoAbastecimentoVo {@link EdicaoAbastecimentoVo} a ser preenchido
      * @param itensAutorizacaoPagamento os itens da autorizacao de pagamento
      * @param itensAutorizacaoPagamentoEdicao os itens da autorizacao de pagamento editada
      */

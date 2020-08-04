@@ -35,6 +35,11 @@ public enum GrupoExecucaoParametroSistema {
     private final Class<ITratadorViolacoesParametros<?>> tratadorViolacoes;
     private final ParametroSistema[] parametros;
 
+    /**
+     * Construtor do Enum
+     * @param tratadorViolacoes Classe tratadora de violações de parâmetro
+     * @param parametros Parâmetros do sistema
+     */
     GrupoExecucaoParametroSistema(Class tratadorViolacoes, ParametroSistema... parametros) {
         this.tratadorViolacoes = tratadorViolacoes;
         this.parametros = parametros;

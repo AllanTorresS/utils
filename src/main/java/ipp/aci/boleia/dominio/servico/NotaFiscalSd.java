@@ -317,7 +317,7 @@ public class NotaFiscalSd {
                 AutorizacaoPagamento autorizacaoPagamento = notaFiscal.getAutorizacoesPagamento().stream()
                         .findFirst()
                         .orElseThrow(ExcecaoRecursoNaoEncontrado::new);
-                TransacaoConsolidada consolidada = transacaoConsolidadaDados.obterConsolidadoPorAbastecimento(autorizacaoPagamento.getId());
+                TransacaoConsolidada consolidada = transacaoConsolidadaDados.obterConsolidadoParaAbastecimento(autorizacaoPagamento.getId());
                 NotaFiscalVo nota = new NotaFiscalVo(notaFiscal, consolidada, autorizacaoPagamento);
                 throw new ExcecaoValidacao(Erro.NOTA_FISCAL_UPLOAD_NOTA_REPETIDA, UtilitarioJson.toJSONString(nota));
             }
@@ -340,7 +340,7 @@ public class NotaFiscalSd {
      * Recupera campos da nota a partir do arquivo no S3, caso não estejam preenchidos no banco.
      * @param nf a nota fiscal que terá os campos recuperados
      */
-    public void recuperarCamposNulos(NotaFiscal nf) {
+    private void recuperarCamposNulos(NotaFiscal nf) {
         if (!nf.getIsJustificativa() &&
                 (nf.getNumeroSerie() == null || nf.getCnpjEmitente() == null || nf.getChaveAcesso() == null)) {
             Document documentoBase = UtilitarioXml.lerXml(UtilitarioStreams.carregarEmMemoria(obterXmlNotaFiscal(nf)));

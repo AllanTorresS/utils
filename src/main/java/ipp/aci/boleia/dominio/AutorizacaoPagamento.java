@@ -433,6 +433,14 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     @JoinColumn(name = "CD_TRANS_CONSOL")
     private TransacaoConsolidada transacaoConsolidada;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_TRANS_CONSOL_POSTERGADA")
+    private TransacaoConsolidada transacaoConsolidadaPostergada;
+
+    @Column(name = "DT_POSTERGACAO")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataPostergacao;
+
     @Column(name = "CD_ABASTECIMENTO_CTA")
     private Long codigoAbastecimentoCTA;
 
@@ -457,6 +465,12 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     @Formula(PRECOCOMBUSTIVEL_FORMULA)
     private BigDecimal precoCombustivelTotal;
 
+    @Transient
+    private TipoErroAutorizacaoPagamento tipoErroAutorizacaoPagamento;
+
+    /**
+     * Construtor da classe.
+     */
     public AutorizacaoPagamento () {
         this.statusEdicao = StatusEdicao.NAO_EDITADO.getValue();
     }
@@ -1163,6 +1177,22 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
         this.transacaoConsolidada = transacaoConsolidada;
     }
 
+    public TransacaoConsolidada getTransacaoConsolidadaPostergada() {
+        return transacaoConsolidadaPostergada;
+    }
+
+    public void setTransacaoConsolidadaPostergada(TransacaoConsolidada transacaoConsolidadaPostergada) {
+        this.transacaoConsolidadaPostergada = transacaoConsolidadaPostergada;
+    }
+
+    public Date getDataPostergacao() {
+        return dataPostergacao;
+    }
+
+    public void setDataPostergacao(Date dataPostergacao) {
+        this.dataPostergacao = dataPostergacao;
+    }
+
     @Transient
     @Override
     public List<PontoDeVenda> getPontosDeVenda() {
@@ -1465,6 +1495,20 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     }
 
     /**
+     * Informa se a autorização de pagamento possui pendência de emissão de nota fiscal
+     * levando em consideração a exigência de emissão e status de autorização.
+     *
+     * @return true, caso possua pendencia.
+     */
+    @Transient
+    public boolean isPendenteEmissaoNF() {
+        return estaAutorizado() &&
+                valorTotal.compareTo(BigDecimal.ZERO) > 0 &&
+                exigeEmissaoNF() &&
+                (statusNotaFiscalEsta(StatusNotaFiscalAbastecimento.PENDENTE));
+    }
+
+    /**
      * Obtem o valor do abastecimento considerando o desconto
      * @return o valor total do abastecimento com desconto
      */
@@ -1580,5 +1624,49 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
             }
         }
         return null;
+    }
+
+    /**
+     * Informa a autorização de pagamento possui exigencia de NF para a Unidade.
+     *
+     * @return true, caso possua
+     */
+    @Transient
+    public boolean unidadePossuiExigenciaNF() {
+        return unidadeExigeNf != null && unidadeExigeNf;
+    }
+
+    /**
+     * Informa a autorização de pagamento possui exigencia de NF para a Empresa Agregada.
+     *
+     * @return true, caso possua
+     */
+    @Transient
+    public boolean empresaAgregadaPossuiExigenciaNF() {
+        return empresaAgregadaExigeNf != null && empresaAgregadaExigeNf;
+    }
+
+    /**
+     * Informa se a autorização de pagamento exige emissão de nota.
+     *
+     * @return true, caso exija emissão de nf
+     */
+    @Transient
+    public boolean exigeEmissaoNF() {
+        return frota.exigeNotaFiscal() || unidadePossuiExigenciaNF() || empresaAgregadaPossuiExigenciaNF();
+    }
+
+    /**
+     * Retorna qual a transação consolidada vigente do abastecimento.
+     *
+     * @return caso tenha sido postergado, retorna a transação consolidada da postergação,
+     * caso contrário retorna a transação consolidada original.
+     */
+    @Transient
+    public TransacaoConsolidada getTransacaoConsolidadaVigente() {
+        if(transacaoConsolidadaPostergada != null) {
+            return transacaoConsolidadaPostergada;
+        }
+        return transacaoConsolidada;
     }
 }

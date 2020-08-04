@@ -24,6 +24,8 @@ import java.util.Date;
 @Table(name = "HISTORICO_INTEGRACAO_APCO")
 public class HistoricoIntegracaoAPCO  implements IPersistente {
 
+	private static final long serialVersionUID = 2678513522907356519L;
+
 	@Id
 	@Column(name = "CD_OPERACAO")
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_HISTORICO_INTEGRACAO_APCO")

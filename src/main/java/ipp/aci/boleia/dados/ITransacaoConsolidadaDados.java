@@ -1,14 +1,20 @@
 package ipp.aci.boleia.dados;
 
 
+import ipp.aci.boleia.dominio.AutorizacaoPagamento;
 import ipp.aci.boleia.dominio.TransacaoConsolidada;
 import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
+import ipp.aci.boleia.dominio.vo.AgrupamentoTransacaoConsolidadaPvVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaFinanceiroVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaReembolsoGraficoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaReembolsoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaTransacaoConsolidadaVo;
 import ipp.aci.boleia.dominio.vo.frotista.FiltroPesquisaNotaFiscalFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.ResultadoPaginadoFrtVo;
+import ipp.aci.boleia.visao.dto.PontoGraficoReembolsoRevendaDTO;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -97,7 +103,16 @@ public interface ITransacaoConsolidadaDados extends IRepositorioBoleiaDados<Tran
      * @param idAbastecimento O abastecimento
      * @return A transação consolidada
      */
-    TransacaoConsolidada obterConsolidadoPorAbastecimento(Long idAbastecimento);
+    TransacaoConsolidada obterConsolidadoParaAbastecimento(Long idAbastecimento);
+
+    /**
+     * Obtém um consolidado que corresponda as características de um abastecimento em uma data específica.
+     *
+     * @param abastecimento O abastecimento
+     * @param dataReferencia A data de referência usada na busca.
+     * @return O consolidado encontrado.
+     */
+    TransacaoConsolidada obterConsolidadoParaAbastecimentoEData(AutorizacaoPagamento abastecimento, Date dataReferencia);
 
     /**
      * Método que realiza a pesquisa de transações consolidadas para Notas Fiscais no contexto da API
@@ -129,4 +144,69 @@ public interface ITransacaoConsolidadaDados extends IRepositorioBoleiaDados<Tran
      * @return lista de transacções consolidadas em aberta da frota informada.
      */
     List<TransacaoConsolidada> buscarCiclosEmAberto(Long idFrota);
+
+    /**
+     * Obtém a lista de transações abertas que tiveram seu período de abastecimento encerrado
+     * e transações em ajuste que tiveram seu período de ajuste encerrado
+     * @return lista de transacoes candidatas à atualização de status
+     */
+    List<TransacaoConsolidada> obterCiclosParaAtualizarStatus();
+
+    /**
+     * Pesquisa uma lista de transações consolidadas a partir um pv e um período de data.
+     *
+     * @param pv O identificador do pv.
+     * @param de Data inicial do período.
+     * @param ate Data final do período.
+     * @return A lista de transações encontradas.
+     */
+    List<TransacaoConsolidada> pesquisarTransacoesPorPvEData(Long pv, Date de, Date ate);
+
+    /**
+     * Pesquisa o total de reembolso dos consolidados baseadd no filtro de pesquisa.
+     * @param filtro parâmetros utilizados na consulta.
+     * @param usuarioLogado usuario logado que solicita a pesquisa.
+     * @return A soma dos reembolsos.
+     */
+    BigDecimal obterTotalReembolsoPeriodo(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado);
+
+    /**
+     * Pesquisa uma lista de transações consolidadas baseado em um filtro de pesquisa
+     *
+     * @param filtro parâmetros utilizados na consulta
+     * @param usuarioLogado usuario logado que solicita a pesquisa
+     * @return lista de registros encontrados
+     */
+    ResultadoPaginado<TransacaoConsolidada> pesquisarTransacoesFinanceiro(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado);
+
+    /** Obtém os pontos de datas e valores de pagamento de reembolsos previstos e pagos para o gráfico do financeiro.
+     *
+     * Nota 1: Somente serão exibidos reembolsos com valores acima de zero.
+     * Nota 2: Os reembolsos previstos existentes sao aqueles que tem status EM_ABERTO, ATRASADO ou AGUARDANDO_NF.
+     * Nota 3: Há uma diferenciação entre reembolsos previstos existentes e não gerados que é importante para comportar diferentes fases do projeto,
+     * onde o reembolso era gerado independente da emissão de notas como também de etapas em que tal emissão era crucial para a sua criação.
+     * Neste caso, os reembolsos devem ter sua data de previsão de pagamento de reembolso calculada.
+     * @param filtro filtro contendo as informações que devem ser consideradas na consulta.
+     * @param usuarioLogado Usuario logado no sistema que fez a requisição.
+     * @return um mapa com data e valores de reembolsos previstos.
+     */
+    List<PontoGraficoReembolsoRevendaDTO> obterPontosGraficoReembolsos(FiltroPesquisaReembolsoGraficoVo filtro, Usuario usuarioLogado);
+
+    /** Obtém o número de ciclos com reembolso atrasados para mostrar no banner
+     *
+     * @param filtro O filtro com as informações que devem ser consideradas na busca.
+     * @param usuario Usuario logado que solicita a pesquisa.
+     * @return Número de reembolsos atrasados.
+     */
+    Integer obterNumeroReembolsosAtrasados(FiltroPesquisaFinanceiroVo filtro, Usuario usuario);
+
+    /**
+     * Busca uma lista com transações consolidadas agrupadas para ponto de venda.
+     *
+     * @param idPv Identificador do ponto de venda.
+     * @param dataInicioPeriodo A data início utilizada na pesquisa.
+     * @param dataFimPeriodo A data fim utilizada na pesquisa.
+     * @return Uma lista com as transações consolidadas agrupadas.
+     */
+    List<AgrupamentoTransacaoConsolidadaPvVo> pesquisarTransacoesConsolidadasAgrupadasParaPv(Long idPv, Date dataInicioPeriodo, Date dataFimPeriodo);
 }

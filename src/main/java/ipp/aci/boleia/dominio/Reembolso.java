@@ -51,7 +51,7 @@ public class Reembolso implements IPersistente, IPertenceRevendedor {
     private Integer quantidadeParcelas;
 
     @Column(name = "DT_VENC_PGTO")
-    private Date dataVencimentoPagto;
+    private Date dataVencimentoPgto;
 
     @Column(name = "VR_REEMB")
     private BigDecimal valorReembolso;
@@ -135,12 +135,12 @@ public class Reembolso implements IPersistente, IPertenceRevendedor {
         this.quantidadeParcelas = quantidadeParcelas;
     }
 
-    public Date getDataVencimentoPagto() {
-        return dataVencimentoPagto;
+    public Date getDataVencimentoPgto() {
+        return dataVencimentoPgto;
     }
 
-    public void setDataVencimentoPagto(Date dataVencimentoPagto) {
-        this.dataVencimentoPagto = dataVencimentoPagto;
+    public void setDataVencimentoPgto(Date dataVencimentoPgto) {
+        this.dataVencimentoPgto = dataVencimentoPgto;
     }
 
     public BigDecimal getValorReembolso() {

@@ -98,13 +98,13 @@ public class AutorizacaoPagamentoSd {
      * Retorna lista de Autorizacao Pagamento Edicao que tem a necessidade de alterar o status
      * de edição de cada registro de Autorizacao Pagamento se o mesmo teve alguma alteracao
      *
-     * @param transacaoConsolidada Consolidado com os registros de Autorizacao Pagamento
+     * @param autorizacaoPagamentos Lista de abastecimentos presentes em um ciclo
      * @return Lista de AutorizacaoPagamentoEdicao que precisam ser alteradas
      */
-    public List<AutorizacaoPagamentoEdicao> obtemAutorizacoesPendentesDeUmConsolidado(TransacaoConsolidada transacaoConsolidada) {
+    public List<AutorizacaoPagamentoEdicao> obtemAutorizacoesPendentesDeUmConsolidado(List<AutorizacaoPagamento> autorizacaoPagamentos) {
         List<AutorizacaoPagamentoEdicao> autorizacoesPendentes = new ArrayList<>();
 
-        for (AutorizacaoPagamento autorizacaoPagamento: transacaoConsolidada.getAutorizacaoPagamentos()) {
+        for (AutorizacaoPagamento autorizacaoPagamento: autorizacaoPagamentos) {
             List<AutorizacaoPagamentoEdicao> edicoesPendentesAbastecimento = repositorioAutorizacaoPagamentoEdicao.pesquisar(
                             new FiltroPesquisaAutorizacaoPagamentoEdicaoVo(autorizacaoPagamento.getId(), StatusEdicao.PENDENTE, new ParametroOrdenacaoColuna[] {
                                     new ParametroOrdenacaoColuna("dataEdicao", Ordenacao.DECRESCENTE),

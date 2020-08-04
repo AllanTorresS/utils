@@ -43,6 +43,16 @@ public enum ParametroSistema {
     private final EstruturaParametroSistema estrutura;
     private final Class<ILogicaParametroSistema<?>> logicaExecucao;
 
+    /**
+     * Construtor do enum
+     * @param codigo Código do parâmetro
+     * @param tipoRestritividade Tipo de restritividade do parâmetro
+     * @param restritivaPorDefault Se o parâmetro é restritivo por default
+     * @param estrutura Estrutura do parâmetro
+     * @param nome Nome do parâmetro
+     * @param descricao Descrição do parâmetro
+     * @param logicaExecucao Classe que contém a lógica de execução do parâmetro
+     */
     ParametroSistema(Integer codigo, TipoRestritividade tipoRestritividade, boolean restritivaPorDefault, boolean sempreAtivo, EstruturaParametroSistema estrutura, String nome, String descricao, Class logicaExecucao) {
         this.codigo = codigo;
         this.tipoRestritividade = tipoRestritividade;

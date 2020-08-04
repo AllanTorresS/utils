@@ -257,6 +257,14 @@ public class AutorizacaoPagamentoEdicao implements IPersistente {
     @JoinColumn(name = "CD_TRANS_CONSOL")
     private TransacaoConsolidada transacaoConsolidada;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_TRANS_CONSOL_POSTERGADA")
+    private TransacaoConsolidada transacaoConsolidadaPostergada;
+
+    @Column(name = "DT_POSTERGACAO")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataPostergacao;
+
     @DecimalMax(VALOR_MAXIMO_AUTORIZACAO)
     @Column(name = "VA_DESCONTO_TOTAL")
     private BigDecimal valorDescontoTotal;
@@ -392,6 +400,8 @@ public class AutorizacaoPagamentoEdicao implements IPersistente {
         this.setHodometroHorimetroDataHoraEdicao(abastecimento.getHodometroHorimetroDataHoraEdicao());
         this.setTransacaoFrota(abastecimento.getTransacaoFrota());
         this.setTransacaoConsolidada(abastecimento.getTransacaoConsolidada());
+        this.setTransacaoConsolidadaPostergada(abastecimento.getTransacaoConsolidadaPostergada());
+        this.setDataPostergacao(abastecimento.getDataPostergacao());
         this.setValorDescontoTotal(abastecimento.getValorDescontoTotal());
         this.setCicloRepasse(abastecimento.getCicloRepasse());
         this.setUnidade(abastecimento.getUnidade());
@@ -856,6 +866,22 @@ public class AutorizacaoPagamentoEdicao implements IPersistente {
 
     public void setTransacaoConsolidada(TransacaoConsolidada transacaoConsolidada) {
         this.transacaoConsolidada = transacaoConsolidada;
+    }
+
+    public TransacaoConsolidada getTransacaoConsolidadaPostergada() {
+        return transacaoConsolidadaPostergada;
+    }
+
+    public void setTransacaoConsolidadaPostergada(TransacaoConsolidada transacaoConsolidadaPostergada) {
+        this.transacaoConsolidadaPostergada = transacaoConsolidadaPostergada;
+    }
+
+    public Date getDataPostergacao() {
+        return dataPostergacao;
+    }
+
+    public void setDataPostergacao(Date dataPostergacao) {
+        this.dataPostergacao = dataPostergacao;
     }
 
     public BigDecimal getValorDescontoTotal() {

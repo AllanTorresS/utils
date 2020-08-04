@@ -201,6 +201,22 @@ public final class UtilitarioFormatacao {
     }
 
     /**
+     * Formata um decimal para apresentação na tela com prefixo do Real (R$) considerando
+     * o sinal de positivo ou negativo.
+     * Se a quantidade de casas decimais do valor fornecido estiver abaixo de 2,
+     * modificamos para 2.
+     *
+     * @param decimal valor decimal
+     * @return valor formatado
+     */
+    public static String formatarDecimalMoedaRealComSinal(BigDecimal decimal) {
+        if (decimal != null && decimal.scale() < 2) {
+            decimal = decimal.setScale(2, BigDecimal.ROUND_HALF_UP);
+        }
+        return formatarDecimal(decimal, ConstantesFormatacao.FORMATO_MOEDA_REAL_COM_SINAL);
+    }
+
+    /**
      * Formata um decimal para apresentação na tela com prefixo do Real (R$)
      * definindo a escala utilizada e arredondamento {@link java.math.BigDecimal#ROUND_HALF_UP}.
      *
@@ -210,6 +226,19 @@ public final class UtilitarioFormatacao {
      */
     public static String formatarDecimalMoedaReal(BigDecimal decimal, int scale) {
         return decimal != null ? formatarDecimalMoedaReal(decimal.setScale(scale, BigDecimal.ROUND_HALF_UP)) : null;
+    }
+
+    /**
+     * Formata um decimal para apresentação na tela com prefixo do Real (R$) considerando
+     * o sinal de positivo ou negativo definindo a escala utilizada e
+     * arredondamento {@link java.math.BigDecimal#ROUND_HALF_UP}.
+     *
+     * @param decimal valor decimal
+     * @param scale   valor do número de casas decimais
+     * @return valor formatado
+     */
+    public static String formatarDecimalMoedaRealComSinal(BigDecimal decimal, int scale) {
+        return decimal != null ? formatarDecimalMoedaRealComSinal(decimal.setScale(scale, BigDecimal.ROUND_HALF_UP)) : null;
     }
 
     /**
