@@ -57,7 +57,7 @@ public class NfeAnexosArmazemSd {
             anexoArmazem.setNumeroNota(ConstantesNotaFiscal.NOTA_FISCAL_PREFIX + nota.getNumeroDaNota());
         }
         if (nota.getChaveAcesso() != null) {
-            anexoArmazem.setChaveAcesso(nota.getChaveAcesso());
+            anexoArmazem.setChaveAcesso(nota.getChaveAcesso().replace(" ",""));
         }
 
         anexoArmazem.setEmail(dadoArmazem);
