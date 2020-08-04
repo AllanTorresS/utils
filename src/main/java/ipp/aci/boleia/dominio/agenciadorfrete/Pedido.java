@@ -81,12 +81,6 @@ public class Pedido implements IPersistente {
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataCriacao;
 
-    @Column(name = "DS_COD_ABAST")
-    private String codigoAbastecimento; //TODO: refatorar
-
-    @Column(name = "DT_EXP_COD_ABAST")
-    private Date expiracaoCodigoAbastecimento; //TODO: refatorar
-
     @Column(name = "NO_VERSAO")
     @Version
     private Long versao;
@@ -187,21 +181,5 @@ public class Pedido implements IPersistente {
 
     public void setTransacao(Transacao transacao) {
         this.transacao = transacao;
-    }
-
-    public String getCodigoAbastecimento() {
-        return codigoAbastecimento;
-    }
-
-    public void setCodigoAbastecimento(String codigoAbastecimento) {
-        this.codigoAbastecimento = codigoAbastecimento;
-    }
-
-    public Date getExpiracaoCodigoAbastecimento() {
-        return expiracaoCodigoAbastecimento;
-    }
-
-    public void setExpiracaoCodigoAbastecimento(Date expiracaoCodigoAbastecimento) {
-        this.expiracaoCodigoAbastecimento = expiracaoCodigoAbastecimento;
     }
 }
