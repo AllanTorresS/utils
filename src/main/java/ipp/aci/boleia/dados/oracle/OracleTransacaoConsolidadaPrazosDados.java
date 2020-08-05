@@ -1,0 +1,20 @@
+package ipp.aci.boleia.dados.oracle;
+
+import ipp.aci.boleia.dados.IRepositorioBoleiaDados;
+import org.springframework.stereotype.Repository;
+
+/**
+ * Repositório da entidade TransacaoConsolidadaPrazos.
+ */
+@Repository
+public class OracleTransacaoConsolidadaPrazosDados extends OracleRepositorioBoleiaDados<TransacaoConsolidadaPrazos> implements IRepositorioBoleiaDados<TransacaoConsolidadaPrazos> {
+
+    /**
+     * Instancia o repositório
+     */
+    public OracleTransacaoConsolidadaPrazosDados() {
+        super(TransacaoConsolidadaPrazos.class);
+    }
+
+
+}

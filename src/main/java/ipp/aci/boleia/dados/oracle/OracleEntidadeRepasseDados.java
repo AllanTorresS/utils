@@ -11,7 +11,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class OracleEntidadeRepasseDados extends OracleRepositorioBoleiaDados<EntidadeRepasse>
         implements IEntidadeRepasseDados {
-    final Long CNPJ_IPIRANGA = 33337122000127L;
+
+    private static final Long CNPJ_IPIRANGA = 33337122000127L;
 
     /**
      * Construtor padrão

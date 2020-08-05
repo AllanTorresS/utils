@@ -44,6 +44,7 @@ import ipp.aci.boleia.util.Ordenacao;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
 import ipp.aci.boleia.util.negocio.ParametrosPesquisaBuilder;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
@@ -136,6 +137,11 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
             " AND a.dataRequisicao BETWEEN :dataInicial AND :dataFinal" +
             " GROUP BY c.codigoCorporativo, a.frota.id, i.combustivel.codigoCombustivelCorporativo, TRUNC(a.dataRequisicao)";
 
+    private static final String QUERY_AUTORIZACOES_EM_LISTA_DE_ABASTECIMENTOS_POR_FLAG_JUSTIFICATIVA = "" +
+            " SELECT a FROM AutorizacaoPagamento a " +
+            " JOIN a.notasFiscais nf " +
+            " where a.id in (:idsAutorizacoes) " +
+            " and nf.isJustificativa = :isJustificativa ";
 
     /**
      * Instancia o repositorio
@@ -316,12 +322,28 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
 
         povoarParametroIgual("frota", filtro.getFrota() != null ? filtro.getFrota().getId() : null, parametros);
         povoarParametroIgual("pontoVenda", filtro.getPontoDeVenda() != null ? filtro.getPontoDeVenda().getId() : null, parametros);
-        povoarParametroDataMaiorIgual("dataProcessamento", filtro.getDe(), parametros);
-        povoarParametroDataMenorIgual("dataProcessamento", filtro.getAte(), parametros);
+        if(filtro.getDe() != null) {
+            ParametroPesquisaDataMaiorOuIgual dataProcessamentoDe = new ParametroPesquisaDataMaiorOuIgual("dataProcessamento", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe()));
+            ParametroPesquisaDataMaiorOuIgual dataPostergacaoDe = new ParametroPesquisaDataMaiorOuIgual("dataPostergacao", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe()));
+            parametros.add(new ParametroPesquisaOr(dataProcessamentoDe, dataPostergacaoDe));
+        }
+        if(filtro.getAte() != null) {
+            ParametroPesquisaDataMenorOuIgual dataProcessamentoAte = new ParametroPesquisaDataMenorOuIgual("dataProcessamento", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte()));
+            ParametroPesquisaDataMenorOuIgual dataPostergacaoAte = new ParametroPesquisaDataMenorOuIgual("dataPostergacao", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte()));
+            parametros.add(new ParametroPesquisaOr(dataProcessamentoAte, dataPostergacaoAte));
+        }
         povoarParametroDataMaiorIgual("dataRequisicao", filtro.getRequisicaoDe(), parametros);
         povoarParametroDataMenorIgual("dataRequisicao", filtro.getRequisicaoAte(), parametros);
-        povoarParametroDataMaiorIgual("dataProcessamento", filtro.getProcessamentoDe(), parametros);
-        povoarParametroDataMenorIgual("dataProcessamento", filtro.getProcessamentoAte(), parametros);
+        if(filtro.getProcessamentoDe() != null) {
+            ParametroPesquisaDataMaiorOuIgual dataProcessamentoDe = new ParametroPesquisaDataMaiorOuIgual("dataProcessamento", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getProcessamentoDe()));
+            ParametroPesquisaDataMaiorOuIgual dataPostergacaoDe = new ParametroPesquisaDataMaiorOuIgual("dataPostergacao", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getProcessamentoDe()));
+            parametros.add(new ParametroPesquisaOr(dataProcessamentoDe, dataPostergacaoDe));
+        }
+        if(filtro.getProcessamentoAte() != null) {
+            ParametroPesquisaDataMenorOuIgual dataProcessamentoAte = new ParametroPesquisaDataMenorOuIgual("dataProcessamento", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getProcessamentoAte()));
+            ParametroPesquisaDataMenorOuIgual dataPostergacaoAte = new ParametroPesquisaDataMenorOuIgual("dataPostergacao", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getProcessamentoAte()));
+            parametros.add(new ParametroPesquisaOr(dataProcessamentoAte, dataPostergacaoAte));
+        }
         povoarParametroDataMaiorIgual("dataRequisicao", filtro.getDataAbastecimento(), parametros);
         povoarParametroDataMenorIgual("dataRequisicao", filtro.getDataAbastecimento(), parametros);
         povoarParametroLike("placaVeiculo", filtro.getPlaca(), parametros);
@@ -333,8 +355,16 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         povoarParametroModalidadePagementoPre(filtro, parametros);
         povoarParametrosStatus(filtro, parametros);
         povoarParametrosEstorno(filtro, parametros);
-        povoarParametroDataHoraMaiorIgual("dataProcessamento", filtro.getDataHoraProcessamentoDe(), parametros);
-        povoarParametroDataHoraMenorIgual("dataProcessamento", filtro.getDataHoraProcessamentoAte(), parametros);
+        if(filtro.getDataHoraProcessamentoDe() != null) {
+            ParametroPesquisaDataMaiorOuIgual dataProcessamentoDe = new ParametroPesquisaDataMaiorOuIgual("dataProcessamento", filtro.getDataHoraProcessamentoDe());
+            ParametroPesquisaDataMaiorOuIgual dataPostergacaoDe = new ParametroPesquisaDataMaiorOuIgual("dataProcessamento", filtro.getDataHoraProcessamentoDe());
+            parametros.add(new ParametroPesquisaOr(dataProcessamentoDe, dataPostergacaoDe));
+        }
+        if(filtro.getDataHoraProcessamentoAte() != null) {
+            ParametroPesquisaDataMenorOuIgual dataProcessamentoAte = new ParametroPesquisaDataMenorOuIgual("dataProcessamento", filtro.getDataHoraProcessamentoAte());
+            ParametroPesquisaDataMenorOuIgual dataPostergacaoAte = new ParametroPesquisaDataMenorOuIgual("dataPostergacao", filtro.getDataHoraProcessamentoAte());
+            parametros.add(new ParametroPesquisaOr(dataProcessamentoAte, dataPostergacaoAte));
+        }
         povoarParametrosAjustados(filtro, parametros);
 
         if(filtro.isContingencia()){
@@ -350,7 +380,10 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         if(filtro.getIdConsolidado() != null){
             parametros.add(new ParametroPesquisaIgual("empresaAgregadaExigeNf", filtro.getEmpresaAgregada() != null));
             parametros.add(new ParametroPesquisaIgual("unidadeExigeNf", filtro.getUnidade() != null));
-            parametros.add(new ParametroPesquisaIgual("transacaoConsolidada.id", filtro.getIdConsolidado()));
+
+            ParametroPesquisaIgual abastecimentoNaoPostergado = new ParametroPesquisaIgual("transacaoConsolidada.id", filtro.getIdConsolidado());
+            ParametroPesquisaIgual abastecimentoPostergadoParaCiclo = new ParametroPesquisaIgual("transacaoConsolidadaPostergada.id", filtro.getIdConsolidado());
+            parametros.add(new ParametroPesquisaOr(abastecimentoNaoPostergado, abastecimentoPostergadoParaCiclo));
         }
         if(filtro.isPdv()){
             parametros.add(new ParametroPesquisaIgual("tipoAutorizacaoPagamento", TipoAutorizacaoPagamento.PDV_WEB.getValue()));
@@ -575,6 +608,10 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         return pesquisar((InformacaoPaginacao)null, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
 
+    @Override
+    public List<AutorizacaoPagamento> obterAbastecimentosPostergadosParaCiclo(TransacaoConsolidada transacaoConsolidada) {
+        return pesquisar((ParametroOrdenacaoColuna) null, new ParametroPesquisaIgual("transacaoConsolidadaPostergada.id", transacaoConsolidada.getId()));
+    }
 
     /**
      * Cria a lista de parametros para a pesquisa da tela de listagem de autorizacoes de pagamento
@@ -848,4 +885,16 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         return pesquisar(null, CONSULTA_VENDA_PROFROTAS, VolumeVendasClienteProFrotaVo.class, new ParametroPesquisaIgual("dataInicial", dataInicial), new ParametroPesquisaIgual("dataFinal", dataFinal)).getRegistros();
     }
 
+    @Override
+    public List<AutorizacaoPagamento> obterAbastecimentosComJustificativaAssociadaPorAbastecimentos(List<Long> idsAutorizacoes) {
+
+        if(CollectionUtils.isNotEmpty(idsAutorizacoes)) {
+            return pesquisar(null, QUERY_AUTORIZACOES_EM_LISTA_DE_ABASTECIMENTOS_POR_FLAG_JUSTIFICATIVA,
+                    new ParametroPesquisaIgual("idsAutorizacoes", idsAutorizacoes),
+                    new ParametroPesquisaIgual("isJustificativa", true)).getRegistros();
+        } else {
+            return new ArrayList<>();
+        }
+
+    }
 }

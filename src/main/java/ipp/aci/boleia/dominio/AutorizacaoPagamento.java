@@ -483,9 +483,6 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
         this.codigoRFIDFrentista = codigoRFIDFrentista;
     }
 
-    @Transient
-    private TipoErroAutorizacaoPagamento tipoErroAutorizacaoPagamento;
-
     @Override
     public Long getId() {
         return id;
