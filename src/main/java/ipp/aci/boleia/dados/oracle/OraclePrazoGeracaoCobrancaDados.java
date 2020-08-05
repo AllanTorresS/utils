@@ -1,5 +1,7 @@
 package ipp.aci.boleia.dados.oracle;
 
+import ipp.aci.boleia.dados.IPrazoGeracaoCobrancaDados;
+import ipp.aci.boleia.dominio.PrazoGeracaoCobranca;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import org.springframework.stereotype.Repository;
 

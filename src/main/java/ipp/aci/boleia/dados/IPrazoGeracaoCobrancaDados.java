@@ -1,5 +1,7 @@
 package ipp.aci.boleia.dados;
 
+import ipp.aci.boleia.dominio.PrazoGeracaoCobranca;
+
 /**
  * Contrato para implementação de repositórios da entidade PrazoGeracaoCobranca.
  */

@@ -10,9 +10,9 @@ import ipp.aci.boleia.dominio.vo.FiltroPesquisaFinanceiroVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaReembolsoGraficoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaReembolsoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaTransacaoConsolidadaVo;
+import ipp.aci.boleia.dominio.vo.PontosGraficoFinanceiroVo;
 import ipp.aci.boleia.dominio.vo.frotista.FiltroPesquisaNotaFiscalFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.ResultadoPaginadoFrtVo;
-import ipp.aci.boleia.visao.dto.PontoGraficoReembolsoRevendaDTO;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -190,7 +190,7 @@ public interface ITransacaoConsolidadaDados extends IRepositorioBoleiaDados<Tran
      * @param usuarioLogado Usuario logado no sistema que fez a requisição.
      * @return um mapa com data e valores de reembolsos previstos.
      */
-    List<PontoGraficoReembolsoRevendaDTO> obterPontosGraficoReembolsos(FiltroPesquisaReembolsoGraficoVo filtro, Usuario usuarioLogado);
+    List<PontosGraficoFinanceiroVo> obterPontosGraficoReembolsos(FiltroPesquisaReembolsoGraficoVo filtro, Usuario usuarioLogado);
 
     /** Obtém o número de ciclos com reembolso atrasados para mostrar no banner
      *

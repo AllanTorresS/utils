@@ -1482,16 +1482,6 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     }
 
     /**
-     * Verifica se a nota fiscal esta justificada
-     *
-     * @return True, caso a nota fiscal esteja com status igual a JUSTIFICADA
-     */
-    @Transient
-    public boolean notaFiscalEstaJustificada() {
-        return statusNotaFiscalEsta(StatusNotaFiscalAbastecimento.JUSTIFICADA);
-    }
-
-    /**
      * Informa se a autorização de pagamento possui pendência de emissão de nota fiscal
      * levando em consideração a exigência de emissão e status de autorização.
      *

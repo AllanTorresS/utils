@@ -413,7 +413,7 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
      */
     @Transient
     public boolean isPrazoEmissaoNotaVencido(Date dataHoraCorrente) {
-        return dataPrazoEmissaoNfe.after(dataHoraCorrente);
+        return prazos.getDataLimiteEmissaoNfe().after(dataHoraCorrente);
     }
 
     /**
