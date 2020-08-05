@@ -260,6 +260,41 @@ public class OraclePrecoBaseDados extends OracleOrdenacaoPrecosDados<PrecoBase> 
     }
 
     @Override
+    public List<PrecoBase> buscarPrecosPorFrotaLocalizacaoCombustivel(FiltroPesquisaLocalizacaoVo filtro, List<Long> idsTipoCombustivel ){
+
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaMaior("pontoVenda.latitude", new BigDecimal(filtro.getLatitudeInicial())));
+        parametros.add(new ParametroPesquisaMenor("pontoVenda.latitude", new BigDecimal(filtro.getLatitudeFinal())));
+
+        parametros.add(new ParametroPesquisaMaior("pontoVenda.longitude", new BigDecimal(filtro.getLongitudeInicial())));
+        parametros.add(new ParametroPesquisaMenor("pontoVenda.longitude", new BigDecimal(filtro.getLongitudeFinal())));
+
+        parametros.add(new ParametroPesquisaIgual("pontoVenda.status", StatusAtivacao.ATIVO.getValue()));
+
+        parametros.add(new ParametroPesquisaIgual("pontoVenda.statusHabilitacao", StatusHabilitacaoPontoVenda.HABILITADO.getValue()));
+        parametros.add(new ParametroPesquisaIn("precoMicromercado.tipoCombustivel.id", idsTipoCombustivel));
+
+
+        parametros.add(new ParametroPesquisaIn("status", Arrays.asList(StatusAlteracaoPrecoPosto.VIGENTE.getValue(),
+                StatusAlteracaoPrecoPosto.ACEITO.getValue())));
+        parametros.add(new ParametroPesquisaNulo("preco", true));
+
+        ParametroOrdenacaoColuna ordenacao = new ParametroOrdenacaoColuna("id");
+
+        return pesquisar(ordenacao, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+    @Override
+    public List<PrecoBase> buscarPrecosVigentesPorCombustiveis(Long idPtov, List<Long> idsTipoCombustivel) {
+        List<Integer> statusVigentes = new ArrayList<>();
+        statusVigentes.add(StatusAlteracaoPrecoPosto.VIGENTE.getValue());
+        statusVigentes.add(StatusAlteracaoPrecoPosto.ACEITO.getValue());
+        statusVigentes.add(StatusAlteracaoPrecoPosto.ACEITE_PENDENTE_REVENDA.getValue());
+        statusVigentes.add(StatusAlteracaoPrecoPosto.ACEITE_PENDENTE_INTERNO.getValue());
+        return pesquisarSemIsolamentoDados((ParametroOrdenacaoColuna) null, new ParametroPesquisaIgual("pontoVenda.id",idPtov), new ParametroPesquisaIn("precoMicromercado.tipoCombustivel.id",idsTipoCombustivel), new ParametroPesquisaIn("status",statusVigentes));
+    }
+
+    @Override
     protected String getPrefixoCampoFrotaPontoVenda() {
         return null;
     }
