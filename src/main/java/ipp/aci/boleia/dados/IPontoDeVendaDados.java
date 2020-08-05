@@ -105,6 +105,14 @@ public interface IPontoDeVendaDados extends IRepositorioBoleiaDados<PontoDeVenda
      * @return Lista de Pontos de Venda encontrados
      */
     List<PontoDeVenda> pesquisarPorMunicipioNome(FiltroPesquisaParcialPtovVo filtro);
+    
+    /**
+     * Pesquisa PontoDeVenda sem vínculo com a frota a partir do CNPJ ou Nome
+     *
+     * @param filtro O filtro da pesquisa
+     * @return Lista de Pontos de Venda encontrados
+     */
+    public List<PontoDeVenda> pesquisarSemVinculoComFrota(FiltroPesquisaParcialPtovVo filtro);
 
     /**
      * Obtem todos PVs habilitados da solução
