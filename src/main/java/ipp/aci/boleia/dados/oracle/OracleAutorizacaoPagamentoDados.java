@@ -559,6 +559,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     public List<AutorizacaoPagamento> obterAbastecimentoPorNota(Long cnpjDest, Long cnpjEmit, Date dataEmissao, BigDecimal valorTotalNota) {
         final BigDecimal toleranciaDeValorNota = BigDecimal.valueOf(.05);
         List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaIgual("status", StatusAutorizacao.AUTORIZADO.getValue()));
         parametros.add(new ParametroPesquisaIgual("pontoVenda.componentes.codigoPessoa", cnpjEmit));
         parametros.add(
                 new ParametroPesquisaOr(
