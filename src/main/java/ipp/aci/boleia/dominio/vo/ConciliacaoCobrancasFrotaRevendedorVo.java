@@ -36,7 +36,7 @@ public class ConciliacaoCobrancasFrotaRevendedorVo {
      * @param transacaoConsolidada A transacao consolidada da frota e do revendedor
      */
     public ConciliacaoCobrancasFrotaRevendedorVo(TransacaoConsolidada transacaoConsolidada){
-        TransacaoConsolidadaValores valor
+        TransacaoConsolidadaValores valores = transacaoConsolidada.getValores();
         this.dataContabil = formatarDataCurta(transacaoConsolidada.getDataFimPeriodo());
         this.periodoCiclo = formatarPeriodoDiasMes(transacaoConsolidada.getDataInicioPeriodo(),transacaoConsolidada.getDataFimPeriodo(), true);
         this.conta = CONTA_CONTABIL;
