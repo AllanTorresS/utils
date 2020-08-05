@@ -73,6 +73,9 @@ public final  class Rotas {
     public static final  String VIP_API                              = BASE_API + "/vip";
     public static final  String AUTORIZACAO_API                      = BASE_API + "/autorizacao";
     public static final  String PRODUTO_API                          = BASE_API + "/produto";
+    public static final  String AGENCIADOR_FRETE_API                 = BASE_API + "/agenciadorfrete";
+    public static final  String MOTORISTA_AUTONOMO_API               = BASE_API + "/motoristaautonomo";
+    public static final  String AGENCIADOR_FRETE_TAXA_API            = BASE_API + "/agenciadorfretetaxa";
     public static final  String NOTA_FISCAL_API                      = BASE_API + "/notaFiscal";
     public static final  String TRANS_CONSOL_API                     = BASE_API + "/transacaoConsolidada";
     public static final  String TRANS_CONSOL_FROTA_API               = BASE_API + "/transacaoConsolidadaFrota";
@@ -99,6 +102,7 @@ public final  class Rotas {
     public static final  String BANCO_API                            = BASE_API + "/banco";
     public static final  String PARAMETRO_SISTEMA_API                = BASE_API + "/parametroSistema";
     public static final  String PRODUTOS_ADICIONAIS_PDV              = BASE_API + "/produtosAdicionaisPDV";
+    public static final  String PEDIDO_AGENCIADOR_FRETE_API          = BASE_API + "/pedidoAgenciadorFrete";
     public static final  String SISTEMA_API                          = BASE_API + "/sistema";
     public static final  String API_TOKEN_API                        = BASE_API + "/apiToken";
     public static final  String KMVPDVCAMINHONEIRO_API               = BASE_API + "/kmvPdvCaminhoneiro";

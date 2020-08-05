@@ -23,7 +23,7 @@ public final class ExternoRotas {
     public static final String VEICULO_API = BASE_API + "/veiculo";
     public static final String FROTA_API = BASE_API + "/frota";
     public static final String AGENCIADOR_POSTO_API = AGENCIADOR_FRETE_API + "/posto";
-
+    public static final String MOTORISTA_AUTONOMO_API = AGENCIADOR_FRETE_API + "/motoristaautonomo";
 
 
     // Produces
