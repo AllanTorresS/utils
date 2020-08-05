@@ -1,7 +1,6 @@
 package ipp.aci.boleia.dados;
 
 
-import ipp.aci.boleia.dados.IRepositorioBoleiaDados;
 import ipp.aci.boleia.dominio.Documento;
 import ipp.aci.boleia.dominio.DocumentoAceite;
 import ipp.aci.boleia.dominio.Usuario;

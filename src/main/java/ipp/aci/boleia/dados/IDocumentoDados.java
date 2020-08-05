@@ -1,6 +1,5 @@
 package ipp.aci.boleia.dados;
 
-import ipp.aci.boleia.dados.IRepositorioBoleiaDados;
 import ipp.aci.boleia.dominio.Documento;
 import ipp.aci.boleia.dominio.enums.DocumentoStatus;
 import ipp.aci.boleia.dominio.enums.DocumentoTipo;
