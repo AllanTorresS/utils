@@ -18,6 +18,8 @@ import javax.persistence.Transient;
 @Table(name = "MUNICIPIO")
 public class Municipio implements IPersistente {
 
+    private static final long serialVersionUID = 6556006928957662935L;
+
     @Id
     @Column(name = "CD_MUNICIPIO")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_MUNICIPIO")
@@ -72,8 +74,8 @@ public class Municipio implements IPersistente {
     @Transient
     public String getNomeApresentacao() {
         String  nomeApresentacao = this.getNome();
-        String UF = this.getSiglaUf();
+        String sigla = this.getSiglaUf();
         nomeApresentacao += " - ";
-        return nomeApresentacao + UF;
+        return nomeApresentacao + sigla;
     }
 }

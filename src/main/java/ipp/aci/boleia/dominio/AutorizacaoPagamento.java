@@ -1,8 +1,9 @@
 package ipp.aci.boleia.dominio;
 
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import ipp.aci.boleia.dominio.enums.ClassificacaoAgregado;
 import ipp.aci.boleia.dominio.enums.StatusAutorizacao;
+import ipp.aci.boleia.dominio.enums.StatusEdicao;
 import ipp.aci.boleia.dominio.enums.StatusNotaFiscalAbastecimento;
 import ipp.aci.boleia.dominio.enums.TipoErroAutorizacaoPagamento;
 import ipp.aci.boleia.dominio.enums.TipoPreenchimentoLitragem;
@@ -60,6 +61,12 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
 
     public static final String VALOR_MAXIMO_AUTORIZACAO = "99999.999";
     private static final long serialVersionUID = 5442724833587865453L;
+
+    /**
+     * <i>@Formula</i> necessária para que seja possível realizar a ordenação paginada
+     * dos estornos por preço total de abastecimeto sem grandes mudanças na estrutura de pesquisa.
+     */
+    private static final String PRECOCOMBUSTIVEL_FORMULA = "QT_TOTAL_LIT_ABAS * VA_UNITARIO_ABAS";
 
     @Id
     @Column(name = "CD_AUTORIZACAO_PAGAMENTO")
@@ -340,15 +347,12 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     @Column(name = "ID_TIPO_SENHA_AUTO")
     private Integer tipoSenhaAutorizacao;
 
+    @Column(name = "ID_MOTIVO_SEM_SENHA_OU_CODIGO")
+    private Integer codigoMotivoSemSenhaOuCodigo;
+
     @NotAudited
     @Formula(StatusAutorizacao.DECODE_FORMULA)
     private String statusAutorizacaoConvertido;
-
-    @Column(name = "ID_KMV_ACUMULADO")
-    private Integer kmvAcumulado;
-
-    @Column(name = "VA_PONTOS_ACUMULADOS_KMV")
-    private Integer pontosAcumuladosKmv;
 
     @OneToMany(mappedBy = "autorizacaoPagamento", fetch = FetchType.LAZY)
     private List<ItemAutorizacaoPagamento> items;
@@ -445,6 +449,17 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
 
     @Column(name = "ID_PROCESSADO_CAMPANHA")
     private Boolean foiProcessadoPeloGeradorDeCampanhas;
+
+    @Column(name = "ID_STATUS_EDICAO")
+    private Integer statusEdicao;
+
+    @NotAudited
+    @Formula(PRECOCOMBUSTIVEL_FORMULA)
+    private BigDecimal precoCombustivelTotal;
+
+    public AutorizacaoPagamento () {
+        this.statusEdicao = StatusEdicao.NAO_EDITADO.getValue();
+    }
 
     public String getCodigoRFIDFrentista() {
         return codigoRFIDFrentista;
@@ -924,14 +939,6 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
         this.tipoAutorizacaoPagamento = tipoAutorizacaoPagamento;
     }
 
-    public Integer getKmvAcumulado() {
-        return kmvAcumulado;
-    }
-
-    public void setKmvAcumulado(Integer kmvAcumulado) {
-        this.kmvAcumulado = kmvAcumulado;
-    }
-
     public String getStatusAutorizacaoConvertido() {
         return statusAutorizacaoConvertido;
     }
@@ -946,6 +953,14 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
 
     public void setTipoSenhaAutorizacao(Integer tipoSenhaAutorizacao) {
         this.tipoSenhaAutorizacao = tipoSenhaAutorizacao;
+    }
+
+    public Integer getCodigoMotivoSemSenhaOuCodigo() {
+        return codigoMotivoSemSenhaOuCodigo;
+    }
+
+    public void setCodigoMotivoSemSenhaOuCodigo(Integer codigoMotivoSemSenhaOuCodigo) {
+        this.codigoMotivoSemSenhaOuCodigo = codigoMotivoSemSenhaOuCodigo;
     }
 
     public ComandaDigital getComandaDigital() {
@@ -1236,14 +1251,6 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
         this.estadoPV = estadoPV;
     }
 
-    public Integer getPontosAcumuladosKmv() {
-        return pontosAcumuladosKmv;
-    }
-
-    public void setPontosAcumuladosKmv(Integer pontosAcumuladosKmv) {
-        this.pontosAcumuladosKmv = pontosAcumuladosKmv;
-    }
-
     public Integer getStatusRastreador() {
         return statusRastreador;
     }
@@ -1274,6 +1281,22 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
 
     public void setNumeroAbadiPv(Long numeroAbadiPv) {
         this.numeroAbadiPv = numeroAbadiPv;
+    }
+
+    public Integer getStatusEdicao() {
+        return statusEdicao;
+    }
+
+    public void setStatusEdicao(Integer statusEdicao) {
+        this.statusEdicao = statusEdicao;
+    }
+
+    public BigDecimal getPrecoCombustivelTotal() {
+        return precoCombustivelTotal;
+    }
+
+    public void setPrecoCombustivelTotal(BigDecimal precoCombustivelTotal) {
+        this.precoCombustivelTotal = precoCombustivelTotal;
     }
 
     /**
@@ -1441,7 +1464,16 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
         return statusNotaFiscalEsta(StatusNotaFiscalAbastecimento.JUSTIFICADA);
     }
 
-    /***
+    /**
+     * Obtem o valor do abastecimento considerando o desconto
+     * @return o valor total do abastecimento com desconto
+     */
+    @Transient
+    public BigDecimal getValorTotalComDesconto() {
+        return getValorTotal().subtract(getValorDescontoTotal());
+    }
+
+    /**
      * Calcula da data de debito de um abastecimento a partir dos dados da frota
      *
      * @return A data calculada
@@ -1509,5 +1541,44 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
      */
     public Boolean deveGerarRepasse(){
         return BigDecimal.ZERO.compareTo(this.getValorDescontoTotal()) != 0;
+    }
+
+    /**
+     * Informa se a autorização de pagamento possui alguma nota fiscal com justificativa.
+     * @return true, caso possua.
+     */
+    @Transient
+    public boolean possuiNotasFiscaisComJustificativa() {
+        return notasFiscais != null && !getNotasFiscaisComJustificativa().isEmpty();
+    }
+
+    /**
+     * Calcula o consumo relativo a autorizacao de pagamento.
+     * @return consumo relativo a autorizacao de pagamento.
+     */
+    @JsonIgnore
+    public BigDecimal obterConsumo() {
+        final BigDecimal diferencaHodometroHorimetro = obterDiferencaHodometroHorimetro();
+        return diferencaHodometroHorimetro == null || totalLitrosAbastecimento == null ? null :
+            diferencaHodometroHorimetro.divide(totalLitrosAbastecimento, 3, BigDecimal.ROUND_HALF_UP);
+    }
+
+    /**
+     * Obtem a diferenca de hodometro ou horimetro da autorizacao de pagamento.
+     * @return a diferenca de hodometro ou horimetro da autorizacao de pagamento.
+     */
+    @JsonIgnore
+    private BigDecimal obterDiferencaHodometroHorimetro() {
+        if (hodometro != null) {
+            if (hodometroAnterior != null && hodometroAnterior != BigDecimal.ZERO.longValue()) {
+                return new BigDecimal(hodometro - hodometroAnterior);
+            }
+        }
+        if (horimetro != null) {
+            if (horimetroAnterior != null && !horimetroAnterior.equals(BigDecimal.ZERO)) {
+                return horimetro.subtract(horimetroAnterior);
+            }
+        }
+        return null;
     }
 }

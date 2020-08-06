@@ -6,7 +6,7 @@ import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
  * Representa um parametro de pesquisa para clausula SQL NOT EQUAL (&lt;&gt;),
  * a ser usado pelos repositorios do sistema
  */
-public class ParametroPesquisaDiferente extends ParametroPesquisa {
+public class ParametroPesquisaDiferente extends ParametroPesquisa{
 
     /**
      * Construtor

@@ -11,6 +11,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import ipp.aci.boleia.dominio.ComandaDigital;
 import ipp.aci.boleia.dominio.DispositivoMotorista;
 import ipp.aci.boleia.dominio.Frota;
+import ipp.aci.boleia.dominio.ModuloInterno;
 import ipp.aci.boleia.dominio.Motorista;
 import ipp.aci.boleia.dominio.Permissao;
 import ipp.aci.boleia.dominio.PontoDeVenda;
@@ -28,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -116,6 +118,20 @@ public class UtilitarioJwt {
             }
         }
         return token;
+    }
+
+    /**
+     * Exige um tipo de token na requisição.
+     * Caso nao possua, lança um erro de autorização.
+     *
+     * @param request Requisição usada
+     * @param tipoTokenJwt Tipo de token exigido.
+     */
+    public void exigirTipoToken(HttpServletRequest request, TipoTokenJwt tipoTokenJwt) {
+        String token = extrairToken(request);
+        if(!isTipoTokenIgual(JWT.decode(token), tipoTokenJwt)) {
+            throw new AccessDeniedException(null);
+        }
     }
 
     /**
@@ -257,6 +273,34 @@ public class UtilitarioJwt {
                 null);
     }
 
+
+    /**
+     * Cria um token JWT para um módulo interno da aplicação
+     *
+     * @param moduloInterno O módulo interno
+     * @return O token gerado
+     */
+    public String criarTokenModuloInterno(ModuloInterno moduloInterno) {
+
+        Set<String> setPerms  = moduloInterno.getPermissoes().stream().map(Permissao::getChave).collect(Collectors.toSet());
+        List<String> permissoes = new ArrayList<>(setPerms);
+
+        return criarTokenJWT(
+                TipoTokenJwt.MODULO_INTERNO,
+                null,
+                TipoPerfilUsuario.MODULO_INTERNO,
+                moduloInterno.getId(),
+                null,
+                null,
+                0L,
+                permissoes.toArray(new String[permissoes.size()]),
+                null,
+                null,
+                null,
+                null,
+                null);
+    }
+
     /**
      * Cria um token JWT para uma comanda digital para Revenda
      *
@@ -389,7 +433,7 @@ public class UtilitarioJwt {
             throw new ExcecaoBoleiaRuntime(e);
         }
     }
-
+    
     /**
      * Cria um token JWT de acordo com os parametros informados
      *
@@ -613,7 +657,7 @@ public class UtilitarioJwt {
      * @return true se e um token de usuario humano
      */
     public boolean isTokenUsuarioBoleia(DecodedJWT jwt) {
-        return jwt.getClaim(CAMPO_TOKEN_TIPO).asString().equals(TipoTokenJwt.USUARIO_BOLEIA.name());
+        return isTipoTokenIgual(jwt, TipoTokenJwt.USUARIO_BOLEIA);
     }
 
     /**
@@ -623,7 +667,7 @@ public class UtilitarioJwt {
      * @return true se e um token de usuario humano
      */
     public boolean isTokenUsuarioPDV(DecodedJWT jwt) {
-        return jwt.getClaim(CAMPO_TOKEN_TIPO).asString().equals(TipoTokenJwt.USUARIO_PDV.name());
+        return isTipoTokenIgual(jwt, TipoTokenJwt.USUARIO_PDV);
     }
 
     /**
@@ -633,7 +677,7 @@ public class UtilitarioJwt {
      * @return true se e um token de comanda digital
      */
     public boolean isTokenComandaDigital(DecodedJWT jwt) {
-        return jwt.getClaim(CAMPO_TOKEN_TIPO).asString().equals(TipoTokenJwt.COMANDA_DIGITAL.name());
+        return isTipoTokenIgual(jwt, TipoTokenJwt.COMANDA_DIGITAL);
     }
 
     /**
@@ -643,7 +687,7 @@ public class UtilitarioJwt {
      * @return true se e um token de usuario do aplicativo motorista
      */
     public boolean isTokenUsuarioMotorista(DecodedJWT jwt) {
-        return jwt.getClaim(CAMPO_TOKEN_TIPO).asString().equals(TipoTokenJwt.USUARIO_MOTORISTA.name());
+        return isTipoTokenIgual(jwt, TipoTokenJwt.USUARIO_MOTORISTA);
     }
 
     /**
@@ -653,7 +697,18 @@ public class UtilitarioJwt {
      * @return true se e um token de usuario frotista do app do gestor.
      */
     public boolean isTokenDispositivoFrotista(DecodedJWT jwt) {
-        return jwt.getClaim(CAMPO_TOKEN_TIPO).asString().equals(TipoTokenJwt.DISPOSITIVO_FROTISTA.name());
+        return isTipoTokenIgual(jwt, TipoTokenJwt.DISPOSITIVO_FROTISTA);
+    }
+
+    /**
+     * Compara o tipo de um token JWT com outro específico.
+     *
+     * @param jwt Token utilizado na comparação
+     * @param tipoTokenJwt Tipo de token a ser comparadao.
+     * @return True, caso o tipo seja o mesmo.
+     */
+    private boolean isTipoTokenIgual(DecodedJWT jwt, TipoTokenJwt tipoTokenJwt) {
+        return jwt.getClaim(CAMPO_TOKEN_TIPO).asString().equals(tipoTokenJwt.name());
     }
 
     /**
@@ -985,6 +1040,54 @@ public class UtilitarioJwt {
             null,
             null,
             new Long[]{pontoDeVenda.getId()},
+            null);
+    }
+    
+    /**
+     * Cria um token para o pré credenciamento de postos.
+     *
+     * @param cnpj O CNPJ da possível frota.
+     * @param cpf O CPF do possível usuário.
+     * @return O token gerado.
+     */
+    public String criarTokenPreCredenciamentoFrota(Long cnpj, Long cpf) {
+        return criarTokenJWT (
+            TipoTokenJwt.PRE_CREDENCIAMENTO_FROTA,
+            null,
+            TipoTokenJwt.PRE_CREDENCIAMENTO_FROTA.getTipoPerfil(),
+            cpf,
+            "Site Pró-frotas",
+            null,
+            null,
+            TipoTokenJwt.PRE_CREDENCIAMENTO_FROTA.getPermissoes(),
+            cnpj,
+            null,
+            null,
+            null,
+            null);
+    }
+    
+    /**
+     * Cria um token para o pré credenciamento de postos.
+     *
+     * @param cnpj O CNPJ da possível frota.
+     * @param cpf O CPF do possível usuário.
+     * @return O token gerado.
+     */
+    public String criarTokenCredenciamentoFrota(Long cnpj, Long cpf) {
+        return criarTokenJWT (
+            TipoTokenJwt.CREDENCIAMENTO_FROTA,
+            null,
+            TipoTokenJwt.CREDENCIAMENTO_FROTA.getTipoPerfil(),
+            cpf,
+            "Site Pró-frotas",
+            null,
+            null,
+            TipoTokenJwt.CREDENCIAMENTO_FROTA.getPermissoes(),
+            cnpj,
+            null,
+            null,
+            null,
             null);
     }
 }

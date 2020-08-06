@@ -1378,7 +1378,7 @@
     </binding>
     <service name="voucher">
         <port name="voucherSoap" binding="s0:voucherSoap">
-            <soap:address location="http://ensemdes.ipiranga.com.br:7070/csp/ipirangaws/ws.voucher.Service.CLS"/>
+            <soap:address location="${settings.jde.voucher.soap.address}"/>
         </port>
     </service>
 </definitions>

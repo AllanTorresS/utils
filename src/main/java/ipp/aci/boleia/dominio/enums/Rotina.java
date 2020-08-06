@@ -3,6 +3,8 @@ package ipp.aci.boleia.dominio.enums;
 
 import ipp.aci.boleia.util.i18n.IEnumComLabel;
 
+import java.util.Arrays;
+
 /**
  * Indica as rotinas implementadas no sistema
  */
@@ -28,14 +30,19 @@ public enum Rotina implements IEnumComLabel<Rotina> {
     PROPAGACAO_DE_PRECOS_FROTA(17),
     ATUALIZACAO_DADOS_TELEMETRIA_ONIXSAT(18),
     ATUALIZACAO_VEICULOS_ONIXSAT(19),
-    VIGENCIA_IMPORTACA_PRECO_POSTO(20),
+    VIGENCIA_IMPORTACAO_PRECO_POSTO(20),
     SINCRONIZA_ABASTECIMENTO(21),
     CONCILIACAO_POS_ABASTECE_AI(22),
     ENVIO_REPASSE_JDE(23),
     CONCILIACAO_REPASSE(24),
     ATUALIZACAO_STATUS_CAMPANHA(25),
     IMPORTACAO_CONCILIACAO_AUTOMATICA_NOTAS_FISCAIS(27),
-    IMPORTACAO_EMAILS_NOTAS(28);
+    IMPORTACAO_EMAILS_NOTAS(28),
+    EMAIL_MENSAL_KMV_DONO_FROTA(29),
+    INTEGRACAO_APCO(30),
+    VERIFICACAO_ABASTECIMENTO_PENDENTE_AUTORIZACAO(31),
+    VERIFICACAO_FROTA_ATIVACAO_TEMPORARIA(32),
+    VERIFICACAO_SALDO_FROTA(33);
 
     private final Integer value;
 
@@ -64,5 +71,17 @@ public enum Rotina implements IEnumComLabel<Rotina> {
             }
         }
         return null;
+    }
+
+    /**
+     * Obtém o enumerado referente ao parâmetro fornecido
+     *
+     * @param nome nome da rotina
+     * @return enumerado ou nulo
+     */
+    public static Rotina obterPorNome(String nome) {
+        return Arrays.stream(Rotina.values())
+                .filter(t -> t.name().equalsIgnoreCase(nome))
+                .findFirst().orElse(null);
     }
 }

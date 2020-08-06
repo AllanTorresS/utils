@@ -2,6 +2,9 @@ package ipp.aci.boleia.dominio.enums;
 
 import ipp.aci.boleia.util.i18n.IEnumComLabel;
 
+/**
+ * Enumera os diferentes status de anexo.
+ */
 public enum StatusAnexo implements IEnumComLabel<StatusAnexo> {
     NAO_PROCESSADO(0),
     PROCESSADO(1),

@@ -12,10 +12,12 @@ public final class ConstantesNotaFiscal {
 
     public static final String TEMPLATE_DANFE = "danfe";
 
-    public static final String EMITENTE     = "0 - EMITENTE";
+    public static final String EMITENTE = "0 - EMITENTE";
     public static final String DESTINATARIO = "1 - DESTINATÁRIO";
-    public static final String TERCEIROS    = "2 - TERCEIROS";
-    public static final String SEM_FRETE    = "9 - SEM FRETE";
+    public static final String TERCEIROS = "2 - TERCEIROS";
+    public static final String SEM_FRETE = "9 - SEM FRETE";
+
+    public static final int TAMANHO_CHAVE_ACESSO = 44;
 
     /**
      * Impede instanciacao

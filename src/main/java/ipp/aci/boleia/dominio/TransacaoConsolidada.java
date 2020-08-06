@@ -363,12 +363,12 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
      */
     @Transient
     public Date getDataUltimaSubidaNF() {
-        return emptyIfNull(this.getAutorizacaoPagamentos()).stream().map(a ->
-                a.getNotasFiscais().stream().map(n -> n.getDataEmissao()).max(Date::compareTo)
-                        .orElse(null)).filter(Objects::nonNull).max(Date::compareTo).orElse(null);
+       return emptyIfNull(this.getAutorizacaoPagamentos()).stream().map(a ->
+               a.getNotasFiscais().stream().map(n -> n.getDataEmissao()).max(Date::compareTo)
+                       .orElse(null)).filter(Objects::nonNull).max(Date::compareTo).orElse(null);
     }
 
-    /**
+     /**
      * Obtem o status da consolidacao a partir da data atual
      *
      * @param dataCorrente A data atual

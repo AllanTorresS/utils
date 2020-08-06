@@ -24,7 +24,7 @@ public class OraclePermissaoDados extends OracleRepositorioBoleiaDados<Permissao
     }
 
     @Override
-    public List<Permissao> obterPermissoesPortais(Boolean portalFrotista, Boolean portalRevendedor, Boolean portalSolucao, Boolean portalPrecos, Boolean sistemaExterno) {
+    public List<Permissao> obterPermissoesPortais(Boolean portalFrotista, Boolean portalRevendedor, Boolean portalSolucao, Boolean portalPrecos, Boolean sistemaExterno, Boolean moduloInterno) {
 
         List<ParametroPesquisa> params = new ArrayList<>();
 
@@ -46,6 +46,10 @@ public class OraclePermissaoDados extends OracleRepositorioBoleiaDados<Permissao
 
         if(Boolean.TRUE.equals(sistemaExterno)) {
             params.add(new ParametroPesquisaIgual("sistemaExterno", sistemaExterno));
+        }
+
+        if(Boolean.TRUE.equals(moduloInterno)) {
+            params.add(new ParametroPesquisaIgual("moduloInterno", moduloInterno));
         }
 
         return pesquisar(new ParametroOrdenacaoColuna("nome"), params.toArray(new ParametroPesquisa[params.size()]));

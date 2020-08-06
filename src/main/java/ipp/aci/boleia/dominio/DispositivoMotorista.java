@@ -18,6 +18,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -46,10 +47,12 @@ public class DispositivoMotorista implements IPersistente, IPertenceFrota, IPert
     @SequenceGenerator(name = "SEQ_DISPOSITIVO_MOTORISTA", sequenceName = "SEQ_DISPOSITIVO_MOTORISTA", allocationSize = 1)
     private Long id;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_FROTA")
     private Frota frota;
 
+    @NotNull
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_MOTORISTA")
     private Motorista motorista;
@@ -124,6 +127,9 @@ public class DispositivoMotorista implements IPersistente, IPertenceFrota, IPert
 
     @Column(name = "TIMEZONE")
     private String timeZone;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "dispositivoMotorista")
+    private List<DispositivoMotoristaPedido> pedidos;
 
     @Override
     public Long getId() {
@@ -322,5 +328,13 @@ public class DispositivoMotorista implements IPersistente, IPertenceFrota, IPert
 
     public void setTimeZone(String timeZone) {
         this.timeZone = timeZone;
+    }
+
+    public List<DispositivoMotoristaPedido> getPedidos() {
+        return pedidos;
+    }
+
+    public void setPedidos(List<DispositivoMotoristaPedido> pedidos) {
+        this.pedidos = pedidos;
     }
 }

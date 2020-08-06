@@ -7,7 +7,9 @@ import ipp.aci.boleia.dominio.enums.StatusFrota;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaSaldoFrotaVo;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Repository;
@@ -51,6 +53,9 @@ public class OracleSaldoFrotaDados extends OracleRepositorioBoleiaDados<SaldoFro
         if (filtro.getFrota() != null) {
             parametros.add(new ParametroPesquisaIgual("frota.id", filtro.getFrota().getId()));
         }
+        if (filtro.getIdsFrotas() != null) {
+            parametros.add(new ParametroPesquisaIn("frota.id", filtro.getIdsFrotas()));
+        }
         if (filtro.getModalidadePagamento() != null && filtro.getModalidadePagamento().getName() != null) {
             parametros.add(new ParametroPesquisaIgual("frota.modoPagamento", ModalidadePagamento.valueOf(filtro.getModalidadePagamento().getName()).getValue()));
         }
@@ -62,6 +67,9 @@ public class OracleSaldoFrotaDados extends OracleRepositorioBoleiaDados<SaldoFro
         }
         if (filtro.getUf() != null && filtro.getUf().getName() != null) {
             parametros.add(new ParametroPesquisaIgual("frota.unidadeFederativa", filtro.getUf().getName()));
+        }
+        if (filtro.isPossuiLimite() != null && filtro.isPossuiLimite()) {
+            parametros.add(new ParametroPesquisaNulo("frota.saldo.limiteCredito", true));
         }
 
         return parametros;

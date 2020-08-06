@@ -19,6 +19,7 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaior;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMenor;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
+import ipp.aci.boleia.dominio.vo.EnumVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaCobrancaVo;
 import ipp.aci.boleia.dominio.vo.frotista.FiltroPesquisaCobrancaFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.InformacaoPaginacaoFrtVo;
@@ -28,6 +29,7 @@ import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioFormatacaoData;
 import ipp.aci.boleia.util.negocio.ParametrosPesquisaBuilder;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -226,10 +228,18 @@ public class OracleCobrancaDados extends OracleRepositorioBoleiaDados<Cobranca> 
     @Override
     public List<Cobranca> obterCobrancasErroEnvio(Integer numeroTentativas) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
-        parametros.add(new ParametroPesquisaIgual("statusIntegracaoJDE", StatusIntegracaoJde.ERRO_ENVIO.getValue()));
+        parametros.add(new ParametroPesquisaOr(
+				new ParametroPesquisaIgual("statusIntegracaoJDE", StatusIntegracaoJde.ERRO_ENVIO.getValue()),
+				new ParametroPesquisaNulo("statusIntegracaoJDE")
+		));
         parametros.add(new ParametroPesquisaMenor("numeroTentativasEnvio", new BigDecimal(numeroTentativas)));
         return pesquisar(new ParametroOrdenacaoColuna("dataFimPeriodo", Ordenacao.CRESCENTE), parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
+
+	@Override
+	public Cobranca desanexar(Cobranca cobranca) {
+		return super.desanexar(cobranca);
+	}
 
 	/**
 	 * Constroi um {@link ParametroPesquisa} para status de cobrança
@@ -274,19 +284,34 @@ public class OracleCobrancaDados extends OracleRepositorioBoleiaDados<Cobranca> 
      * @param parametros A lista corrente de parametros
      */
     private void povoarParametrosStatusPagamento(FiltroPesquisaCobrancaVo filtro, List<ParametroPesquisa> parametros) {
-        if (filtro.getStatusPagamento() != null && filtro.getStatusPagamento().getName() != null) {
-            if (StatusPagamentoCobranca.valueOf(filtro.getStatusPagamento().getName()).getValue().equals(StatusPagamentoCobranca.VENCIDO.getValue())){
-                parametros.add(new ParametroPesquisaOr(new ParametroPesquisaIgual("status", StatusPagamentoCobranca.EM_ABERTO.getValue()),new ParametroPesquisaIgual("status", StatusPagamentoCobranca.VENCIDO.getValue())));
-                parametros.add(new ParametroPesquisaDataMenor("dataVencimentoPagto", UtilitarioCalculoData.obterPrimeiroInstanteDia(ambiente.buscarDataAmbiente())));
-            } else {
-                parametros.add(new ParametroPesquisaIgual("status", StatusPagamentoCobranca.valueOf(filtro.getStatusPagamento().getName()).getValue()));
-                if (StatusPagamentoCobranca.valueOf(filtro.getStatusPagamento().getName()).getValue().equals(StatusPagamentoCobranca.EM_ABERTO.getValue())){
-                    parametros.add(new ParametroPesquisaOr(
-                    		new ParametroPesquisaDataMaiorOuIgual("dataVencimentoPagto", ambiente.buscarDataAmbiente()),
-							new ParametroPesquisaNulo("dataVencimentoPagto"))
-					);
-                }
-            }
+        if (CollectionUtils.isNotEmpty(filtro.getStatusPagamento())) {
+        	ParametroPesquisaOr parametrosStatusOr = new ParametroPesquisaOr();
+
+			for (EnumVo statusPagamento : filtro.getStatusPagamento()) {
+				if(statusPagamento.getName() != null) {
+					if (StatusPagamentoCobranca.valueOf(statusPagamento.getName()).getValue().equals(StatusPagamentoCobranca.VENCIDO.getValue())){
+						parametrosStatusOr.addParametro(new ParametroPesquisaAnd(
+							new ParametroPesquisaOr(new ParametroPesquisaIgual("status", StatusPagamentoCobranca.EM_ABERTO.getValue()),new ParametroPesquisaIgual("status", StatusPagamentoCobranca.VENCIDO.getValue())),
+							new ParametroPesquisaDataMenor("dataVencimentoPagto", UtilitarioCalculoData.obterPrimeiroInstanteDia(ambiente.buscarDataAmbiente()))
+						));
+					} else {
+						ParametroPesquisaAnd parametrosPesquisaAnd = new ParametroPesquisaAnd();
+
+						parametrosPesquisaAnd.addParametro(new ParametroPesquisaIgual("status", StatusPagamentoCobranca.valueOf(statusPagamento.getName()).getValue()));
+
+						if (StatusPagamentoCobranca.valueOf(statusPagamento.getName()).getValue().equals(StatusPagamentoCobranca.EM_ABERTO.getValue())){
+							parametrosPesquisaAnd.addParametro(new ParametroPesquisaOr(
+								new ParametroPesquisaDataMaiorOuIgual("dataVencimentoPagto", ambiente.buscarDataAmbiente()),
+								new ParametroPesquisaNulo("dataVencimentoPagto"))
+							);
+						}
+
+						parametrosStatusOr.addParametro(parametrosPesquisaAnd);
+					}
+				}
+			}
+
+			parametros.add(parametrosStatusOr);
         }
     }
 }

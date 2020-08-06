@@ -60,7 +60,6 @@ public class EmpresaAgregadaSd {
     /**
      * Corrige as entidades relacionadas em relação a hierarquia da frota
      * (Motorista,Veiculo e Grupo Operacional)
-     *
      * @param id id da unidade
      */
     private void corrigirDadosRelacionados(Long... id) {

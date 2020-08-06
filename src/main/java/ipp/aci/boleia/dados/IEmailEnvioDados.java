@@ -20,11 +20,11 @@ public interface IEmailEnvioDados {
     /**
      * Envia um email para os destinatarios definidos, com arquivo anexado
      *
-     * @param assunto       Assunto do email
-     * @param corpo         Corpo HTML do email
+     * @param assunto Assunto do email
+     * @param corpo   Corpo HTML do email
      * @param destinatarios Destinatarios do email
-     * @param anexo         Arquivo que será anexado ao email
-     * @param nomeAnexo     Nome do arquivo anexado
+     * @param anexo Arquivo que será anexado ao email
+     * @param nomeAnexo Nome do arquivo anexado
      */
     void enviarEmail(String assunto, String corpo, List<String> destinatarios, DataSource anexo, String nomeAnexo);
 }

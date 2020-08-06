@@ -186,7 +186,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "    AND FR2.id=FR.id " +
                     "    AND AP.status = 1 " +
                     "    AND (AP.dataProcessamento BETWEEN TC.dataInicioPeriodo AND TC.dataFimPeriodo) " +
-                    "    AND LOWER(NF.numero) LIKE '%%'||:notaFiscal||'%%')";
+                    "    AND LOWER(NF.numero) LIKE '%%'||:notaFiscal||'%%' " +
+                    "    AND (LOWER(NF.numeroSerie) LIKE '%%'||:numeroSerie||'%%' OR :numeroSerie is null))";
 
 
 
@@ -234,8 +235,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
 
     /**
      * Realiza a pesquisa de Transacoes Consolidadas através de um filtor
-     *
-     * @param filtro        parâmetros utilizados na consulta
+     * 
+     * @param filtro parâmetros utilizados na consulta
      * @param usuarioLogado usuário que está realizando a consulta
      * @return retorna o resultado paginado da consulta
      */
@@ -315,7 +316,15 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         parametros.add(parametroRede);
         parametros.add(parametroIdInvalido);
 
-        povoarParametroIgual("notaFiscal", filtro.getNotaFiscal() != null && filtro.getNotaFiscal().trim().length() > 0 ? filtro.getNotaFiscal().toLowerCase() : null, parametros);
+        if(filtro.getNotaFiscal() != null && filtro.getNotaFiscal().trim().length() > 0) {
+            povoarParametroIgual("notaFiscal", filtro.getNotaFiscal().toLowerCase(), parametros);
+
+            ParametroPesquisaIgual parametroNumeroSerie = new ParametroPesquisaIgual("numeroSerie", null);
+            if(filtro.getNumeroSerie() != null && filtro.getNumeroSerie().trim().length() > 0) {
+                parametroNumeroSerie = new ParametroPesquisaIgual("numeroSerie", filtro.getNumeroSerie().toLowerCase());
+            }
+            parametros.add(parametroNumeroSerie);
+        }
 
         return parametros;
     }
@@ -494,8 +503,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         ParametroPesquisaDataMenorOuIgual parametroDataFimPeriodo = new ParametroPesquisaDataMenorOuIgual("dataFimPeriodo",null);
         ParametroPesquisaIgual parametroNumeroDocumento = new ParametroPesquisaIgual("numeroDocumento",null);
         ParametroPesquisaIgual parametroIdFrota = new ParametroPesquisaIgual("idFrota",null);
-        ParametroPesquisaIgual parametroIdPontoVenda = new ParametroPesquisaIgual("idPontoVenda", null);
-        ParametroPesquisaIgual parametroIdEmpresaAgregada = new ParametroPesquisaIgual("idEmpresaAgregada", null);
+        ParametroPesquisaIgual parametroIdPontoVenda = new ParametroPesquisaIgual("idPontoVenda",null);
+        ParametroPesquisaIgual parametroIdEmpresaAgregada = new ParametroPesquisaIgual("idEmpresaAgregada",null);
         ParametroPesquisaIgual parametroIdUnidade = new ParametroPesquisaIgual("idUnidade",null);
 
         if (filtro.getDe() != null) {
@@ -673,7 +682,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
     }
 
     @Override
-    public List<TransacaoConsolidada> buscarCiclosEmAberto(Long idFrota) {
+    public List<TransacaoConsolidada> buscarCiclosEmAberto(Long idFrota){
         List<ParametroPesquisa> parametros = new ArrayList<>();
         parametros.add(new ParametroPesquisaIgual("frotaPtov.frota", idFrota));
         parametros.add(new ParametroPesquisaIgual("statusConsolidacao", StatusTransacaoConsolidada.ABERTA.getValue()));

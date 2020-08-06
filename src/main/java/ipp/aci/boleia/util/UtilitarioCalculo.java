@@ -28,7 +28,6 @@ public final class UtilitarioCalculo {
      * @param <T> Tipo de retorno
      * @param streamValores Stream com os valores a serem somados
      * @param funcaoMapeadora Função mapeadora que será usado no map-reduce.
-     * @param <T> Tipo das valores presentes no stream
      * @return O resultado da soma
      */
     public static <T> BigDecimal somarValoresLista(Stream<T> streamValores, Function<T, BigDecimal> funcaoMapeadora) {
@@ -55,7 +54,7 @@ public final class UtilitarioCalculo {
      * Aceita como parâmetro uma função que será utilizada para obter de cada objeto o valor que deve ser somado.<br>
      * Se os objetos da lista já são do tipo {@link BigDecimal}, pode-se utilizar a função {@link Function#identity()}.<br>
      * <br>
-     * Utiliza o método {@link Stream#reduce(Object, BinaryOperator)} para fazer a soma.
+     * Utiliza o método {@link java.util.stream.Stream#reduce(Object, BinaryOperator)} para fazer a soma.
      *
      * @param listaObjetos lista de objetos
      * @param funcaoMapeadora função que extrai do objeto o valor a ser somado

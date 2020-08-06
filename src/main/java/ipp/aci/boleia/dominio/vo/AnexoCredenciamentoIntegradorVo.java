@@ -13,14 +13,7 @@ public class AnexoCredenciamentoIntegradorVo {
 	 * Construtor default da classe.
 	 */
 	public AnexoCredenciamentoIntegradorVo() {}
-
-	/**
-	 * Constrói o objeto a partir dos dados informados.
-	 *
-	 * @param nome Nome no contrato social.
-	 * @param conteudo Conteúdo do contrato social.
-	 * @param idLead Identificador de credenciamento.
-	 */
+	
 	public AnexoCredenciamentoIntegradorVo(String nome, String conteudo, String idLead) {
 		this.name = nome;
 		this.body = conteudo;

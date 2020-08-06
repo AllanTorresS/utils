@@ -48,6 +48,7 @@ public enum StatusBloqueio implements IEnumComLabel<StatusBloqueio> {
 
     /**
      * Informa se o valor do enum é igual a BLOQUEADO.
+     *
      * @return true, caso seja.
      */
     public boolean isBloqueado() {

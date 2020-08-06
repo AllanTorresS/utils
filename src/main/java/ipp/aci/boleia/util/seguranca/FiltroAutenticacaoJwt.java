@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -74,9 +73,6 @@ public class FiltroAutenticacaoJwt implements Filter {
     @Autowired
     private RenovadorTokenJwt renovadorTokenJwt;
 
-    @Value("${cors.allowed.origins}")
-    private String[] allowedOrigins;
-
     @Override
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
 
@@ -121,9 +117,9 @@ public class FiltroAutenticacaoJwt implements Filter {
      * @param response a resposta HTTP
      * @param encodedJwtToken o token jwt
      * @param fingerprint a string que representa o fingerprint
-     * @return <b>true</b> para encerrar a execução do {@link FiltroAutenticacaoJwt} e retornar ao cliente
+     * @return <b>true</b> para encerrar a execução do  e retornar ao cliente
      *     a resposta de erro que já foi escrita no parâmetro {@link HttpServletResponse}.
-     *     <br><b>false</b> para prosseguir com a execução do {@link FiltroAutenticacaoJwt}.
+     *     <br><b>false</b> para prosseguir com a execução do .
      * @throws IOException excecao de entrada e saida
      */
     private boolean deveInterromperFiltroSessaoOuTokenInvalido(HttpServletResponse response, String encodedJwtToken, String fingerprint) throws IOException {
@@ -259,16 +255,20 @@ public class FiltroAutenticacaoJwt implements Filter {
         } else if(utilitarioJwt.isTokenDispositivoFrotista(token)) {
             usuario = servicosDeUsuario.obterPorEmailComPermissoes(utilitarioJwt.getNomeUsuario(token));
 
-            /**
-             * Usuário gestor não possui perfil de usuário. Portanto, as permissões devem ser carregadas separadamente.
+            /*
+              Usuário gestor não possui perfil de usuário. Portanto, as permissões devem ser carregadas separadamente.
              */
             usuario.setPermissoes(new HashSet<>());
             usuario.getPermissoes().addAll(servicoPermissoes.obterPermissoes(TipoPerfilUsuario.FROTA));
-        } else {
+        } else if (utilitarioJwt.isTokenUsuarioBoleia(token)) {
             usuario = servicosDeUsuario.obterPorIdComPermissoes(utilitarioJwt.getIdentificadorUsuario(token));
-            if (usuario == null){
+            if (usuario != null){
+                servicosDeUsuario.povoarPermissoesUsuario(usuario);
+            }else{
                 usuario = utilitarioJwt.montarUsuarioJwt(token, strToken);
             }
+        } else {
+            usuario = utilitarioJwt.montarUsuarioJwt(token, strToken);
         }
         usuario.setTokenJWT(strToken);
         usuario.setTipoTokenJwt(utilitarioJwt.getTipoToken(token));
@@ -331,9 +331,7 @@ public class FiltroAutenticacaoJwt implements Filter {
 
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        if (allowedOrigins != null) {
-            response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, String.join(" ", allowedOrigins));
-        }
+
         byte[] bytes = UtilitarioJson.toJSON(msgVo).getBytes(StandardCharsets.UTF_8);
         ServletOutputStream out = response.getOutputStream();
         out.write(bytes);

@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:s="http://www.w3.org/2001/XMLSchema"
-             xmlns:s0="http://tempuri.org" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
-             targetNamespace="http://tempuri.org">
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:s0="http://tempuri.org" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" targetNamespace="http://tempuri.org">
     <types>
         <s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org">
             <s:element name="consultarJDE">
@@ -802,121 +800,61 @@
                     </s:element>
                 </s:sequence>
             </s:complexType>
-            <s:element name="marcarTituloASerBaixadoLote">
+            <s:element name="prorrogarVencimento">
                 <s:complexType>
                     <s:sequence>
-                        <s:element minOccurs="0" name="pRequest" type="s0:marcarTituloASerBaixadoLoteReq"/>
+                        <s:element minOccurs="0" name="pRequest" type="s0:prorrogarVencimentoReq"/>
                     </s:sequence>
                 </s:complexType>
             </s:element>
-            <s:complexType name="marcarTituloASerBaixadoLoteReq">
+            <s:complexType name="prorrogarVencimentoReq">
                 <s:complexContent>
                     <s:extension base="s0:Ens_Request">
                         <s:sequence>
-                            <s:element minOccurs="0" name="listaTitulo" type="s0:ArrayOfmarcarTituloASerBaixadoLoteTituloReqPairOflistaTituloKeymarcarTituloASerBaixadoLoteTituloReq"/>
+                            <s:element minOccurs="0" name="documento" type="s:decimal"/>
+                            <s:element minOccurs="0" name="tipo" type="s:string"/>
+                            <s:element minOccurs="0" name="companhia" type="s:string"/>
+                            <s:element minOccurs="0" name="sufixo" type="s:string"/>
+                            <s:element minOccurs="0" name="acrecimo" type="s:decimal"/>
+                            <s:element minOccurs="0" name="vencimento" type="s:date"/>
+                            <s:element minOccurs="0" name="alteracao" type="s:string"/>
+                            <s:element minOccurs="0" name="auditoria" type="s:string"/>
+                            <s:element minOccurs="0" name="aprovacao" type="s:date"/>
+                            <s:element minOccurs="0" name="usuario" type="s:string"/>
                         </s:sequence>
                     </s:extension>
                 </s:complexContent>
             </s:complexType>
-            <s:complexType name="ArrayOfmarcarTituloASerBaixadoLoteTituloReqPairOflistaTituloKeymarcarTituloASerBaixadoLoteTituloReq">
-                <s:sequence>
-                    <s:element maxOccurs="unbounded" minOccurs="0" name="marcarTituloASerBaixadoLoteTituloReq" nillable="true" type="s0:PairOflistaTituloKeymarcarTituloASerBaixadoLoteTituloReq"/>
-                </s:sequence>
-            </s:complexType>
-            <s:complexType name="PairOflistaTituloKeymarcarTituloASerBaixadoLoteTituloReq">
-                <s:complexContent>
-                    <s:extension base="s0:marcarTituloASerBaixadoLoteTituloReq">
-                        <s:attribute name="listaTituloKey" type="s:string" use="required"/>
-                    </s:extension>
-                </s:complexContent>
-            </s:complexType>
-            <s:complexType name="marcarTituloASerBaixadoLoteTituloReq">
-                <s:sequence>
-                    <s:element name="cenario" type="s:long"/>
-                    <s:element name="numeroDocumento" type="s:long"/>
-                    <s:element name="tipoDocumento">
-                        <s:simpleType>
-                            <s:restriction base="s:string">
-                                <s:maxLength value="2"/>
-                            </s:restriction>
-                        </s:simpleType>
-                    </s:element>
-                    <s:element name="companhiaDocumento">
-                        <s:simpleType>
-                            <s:restriction base="s:string">
-                                <s:maxLength value="5"/>
-                            </s:restriction>
-                        </s:simpleType>
-                    </s:element>
-                    <s:element name="listaParcelas" type="s0:ArrayOfmarcarTituloASerBaixadoLoteTituloParcelaReqPairOflistaParcelasKeymarcarTituloASerBaixadoLoteTituloParcelaReq"/>
-                </s:sequence>
-            </s:complexType>
-            <s:complexType name="ArrayOfmarcarTituloASerBaixadoLoteTituloParcelaReqPairOflistaParcelasKeymarcarTituloASerBaixadoLoteTituloParcelaReq">
-                <s:sequence>
-                    <s:element maxOccurs="unbounded" minOccurs="0" name="marcarTituloASerBaixadoLoteTituloParcelaReq" nillable="true" type="s0:PairOflistaParcelasKeymarcarTituloASerBaixadoLoteTituloParcelaReq"/>
-                </s:sequence>
-            </s:complexType>
-            <s:complexType name="PairOflistaParcelasKeymarcarTituloASerBaixadoLoteTituloParcelaReq">
-                <s:complexContent>
-                    <s:extension base="s0:marcarTituloASerBaixadoLoteTituloParcelaReq">
-                        <s:attribute name="listaParcelasKey" type="s:string" use="required"/>
-                    </s:extension>
-                </s:complexContent>
-            </s:complexType>
-            <s:complexType name="marcarTituloASerBaixadoLoteTituloParcelaReq">
-                <s:sequence>
-                    <s:element name="lancamentoCR" type="s:long"/>
-                    <s:element name="numeroParcela">
-                        <s:simpleType>
-                            <s:restriction base="s:string">
-                                <s:maxLength value="3"/>
-                            </s:restriction>
-                        </s:simpleType>
-                    </s:element>
-                </s:sequence>
-            </s:complexType>
-            <s:element name="marcarTituloASerBaixadoLoteResponse">
+            <s:element name="prorrogarVencimentoResponse">
                 <s:complexType>
                     <s:sequence>
-                        <s:element name="marcarTituloASerBaixadoLoteResult" type="s0:marcarTituloASerBaixadoLoteResp"/>
+                        <s:element name="prorrogarVencimentoResult" type="s0:prorrogarVencimentoResp"/>
                     </s:sequence>
                 </s:complexType>
             </s:element>
-            <s:complexType name="marcarTituloASerBaixadoLoteResp">
+            <s:complexType name="prorrogarVencimentoResp">
                 <s:complexContent>
                     <s:extension base="s0:Ens_Response">
                         <s:sequence>
-                            <s:element minOccurs="0" name="status" type="s:boolean"/>
-                            <s:element minOccurs="0" name="msgErro">
+                            <s:element minOccurs="0" name="codigoErro">
                                 <s:simpleType>
                                     <s:restriction base="s:string">
                                         <s:maxLength value="1024"/>
                                     </s:restriction>
                                 </s:simpleType>
                             </s:element>
-                            <s:element minOccurs="0" name="listaLancamentoRetorno" type="s0:ArrayOfmarcarTituloASerBaixadoLoteLancamentoRespPairOflistaLancamentoRetornoKeymarcarTituloASerBaixadoLoteLancamentoResp"/>
+                            <s:element minOccurs="0" name="status" type="s:boolean"/>
+                            <s:element minOccurs="0" name="mensagem">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="1024"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="sessionId" type="s:long"/>
                         </s:sequence>
                     </s:extension>
                 </s:complexContent>
-            </s:complexType>
-            <s:complexType name="ArrayOfmarcarTituloASerBaixadoLoteLancamentoRespPairOflistaLancamentoRetornoKeymarcarTituloASerBaixadoLoteLancamentoResp">
-                <s:sequence>
-                    <s:element maxOccurs="unbounded" minOccurs="0" name="marcarTituloASerBaixadoLoteLancamentoResp" nillable="true" type="s0:PairOflistaLancamentoRetornoKeymarcarTituloASerBaixadoLoteLancamentoResp"/>
-                </s:sequence>
-            </s:complexType>
-            <s:complexType name="PairOflistaLancamentoRetornoKeymarcarTituloASerBaixadoLoteLancamentoResp">
-                <s:complexContent>
-                    <s:extension base="s0:marcarTituloASerBaixadoLoteLancamentoResp">
-                        <s:attribute name="listaLancamentoRetornoKey" type="s:string" use="required"/>
-                    </s:extension>
-                </s:complexContent>
-            </s:complexType>
-            <s:complexType name="marcarTituloASerBaixadoLoteLancamentoResp">
-                <s:sequence>
-                    <s:element minOccurs="0" name="lancamento" type="s:long"/>
-                    <s:element minOccurs="0" name="codigoErro" type="s:string"/>
-                    <s:element minOccurs="0" name="mensagemErro" type="s:string"/>
-                </s:sequence>
             </s:complexType>
             <s:element name="verificarTituloPago">
                 <s:complexType>
@@ -1031,11 +969,11 @@
     <message name="marcarTituloASerBaixadoSoapOut">
         <part name="parameters" element="s0:marcarTituloASerBaixadoResponse"/>
     </message>
-    <message name="marcarTituloASerBaixadoLoteSoapIn">
-        <part name="parameters" element="s0:marcarTituloASerBaixadoLote"/>
+    <message name="prorrogarVencimentoSoapIn">
+        <part name="parameters" element="s0:prorrogarVencimento"/>
     </message>
-    <message name="marcarTituloASerBaixadoLoteSoapOut">
-        <part name="parameters" element="s0:marcarTituloASerBaixadoLoteResponse"/>
+    <message name="prorrogarVencimentoSoapOut">
+        <part name="parameters" element="s0:prorrogarVencimentoResponse"/>
     </message>
     <message name="verificarTituloPagoSoapIn">
         <part name="parameters" element="s0:verificarTituloPago"/>
@@ -1068,9 +1006,9 @@
             <input message="s0:marcarTituloASerBaixadoSoapIn"/>
             <output message="s0:marcarTituloASerBaixadoSoapOut"/>
         </operation>
-        <operation name="marcarTituloASerBaixadoLote">
-            <input message="s0:marcarTituloASerBaixadoLoteSoapIn"/>
-            <output message="s0:marcarTituloASerBaixadoLoteSoapOut"/>
+        <operation name="prorrogarVencimento">
+            <input message="s0:prorrogarVencimentoSoapIn"/>
+            <output message="s0:prorrogarVencimentoSoapOut"/>
         </operation>
         <operation name="verificarTituloPago">
             <input message="s0:verificarTituloPagoSoapIn"/>
@@ -1133,8 +1071,8 @@
                 <soap:body use="literal"/>
             </output>
         </operation>
-        <operation name="marcarTituloASerBaixadoLote">
-            <soap:operation soapAction="http://tempuri.org/cbpi.bs.fatura.autenticado.Service.marcarTituloASerBaixadoLote" style="document"/>
+        <operation name="prorrogarVencimento">
+            <soap:operation soapAction="http://tempuri.org/cbpi.bs.fatura.autenticado.Service.prorrogarVencimento" style="document"/>
             <input>
                 <soap:body use="literal"/>
             </input>
@@ -1154,7 +1092,7 @@
     </binding>
     <service name="Fatura">
         <port name="FaturaSoap" binding="s0:FaturaSoap">
-            <soap:address location="http://ensemdes.ipiranga.com.br:7070/csp/ipirangaws/cbpi.bs.fatura.autenticado.Service.CLS"/>
+            <soap:address location="${settings.jde.fatura.soap.address}"/>
         </port>
     </service>
 </definitions>

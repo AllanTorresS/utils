@@ -180,7 +180,7 @@
     </binding>
     <service name="contaBancaria">
         <port name="contaBancariaSoap" binding="s0:contaBancariaSoap">
-            <soap:address location="http://ensemdes.ipiranga.com.br:7070/csp/ipirangaws/ws.retornoDadosContaBancaria.Service.CLS"/>
+            <soap:address location="${settings.jde.contabancaria.soap.address}"/>
         </port>
     </service>
 </definitions>

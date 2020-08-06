@@ -51,12 +51,13 @@ public class PontoDeVendaSd {
 
     @Autowired
     private ITaxaPerfilDados repositorioTaxaPerfil;
-
+    
     @Autowired
-    private ILeadCredenciamentoDados repositorioLeadCredenciamentoPosto;
+	private ILeadCredenciamentoDados repositorioLeadCredenciamentoPosto;
 
     @Autowired
     private IPontoDeVendaDados repositorioPontoVenda;
+
     /**
      * Preenche o questionário do ponto de venda com as opções default caso não tenha respostas preenchidas
      *
@@ -137,50 +138,50 @@ public class PontoDeVendaSd {
     /**
      * Obtem o status do credenciamento de posto dentro dos possíveis casos dos valores da {@link StatusCredenciamentoPosto}.
      *
-     * @param usuario      {@link Usuario} Usuário.
+     * @param usuario {@link Usuario} Usuário.
      * @param pontoDeVenda {@link PontoDeVenda} Ponto de venda.
-     * @param cnpj         Cnpj do ponto de venda.
+     * @param cnpj Cnpj do ponto de venda.
      * @return {@link StatusCredenciamentoPosto} Status.
      */
     public StatusCredenciamentoPosto obterStatusCredenciamento(Usuario usuario, PontoDeVenda pontoDeVenda, String cnpj) {
-        StatusCredenciamentoPosto status = verificarStatusCredenciamento(usuario, pontoDeVenda);
-        if ((StatusCredenciamentoPosto.INICIAR_CREDENCIAMENTO == status || StatusCredenciamentoPosto.BANDEIRA_BRANCA == status)
-                && Boolean.TRUE.equals(repositorioLeadCredenciamentoPosto.validarLeadExistente(cnpj))) {
-            return StatusCredenciamentoPosto.INICIADO_SALESFORCE;
-        } else {
-            return status;
-        }
+    	StatusCredenciamentoPosto status = verificarStatusCredenciamento(usuario, pontoDeVenda);
+    	if ((StatusCredenciamentoPosto.INICIAR_CREDENCIAMENTO == status || StatusCredenciamentoPosto.BANDEIRA_BRANCA == status) 
+    			&& Boolean.TRUE.equals(repositorioLeadCredenciamentoPosto.validarLeadExistente(cnpj))) {
+    		return StatusCredenciamentoPosto.INICIADO_SALESFORCE;
+    	} else {
+    		return status;
+    	}
     }
-
+    
     /**
      * Obtem o status{@link StatusCredenciamentoPosto} para habilitação do posto.
      *
-     * @param usuario      {@link Usuario} Usuário.
+     * @param usuario {@link Usuario} Usuário.
      * @param pontoDeVenda {@link PontoDeVenda} Ponto de venda.
      * @return {@link StatusCredenciamentoPosto} Status.
      */
     public StatusCredenciamentoPosto obterStatusHabilitacao(Usuario usuario, PontoDeVenda pontoDeVenda) {
-        if (pontoDeVenda != null) {
-            if (verificarCredenciamentoPendente(usuario, pontoDeVenda)) {
-                return StatusCredenciamentoPosto.CREDENCIAMENTO_PENDENTE;
-            }
-
-            if (StatusHabilitacaoPontoVenda.HABILITADO.getValue().equals(pontoDeVenda.getStatusHabilitacao())) {
-                return StatusCredenciamentoPosto.HABILITADO;
-            }
-
-            if ((pontoDeVenda.getStatusHabilitacao() == null || StatusHabilitacaoPontoVenda.DESABILITADO.getValue().equals(pontoDeVenda.getStatusHabilitacao())) &&
-                    (!CollectionUtils.isNullOrEmpty(pontoDeVenda.getUsuarios()) && !pontoDeVenda.getUsuarios().contains(usuario))) {
-                return StatusCredenciamentoPosto.OUTRO_USUARIO;
-            }
-
-            if (!verificarMesmaRede(usuario, pontoDeVenda)) {
-                return StatusCredenciamentoPosto.OUTRA_REDE;
-            }
-        }
-        return StatusCredenciamentoPosto.INICIAR_HABILITACAO;
+    	if (pontoDeVenda != null) {
+    		if (verificarCredenciamentoPendente(usuario, pontoDeVenda)) {
+        		return StatusCredenciamentoPosto.CREDENCIAMENTO_PENDENTE;
+        	}
+        	
+    		if (StatusHabilitacaoPontoVenda.HABILITADO.getValue().equals(pontoDeVenda.getStatusHabilitacao())) {
+    			return StatusCredenciamentoPosto.HABILITADO;
+    		}
+    		
+    		if ((pontoDeVenda.getStatusHabilitacao() == null || StatusHabilitacaoPontoVenda.DESABILITADO.getValue().equals(pontoDeVenda.getStatusHabilitacao())) && 
+    				(!CollectionUtils.isNullOrEmpty(pontoDeVenda.getUsuarios()) && !pontoDeVenda.getUsuarios().contains(usuario))) {
+    			return StatusCredenciamentoPosto.OUTRO_USUARIO;
+    		}
+    		
+    		if (!verificarMesmaRede(usuario, pontoDeVenda)) {
+        		return StatusCredenciamentoPosto.OUTRA_REDE;
+        	} 
+    	}
+		return StatusCredenciamentoPosto.INICIAR_HABILITACAO;
     }
-
+    
     /**
      * Retorna o status do credenciamento através do cpf e cnpj informados.
      *
@@ -206,11 +207,11 @@ public class PontoDeVendaSd {
     			return StatusCredenciamentoPosto.PENDENTE_ACEITE;
             }
 
-            if (pontoDeVenda.getStatusHabilitacao() == null || StatusHabilitacaoPontoVenda.DESABILITADO.getValue().equals(pontoDeVenda.getStatusHabilitacao())) {
+    		if (pontoDeVenda.getStatusHabilitacao() == null || StatusHabilitacaoPontoVenda.DESABILITADO.getValue().equals(pontoDeVenda.getStatusHabilitacao())) {
     			return obterStatusCredenciamento(usuario, pontoDeVenda);
-            }
-        }
-        return StatusCredenciamentoPosto.BANDEIRA_BRANCA;
+    		}
+    	}
+    	return StatusCredenciamentoPosto.BANDEIRA_BRANCA;
     }
 
     /**
@@ -231,34 +232,40 @@ public class PontoDeVendaSd {
 					return StatusCredenciamentoPosto.INICIADO_CREDENCIAMENTO_VALIDO;
 				} else {
 					return StatusCredenciamentoPosto.INICIADO_CREDENCIAMENTO_EXPIRADO;
-                }
-            }
-        }
+				}
+			}
+		}
 
-        if (!verificarMesmaRede(usuario, pontoDeVenda)) {
-            return StatusCredenciamentoPosto.OUTRA_REDE;
-        }
-
-        return StatusCredenciamentoPosto.INICIAR_CREDENCIAMENTO;
+    	if (!verificarMesmaRede(usuario, pontoDeVenda)) {
+    		return StatusCredenciamentoPosto.OUTRA_REDE;
+    	} 
+		
+		return StatusCredenciamentoPosto.INICIAR_CREDENCIAMENTO;
     }
 
     /**
      * Verifica se o ponto de venda pertence a mesma rede do usuário através da raiz do cnpj.
      *
-     * @param usuario      {@link Usuario} Usuário.
+     * @param usuario {@link Usuario} Usuário.
      * @param pontoDeVenda {@link PontoDeVenda} Ponto de venda.
      * @return true caso seja da mesma rede se não false.
      */
     private static boolean verificarMesmaRede(Usuario usuario, PontoDeVenda pontoDeVenda) {
-        if (usuario != null && !CollectionUtils.isNullOrEmpty(usuario.getPontosDeVenda())) {
-            if (usuario.getPontosDeVenda().get(0).getComponenteAreaAbastecimento().getCodigoPessoa().toString().substring(0, 8).
-                    equals(pontoDeVenda.getComponenteAreaAbastecimento().getCodigoPessoa().toString().substring(0, 8))) {
-                return true;
-            } else {
-                return false;
-            }
+    	if (usuario != null && !CollectionUtils.isNullOrEmpty(usuario.getPontosDeVenda())) {
+
+    	    Long usuarioPontoVendaCnpj = usuario.getPontosDeVenda().get(0).getComponenteAreaAbastecimento().getCodigoPessoa();
+    	    Long pontoVendaCnpj = pontoDeVenda.getComponenteAreaAbastecimento().getCodigoPessoa();
+
+                if (String.format("%014d",usuarioPontoVendaCnpj).substring(0, 8)
+                        .equals(String.format("%014d",pontoVendaCnpj).substring(0, 8))){
+                    return true;
+                }
+                else{
+                    return false;
+                }
+
     	}
-        return true;
+    	return true;
     }
 
     /**
@@ -270,11 +277,11 @@ public class PontoDeVendaSd {
      */
     private static boolean verificarCredenciamentoPendente(Usuario usuario, PontoDeVenda pontoDeVenda) {
         if (usuario != null && !CollectionUtils.isNullOrEmpty(usuario.getPontosDeVenda()) && !usuario.getPontosDeVenda().contains(pontoDeVenda)
-    			&& usuario.getPontosDeVenda().stream().anyMatch(pv -> StatusHabilitacaoPontoVenda.PENDENTE_ACEITE.getValue()
-                .equals(pv.getStatusHabilitacao()) || pv.getTokenCredenciamento() != null)) {
-    		return true;
-    	}
-    	return false;
+                && (StatusHabilitacaoPontoVenda.PENDENTE_ACEITE.getValue().equals(pontoDeVenda.getStatusHabilitacao())
+                || pontoDeVenda.getTokenCredenciamento() != null )) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -286,17 +293,17 @@ public class PontoDeVendaSd {
     public TaxaPerfil obterTaxaPorPerfil(PontoDeVenda pontoDeVenda) {
     	if (Boolean.TRUE.equals(pontoDeVenda.getRodoRede())) {
     		return repositorioTaxaPerfil.obterPorTipo(PerfilPontoDeVenda.RODO_REDE);
-    	}
+    	} 
 
     	if (!Strings.isNullOrEmpty(pontoDeVenda.getPerfilVenda())) {
     		if(PerfilPontoDeVenda.RODOVIA.name().equalsIgnoreCase(pontoDeVenda.getPerfilVenda())) {
-                return repositorioTaxaPerfil.obterPorTipo(PerfilPontoDeVenda.RODOVIA);
+    			return repositorioTaxaPerfil.obterPorTipo(PerfilPontoDeVenda.RODOVIA);
     		}
     		if(PerfilPontoDeVenda.URBANO.name().equalsIgnoreCase(pontoDeVenda.getPerfilVenda())) {
-                return repositorioTaxaPerfil.obterPorTipo(PerfilPontoDeVenda.URBANO);
-            }
-        }
-        return repositorioTaxaPerfil.obterPorTipo(PerfilPontoDeVenda.OUTROS);
+    			return repositorioTaxaPerfil.obterPorTipo(PerfilPontoDeVenda.URBANO);
+    		}
+    	}
+    	return repositorioTaxaPerfil.obterPorTipo(PerfilPontoDeVenda.OUTROS);
     }
 
     /**

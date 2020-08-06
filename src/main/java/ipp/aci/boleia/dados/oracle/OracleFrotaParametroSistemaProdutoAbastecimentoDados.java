@@ -5,6 +5,7 @@ import ipp.aci.boleia.dados.IFrotaParametroSistemaIntervaloAbastecimentoDados;
 import ipp.aci.boleia.dados.IFrotaParametroSistemaProdutoAbastecimentoDados;
 import ipp.aci.boleia.dominio.FrotaParametroSistema;
 import ipp.aci.boleia.dominio.FrotaParametroSistemaProdutoAbastecimento;
+import ipp.aci.boleia.dominio.TipoCombustivel;
 import ipp.aci.boleia.dominio.Veiculo;
 import ipp.aci.boleia.dominio.enums.ParametroSistema;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
@@ -36,10 +37,10 @@ public class OracleFrotaParametroSistemaProdutoAbastecimentoDados extends Oracle
     }
 
     @Override
-    public void incluirVeiculo(Veiculo veiculo) {
+    public void incluirVeiculo(Veiculo veiculo, List<TipoCombustivel> tiposCombustivel) {
         FrotaParametroSistema frotaParametroSistema = repositorioParamSistema.obterPorParametroSistema(veiculo.getFrota().getId(), ParametroSistema.PRODUTO_ABASTECIMENTO);
         if (frotaParametroSistema != null && frotaParametroSistema.getAtivo()) {
-            List<FrotaParametroSistemaProdutoAbastecimento> frotaParametroSistemaProdutoAbastecimentosList = veiculo.getCombustivelMotor().getTiposCombustivel().stream()
+            List<FrotaParametroSistemaProdutoAbastecimento> frotaParametroSistemaProdutoAbastecimentosList = tiposCombustivel.stream()
                     .map(tc -> new FrotaParametroSistemaProdutoAbastecimento(frotaParametroSistema, veiculo, tc, true)).collect(Collectors.toList());
             this.armazenarLista(frotaParametroSistemaProdutoAbastecimentosList);
         }

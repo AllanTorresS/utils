@@ -51,6 +51,14 @@ public class NotaFiscal implements IPersistente, IPertenceRevendedor, IPertenceF
     @Column(name = "NO_NUMERO")
     private String numero;
 
+    @Size(max=10)
+    @Column(name = "NO_NUMERO_SERIE")
+    private String numeroSerie;
+
+    @Size(max=14)
+    @Column(name = "NO_CNPJ_EMIT")
+    private String cnpjEmitente;
+
     @NotNull
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_ARQUIVO")
@@ -96,6 +104,10 @@ public class NotaFiscal implements IPersistente, IPertenceRevendedor, IPertenceF
     @Size(max = 200)
     private String motivoFalhaConciliacao;
 
+    @Column(name = "NO_CHAVE_ACESSO")
+    @Size(min = 44, max = 44)
+    private String chaveAcesso;
+
     @Override
     public Long getId() {
         return id;
@@ -112,6 +124,22 @@ public class NotaFiscal implements IPersistente, IPertenceRevendedor, IPertenceF
 
     public void setNumero(String numero) {
         this.numero = numero;
+    }
+
+    public String getNumeroSerie() {
+        return numeroSerie;
+    }
+
+    public void setNumeroSerie(String numeroSerie) {
+        this.numeroSerie = numeroSerie;
+    }
+
+    public String getCnpjEmitente() {
+        return cnpjEmitente;
+    }
+
+    public void setCnpjEmitente(String cnpjEmitente) {
+        this.cnpjEmitente = cnpjEmitente;
     }
 
     public Arquivo getArquivo() {
@@ -152,11 +180,6 @@ public class NotaFiscal implements IPersistente, IPertenceRevendedor, IPertenceF
 
     public void setValorTotal(BigDecimal valorTotal) {
         this.valorTotal = valorTotal;
-    }
-
-    @Transient
-    public String getNomeXml() {
-        return getNumero().concat(".xml");
     }
 
     public List<AutorizacaoPagamento> getAutorizacoesPagamento() {
@@ -215,6 +238,14 @@ public class NotaFiscal implements IPersistente, IPertenceRevendedor, IPertenceF
 
     public void setMotivoFalhaConciliacao(String motivoFalhaConciliacao) {
         this.motivoFalhaConciliacao = motivoFalhaConciliacao;
+    }
+
+    public String getChaveAcesso() {
+        return chaveAcesso;
+    }
+
+    public void setChaveAcesso(String chaveAcesso) {
+        this.chaveAcesso = chaveAcesso;
     }
 
     /**

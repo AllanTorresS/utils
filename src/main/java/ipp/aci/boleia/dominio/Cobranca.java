@@ -2,7 +2,9 @@ package ipp.aci.boleia.dominio;
 
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
+import org.hibernate.annotations.Formula;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,6 +22,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Representa a tabela de Cobranca
@@ -30,6 +33,11 @@ import java.util.List;
 public class Cobranca implements IPersistente, IPertenceFrota {
 
     private static final long serialVersionUID = -2656595902166817661L;
+
+    /**
+     * Utilizado para possibilitar a ordenação paginada pela data de vencimento vigente.
+     */
+    private static final String FORMULA_DATA_VENCIMENTO_VIGENTE = "CASE WHEN DT_VENC_PGTO_AJUSTADA IS NOT NULL THEN DT_VENC_PGTO_AJUSTADA ELSE DT_VENC_PGTO END";
 
     @Id
     @Column(name = "CD_COBRANCA")
@@ -57,6 +65,10 @@ public class Cobranca implements IPersistente, IPertenceFrota {
 
     @Column(name = "DT_VENC_PGTO_AJUSTADA")
     private Date dataVencimentoPagtoAjustada;
+
+    @NotAudited
+    @Formula(FORMULA_DATA_VENCIMENTO_VIGENTE)
+    private Date dataVencimentoVigente;
 
     @Column(name = "DT_PGTO")
     private Date dataPagamento;
@@ -280,34 +292,49 @@ public class Cobranca implements IPersistente, IPertenceFrota {
 
     /**
      * Retorna o último ajuste efetuado para a cobrança.
-     *
      * @return o último ajuste encontrado.
      */
     @Transient
     public AjusteCobranca getUltimoAjuste() {
-        if (ajustes != null && !ajustes.isEmpty()) {
+        if(ajustes != null && !ajustes.isEmpty()) {
             return ajustes.stream().max(Comparator.comparing(AjusteCobranca::getId)).get();
         }
         return null;
     }
 
     /**
-     * Retorna o último ajuste efetuado com alteração da data de vencimento.
+     * Retorna o último ajuste de valor efetuado para a cobrança.
      *
+     * @return o último ajuste de valor encontrado.
+     */
+    @Transient
+    public AjusteCobranca getUltimoAjusteValor() {
+        if (ajustes != null && !ajustes.isEmpty()) {
+            return ajustes.stream()
+                            .filter(AjusteCobranca::isAjusteValor)
+                            .max(Comparator.comparing(AjusteCobranca::getId))
+                            .orElse(null);
+        }
+        return null;
+    }
+
+    /**
+     * Retorna o último ajuste efetuado com alteração da data de vencimento.
      * @return ajuste de data encontrado.
      */
     @Transient
     public AjusteCobranca getUltimoAjusteData() {
-        if (ajustes != null && !ajustes.isEmpty()) {
-            return ajustes.stream().filter(ajuste -> ajuste.getDataVencimentoAjuste() != null)
-                    .max(Comparator.comparing(AjusteCobranca::getDataAjuste)).orElse(null);
+        if(ajustes != null && !ajustes.isEmpty()) {
+            return ajustes.stream()
+                            .filter(AjusteCobranca::isProrrogacaoVencimento)
+                            .max(Comparator.comparing(AjusteCobranca::getId))
+                            .orElse(null);
         }
         return null;
     }
 
     /**
      * Verifica se houve um ajuste para a cobrança.
-     *
      * @return o valor total ajustado caso tenha ocorrido ajuste desta cobrança e valor total da cobrança, caso contrário.
      */
     @Transient
@@ -316,28 +343,53 @@ public class Cobranca implements IPersistente, IPertenceFrota {
         return valorTotalAjustado != null ? valorTotalAjustado : valorTotal.subtract(descontosFrotaLeves);
     }
 
-    @Transient
     public Date getDataVencimentoVigente() {
-        return dataVencimentoPagtoAjustada != null ? dataVencimentoPagtoAjustada : dataVencimentoPagto;
+        return dataVencimentoVigente;
+    }
+
+    public void setDataVencimentoVigente(Date dataVencimentoVigente) {
+        this.dataVencimentoVigente = dataVencimentoVigente;
     }
 
     /**
      * Verifica se a cobrança possui um ajuste de desconto.
-     *
      * @return true caso exista um ajuste de desconto, false caso contrário.
      */
     @Transient
-    public Boolean possuiDesconto() {
+    public Boolean possuiDesconto(){
         return ajustes != null && ajustes.stream().anyMatch(AjusteCobranca::isDesconto);
     }
 
     /**
      * Verifica se a cobrança possui um ajuste de acréscimo.
-     *
      * @return true caso exista um ajuste de acréscimo, false caso contrário.
      */
     @Transient
-    public Boolean possuiAcrescimo() {
+    public Boolean possuiAcrescimo(){
         return ajustes != null && ajustes.stream().anyMatch(AjusteCobranca::isAcrescimo);
+    }
+
+    /**
+     * Incrementa o número de tentativas de envio para o JDE
+     */
+    public void incrementarNumeroTentativasEnvio() {
+        if (this.getNumeroTentativasEnvio() != null) {
+            this.setNumeroTentativasEnvio(this.getNumeroTentativasEnvio() + 1);
+        } else {
+            this.setNumeroTentativasEnvio(1);
+        }
+    }
+
+    /**
+     * Retorna a lista de ajustes de acréscimo ou desconto realizados na cobrança.
+     *
+     * @return lista de ajustes
+     */
+    @Transient
+    public List<AjusteCobranca> getAjustesComValor() {
+        if(ajustes != null && !ajustes.isEmpty()) {
+            return ajustes.stream().filter(AjusteCobranca::isAjusteValor).collect(Collectors.toList());
+        }
+        return Collections.emptyList();
     }
 }

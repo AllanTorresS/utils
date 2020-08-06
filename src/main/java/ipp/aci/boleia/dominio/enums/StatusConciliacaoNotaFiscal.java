@@ -2,6 +2,9 @@ package ipp.aci.boleia.dominio.enums;
 
 import ipp.aci.boleia.util.i18n.IEnumComLabel;
 
+/**
+ * Enumera os diferentes status de conciliação da nota fiscal.
+ */
 public enum StatusConciliacaoNotaFiscal implements IEnumComLabel<StatusConciliacaoNotaFiscal> {
     UPLOAD(0),
     IMPORTADO(1),
@@ -13,6 +16,7 @@ public enum StatusConciliacaoNotaFiscal implements IEnumComLabel<StatusConciliac
 
     /**
      * Construtor padrão
+     *
      * @param value O valor do status
      */
     StatusConciliacaoNotaFiscal(Integer value) {
@@ -25,12 +29,13 @@ public enum StatusConciliacaoNotaFiscal implements IEnumComLabel<StatusConciliac
 
     /**
      * Obtem por valor
+     *
      * @param value value
      * @return Enum para o valor
      */
     public static StatusConciliacaoNotaFiscal obterPorValor(Integer value) {
-        for(StatusConciliacaoNotaFiscal status : StatusConciliacaoNotaFiscal.values()) {
-            if(status.value.equals(value)) {
+        for (StatusConciliacaoNotaFiscal status : StatusConciliacaoNotaFiscal.values()) {
+            if (status.value.equals(value)) {
                 return status;
             }
         }

@@ -4,8 +4,8 @@ import ipp.aci.boleia.dominio.SistemaExterno;
 import org.springframework.stereotype.Component;
 
 import static ipp.aci.boleia.util.seguranca.UtilitarioCriptografia.calcularHashSHA256;
-import static ipp.aci.boleia.util.seguranca.UtilitarioCriptografia.gerarSaltBCrypt;
 import static ipp.aci.boleia.util.seguranca.UtilitarioCriptografia.toBase64;
+import static ipp.aci.boleia.util.seguranca.UtilitarioCriptografia.gerarSaltBCrypt;
 
 /**
  * Encapsula as regras de negocio ligadas ao SistemaExterno.

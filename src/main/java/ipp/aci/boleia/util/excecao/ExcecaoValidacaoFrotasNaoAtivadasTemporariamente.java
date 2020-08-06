@@ -18,7 +18,7 @@ public class ExcecaoValidacaoFrotasNaoAtivadasTemporariamente extends ExcecaoVal
     /**
      * Constroi a excecao
      *
-     * @param erro      O tipo de erro de validacao
+     * @param erro O tipo de erro de validacao
      * @param parametro parametros da mensagem
      */
     public ExcecaoValidacaoFrotasNaoAtivadasTemporariamente(Erro erro, Object... parametro) {

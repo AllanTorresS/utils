@@ -20,6 +20,7 @@ import org.springframework.stereotype.Repository;
 import javax.mail.Address;
 import javax.mail.Authenticator;
 import javax.mail.BodyPart;
+import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -28,6 +29,7 @@ import javax.mail.Part;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javax.mail.search.AndTerm;
 import javax.mail.search.ComparisonTerm;
 import javax.mail.search.ReceivedDateTerm;
@@ -41,10 +43,14 @@ import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
+/**
+ * Implementação do repositório de recebimento de emails.
+ */
 @Repository
 public class ImapsEmailRecebimentoDados implements IEmailRecebimentoDados {
 
     private static final String NOME_PROTOCOLO = "imaps";
+    private static final String EXTENSAO_XML = ".xml";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ImapsEmailRecebimentoDados.class);
 
@@ -52,47 +58,104 @@ public class ImapsEmailRecebimentoDados implements IEmailRecebimentoDados {
     private UtilitarioAmbiente ambiente;
 
     @Override
-    public ImportacaoNfeArmazemVo obterEmailsAPartirDe(ConfiguracaoLeitorEmailVo config, Date dataInicio) {
+    public ImportacaoNfeArmazemVo obterEmailsEntre(ConfiguracaoLeitorEmailVo config, Date dataInicio, Date dataFinal) {
         Date dataInicioLeitura = ambiente.buscarDataAmbiente();
         ImportacaoNfeArmazemVo resultadoLeitura = new ImportacaoNfeArmazemVo();
-        Folder diretorio = conectarEObterDiretorio(config);
-        List<Message> mensagens = buscarMensagensRecebidasAPartirDe(diretorio, dataInicio);
+        IMAPStore emailStore = conectarEmail(config);
+
+        List<Message> mensagens = new ArrayList<>();
+        for (String nomeDiretorio: config.getDiretorios()) {
+
+            Folder diretorio = obterDiretorio(emailStore, nomeDiretorio );
+            if (diretorio != null) {
+                if (dataInicio != null) {
+                    if (dataFinal != null) {
+                        mensagens.addAll(buscarMensagensRecebidasEmIntervalo(diretorio, dataInicio, dataFinal));
+                    } else {
+                        mensagens.addAll(buscarMensagensRecebidasAPartirDe(diretorio, dataInicio));
+                    }
+                } else {
+                    mensagens.addAll(buscarMensagens(diretorio));
+                }
+            }
+        }
 
         List<EmailVo> emails = new ArrayList<>();
+        List<Message> mensagensProcessadas = new ArrayList<>();
         for (Message mensagem : mensagens) {
-            if(possuiAnexos(mensagem)) {
-                montarObjetoArmazem(config.getMimeTypeAnexo(), emails, mensagem);
-            }
-            else {
-                continue;
+
+            try {
+                if (((dataInicio == null) || dataInicio.before(mensagem.getReceivedDate())) &&
+                        ((dataFinal == null) || (mensagem.getReceivedDate().before(dataFinal)))) {
+                    mensagensProcessadas.add(mensagem);
+
+                    if (possuiAnexos(mensagem)) {
+                        montarObjetoArmazem(config.getMimeTypeAnexo(), emails, mensagem);
+                    }
+                }
+            } catch(MessagingException | RuntimeException e) {
+                LOGGER.error(e.getMessage(), e);
             }
         }
         resultadoLeitura.setMensagens(emails);
         resultadoLeitura.setDataLeitura(dataInicioLeitura);
+        arquivarMensagens(config, emailStore, mensagensProcessadas);
 
+        try {
+            emailStore.close();
+        } catch(MessagingException | ExcecaoBoleiaRuntime e) {
+            LOGGER.error(e.getMessage(), e);
+        }
         return resultadoLeitura;
+    }
+
+    /**
+     * Copia as mensagens para a pasta de arquivo morto do email e apaga da pasta de origem
+     *
+     * @param config Objeto contendo as configurações para a sessão
+     * @param emailStore conexão IMAP com a conta de e-mail
+     * @param mensagens Lista de mensagens a arquivar
+     */
+    private void arquivarMensagens(ConfiguracaoLeitorEmailVo config, IMAPStore emailStore, List<Message> mensagens) {
+        try{
+            if (mensagens.isEmpty()) {
+                return;
+            }
+            Folder diretorioArquivamento = emailStore.getFolder(config.getDiretorioArquivamento());
+            if (!diretorioArquivamento.exists())
+                diretorioArquivamento.create(Folder.HOLDS_MESSAGES);
+
+            for (String nomeDiretorio: config.getDiretorios()) {
+                Folder diretorioOrigem = obterDiretorio(emailStore, nomeDiretorio );
+
+                List<Message> mensagensOrigem = new ArrayList<>();
+                for (Message mensagem : mensagens) {
+                    if (mensagem.getFolder().getName().equals(diretorioOrigem.getName()))
+                        mensagensOrigem.add(mensagem);
+                }
+
+                Message[] listaMensagens = new Message[mensagensOrigem.size()];
+                mensagens.toArray(listaMensagens);
+                diretorioOrigem.copyMessages(listaMensagens, diretorioArquivamento);
+                diretorioOrigem.setFlags(listaMensagens, new Flags(Flags.Flag.DELETED), true);
+                diretorioOrigem.close(true);
+            }
+
+        } catch(Exception me) {
+            LOGGER.error(me.getMessage(), me);
+        }
+    }
+
+    @Override
+    public ImportacaoNfeArmazemVo obterEmailsAPartirDe(ConfiguracaoLeitorEmailVo config, Date dataInicio) {
+
+        return obterEmailsEntre(config, dataInicio, null);
     }
 
     @Override
     public ImportacaoNfeArmazemVo obterTodosOsEmails(ConfiguracaoLeitorEmailVo config) {
-        Date dataInicioLeitura = ambiente.buscarDataAmbiente();
-        ImportacaoNfeArmazemVo resultadoLeitura = new ImportacaoNfeArmazemVo();
-        Folder diretorio = conectarEObterDiretorio(config);
-        List<Message> mensagens = buscarMensagens(diretorio);
 
-        List<EmailVo> emails = new ArrayList<>();
-        for (Message mensagem : mensagens) {
-            if(possuiAnexos(mensagem)) {
-                montarObjetoArmazem(config.getMimeTypeAnexo(), emails, mensagem);
-            }
-            else {
-                continue;
-            }
-        }
-        resultadoLeitura.setMensagens(emails);
-        resultadoLeitura.setDataLeitura(dataInicioLeitura);
-
-        return resultadoLeitura;
+        return obterEmailsAPartirDe(config, null);
     }
 
     @Override
@@ -101,11 +164,11 @@ public class ImapsEmailRecebimentoDados implements IEmailRecebimentoDados {
     }
 
     /**
-     * Conecta a uma conta de e-mail via protocolo IMAPs e retorna o diretório escolhido pela configuração
+     * Conecta a uma conta de e-mail via protocolo IMAPs
      * @param config Objeto contendo as configurações para a sessão
-     * @return O diretório escolhido da conta de e-mail
+     * @return A conexão com a conta IMAP
      */
-    private Folder conectarEObterDiretorio(ConfiguracaoLeitorEmailVo config) {
+    private IMAPStore conectarEmail(ConfiguracaoLeitorEmailVo config) {
         try {
             Properties propriedadesConexao = new Properties();
 
@@ -124,14 +187,29 @@ public class ImapsEmailRecebimentoDados implements IEmailRecebimentoDados {
             IMAPStore emailStore = (IMAPStore) sessao.getStore();
             emailStore.connect();
 
-            Folder diretorio = emailStore.getFolder(config.getDiretorio());
-            diretorio.open(Folder.READ_ONLY);
+            return emailStore;
 
-            return diretorio;
-        }
-        catch(Exception e) {
+        } catch(Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw new ExcecaoBoleiaRuntime(Erro.ERRO_CONEXAO_LEITOR_EMAIL);
+        }
+    }
+
+    /**
+     * Retorna o diretório escolhido pela configuração, a partir da conexão passada
+     * @param emailStore conexão IMAP com a conta de e-mail
+     * @param nomeDiretorio  nome do diretório a ser aberto para leitura dos e-mails
+     * @return O diretório escolhido da conta de e-mail
+     */
+    private Folder obterDiretorio(IMAPStore emailStore, String nomeDiretorio) {
+        try {
+            Folder diretorio = emailStore.getFolder(nomeDiretorio);
+            diretorio.open(Folder.READ_WRITE);
+            return diretorio;
+
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            return null;
         }
     }
 
@@ -153,8 +231,7 @@ public class ImapsEmailRecebimentoDados implements IEmailRecebimentoDados {
     private List<Message> buscarMensagens(Folder diretorioEmail) {
         try {
             return Arrays.asList(diretorioEmail.getMessages());
-        }
-        catch(MessagingException e) {
+        } catch(MessagingException e) {
             LOGGER.error(e.getMessage(), e);
             throw new ExcecaoBoleiaRuntime(Erro.ERRO_BUSCA_MENSAGENS_LEITOR_EMAIL);
         }
@@ -178,8 +255,7 @@ public class ImapsEmailRecebimentoDados implements IEmailRecebimentoDados {
             }
 
             return Arrays.asList(diretorioEmail.search(termoBusca));
-        }
-        catch(MessagingException e) {
+        } catch(MessagingException e) {
             LOGGER.error(e.getMessage(), e);
             throw new ExcecaoBoleiaRuntime(Erro.ERRO_BUSCA_MENSAGENS_LEITOR_EMAIL);
         }
@@ -193,9 +269,15 @@ public class ImapsEmailRecebimentoDados implements IEmailRecebimentoDados {
      */
     private List<InputStream> obterAnexos(Message mensagem, String mimeType) {
         try {
-            Object conteudo = mensagem.getContent();
-            if (conteudo instanceof String)
+            Message mensagemInterna = mensagem;
+            if (mensagem.getContent()==null) {
+                mensagemInterna = new MimeMessage((MimeMessage) mensagem);
+            }
+
+            Object conteudo = mensagemInterna.getContent();
+            if (conteudo instanceof String){
                 return null;
+            }
 
             if (conteudo instanceof Multipart) {
                 Multipart multipart = (Multipart) conteudo;
@@ -204,9 +286,8 @@ public class ImapsEmailRecebimentoDados implements IEmailRecebimentoDados {
                 for (int i = 0; i < multipart.getCount(); i++) {
                     try {
                         resultado.addAll(obterAnexos(multipart.getBodyPart(i), mimeType));
-                    }
-                    catch(ExcecaoBoleiaRuntime e) {
-                        continue;
+                    } catch (MessagingException | IOException | RuntimeException e) {
+                        LOGGER.error(e.getMessage(), e);
                     }
                 }
                 return resultado;
@@ -226,31 +307,28 @@ public class ImapsEmailRecebimentoDados implements IEmailRecebimentoDados {
      * @param mimeType O Mime Type sendo buscado
      * @return Lista de anexos em formato de InputStream
      */
-    private List<InputStream> obterAnexos(BodyPart parte, String mimeType) {
-        try {
-            List<InputStream> resultado = new ArrayList<>();
-            Object conteudo = parte.getInputStream();
-            if (conteudo instanceof InputStream || conteudo instanceof String) {
-                if ((Part.ATTACHMENT.equalsIgnoreCase(parte.getDisposition()) || StringUtils.isNotBlank(parte.getFileName())) && parte.isMimeType(mimeType)) {
-                    resultado.add(parte.getInputStream());
-                    return resultado;
-                } else {
-                    return new ArrayList<>();
-                }
+    private List<InputStream> obterAnexos(BodyPart parte, String mimeType) throws IOException, MessagingException {
+        List<InputStream> resultado = new ArrayList<>();
+        Object conteudo = parte.getInputStream();
+        if (conteudo instanceof InputStream || conteudo instanceof String) {
+            if (Part.ATTACHMENT.equalsIgnoreCase(parte.getDisposition()) &&
+                    StringUtils.isNotBlank(parte.getFileName()) &&
+                        parte.getFileName().toLowerCase().endsWith(EXTENSAO_XML)
+            ) {
+                resultado.add(parte.getInputStream());
+                return resultado;
+            } else {
+                return new ArrayList<>();
             }
-            if (conteudo instanceof Multipart) {
-                Multipart multipart = (Multipart) conteudo;
-                for (int i = 0; i < multipart.getCount(); i++) {
-                    BodyPart bodyPart = multipart.getBodyPart(i);
-                    resultado.addAll(obterAnexos(bodyPart, mimeType));
-                }
+        }
+        if (conteudo instanceof Multipart) {
+            Multipart multipart = (Multipart) conteudo;
+            for (int i = 0; i < multipart.getCount(); i++) {
+                BodyPart bodyPart = multipart.getBodyPart(i);
+                resultado.addAll(obterAnexos(bodyPart, mimeType));
             }
-            return resultado;
         }
-        catch (MessagingException | IOException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new ExcecaoBoleiaRuntime(Erro.ERRO_OBTER_ANEXOS_LEITOR_EMAIL);
-        }
+        return resultado;
     }
 
     /**
@@ -261,15 +339,23 @@ public class ImapsEmailRecebimentoDados implements IEmailRecebimentoDados {
     private Boolean possuiAnexos (Message mensagem) {
         try {
             String mimeTypeMultipart = "multipart/mixed";
-            if (mensagem.isMimeType(mimeTypeMultipart)) {
-                Multipart mp = (Multipart) mensagem.getContent();
+
+            if (!mensagem.getFolder().isOpen()) {
+                mensagem.getFolder().open(Folder.READ_WRITE);
+            }
+
+            Message mensagemInterna = mensagem;
+            if (mensagem.getContent()==null) {
+                mensagemInterna = new MimeMessage((MimeMessage) mensagem);
+            }
+            if (mensagemInterna.isMimeType(mimeTypeMultipart)) {
+                Multipart mp = (Multipart) mensagemInterna.getContent();
                 if (mp.getCount() > 1) {
                     return true;
                 }
             }
             return false;
-        }
-        catch(MessagingException | IOException e) {
+        } catch(MessagingException | IOException e) {
             LOGGER.error(e.getMessage(), e);
             throw new ExcecaoBoleiaRuntime(Erro.ERRO_OBTER_ANEXOS_LEITOR_EMAIL);
         }
@@ -292,8 +378,8 @@ public class ImapsEmailRecebimentoDados implements IEmailRecebimentoDados {
             List<String> anexosBase64 = obterAnexos(mensagem, mimeTypeAnexo).stream().map(anexo -> Base64.encodeBase64String((UtilitarioStreams.carregarEmMemoria(anexo)))).collect(Collectors.toList());
             emailVo.setAnexos(anexosBase64);
             emails.add(emailVo);
-        }
-        catch(MessagingException e) {
+
+        } catch(MessagingException e) {
             LOGGER.error(e.getMessage(), e);
             throw new ExcecaoBoleiaRuntime(Erro.ERRO_BUSCA_MENSAGENS_LEITOR_EMAIL);
         }

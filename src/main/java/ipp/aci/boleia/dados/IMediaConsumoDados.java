@@ -53,5 +53,5 @@ public interface IMediaConsumoDados extends IRepositorioBoleiaDados<AutorizacaoP
      * informado e o anterior.
      */
     ResultadoPaginado<VolumeAbastecidoTipoCombustivelVo> pesquisarVolumeAbastecidoPorTipooCombustivel(Usuario usuarioFrotista,
-                                                                                                      int periodo);
+                                                                                         int periodo);
 }

@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:ns2="java:oracle.e1.bssv.JP590B1.valueobject" xmlns:ns3="java:oracle.e1.bssv.JP5903B1.valueobject" xmlns:ns4="java:oracle.e1.bssvfoundation.base" xmlns:ns5="java:oracle.e1.bssvfoundation.util" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:s0="http://ipiranga.com.br/notasDeDebito" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" targetNamespace="http://ipiranga.com.br/notasDeDebito">
+    <types>
+        <s:schema elementFormDefault="qualified" targetNamespace="http://ipiranga.com.br/notasDeDebito">
+            <s:import namespace="java:oracle.e1.bssv.JP5903B1.valueobject"/>
+            <s:import namespace="java:oracle.e1.bssv.JP590B1.valueobject"/>
+            <s:element name="consultarNotasDeDebito">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" name="pRequest" type="ns2:notasDeDebitoReq"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="Ens_Request">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Messagebody"/>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="Ens_Messagebody"/>
+            <s:complexType name="consultarNotasDeDebitoRequest">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Request">
+                        <s:sequence>
+                            <s:element name="inputV0" type="ns3:ConsultaNotasDeDebito_Input"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:element name="consultarNotasDeDebitoResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element name="consultarNotasDeDebitoResult" type="s0:notasDeDebitoResp"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="notasDeDebitoResp">
+                <s:complexContent>
+                    <s:extension base="s0:v2">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="saida" type="s0:consultarNotasDeDebitoResponse"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="v2">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Response">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="statusIntegracao" type="s0:statusIntegracao"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="Ens_Response">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Messagebody"/>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="statusIntegracao">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Response">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="status" type="s:boolean"/>
+                            <s:element minOccurs="0" name="mensagem">
+                                <s:simpleType>
+                                    <s:restriction base="s:string">
+                                        <s:maxLength value="1024"/>
+                                    </s:restriction>
+                                </s:simpleType>
+                            </s:element>
+                            <s:element minOccurs="0" name="sessionId" type="s:long"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="consultarNotasDeDebitoResponse">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Response">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="consultarNotasDeDebitoRspnslmnt" type="ns3:ConsultaNotasDeDebito_Output"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+        </s:schema>
+        <s:schema elementFormDefault="qualified" targetNamespace="java:oracle.e1.bssv.JP590B1.valueobject">
+            <s:import namespace="http://ipiranga.com.br/notasDeDebito"/>
+            <s:complexType name="notasDeDebitoReq">
+                <s:complexContent>
+                    <s:extension base="s0:Ens_Request">
+                        <s:sequence>
+                            <s:element name="entrada" type="s0:consultarNotasDeDebitoRequest"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+        </s:schema>
+        <s:schema elementFormDefault="qualified" targetNamespace="java:oracle.e1.bssv.JP5903B1.valueobject">
+            <s:import namespace="java:oracle.e1.bssvfoundation.base"/>
+            <s:complexType name="ConsultaNotasDeDebito_Input">
+                <s:complexContent>
+                    <s:extension base="ns4:ValueObject">
+                        <s:sequence>
+                            <s:element name="CodigoCliente" type="s:int"/>
+                            <s:element name="CompanhiaDocumento" type="s:string"/>
+                            <s:element name="TipoDocumento" type="s:string"/>
+                            <s:element name="DataFatura" type="s:dateTime"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="ConsultaNotasDeDebito_Output">
+                <s:complexContent>
+                    <s:extension base="ns4:MessageValueObject">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="NotasDeDebito" type="ns3:NotasDeDebito"/>
+                            <s:element minOccurs="0" name="CodigoErro" type="s:string"/>
+                            <s:element minOccurs="0" name="DescricaoErro" type="s:string"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="NotasDeDebito">
+                <s:complexContent>
+                    <s:extension base="ns4:ValueObject">
+                        <s:sequence>
+                            <s:element maxOccurs="unbounded" minOccurs="0" name="NotasDeDebito" nillable="true" type="ns3:NotaDeDebito"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="ArrayOfNotaDeDebito">
+                <s:sequence>
+                    <s:element maxOccurs="unbounded" minOccurs="0" name="NotaDeDebito" nillable="true" type="ns3:NotaDeDebito"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="NotaDeDebito">
+                <s:complexContent>
+                    <s:extension base="ns4:ValueObject">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="NumeroDocumento" type="s:int"/>
+                            <s:element minOccurs="0" name="Parcela" type="s:string"/>
+                            <s:element minOccurs="0" name="ValorBruto" type="s:decimal"/>
+                            <s:element minOccurs="0" name="ValorEmAberto" type="s:decimal"/>
+                            <s:element minOccurs="0" name="StatusPgto" type="s:string"/>
+                            <s:element minOccurs="0" name="DataVenc" type="s:dateTime"/>
+                            <s:element minOccurs="0" name="DataContabil" type="s:dateTime"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+        </s:schema>
+        <s:schema elementFormDefault="qualified" targetNamespace="java:oracle.e1.bssvfoundation.base">
+            <s:import namespace="java:oracle.e1.bssvfoundation.util"/>
+            <s:complexType name="ValueObject"/>
+            <s:complexType name="MessageValueObject">
+                <s:complexContent>
+                    <s:extension base="ns4:ValueObject">
+                        <s:sequence>
+                            <s:element minOccurs="0" name="E1MessageList" type="ns5:E1MessageList"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+        </s:schema>
+        <s:schema elementFormDefault="qualified" targetNamespace="java:oracle.e1.bssvfoundation.util">
+            <s:complexType name="E1MessageList">
+                <s:sequence>
+                    <s:element maxOccurs="unbounded" minOccurs="0" name="E1Messages" nillable="true" type="ns5:E1Message"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="ArrayOfE1Message">
+                <s:sequence>
+                    <s:element maxOccurs="unbounded" minOccurs="0" name="E1Message" nillable="true" type="ns5:E1Message"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="E1Message">
+                <s:sequence>
+                    <s:element minOccurs="0" name="MessagePrefix" type="s:string"/>
+                    <s:element minOccurs="0" name="Message" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+        </s:schema>
+    </types>
+    <message name="consultarNotasDeDebitoSoapIn">
+        <part name="parameters" element="s0:consultarNotasDeDebito"/>
+    </message>
+    <message name="consultarNotasDeDebitoSoapOut">
+        <part name="parameters" element="s0:consultarNotasDeDebitoResponse"/>
+    </message>
+    <portType name="notasDeDebitoSoap">
+        <operation name="consultarNotasDeDebito">
+            <input message="s0:consultarNotasDeDebitoSoapIn"/>
+            <output message="s0:consultarNotasDeDebitoSoapOut"/>
+        </operation>
+    </portType>
+    <binding name="notasDeDebitoSoap" type="s0:notasDeDebitoSoap">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="consultarNotasDeDebito">
+            <soap:operation soapAction="http://ipiranga.com.br/notasDeDebito/ws.notasDeDebito.Service.consultarNotasDeDebito" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="notasDeDebito">
+        <port name="notasDeDebitoSoap" binding="s0:notasDeDebitoSoap">
+            <soap:address location="${settings.jde.notasdedebito.soap.address}"/>
+        </port>
+    </service>
+</definitions>

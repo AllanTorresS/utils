@@ -9,6 +9,7 @@ import ipp.aci.boleia.dominio.enums.StatusExecucaoParametroSistema;
 import ipp.aci.boleia.dominio.vo.ContextoExecucaoParametroSistemaVo;
 import ipp.aci.boleia.dominio.vo.ResultadoExecucaoParametroSistemaVo;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
+import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.i18n.Mensagens;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -32,7 +33,7 @@ public class LogicaParametroIntervaloAbastecimento implements ILogicaParametroSi
         AutorizacaoPagamento autorizacao = contexto.getDados();
         ResultadoExecucaoParametroSistemaVo<AutorizacaoPagamento> resultado = new ResultadoExecucaoParametroSistemaVo<>(autorizacao);
         Veiculo veiculo = autorizacao.getVeiculo();
-        if(veiculo.isProprio()) {
+        if(veiculo.isProprio() || veiculo.isAgregado()) {
             boolean ativoParaTodos = frotaParam.getVerificarIntervaloAbastecimentoTodosVeiculos() != null && frotaParam.getVerificarIntervaloAbastecimentoTodosVeiculos();
             FrotaParametroSistemaIntervaloAbastecimento intervalo = getConfiguracaoVeiculo(frotaParam, veiculo);
             if (ativoParaTodos || (intervalo != null && intervalo.isAtivo())) {
@@ -44,6 +45,7 @@ public class LogicaParametroIntervaloAbastecimento implements ILogicaParametroSi
                     long decorrido = (dataCorrente.getTime() - dataUltimo.getTime()) / 1000 / 60;
                     if (decorrido < minimoMinutos) {
                         resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
+                        resultado.setCodigoErro(Erro.ERRO_AUTORIZACAO_INTERVALO_PERMITIDO);
                         resultado.setMensagemErro(mensagens.obterMensagem("parametro.sistema.erro.abastecimento.intervalo", UtilitarioFormatacao.formatarPlacaVeiculo(veiculo.getPlaca())));
                     }
                 }

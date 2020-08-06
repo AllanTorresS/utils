@@ -87,7 +87,7 @@ public enum CamposRelatorioAbastecimento {
     TROCA_OLEO_VALOR_UNITARO_SERVICO(730, "enum.CamposRelatorioAbastecimento.TROCA_OLEO_VALOR_UNITARIO_SERVICO.label", true, true, 7, 30, false),
     TROCA_OLEO_VALOR_TOTAL_SERVICO(731, "enum.CamposRelatorioAbastecimento.TROCA_OLEO_VALOR_TOTAL_SERVICO.label", true, true, 7, 30, false),
     VALOR_TOTAL_TRANSACAO(732, "enum.CamposRelatorioAbastecimento.VALOR_TOTAL_TRANSACAO.label", true, true, 7, 30, false),
-    STATUS(733, "enum.CamposRelatorioAbastecimento.STATUS.label", true, true, 7, 20, false),
+    STATUS(733, "enum.CamposRelatorioAbastecimento.STATUS.label", true, true, 7, 25, false),
     MOTIVO_RECUSA(734, "enum.CamposRelatorioAbastecimento.MOTIVO_RECUSA.label", true, true, 7, 30, false),
     RESUMO_OPERACAO(735, "enum.CamposRelatorioAbastecimento.RESUMO_OPERACAO.label", true, true, 7, 100, false),
     VALOR_DESCONTO_FROTAS_LEVES(736, "enum.CamposRelatoriosAbastecimento.VALOR_DESCONTO_FROTAS_LEVES.label", false, true, 7, 30, true),

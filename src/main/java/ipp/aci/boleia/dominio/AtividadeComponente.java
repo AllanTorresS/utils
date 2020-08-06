@@ -12,14 +12,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Arrays;
 import java.util.List;
-
-import static ipp.aci.boleia.dominio.enums.TipoAtividadeComponente.AREA_ABASTECIMENTO;
 
 /**
  * Representa a tabela de Atividade Componente
@@ -92,15 +89,7 @@ public class AtividadeComponente implements IPersistente {
      * @return lista de area de abastecimentos
      */
     public static List<String> obterCodigosAreaAbastecimento(){
-        return Arrays.asList(AREA_ABASTECIMENTO.getCodigoCorporativo(), TipoAtividadeComponente.AREA_ABASTECIMENTO_OUTRA.getCodigoCorporativo());
-    }
-
-    /**
-     * Monta o nome de apresentacao a respeito de uma Infraestrutura presente em um ponto de venda.
-     * @return O nome de apresentacao em questão
-     */
-    @Transient
-    public String getNomeApresentacao() {
-        return getDescricao();
+        return Arrays.asList(TipoAtividadeComponente.AREA_ABASTECIMENTO.getCodigoCorporativo(),
+                TipoAtividadeComponente.AREA_ABASTECIMENTO_OUTRA.getCodigoCorporativo());
     }
 }

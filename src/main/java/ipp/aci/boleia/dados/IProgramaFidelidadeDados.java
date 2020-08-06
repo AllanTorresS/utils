@@ -10,13 +10,7 @@ import java.util.List;
  */
 public interface IProgramaFidelidadeDados {
 
-    /**
-     * Registra o acúmulo de Km de vantagens
-     *
-     * @param acumulo Objeto que contêm os dados do acúmulo
-     * @return O resultado da operacao de acumulo de pontos
-     */
-    KmvVo acumularPontos(KmvAcumuloVo acumulo);
+
 
     /**
      * Obtem os acúmulos de Km de Vantagens pendentes
@@ -42,4 +36,18 @@ public interface IProgramaFidelidadeDados {
      * @return O saldo do motorista no Km de Vantagens
      */
     Integer mostrarSaldo(String cpf, String senha);
+
+    /**
+     * Acumula pontos para o dono da frota.
+     * @param acumulo o acúmulo pendente
+     * @return o objeto de retorno da operação.
+     */
+	KmvVo acumularPontosParaDonoFrota(KmvAcumuloVo acumulo);
+
+    /**
+     * Acumula pontos para o motorista
+     * @param acumulo o acúmulo pendente
+     * @return o objeto de retorno da operação.
+     */
+    KmvVo acumularPontosParaMotorista(KmvAcumuloVo acumulo);
 }

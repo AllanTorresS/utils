@@ -59,6 +59,10 @@ public class TipoCombustivel implements IPersistente {
 	@Column(name = "CD_CONNECTCTA")
 	private Long codigoConnectCTA;
 
+	@Column(name = "CD_COMB_CORP")
+	private Long codigoCombustivelCorporativo;
+
+
 	@Override
 	public Long getId() {
 		return id;
@@ -123,5 +127,13 @@ public class TipoCombustivel implements IPersistente {
 
 	public void setCodigoConnectCTA(Long codigoConnectCTA) {
 		this.codigoConnectCTA = codigoConnectCTA;
+	}
+
+	public Long getCodigoCombustivelCorporativo() {
+		return codigoCombustivelCorporativo;
+	}
+
+	public void setCodigoCombustivelCorporativo(Long codigoCombustivelCorporativo) {
+		this.codigoCombustivelCorporativo = codigoCombustivelCorporativo;
 	}
 }

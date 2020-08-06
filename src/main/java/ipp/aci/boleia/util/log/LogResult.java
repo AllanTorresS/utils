@@ -1,10 +1,14 @@
 package ipp.aci.boleia.util.log;
 
+/**
+ * Log com as informações do resultado final de uma requisição.
+ */
 public class LogResult {
     private LogRequest request;
     private Object response;
     private Integer status;
     private Long duration;
+
     public LogRequest getRequest() {
         return request;
     }

@@ -61,7 +61,7 @@ public class OracleEmpresaUnidadeViewDados extends OracleRepositorioBoleiaDados<
      */
     private void montarParametroPesquisaUf(EnumVo filtroUf, List<ParametroPesquisa> parametros) {
         String uf = null;
-        if (filtroUf != null && filtroUf.getName() != null) {
+        if(filtroUf != null && filtroUf.getName() != null) {
             uf = Estado.valueOf(filtroUf.getName()).getSigla();
         }
         parametros.add(new ParametroPesquisaIgual("uf", uf));
@@ -71,11 +71,11 @@ public class OracleEmpresaUnidadeViewDados extends OracleRepositorioBoleiaDados<
      * Inclui na lista de parametros o parametro de pesquisa por tipo de entidade.
      *
      * @param filtroTipoEntidade Filtro de tipo de entidade.
-     * @param parametros         Lista de parametros.
+     * @param parametros Lista de parametros.
      */
     private void montarParametroPesquisaTipoEntidade(EnumVo filtroTipoEntidade, List<ParametroPesquisa> parametros) {
         TipoEntidadeUnidadeEmpresaAgregada tipoEntidade = null;
-        if (filtroTipoEntidade != null && filtroTipoEntidade.getName() != null) {
+        if(filtroTipoEntidade != null && filtroTipoEntidade.getName() != null) {
             tipoEntidade = TipoEntidadeUnidadeEmpresaAgregada.valueOf(filtroTipoEntidade.getName());
         }
         parametros.add(new ParametroPesquisaIgual("tipoEntidade", tipoEntidade != null ? tipoEntidade.getValue() : null));

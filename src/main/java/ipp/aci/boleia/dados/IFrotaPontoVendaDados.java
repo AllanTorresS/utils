@@ -6,6 +6,7 @@ import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.AutorizacaoPagamentoOrfaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaPostoCredenciadoVo;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -59,4 +60,11 @@ public interface IFrotaPontoVendaDados extends IRepositorioBoleiaDados<FrotaPont
 	 * @return Uma lista contendo as entidaes armazenadas
 	 */
 	List<FrotaPontoVenda> armazenarListaFrotaPV(List<FrotaPontoVenda> listaFrotaPV);
+
+	/**
+	 * Obtem todas frotaPontoVenda mais atualizadas em relação a uma determinada data
+	 * @param dataReferencia a data usada como ponto de referência
+	 * @return uma lista contendo as entidades recuperadas pelo critério
+	 */
+	List<FrotaPontoVenda> buscarPorDataMaisRecente(Date dataReferencia);
 }

@@ -99,8 +99,7 @@
                                     </s:restriction>
                                 </s:simpleType>
                             </s:element>
-                            <s:element minOccurs="0" name="listaVoucherRetorno"
-                                       type="s0:ArrayOfconsultarVoucherRetornoRespPairOflistaVoucherRetornoKeyconsultarVoucherRetornoResp"/>
+                            <s:element minOccurs="0" name="listaVoucherRetorno" type="s0:ArrayOfconsultarVoucherRetornoRespPairOflistaVoucherRetornoKeyconsultarVoucherRetornoResp"/>
                         </s:sequence>
                     </s:extension>
                 </s:complexContent>
@@ -110,11 +109,9 @@
                     <s:extension base="s0:Ens_Messagebody"/>
                 </s:complexContent>
             </s:complexType>
-            <s:complexType
-                    name="ArrayOfconsultarVoucherRetornoRespPairOflistaVoucherRetornoKeyconsultarVoucherRetornoResp">
+            <s:complexType name="ArrayOfconsultarVoucherRetornoRespPairOflistaVoucherRetornoKeyconsultarVoucherRetornoResp">
                 <s:sequence>
-                    <s:element maxOccurs="unbounded" minOccurs="0" name="consultarVoucherRetornoResp" nillable="true"
-                               type="s0:PairOflistaVoucherRetornoKeyconsultarVoucherRetornoResp"/>
+                    <s:element maxOccurs="unbounded" minOccurs="0" name="consultarVoucherRetornoResp" nillable="true" type="s0:PairOflistaVoucherRetornoKeyconsultarVoucherRetornoResp"/>
                 </s:sequence>
             </s:complexType>
             <s:complexType name="PairOflistaVoucherRetornoKeyconsultarVoucherRetornoResp">
@@ -137,14 +134,12 @@
                     <s:element minOccurs="0" name="numeroVoucher" type="s:long"/>
                     <s:element minOccurs="0" name="tipoVoucher" type="s:string"/>
                     <s:element minOccurs="0" name="companhiaVoucher" type="s:string"/>
-                    <s:element minOccurs="0" name="listaVoucherDetalhe"
-                               type="s0:ArrayOfvoucherDetalhePairOflistaVoucherDetalheKeyvoucherDetalhe"/>
+                    <s:element minOccurs="0" name="listaVoucherDetalhe" type="s0:ArrayOfvoucherDetalhePairOflistaVoucherDetalheKeyvoucherDetalhe"/>
                 </s:sequence>
             </s:complexType>
             <s:complexType name="ArrayOfvoucherDetalhePairOflistaVoucherDetalheKeyvoucherDetalhe">
                 <s:sequence>
-                    <s:element maxOccurs="unbounded" minOccurs="0" name="voucherDetalhe" nillable="true"
-                               type="s0:PairOflistaVoucherDetalheKeyvoucherDetalhe"/>
+                    <s:element maxOccurs="unbounded" minOccurs="0" name="voucherDetalhe" nillable="true" type="s0:PairOflistaVoucherDetalheKeyvoucherDetalhe"/>
                 </s:sequence>
             </s:complexType>
             <s:complexType name="PairOflistaVoucherDetalheKeyvoucherDetalhe">
@@ -198,14 +193,12 @@
                     <s:element minOccurs="0" name="tipoDocumentoCompra" type="s:string"/>
                     <s:element minOccurs="0" name="companhiaDocumentoCompra" type="s:string"/>
                     <s:element minOccurs="0" name="sufixoDocumentoCompra" type="s:string"/>
-                    <s:element minOccurs="0" name="listaContabilizacao"
-                               type="s0:ArrayOfcontabilizacaoPairOflistaContabilizacaoKeycontabilizacao"/>
+                    <s:element minOccurs="0" name="listaContabilizacao" type="s0:ArrayOfcontabilizacaoPairOflistaContabilizacaoKeycontabilizacao"/>
                 </s:sequence>
             </s:complexType>
             <s:complexType name="ArrayOfcontabilizacaoPairOflistaContabilizacaoKeycontabilizacao">
                 <s:sequence>
-                    <s:element maxOccurs="unbounded" minOccurs="0" name="contabilizacao" nillable="true"
-                               type="s0:PairOflistaContabilizacaoKeycontabilizacao"/>
+                    <s:element maxOccurs="unbounded" minOccurs="0" name="contabilizacao" nillable="true" type="s0:PairOflistaContabilizacaoKeycontabilizacao"/>
                 </s:sequence>
             </s:complexType>
             <s:complexType name="PairOflistaContabilizacaoKeycontabilizacao">
@@ -277,16 +270,14 @@
                                     </s:restriction>
                                 </s:simpleType>
                             </s:element>
-                            <s:element minOccurs="0" name="listaVoucher"
-                                       type="s0:ArrayOfvoucherPairOflistaVoucherKeyvoucher"/>
+                            <s:element minOccurs="0" name="listaVoucher" type="s0:ArrayOfvoucherPairOflistaVoucherKeyvoucher"/>
                         </s:sequence>
                     </s:extension>
                 </s:complexContent>
             </s:complexType>
             <s:complexType name="ArrayOfvoucherPairOflistaVoucherKeyvoucher">
                 <s:sequence>
-                    <s:element maxOccurs="unbounded" minOccurs="0" name="voucher" nillable="true"
-                               type="s0:PairOflistaVoucherKeyvoucher"/>
+                    <s:element maxOccurs="unbounded" minOccurs="0" name="voucher" nillable="true" type="s0:PairOflistaVoucherKeyvoucher"/>
                 </s:sequence>
             </s:complexType>
             <s:complexType name="PairOflistaVoucherKeyvoucher">
@@ -342,8 +333,7 @@
             </s:complexType>
             <s:complexType name="ArrayOfitemPairOflistaItensKeyitem">
                 <s:sequence>
-                    <s:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true"
-                               type="s0:PairOflistaItensKeyitem"/>
+                    <s:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="s0:PairOflistaItensKeyitem"/>
                 </s:sequence>
             </s:complexType>
             <s:complexType name="PairOflistaItensKeyitem">
@@ -371,14 +361,12 @@
                             </s:restriction>
                         </s:simpleType>
                     </s:element>
-                    <s:element minOccurs="0" name="listaDistribuicaoContabil"
-                               type="s0:ArrayOfdistribuicaoContabilPairOflistaDistribuicaoContabilKeydistribuicaoContabil"/>
+                    <s:element minOccurs="0" name="listaDistribuicaoContabil" type="s0:ArrayOfdistribuicaoContabilPairOflistaDistribuicaoContabilKeydistribuicaoContabil"/>
                 </s:sequence>
             </s:complexType>
             <s:complexType name="ArrayOfdistribuicaoContabilPairOflistaDistribuicaoContabilKeydistribuicaoContabil">
                 <s:sequence>
-                    <s:element maxOccurs="unbounded" minOccurs="0" name="distribuicaoContabil" nillable="true"
-                               type="s0:PairOflistaDistribuicaoContabilKeydistribuicaoContabil"/>
+                    <s:element maxOccurs="unbounded" minOccurs="0" name="distribuicaoContabil" nillable="true" type="s0:PairOflistaDistribuicaoContabilKeydistribuicaoContabil"/>
                 </s:sequence>
             </s:complexType>
             <s:complexType name="PairOflistaDistribuicaoContabilKeydistribuicaoContabil">
@@ -412,8 +400,7 @@
                 <s:complexContent>
                     <s:extension base="s0:Ens_Response">
                         <s:sequence>
-                            <s:element minOccurs="0" name="listaVoucherRetorno"
-                                       type="s0:ArrayOfcriarEmLoteVoucherRetornoRespPairOflistaVoucherRetornoKeycriarEmLoteVoucherRetornoResp"/>
+                            <s:element minOccurs="0" name="listaVoucherRetorno" type="s0:ArrayOfcriarEmLoteVoucherRetornoRespPairOflistaVoucherRetornoKeycriarEmLoteVoucherRetornoResp"/>
                             <s:element minOccurs="0" name="status" type="s:boolean"/>
                             <s:element minOccurs="0" name="msgErro">
                                 <s:simpleType>
@@ -426,11 +413,9 @@
                     </s:extension>
                 </s:complexContent>
             </s:complexType>
-            <s:complexType
-                    name="ArrayOfcriarEmLoteVoucherRetornoRespPairOflistaVoucherRetornoKeycriarEmLoteVoucherRetornoResp">
+            <s:complexType name="ArrayOfcriarEmLoteVoucherRetornoRespPairOflistaVoucherRetornoKeycriarEmLoteVoucherRetornoResp">
                 <s:sequence>
-                    <s:element maxOccurs="unbounded" minOccurs="0" name="criarEmLoteVoucherRetornoResp" nillable="true"
-                               type="s0:PairOflistaVoucherRetornoKeycriarEmLoteVoucherRetornoResp"/>
+                    <s:element maxOccurs="unbounded" minOccurs="0" name="criarEmLoteVoucherRetornoResp" nillable="true" type="s0:PairOflistaVoucherRetornoKeycriarEmLoteVoucherRetornoResp"/>
                 </s:sequence>
             </s:complexType>
             <s:complexType name="PairOflistaVoucherRetornoKeycriarEmLoteVoucherRetornoResp">
@@ -572,8 +557,7 @@
     <binding name="voucherContasPagarSoap" type="s0:voucherContasPagarSoap">
         <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
         <operation name="consultar">
-            <soap:operation soapAction="http://tempuri.org/cbpi.bs.voucherContasPagar.Service.consultar"
-                            style="document"/>
+            <soap:operation soapAction="http://tempuri.org/cbpi.bs.voucherContasPagar.Service.consultar" style="document"/>
             <input>
                 <soap:body use="literal"/>
             </input>
@@ -582,8 +566,7 @@
             </output>
         </operation>
         <operation name="criarEmLote">
-            <soap:operation soapAction="http://tempuri.org/cbpi.bs.voucherContasPagar.Service.criarEmLote"
-                            style="document"/>
+            <soap:operation soapAction="http://tempuri.org/cbpi.bs.voucherContasPagar.Service.criarEmLote" style="document"/>
             <input>
                 <soap:body use="literal"/>
             </input>
@@ -592,8 +575,7 @@
             </output>
         </operation>
         <operation name="liberar">
-            <soap:operation soapAction="http://tempuri.org/cbpi.bs.voucherContasPagar.Service.liberar"
-                            style="document"/>
+            <soap:operation soapAction="http://tempuri.org/cbpi.bs.voucherContasPagar.Service.liberar" style="document"/>
             <input>
                 <soap:body use="literal"/>
             </input>
@@ -604,7 +586,7 @@
     </binding>
     <service name="voucherContasPagar">
         <port name="voucherContasPagarSoap" binding="s0:voucherContasPagarSoap">
-            <soap:address location="http://ensemdes.ipiranga.com.br:7070/csp/ipirangaws/cbpi.bs.voucherContasPagar.Service.CLS"/>
+            <soap:address location="${settings.jde.vouchercontaspagar.soap.address}"/>
         </port>
     </service>
 </definitions>

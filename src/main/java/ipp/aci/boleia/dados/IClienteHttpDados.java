@@ -29,7 +29,7 @@ public interface IClienteHttpDados {
      * @param <T> O tipo do objeto de resposta
      * @return resposta da requisição
      */
-    <T> T doGet(String url, Header[] headers, ConsumidorHttp<T> consumidorHttp);
+    <T> T doGet(String url,  Header[] headers, ConsumidorHttp<T> consumidorHttp);
 
     /**
      * Realiza uma requisição do tipo GET usando credenciais

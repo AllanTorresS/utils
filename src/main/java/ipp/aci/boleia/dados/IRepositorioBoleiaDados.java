@@ -91,4 +91,5 @@ public interface IRepositorioBoleiaDados<T extends IPersistente> {
      * @return A entidade obtida
      */
     T obterPorIdentificadorPadrao(String identificador);
+
 }

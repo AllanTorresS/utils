@@ -127,7 +127,7 @@ public class ContextoImportacaoPrecosBaseVo  implements IDadosIniciaisImportacao
      * @param precosMicromercado A lista de precos de micromercado vigentes
      * @return O indice
      */
-    private Map<String, PrecoMicromercado> indexarPrecosMicromercado(List<PrecoMicromercado> precosMicromercado) {
+    private Map<String,PrecoMicromercado> indexarPrecosMicromercado(List<PrecoMicromercado> precosMicromercado) {
         Map<String, PrecoMicromercado> indice = new HashMap<>();
         if(precosMicromercado != null){
             for(PrecoMicromercado p : precosMicromercado){
@@ -166,8 +166,8 @@ public class ContextoImportacaoPrecosBaseVo  implements IDadosIniciaisImportacao
      * @param combustiveis A lista de combustiveis a ser indexada
      * @return O indice
      */
-    private Map<String, TipoCombustivel> indexarTiposCombustivel(List<TipoCombustivel> combustiveis) {
-        Map<String, TipoCombustivel> indice = new HashMap<>();
+    private Map<String,TipoCombustivel> indexarTiposCombustivel(List<TipoCombustivel> combustiveis) {
+        Map<String,TipoCombustivel> indice = new HashMap<>();
         if(combustiveis != null){
             for(TipoCombustivel c : combustiveis){
                 indice.put(c.getDescricao(), c);
@@ -182,7 +182,7 @@ public class ContextoImportacaoPrecosBaseVo  implements IDadosIniciaisImportacao
      * @param pontosDeVenda a lista de PVs
      * @return O indice
      */
-    private Map<Long, PontoDeVenda> indexarPontosDeVenda(List<PontoDeVenda> pontosDeVenda) {
+    private Map<Long,PontoDeVenda> indexarPontosDeVenda(List<PontoDeVenda> pontosDeVenda) {
         Map<Long, PontoDeVenda> indice = new HashMap<>();
         if(pontosDeVenda != null){
             for(PontoDeVenda p : pontosDeVenda){

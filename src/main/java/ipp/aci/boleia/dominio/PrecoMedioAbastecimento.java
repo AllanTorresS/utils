@@ -26,7 +26,7 @@ import java.util.Date;
 @Entity
 @Audited
 @Table(name = "PRECO_MEDIO_ABST")
-public class PrecoMedioAbastecimento implements IPersistente {
+public class PrecoMedioAbastecimento implements IPersistente{
 
     private static final long serialVersionUID = -4822174765550113811L;
 

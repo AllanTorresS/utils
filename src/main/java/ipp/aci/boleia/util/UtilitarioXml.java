@@ -38,6 +38,7 @@ public final class UtilitarioXml {
 
     /**
      * Obtem uma nova instancia de XPath
+     *
      * @return a instancia criada
      */
     private static final XPath getXPath() {
@@ -150,7 +151,7 @@ public final class UtilitarioXml {
      * @param documento documento que representa o Xml da nota parseada
      * @param caminho O caminho de nos no XML da nota
      * @param node O nó onde o caminho deve ser pesquisado, se nulo pesquisa na
-     *             raíz do documento
+     * raíz do documento
      * @return O valor obtido
      */
     public static String getString(Document documento, String caminho, Node node) {
@@ -168,8 +169,8 @@ public final class UtilitarioXml {
      * @param caminho O caminho de nos no XML da nota
      * @return O valor obtido
      */
-    public static Long getLong(Document documento,String caminho) {
-        if(caminho != null) {
+    public static Long getLong(Document documento, String caminho) {
+        if (caminho != null) {
             try {
                 return Long.parseLong(getString(documento, caminho).trim(), 10);
             } catch (NumberFormatException e) {
@@ -188,7 +189,7 @@ public final class UtilitarioXml {
      */
     public static BigDecimal getBigDecimal(Document documento, String caminho) {
         String vlr = getString(documento, caminho);
-        if(vlr != null) {
+        if (vlr != null) {
             try {
                 return new BigDecimal(vlr.trim());
             } catch (NumberFormatException e) {
@@ -207,7 +208,7 @@ public final class UtilitarioXml {
      */
     public static Date getDate(Document documento, String caminho) {
         String vlr = getString(documento, caminho);
-        if(vlr != null) {
+        if (vlr != null) {
             return UtilitarioFormatacaoData.lerDataIso8601(vlr);
         }
         return null;

@@ -359,7 +359,7 @@ public class FrotaParametroSistema implements IPersistente, IPertenceFrota {
     }
 
     public Boolean getCotaVeiculoVisivelMotorista() {
-        return cotaVeiculoVisivelMotorista;
+        return cotaVeiculoVisivelMotorista != null && cotaVeiculoVisivelMotorista;
     }
 
     public void setCotaVeiculoVisivelMotorista(Boolean cotaVeiculoVisivelMotorista) {

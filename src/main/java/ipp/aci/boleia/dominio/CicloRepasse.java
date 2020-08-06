@@ -1,7 +1,7 @@
 package ipp.aci.boleia.dominio;
-
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import org.hibernate.envers.Audited;
+
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

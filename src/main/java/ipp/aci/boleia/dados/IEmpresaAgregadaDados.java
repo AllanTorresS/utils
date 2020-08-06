@@ -30,7 +30,7 @@ public interface IEmpresaAgregadaDados extends IRepositorioBoleiaDados<EmpresaAg
     /**
      * Pesquisa empresa agregada por CNPJ e frota
      *
-     * @param cnpj    cnpj da empresa agregada
+     * @param cnpj cnpj da empresa agregada
      * @param idFrota Identificador da frota
      * @return lista de registros
      */

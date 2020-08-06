@@ -1,7 +1,6 @@
 package ipp.aci.boleia.dominio.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;

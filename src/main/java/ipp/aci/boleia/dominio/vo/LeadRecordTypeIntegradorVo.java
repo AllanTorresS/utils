@@ -7,17 +7,17 @@ public class LeadRecordTypeIntegradorVo {
 	
 	private String name;
 
-    /**
-     * Construtor default da classe.
-     */
+	/**
+	 * Construtor default da classe.
+	 */
 	public LeadRecordTypeIntegradorVo() {
 		// serializacao json
 	}
 
-    /**
-     * Constrói o objeto a partir do tipo de registro.
-     *
-     * @param recordTypeName Tipo de registro.
+	/**
+	 * Constrói o objeto a partir do tipo de registro.
+	 *
+	 * @param recordTypeName Tipo de registro.
 	 */
 	public LeadRecordTypeIntegradorVo(String recordTypeName) {
 		this.name = recordTypeName;

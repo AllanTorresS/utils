@@ -66,8 +66,8 @@ public class ContextoImportacaoPrecosMicromercadoVo implements IDadosIniciaisImp
      * @param combustiveis a lista de combustiveis
      * @return O indice
      */
-    private Map<String, TipoCombustivel> indexarCombustiveis(List<TipoCombustivel> combustiveis) {
-        Map<String, TipoCombustivel> indice = new HashMap<>();
+    private Map<String,TipoCombustivel> indexarCombustiveis(List<TipoCombustivel> combustiveis) {
+        Map<String,TipoCombustivel> indice = new HashMap<>();
         if(combustiveis != null) {
             for(TipoCombustivel combustivel : combustiveis) {
                 indice.put(combustivel.getDescricao(), combustivel);
@@ -110,8 +110,8 @@ public class ContextoImportacaoPrecosMicromercadoVo implements IDadosIniciaisImp
      * @param precoMicromercados a lista de precos micromercado
      * @return O indice
      */
-    private Map<String, PrecoMicromercado> indexarPrecosMicromercado(List<PrecoMicromercado> precoMicromercados) {
-        Map<String, PrecoMicromercado> indice = new HashMap<>();
+    private Map<String,PrecoMicromercado> indexarPrecosMicromercado(List<PrecoMicromercado> precoMicromercados) {
+        Map<String,PrecoMicromercado> indice = new HashMap<>();
         if(precoMicromercados != null) {
             for (PrecoMicromercado p : precoMicromercados) {
                 indice.put(criarChaveMicromercadoCombustivel(p), p);

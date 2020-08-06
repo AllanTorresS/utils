@@ -28,6 +28,7 @@ public class NfeAnexosArmazemSd {
 
     /**
      * Preenche os dados para persistência do anexo no armazém
+     *
      * @param dadoArmazem O registro do armazém que contém as informações do e-mail que originou o anexo
      * @param nota Objeto que representa a DANFe
      * @param statusAnexo O status do anexo a ser persistido
@@ -40,7 +41,7 @@ public class NfeAnexosArmazemSd {
         if (nota.getDestCnpjCpf() != null) {
             anexoArmazem.setCnpjFrota(Long.parseLong(UtilitarioFormatacao.obterNumeracaoSemFormatacao(nota.getDestCnpjCpf())));
         }
-        if(nota.getEmitCnpj() != null) {
+        if (nota.getEmitCnpj() != null) {
             anexoArmazem.setCnpjPtov(Long.parseLong(UtilitarioFormatacao.obterNumeracaoSemFormatacao(nota.getEmitCnpj())));
         }
         if (nota.getValorTotalNota() != null) {
@@ -55,10 +56,13 @@ public class NfeAnexosArmazemSd {
         if (nota.getNumeroDaNota() != null) {
             anexoArmazem.setNumeroNota(ConstantesNotaFiscal.NOTA_FISCAL_PREFIX + nota.getNumeroDaNota());
         }
+        if (nota.getChaveAcesso() != null) {
+            anexoArmazem.setChaveAcesso(nota.getChaveAcesso());
+        }
 
         anexoArmazem.setEmail(dadoArmazem);
         anexoArmazem.setStatus(statusAnexo);
-        if(justificativaFalha != null) {
+        if (justificativaFalha != null) {
             anexoArmazem.setMotivoFalhaImportacao(justificativaFalha);
         }
         anexoArmazem.setNumeroTentativasAtualizacao(ZERO);
@@ -67,6 +71,7 @@ public class NfeAnexosArmazemSd {
 
     /**
      * Obtém a mensagem correspondente ao erro de validação de nota fiscal
+     *
      * @param erro Erro de validação encontrado
      * @return A mensagem correspondente ao erro
      */

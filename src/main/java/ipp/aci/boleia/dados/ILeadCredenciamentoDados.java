@@ -1,5 +1,7 @@
 package ipp.aci.boleia.dados;
 
+import ipp.aci.boleia.dominio.enums.EtapaCredenciamentoFrota;
+import ipp.aci.boleia.dominio.vo.LeadCredenciamentoFrotaIntegradorVo;
 import ipp.aci.boleia.dominio.vo.LeadCredenciamentoPostoIntegradorVo;
 import ipp.aci.boleia.util.excecao.ExcecaoValidacao;
 
@@ -35,20 +37,29 @@ public interface ILeadCredenciamentoDados {
 	void anexarLead(Object corpo);
 	
 	/**
-     * Consulta as informações de Lead.
+     * Consulta as informações de Lead do posto.
      *
-     * @param cnpj Parâmetro de identificação do Lead.
+     * @param cnpj Parâmetro de identificaçao do Lead.
      * @return {@link LeadCredenciamentoPostoIntegradorVo} Dados do lead de posto.
      * @throws ExcecaoValidacao Caso não exista dados de Lead para o posto com o CNPJ informado.
      */
-    LeadCredenciamentoPostoIntegradorVo consultarPostoLead(String cnpj) throws ExcecaoValidacao;
+	LeadCredenciamentoPostoIntegradorVo consultarPostoLead(String cnpj) throws ExcecaoValidacao;
+	
+	/**
+     * Consulta as informações de Lead da frota.
+     *
+     * @param cnpj Parâmetro de identificação do Lead.
+     * @param etapa Etapa do credenciamento de frota.
+     * @return {@link LeadCredenciamentoFrotaIntegradorVo} Dados do lead de frota.
+     * @throws ExcecaoValidacao Caso não exista dados de Lead para frota com o CNPJ informado.
+     */
+	LeadCredenciamentoFrotaIntegradorVo consultarFrotaLead(String cnpj, EtapaCredenciamentoFrota etapa) throws ExcecaoValidacao;
 
-    /**
+	/**
      * Valida a existencia de Lead para o CNPJ informado.
      *
      * @param cnpj Parâmetro de busca do Lead.
-     * @return true em caso de existencia do Lead, caso contrario false.
+     * @return true em caso de existência do Lead, caso contrario false.
      */
-    Boolean validarLeadExistente(String cnpj);
-
+	Boolean validarLeadExistente(String cnpj);
 }

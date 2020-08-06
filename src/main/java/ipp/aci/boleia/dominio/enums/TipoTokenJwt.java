@@ -18,7 +18,10 @@ public enum TipoTokenJwt {
     DOWNLOAD_ARQUIVO         (null,                                 1,  false),
     SISTEMA_EXTERNO          (TipoPerfilUsuario.SISTEMA_EXTERNO,  720,  false),
     PRE_CREDENCIAMENTO_POSTO (TipoPerfilUsuario.REVENDA,   		    1,  false, TipoTokenJwt.getPermissoesPreCredenciamentoPosto()),
-	CREDENCIAMENTO_POSTO     (TipoPerfilUsuario.REVENDA,           24,  false, TipoTokenJwt.getPermissoesCredenciamentoPosto());
+	CREDENCIAMENTO_POSTO     (TipoPerfilUsuario.REVENDA,           2160,  false, TipoTokenJwt.getPermissoesCredenciamentoPosto()),
+	PRE_CREDENCIAMENTO_FROTA (TipoPerfilUsuario.FROTA,             	1,  false, TipoTokenJwt.getPermissoesPreCredenciamentoFrota()),
+	CREDENCIAMENTO_FROTA     (TipoPerfilUsuario.FROTA,             24,  false, TipoTokenJwt.getPermissoesCredenciamentoFrota()),
+    MODULO_INTERNO           (TipoPerfilUsuario.MODULO_INTERNO,     1,  false);
 
     private final int duracaoHoras;
     private final TipoPerfilUsuario tipoPerfil;
@@ -52,7 +55,8 @@ public enum TipoTokenJwt {
             ChavePermissao.FROTA_ATIVAR_TEMPORARIAMENTE,
             ChavePermissao.API_CREDENCIAMENTO_PDV_CONSULTAR_STATUS,
             ChavePermissao.API_CREDENCIAMENTO_PDV_HABILITAR,
-            ChavePermissao.API_CREDENCIAMENTO_PDV_LISTAR_BANDEIRA
+            ChavePermissao.API_CREDENCIAMENTO_PDV_LISTAR_BANDEIRA,
+            ChavePermissao.API_CREDENCIAMENTO_FROTA_CONSULTAR_STATUS
         );
     }
 
@@ -120,7 +124,7 @@ public enum TipoTokenJwt {
     }
     
     /**
-     * Lista as permissoes que o site do pró-frotas possui ao se comunicarem com o Boleia
+     * Lista as permissoes que o site do pró-frotas possui ao se comunicarem com o Boleia no pré credenciamento de posto
      * @return Um vetor de chaves de permissoes
      */
     private static String[] getPermissoesPreCredenciamentoPosto() {
@@ -145,6 +149,29 @@ public enum TipoTokenJwt {
         );
     }
     
+    /**
+     * Lista as permissoes que o site do pró-frotas possui ao se comunicarem com o Boleia no pré credenciamento de frota
+     * @return Um vetor de chaves de permissoes
+     */
+    private static String[] getPermissoesPreCredenciamentoFrota() {
+        return ChavePermissao.getChaves(
+        	   ChavePermissao.API_CREDENCIAMENTO_FROTA_CONSULTAR_STATUS,
+        	   ChavePermissao.API_CREDENCIAMENTO_FROTA_ENVIAR_LEAD
+        );
+    }
+    
+    /**
+     * Lista as permissoes que o credenciamento de frota possui para se comunicar com o Boleia
+     * @return Um vetor de chaves de permissoes
+     */
+    private static String[] getPermissoesCredenciamentoFrota() {
+    	return ChavePermissao.getChaves(
+    			ChavePermissao.API_CREDENCIAMENTO_FROTA_ATUALIZAR_LEAD,
+    			ChavePermissao.API_CREDENCIAMENTO_FROTA_CONSULTAR_LEAD,
+    			ChavePermissao.API_CREDENCIAMENTO_FROTA_PESQUISAR_CEP
+    			);
+    }
+   
     public int getDuracaoHoras() {
         return duracaoHoras;
     }

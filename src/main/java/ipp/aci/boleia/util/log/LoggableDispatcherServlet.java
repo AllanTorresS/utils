@@ -105,8 +105,7 @@ public class LoggableDispatcherServlet extends DispatcherServlet {
                     int length = Math.min(buf.length, 5120);
                     try {
                         return new String(buf, 0, length, wrapper.getCharacterEncoding());
-                    }
-                    catch (UnsupportedEncodingException ex) {
+                    } catch (UnsupportedEncodingException ex) {
                     }
                 }
             }            

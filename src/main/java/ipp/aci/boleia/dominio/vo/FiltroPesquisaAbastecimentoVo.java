@@ -1,6 +1,7 @@
 package ipp.aci.boleia.dominio.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import ipp.aci.boleia.dominio.enums.TipoPerfilUsuario;
 import ipp.aci.boleia.dominio.pesquisa.comum.BaseFiltroPaginado;
 
 import java.util.Date;
@@ -29,6 +30,7 @@ public class FiltroPesquisaAbastecimentoVo extends BaseFiltroPaginado {
     private boolean contingencia;
     private EnumVo statusEmissaoNf;
     private String notaFiscal;
+    private String numeroSerie;
     private Boolean semEstorno;
     private EntidadeVo unidade;
     private EnumVo classificacao;
@@ -36,6 +38,9 @@ public class FiltroPesquisaAbastecimentoVo extends BaseFiltroPaginado {
     private EnumVo agruparExibicao;
     private int [] camposExportacaoRelatorio;
     private boolean pendenteConfirmacaoPOS;
+    private Boolean apenasEstornos;
+    private TipoPerfilUsuario tipoPerfilUsuario;
+    private Boolean apenasAjustados;
 
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss.SSSZ")
     private Date dataHoraProcessamentoDe;
@@ -130,6 +135,10 @@ public class FiltroPesquisaAbastecimentoVo extends BaseFiltroPaginado {
     public void setNotaFiscal(String notaFiscal) {
         this.notaFiscal = notaFiscal;
     }
+
+    public String getNumeroSerie() { return numeroSerie; }
+
+    public void setNumeroSerie(String numeroSerie) { this.numeroSerie = numeroSerie; }
 
     public Boolean getSemEstorno() {
         return semEstorno;
@@ -254,4 +263,24 @@ public class FiltroPesquisaAbastecimentoVo extends BaseFiltroPaginado {
     public void setIdReembolso(Long idReembolso) {
         this.idReembolso = idReembolso;
     }
+
+    public Boolean isApenasEstornos() { return apenasEstornos; }
+
+    public void setApenasEstornos(Boolean apenasEstornos) { this.apenasEstornos = apenasEstornos; }
+
+    public boolean isPendenteConfirmacaoPOS() {
+        return pendenteConfirmacaoPOS;
+    }
+
+    public TipoPerfilUsuario getTipoPerfilUsuario() {
+        return tipoPerfilUsuario;
+    }
+
+    public void setTipoPerfilUsuario(TipoPerfilUsuario tipoPerfilUsuario) {
+        this.tipoPerfilUsuario = tipoPerfilUsuario;
+    }
+
+    public Boolean isApenasAjustados() { return apenasAjustados; }
+
+    public void setApenasAjustados(Boolean apenasAjustados) { this.apenasAjustados = apenasAjustados; }
 }

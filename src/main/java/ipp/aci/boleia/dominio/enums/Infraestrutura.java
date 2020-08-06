@@ -28,7 +28,7 @@ public enum Infraestrutura implements IEnumComLabel<Infraestrutura> {
     /**
      * Construtor
      * @param value o valor do enum
-     * @param idOpcaoCorrespondente
+     * @param idOpcaoCorrespondente id Opção
      */
     Infraestrutura(Integer value, Long idOpcaoCorrespondente) {
         this.value = value;

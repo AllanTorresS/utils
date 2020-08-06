@@ -5,6 +5,7 @@ import ipp.aci.boleia.dominio.enums.ParametroSistema;
 import ipp.aci.boleia.dominio.servico.NotificacaoUsuarioSd;
 import ipp.aci.boleia.dominio.vo.ContextoExecucaoParametroSistemaVo;
 import ipp.aci.boleia.dominio.vo.ResultadoExecucaoParametroSistemaVo;
+import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.excecao.ExcecaoValidacao;
 import ipp.aci.boleia.util.excecao.ExcecaoViolacaoRegraVersatil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,14 +26,24 @@ public class TratadorViolacoesParametrosAbastecimento implements ITratadorViolac
     public ContextoExecucaoParametroSistemaVo<AutorizacaoPagamento> tratarViolacaoRegraRestritiva(ContextoExecucaoParametroSistemaVo<AutorizacaoPagamento> contexto) throws ExcecaoValidacao {
         ResultadoExecucaoParametroSistemaVo violacao = contexto.getViolacaoRestritiva();
         notificarViolacaoRegraRestritiva(contexto);
-        throw new ExcecaoValidacao(violacao.getMensagemErro());
+
+        Erro codigoErro = Erro.ERRO_VALIDACAO;
+        if(violacao.getCodigoErro() != null) {
+            codigoErro = violacao.getCodigoErro();
+        }
+        throw new ExcecaoValidacao(codigoErro, violacao.getMensagemErro());
     }
 
     @Override
     public ContextoExecucaoParametroSistemaVo<AutorizacaoPagamento> tratarViolacaoRegraVersatil(ContextoExecucaoParametroSistemaVo<AutorizacaoPagamento> contexto) throws ExcecaoViolacaoRegraVersatil {
         ResultadoExecucaoParametroSistemaVo violacao = contexto.getViolacaoRestritiva();
         notificarViolacaoRegraRestritiva(contexto);
-        throw new ExcecaoViolacaoRegraVersatil(violacao.getMensagemErro());
+
+        Erro codigoErro = Erro.ERRO_VALIDACAO;
+        if(violacao.getCodigoErro() != null) {
+            codigoErro = violacao.getCodigoErro();
+        }
+        throw new ExcecaoViolacaoRegraVersatil(codigoErro, violacao.getMensagemErro());
     }
 
     @Override

@@ -17,7 +17,7 @@ public class ExcecaoViolacaoDadosAcordo extends ExcecaoBoleia {
     /**
      * Constroi a excecao
      *
-     * @param erro      O tipo de erro de validacao
+     * @param erro O tipo de erro de validacao
      * @param parametro parametros da mensagem
      */
     public ExcecaoViolacaoDadosAcordo(Erro erro, Object... parametro) {

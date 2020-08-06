@@ -22,23 +22,19 @@ public enum StatusCredenciamentoPosto {
 	
 	/**Iniciar o credenciamento de um novo posto e usuário*/
 	INICIAR_CREDENCIAMENTO,
-
-    /**
-     * Caso a habilitação esteja apta para ser iniciada
-     */
-    INICIAR_HABILITACAO,
-
-    /**
-     * Caso o ponto de venda possua for bandeira branca(inexistente)
-     */
-    BANDEIRA_BRANCA,
+	
+	/**Caso a habilitação esteja apta para ser iniciada*/
+	INICIAR_HABILITACAO,
+	
+	/**Caso o ponto de venda possua for bandeira branca(inexistente)*/
+	BANDEIRA_BRANCA,
 	
 	/**Caso o token do credenciamento do ponto de venda esteja válido*/
 	INICIADO_CREDENCIAMENTO_VALIDO,
 	
 	/**Caso o token do credenciamento do ponto de venda esteja expirado*/
-    INICIADO_CREDENCIAMENTO_EXPIRADO,
-
-    /**Caso o credenciamento para o CNPJ informado tenha iniciado através da plataforma do Salesforce */
+	INICIADO_CREDENCIAMENTO_EXPIRADO,
+	
+	/**Caso o credenciamento para o CNPJ informado tenha iniciado através da plataforma do Salesforce */
 	INICIADO_SALESFORCE,
 }

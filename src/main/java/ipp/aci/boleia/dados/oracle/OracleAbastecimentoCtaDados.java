@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
  * Respositorio de entidades de AbastecimentoCta
  */
 @Repository
-public class OracleAbastecimentoCtaDados extends OracleRepositorioBoleiaDados<AbastecimentoCta> implements IAbastecimentoCtaDados {
+public class OracleAbastecimentoCtaDados extends OracleRepositorioBoleiaDados<AbastecimentoCta>  implements IAbastecimentoCtaDados {
 
     /**
      * Instancia o repositorio

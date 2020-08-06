@@ -1,5 +1,7 @@
 package ipp.aci.boleia.util.jde;
 
+import java.math.BigDecimal;
+
 /**
  * Enumera as constantes utilizadas pelos serviços de integração com o JDE
  */
@@ -37,7 +39,7 @@ public final class ConstantesJde {
     public static final String CREDITO_FROTA_TIPO_DOCUMENTO = "D4";
     public static final String CREDITO_FROTA_OBSERVACAO = "CRÉDITO PRÉ PAGO";
 
-
+    public static final String FATURA_CIA_DOCUMENTO = "74090";
     public static final String FATURA_TIPO_DOCUMENTO = "D3";
     public static final String FATURA_REPASSE_TIPO_DOCUMENTO = "DB";
     public static final String FATURA_CENARIO = "140";
@@ -81,6 +83,10 @@ public final class ConstantesJde {
     public static final String BOLETO_NUMERO_PARCELA = "001";
 
     public static final String CONDICAO_PGTO_REPASSE = "015";
+
+    public static final String SUFIXO_PRORROGAR_VENCIMENTO = "001";
+    public static final BigDecimal ACRECIMO_PRORROGAR_VENCIMENTO = new BigDecimal(0);
+    public static final String ALTERACAO_PRORROGAR_VENCIMENTO = "03";
 
     /**
      * Impede instanciacao e heranca

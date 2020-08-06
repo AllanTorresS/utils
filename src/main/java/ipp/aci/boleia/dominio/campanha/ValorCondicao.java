@@ -22,6 +22,8 @@ import javax.persistence.Table;
 @Table(name = "VALOR_CONDICAO", schema = "BOLEIA_CAMPANHA_SCHEMA")
 public class ValorCondicao implements IPersistente, Cloneable {
 
+    private static final long serialVersionUID = -2314063083945732443L;
+
     @Id
     @Column(name = "CD_VALOR_CONDICAO")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_VALOR_CONDICAO")

@@ -53,7 +53,7 @@ public class QuestionarioPerguntaOpcao implements IPersistente {
     private Servico servico;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "QUEST_RESP_PTOV", joinColumns = {@JoinColumn(name = "CD_QUEST_PERG_OPCAO")}, inverseJoinColumns = {@JoinColumn(name = "CD_PTOV")})
+    @JoinTable(name="QUEST_RESP_PTOV", joinColumns= {@JoinColumn(name="CD_QUEST_PERG_OPCAO")}, inverseJoinColumns= {@JoinColumn(name="CD_PTOV")})
     private List<PontoDeVenda> pontosDeVenda;
 
     @Version

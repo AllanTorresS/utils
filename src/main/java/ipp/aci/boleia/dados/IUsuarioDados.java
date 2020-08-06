@@ -55,6 +55,15 @@ public interface IUsuarioDados extends IRepositorioBoleiaDados<Usuario> {
     Usuario obterPorEmail(String email);
 
     /**
+     * Localiza o usuario que possui um dado email e tipo de perfil especificado
+     *
+     * @param email O email
+     * @param tipoPerfil O tipo de perfil
+     * @return O usuario encontrado
+     */
+    Usuario obterPorEmailTipoPerfil(String email, TipoPerfilUsuario tipoPerfil);
+
+    /**
      * Localiza o usuario que possui um dado token
      *
      * @param token token do usuario
@@ -142,4 +151,11 @@ public interface IUsuarioDados extends IRepositorioBoleiaDados<Usuario> {
      * @return Usuarios da frota
      */
     List<Usuario> obterPorFrota(Long id);
+
+    /**
+     * Obtem todos os asessores de uma coordenadoria.
+     * @param id da coordenadoria
+     * @return Assessores da coordenadoria
+     */
+    List<Usuario> obterPorCoordenadoria(final Long id);
 }

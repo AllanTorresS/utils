@@ -62,6 +62,10 @@ public class Permissao implements IPersistente {
     @Column(name = "ID_PERMISSAO_FROTA")
     private boolean permissaoFrota;
 
+    @NotNull
+    @Column(name = "ID_MODULO_INTERNO")
+    private boolean moduloInterno;
+
 	@Override
     public Long getId() {
         return id;
@@ -144,6 +148,14 @@ public class Permissao implements IPersistente {
 		this.permissaoFrota = permissaoFrota;
 	}
 
+    public boolean isModuloInterno() {
+        return moduloInterno;
+    }
+
+    public void setModuloInterno(boolean moduloInterno) {
+        this.moduloInterno = moduloInterno;
+    }
+
     @Override
 	public int hashCode() {
 		final int prime = 31;
@@ -154,21 +166,21 @@ public class Permissao implements IPersistente {
 
 	@Override
 	public boolean equals(Object obj) {
-        if (this == obj) {
+		if (this == obj) {
             return true;
         }
-        if (obj == null) {
+		if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+		if (getClass() != obj.getClass()) {
             return false;
         }
 		Permissao other = (Permissao) obj;
 		if (chave == null) {
-            if (other.chave != null) {
+			if (other.chave != null) {
                 return false;
             }
-        } else if (!chave.equals(other.chave)) {
+		} else if (!chave.equals(other.chave)) {
             return false;
         }
 		return true;

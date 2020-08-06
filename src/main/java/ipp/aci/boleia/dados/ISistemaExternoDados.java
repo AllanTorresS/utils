@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Contrato para implementacao de repositorios de entidades SistemaExterno
  */
-public interface ISistemaExternoDados extends IRepositorioBoleiaDados<SistemaExterno> {
+public interface ISistemaExternoDados extends IRepositorioBoleiaDados<SistemaExterno>{
 
     /**
      * Obtem o Sistema de Externo

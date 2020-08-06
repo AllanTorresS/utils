@@ -1,10 +1,13 @@
 package ipp.aci.boleia.dados.oracle;
 
 import ipp.aci.boleia.dados.IPrecoBaseDados;
+import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.PrecoBase;
+import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.enums.StatusAlteracaoPrecoPosto;
 import ipp.aci.boleia.dominio.enums.StatusAtivacao;
 import ipp.aci.boleia.dominio.enums.StatusHabilitacaoPontoVenda;
+import ipp.aci.boleia.dominio.enums.TipoPerfilUsuario;
 import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
@@ -34,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Respositorio de entidades
@@ -53,10 +57,11 @@ public class OraclePrecoBaseDados extends OracleOrdenacaoPrecosDados<PrecoBase> 
      * Monta os parametros de pesquisa a partir do filtro de busca recebido
      *
      * @param filtro O filtro de busca
+     * @param usuario o tipo de usuário especifico para a busca
      * @param statusPossiveis A lista de status a serem considerados na busca
      * @return Uma lista de parametros de pesquisa
      */
-    private List<ParametroPesquisa> montarParametroPesquisa(FiltroPesquisaAlteracaoPrecoVo filtro, Integer... statusPossiveis) {
+    private List<ParametroPesquisa> montarParametroPesquisa(FiltroPesquisaAlteracaoPrecoVo filtro, Usuario usuario, Integer... statusPossiveis) {
 
         List<ParametroPesquisa> parametros = new ArrayList<>();
 
@@ -78,15 +83,23 @@ public class OraclePrecoBaseDados extends OracleOrdenacaoPrecosDados<PrecoBase> 
                 parametros.add(new ParametroPesquisaIn("status", Arrays.asList(statusPossiveis)));
             }
         }
-        if(filtro.getPontoVenda()!=null && filtro.getPontoVenda().getId()!=null) {
-            parametros.add(new ParametroPesquisaIgual("pontoVenda", filtro.getPontoVenda().getId()));
-        }
+
         if(filtro.getProduto()!=null && filtro.getProduto().getId()!=null) {
             parametros.add(new ParametroPesquisaIgual("precoMicromercado.tipoCombustivel", filtro.getProduto().getId()));
         }
         if(filtro.getUfPontoDeVenda() != null) {
             parametros.add(new ParametroPesquisaIgual("pontoVenda.uf", filtro.getUfPontoDeVenda().getName()));
         }
+
+        if(filtro.getPontoVenda()!=null && filtro.getPontoVenda().getId()!=null) {
+            parametros.add(new ParametroPesquisaIgual("pontoVenda", filtro.getPontoVenda().getId()));
+        } else if (usuario != null && usuario.getTipoPerfilUsuario().equals(TipoPerfilUsuario.REVENDA)) {
+            List<PontoDeVenda> pontoDeVendasPermitidos = usuario.getPontosDeVenda();
+            if (pontoDeVendasPermitidos != null && !pontoDeVendasPermitidos.isEmpty()) {
+                parametros.add(new ParametroPesquisaIn("pontoVenda", pontoDeVendasPermitidos.stream().map(PontoDeVenda::getId).collect(Collectors.toList())));
+            }
+        }
+
         if(filtro.getMunicipioPontoDeVenda() != null) {
             parametros.add(new ParametroPesquisaLike("pontoVenda.municipio", filtro.getMunicipioPontoDeVenda()));
         }
@@ -130,8 +143,8 @@ public class OraclePrecoBaseDados extends OracleOrdenacaoPrecosDados<PrecoBase> 
     }
 
     @Override
-    public ResultadoPaginado<PrecoBase> pesquisaPaginada(FiltroPesquisaAlteracaoPrecoVo filtro, Integer... statusPossiveis) {
-        List<ParametroPesquisa> parametros = montarParametroPesquisa(filtro, statusPossiveis);
+    public ResultadoPaginado<PrecoBase> pesquisaPaginada(FiltroPesquisaAlteracaoPrecoVo filtro, Usuario usuario, Integer... statusPossiveis) {
+        List<ParametroPesquisa> parametros = montarParametroPesquisa(filtro,usuario,statusPossiveis);
         return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
@@ -159,7 +172,7 @@ public class OraclePrecoBaseDados extends OracleOrdenacaoPrecosDados<PrecoBase> 
         paginacao.setPagina(1);
         paginacao.setTamanhoPagina(1);
         paginacao.setParametrosOrdenacaoColuna(
-                Arrays.asList(new ParametroOrdenacaoColuna("dataAtualizacao", Ordenacao.DECRESCENTE), new ParametroOrdenacaoColuna("status", Ordenacao.CRESCENTE))
+                Arrays.asList(new ParametroOrdenacaoColuna("dataAtualizacao", Ordenacao.DECRESCENTE), new ParametroOrdenacaoColuna("status",Ordenacao.CRESCENTE))
         );
 
         List<Integer> statusValidos = new ArrayList<>();
@@ -230,6 +243,21 @@ public class OraclePrecoBaseDados extends OracleOrdenacaoPrecosDados<PrecoBase> 
         );
     }
 
+    @Override
+    public List<PrecoBase> buscarPrecosPorCombustivelERegiao(Long idCombustivel, String municipioPontoDeVenda) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+
+        parametros.add(new ParametroPesquisaIgual("precoMicromercado.tipoCombustivel.id", idCombustivel));
+        parametros.add(new ParametroPesquisaIgual("status", StatusAlteracaoPrecoPosto.VIGENTE.getValue()));
+
+        if(municipioPontoDeVenda != null) {
+            parametros.add(new ParametroPesquisaIgual("pontoVenda.municipio", municipioPontoDeVenda));
+        }
+
+        ParametroOrdenacaoColuna ordenacao = new ParametroOrdenacaoColuna("id");
+
+        return pesquisarSemIsolamentoDados(ordenacao, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
 
     @Override
     protected String getPrefixoCampoFrotaPontoVenda() {

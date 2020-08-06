@@ -126,13 +126,14 @@ public final class UtilitarioStreams {
 
     /**
      * Le um input stream e o  carrega em memoria, para reuso
+     *
      * @param in o stream de entrada
      * @return um vetor de bytes memoria
      */
     public static byte[] carregarEmMemoria(InputStream in) {
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-            IOUtils.copy(in,out);
+            IOUtils.copy(in, out);
             return out.toByteArray();
         } catch (IOException e) {
             throw new ExcecaoBoleiaRuntime(e);

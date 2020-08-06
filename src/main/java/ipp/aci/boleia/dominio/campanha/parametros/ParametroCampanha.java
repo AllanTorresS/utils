@@ -22,6 +22,8 @@ import javax.validation.constraints.NotNull;
 @Table(name="PARAMETRO_CAMPANHA", schema = "BOLEIA_CAMPANHA_SCHEMA")
 public class ParametroCampanha implements IPersistente {
 
+	private static final long serialVersionUID = 8734658514970224934L;
+
 	@Id
 	@Column(name = "CD_PARAM")
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_PARAMETRO_CAMPANHA")

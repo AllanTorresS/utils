@@ -6,6 +6,7 @@ import ipp.aci.boleia.dados.IPedidoCreditoFrotaDados;
 import ipp.aci.boleia.dados.ISaldoFrotaDados;
 import ipp.aci.boleia.dados.ITransacaoFrotaDados;
 import ipp.aci.boleia.dominio.AutorizacaoPagamento;
+import ipp.aci.boleia.dominio.AutorizacaoPagamentoEdicao;
 import ipp.aci.boleia.dominio.ExtratoPedidoTransacao;
 import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.PedidoCreditoFrota;
@@ -127,7 +128,7 @@ public class TransacaoFrotaSd {
             saldo.setFrota(frota);
             saldo.setSaldoCorrente(BigDecimal.ZERO);
             PedidoCreditoFrota pedido = null;
-            if(modalidadePagamento.equals(ModalidadePagamento.PRE_PAGO)) {
+            if(ModalidadePagamento.PRE_PAGO.equals(modalidadePagamento)) {
                 pedido = criarPedidoCreditoInicialHabilitacao(frota, valorInicial);
             } else {
                 saldo.setLimiteCredito(valorInicial);
@@ -198,14 +199,13 @@ public class TransacaoFrotaSd {
      * @param valorPago da transacao em relacao ao pedido
      * @param transacaoFrota transacao total realizada
      * @param pedido vinculado a transacao
-     * @return extrato armazenado
      */
-    private ExtratoPedidoTransacao registrarExtratoTransacaoPedido(BigDecimal valorPago, TransacaoFrota transacaoFrota, PedidoCreditoFrota pedido) {
+    private void registrarExtratoTransacaoPedido(BigDecimal valorPago, TransacaoFrota transacaoFrota, PedidoCreditoFrota pedido) {
         ExtratoPedidoTransacao extrato = new ExtratoPedidoTransacao();
         extrato.setTransacaoFrota(transacaoFrota);
         extrato.setPedido(pedido);
         extrato.setValor(valorPago);
-        return repositorioExtrato.armazenar(extrato);
+        repositorioExtrato.armazenar(extrato);
     }
 
     /**
@@ -238,14 +238,14 @@ public class TransacaoFrotaSd {
         if (diferenca.compareTo(BigDecimal.ZERO) != 0) {
             if(diferenca.compareTo(BigDecimal.ZERO)>0) {
                 registrarTransacao(frota, diferenca, TipoTransacao.AUMENTO_SALDO_LIMITE_FROTA);
-                if(modalidadePagamento.equals(ModalidadePagamento.PRE_PAGO)) {
+                if(ModalidadePagamento.PRE_PAGO.equals(modalidadePagamento)) {
                     frota.setPrimeiraCompra(true);
                     saldo.setFrota(repositorioFrota.armazenar(frota));
                 }
             } else {
                 registrarTransacao(frota, diferenca.abs(), TipoTransacao.REDUCAO_SALDO_LIMITE_FROTA);
             }
-            if(modalidadePagamento != null && modalidadePagamento.equals(ModalidadePagamento.POS_PAGO)) {
+            if(ModalidadePagamento.POS_PAGO.equals(modalidadePagamento)) {
                 saldo.setLimiteCredito(valorAlterado);
             }
             repositorioSaldo.armazenar(saldo);
@@ -273,18 +273,17 @@ public class TransacaoFrotaSd {
      * @param frota a frota
      * @param valorTotal o valor da transacao
      * @param tipo o tipo da transacao
-     * @return A transacao registrada
      * @throws ExcecaoCreditoInsuficiente Caso o saldo corrente seja inferior ao valor da transacao informada
      */
-    private TransacaoFrota registrarTransacao(Frota frota, BigDecimal valorTotal, TipoTransacao tipo) throws ExcecaoCreditoInsuficiente {
-        if(tipo.isDebito() && frota.getSaldo().getSaldoCorrente().compareTo(valorTotal) < 0) {
+    private void registrarTransacao(Frota frota, BigDecimal valorTotal, TipoTransacao tipo) throws ExcecaoCreditoInsuficiente {
+        if (tipo.isDebito() && frota.getSaldo().getSaldoCorrente().compareTo(valorTotal) < 0) {
             if (frota.isPrePago()) {
                 throw new ExcecaoBoleiaRuntime(Erro.ERRO_FROTA_PRE_NEGATIVADA);
             } else {
                 throw new ExcecaoCreditoInsuficiente();
             }
         }
-        return registrarTransacaoSemVerificarSaldo(frota, valorTotal, tipo, null, null);
+        registrarTransacaoSemVerificarSaldo(frota, valorTotal, tipo, null, null);
     }
 
     /**
@@ -298,14 +297,59 @@ public class TransacaoFrotaSd {
      * @throws ExcecaoCreditoInsuficiente Caso o saldo corrente seja inferior ao valor da transacao informada
      */
     public TransacaoFrota registrarTransacaoComDesconto(Frota frota, BigDecimal valorTotal, BigDecimal valor, TipoAutorizacaoPagamento tipo, Boolean isEstorno) throws ExcecaoCreditoInsuficiente {
-
-        TipoTransacao tipoTransacao =  obterTipoTransacao(tipo, isEstorno);
+        TipoTransacao tipoTransacao = obterTipoTransacao(tipo, isEstorno);
 
         if(tipoTransacao.isDebito() && frota.getSaldo().getSaldoCorrente().compareTo(valorTotal) < 0) {
             throw new ExcecaoCreditoInsuficiente();
         }
 
         return registrarTransacaoSemVerificarSaldo(frota, valor, tipoTransacao, null, null);
+    }
+
+    /**
+     * Dado um valor a ser debitado do saldo da frota, percorre os pedidos de compra de credito que ainda possuam
+     * saldo, do mais antigo para o mais rececente, consumindo o saldo desses pedidos ate que o valor total da transacao seja atingido.
+     * Cria um registro de {@link ExtratoPedidoTransacao} para cada pedido sujo saldo for afetado.
+     * Caso a soma dos saldos pre-pagos disponiveis nao seja suficiente para cobrir completamente o debito, entao
+     * nenhum pedido sera afetado. O debido passa a ser coberto integralmente pelo limite de credito da frota.
+     *
+     * @param valorTotal a debitar dos pedidos
+     * @param transacao responsavel pelo debito
+     * @return A transacao atualizada
+     */
+    private TransacaoFrota atualizarExtratoTransacaoPedido(BigDecimal valorTotal, TransacaoFrota transacao) {
+        List<PedidoCreditoFrota> pedidosPagos = repositorioPedido.obterPagosComSaldo(transacao.getFrota().getId());
+        BigDecimal somaSaldosPre = pedidosPagos.stream().map(PedidoCreditoFrota::getSaldoPedido).reduce(BigDecimal.ZERO, BigDecimal::add);
+        if(somaSaldosPre.compareTo(valorTotal.negate()) >= 0) {
+            for (PedidoCreditoFrota pedido : pedidosPagos) {
+                if (valorTotal.compareTo(BigDecimal.ZERO) < 0) {
+                    ExtratoPedidoTransacao extratoPedido = new ExtratoPedidoTransacao();
+                    extratoPedido.setTransacaoFrota(transacao);
+                    if (pedido.getValorConsumido() == null) {
+                        pedido.setValorConsumido(BigDecimal.ZERO);
+                    }
+
+                    if (pedido.getSaldoPedido().compareTo(valorTotal.negate()) > 0) {
+                        pedido.setValorConsumido(pedido.getValorConsumido().add(valorTotal.negate()));
+                        extratoPedido.setValor(valorTotal);
+                        valorTotal = BigDecimal.ZERO;
+                    } else {
+                        pedido.setValorConsumido(pedido.getValorConsumido().add(pedido.getSaldoPedido()));
+                        extratoPedido.setValor(pedido.getSaldoPedido().negate());
+                        valorTotal = valorTotal.add(pedido.getSaldoPedido());
+                    }
+                    extratoPedido.setPedido(repositorioPedido.armazenar(pedido));
+                    repositorioExtrato.armazenar(extratoPedido);
+                    transacao.setConsumiuCreditoPrePago(true);
+                }
+            }
+        }
+
+        if(valorTotal.compareTo(BigDecimal.ZERO)<0) {
+            registrarExtratoTransacaoPedido(valorTotal, transacao, null);
+        }
+
+        return repositorioTrancacao.armazenar(transacao);
     }
 
     /**
@@ -356,52 +400,6 @@ public class TransacaoFrotaSd {
     }
 
     /**
-     * Dado um valor a ser debitado do saldo da frota, percorre os pedidos de compra de credito que ainda possuam
-     * saldo, do mais antigo para o mais rececente, consumindo o saldo desses pedidos ate que o valor total da transacao seja atingido.
-     * Cria um registro de {@link ExtratoPedidoTransacao} para cada pedido sujo saldo for afetado.
-     * Caso a soma dos saldos pre-pagos disponiveis nao seja suficiente para cobrir completamente o debito, entao
-     * nenhum pedido sera afetado. O debido passa a ser coberto integralmente pelo limite de credito da frota.
-     *
-     * @param valorTotal a debitar dos pedidos
-     * @param transacao responsavel pelo debito
-     * @return A transacao atualizada
-     */
-    private TransacaoFrota atualizarExtratoTransacaoPedido(BigDecimal valorTotal, TransacaoFrota transacao) {
-        List<PedidoCreditoFrota> pedidosPagos = repositorioPedido.obterPagosComSaldo(transacao.getFrota().getId());
-        BigDecimal somaSaldosPre = pedidosPagos.stream().map(PedidoCreditoFrota::getSaldoPedido).reduce(BigDecimal.ZERO, BigDecimal::add);
-        if(somaSaldosPre.compareTo(valorTotal.negate()) >= 0) {
-            for (PedidoCreditoFrota pedido : pedidosPagos) {
-                if (valorTotal.compareTo(BigDecimal.ZERO) < 0) {
-                    ExtratoPedidoTransacao extratoPedido = new ExtratoPedidoTransacao();
-                    extratoPedido.setTransacaoFrota(transacao);
-                    if (pedido.getValorConsumido() == null) {
-                        pedido.setValorConsumido(BigDecimal.ZERO);
-                    }
-
-                    if (pedido.getSaldoPedido().compareTo(valorTotal.negate()) > 0) {
-                        pedido.setValorConsumido(pedido.getValorConsumido().add(valorTotal.negate()));
-                        extratoPedido.setValor(valorTotal);
-                        valorTotal = BigDecimal.ZERO;
-                    } else {
-                        pedido.setValorConsumido(pedido.getValorConsumido().add(pedido.getSaldoPedido()));
-                        extratoPedido.setValor(pedido.getSaldoPedido().negate());
-                        valorTotal = valorTotal.add(pedido.getSaldoPedido());
-                    }
-                    extratoPedido.setPedido(repositorioPedido.armazenar(pedido));
-                    repositorioExtrato.armazenar(extratoPedido);
-                    transacao.setConsumiuCreditoPrePago(true);
-                }
-            }
-        }
-
-        if(valorTotal.compareTo(BigDecimal.ZERO)<0) {
-            registrarExtratoTransacaoPedido(valorTotal, transacao, null);
-        }
-
-        return repositorioTrancacao.armazenar(transacao);
-    }
-
-    /**
      * Determina o tipo de transacao a partir do tipo de autorizacao de pagamento
      *
      * @param tipoAutorizacao o tipo de autorizacao
@@ -409,7 +407,6 @@ public class TransacaoFrotaSd {
      * @return O tipo de transacao correspondente
      */
     private TipoTransacao obterTipoTransacao(TipoAutorizacaoPagamento tipoAutorizacao, boolean isEstorno) {
-
         TipoTransacao tipoTransacao;
         if(!isEstorno) {
             tipoTransacao = obterTipoTransacaoAutorizacao(tipoAutorizacao);
@@ -439,7 +436,7 @@ public class TransacaoFrotaSd {
      * @return O TipoTransacao correspondente
      */
     private TipoTransacao obterTipoTransacaoAutorizacao(TipoAutorizacaoPagamento tipoAutorizacao) {
-        if(tipoAutorizacao != null && tipoAutorizacao.getAutorizacao() != null) {
+        if (tipoAutorizacao != null && tipoAutorizacao.getAutorizacao() != null) {
             return tipoAutorizacao.getAutorizacao();
         } else {
             throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("autorizador.servico.validacao.meioPagamento.invalido", tipoAutorizacao));
@@ -455,5 +452,30 @@ public class TransacaoFrotaSd {
         if(!modalidade.getValue().equals(frota.getModoPagamento())) {
             throw new ExcecaoBoleiaRuntime(Erro.OPERACAO_NAO_PERMITIDA, mensagens.obterMensagem("operacao.nao.permitida.transacao.frota.modalidade"));
         }
+    }
+
+    /**
+     * Edita o saldo de uma frota ao editar/alterar um abastecimento
+     * @param abastecimentoAlterado abastecimento {@link AutorizacaoPagamento} com os novos valores e alterações
+     * @param abastecimentoHistorico abastecimento edição {@link AutorizacaoPagamentoEdicao} com os valores anteriores a edição
+     */
+    public void alterarTransacaoSaldoFrota(AutorizacaoPagamento abastecimentoAlterado, AutorizacaoPagamentoEdicao abastecimentoHistorico){
+
+        BigDecimal valorDaTransacaoDeCompensasao = abastecimentoHistorico.getValorTotal();
+        TransacaoFrota transacaoFrotaAntiga = this.registrarTransacaoSemVerificarSaldo(abastecimentoHistorico.getFrota(),
+                valorDaTransacaoDeCompensasao, TipoTransacao.EDICAO_AUTORIZACAO_PAGAMENTO, null, null);
+        transacaoFrotaAntiga.setAutorizacaoPagamento(null);
+
+        BigDecimal valorDaTransacaoDeDescontoParaCompensasao = abastecimentoHistorico.getValorDescontoTotal();
+        this.registrarTransacaoSemVerificarSaldo(abastecimentoHistorico.getFrota(),
+                valorDaTransacaoDeDescontoParaCompensasao, TipoTransacao.EDICAO_AUTORIZACAO_PAGAMENTO, null, null);
+
+        TipoAutorizacaoPagamento tipoAutorizacaoPagamento = TipoAutorizacaoPagamento.obterPorValor(abastecimentoAlterado.getTipoAutorizacaoPagamento());
+        TipoTransacao tipoTransacao = obterTipoTransacao(tipoAutorizacaoPagamento, false);
+        BigDecimal valorDaNovaTransacao = abastecimentoAlterado.getValorTotal();
+        TransacaoFrota novaTransacaoFrota = this.registrarTransacaoSemVerificarSaldo(abastecimentoAlterado.getFrota(),
+                valorDaNovaTransacao, tipoTransacao, null, null);
+        abastecimentoAlterado.setTransacaoFrota(novaTransacaoFrota);
+        novaTransacaoFrota.setAutorizacaoPagamento(abastecimentoAlterado);
     }
 }

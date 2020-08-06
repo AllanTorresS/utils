@@ -4,11 +4,11 @@ import ipp.aci.boleia.dados.IAutenticacaoUsuarioDados;
 import ipp.aci.boleia.dados.IConfiguracaoSistemaDados;
 import ipp.aci.boleia.dados.IUsuarioMotoristaDados;
 import ipp.aci.boleia.dominio.CodigoValidacaoTokenJwt;
-import ipp.aci.boleia.dominio.Perfil;
 import ipp.aci.boleia.dominio.Permissao;
 import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.UsuarioMotorista;
 import ipp.aci.boleia.dominio.enums.StatusAtivacao;
+import ipp.aci.boleia.dominio.enums.TipoAcesso;
 import ipp.aci.boleia.dominio.enums.TipoPerfilUsuario;
 import ipp.aci.boleia.dominio.enums.TipoTokenJwt;
 import ipp.aci.boleia.util.excecao.Erro;
@@ -41,12 +41,12 @@ import javax.servlet.http.HttpSession;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import static ipp.aci.boleia.dominio.enums.ChaveConfiguracaoSistema.TELEFONE_CENTRAL_ATENDIMENTO_NUMERO;
+import static ipp.aci.boleia.util.UtilitarioFormatacao.TAMANHO_CPF;
+import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarNumeroZerosEsquerda;
 
 /**
  * Prove mecanismos para autenticacao do usuario
@@ -62,10 +62,10 @@ public class ProvedorAutenticacao implements AuthenticationProvider {
     private IServicosDeUsuario servicoUsuario;
 
     @Autowired
-    private IUsuarioMotoristaDados repositorioUsuarioMotorista;
+    private IServicosDeControleAcessoPortal servicosDeControleAcessoPortal;
 
     @Autowired
-    private IServicosDePermissao servicoPermissoes;
+    private IUsuarioMotoristaDados repositorioUsuarioMotorista;
 
     @Autowired
     private IServicosDeCodigoValidacaoTokenJwt servicosDeCodigoValidacaoTokenJwt;
@@ -88,11 +88,12 @@ public class ProvedorAutenticacao implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication auth) throws AuthenticationException {
         try {
-            String paramPrecos = obterParametroRequest("analistaPrecos");
+            boolean isPrecos = obterParametroRequest("analistaPrecos") != null;
             boolean isUsernameCpf = obterParametroRequest("cpf") != null;
             boolean isAutenticacaoMotorista = obterParametroRequest("motorista") != null;
+
             Usuario usuario;
-            if(paramPrecos!=null) {
+            if(isPrecos) {
                 usuario = montarUsuarioPrecos(auth.getName());
             } else if (isUsernameCpf) {
                 usuario = servicoUsuario.obterPorCpfComPermissoes(auth.getName(), isAutenticacaoMotorista);
@@ -107,12 +108,46 @@ public class ProvedorAutenticacao implements AuthenticationProvider {
             if(usuario != null) {
                 validarUsuario(usuario);
             } else {
+                registrarTentativaAcesso(auth.getName());
                 throw new UsernameNotFoundException(null, new ExcecaoBoleiaRuntime(Erro.AUTENTICACAO_CREDENCIAIS_INVALIDAS));
             }
 
             return autenticarUsuario(usuario, auth.getCredentials());
         } catch (ExcecaoBoleiaRuntime e) {
             throw new AuthenticationServiceException(null, e);
+        }
+    }
+
+    /**
+     * Registra uma tentativa de acesso de um login.
+     *
+     * @param login Login usado na tentativa de acesso.
+     */
+    private void registrarTentativaAcesso(String login) {
+        boolean isPrecos = obterParametroRequest("analistaPrecos") != null;
+        boolean isUsuarioInterno = obterParametroRequest("usuarioInterno") != null;
+        boolean isPdv = obterParametroRequest("pdv") != null;
+        boolean isMotorista = obterParametroRequest("motorista") != null;
+        boolean isLoginGestor = obterParametroRequest("gestor") != null;
+        boolean isLoginPortal = !isPdv && !isMotorista && !isLoginGestor;
+
+        if(isPdv) {
+            servicosDeControleAcessoPortal.registrarTentativaAcesso(login, TipoAcesso.PDV, false);
+        } else if(isLoginPortal) {
+            servicosDeControleAcessoPortal.registrarTentativaAcesso(login, TipoAcesso.PORTAL, isUsuarioInterno || isPrecos);
+        }
+    }
+
+    /**
+     * Valida a presença de um token recaptcha válido na requisição, caso seja necessário para um username.
+     *
+     * @param username Username utilizado na tentativa de acesso.log
+     * @param tipoAcesso Tipo de acesso.
+     */
+    private void validarRecaptcha(String username, TipoAcesso tipoAcesso) {
+        if(servicosDeControleAcessoPortal.precisaRecaptchaAcesso(username, tipoAcesso)) {
+            String tokenRecaptcha = obterParametroRequest("tokenRecaptcha");
+            utilitarioAmbiente.validarRecaptcha(tokenRecaptcha);
         }
     }
 
@@ -168,23 +203,29 @@ public class ProvedorAutenticacao implements AuthenticationProvider {
      */
     private Authentication autenticarUsuarioInterno(Usuario usuario, Object senha) {
         try {
+            validarRecaptcha(usuario.getLogin(), TipoAcesso.PORTAL);
+
             boolean sucessoAutenticacao = autenticacaoDados.autenticar(usuario.getLogin(), (String) senha);
             if (sucessoAutenticacao) {
                 TipoPerfilUsuario perfilNecessario = usuario.isPrecos() ? TipoPerfilUsuario.PRECOS : TipoPerfilUsuario.INTERNO;
                 if (!autenticacaoDados.possuiPerfil(usuario.getLogin(), perfilNecessario)) {
+                    servicosDeControleAcessoPortal.registrarTentativaAcesso(usuario.getLogin(), TipoAcesso.PORTAL, true);
                     throw new BadCredentialsException(null, new ExcecaoBoleiaRuntime(Erro.AUTENTICACAO_CREDENCIAIS_INVALIDAS));
                 }
                 if (!usuario.isPrecos()) {
                     usuario.setPrimeiroLogin(servicoUsuario.registrarSucessoAutenticacao(usuario.getId()));
                 }
-                usuario = povoarPermissoesUsuario(usuario);
+                usuario = servicoUsuario.povoarPermissoesUsuario(usuario);
                 usuario.setTokenJWT(utilitarioJwt.criarTokenUsuarioBoleia(usuario));
                 usuario.setTipoTokenJwt(TipoTokenJwt.USUARIO_BOLEIA);
+
+                servicosDeControleAcessoPortal.resetarControleAcesso(usuario.getLogin(), TipoAcesso.PORTAL, true);
                 return InformacoesAutenticacao.build(usuario.getLogin(), senha, usuario);
             } else {
                 if (!usuario.isPrecos()) {
                     registrarErroAutenticacao(usuario.getId());
                 }
+                servicosDeControleAcessoPortal.registrarTentativaAcesso(usuario.getLogin(), TipoAcesso.PORTAL, true);
                 throw new BadCredentialsException(null, new ExcecaoBoleiaRuntime(Erro.AUTENTICACAO_CREDENCIAIS_INVALIDAS));
             }
         } catch(ExcecaoAutenticacaoRemota e) {
@@ -203,11 +244,18 @@ public class ProvedorAutenticacao implements AuthenticationProvider {
 
         boolean credenciaisValidas = credenciaisValidas(usuario, senha);
 
+        boolean isLoginPDV = obterParametroRequest("pdv") != null;
+        boolean isLoginMotorista = obterParametroRequest("motorista") != null;
+        boolean isLoginGestor = obterParametroRequest("gestor") != null;
+        boolean isLoginPortal = !isLoginPDV && !isLoginMotorista && !isLoginGestor;
+
+        if(isLoginPortal) {
+            validarRecaptcha(usuario.getEmail(), TipoAcesso.PORTAL);
+        } else if(isLoginPDV) {
+            validarRecaptcha(formatarNumeroZerosEsquerda(usuario.getCpf(), TAMANHO_CPF), TipoAcesso.PDV);
+        }
         if (credenciaisValidas) {
-            boolean isLoginPDV = obterParametroRequest("pdv") != null;
-            boolean isLoginMotorista = obterParametroRequest("motorista") != null;
-            boolean isLoginGestor = obterParametroRequest("gestor") != null;
-            usuario = povoarPermissoesUsuario(usuario);
+            usuario = servicoUsuario.povoarPermissoesUsuario(usuario);
             String username = usuario.getEmail();
             if (!isLoginPDV || possuiPermissao(usuario, ChavePermissao.PORTAL_PDV_ACESSAR)) {
                 usuario.setPrimeiroLogin(servicoUsuario.registrarSucessoAutenticacao(usuario.getId()));
@@ -215,6 +263,7 @@ public class ProvedorAutenticacao implements AuthenticationProvider {
                     usuario.setTokenJWT(utilitarioJwt.criarTokenUsuarioPdv(usuario, 0, getHeader("Fingerprint")));
                     usuario.setTipoTokenJwt(TipoTokenJwt.USUARIO_PDV);
                     mesclarPermissoesUsuarioPdv(usuario, TipoTokenJwt.USUARIO_PDV.getPermissoes());
+                    servicosDeControleAcessoPortal.resetarControleAcesso(formatarNumeroZerosEsquerda(usuario.getCpf(), TAMANHO_CPF), TipoAcesso.PDV, false);
                 } else if (isLoginMotorista) {
                     CodigoValidacaoTokenJwt codigoValidacaoTokenJwt = servicosDeCodigoValidacaoTokenJwt.registrarNovoCodigoParaUsuario(usuario);
                     usuario.setCodigoValidacaoTokenJwt(codigoValidacaoTokenJwt);
@@ -228,6 +277,7 @@ public class ProvedorAutenticacao implements AuthenticationProvider {
                 } else {
                     usuario.setTokenJWT(utilitarioJwt.criarTokenUsuarioBoleia(usuario));
                     usuario.setTipoTokenJwt(TipoTokenJwt.USUARIO_BOLEIA);
+                    servicosDeControleAcessoPortal.resetarControleAcesso(usuario.getEmail(), TipoAcesso.PORTAL, false);
                 }
 
                 return InformacoesAutenticacao.build(username, senha, usuario);
@@ -235,6 +285,11 @@ public class ProvedorAutenticacao implements AuthenticationProvider {
         }
 
         if (!credenciaisValidas) {
+            if(isLoginPortal) {
+                servicosDeControleAcessoPortal.registrarTentativaAcesso(usuario.getEmail(), TipoAcesso.PORTAL, false);
+            } else if(isLoginPDV) {
+                servicosDeControleAcessoPortal.registrarTentativaAcesso(formatarNumeroZerosEsquerda(usuario.getCpf(), TAMANHO_CPF), TipoAcesso.PDV, false);
+            }
             registrarErroAutenticacao(usuario.getId());
             if (ULTIMA_TENTATIVA_LOGIN_INCORRETO.equals(usuario.getNumeroErrosLogin())) {
                 throw new BadCredentialsException(null, new ExcecaoBoleiaRuntime(Erro.ULTIMA_TENTATIVA_LOGIN));
@@ -277,49 +332,6 @@ public class ProvedorAutenticacao implements AuthenticationProvider {
     }
 
     /**
-     * Povoa o objeto usuario com as permissoes localizadas para ele
-     *
-     * @param usuario O usuario autenticadp
-     * @return O usuario com as permissoes pertinentes
-     */
-    private Usuario povoarPermissoesUsuario(Usuario usuario) {
-        Set<Permissao> permissoes = listarPermissoesUsuario(usuario);
-        usuario.setPermissoes(permissoes);
-        return usuario;
-    }
-
-    /**
-     * Lista as permissoes vinculadas aos perfis do usuario. Caso seja um gestor,
-     * lista todas as permissoes vinculadas a seu tipo de perfil.
-     *
-     * @param usuario O usuario autenticado
-     * @return A lista de permissoes
-     */
-    private Set<Permissao> listarPermissoesUsuario(Usuario usuario) {
-
-        Set<Permissao> permissoes = new HashSet<>();
-
-        if (usuario.getGestor() != null && usuario.getGestor()) {
-            List<Permissao> perms = servicoPermissoes.obterPermissoes(TipoPerfilUsuario.obterPorValor(usuario.getTipoPerfil().getId()), usuario);
-            if (perms != null) {
-                permissoes.addAll(perms);
-            }
-        } else {
-            List<Perfil> perfis = usuario.getPerfis();
-            if (perfis != null) {
-                for (Perfil perfil : perfis) {
-                    List<Permissao> perms = perfil.getPermissoes();
-                    if (perms != null) {
-                        permissoes.addAll(perms);
-                    }
-                }
-            }
-        }
-
-        return permissoes;
-    }
-
-    /**
      * Retorna true caso as credenciais informadas estejam compativeis com aquelas armazenadas em banco de dados
      *
      * @param usuario o usuario localizado no banco de dados
@@ -336,9 +348,6 @@ public class ProvedorAutenticacao implements AuthenticationProvider {
         byte[] hashEsperado = UtilitarioCriptografia.fromBase64(usuario.getSenhaHash());
         return UtilitarioCriptografia.verificarHashBCrypt(senha, salt, hashEsperado);
     }
-
-
-
 
     /**
      * Le a senha do usuario como um vetor de bytes

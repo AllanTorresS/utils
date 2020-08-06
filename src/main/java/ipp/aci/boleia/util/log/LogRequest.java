@@ -2,6 +2,9 @@ package ipp.aci.boleia.util.log;
 
 import java.util.HashMap;
 
+/**
+ * Informações do log de um request.
+ */
 public class LogRequest {
     private String client;
     private String url;
@@ -9,6 +12,7 @@ public class LogRequest {
     private HashMap<String, String> parameter;
     private HashMap<String, String> header;
     private Object body;
+
     public String getUrl() {
         return url;
     }

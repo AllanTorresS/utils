@@ -12,6 +12,7 @@ import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaAnd;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaEmpty;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
@@ -70,13 +71,8 @@ public class OracleDispositivoMotoristaDados extends OracleRepositorioBoleiaDado
     }
 
     @Override
-    public DispositivoMotorista obterPorMotorista(Long idMotorista) {
-        return pesquisarUnico(new ParametroPesquisaIgual("motorista", idMotorista));
-    }
-
-    @Override
-    public DispositivoMotorista obterPorMotoristaSemIsolamento(Long idMotorista) {
-        return pesquisarUnicoSemIsolamentoDados(new ParametroPesquisaIgual("motorista", idMotorista));
+    public List<DispositivoMotorista> obterPorMotorista(Long idMotorista) {
+        return pesquisar((ParametroOrdenacaoColuna) null,new ParametroPesquisaIgual("motorista", idMotorista));
     }
 
     @Override
@@ -86,7 +82,9 @@ public class OracleDispositivoMotoristaDados extends OracleRepositorioBoleiaDado
     @Override
     public void excluirPorMotoristas(Long... idsMotorista) {
         if(idsMotorista != null) {
-            List<DispositivoMotorista> dispositivos = pesquisar((ParametroOrdenacaoColuna) null, new ParametroPesquisaIn("motorista", Arrays.asList(idsMotorista)));
+            List<DispositivoMotorista> dispositivos = pesquisar((ParametroOrdenacaoColuna) null,
+                    new ParametroPesquisaIn("motorista", Arrays.asList(idsMotorista)),
+                    new ParametroPesquisaEmpty("pedidos"));
             if(dispositivos != null) {
                 dispositivos.forEach(d -> excluir(d.getId()));
             }

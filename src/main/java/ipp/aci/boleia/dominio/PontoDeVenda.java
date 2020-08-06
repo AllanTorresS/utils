@@ -53,11 +53,23 @@ import java.util.StringJoiner;
 @Table(name = "PONTO_VENDA")
 public class PontoDeVenda implements IPersistente, IExclusaoLogica, IPertenceRevendedor {
 
-    /**
-     * Foi necessário a utilização de uma subquery em um @Formula para que fosse possível realizar a ordenação paginada
-     * do ponto de venda por cnpj sem grandes mudanças na estrutura de pesquisa via Criteria.
-     */
-    private static final String CNPJ_FORMULA = "(SELECT c.CD_PESSOA FROM BOLEIA_SCHEMA.COMPONENTE c JOIN BOLEIA_SCHEMA.ATIVIDADE_COMPONENTE ac ON c.CD_ATIV_COMP = ac.CD_ATIV_COMP WHERE c.CD_PTOV = CD_PTOV AND (ac.CD_ATIV_COMP_CORP = 1 OR ac.CD_ATIV_COMP_CORP = 99))";
+    private static final String CNPJ_FORMULA = " (SELECT * FROM" +
+            " 	(" +
+            " 	SELECT" +
+            " 		C.CD_PESSOA" +
+            " 	FROM" +
+            " 		BOLEIA_SCHEMA.COMPONENTE C" +
+            " 	JOIN BOLEIA_SCHEMA.ATIVIDADE_COMPONENTE AC ON" +
+            " 		C.CD_ATIV_COMP = AC.CD_ATIV_COMP" +
+            " 	WHERE" +
+            " 		C.CD_PTOV = CD_PTOV" +
+            " 		AND (AC.CD_ATIV_COMP_CORP = 1" +
+            " 		OR AC.CD_ATIV_COMP_CORP = 99)" +
+            " 	ORDER BY" +
+            " 		ID_STATUS_CORP DESC," +
+            " 		DT_CRIACAO DESC" +
+            " 	)" +
+            " 	WHERE rownum = 1)";;
 
     private static final long serialVersionUID = -6358128598442202483L;
 
@@ -844,7 +856,7 @@ public class PontoDeVenda implements IPersistente, IExclusaoLogica, IPertenceRev
 
     @Transient
     public String getLogradouroENumero() {
-        return this.logradouroEndereco + ", " + this.numeroEndereco;
+        return this.logradouroEndereco + (this.numeroEndereco  != null ? ", " + this.numeroEndereco : "");
     }
 
     @Transient
@@ -940,5 +952,23 @@ public class PontoDeVenda implements IPersistente, IExclusaoLogica, IPertenceRev
             return false;
         }
         return bandeira.getCodigoCorporativo().equals(TiposBandeiras.BANDEIRA_BRANCA.getCodigoCorporativo());
+    }
+
+    /**
+     * Informa se o ponto de venda é ou não bandeira ipiranga
+     *
+     * @return se o ponto de venda é ou não bandeira ipiranga
+     */
+    public Boolean isBandeiraIpiranga() {
+        Componente areaDeAbastecimento = getComponenteAreaAbastecimento();
+        if (areaDeAbastecimento == null) {
+            return false;
+        }
+
+        Bandeira bandeira = areaDeAbastecimento.getBandeira();
+        if (bandeira == null) {
+            return false;
+        }
+        return bandeira.getCodigoCorporativo().equals(TiposBandeiras.IPIRANGA.getCodigoCorporativo());
     }
 }

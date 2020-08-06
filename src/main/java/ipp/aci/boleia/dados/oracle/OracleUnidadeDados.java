@@ -46,8 +46,8 @@ public class OracleUnidadeDados extends OracleRepositorioBoleiaDados<Unidade> im
 
 	/**
      * Monta uma lista com os parametros de pesquisa de unidade.
-     *
-     * @param filtro Filtro de pesquisa de unidade.
+	 *
+	 * @param filtro Filtro de pesquisa de unidade.
      * @return A lista com os parametros a serem aplicados na consulta.
 	 */
 	private List<ParametroPesquisa> montarParametrosPesquisa(FiltroPesquisaUnidadeVo filtro) {
@@ -81,12 +81,12 @@ public class OracleUnidadeDados extends OracleRepositorioBoleiaDados<Unidade> im
 				new ParametroPesquisaLike("nome", termo)));
 		if (possuiPostoInterno) {
             parametros.add(new ParametroPesquisaIgual("postoInterno", possuiPostoInterno));
-        }
-        if (idFrota != null) {
-            parametros.add(new ParametroPesquisaIgual("frota.id", idFrota));
-        }
-        return pesquisar(new ParametroOrdenacaoColuna("nome"), parametros.toArray(new ParametroPesquisa[parametros.size()]));
-    }
+		}
+		if(idFrota != null){
+			parametros.add(new ParametroPesquisaIgual("frota.id", idFrota));
+		}
+		return pesquisar(new ParametroOrdenacaoColuna("nome"), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+	}
 
 	@Override
 	public List<Unidade> pesquisarPorFrota(Long idFrota) {

@@ -79,7 +79,6 @@ public class UsuarioSd {
     @Autowired
     private ValidadorEntidade validadorEntidade;
 
-
     /**
      * Exclui o usuário com validação de tipo de perfil
      *
@@ -334,7 +333,7 @@ public class UsuarioSd {
 
             if (usuarioMotorista.getTokenAllowMe() == null && !usuarioPossuiCadastro) {
                 verificacaoDispositivoDados.cadastrarUsernameUsuarioETokenDispositivoMotorista(usuarioMotorista, motorista);
-            }else {
+            } else {
                 verificacaoDispositivoDados.excluirDispositivoAllowMe(usuarioMotorista, motorista);
                 verificacaoDispositivoDados.cadastrarTokenUsuarioMotorista(usuarioMotorista, motorista);
             }
@@ -442,7 +441,6 @@ public class UsuarioSd {
             	usuario.getPontosDeVenda().set(posicao, pontoDeVenda);
             } else {
             	usuario.getPontosDeVenda().add(pontoDeVenda);
-            	usuario.setRede(pontoDeVenda.getRede());
             }
         }
         return usuario;

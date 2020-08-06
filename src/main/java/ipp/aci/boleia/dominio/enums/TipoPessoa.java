@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.excecao.ExcecaoValidacao;
 import ipp.aci.boleia.util.i18n.IEnumComLabel;
+import ipp.aci.boleia.util.i18n.Mensagens;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -68,6 +69,13 @@ public enum TipoPessoa implements IEnumComLabel<TipoPessoa> {
             }
         }
         return null;
+    }
+    /**
+     * Obtem o label da enumeracao mapeado com o utilizado na base do corporativo
+     * @return O label abreviado da enumeracao
+     */
+     public String valorIpiranga() {
+        return Mensagens.obterLabelValorIpiranga(this);
     }
 }
 

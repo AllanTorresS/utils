@@ -41,16 +41,9 @@ public interface IDispositivoMotoristaDados extends IRepositorioBoleiaDados<Disp
     /**
      * Obtem um dispositivo a partir do motorista
      * @param idMotorista o id do motorista
-     * @return o dispositivo associado, se existir
+     * @return os dispositivos associados, se existirem
      */
-    DispositivoMotorista obterPorMotorista(Long idMotorista);
-
-    /**
-     * Obtem um dispositivo a partir do motorista sem a utilização do isolamento de dados.
-     * @param idMotorista o id do motorista
-     * @return o dispositivo associado, se existir
-     */
-    DispositivoMotorista obterPorMotoristaSemIsolamento(Long idMotorista);
+    List<DispositivoMotorista> obterPorMotorista(Long idMotorista);
 
     /**
      * Exclui o dispositivo de um dado motorista

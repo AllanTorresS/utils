@@ -5,6 +5,7 @@ import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFrotaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialFrotaVo;
+import ipp.aci.boleia.dominio.vo.apco.ClienteProFrotaVo;
 
 import java.util.Date;
 import java.util.List;
@@ -125,5 +126,43 @@ public interface IFrotaDados extends IRepositorioBoleiaDados<Frota> {
      * @return Lista de Frotas paginada
      */
     List<Frota> buscarFrotaUnidadeAtivaComPostoInternoPorDataAtualizacaoECnpj(Date dataUltimaAtualizacao, Long cnpj);
+    
+    /**
+     * Obtem a frota através dp CNPJ sem isolamento de dados.
+     * 
+     * @param cnpj CNPJ da frota.
+     * @return Frota.
+     */
+    Frota obterPorCnpj(Long cnpj);
 
+    /**
+     * Retorna as frotas que os donos acúmularam KMV em um intervalo
+     * @param dataInicio o inicio do intervalo
+     * @param dataFim o final do intervalo
+     * @return Lista de Frotas paginada
+     */
+    List<Frota> buscarFrotaComKmvAcumuladosParaDonoDaFrota(Date dataInicio, Date dataFim);
+
+    /**
+     * Obtem a frota associada à cobrança informada
+     * @param idCobranca o id da cobrança
+     * @return a frota associada à cobrança informada
+     */
+    Frota obterPorCobranca(Long idCobranca);
+
+    /**
+     * Retorna os dados das frotas clientes com data de atualização mais recente em relação a uma última
+     * integração com a APCO.
+     * @param dataUltimoEnvio a data do último envio de dados bem sucedido
+     * @return Lista de Frotas para exportacao
+     */
+    List<ClienteProFrotaVo> obterClienteFrotaAPCO(Date dataUltimoEnvio);
+
+    /**
+     * Altera o estado da entidade Frota para desanexado
+     *
+     * @param frota altera entidade para transiente
+     * @return A frota desanexada
+     */
+    Frota desanexar(Frota frota);
 }

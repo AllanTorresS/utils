@@ -5,14 +5,16 @@ package ipp.aci.boleia.dominio.enums;
  */
 public enum TipoArquivo {
 
-    FOTO_MOTORISTA("foto_motorista/",".jpg", "image/jpeg", false),
-    FOTO_PONTO_VENDA("foto_ponto_venda/",".jpg", "image/jpeg", true),
-    FOTO_HODOMETRO_HORIMETRO("foto_hodometro_horimetro/",".jpg", "image/jpeg", false),
-    NOTA_FISCAL("nota_fiscal/",".xml", "text/xml", false),
-    JUSTIFICATIVA_NOTA("justificativa_nota_fiscal/",".pdf", "application/pdf", false),
-    RELATORIO_48_HORAS_XLSX("relatorio_48_horas/", ".xlsx", "application/vnd.ms-excel", false),
-    RELATORIO_48_HORAS_TXT("relatorio_48_horas/",".txt","text/plain", false),
-    NOTA_FISCAL_ARMAZEM("nfe_anexo_armazem/", ".xml", "text/xml", false);
+    FOTO_MOTORISTA("foto_motorista/",".jpg", "image/jpeg", false, 30),
+    FOTO_PONTO_VENDA("foto_ponto_venda/",".jpg", "image/jpeg", true, 30),
+    FOTO_HODOMETRO_HORIMETRO("foto_hodometro_horimetro/",".jpg", "image/jpeg", false, 30),
+    NOTA_FISCAL("nota_fiscal/",".xml", "text/xml", false, 120),
+    JUSTIFICATIVA_NOTA("justificativa_nota_fiscal/",".pdf", "application/pdf", false, 120),
+    RELATORIO_48_HORAS_XLSX("relatorio_48_horas/", ".xlsx", "application/vnd.ms-excel", false, 120),
+    RELATORIO_48_HORAS_TXT("relatorio_48_horas/",".txt","text/plain", false, 60),
+    NOTA_FISCAL_ARMAZEM("nfe_anexo_armazem/", ".xml", "text/xml", false, 120),
+    DOWNLOAD_PRESIGNED_NOTA_FISCAL_PDF("download_presigned/nota_fiscal/pdf/", ".pdf", "application/pdf", false, 120),
+    DOWNLOAD_PRESIGNED_NOTA_FISCAL_XML("download_presigned/nota_fiscal/xml/", ".xml", "text/xml", false, 120);
 
     public static final String PREFIXO_BASE64 = "base64,";
 
@@ -20,12 +22,14 @@ public enum TipoArquivo {
     private final String sufixo;
     private final String mimeType;
     private final boolean nomeArquivoAutoContido;
+    private final Integer tempoMinutosUrl;
 
-    TipoArquivo(String prefixo, String sufixo, String mimeType, boolean nomeArquivoAutoContido) {
+    TipoArquivo(String prefixo, String sufixo, String mimeType, boolean nomeArquivoAutoContido, Integer tempoMinutosUrl) {
         this.prefixo = prefixo;
         this.sufixo = sufixo;
         this.mimeType = mimeType;
         this.nomeArquivoAutoContido = nomeArquivoAutoContido;
+        this.tempoMinutosUrl = tempoMinutosUrl;
     }
 
     public String getMimeType() {
@@ -39,6 +43,8 @@ public enum TipoArquivo {
     public String getSufixo() {
         return sufixo;
     }
+
+    public Integer getTempoMinutosUrl() { return tempoMinutosUrl; }
 
     public boolean isNomeArquivoAutoContido() {
         return nomeArquivoAutoContido;

@@ -6,9 +6,11 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import ipp.aci.boleia.dados.IComandaDigitalDados;
 import ipp.aci.boleia.dados.IDispositivoMotoristaDados;
+import ipp.aci.boleia.dados.IModuloInternoDados;
 import ipp.aci.boleia.dados.IUsuarioDados;
 import ipp.aci.boleia.dominio.ComandaDigital;
 import ipp.aci.boleia.dominio.DispositivoMotorista;
+import ipp.aci.boleia.dominio.ModuloInterno;
 import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.enums.TipoPerfilUsuario;
 import ipp.aci.boleia.dominio.enums.TipoTokenJwt;
@@ -54,6 +56,9 @@ public class RenovadorTokenJwt {
 
     @Autowired
     private IDispositivoMotoristaDados dispositivoMotoristaDados;
+
+    @Autowired
+    private IModuloInternoDados moduloInternoDados;
 
     private LoadingCache<ChaveCache, Optional<String>> cacheRenovacaoTokens;
 
@@ -135,6 +140,7 @@ public class RenovadorTokenJwt {
                     case SALES_FORCE:           return utilitarioJwt.criarTokenSalesForce();
                     case USUARIO_PDV:           return renovarTokenPDV(token, fingerprint);
                     case API_FROTISTA:          return renovarTokenApiFrotista(token, strToken);
+                    case MODULO_INTERNO:        return renovarTokenModuloInterno(token);
                 }
             }
         } catch (ExcecaoTokenJwtExpirado e) {
@@ -205,6 +211,21 @@ public class RenovadorTokenJwt {
      */
     private String renovarTokenApiFrotista(DecodedJWT token, String strToken) {
         return servicosDeApiToken.renovarTokenFrota(token, strToken);
+    }
+
+    /**
+     * Renova um token de módulo interno a partir do token atual previamente validado
+     * @param token O token atual previamente validado
+     */
+    private String renovarTokenModuloInterno(DecodedJWT token) {
+        String novoToken = null;
+        Long id = utilitarioJwt.getIdentificadorUsuario(token);
+        TipoPerfilUsuario tipoPerfil = utilitarioJwt.getTipoPerfilUsuario(token);
+        ModuloInterno moduloInterno = moduloInternoDados.obterPorId(id);
+        if (moduloInterno != null) {
+            novoToken = utilitarioJwt.criarTokenModuloInterno(moduloInterno);
+        }
+        return novoToken;
     }
 
     /**

@@ -8,9 +8,11 @@ import ipp.aci.boleia.dominio.enums.StatusHabilitacaoPontoVenda;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaior;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.vo.AutorizacaoPagamentoOrfaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaPostoCredenciadoVo;
+import ipp.aci.boleia.util.Ordenacao;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.Query;
@@ -52,20 +54,20 @@ public class OracleFrotaPontoVendaDados extends OracleRepositorioBoleiaDados<Fro
 		super(FrotaPontoVenda.class);
 	}
 
-	@Override
-	public ResultadoPaginado<FrotaPontoVenda> pesquisarPostosCredenciados(FiltroPesquisaPostoCredenciadoVo filtro) {
-		List<ParametroPesquisa> parametros = new ArrayList<>();
-		povoarParametroIgual("frota.id", filtro.getFrota().getId(), parametros);
-		povoarParametroIgual("pontoVenda.id", filtro.getPontoVenda() != null ? filtro.getPontoVenda().getId() : null, parametros);
-		povoarParametroLike("pontoVenda.municipio", filtro.getCidade(), parametros);
-		povoarParametroIgual("pontoVenda.uf", filtro.getUf() != null ? filtro.getUf().getName() : null, parametros);
-		parametros.add(new ParametroPesquisaIgual("pontoVenda.status", StatusAtivacao.ATIVO.getValue()));
-		parametros.add(new ParametroPesquisaIgual("pontoVenda.statusHabilitacao", StatusHabilitacaoPontoVenda.HABILITADO.getValue()));
-		if(filtro.getStatusBloqueio() != null && filtro.getStatusBloqueio().getName() != null) {
-			parametros.add(new ParametroPesquisaIgual("statusBloqueio", StatusBloqueio.valueOf(filtro.getStatusBloqueio().getName()).getValue()));
-		}
-		return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
-	}
+    @Override
+    public ResultadoPaginado<FrotaPontoVenda> pesquisarPostosCredenciados(FiltroPesquisaPostoCredenciadoVo filtro) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        povoarParametroIgual("frota.id", filtro.getFrota().getId(), parametros);
+        povoarParametroIgual("pontoVenda.id", filtro.getPontoVenda() != null ? filtro.getPontoVenda().getId() : null, parametros);
+        povoarParametroLike("pontoVenda.municipio", filtro.getCidade(), parametros);
+        povoarParametroIgual("pontoVenda.uf", filtro.getUf() != null ? filtro.getUf().getName() : null, parametros);
+        parametros.add(new ParametroPesquisaIgual("pontoVenda.status", StatusAtivacao.ATIVO.getValue()));
+        parametros.add(new ParametroPesquisaIgual("pontoVenda.statusHabilitacao", StatusHabilitacaoPontoVenda.HABILITADO.getValue()));
+        if (filtro.getStatusBloqueio() != null && filtro.getStatusBloqueio().getName() != null) {
+            parametros.add(new ParametroPesquisaIgual("statusBloqueio", StatusBloqueio.valueOf(filtro.getStatusBloqueio().getName()).getValue()));
+        }
+        return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
 
 	@Override
 	public List<FrotaPontoVenda> buscarPorMicromercado(Long idMicromercado) {
@@ -105,5 +107,12 @@ public class OracleFrotaPontoVendaDados extends OracleRepositorioBoleiaDados<Fro
 			}
 		}
 		return armazenados;
+	}
+
+	@Override
+	public List<FrotaPontoVenda> buscarPorDataMaisRecente(Date dataReferencia){
+		List<ParametroPesquisa> parametros = new ArrayList<>();
+		parametros.add(new ParametroPesquisaDataMaior("dataAtualizacao", dataReferencia));
+		return pesquisar(new ParametroOrdenacaoColuna("dataAtualizacao", Ordenacao.CRESCENTE), parametros.toArray(new ParametroPesquisa[parametros.size()]));
 	}
 }

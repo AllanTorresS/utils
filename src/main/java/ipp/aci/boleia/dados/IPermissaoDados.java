@@ -16,9 +16,10 @@ public interface IPermissaoDados extends IRepositorioBoleiaDados<Permissao> {
      * @param portalSolucao true caso portal solucao
      * @param portalPrecos true caso portal de precos
      * @param sistemaExterno true caso sistema externo
+     * @param moduloInterno true caso modulo interno
      * @return uma lista de permissoes encontradas
      */
-    List<Permissao> obterPermissoesPortais(Boolean portalFrotista, Boolean portalRevendedor, Boolean portalSolucao, Boolean portalPrecos, Boolean sistemaExterno);
+    List<Permissao> obterPermissoesPortais(Boolean portalFrotista, Boolean portalRevendedor, Boolean portalSolucao, Boolean portalPrecos, Boolean sistemaExterno, Boolean moduloInterno);
 
     /**
      * Obtem as permissoes existentes para a frota

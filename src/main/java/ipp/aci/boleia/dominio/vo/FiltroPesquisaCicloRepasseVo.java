@@ -2,6 +2,8 @@ package ipp.aci.boleia.dominio.vo;
 
 import ipp.aci.boleia.dominio.pesquisa.comum.BaseFiltroPaginado;
 
+import java.util.List;
+
 /**
  * Filtro para pesquisa de Ciclos de Repasse
  */
@@ -9,10 +11,11 @@ public class FiltroPesquisaCicloRepasseVo extends BaseFiltroPaginado {
 
 	private String de;
 	private String ate;
+	private EntidadeVo pontoDeVenda;
+	private String numeroDocumento;
+	private List<EnumVo> produto;
 	private EnumVo statusPagamento;
 	private EnumVo statusIntegracao;
-	private String numeroDocumento;
-	private EntidadeVo frota;
 
 	public String getDe() {
 		return de;
@@ -30,14 +33,6 @@ public class FiltroPesquisaCicloRepasseVo extends BaseFiltroPaginado {
 		this.ate = ate;
 	}
 
-	public EnumVo getStatusPagamento() {
-		return statusPagamento;
-	}
-
-	public void setStatusPagamento(EnumVo statusPagamento) {
-		this.statusPagamento = statusPagamento;
-	}
-
 	public String getNumeroDocumento() {
 		return numeroDocumento;
 	}
@@ -46,12 +41,28 @@ public class FiltroPesquisaCicloRepasseVo extends BaseFiltroPaginado {
 		this.numeroDocumento = numeroDocumento;
 	}
 
-	public EntidadeVo getFrota() {
-		return frota;
+	public EntidadeVo getPontoDeVenda() {
+		return pontoDeVenda;
 	}
 
-	public void setFrota(EntidadeVo frota) {
-		this.frota = frota;
+	public void setPontoDeVenda(EntidadeVo pontoDeVenda) {
+		this.pontoDeVenda = pontoDeVenda;
+	}
+
+	public List<EnumVo> getProduto() {
+		return produto;
+	}
+
+	public void setProduto(List<EnumVo> produto) {
+		this.produto = produto;
+	}
+
+	public EnumVo getStatusPagamento() {
+		return statusPagamento;
+	}
+
+	public void setStatusPagamento(EnumVo statusPagamento) {
+		this.statusPagamento = statusPagamento;
 	}
 
 	public EnumVo getStatusIntegracao() {

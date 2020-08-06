@@ -27,6 +27,8 @@ import java.util.Date;
 @Table(name = "HIST_BLOQUEIO_FROTA_PTOV")
 public class HistoricoBloqueioFrotaPontoVenda implements IPersistente {
 
+    private static final long serialVersionUID = 5332493917164018504L;
+
     @Id
     @Column(name = "CD_HIST_BLOQUEIO_FROTA_PTOV")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_HIST_BLOQUEIO_FROTA_PTOV")

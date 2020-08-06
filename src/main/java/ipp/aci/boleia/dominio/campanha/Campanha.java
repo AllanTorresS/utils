@@ -41,6 +41,8 @@ import java.util.stream.Collectors;
 @Table(name = "CAMPANHA", schema = "BOLEIA_CAMPANHA_SCHEMA")
 public class Campanha implements IPersistente, IExclusaoLogica, Cloneable {
 
+    private static final long serialVersionUID = 72078305247273678L;
+
     @Id
     @Column(name = "CD_CAMPANHA")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_CAMPANHA")
@@ -238,8 +240,12 @@ public class Campanha implements IPersistente, IExclusaoLogica, Cloneable {
      * @return se os objetos são ou não iguais
      */
     public boolean comparar(Campanha campanha) {
-        if (this == campanha) return true;
-        if (campanha == null) return false;
+        if (this == campanha) {
+            return true;
+        }
+        if (campanha == null){
+            return false;
+        }
 
         Boolean datasSobrePostas = UtilitarioCalculoData.dataEmIntervalo(this.getDataInicio(), campanha.getDataInicio(), campanha.getDataFim())
                 || UtilitarioCalculoData.dataEmIntervalo(this.getDataFim(), campanha.getDataInicio(), campanha.getDataFim())

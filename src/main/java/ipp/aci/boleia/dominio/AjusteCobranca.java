@@ -151,13 +151,43 @@ public class AjusteCobranca implements IPersistente {
         this.versao = versao;
     }
 
+    /**
+     * Informa se o ajuste de cobrança é um desconto.
+     *
+     * @return true, caso seja um desconto.
+     */
     @Transient
     public boolean isDesconto() {
-        return valorAjuste.compareTo(BigDecimal.ZERO) < 0;
+        return valorAjuste != null && valorAjuste.compareTo(BigDecimal.ZERO) < 0;
     }
 
+    /**
+     * Informa se o ajuste de cobrança é um acréscimo.
+     *
+     * @return true, caso seja um acréscimo.
+     */
     @Transient
     public boolean isAcrescimo() {
-        return valorAjuste.compareTo(BigDecimal.ZERO) > 0;
+        return valorAjuste != null && valorAjuste.compareTo(BigDecimal.ZERO) > 0;
+    }
+
+    /**
+     * Informa se o ajuste de cobrança foi um ajuste de acréscimo ou desconto.
+     *
+     * @return true, caso seja um ajuste de valor.
+     */
+    @Transient
+    public boolean isAjusteValor() {
+        return isDesconto() || isAcrescimo();
+    }
+
+    /**
+     * Informa se ocorreu uma prorrogação de vencimento no ajuste da cobrança.
+     *
+     * @return true, caso tenha tido uma prorrogação de vencimento no ajuste.
+     */
+    @Transient
+    public boolean isProrrogacaoVencimento() {
+        return dataVencimentoAjuste != null;
     }
 }
