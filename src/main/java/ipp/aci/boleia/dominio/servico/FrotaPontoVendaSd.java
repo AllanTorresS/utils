@@ -64,6 +64,18 @@ public class FrotaPontoVendaSd {
      * @return O registro de {@link FrotaPontoVenda} criado.
      */
     public FrotaPontoVenda criarFrotaPontoVenda(Frota frota, PontoDeVenda pontoVenda, boolean semIsolamento) {
+        return criarFrotaPontoVenda(frota, pontoVenda, semIsolamento, null);
+    }
+    /**
+     * Cria um novo registro de {@link FrotaPontoVenda}.
+     *
+     * @param frota Registro da frota.
+     * @param pontoVenda Registro do ponto de venda.
+     * @param semIsolamento Informa se o armazenamento será feito sem isolamento de dados.
+     * @param justificativa Motivo para criacao do vinculo.
+     * @return O registro de {@link FrotaPontoVenda} criado.
+     */
+    public FrotaPontoVenda criarFrotaPontoVenda(Frota frota, PontoDeVenda pontoVenda, boolean semIsolamento, String justificativa) {
         FrotaPontoVenda frotaPontoVenda = new FrotaPontoVenda();
         frotaPontoVenda.setFrota(frota);
         frotaPontoVenda.setPontoVenda(pontoVenda);
@@ -71,6 +83,7 @@ public class FrotaPontoVendaSd {
         frotaPontoVenda.setStatusVinculo(StatusVinculoFrotaPontoVenda.ATIVO.getValue());
         frotaPontoVenda.setVersao(0L);
         frotaPontoVenda.setDataAtualizacao(ambiente.buscarDataAmbiente());
+        frotaPontoVenda.setJustificativaVinculo(justificativa);
         FrotaPontoVenda retorno;
         if(semIsolamento) {
             retorno = frotaPontoVendaDados.armazenarSemIsolamentoDeDados(frotaPontoVenda);

@@ -74,8 +74,7 @@ public class OracleUnidadeDados extends OracleRepositorioBoleiaDados<Unidade> im
 	@Override
 	public List<Unidade> pesquisarPorCnpjRazaoSocial(String termo, Long idFrota, boolean possuiPostoInterno){
 		List<ParametroPesquisa> parametros = new ArrayList<>();
-		String termoCnpj = (termo == null) ? null : termo.replaceAll("[-./]+", "")
-				.replaceFirst("^0+(?!$)", "");
+		String termoCnpj = preparaTermoCnpj(termo);
 		parametros.add(new ParametroPesquisaOr(
 				new ParametroPesquisaLike("cnpj", termoCnpj),
 				new ParametroPesquisaLike("nome", termo)));

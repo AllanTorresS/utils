@@ -316,7 +316,7 @@ public class OracleMotoristaDados extends OracleRepositorioBoleiaDados<Motorista
      * @param parametros Os parametros da consulta
      */
     private void povoarParametrosParaAutocomplete(FiltroPesquisaParcialMotoristaVo filtro, List<ParametroPesquisa> parametros) {
-        String termoCnpj = (filtro.getTermo() == null) ? null : filtro.getTermo().replaceAll("[-.]+", "").replaceFirst("^0+(?!$)", "");
+        String termoCnpj = preparaTermoCnpj(filtro.getTermo());
         ParametroPesquisa paramCnpj = new ParametroPesquisaLike("cpf", termoCnpj);
         ParametroPesquisa paramRazao = new ParametroPesquisaLike("nome", filtro.getTermo());
 
