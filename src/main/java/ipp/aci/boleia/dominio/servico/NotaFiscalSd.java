@@ -340,7 +340,7 @@ public class NotaFiscalSd {
      * Recupera campos da nota a partir do arquivo no S3, caso não estejam preenchidos no banco.
      * @param nf a nota fiscal que terá os campos recuperados
      */
-    private void recuperarCamposNulos(NotaFiscal nf) {
+    public void recuperarCamposNulos(NotaFiscal nf) {
         if (!nf.getIsJustificativa() &&
                 (nf.getNumeroSerie() == null || nf.getCnpjEmitente() == null || nf.getChaveAcesso() == null)) {
             Document documentoBase = UtilitarioXml.lerXml(UtilitarioStreams.carregarEmMemoria(obterXmlNotaFiscal(nf)));

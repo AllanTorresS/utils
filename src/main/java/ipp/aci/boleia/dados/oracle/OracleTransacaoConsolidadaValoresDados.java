@@ -1,6 +1,7 @@
 package ipp.aci.boleia.dados.oracle;
 
 import ipp.aci.boleia.dados.IRepositorioBoleiaDados;
+import ipp.aci.boleia.dados.ITransacaoConsolidadaValoresDados;
 import ipp.aci.boleia.dominio.TransacaoConsolidadaValores;
 import org.springframework.stereotype.Repository;
 
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Repository;
  * Respositorio de entidades Conta transacao consolidada valores
  */
 @Repository
-public class OracleTransacaoConsolidadaValoresDados extends OracleRepositorioBoleiaDados<TransacaoConsolidadaValores> implements IRepositorioBoleiaDados<TransacaoConsolidadaValores> {
+public class OracleTransacaoConsolidadaValoresDados extends OracleRepositorioBoleiaDados<TransacaoConsolidadaValores> implements ITransacaoConsolidadaValoresDados {
 
     /**
      * Instancia o repositorio
