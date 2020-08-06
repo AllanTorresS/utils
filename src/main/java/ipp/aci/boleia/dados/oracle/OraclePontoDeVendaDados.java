@@ -67,7 +67,7 @@ public class OraclePontoDeVendaDados extends OracleRepositorioBoleiaDados<PontoD
         " LEFT JOIN FETCH p.avaliacao " +
         " LEFT JOIN p.negociacoes n WITH n.frota.id = :idFrota" +
         " WHERE " + 
-        "     (n.statusVinculo = 0 OR n.statusVinculo IS NULL) " +
+        "     n.statusVinculo IS NULL " +
         "     AND ( " + removerCaseCampo(removerAcentosCampo("p.nome")) + " like :nome " +
         "           OR cast(c.codigoPessoa as string) like :cnpj )" +
         "     %s " +
