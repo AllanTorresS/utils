@@ -1,4 +1,4 @@
-package ipp.aci.boleia.dominio.servico;
+package ipp.aci.boleia.dominio.servico.agenciadorfrete;
 
 import ipp.aci.boleia.dados.IAgenciadorFreteExternoDados;
 import ipp.aci.boleia.dominio.agenciadorfrete.Transacao;

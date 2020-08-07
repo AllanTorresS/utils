@@ -38,6 +38,9 @@ public class ConfiguracoesSwagger {
     private static final String PACOTE_API_EXTERNO = "ipp.aci.boleia.visao.externo";
     public static final String API_FROTISTA_GROUP_NAME = "api-frotista";
     public static final String API_EXTERNO_GROUP_NAME = "api-externo";
+    public static final String API_AGENCIADOR_FRETE_GROUP_NAME = "api-agenciadorfrete";
+    private static final String PACOTE_API_AGENCIADOR_FRETE = "ipp.aci.boleia.visao.agenciadorfrete";
+
 
     @Value(value="${docs.api.frotista.titulo}")
     private String apiFrotistaTitulo;
@@ -56,6 +59,16 @@ public class ConfiguracoesSwagger {
 
     @Value(value="${docs.api.externo.versao}")
     private String apiExternoVersao;
+
+    @Value(value="${docs.api.agenciadorfrete.titulo}")
+    private String apiAgenciadorDeFreteTitulo;
+
+    @Value(value="${docs.api.agenciadorfrete.descricao}")
+    private String apiAgenciadorDeFreteDescricao;
+
+    @Value(value="${docs.api.agenciadorfrete.versao}")
+    private String apiAgenciadorDeFreteVersao;
+
 
     @Autowired
     private TypeResolver typeResolver;
@@ -101,6 +114,27 @@ public class ConfiguracoesSwagger {
                 .apiInfo(getApiExternoInfo())
                 .additionalModels(getAditionalModel())
                 .directModelSubstitute(Date.class, String.class);
+    }
+
+    /**
+     * Configuracao Swagger para a api do frotista
+     * @return plugin docket
+     */
+    @Bean
+    public Docket apiAgenciadorDeFrete() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .groupName(API_AGENCIADOR_FRETE_GROUP_NAME)
+                .protocols(new HashSet<>(Arrays.asList("http", "https")))
+                .select()
+                .apis(RequestHandlerSelectors.basePackage(PACOTE_API_AGENCIADOR_FRETE))
+                .paths(PathSelectors.any())
+                .build()
+                .globalResponseMessage(RequestMethod.GET, getGlobalResponseMessages())
+                .globalResponseMessage(RequestMethod.POST, getGlobalResponseMessages())
+                .globalResponseMessage(RequestMethod.PUT, getGlobalResponseMessages())
+                .globalResponseMessage(RequestMethod.DELETE, getGlobalResponseMessages())
+                .apiInfo(getApiAgenciadorDeFreteInfo())
+                .additionalModels(getAditionalModel());
     }
 
     /**
@@ -163,6 +197,18 @@ public class ConfiguracoesSwagger {
                 .responseModel(new ModelRef(String.class.getSimpleName()))
                 .build()
         );
+    }
+
+    /**
+     * Obtem a as informacoes da api do agenciador de frete
+     * @return informacoes da api
+     */
+    private ApiInfo getApiAgenciadorDeFreteInfo() {
+        return new ApiInfoBuilder()
+                .title(apiAgenciadorDeFreteTitulo)
+                .description(apiAgenciadorDeFreteDescricao)
+                .version(apiAgenciadorDeFreteVersao)
+                .build();
     }
 
     /**

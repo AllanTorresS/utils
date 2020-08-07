@@ -1,11 +1,14 @@
 package ipp.aci.boleia.util.negocio;
 
 import ipp.aci.boleia.dados.IAmbienteDados;
+import ipp.aci.boleia.dados.ISistemaExternoDados;
 import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.Permissao;
 import ipp.aci.boleia.dominio.Rede;
+import ipp.aci.boleia.dominio.SistemaExterno;
 import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.enums.TipoPerfilUsuario;
+import ipp.aci.boleia.dominio.enums.TipoTokenJwt;
 import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
 import ipp.aci.boleia.util.seguranca.ProvedorAutenticacao;
@@ -54,6 +57,9 @@ public class UtilitarioAmbiente {
     @Value("${google.recaptcha.secret.key}")
     private String recapcthaSecretKey;
 
+    @Autowired
+    private ISistemaExternoDados sistemaExternoDados;
+
     /**
      * Retorna o nome do sistema
      *
@@ -88,6 +94,19 @@ public class UtilitarioAmbiente {
      */
     public Usuario getUsuarioLogado() {
        return ProvedorAutenticacao.getUsuarioLogado();
+    }
+
+    /**
+     * Obtem Id do sistema externo no sistema
+     *
+     * @return O id do sistema externo logado no sistema
+     */
+    public SistemaExterno getSistemaExterno() {
+        Usuario usuario = getUsuarioLogado();
+        if(usuario != null && usuario.getTipoTokenJwt() != null && usuario.getTipoTokenJwt().equals(TipoTokenJwt.SISTEMA_EXTERNO)) {
+            return sistemaExternoDados.obterPorId(usuario.getId());
+        }
+        return null;
     }
 
     /**
