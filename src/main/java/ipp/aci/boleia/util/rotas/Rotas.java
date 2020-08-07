@@ -102,7 +102,7 @@ public final  class Rotas {
     public static final  String BANCO_API                            = BASE_API + "/banco";
     public static final  String PARAMETRO_SISTEMA_API                = BASE_API + "/parametroSistema";
     public static final  String PRODUTOS_ADICIONAIS_PDV              = BASE_API + "/produtosAdicionaisPDV";
-    public static final  String PEDIDO_AGENCIADOR_FRETE_API          = BASE_API + "/pedidoAgenciadorFrete";
+    public static final  String PEDIDO_AGENCIADOR_FRETE_API          = BASE_API + "/pedidoagenciadorfrete";
     public static final  String SISTEMA_API                          = BASE_API + "/sistema";
     public static final  String API_TOKEN_API                        = BASE_API + "/apiToken";
     public static final  String KMVPDVCAMINHONEIRO_API               = BASE_API + "/kmvPdvCaminhoneiro";
