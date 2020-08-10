@@ -586,6 +586,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     public List<AutorizacaoPagamento> obterAbastecimentoPorNota(Long cnpjDest, Long cnpjEmit, Date dataEmissao, BigDecimal valorTotalNota) {
         final BigDecimal toleranciaDeValorNota = BigDecimal.valueOf(.05);
         List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaIgual("status", StatusAutorizacao.AUTORIZADO.getValue()));
         parametros.add(new ParametroPesquisaIgual("pontoVenda.componentes.codigoPessoa", cnpjEmit));
         parametros.add(
                 new ParametroPesquisaOr(
@@ -595,11 +596,11 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                 )
         );
         parametros.add(new ParametroPesquisaIgual("statusNotaFiscal", StatusNotaFiscalAbastecimento.PENDENTE.getValue()));
-        parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataProcessamento", UtilitarioCalculoData.obterPrimeiroInstanteDia(dataEmissao)));
         parametros.add(new ParametroPesquisaDataMenorOuIgual("dataProcessamento", UtilitarioCalculoData.obterUltimoInstanteDia(dataEmissao)));
         parametros.add(new ParametroPesquisaMenorOuIgual("valorTotal", valorTotalNota.add(toleranciaDeValorNota)));
         parametros.add(new ParametroPesquisaMaiorOuIgual("valorTotal", valorTotalNota.subtract(toleranciaDeValorNota)));
-        return pesquisar((InformacaoPaginacao)null, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+
+        return pesquisar((InformacaoPaginacao) null, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
 
 
