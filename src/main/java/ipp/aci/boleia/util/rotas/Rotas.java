@@ -73,6 +73,9 @@ public final  class Rotas {
     public static final  String VIP_API                              = BASE_API + "/vip";
     public static final  String AUTORIZACAO_API                      = BASE_API + "/autorizacao";
     public static final  String PRODUTO_API                          = BASE_API + "/produto";
+    public static final  String AGENCIADOR_FRETE_API                 = BASE_API + "/agenciadorfrete";
+    public static final  String MOTORISTA_AUTONOMO_API               = BASE_API + "/motoristaautonomo";
+    public static final  String AGENCIADOR_FRETE_TAXA_API            = BASE_API + "/agenciadorfrete/taxa";
     public static final  String NOTA_FISCAL_API                      = BASE_API + "/notaFiscal";
     public static final  String TRANS_CONSOL_API                     = BASE_API + "/transacaoConsolidada";
     public static final  String TRANS_CONSOL_FROTA_API               = BASE_API + "/transacaoConsolidadaFrota";
