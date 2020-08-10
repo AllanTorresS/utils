@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -61,6 +62,9 @@ public class Consolidado implements IPersistente {
     @Column(name = "DT_CRIACAO")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataCriacao;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    private Cobranca cobranca;
 
     @Column(name = "NO_VERSAO")
     @Version
@@ -130,5 +134,13 @@ public class Consolidado implements IPersistente {
 
     public void setAgenciadorFrete(AgenciadorFrete agenciadorFrete) {
         this.agenciadorFrete = agenciadorFrete;
+    }
+
+    public Cobranca getCobranca() {
+        return cobranca;
+    }
+
+    public void setCobranca(Cobranca cobranca) {
+        this.cobranca = cobranca;
     }
 }
