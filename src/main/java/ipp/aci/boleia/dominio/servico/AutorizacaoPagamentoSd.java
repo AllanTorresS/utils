@@ -5,7 +5,6 @@ import ipp.aci.boleia.dados.IAutorizacaoPagamentoEdicaoDados;
 import ipp.aci.boleia.dominio.AutorizacaoPagamento;
 import ipp.aci.boleia.dominio.AutorizacaoPagamentoEdicao;
 import ipp.aci.boleia.dominio.NotaFiscal;
-import ipp.aci.boleia.dominio.TransacaoConsolidada;
 import ipp.aci.boleia.dominio.enums.StatusAutorizacao;
 import ipp.aci.boleia.dominio.enums.StatusEdicao;
 import ipp.aci.boleia.dominio.enums.StatusNotaFiscalAbastecimento;
@@ -48,14 +47,25 @@ public class AutorizacaoPagamentoSd {
     private IAutorizacaoPagamentoEdicaoDados repositorioAutorizacaoPagamentoEdicao;
 
     /**
-     * Obtem lista de abastecimentos para exportação de acordo com o filtro informado.
+     * Obtém lista de abastecimentos para exportação de acordo com o filtro informado.
      *
-     * @param filtro O filtro da ultima busca
+     * @param filtro O filtro da última busca
      * @return Uma Resultado Paginado de AutorizacaoPagamento
      */
     public ResultadoPaginado<AutorizacaoPagamento> pesquisarAbastecimentosParaExportacao(FiltroPesquisaAbastecimentoVo filtro) {
+        return pesquisarAbastecimentosParaExportacao(filtro, Collections.singletonList(new ParametroOrdenacaoColuna("dataProcessamento", Ordenacao.DECRESCENTE)));
+    }
+
+    /**
+     * Obtém lista de abastecimentos para exportação de acordo com o filtro informado.
+     *
+     * @param filtro O filtro da última busca
+     * @param ordenacao Parametros de ordenação da consulta
+     * @return Uma Resultado Paginado de AutorizacaoPagamento
+     */
+    public ResultadoPaginado<AutorizacaoPagamento> pesquisarAbastecimentosParaExportacao(FiltroPesquisaAbastecimentoVo filtro, List<ParametroOrdenacaoColuna> ordenacao) {
         filtro.getPaginacao().setTamanhoPagina(null);
-        filtro.getPaginacao().setParametrosOrdenacaoColuna(Collections.singletonList(new ParametroOrdenacaoColuna("dataProcessamento", Ordenacao.DECRESCENTE)));
+        filtro.getPaginacao().setParametrosOrdenacaoColuna(ordenacao);
         return repositorioAutorizacaoPagamento.pesquisaPaginada(filtro, true);
     }
 

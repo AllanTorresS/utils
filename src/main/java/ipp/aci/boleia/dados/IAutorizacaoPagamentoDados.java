@@ -343,4 +343,18 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
      * @return Lista de abastecimentos de um ciclo que tem justificativa associada
      */
     List<AutorizacaoPagamento> obterAbastecimentosComJustificativaAssociadaPorAbastecimentos(List<Long> idsAutorizacoes);
+
+    /**
+     * Retorna a lista de abastecimentos de um consolidado que possui exigência de emissão de nota fiscal, sejam eles postergados ou não.
+     * @param transacaoConsolidada o consolidado que se deseja obter os abastecimentos.
+     * @return a lista de abastecimentos do consolidado.
+     */
+    List<AutorizacaoPagamento> obterAbastecimentosCicloParaNotaFiscal(TransacaoConsolidada transacaoConsolidada);
+
+    /** Obtém o número abastecimentos pertencentes ao ciclo que foram postergados
+     *
+     * @param filtro O filtro com as informações que devem ser consideradas na busca.
+     * @return Número de abastecimentos postergados.
+     */
+    Integer obterNumeroAbastecimentosPostergados(FiltroPesquisaAbastecimentoVo filtro);
 }

@@ -1531,7 +1531,16 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
      * @return O item da autorização que representa o abastecimento
      */
     public ItemAutorizacaoPagamento obterItemAbastecimento() {
-        return this.getItems().stream().filter(i -> i.isAbastecimento()).findFirst().get();
+        return this.getItems().stream().filter(ItemAutorizacaoPagamento::isAbastecimento).findFirst().get();
+    }
+
+    /**
+     * Obtém uma lista de produtos e serviços de uma autorização pagamento
+     *
+     * @return A lista de itens da autorização que representa os produtos e serviços
+     */
+    public List<ItemAutorizacaoPagamento> obterItensServico(){
+        return this.getItems().stream().filter(i -> !i.isAbastecimento()).collect(Collectors.toList());
     }
 
     public Long getCodigoAbastecimentoCTA() {

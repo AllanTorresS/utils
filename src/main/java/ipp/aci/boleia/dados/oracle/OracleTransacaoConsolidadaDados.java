@@ -286,46 +286,49 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
 
     private static final String CONSULTA_PONTOS_GRAFICO =
             "SELECT new ipp.aci.boleia.dominio.vo.PontosGraficoFinanceiroVo( " +
-                    "(CASE " +
-                    "WHEN rm.dataPagamento IS NOT NULL THEN trunc(rm.dataPagamento) " +
+                "(CASE " +
+                    "WHEN rm.status=1 THEN trunc(rm.dataPagamento) " +
+                    "WHEN rm.dataVencimentoPgto IS NOT NULL THEN trunc(rm.dataVencimentoPgto) " +
                     "ELSE trunc(prz.dataLimiteEmissaoNfe+ 2) " +
-                    "END) AS dataPagamento, " +
-                    "sum(tc_vr.valorReembolso ), " +
-                    "CASE " +
+                "END) AS dataPagamento, " +
+                "SUM(CASE WHEN rm.valorReembolso IS NULL THEN tc_vr.valorReembolso "+
+                    "ELSE rm.valorReembolso END), " +
+                "CASE " +
                     "WHEN rm.status=0 THEN 'PREVISTO' " +
                     "WHEN rm.status=1 THEN 'PAGO' " +
                     "WHEN rm.status=2 THEN 'PREVISTO' " +
                     "WHEN rm.status=3 THEN 'PREVISTO' " +
                     "WHEN rm.status IS NULL THEN 'PREVISTO' " +
-                    "END) " +
-                    "FROM " +
+                "END) " +
+                "FROM " +
                     "TransacaoConsolidada tc " +
                     "LEFT JOIN tc.valores tc_vr " +
                     "LEFT JOIN tc.prazos prz " +
                     "LEFT JOIN tc.reembolso rm	" +
                     "LEFT JOIN tc.frotaPtov f_ptov	" +
-                    "WHERE " +
-                    "rm.status NOT IN (4,5) " +
+                "WHERE " +
+                    "(rm.status is null or rm.status NOT IN (4,5)) " +
                     "AND tc.dataInicioPeriodo >= :dataInicioPeriodo " +
                     "AND trunc(tc.dataFimPeriodo) 	<= :dataFimPeriodo " +
                     "AND (f_ptov.pontoVenda.id IN :idsPvs) " +
                     "AND (f_ptov.frota.id = :idFrota OR :idFrota is null) " +
-                    "AND tc_vr.valorReembolso <> 0" +
+                    "AND (tc_vr.valorReembolso <> 0 or rm.valorReembolso <> 0) " +
                     "AND tc_vr.valorReembolso is not null " +
                     "AND (tc.statusConsolidacao = :statusConsolidacao or :statusConsolidacao is null) " +
-                    "GROUP BY " +
+                "GROUP BY " +
                     "CASE " +
-                    "WHEN rm.dataPagamento IS NOT NULL THEN trunc(rm.dataPagamento) " +
-                    "ELSE trunc(prz.dataLimiteEmissaoNfe+ 2) " +
+                        "WHEN rm.status=1 THEN trunc(rm.dataPagamento) " +
+                        "WHEN rm.dataVencimentoPgto IS NOT NULL THEN trunc(rm.dataVencimentoPgto) " +
+                        "ELSE trunc(prz.dataLimiteEmissaoNfe+ 2) " +
                     "END, " +
                     "CASE " +
-                    "WHEN rm.status=0 THEN 'PREVISTO' " +
-                    "WHEN rm.status=1 THEN 'PAGO' " +
-                    "WHEN rm.status=2 THEN 'PREVISTO' " +
-                    "WHEN rm.status=3 THEN 'PREVISTO' " +
-                    "WHEN rm.status IS NULL THEN 'PREVISTO' " +
+                        "WHEN rm.status=0 THEN 'PREVISTO' " +
+                        "WHEN rm.status=1 THEN 'PAGO' " +
+                        "WHEN rm.status=2 THEN 'PREVISTO' " +
+                        "WHEN rm.status=3 THEN 'PREVISTO' " +
+                        "WHEN rm.status IS NULL THEN 'PREVISTO' " +
                     "END " +
-                    "ORDER BY dataPagamento ASC ";
+                "ORDER BY dataPagamento ASC ";
 
     /**
      * Busca uma lista de transações consolidadas de um ponto de venda agrupadas por data e status.

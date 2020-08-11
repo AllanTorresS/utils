@@ -66,6 +66,11 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
 
     private static final Integer LIMITE_SUPERIOR_CONCILIACAO = -48;
 
+    private static final String REMOVER_ACENTO = "TRANSLATE( %s, " +
+            "'âãäåāăąÁÂÃÄÅĀĂĄèééêëēĕėęěĒĔĖĘĚìíîïìĩīĭÌÍÎÏÌĨĪĬóôõöōŏőÒÓÔÕÖŌŎŐùúûüũūŭůÙÚÛÜŨŪŬŮ'," +
+            "'aaaaaaaaaaaaaaaeeeeeeeeeeeeeeeiiiiiiiiiiiiiiiiooooooooooooooouuuuuuuuuuuuuuuu')";
+
+    private static final String TO_LOWER = "LOWER(%s)";
 
     private static final String QUERY_ATUALIZACAO_COTA_VEICULO =
             " SELECT new ipp.aci.boleia.dominio.vo.QuantidadeAbastecidaVeiculoVo(" +
@@ -142,6 +147,16 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
             " JOIN a.notasFiscais nf " +
             " where a.id in (:idsAutorizacoes) " +
             " and nf.isJustificativa = :isJustificativa ";
+
+    private static final String CONSULTA_QUANTIDADE_ABASTECIMENTOS_POSTERGADOS =
+            "SELECT COUNT(DISTINCT a) " +
+                    "FROM AutorizacaoPagamento a " +
+                    "LEFT JOIN a.notasFiscais nf " +
+                    "WHERE a.transacaoConsolidada.id = :idConsolidado AND a.transacaoConsolidadaPostergada IS NOT NULL " +
+                    "AND a.status = " + StatusAutorizacao.AUTORIZADO.getValue() + " " +
+                    "AND (a.dataRequisicao >= :dataRequisicaoDe OR :dataRequisicaoDe IS NULL) " +
+                    "AND (a.dataRequisicao <= :dataRequisicaoAte OR :dataRequisicaoAte IS NULL) " +
+                    "AND (" + String.format(TO_LOWER, String.format(REMOVER_ACENTO, "a.placaVeiculo")) + " LIKE :placaVeiculo OR :placaVeiculo IS NULL) ";
 
     /**
      * Instancia o repositorio
@@ -896,5 +911,46 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
             return new ArrayList<>();
         }
 
+    }
+
+    @Override
+    public List<AutorizacaoPagamento> obterAbastecimentosCicloParaNotaFiscal(TransacaoConsolidada transacaoConsolidada) {
+        List<ParametroPesquisa> params = new ArrayList<>();
+        params.add(new ParametroPesquisaIgual("status", StatusAutorizacao.AUTORIZADO.getValue()));
+        params.add(new ParametroPesquisaMaior("valorTotal", BigDecimal.ZERO));
+
+        params.add(new ParametroPesquisaOr(
+                new ParametroPesquisaIgual("transacaoConsolidadaPostergada.id", transacaoConsolidada.getId()),
+                new ParametroPesquisaAnd(
+                        new ParametroPesquisaIgual("transacaoConsolidada.id", transacaoConsolidada.getId()),
+                        new ParametroPesquisaNulo("dataPostergacao"))
+        ));
+
+        //Validando exigência de NF para ciclos de empresas agregadas e unidades.
+        if(transacaoConsolidada.getEmpresaAgregada() != null && transacaoConsolidada.getEmpresaAgregada().getId() != null) {
+            params.add(new ParametroPesquisaIgual("empresaAgregada.id", transacaoConsolidada.getEmpresaAgregada().getId()));
+            params.add(new ParametroPesquisaIgual("empresaAgregadaExigeNf", true));
+        }
+        if(transacaoConsolidada.getUnidade() != null && transacaoConsolidada.getUnidade().getId() != null) {
+            params.add(new ParametroPesquisaIgual("unidade.id", transacaoConsolidada.getUnidade().getId()));
+            params.add(new ParametroPesquisaIgual("unidadeExigeNf", true));
+        }
+
+        return pesquisar((ParametroOrdenacaoColuna) null, params.toArray(new ParametroPesquisa[params.size()]));
+    }
+
+    @Override
+    public Integer obterNumeroAbastecimentosPostergados(FiltroPesquisaAbastecimentoVo filtro) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+
+        parametros.add(new ParametroPesquisaIgual("idConsolidado", filtro.getIdConsolidado()));
+
+        parametros.add(new ParametroPesquisaIgual("dataRequisicaoDe", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDataAbastecimento())));
+        parametros.add(new ParametroPesquisaIgual("dataRequisicaoAte", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getDataAbastecimento())));
+
+        parametros.add(new ParametroPesquisaIgual("placaVeiculo", filtro.getPlaca()));
+
+        Long quantidadePostergados = pesquisarUnicoSemIsolamentoDados(CONSULTA_QUANTIDADE_ABASTECIMENTOS_POSTERGADOS, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        return quantidadePostergados.intValue();
     }
 }
