@@ -1,5 +1,6 @@
 package ipp.aci.boleia.dominio;
 
+import ipp.aci.boleia.dominio.enums.RestricaoVisibilidadePontoVenda;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import java.util.Date;
 import javax.persistence.Column;
@@ -14,6 +15,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -40,7 +42,6 @@ public class HistoricoPontoVenda implements IPersistente {
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataHistorico;
     
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_USUARIO")
     private Usuario usuario;
@@ -86,5 +87,15 @@ public class HistoricoPontoVenda implements IPersistente {
 
     public void setRestricaoVisibilidade(Integer restricaoVisibilidade) {
         this.restricaoVisibilidade = restricaoVisibilidade;
+    }
+
+    /**
+     * Informa se um ponto de venda deveria ser visivel apenas para frotas com vinculo ativo.
+     * 
+     * @return se um ponto de venda deveria ser visivel apenas para frotas com vinculo ativo.
+     */
+    @Transient
+    public boolean isVisivelApenasParaFrotasVinculadas() {
+        return RestricaoVisibilidadePontoVenda.VISIVEL_APENAS_PARA_FROTAS_COM_VINCULO_ATIVO.getValue().equals( this.getRestricaoVisibilidade());
     }
 }

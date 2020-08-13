@@ -1,6 +1,7 @@
 package ipp.aci.boleia.dominio;
 
 import ipp.aci.boleia.dominio.enums.StatusBloqueio;
+import ipp.aci.boleia.dominio.enums.StatusVinculoFrotaPontoVenda;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
 import ipp.aci.boleia.dominio.interfaces.IPertenceRevendedor;
@@ -180,6 +181,26 @@ public class FrotaPontoVenda implements IPersistente, IPertenceFrota, IPertenceR
 
     public void setStatusVinculo(Integer statusVinculo) {
         this.statusVinculo = statusVinculo;
+    }
+    
+    /**
+     * Informa se a relacao {@link FrotaPontoVenda} esta ativa.
+     *
+     * @return true, caso esteja ativa.
+     */
+    @Transient
+    public boolean isVinculoAtivo(){
+        return StatusVinculoFrotaPontoVenda.ATIVO.equals(StatusVinculoFrotaPontoVenda.obterPorValor(this.statusVinculo));
+    }
+    
+    /**
+     * Informa se o {@link PontoDeVenda} deve estar visivel para a {@link Frota} 
+     * 
+     * @return true, caso deva estar visivel.
+     */
+    @Transient
+    public boolean isVisivelParaFrota(){
+        return this.isVinculoAtivo() || !this.getPontoVenda().isVisivelApenasParaFrotasVinculadas();
     }
 
     public String getJustificativaVinculo() {

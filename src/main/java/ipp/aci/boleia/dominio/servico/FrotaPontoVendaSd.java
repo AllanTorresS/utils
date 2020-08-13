@@ -3,9 +3,13 @@ package ipp.aci.boleia.dominio.servico;
 import ipp.aci.boleia.dados.IFrotaPontoVendaDados;
 import ipp.aci.boleia.dados.IHistoricoBloqueioFrotaPontoVendaDados;
 import ipp.aci.boleia.dados.IHistoricoFrotaPontoVendaDados;
+import ipp.aci.boleia.dados.IHistoricoPontoVendaDados;
+import ipp.aci.boleia.dados.IPontoDeVendaDados;
+import ipp.aci.boleia.dominio.AutorizacaoPagamento;
 import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.FrotaPontoVenda;
 import ipp.aci.boleia.dominio.HistoricoFrotaPontoVenda;
+import ipp.aci.boleia.dominio.HistoricoPontoVenda;
 import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.enums.RestricaoVisibilidadePontoVenda;
 import ipp.aci.boleia.dominio.enums.StatusBloqueio;
@@ -42,7 +46,13 @@ public class FrotaPontoVendaSd {
     private IHistoricoFrotaPontoVendaDados historicoFrotaPontoVendaDados;
     
     @Autowired
+    private IPontoDeVendaDados pontoDeVendaDados;
+    
+    @Autowired
     private PontoDeVendaSd pontoDeVendaSd;
+    
+    @Autowired
+    private IHistoricoPontoVendaDados historicoPontoVendaDados;
 
     /**
      * Cria um novo registro de {@link FrotaPontoVenda}.
@@ -52,7 +62,7 @@ public class FrotaPontoVendaSd {
      * @return O registro de {@link FrotaPontoVenda} criado.
      */
     public FrotaPontoVenda criarFrotaPontoVenda(Frota frota, PontoDeVenda pontoVenda) {
-        return criarFrotaPontoVenda(frota, pontoVenda, false);
+        return criarFrotaPontoVenda(frota, pontoVenda, null);
     }
 
     /**
@@ -60,12 +70,13 @@ public class FrotaPontoVendaSd {
      *
      * @param frota Registro da frota.
      * @param pontoVenda Registro do ponto de venda.
-     * @param semIsolamento Informa se o armazenamento será feito sem isolamento de dados.
+     * @param justificativa Motivo para criacao do vinculo.
      * @return O registro de {@link FrotaPontoVenda} criado.
      */
-    public FrotaPontoVenda criarFrotaPontoVenda(Frota frota, PontoDeVenda pontoVenda, boolean semIsolamento) {
-        return criarFrotaPontoVenda(frota, pontoVenda, semIsolamento, null);
+    public FrotaPontoVenda criarFrotaPontoVenda(Frota frota, PontoDeVenda pontoVenda,String justificativa) {
+        return criarFrotaPontoVenda(frota, pontoVenda, false, justificativa, StatusVinculoFrotaPontoVenda.ATIVO);
     }
+    
     /**
      * Cria um novo registro de {@link FrotaPontoVenda}.
      *
@@ -73,14 +84,15 @@ public class FrotaPontoVendaSd {
      * @param pontoVenda Registro do ponto de venda.
      * @param semIsolamento Informa se o armazenamento será feito sem isolamento de dados.
      * @param justificativa Motivo para criacao do vinculo.
+     * @param statusVinculo Status do vinculo
      * @return O registro de {@link FrotaPontoVenda} criado.
      */
-    public FrotaPontoVenda criarFrotaPontoVenda(Frota frota, PontoDeVenda pontoVenda, boolean semIsolamento, String justificativa) {
+    public FrotaPontoVenda criarFrotaPontoVenda(Frota frota, PontoDeVenda pontoVenda, boolean semIsolamento, String justificativa, StatusVinculoFrotaPontoVenda statusVinculo) {
         FrotaPontoVenda frotaPontoVenda = new FrotaPontoVenda();
         frotaPontoVenda.setFrota(frota);
         frotaPontoVenda.setPontoVenda(pontoVenda);
         frotaPontoVenda.setStatusBloqueio(StatusBloqueio.DESBLOQUEADO.getValue());
-        frotaPontoVenda.setStatusVinculo(StatusVinculoFrotaPontoVenda.ATIVO.getValue());
+        frotaPontoVenda.setStatusVinculo(statusVinculo.getValue());
         frotaPontoVenda.setVersao(0L);
         frotaPontoVenda.setDataAtualizacao(ambiente.buscarDataAmbiente());
         frotaPontoVenda.setJustificativaVinculo(justificativa);
@@ -93,6 +105,22 @@ public class FrotaPontoVendaSd {
         armazenarHistoricoFrotaPontoVenda(frotaPontoVenda);
         
         return retorno;
+    }
+    
+    /**
+     * Cria um novo registro de {@link FrotaPontoVenda}.
+     *
+     * @param autorizacaoPagamento A autorizacao de pagamento que originou a necessidade da criacao.
+     * @param semIsolamento Informa se o armazenamento será feito sem isolamento de dados.
+     * @return O registro de {@link FrotaPontoVenda} criado.
+     */
+    public FrotaPontoVenda criarFrotaPontoVenda(AutorizacaoPagamento autorizacaoPagamento, boolean semIsolamento){
+        if (autorizacaoPagamento.getCodigoMotivoSemSenhaOuCodigo() != null){                
+            if (autorizacaoPagamento.getPontoVenda().isVisivelApenasParaFrotasVinculadas()){
+                return criarFrotaPontoVenda(autorizacaoPagamento.getFrota(), autorizacaoPagamento.getPontoVenda(), semIsolamento, null, StatusVinculoFrotaPontoVenda.INATIVO);
+            }            
+        }        
+        return criarFrotaPontoVenda(autorizacaoPagamento.getFrota(), autorizacaoPagamento.getPontoVenda(), semIsolamento, null, StatusVinculoFrotaPontoVenda.ATIVO) ;
     }
     
     /**
@@ -121,6 +149,32 @@ public class FrotaPontoVendaSd {
         FrotaPontoVenda frotaPontoVenda = frotaPontoVendaDados.obterFrotaPontoVenda(idFrota, idPv);
         return frotaPontoVenda != null && frotaPontoVenda.isBloqueado();
     }
+    
+    /**
+     * Realiza a validação se um {@link PontoDeVenda} deve estar visível para uma {@link Frota}
+     *
+     * @param idFrota Identificador da frota
+     * @param pontoDeVenda o Ponto de venda
+     * @return true caso o posto deva estar visível para a frota.
+     */
+    public boolean validarVisibilidade(Long idFrota, PontoDeVenda pontoDeVenda) {
+        if (pontoDeVenda.isVisivelApenasParaFrotasVinculadas()){            
+            FrotaPontoVenda frotaPontoVenda = frotaPontoVendaDados.obterFrotaPontoVenda(idFrota, pontoDeVenda.getId());
+            return frotaPontoVenda != null && frotaPontoVenda.isVinculoAtivo();
+        }
+        return true;
+    }
+    
+    /**
+     * Realiza a validação se um {@link PontoDeVenda} deve estar visível para uma {@link Frota}
+     *
+     * @param idFrota Identificador da frota
+     * @param idPontoDeVenda Identificador do pv
+     * @return true caso o posto deva estar visível para a frota.
+     */
+    public boolean validarVisibilidade(Long idFrota, Long idPontoDeVenda) {
+        return this.validarVisibilidade(idFrota, pontoDeVendaDados.obterPorId(idPontoDeVenda));
+    }
 
     /**
      * Verifica se a relação FrotaPontoVenda estava bloqueada na data do abastecimento.
@@ -138,7 +192,36 @@ public class FrotaPontoVendaSd {
                 throw new ExcecaoValidacao(Erro.FROTA_PONTO_VENDA_BLOQUEADO);
             }
         }
-    }        
+    }  
+    
+    /**
+     * Verifica se a relação FrotaPontoVenda permitia visibilidade na data do abastecimento.
+     *
+     * @param idFrota Identificador da frota
+     * @param idPv Identificador do ponto de venda
+     * @param dataAbastecimento Data do abastecimento
+     * @throws ExcecaoValidacao Exceção lançada caso a relação não estivesse visível na data do abastecimento
+     */
+    public void validarHistoricoVisibilidade(Long idFrota, Long idPv, Date dataAbastecimento) throws ExcecaoValidacao {
+        FrotaPontoVenda frotaPontoVenda = frotaPontoVendaDados.obterFrotaPontoVenda(idFrota, idPv);
+        HistoricoPontoVenda historicoPontoVenda = historicoPontoVendaDados.obterHistoricoPontoVendaPorData(idPv, dataAbastecimento);
+        if(frotaPontoVenda != null){
+            if((historicoPontoVenda != null && historicoPontoVenda.isVisivelApenasParaFrotasVinculadas())
+                || (historicoPontoVenda == null && frotaPontoVenda.getPontoVenda().isVisivelApenasParaFrotasVinculadas())) {
+
+                HistoricoFrotaPontoVenda historicoFrotaPontoVenda = historicoFrotaPontoVendaDados.obterHistoricoFrotaPontoVendaPorData(frotaPontoVenda.getId(), dataAbastecimento);
+                if((historicoFrotaPontoVenda != null && !historicoFrotaPontoVenda.isVinculoAtivo())
+                    || (historicoFrotaPontoVenda == null && !frotaPontoVenda.isVinculoAtivo())) {
+                    throw new ExcecaoValidacao(Erro.FROTA_PONTO_VENDA_NAO_VISIVEL);
+                }
+            }            
+        } else {
+            if((historicoPontoVenda != null && historicoPontoVenda.isVisivelApenasParaFrotasVinculadas())
+                || (historicoPontoVenda == null && pontoDeVendaDados.obterPorId(idPv).isVisivelApenasParaFrotasVinculadas())) {
+                throw new ExcecaoValidacao(Erro.FROTA_PONTO_VENDA_NAO_VISIVEL);
+            }
+        }
+    }
     
     /**
      * Aplica a regra de alteracao da flag de visibilidade do ponto de venda.

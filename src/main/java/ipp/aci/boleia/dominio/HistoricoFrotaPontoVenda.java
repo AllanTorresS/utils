@@ -1,5 +1,6 @@
 package ipp.aci.boleia.dominio;
 
+import ipp.aci.boleia.dominio.enums.StatusVinculoFrotaPontoVenda;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import java.util.Date;
 import javax.persistence.Column;
@@ -14,6 +15,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -40,7 +42,6 @@ public class HistoricoFrotaPontoVenda implements IPersistente {
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataHistorico;
     
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_USUARIO")
     private Usuario usuario;
@@ -97,5 +98,15 @@ public class HistoricoFrotaPontoVenda implements IPersistente {
 
     public void setJustificativaVinculo(String justificativaVinculo) {
         this.justificativaVinculo = justificativaVinculo;
+    }
+    
+    /**
+     * Informa se a relacao {@link FrotaPontoVenda} estava ativa.
+     *
+     * @return true, caso estivesse ativa.
+     */
+    @Transient
+    public boolean isVinculoAtivo(){
+        return StatusVinculoFrotaPontoVenda.ATIVO.equals(StatusVinculoFrotaPontoVenda.obterPorValor(this.statusVinculo));
     }
 }

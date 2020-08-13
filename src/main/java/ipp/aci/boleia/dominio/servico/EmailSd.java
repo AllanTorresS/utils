@@ -3,6 +3,7 @@ package ipp.aci.boleia.dominio.servico;
 
 import ipp.aci.boleia.dados.IConfiguracaoSistemaDados;
 import ipp.aci.boleia.dados.IFrotaPontoVendaDados;
+import ipp.aci.boleia.dados.IHistoricoPontoVendaDados;
 import ipp.aci.boleia.dados.ITokenDados;
 import ipp.aci.boleia.dados.IUsuarioDados;
 import ipp.aci.boleia.dados.servicos.aws.AwsEmailEnvioDados;
@@ -13,6 +14,7 @@ import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.FrotaPontoVenda;
 import ipp.aci.boleia.dominio.GapPontoDeVenda;
 import ipp.aci.boleia.dominio.GapServico;
+import ipp.aci.boleia.dominio.HistoricoPontoVenda;
 import ipp.aci.boleia.dominio.ItemAutorizacaoPagamento;
 import ipp.aci.boleia.dominio.Motorista;
 import ipp.aci.boleia.dominio.ParametroCiclo;
@@ -59,6 +61,7 @@ import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarDecimalMoedaReal;
 import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarNumeroTelefone;
 import static ipp.aci.boleia.util.UtilitarioFormatacao.obterString;
 import static ipp.aci.boleia.util.UtilitarioFormatacaoData.formatarDataHora;
+import org.springframework.scheduling.annotation.Async;
 
 /**
  * Oferece funcionalidades para envio de emails
@@ -115,6 +118,9 @@ public class EmailSd {
 
     @Autowired
     private IFrotaPontoVendaDados repositorioFrotaPtov;
+    
+    @Autowired
+    private IHistoricoPontoVendaDados historicoPontoVendaDados;
 
     /**
      * Gera um token e envia um link com token para acesso pelo usuario em email
@@ -651,6 +657,41 @@ public class EmailSd {
         });
         corpo.append(mensagens.obterMensagem("email.alteracao.invalidada.corpo5"));
 
+        emailDados.enviarEmail(assunto, corpo.toString(), Arrays.asList(destinatario));
+    }
+    
+    @Async
+    public void enviarEmailNotificacaoAbastecimentoPontoVendaNaoVisivel(AutorizacaoPagamento autorizacaoPagamento){
+        FrotaPontoVenda frotaPtov = autorizacaoPagamento.getTransacaoConsolidada().getFrotaPtov();
+        String destinatario;
+        if (frotaPtov.getUltimoHistorico()!= null && frotaPtov.getUltimoHistorico().getUsuario() != null){
+            destinatario = frotaPtov.getUltimoHistorico().getUsuario().getEmail();
+        } else {
+            HistoricoPontoVenda historicoPontoVenda = historicoPontoVendaDados.obterHistoricoPontoVendaPorData(autorizacaoPagamento.getPontoVenda().getId(), autorizacaoPagamento.getDataRequisicao());
+            if (historicoPontoVenda != null){
+                destinatario = historicoPontoVenda.getUsuario().getEmail();
+            } else {
+                return;
+            }
+        }
+        
+        String assunto = mensagens.obterMensagem("email.alteracao.invalidada.assunto");
+
+        StringBuilder corpo = new StringBuilder(mensagens.obterMensagem("email.abastecimento.contingencia.naovisivel.corpo1"));
+        autorizacaoPagamento.getItems().stream().filter(i-> i.isAbastecimento()).forEach(item -> {            
+            corpo.append(mensagens.obterMensagem("email.abastecimento.contingencia.naovisivel.corpo2",
+                    UtilitarioFormatacaoData.formatarDataHora(autorizacaoPagamento.getDataRequisicao()),
+                    UtilitarioFormatacao.formatarCnpjApresentacao(autorizacaoPagamento.getCnpjAreaAbastecimento())+"<br/>"+autorizacaoPagamento.getPontoVenda().getNome(),
+                    UtilitarioFormatacao.formatarCnpjApresentacao(autorizacaoPagamento.getCnpjFrota())+"<br/>"+autorizacaoPagamento.getRazaoSocialFrota(),
+                    autorizacaoPagamento.getPlacaVeiculo(),
+                    item.getCombustivel().getDescricao()+"<br/>"+item.getValorUnitario(),
+                    item.getQuantidade(),
+                    item.getValorTotal(),
+                    autorizacaoPagamento.getPedido().getNumero()
+                    ));            
+        });
+        corpo.append(mensagens.obterMensagem("email.abastecimento.contingencia.naovisivel.corpo3"));
+        
         emailDados.enviarEmail(assunto, corpo.toString(), Arrays.asList(destinatario));
     }
 
