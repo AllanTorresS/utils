@@ -33,7 +33,7 @@ public class LogicaParametroPostosAutorizadosAbastecimento implements ILogicaPar
         if(veiculo.isProprio()) {
             Long idPtov = autorizacao.getPontoVenda().getId();
             FrotaParametroSistemaPostoAutorizadoAbastecimento autorizacaoPosto = frotaParam.getAutorizacaoAbastecimentoPosto(idPtov);
-            if (autorizacaoPosto == null || !autorizacaoPosto.isAutorizado()) {
+            if (autorizacaoPosto == null || !autorizacaoPosto.isHabilitadoEAutorizado()) {
                 resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
                 resultado.setMensagemErro(mensagens.obterMensagem("parametro.sistema.erro.abastecimento.posto.nao.autorizado", UtilitarioFormatacao.formatarPlacaVeiculo(veiculo.getPlaca())));
             } else if(parametroSistemaSd.violouLimiteAbastecimento(autorizacao, autorizacaoPosto, frotaParam.getEmLitros())) {

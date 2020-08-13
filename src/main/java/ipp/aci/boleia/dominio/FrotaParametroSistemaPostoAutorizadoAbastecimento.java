@@ -1,5 +1,6 @@
 package ipp.aci.boleia.dominio;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import ipp.aci.boleia.dominio.enums.TipoRestricaoPostosPermitidos;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
@@ -104,8 +105,21 @@ public class FrotaParametroSistemaPostoAutorizadoAbastecimento implements IPersi
         this.versao = versao;
     }
 
-    @Transient
+    /**
+     * Valida se o posto esta autorizado. Nao importa se ele esta habilitado.
+     * @return true se o posto estiver autorizado.
+     */
+    @JsonIgnore
     public boolean isAutorizado() {
+        return this.pontoVenda != null && autorizado != null && this.autorizado;
+    }
+
+    /**
+     * Valida se o posto esta habilitado e autorizado.
+     * @return true se o posto estiver habilitado e autorizado.
+     */
+    @JsonIgnore
+    public boolean isHabilitadoEAutorizado() {
         return this.pontoVenda != null && this.pontoVenda.isHabilitado() && autorizado != null && this.autorizado;
     }
 
