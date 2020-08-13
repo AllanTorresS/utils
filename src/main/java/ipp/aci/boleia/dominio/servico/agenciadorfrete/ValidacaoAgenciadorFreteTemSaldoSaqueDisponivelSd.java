@@ -9,12 +9,14 @@ import ipp.aci.boleia.util.i18n.Mensagens;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+
 
 /**
  * Classe que valida se o agenciador de frete permite o saque solicitado na transação
  */
 @Component
-public class ValidacaoAgenciadorFreteTemSaldoDisponivelSd {
+public class ValidacaoAgenciadorFreteTemSaldoSaqueDisponivelSd {
 
     @Autowired
     private IAgenciadorFreteExternoDados agenciadorFreteExternoDados;
@@ -25,14 +27,16 @@ public class ValidacaoAgenciadorFreteTemSaldoDisponivelSd {
     /**
      * Valida se o agenciador de frete permite o saque solicitado na transação
      * @param transacao A trasação a ser validada
-     * @throws ExcecaoValidacao Caso a validação falhe
+     * @throws ExcecaoServicoIndisponivel Caso a validação falhe
      */
     public void validar(Transacao transacao) throws ExcecaoValidacao, ExcecaoServicoIndisponivel {
-
-        if(transacao.getPedido() != null && !agenciadorFreteExternoDados.temSaldoDisponivel(transacao)) {
-            throw new ExcecaoValidacao(mensagens.obterMensagem("agentefrete.api.validacao.saldo.insuficiente.agenciador",
-                    UtilitarioFormatacao.formatarCnpjApresentacao(transacao.getMotorista().getAgenciadorFrete().getCnpj()),
-                    transacao.getMotorista().getAgenciadorFrete().getSistemaExterno().getNomeSistema()));
+        if(transacao.getSaque().getValorSolicitado() != null){
+            BigDecimal saldoSaque = agenciadorFreteExternoDados.obterSaldoDeSaqueDisponivel(transacao);
+            if(transacao.getSaque().getValorSolicitado().compareTo(saldoSaque) > 0){
+                throw new ExcecaoValidacao(mensagens.obterMensagem("agentefrete.api.validacao.saldo.insuficiente.agenciador",
+                        UtilitarioFormatacao.formatarCnpjApresentacao(transacao.getMotorista().getAgenciadorFrete().getCnpj()),
+                        transacao.getMotorista().getAgenciadorFrete().getSistemaExterno().getNomeSistema()));
+            }
         }
     }
 }
