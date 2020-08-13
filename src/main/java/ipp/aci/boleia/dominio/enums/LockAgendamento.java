@@ -36,7 +36,7 @@ public enum LockAgendamento {
     ENVIO_REPASSE_JDE                               (ConstantesDuracao.UMA_HORA, ConstantesDuracao.UM_SEGUNDO),
     CONCILIACAO_REPASSE                             (ConstantesDuracao.CINCO_MINUTO, ConstantesDuracao.UM_SEGUNDO),
     ATUALIZACAO_STATUS_CAMPANHA                     (ConstantesDuracao.CINCO_MINUTO, ConstantesDuracao.UM_SEGUNDO),
-    PUBLICACAO_DE_DOCUMENTOS                        (ConstantesDuracao.DUAS_HORAS, ConstantesDuracao.DUAS_HORAS),
+    PUBLICACAO_DE_DOCUMENTOS                        (ConstantesDuracao.DUAS_HORAS, ConstantesDuracao.UM_SEGUNDO),
     IMPORTACAO_EMAILS_NOTAS                         (ConstantesDuracao.UMA_HORA, ConstantesDuracao.UM_SEGUNDO),
     IMPORTACAO_CONCILIACAO_AUTOMATICA_NOTAS_FISCAIS (ConstantesDuracao.DUAS_HORAS, ConstantesDuracao.DUAS_HORAS),
     EMAIL_MENSAL_KMV_DONO_FROTA                     (ConstantesDuracao.CINCO_MINUTO,ConstantesDuracao.UM_SEGUNDO),
