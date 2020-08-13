@@ -105,22 +105,18 @@ public class FrotaParametroSistemaPostoAutorizadoAbastecimento implements IPersi
         this.versao = versao;
     }
 
-    /**
-     * Valida se o posto esta autorizado. Nao importa se ele esta habilitado.
-     * @return true se o posto estiver autorizado.
-     */
-    @JsonIgnore
+    @Transient
     public boolean isAutorizado() {
-        return this.pontoVenda != null && autorizado != null && this.autorizado;
+        return this.pontoVenda != null && this.pontoVenda.isHabilitado() && autorizado != null && this.autorizado;
     }
 
     /**
-     * Valida se o posto esta habilitado e autorizado.
-     * @return true se o posto estiver habilitado e autorizado.
+     * Valida se o ponto de venda esta autorizado. Nao importa se esta habilitado ou nao.
+     * @return true se o ponto de venda estiver autorizado.
      */
     @JsonIgnore
-    public boolean isHabilitadoEAutorizado() {
-        return this.pontoVenda != null && this.pontoVenda.isHabilitado() && autorizado != null && this.autorizado;
+    public boolean isApenasAutorizado() {
+        return this.pontoVenda != null && autorizado != null && this.autorizado;
     }
 
     @Override
