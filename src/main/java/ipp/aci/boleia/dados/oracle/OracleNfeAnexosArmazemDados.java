@@ -58,4 +58,9 @@ public class OracleNfeAnexosArmazemDados extends OracleRepositorioBoleiaDados<Nf
                 new ParametroPesquisaFetch("notaFiscal.autorizacoesPagamento"))
                 .getRegistros();
     }
+
+    @Override
+    public NfeAnexosArmazem obterPorNotaFiscal(Long idNota) {
+        return pesquisarUnico(new ParametroPesquisaIgual("notaFiscal.id", idNota));
+    }
 }
