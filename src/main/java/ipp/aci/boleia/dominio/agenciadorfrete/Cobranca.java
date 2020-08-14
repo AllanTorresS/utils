@@ -9,6 +9,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
@@ -33,13 +34,17 @@ public class Cobranca implements IPersistente {
     private List<Consolidado> consolidados;
 
     @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_DOCUMENTO")
     private DocumentoJde documentoJde;
 
     @Column(name = "QT_PARCELAS")
     private Integer quantidadeParcelas;
 
+    @Column(name = "DT_CRIACAO")
+    private Date dataCriacao;
+
     @Column(name = "DT_VENC_PGTO")
-    private Date dataVencimentoPagto;
+    private Date dataVencimento;
 
     @Column(name = "DT_PGTO")
     private Date dataPagamento;
@@ -88,12 +93,12 @@ public class Cobranca implements IPersistente {
         this.quantidadeParcelas = quantidadeParcelas;
     }
 
-    public Date getDataVencimentoPagto() {
-        return dataVencimentoPagto;
+    public Date getDataVencimento() {
+        return dataVencimento;
     }
 
-    public void setDataVencimentoPagto(Date dataVencimentoPagto) {
-        this.dataVencimentoPagto = dataVencimentoPagto;
+    public void setDataVencimento(Date dataVencimento) {
+        this.dataVencimento = dataVencimento;
     }
 
     public Date getDataPagamento() {
@@ -126,5 +131,13 @@ public class Cobranca implements IPersistente {
 
     public void setVersao(Long versao) {
         this.versao = versao;
+    }
+
+    public Date getDataCriacao() {
+        return dataCriacao;
+    }
+
+    public void setDataCriacao(Date dataCriacao) {
+        this.dataCriacao = dataCriacao;
     }
 }
