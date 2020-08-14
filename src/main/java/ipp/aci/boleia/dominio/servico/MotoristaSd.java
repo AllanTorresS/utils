@@ -30,7 +30,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.locks.Lock;
 
 import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarCnpjApresentacao;
-import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarCpfApresentacao;
 import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarCpfOcultoApresentacao;
 
 /**
