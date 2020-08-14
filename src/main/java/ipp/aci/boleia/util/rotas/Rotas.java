@@ -84,6 +84,7 @@ public final  class Rotas {
     public static final  String MICROMERCADO_API                     = BASE_API + "/importarMicromercado";
     public static final  String NEGOCIACOES_API                      = BASE_API + "/negociacoes";
     public static final  String COBRANCA_API                         = BASE_API + "/cobranca";
+    public static final  String COBRANCA_CONECTCAR_API               = BASE_API + "/cobrancaConectcar";
     public static final  String CICLO_REPASSE_API                    = BASE_API + "/cicloRepasse";
     public static final  String REEMBOLSO_API                        = BASE_API + "/reembolso";
     public static final  String ABASTECIMENTO_API                    = BASE_API + "/abastecimento";
@@ -114,6 +115,7 @@ public final  class Rotas {
     public static final  String CREDENCIAMENTO_POSTO_API             = BASE_API + "/credenciamentoPosto";
     public static final  String POSTO_CREDENCIADO_API                = BASE_API + "/postoCredenciado";
     public static final  String CREDENCIAMENTO_FROTA_API             = BASE_API + "/credenciamentoFrota";
+    public static final  String DASHBOARD_CONECTCAR_API              = BASE_API + "/dashboardConectcar";
 
     public static final String CAMPANHA_API                          = BASE_API + "/campanha";
     public static final String BANDEIRA_API                          = BASE_API + "/bandeira";
