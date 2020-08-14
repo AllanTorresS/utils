@@ -37,9 +37,6 @@ public class ArmazenamentoArquivosSd {
     private IArmazenamentoDados armazenamentoArquivos;
 
     @Autowired
-    private IMotoristaDados motoristaDados;
-
-    @Autowired
     private INotaFiscalDados notaFiscalDados;
 
     @Autowired
