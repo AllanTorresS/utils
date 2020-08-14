@@ -63,8 +63,13 @@ public class Consolidado implements IPersistente {
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataCriacao;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_COBRANCA")
     private Cobranca cobranca;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_REEMBOLSO")
+    private Reembolso reembolso;
 
     @Column(name = "NO_VERSAO")
     @Version
@@ -142,5 +147,13 @@ public class Consolidado implements IPersistente {
 
     public void setCobranca(Cobranca cobranca) {
         this.cobranca = cobranca;
+    }
+
+    public Reembolso getReembolso() {
+        return reembolso;
+    }
+
+    public void setReembolso(Reembolso reembolso) {
+        this.reembolso = reembolso;
     }
 }

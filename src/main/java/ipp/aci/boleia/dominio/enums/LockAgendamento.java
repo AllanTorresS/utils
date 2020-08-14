@@ -9,6 +9,7 @@ public enum LockAgendamento {
 
     CADASTRO_MOTORISTA_ALLOW_ME                     (ConstantesDuracao.UM_MINUTO, ConstantesDuracao.UM_SEGUNDO),
     CONSOLIDACAO_CICLO                              (ConstantesDuracao.DUAS_HORAS, ConstantesDuracao.DUAS_HORAS),
+    CONSOLIDACAO_CICLO_AG_FRETE                     (ConstantesDuracao.DUAS_HORAS, ConstantesDuracao.DUAS_HORAS),
     STATUS_NOTA_FISCAL                              (ConstantesDuracao.UMA_HORA, ConstantesDuracao.UM_SEGUNDO),
     ATUALIZAR_PV_JDE                                (ConstantesDuracao.UMA_HORA, ConstantesDuracao.UM_SEGUNDO),
     PRECOS_VIGENTES                                 (ConstantesDuracao.UM_MINUTO, ConstantesDuracao.UM_SEGUNDO),
