@@ -160,6 +160,7 @@ public interface IUsuarioDados extends IRepositorioBoleiaDados<Usuario> {
 
     /**
      * Obtem quantidade total de usuarios ativos de um tipo de perfil
+     * @param tipoPerfilUsuario Tipo de perfil do usuário
      * @return Quantidade total
      */
     Long obterQuantidadeTotalAtivosDeTipoPerfil(TipoPerfilUsuario tipoPerfilUsuario);
