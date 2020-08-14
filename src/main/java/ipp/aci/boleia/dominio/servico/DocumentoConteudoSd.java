@@ -1,5 +1,6 @@
 package ipp.aci.boleia.dominio.servico;
 
+import ipp.aci.boleia.dados.IDocumentoConteudoDados;
 import ipp.aci.boleia.dominio.Documento;
 import ipp.aci.boleia.dominio.DocumentoConteudo;
 import org.springframework.beans.factory.annotation.Autowired;

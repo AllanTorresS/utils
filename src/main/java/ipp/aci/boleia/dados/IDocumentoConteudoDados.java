@@ -1,4 +1,4 @@
-package ipp.aci.boleia.dominio.servico;
+package ipp.aci.boleia.dados;
 
 import ipp.aci.boleia.dados.IRepositorioBoleiaDados;
 import ipp.aci.boleia.dominio.DocumentoConteudo;
