@@ -4,7 +4,6 @@ import ipp.aci.boleia.dados.IArmazenamentoDados;
 import ipp.aci.boleia.dados.IArquivoDados;
 import ipp.aci.boleia.dados.IDispositivoMotoristaPedidoDados;
 import ipp.aci.boleia.dados.IMotorGeracaoRelatoriosDados;
-import ipp.aci.boleia.dados.IMotoristaDados;
 import ipp.aci.boleia.dados.INotaFiscalDados;
 import ipp.aci.boleia.dados.IPontoDeVendaDados;
 import ipp.aci.boleia.dados.IRepositorioBoleiaDados;
