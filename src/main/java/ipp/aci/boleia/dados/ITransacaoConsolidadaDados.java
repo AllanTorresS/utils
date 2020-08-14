@@ -2,8 +2,13 @@ package ipp.aci.boleia.dados;
 
 
 import ipp.aci.boleia.dominio.AutorizacaoPagamento;
+import ipp.aci.boleia.dominio.EmpresaAgregada;
+import ipp.aci.boleia.dominio.Frota;
+import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.TransacaoConsolidada;
+import ipp.aci.boleia.dominio.Unidade;
 import ipp.aci.boleia.dominio.Usuario;
+import ipp.aci.boleia.dominio.enums.ModalidadePagamento;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.AgrupamentoTransacaoConsolidadaPvVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFinanceiroVo;
@@ -113,6 +118,19 @@ public interface ITransacaoConsolidadaDados extends IRepositorioBoleiaDados<Tran
      * @return O consolidado encontrado.
      */
     TransacaoConsolidada obterConsolidadoParaAbastecimentoEData(AutorizacaoPagamento abastecimento, Date dataReferencia);
+
+    /**
+     * Busca um consolidado que atenda um conjunto de características.
+     *
+     * @param frota Frota da transação consolidada.
+     * @param pv Ponto de venda da transação consolidada.
+     * @param modalidadePagamento Modalidade de pagamento.
+     * @param empresaAgregada Empresa agregada vinculada a transação consolidada.
+     * @param unidade Unidade vinculada a transação consolidada.
+     * @param dataReferencia Data de referência da transação consolidada.
+     * @return A transação consolidada encontrada.
+     */
+    TransacaoConsolidada obterConsolidado(Frota frota, PontoDeVenda pv, ModalidadePagamento modalidadePagamento, EmpresaAgregada empresaAgregada, Unidade unidade, Date dataReferencia);
 
     /**
      * Método que realiza a pesquisa de transações consolidadas para Notas Fiscais no contexto da API

@@ -136,16 +136,28 @@ public class AgrupamentoTransacaoConsolidadaPvVo {
         this.valorEmitidoNf = valorEmitidoNf;
     }
 
+    /**
+     * Indica se uma transação consolidada está em aberto.
+     * @return true caso esteja em aberto e false caso contrário.
+     */
     @Transient
     public boolean estaEmAberto() {
         return StatusTransacaoConsolidada.EM_ABERTO.getValue().equals(statusConsolidacao);
     }
 
+    /**
+     * Indica se uma transação consolidada está em ajuste.
+     * @return true caso esteja em ajuste e false caso contrário.
+     */
     @Transient
     public boolean estaEmAjuste() {
         return StatusTransacaoConsolidada.EM_AJUSTE.getValue().equals(statusConsolidacao);
     }
 
+    /**
+     * Indica se uma transação consolidada está fechada.
+     * @return true caso esteja fechada e false caso contrário.
+     */
     @Transient
     public boolean estaFechada() {
         return StatusTransacaoConsolidada.FECHADA.getValue().equals(statusConsolidacao);

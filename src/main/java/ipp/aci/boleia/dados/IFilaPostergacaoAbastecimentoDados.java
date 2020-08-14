@@ -11,7 +11,7 @@ public interface IFilaPostergacaoAbastecimentoDados {
      *
      * @param idAbastecimento Identificador do abastecimento.
      */
-    void enviarParaObterCicloPostergacao(Long idAbastecimento);
+    void enviarParaPostergarAbastecimentos(Long idAbastecimento);
 
     /**
      * Envia um consolidado para a fila responsável por realizar o processamento

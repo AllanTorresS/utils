@@ -3,8 +3,11 @@ package ipp.aci.boleia.dados.oracle;
 import ipp.aci.boleia.dados.IPontoDeVendaDados;
 import ipp.aci.boleia.dados.ITransacaoConsolidadaDados;
 import ipp.aci.boleia.dominio.AutorizacaoPagamento;
+import ipp.aci.boleia.dominio.EmpresaAgregada;
+import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.TransacaoConsolidada;
+import ipp.aci.boleia.dominio.Unidade;
 import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.enums.ModalidadePagamento;
 import ipp.aci.boleia.dominio.enums.StatusIntegracaoReembolsoJde;
@@ -741,24 +744,31 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
 
     @Override
     public TransacaoConsolidada obterConsolidadoParaAbastecimentoEData(AutorizacaoPagamento abastecimento, Date dataReferencia) {
-        Boolean prePago = abastecimento.getTransacaoFrota().getConsumiuCreditoPrePago();
-        boolean empresaAgregadaExigeNf = abastecimento.getEmpresaAgregadaExigeNf() != null && abastecimento.getEmpresaAgregadaExigeNf();
-        boolean unidadeExigeNF = abastecimento.getUnidadeExigeNf() != null && abastecimento.getUnidadeExigeNf();
+        Frota frota = abastecimento.getFrota();
+        PontoDeVenda pv = abastecimento.getPontoVenda();
+        ModalidadePagamento modalidadePagamento = abastecimento.getModalidadePagamento();
+        EmpresaAgregada empresaAgregada = abastecimento.empresaAgregadaExigeNf() ? abastecimento.getEmpresaAgregada() : null;
+        Unidade unidade = abastecimento.unidadeExigeNf() ? abastecimento.getUnidade() : null;
 
+        return obterConsolidado(frota, pv, modalidadePagamento, empresaAgregada, unidade, dataReferencia);
+    }
+
+    @Override
+    public TransacaoConsolidada obterConsolidado(Frota frota, PontoDeVenda pv, ModalidadePagamento modalidadePagamento, EmpresaAgregada empresaAgregada, Unidade unidade, Date dataReferencia) {
         ParametroPesquisa parametroEmpresaAgregadaExigeNf = new ParametroPesquisaNulo("empresaAgregada.id");
         ParametroPesquisa parametroUnidadeExigeNf = new ParametroPesquisaNulo("unidade.id");
-        if(empresaAgregadaExigeNf) {
-            parametroEmpresaAgregadaExigeNf = new ParametroPesquisaIgual("empresaAgregada.id", abastecimento.getEmpresaAgregada().getId());
-        } else if(unidadeExigeNF) {
-            parametroUnidadeExigeNf = new ParametroPesquisaIgual("unidade.id", abastecimento.getUnidade().getId());
+        if(empresaAgregada != null) {
+            parametroEmpresaAgregadaExigeNf = new ParametroPesquisaIgual("empresaAgregada.id", empresaAgregada.getId());
+        } else if(unidade != null) {
+            parametroUnidadeExigeNf = new ParametroPesquisaIgual("unidade.id", unidade.getId());
         }
 
         return pesquisarUnico (
                 new ParametroPesquisaDataMenorOuIgual("dataInicioPeriodo", dataReferencia),
                 new ParametroPesquisaDataMaiorOuIgual("dataFimPeriodo", UtilitarioCalculoData.obterPrimeiroInstanteDia(dataReferencia)),
-                new ParametroPesquisaIgual("frotaPtov.pontoVenda.id", abastecimento.getPontoVenda().getId()),
-                new ParametroPesquisaIgual("frotaPtov.frota.id", abastecimento.getFrota().getId()),
-                new ParametroPesquisaIgual("modalidadePagamento", prePago != null && prePago ? ModalidadePagamento.PRE_PAGO.getValue() : ModalidadePagamento.POS_PAGO.getValue()),
+                new ParametroPesquisaIgual("frotaPtov.pontoVenda.id", pv.getId()),
+                new ParametroPesquisaIgual("frotaPtov.frota.id", frota.getId()),
+                new ParametroPesquisaIgual("modalidadePagamento", modalidadePagamento.getValue()),
                 parametroEmpresaAgregadaExigeNf,
                 parametroUnidadeExigeNf
         );
@@ -876,14 +886,14 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         }
 
         String ordenacao = " ";
-        if(filtro.getPaginacao().getParametrosOrdenacaoColuna().size() == 0) {
+        if(filtro.getPaginacao().getParametrosOrdenacaoColuna().isEmpty()) {
             ordenacao = "CASE WHEN r.status = " + StatusPagamentoReembolso.NF_ATRASADA.getValue() + " THEN 0 " +
                     "WHEN r.status = " + StatusPagamentoReembolso.ATRASADO.getValue() + " THEN 1 " +
                     "ELSE 2 END, tc.dataInicioPeriodo, tc.dataFimPeriodo ";
         } else {
             String campoOrdenacao= "tc.dataInicioPeriodo %s , tc.dataFimPeriodo %s ";
             String direcaoOrdenacao = filtro.getPaginacao().getParametrosOrdenacaoColuna().get(0).isDecrescente() ? " DESC" : " ";
-            ordenacao = String.format(campoOrdenacao,direcaoOrdenacao, direcaoOrdenacao);
+            ordenacao = String.format(campoOrdenacao, direcaoOrdenacao, direcaoOrdenacao);
         }
 
         String consultaPesquisa = String.format(CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO, ordenacao);

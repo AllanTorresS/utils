@@ -2,6 +2,7 @@ package ipp.aci.boleia.dominio;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ipp.aci.boleia.dominio.enums.ClassificacaoAgregado;
+import ipp.aci.boleia.dominio.enums.ModalidadePagamento;
 import ipp.aci.boleia.dominio.enums.StatusAutorizacao;
 import ipp.aci.boleia.dominio.enums.StatusEdicao;
 import ipp.aci.boleia.dominio.enums.StatusNotaFiscalAbastecimento;
@@ -1652,5 +1653,36 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
             return transacaoConsolidadaPostergada;
         }
         return transacaoConsolidada;
+    }
+
+    /**
+     * Informa qual a modalidade de pagamento utilizada no abastecimento.
+     *
+     * @return a modalidade de pagamento
+     */
+    @Transient
+    public ModalidadePagamento getModalidadePagamento() {
+        Boolean prePago = getTransacaoFrota().getConsumiuCreditoPrePago();
+        return prePago != null && prePago ? ModalidadePagamento.PRE_PAGO : ModalidadePagamento.POS_PAGO;
+    }
+
+    /**
+     * Retorna um boolean primitivo informando se a empresa agregada do abastecimento exige emissão de NF.
+     *
+     * @return True, caso possua empresa agregada vinculada e exija emissão.
+     */
+    @Transient
+    public boolean empresaAgregadaExigeNf() {
+        return getEmpresaAgregadaExigeNf() != null && getEmpresaAgregadaExigeNf();
+    }
+
+    /**
+     * Retorna um boolean primitivo informando se a unidade do abastecimento exige emissão de NF.
+     *
+     * @return True, caso possua unidade vinculada e exija emissão.
+     */
+    @Transient
+    public boolean unidadeExigeNf() {
+        return getUnidadeExigeNf() != null && getUnidadeExigeNf();
     }
 }

@@ -13,8 +13,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class AwsFilaPostergacaoAbastecimentoDados implements IFilaPostergacaoAbastecimentoDados {
 
-    @Value("${aws.sqs.transacao-consolidada.definir-ciclo-postergacao}")
-    private String nomeFilaObterCicloPostergacao;
+    @Value("${aws.sqs.transacao-consolidada.postergar-abastecimentos}")
+    private String nomeFilaPostergarAbastecimentos;
 
     @Value("${aws.sqs.transacao-consolidada.processar-ciclo-postergacao}")
     private String nomeFilaProcessarCicloPostergacao;
@@ -26,8 +26,8 @@ public class AwsFilaPostergacaoAbastecimentoDados implements IFilaPostergacaoAba
     private QueueMessagingTemplate queueMessagingTemplate;
 
     @Override
-    public void enviarParaObterCicloPostergacao(Long idAbastecimento) {
-        this.queueMessagingTemplate.send(nomeFilaObterCicloPostergacao,
+    public void enviarParaPostergarAbastecimentos(Long idAbastecimento) {
+        this.queueMessagingTemplate.send(nomeFilaPostergarAbastecimentos,
                 MessageBuilder
                         .withPayload(idAbastecimento.toString())
                         .build());

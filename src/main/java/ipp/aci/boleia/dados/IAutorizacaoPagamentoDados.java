@@ -339,14 +339,6 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
     List<VolumeVendasClienteProFrotaVo> obterVendasProfrotasAPCO(Date dataInicial, Date dataFinal);
 
     /**
-     * Retorna uma lista de abastecimentos que foram postergados para um determinado ciclo.
-     *
-     * @param transacaoConsolidada Ciclo para o qual os abastecimentos foram postergados.
-     * @return A lista de abastecimentos postergados
-     */
-    List<AutorizacaoPagamento> obterAbastecimentosPostergadosParaCiclo(TransacaoConsolidada transacaoConsolidada);
-
-    /**
      * Retorna uma lista com os abastecimentos de um ciclo que tem justificativa associada
      *
      * @param idsAutorizacoes Lista que contem os identificadores dos abastecimentos de um determinado ciclo.

@@ -29,15 +29,12 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.Version;
-import javax.validation.constraints.DecimalMax;
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
@@ -51,11 +48,6 @@ import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPertenceRevendedor {
 
     private static final long serialVersionUID = 8095939439819340567L;
-
-    /**
-     * Utilizado para possibilitar a consulta da tela do financeiro.
-     */
-    public static final String DECODE_FORMULA_FINANCEIRO = "DECODE(ID_STATUS, 2, 1, 1, 0, 5, 0)";
 
     @Id
     @Column(name = "CD_TRANS_CONSOL")
@@ -125,6 +117,9 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
 
     @OneToMany(mappedBy = "transacaoConsolidada", fetch = FetchType.LAZY)
     private List<AutorizacaoPagamento> autorizacaoPagamentos;
+
+    @OneToMany(mappedBy = "transacaoConsolidadaPostergada", fetch = FetchType.LAZY)
+    private List<AutorizacaoPagamento> autorizacoesPagamentoPostergadas;
 
     @NotNull
     @OneToOne(fetch = FetchType.LAZY)
@@ -225,6 +220,19 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
 
     public void setAutorizacaoPagamentos(List<AutorizacaoPagamento> autorizacaoPagamentos) {
         this.autorizacaoPagamentos = autorizacaoPagamentos;
+    }
+
+    public List<AutorizacaoPagamento> getAutorizacoesPagamentoPostergadas() {
+        return autorizacoesPagamentoPostergadas;
+    }
+
+    @Transient
+    public Stream<AutorizacaoPagamento> getAutorizacoesPagamentoPostergadasStream() {
+        return autorizacoesPagamentoPostergadas != null ? autorizacoesPagamentoPostergadas.stream() : Stream.empty();
+    }
+
+    public void setAutorizacoesPagamentoPostergadas(List<AutorizacaoPagamento> autorizacoesPagamentoPostergadas) {
+        this.autorizacoesPagamentoPostergadas = autorizacoesPagamentoPostergadas;
     }
 
     public Integer getStatusNotaFiscal() {
@@ -445,5 +453,15 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     public boolean pendenteNotaFiscal() {
         return exigeEmissaoNF() && !isNFEmitida() &&
                 !this.getStatusNotaFiscal().equals(StatusNotaFiscal.SEM_EMISSAO.getValue());
+    }
+
+    /**
+     * Retorna uma lista com todas as autorizações de pagamento associadas a transação consolidada.
+     *
+     * @return lista de autorizações de pagamento.
+     */
+    @Transient
+    public List<AutorizacaoPagamento> getAutorizacoesPagamentoAssociadas() {
+        return Stream.concat(getAutorizacaoPagamentosStream(), getAutorizacoesPagamentoPostergadasStream()).collect(Collectors.toList());
     }
 }

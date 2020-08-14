@@ -424,6 +424,15 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         if (filtro.getIdReembolso() != null) {
             parametros.add(new ParametroPesquisaIgual("transacaoConsolidada.reembolso.id", filtro.getIdReembolso()));
         }
+        if (filtro.getIdConsolidado() != null && filtro.getNotaFiscal() != null) {
+            parametros.add(new ParametroPesquisaOr(
+                    new ParametroPesquisaAnd(
+                            new ParametroPesquisaIgual("transacaoConsolidada", filtro.getIdConsolidado()),
+                            new ParametroPesquisaNulo("transacaoConsolidadaPostergada")
+                    ),
+                    new ParametroPesquisaIgual("transacaoConsolidadaPostergada", filtro.getIdConsolidado())
+            ));
+        }
         return parametros;
     }
 
@@ -644,6 +653,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                 )
         );
         parametros.add(new ParametroPesquisaIgual("statusNotaFiscal", StatusNotaFiscalAbastecimento.PENDENTE.getValue()));
+        parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataProcessamento", UtilitarioCalculoData.obterPrimeiroInstanteDia(dataEmissao)));
         parametros.add(new ParametroPesquisaDataMenorOuIgual("dataProcessamento", UtilitarioCalculoData.obterUltimoInstanteDia(dataEmissao)));
         parametros.add(new ParametroPesquisaMenorOuIgual("valorTotal", valorTotalNota.add(toleranciaDeValorNota)));
         parametros.add(new ParametroPesquisaMaiorOuIgual("valorTotal", valorTotalNota.subtract(toleranciaDeValorNota)));

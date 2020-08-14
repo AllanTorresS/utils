@@ -5,11 +5,8 @@ import ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
 import ipp.aci.boleia.util.UtilitarioFormatacaoData;
-import ipp.aci.boleia.util.i18n.Mensagens;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Date;
 
 import static ipp.aci.boleia.util.UtilitarioLambda.verificarTodosNaoNulos;
@@ -118,12 +115,10 @@ public class CicloExportacaoPdfFinanceiroVo {
                     statusReembolso.equals(StatusPagamentoReembolso.AGUARDANDO_NF.getValue()) ||
                     statusReembolso.equals(StatusPagamentoReembolso.NF_ATRASADA.getValue())) {
                 this.setStatusReembolso(StatusPagamentoReembolso.PREVISTO.getLabel());
-            }
-            else {
+            } else {
                 this.setStatusReembolso(StatusPagamentoReembolso.obterPorValor(consolidado.getReembolso().getStatus()).getLabel());
             }
-        }
-        else {
+        } else {
             this.setStatusReembolso(StatusPagamentoReembolso.PREVISTO.getLabel());
             this.setPrazoReembolso(UtilitarioFormatacaoData.formatarDataCurta(UtilitarioCalculoData.adicionarDiasData(consolidado.getDataFimPeriodo(),consolidado.getPrazos().getPrazoReembolso().intValue())));
         }
