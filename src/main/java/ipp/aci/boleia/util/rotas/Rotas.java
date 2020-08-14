@@ -114,6 +114,7 @@ public final  class Rotas {
     public static final  String MOTOR_GERACAO_RELATORIO              = BASE_API + "/motorGeracaoRelatorio";
     public static final  String CREDENCIAMENTO_POSTO_API             = BASE_API + "/credenciamentoPosto";
     public static final  String POSTO_CREDENCIADO_API                = BASE_API + "/postoCredenciado";
+    public static final  String DOCUMENTO_API                        = BASE_API + "/documento";
     public static final  String CREDENCIAMENTO_FROTA_API             = BASE_API + "/credenciamentoFrota";
 
     public static final String CAMPANHA_API                          = BASE_API + "/campanha";

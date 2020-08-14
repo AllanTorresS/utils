@@ -5,6 +5,7 @@ import ipp.aci.boleia.dominio.FrotaParametroSistema;
 import ipp.aci.boleia.dominio.ItemAutorizacaoPagamento;
 import ipp.aci.boleia.dominio.Veiculo;
 import ipp.aci.boleia.dominio.enums.StatusExecucaoParametroSistema;
+import ipp.aci.boleia.dominio.enums.TipoAutorizacaoPagamento;
 import ipp.aci.boleia.dominio.vo.ContextoExecucaoParametroSistemaVo;
 import ipp.aci.boleia.dominio.vo.ResultadoExecucaoParametroSistemaVo;
 import ipp.aci.boleia.util.UtilitarioCalculo;
@@ -41,9 +42,9 @@ public class LogicaParametroVolumeAbastecido implements ILogicaParametroSistema<
                         resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
                         BigDecimal excedente = UtilitarioCalculo.calcularPorcentagemExcedente(volumeAbastecido, capacidadeTanque);
                         resultado.setMensagemErro(
-                            mensagens.obterMensagem("parametro.sistema.erro.abastecimento.volume.abastecido",
-                                UtilitarioFormatacao.formatarDecimal(excedente, FORMATACAO_EXCEDENTE),
-                                veiculo.getPlaca()));
+                                mensagens.obterMensagem("parametro.sistema.erro.abastecimento.volume.abastecido",
+                                        UtilitarioFormatacao.formatarDecimal(excedente, FORMATACAO_EXCEDENTE),
+                                        veiculo.getPlaca()));
                         break;
                     }
                 }

@@ -20,6 +20,7 @@ import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.excecao.ExcecaoAutenticacaoRemota;
 import ipp.aci.boleia.util.excecao.ExcecaoValidacao;
 import ipp.aci.boleia.util.i18n.Mensagens;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +66,18 @@ public class ValidadorAbastecimentoSd {
                 || (!isEdicaoPendente && StatusEdicao.PENDENTE.getValue().equals(abastecimentoOriginal.getStatusEdicao()))
                 || StatusTransacaoConsolidada.FECHADA.getValue().equals(consolidado.getStatusConsolidacao())
                 || !ModalidadePagamento.POS_PAGO.getValue().equals(abastecimentoOriginal.getFrota().getModoPagamento())){
+            throw new ExcecaoValidacao(Erro.ERRO_EDICAO_PRE_CONDICOES_INVALIDAS, mensagens.obterMensagem(Erro.ERRO_EDICAO_PRE_CONDICOES_INVALIDAS.getChaveMensagem()));
+        }
+    }
+
+    /**
+     * Efetua a validação das condições que permitem a edição de um abastecimento interno.
+     * @param abastecimentoOriginal o abastecimento interno que será validado para edição.
+     * @throws ExcecaoValidacao caso uma das condições de edição não seja respeitada.
+     */
+    public void validarPreCondicoesEdicaoAbastecimentoInterno(AutorizacaoPagamento abastecimentoOriginal) throws ExcecaoValidacao {
+        if(!StatusAutorizacao.AUTORIZADO.getValue().equals(abastecimentoOriginal.getStatus())
+                || !abastecimentoOriginal.isPostoInterno()){
             throw new ExcecaoValidacao(Erro.ERRO_EDICAO_PRE_CONDICOES_INVALIDAS, mensagens.obterMensagem(Erro.ERRO_EDICAO_PRE_CONDICOES_INVALIDAS.getChaveMensagem()));
         }
     }
@@ -116,11 +129,11 @@ public class ValidadorAbastecimentoSd {
         Motorista motorista = repositorioMotorista.obterPorCpfFrotaSemIsolamento(cpfMotorista, frota.getId());
         if (motorista == null) {
             throw new ExcecaoValidacao(Erro.ERRO_EDICAO_MOTORISTA_INVALIDO,
-                    mensagens.obterMensagem(Erro.ERRO_EDICAO_MOTORISTA_INVALIDO.getChaveMensagem(), UtilitarioFormatacao.formatarCpfApresentacao(cpfMotorista), UtilitarioFormatacao.formatarCnpjApresentacao(frota.getCnpj()), frota.getRazaoSocial()));
+                    mensagens.obterMensagem(Erro.ERRO_EDICAO_MOTORISTA_INVALIDO.getChaveMensagem(), UtilitarioFormatacao.formatarCpfOcultoApresentacao(cpfMotorista), UtilitarioFormatacao.formatarCnpjApresentacao(frota.getCnpj()), frota.getRazaoSocial()));
         }
         if (!StatusAtivacao.ATIVO.getValue().equals(motorista.getStatus())) {
             throw new ExcecaoValidacao(Erro.ERRO_EDICAO_MOTORISTA_INATIVO,
-                    mensagens.obterMensagem(Erro.ERRO_EDICAO_MOTORISTA_INATIVO.getChaveMensagem(), UtilitarioFormatacao.formatarCpfApresentacao(cpfMotorista), UtilitarioFormatacao.formatarCnpjApresentacao(motorista.getFrota().getCnpj()), motorista.getFrota().getNomeRazaoFrota()));
+                    mensagens.obterMensagem(Erro.ERRO_EDICAO_MOTORISTA_INATIVO.getChaveMensagem(), UtilitarioFormatacao.formatarCpfOcultoApresentacao(cpfMotorista), motorista.getNome(), UtilitarioFormatacao.formatarCnpjApresentacao(motorista.getFrota().getCnpj()), motorista.getFrota().getNomeRazaoFrota()));
         }
     }
 
@@ -150,6 +163,62 @@ public class ValidadorAbastecimentoSd {
         if (!StatusAtivacao.ATIVO.getValue().equals(pontoDeVenda.getStatus())) {
             throw new ExcecaoValidacao(Erro.ERRO_EDICAO_PONTO_VENDA_INATIVO,
                     mensagens.obterMensagem(Erro.ERRO_EDICAO_PONTO_VENDA_INATIVO.getChaveMensagem(), pontoDeVenda.getNome()));
+        }
+    }
+
+    /**
+     * Valida os campos hodometro e horimetro informados
+     *
+     * @param abastecimentoOriginal o abastecimento interno que será editado.
+     * @param isHodometro indica se o valor informado é do hodômetro
+     * @param novoValor valor editado do hodômetro/horímetro
+     * @param placaVeiculo placa do veículo a ser validado
+     * @throws ExcecaoValidacao quando os campos nao atendem as regras especificadas
+     */
+    public void validarHodometroHorimetro(AutorizacaoPagamento abastecimentoOriginal, boolean isHodometro, String novoValor, String placaVeiculo) throws ExcecaoValidacao{
+        AutorizacaoPagamento abastecimentoPosterior = repositorioAbastecimento.obterAutorizacaoPagamentoPosterior(abastecimentoOriginal);
+        Veiculo veiculo = repositorioVeiculo.buscarPorPlacaFrota(placaVeiculo, abastecimentoOriginal.getFrota().getId());
+
+        if (isHodometro) {
+            Long novoHodometro = novoValor != null? UtilitarioFormatacao.obterLongMascara(novoValor) : null;
+            boolean hodometroValidoInformado = novoHodometro != null && novoHodometro > 0;
+            Long hodometroAnterior = abastecimentoOriginal.getHodometroAnterior() != null? abastecimentoOriginal.getHodometroAnterior() : veiculo.getHodometro();
+
+            if (hodometroValidoInformado && (novoHodometro <= hodometroAnterior)) {
+                hodometroValidoInformado = false;
+            }
+
+            if(hodometroValidoInformado && abastecimentoPosterior != null) {
+                Long hodometroPosterior = abastecimentoPosterior.getHodometro();
+
+                if(novoHodometro >= hodometroPosterior) {
+                    hodometroValidoInformado = false;
+                }
+            }
+
+            if (!hodometroValidoInformado) {
+                throw new ExcecaoValidacao(Erro.ERRO_EDICAO_HODOMETRO_INVALIDO, mensagens.obterMensagem(Erro.ERRO_EDICAO_HODOMETRO_INVALIDO.getChaveMensagem()));
+            }
+        } else {
+            BigDecimal novoHorimetro = novoValor != null? UtilitarioFormatacao.obterDecimalMascara(novoValor) : null;
+            boolean horimetroValidoInformado = novoHorimetro != null && novoHorimetro.compareTo(BigDecimal.ZERO) > 0;
+            BigDecimal horimetroAnterior = abastecimentoOriginal.getHorimetroAnterior() != null? abastecimentoOriginal.getHorimetroAnterior() : veiculo.getHorimetro();
+
+            if (horimetroValidoInformado && (novoHorimetro.compareTo(horimetroAnterior) <= 0)) {
+                horimetroValidoInformado = false;
+            }
+
+            if(horimetroValidoInformado && abastecimentoPosterior != null) {
+                BigDecimal horimetroPosterior = abastecimentoPosterior.getHorimetro();
+
+                if(novoHorimetro.compareTo(horimetroPosterior) >= 0) {
+                    horimetroValidoInformado = false;
+                }
+            }
+
+            if (!horimetroValidoInformado) {
+                throw new ExcecaoValidacao(Erro.ERRO_EDICAO_HORIMETRO_INVALIDO, mensagens.obterMensagem(Erro.ERRO_EDICAO_HORIMETRO_INVALIDO.getChaveMensagem()));
+            }
         }
     }
 }

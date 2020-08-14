@@ -112,6 +112,18 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                     "   ) " +
                     " ORDER BY a.dataRequisicao ASC ";
 
+    private static final String QUERY_LITRAGEM_ULTIMO_ABASTECIMENTO =
+            "SELECT a.totalLitrosAbastecimento " +
+                    "FROM " +
+                    "AutorizacaoPagamento a " +
+                    "WHERE a.status = " + StatusAutorizacao.AUTORIZADO.getValue() +
+                    " AND a.totalLitrosAbastecimento > 0 " +
+                    " AND a.veiculo.placa = :placaVeiculo " +
+                    " AND a.dataRequisicao <= :dataAbastecimento " +
+                    " AND a.cnpjFrota = :cnpjFrota " +
+                    " AND a.id <> :idAbastecimento " +
+                    " ORDER BY a.dataRequisicao DESC";
+
     private static final String QUERY_ABASTECIMENTOS_AUTORIZADOS_PENDENTES_CONFIRMACAO =
             "SELECT new ipp.aci.boleia.dominio.vo.TransacaoPendenteVo(" +
                     "abast.id, " +
@@ -604,6 +616,21 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     }
 
     @Override
+    public BigDecimal obterLitragemDoAbastecimentoAnterior(Long idAbastecimento, Date dataAbastecimento, String placaVeiculo, Long cnpjFrota) {
+
+        List<BigDecimal> litragem = this.pesquisar(new InformacaoPaginacao(1,1),
+                QUERY_LITRAGEM_ULTIMO_ABASTECIMENTO,
+                BigDecimal.class,
+                new ParametroPesquisaIgual("idAbastecimento", idAbastecimento),
+                new ParametroPesquisaIgual("dataAbastecimento", dataAbastecimento),
+                new ParametroPesquisaIgual("placaVeiculo", placaVeiculo),
+                new ParametroPesquisaIgual("cnpjFrota", cnpjFrota)
+        ).getRegistros();
+
+        return litragem.isEmpty() ? null : litragem.get(0);
+    }
+
+    @Override
     public List<AutorizacaoPagamento> obterAbastecimentoPorNota(Long cnpjDest, Long cnpjEmit, Date dataEmissao, BigDecimal valorTotalNota) {
         final BigDecimal toleranciaDeValorNota = BigDecimal.valueOf(.05);
         List<ParametroPesquisa> parametros = new ArrayList<>();
@@ -953,5 +980,35 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
 
         Long quantidadePostergados = pesquisarUnicoSemIsolamentoDados(CONSULTA_QUANTIDADE_ABASTECIMENTOS_POSTERGADOS, parametros.toArray(new ParametroPesquisa[parametros.size()]));
         return quantidadePostergados.intValue();
+    }
+
+    @Override
+    public Long obterTotalAbastecimentosAutorizadosPorMotorista(Long cpfMotorista) {
+        Long totalAbastecimentos = pesquisarTotalRegistros(
+                new ParametroPesquisaIgual("motorista.cpf", cpfMotorista),
+                new ParametroPesquisaIgual("status", StatusAutorizacao.AUTORIZADO.getValue()),
+                new ParametroPesquisaOr(
+                        new ParametroPesquisaMaior("valorTotal", BigDecimal.ZERO),
+                        new ParametroPesquisaNulo("valorTotal"))
+        );
+
+        return totalAbastecimentos != null ? totalAbastecimentos : 0;
+    }
+
+    @Override
+    public Date obterDataUltimoAbastecimentoAutorizadoMotorista(Long cpfMotorista) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaIgual("motorista.cpf", cpfMotorista));
+        parametros.add(new ParametroPesquisaIgual("status", StatusAutorizacao.AUTORIZADO.getValue()));
+        parametros.add(new ParametroPesquisaOr(
+                new ParametroPesquisaMaior("valorTotal", BigDecimal.ZERO),
+                new ParametroPesquisaNulo("valorTotal"))
+        );
+
+        AutorizacaoPagamento autorizacaoPagamento = pesquisar(new InformacaoPaginacao(1,1,"dataRequisicao",Ordenacao.DECRESCENTE),
+                parametros.toArray(new ParametroPesquisa[parametros.size()]))
+                .getRegistros().stream().findFirst().orElse(null);
+
+        return autorizacaoPagamento == null ? null : autorizacaoPagamento.getDataRequisicao();
     }
 }

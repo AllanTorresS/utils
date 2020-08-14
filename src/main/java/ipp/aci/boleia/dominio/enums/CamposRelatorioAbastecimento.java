@@ -59,7 +59,6 @@ public enum CamposRelatorioAbastecimento {
     PEDIDO(702, "enum.CamposRelatorioAbastecimento.PEDIDO.label", false, true, 7, 30, false),
     NUMERO_PEDIDO(703, "enum.CamposRelatorioAbastecimento.NUMERO_PEDIDO.label", false, true, 7, 30, false),
     NUMERO_PEDIDO_PRE_PAGO(704, "enum.CamposRelatorioAbastecimento.NUMERO_PEDIDO_PRE_PAGO.label", false, true, 7, 40, false),
-    NOME_VIP(705, "enum.CamposRelatorioAbastecimento.NOME_VIP.label", true, true, 7, 30, false),
     CODIGO_VIP(706, "enum.CamposRelatorioAbastecimento.CODIGO_VIP.label", true, true, 7, 20, false),
     PRODUTO(707, "enum.CamposRelatorioAbastecimento.PRODUTO.label", true, true, 7, 30, false),
     LITROS(708, "enum.CamposRelatorioAbastecimento.LITROS.label", true, true, 7, 20, false),

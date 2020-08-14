@@ -19,6 +19,7 @@ public final class ConstantesFormatacao {
     public static final String FORMATO_NUMERO_NOTA = "###.###.###";
     public static final String FORMATO_INTEIRO = "###,###";
     public static final String FORMATO_CPF = "###.###.###-##";
+    public static final String FORMATO_CPF_OCULTO = "'*'*'*.'*'*'*.'*'*#-##";
     public static final String FORMATO_CNPJ = "##.###.###/####-##";
     public static final String FORMATO_CEP = "#####-###";
     public static final String FORMATO_CHAVE_ACESSO = "#### #### #### #### #### #### #### #### #### #### ####";

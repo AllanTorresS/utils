@@ -38,7 +38,7 @@ public class LogicaParametroIntervaloAbastecimento implements ILogicaParametroSi
             if (ativoParaTodos || (intervalo != null && intervalo.isAtivo())) {
                 AutorizacaoPagamento ultimo = repositorioAutorizacao.obterUltimoAbastecimentoVeiculo(veiculo.getId());
                 if (ultimo != null) {
-                    if((intervalo.getMinutosIntervaloAbastecimento() != null && intervalo.getMinutosIntervaloAbastecimento() > 0) ||
+                    if((intervalo != null && intervalo.getMinutosIntervaloAbastecimento() != null && intervalo.getMinutosIntervaloAbastecimento() > 0) ||
                             (ativoParaTodos && frotaParam.getMinutosIntervaloAbastecimentoTodosVeiculos() != null && frotaParam.getMinutosIntervaloAbastecimentoTodosVeiculos() > 0)){
 
                         int minimoMinutos = ativoParaTodos ? frotaParam.getMinutosIntervaloAbastecimentoTodosVeiculos() : intervalo.getMinutosIntervaloAbastecimento();
@@ -51,7 +51,7 @@ public class LogicaParametroIntervaloAbastecimento implements ILogicaParametroSi
                             resultado.setMensagemErro(mensagens.obterMensagem("parametro.sistema.erro.abastecimento.intervalo", UtilitarioFormatacao.formatarPlacaVeiculo(veiculo.getPlaca())));
                         }
                     }
-                    if((intervalo.getQuilometrosIntervaloAbastecimento() != null && intervalo.getQuilometrosIntervaloAbastecimento() > 0) ||
+                    if((intervalo != null && intervalo.getQuilometrosIntervaloAbastecimento() != null && intervalo.getQuilometrosIntervaloAbastecimento() > 0) ||
                             (ativoParaTodos && frotaParam.getQuilometrosIntervaloAbastecimentoTodosVeiculos() != null && frotaParam.getQuilometrosIntervaloAbastecimentoTodosVeiculos() > 0)){
                         Long minimoKm = ativoParaTodos ? frotaParam.getQuilometrosIntervaloAbastecimentoTodosVeiculos() : intervalo.getQuilometrosIntervaloAbastecimento();
                         Long ultimoHodometro = ultimo.getHodometro();

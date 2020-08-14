@@ -134,10 +134,6 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     @Column(name = "CD_VIP")
     private String codigoVip;
 
-    @Size(max=250)
-    @Column(name = "NM_VIP")
-    private String nomeVip;
-
     @NotNull
     @Size(max=15)
     @Column(name = "CD_IP_ORIGEM")
@@ -1134,14 +1130,6 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
         this.pedido = pedido;
     }
 
-    public String getNomeVip() {
-        return nomeVip;
-    }
-
-    public void setNomeVip(String nomeVip) {
-        this.nomeVip = nomeVip;
-    }
-
     public AvaliacaoAbastecimento getAvaliacaoAbastecimento() {
         return avaliacaoAbastecimento;
     }
@@ -1393,7 +1381,7 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
      */
     @Transient
     public List<NotaFiscal> getNotasFiscaisComJustificativa() {
-        return notasFiscais.stream().filter(nota -> nota.getIsJustificativa()).collect(Collectors.toList());
+        return notasFiscais.stream().filter(NotaFiscal::getIsJustificativa).collect(Collectors.toList());
     }
 
     /**
@@ -1519,7 +1507,7 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
         int cicloDoAbast = (diaAbast/numDiasDoCiclo) + ((diaAbast%numDiasDoCiclo > 0) ? 1 : 0);
         int ultimoDiaMesDoMes = UtilitarioCalculoData.obterUltimoValorCampo(getDataProcessamento(), Calendar.DAY_OF_MONTH);
         int diasEmRelacaoAcicloAtual = (cicloDoAbast * numDiasDoCiclo);
-        int diaDebito = diasEmRelacaoAcicloAtual > ultimoDiaMesDoMes ? ultimoDiaMesDoMes : diasEmRelacaoAcicloAtual;
+        int diaDebito = Math.min(diasEmRelacaoAcicloAtual, ultimoDiaMesDoMes);
         Date dataDeDebito = UtilitarioCalculoData.obterData((diaDebito + prazoPagamento), mesAbast, anoAbast);
 
         return UtilitarioCalculoData.obterProximoDiaUtilSemFeriado(dataDeDebito);
