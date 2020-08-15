@@ -3,6 +3,8 @@ package ipp.aci.boleia.dados.oracle;
 import ipp.aci.boleia.dados.IRotaDados;
 import ipp.aci.boleia.dominio.Rota;
 import ipp.aci.boleia.dominio.Usuario;
+import ipp.aci.boleia.dominio.enums.RestricaoVisibilidadePontoVenda;
+import ipp.aci.boleia.dominio.enums.StatusVinculoFrotaPontoVenda;
 import ipp.aci.boleia.dominio.enums.TipoPontoRota;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
@@ -29,7 +31,23 @@ public class OracleRotaDados extends OracleRepositorioBoleiaDados<Rota> implemen
     @Autowired
     private UtilitarioAmbiente ambiente;
 
-    private static final String COUNT_PVS      = " (SELECT COUNT(ponto) FROM PontoRota ponto JOIN ponto.rota rota WHERE ponto.pontoVenda IS NOT NULL AND rota.id = r.id) ";
+    private static final String COUNT_PVS      =
+            " (SELECT " +
+                    "COUNT(ponto) " +
+            "FROM PontoRota ponto " +
+            "JOIN ponto.rota rota " +
+            "JOIN rota.frota frota " +
+            "JOIN ponto.pontoVenda pontoVenda " +
+            "LEFT JOIN pontoVenda.negociacoes negociacoes " +
+            "WHERE " +
+                    "pontoVenda IS NOT NULL " +
+                    "AND rota.id = r.id " +
+                    "AND negociacoes.frota.id = rota.frota.id " +
+                    "AND (pontoVenda.restricaoVisibilidade <> " + RestricaoVisibilidadePontoVenda.VISIVEL_APENAS_PARA_FROTAS_COM_VINCULO_ATIVO.getValue() +
+                    " OR (" +
+                        "pontoVenda.restricaoVisibilidade = " + RestricaoVisibilidadePontoVenda.VISIVEL_APENAS_PARA_FROTAS_COM_VINCULO_ATIVO.getValue() +
+                        " AND negociacoes.statusVinculo = " + StatusVinculoFrotaPontoVenda.ATIVO.getValue() +
+                    ")))";
     
     private static final String COUNT_ROTAS_COM_PV = 
             " SELECT " +
