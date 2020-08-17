@@ -61,6 +61,7 @@ import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarDecimalMoedaReal;
 import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarNumeroTelefone;
 import static ipp.aci.boleia.util.UtilitarioFormatacao.obterString;
 import static ipp.aci.boleia.util.UtilitarioFormatacaoData.formatarDataHora;
+import java.math.BigDecimal;
 import org.springframework.scheduling.annotation.Async;
 
 /**
@@ -660,39 +661,41 @@ public class EmailSd {
         emailDados.enviarEmail(assunto, corpo.toString(), Arrays.asList(destinatario));
     }
     
-    @Async
     public void enviarEmailNotificacaoAbastecimentoPontoVendaNaoVisivel(AutorizacaoPagamento autorizacaoPagamento){
-        FrotaPontoVenda frotaPtov = autorizacaoPagamento.getTransacaoConsolidada().getFrotaPtov();
-        String destinatario;
-        if (frotaPtov.getUltimoHistorico()!= null && frotaPtov.getUltimoHistorico().getUsuario() != null){
+        FrotaPontoVenda frotaPtov = null;
+        if (autorizacaoPagamento.getTransacaoConsolidada() != null && autorizacaoPagamento.getTransacaoConsolidada().getFrotaPtov() != null){
+           frotaPtov = autorizacaoPagamento.getTransacaoConsolidada().getFrotaPtov();
+        } else {
+            frotaPtov = repositorioFrotaPtov.obterFrotaPontoVenda(autorizacaoPagamento.getFrota().getId(), autorizacaoPagamento.getPontoVenda().getId());
+        }        
+        String destinatario = null;
+        if (frotaPtov != null && frotaPtov.getUltimoHistorico()!= null && frotaPtov.getUltimoHistorico().getUsuario() != null){
             destinatario = frotaPtov.getUltimoHistorico().getUsuario().getEmail();
         } else {
             HistoricoPontoVenda historicoPontoVenda = historicoPontoVendaDados.obterHistoricoPontoVendaPorData(autorizacaoPagamento.getPontoVenda().getId(), autorizacaoPagamento.getDataRequisicao());
-            if (historicoPontoVenda != null){
+            if (historicoPontoVenda != null && historicoPontoVenda.getUsuario() != null){
                 destinatario = historicoPontoVenda.getUsuario().getEmail();
-            } else {
-                return;
             }
-        }
-        
-        String assunto = mensagens.obterMensagem("email.alteracao.invalidada.assunto");
+        }        
+        if (destinatario != null){
+            String assunto = mensagens.obterMensagem("email.abastecimento.contingencia.naovisivel.assunto");
 
-        StringBuilder corpo = new StringBuilder(mensagens.obterMensagem("email.abastecimento.contingencia.naovisivel.corpo1"));
-        autorizacaoPagamento.getItems().stream().filter(i-> i.isAbastecimento()).forEach(item -> {            
+            StringBuilder corpo = new StringBuilder(mensagens.obterMensagem("email.abastecimento.contingencia.naovisivel.corpo1"));
+     
             corpo.append(mensagens.obterMensagem("email.abastecimento.contingencia.naovisivel.corpo2",
                     UtilitarioFormatacaoData.formatarDataHora(autorizacaoPagamento.getDataRequisicao()),
                     UtilitarioFormatacao.formatarCnpjApresentacao(autorizacaoPagamento.getCnpjAreaAbastecimento())+"<br/>"+autorizacaoPagamento.getPontoVenda().getNome(),
                     UtilitarioFormatacao.formatarCnpjApresentacao(autorizacaoPagamento.getCnpjFrota())+"<br/>"+autorizacaoPagamento.getRazaoSocialFrota(),
                     autorizacaoPagamento.getPlacaVeiculo(),
-                    item.getCombustivel().getDescricao()+"<br/>"+item.getValorUnitario(),
-                    item.getQuantidade(),
-                    item.getValorTotal(),
-                    autorizacaoPagamento.getPedido().getNumero()
+                    autorizacaoPagamento.getNomeItemAbastecimento()+"<br/>"+autorizacaoPagamento.getValorUnitarioAbastecimento(),
+                    UtilitarioFormatacao.formatarLitros(autorizacaoPagamento.getTotalLitrosAbastecimento()),
+                    UtilitarioFormatacao.formatarDecimalMoedaReal(autorizacaoPagamento.getValorTotalAbastecimento()),
+                    autorizacaoPagamento.getPedido()!= null ? autorizacaoPagamento.getPedido().getNumero() : ""
                     ));            
-        });
-        corpo.append(mensagens.obterMensagem("email.abastecimento.contingencia.naovisivel.corpo3"));
-        
-        emailDados.enviarEmail(assunto, corpo.toString(), Arrays.asList(destinatario));
-    }
 
+            corpo.append(mensagens.obterMensagem("email.abastecimento.contingencia.naovisivel.corpo3"));
+
+            emailDados.enviarEmail(assunto, corpo.toString(), Arrays.asList(destinatario));
+        }
+    }
 }
