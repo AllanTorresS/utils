@@ -673,7 +673,7 @@ public class EmailSd {
             destinatario = frotaPtov.getUltimoHistorico().getUsuario().getEmail();
         } else {
             HistoricoPontoVenda historicoPontoVenda = historicoPontoVendaDados.obterHistoricoPontoVendaPorData(autorizacaoPagamento.getPontoVenda().getId(), autorizacaoPagamento.getDataRequisicao());
-            if (historicoPontoVenda != null){
+            if (historicoPontoVenda != null && historicoPontoVenda.getUsuario() != null){
                 destinatario = historicoPontoVenda.getUsuario().getEmail();
             }
         }        
