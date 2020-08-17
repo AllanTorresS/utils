@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -53,14 +52,14 @@ public class TransacaoConectcarConsolidada implements IPersistente, IPertenceFro
 
     @Id
     @Column(name = "CD_TRANS_CONSOL")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_TRANS_CONSOL")
-    @SequenceGenerator(name = "SEQ_TRANS_CONSOL", sequenceName = "SEQ_TRANS_CONSOL", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_TRANS_CONECTCAR_CONSOL")
+    @SequenceGenerator(name = "SEQ_TRANS_CONECTCAR_CONSOL", sequenceName = "SEQ_TRANS_CONECTCAR_CONSOL", allocationSize = 1)
     private Long id;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CD_FROTA_PTOV")
-    private FrotaPontoVenda frotaPtov;
+    @JoinColumn(name = "CD_FROTA")
+    private Frota frota;
 
     @DecimalMin("-999999999999.9999")
     @DecimalMax("999999999999.9999")
@@ -93,7 +92,7 @@ public class TransacaoConectcarConsolidada implements IPersistente, IPertenceFro
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_COBRANCA")
-    private Cobranca cobranca;
+    private CobrancaConectcar cobranca;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_REEMBOLSO")
@@ -175,12 +174,12 @@ public class TransacaoConectcarConsolidada implements IPersistente, IPertenceFro
         this.id = id;
     }
 
-    public FrotaPontoVenda getFrotaPtov() {
-        return frotaPtov;
+    public Frota getFrota() {
+        return frota;
     }
 
-    public void setFrotaPtov(FrotaPontoVenda frotaPtov) {
-        this.frotaPtov = frotaPtov;
+    public void setFrota(Frota frota) {
+        this.frota = frota;
     }
 
     public Date getDataInicioPeriodo() {
@@ -239,11 +238,11 @@ public class TransacaoConectcarConsolidada implements IPersistente, IPertenceFro
         this.prazoReembolsoDias = prazoReembolsoDias;
     }
 
-    public Cobranca getCobranca() {
+    public CobrancaConectcar getCobranca() {
         return cobranca;
     }
 
-    public void setCobranca(Cobranca cobranca) {
+    public void setCobranca(CobrancaConectcar cobranca) {
         this.cobranca = cobranca;
     }
 
@@ -326,17 +325,7 @@ public class TransacaoConectcarConsolidada implements IPersistente, IPertenceFro
     @Transient
     @Override
     public List<Frota> getFrotas() {
-        return frotaPtov != null ? Collections.singletonList(frotaPtov.getFrota()) : Collections.emptyList();
-    }
-
-    @Transient
-    public Frota getFrota() {
-        return frotaPtov != null ? frotaPtov.getFrota() : null;
-    }
-
-    @Transient
-    public PontoDeVenda getPontoVenda() {
-        return frotaPtov != null ? frotaPtov.getPontoVenda() : null;
+        return frota != null ? Collections.singletonList(frota) : Collections.emptyList();
     }
 
     /**
@@ -431,7 +420,7 @@ public class TransacaoConectcarConsolidada implements IPersistente, IPertenceFro
      * Existe uma constraint (UQ_CHAVE_TRANS_CONSOL) no banco que valida a unicidade da chave.
      */
     public void preencherChave() {
-        String key = frotaPtov.getId().toString() + "|"
+        String key = frota.getId().toString() + "|"
                 + UtilitarioFormatacaoData.formatarDataCurta(dataInicioPeriodo) + "|"
                 + UtilitarioFormatacaoData.formatarDataCurta(dataFimPeriodo) + "|";
         if (empresaAgregada != null && empresaAgregada.getId() != null) {
@@ -508,7 +497,7 @@ public class TransacaoConectcarConsolidada implements IPersistente, IPertenceFro
      */
     @Transient
     public boolean exigeEmissaoNF() {
-        return frotaPtov.getFrota().exigeNotaFiscal() || unidade != null || empresaAgregada != null;
+        return frota.exigeNotaFiscal() || unidade != null || empresaAgregada != null;
     }
 
     /**

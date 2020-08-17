@@ -35,39 +35,33 @@ public class CondicoesComerciais implements IPersistente {
 
 	@Digits(integer = 12, fraction = 4)
 	@Column(name = "VR_TOTAL_CREDITO")
-	private BigDecimal valorTotalCredito;
+	private BigDecimal creditoTotal;
+
+	@Column(name = "QT_PRAZO_CICLO")
+	private Integer tamanhoCiclo;
+
+	@Column(name = "QT_PRAZO_PAGAMENTO")
+	private Integer prazoPagamento;
+	
+	@Column(name = "QT_PRAZO_CONTRATO")
+	private Integer prazoContrato;
+
+	@Column(name = "DS_LINK_CONTRATO")
+	private String linkContrato;
 
 	@Digits(integer = 12, fraction = 4)
 	@Column(name = "VR_ADESAO")
 	private BigDecimal valorAdesao;
 
-	@Column(name = "QT_TEMPO_ISENCAO_MENSALIDADE")
-	private BigDecimal quantidadeTempoIsencaoMensalidade;
+	@Digits(integer = 12, fraction = 4)
+	@Column(name = "VR_MENSALIDADE")
+	private BigDecimal valorMensalidade;
 
-	@Column(name = "QT_PRAZO_CICLO")
-	private BigDecimal quantidadePrazoCiclo;
+	@Column(name = "QT_TEMPO_ISENCAO_MENSALIDADE")
+	private Integer mesesIsencao;
 
 	@Column(name = "NO_VERSAO")
 	private Integer versao;
-
-	/**
-	 * Construtor padrão da entidade.
-	 */
-	public CondicoesComerciais() {
-
-	}
-
-	public CondicoesComerciais(Long id, Frota frota, BigDecimal valorTotalCredito, BigDecimal valorAdesao,
-			BigDecimal quantidadeTempoIsencaoMensalidade, BigDecimal quantidadePrazoCiclo, Integer versao) {
-		super();
-		this.id = id;
-		this.frota = frota;
-		this.valorTotalCredito = valorTotalCredito;
-		this.valorAdesao = valorAdesao;
-		this.quantidadeTempoIsencaoMensalidade = quantidadeTempoIsencaoMensalidade;
-		this.quantidadePrazoCiclo = quantidadePrazoCiclo;
-		this.versao = versao;
-	}
 
 	public Long getId() {
 		return id;
@@ -85,12 +79,44 @@ public class CondicoesComerciais implements IPersistente {
 		this.frota = frota;
 	}
 
-	public BigDecimal getValorTotalCredito() {
-		return valorTotalCredito;
+	public BigDecimal getCreditoTotal() {
+		return creditoTotal;
 	}
 
-	public void setValorTotalCredito(BigDecimal valorTotalCredito) {
-		this.valorTotalCredito = valorTotalCredito;
+	public void setCreditoTotal(BigDecimal creditoTotal) {
+		this.creditoTotal = creditoTotal;
+	}
+
+	public Integer getTamanhoCiclo() {
+		return tamanhoCiclo;
+	}
+
+	public void setTamanhoCiclo(Integer tamanhoCiclo) {
+		this.tamanhoCiclo = tamanhoCiclo;
+	}
+
+	public Integer getPrazoPagamento() {
+		return prazoPagamento;
+	}
+
+	public void setPrazoPagamento(Integer prazoPagamento) {
+		this.prazoPagamento = prazoPagamento;
+	}
+
+	public Integer getPrazoContrato() {
+		return prazoContrato;
+	}
+
+	public void setPrazoContrato(Integer prazoContrato) {
+		this.prazoContrato = prazoContrato;
+	}
+
+	public String getLinkContrato() {
+		return linkContrato;
+	}
+
+	public void setLinkContrato(String linkContrato) {
+		this.linkContrato = linkContrato;
 	}
 
 	public BigDecimal getValorAdesao() {
@@ -101,20 +127,20 @@ public class CondicoesComerciais implements IPersistente {
 		this.valorAdesao = valorAdesao;
 	}
 
-	public BigDecimal getQuantidadeTempoIsencaoMensalidade() {
-		return quantidadeTempoIsencaoMensalidade;
+	public BigDecimal getValorMensalidade() {
+		return valorMensalidade;
 	}
 
-	public void setQuantidadeTempoIsencaoMensalidade(BigDecimal quantidadeTempoIsencaoMensalidade) {
-		this.quantidadeTempoIsencaoMensalidade = quantidadeTempoIsencaoMensalidade;
+	public void setValorMensalidade(BigDecimal valorMensalidade) {
+		this.valorMensalidade = valorMensalidade;
 	}
 
-	public BigDecimal getQuantidadePrazoCiclo() {
-		return quantidadePrazoCiclo;
+	public Integer getMesesIsencao() {
+		return mesesIsencao;
 	}
 
-	public void setQuantidadePrazoCiclo(BigDecimal quantidadePrazoCiclo) {
-		this.quantidadePrazoCiclo = quantidadePrazoCiclo;
+	public void setMesesIsencao(Integer mesesIsencao) {
+		this.mesesIsencao = mesesIsencao;
 	}
 
 	public Integer getVersao() {
@@ -149,4 +175,5 @@ public class CondicoesComerciais implements IPersistente {
 			return false;
 		return true;
 	}
+
 }

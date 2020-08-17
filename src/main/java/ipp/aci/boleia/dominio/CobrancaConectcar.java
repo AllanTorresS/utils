@@ -2,10 +2,8 @@ package ipp.aci.boleia.dominio;
 
 import java.math.BigDecimal;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,6 +11,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -50,6 +50,10 @@ public class CobrancaConectcar implements IPersistente, IPertenceFrota {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "cobranca")
     private List<TransacaoConectcarConsolidada> transacoesConsolidadas;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_FROTA")
+    private Frota frota;
+    
     @Column(name = "NO_DOC_JDE")
     private Long numeroDocumento;
 
@@ -80,9 +84,6 @@ public class CobrancaConectcar implements IPersistente, IPertenceFrota {
 
     @Column(name = "VR_TOTAL_AJUSTADO")
     private BigDecimal valorTotalAjustado;
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "cobranca")
-    private List<AjusteCobranca> ajustes;
 
     @Column(name = "ID_STATUS")
     private Integer status;
@@ -203,14 +204,6 @@ public class CobrancaConectcar implements IPersistente, IPertenceFrota {
         this.valorTotalAjustado = valorTotalAjustado;
     }
 
-    public List<AjusteCobranca> getAjustes() {
-        return ajustes;
-    }
-
-    public void setAjustes(List<AjusteCobranca> ajustes) {
-        this.ajustes = ajustes;
-    }
-
     public Integer getStatus() {
         return status;
     }
@@ -302,49 +295,6 @@ public class CobrancaConectcar implements IPersistente, IPertenceFrota {
     }
 
     /**
-     * Retorna o último ajuste efetuado para a cobrança.
-     * @return o último ajuste encontrado.
-     */
-    @Transient
-    public AjusteCobranca getUltimoAjuste() {
-        if(ajustes != null && !ajustes.isEmpty()) {
-            return ajustes.stream().max(Comparator.comparing(AjusteCobranca::getId)).get();
-        }
-        return null;
-    }
-
-    /**
-     * Retorna o último ajuste de valor efetuado para a cobrança.
-     *
-     * @return o último ajuste de valor encontrado.
-     */
-    @Transient
-    public AjusteCobranca getUltimoAjusteValor() {
-        if (ajustes != null && !ajustes.isEmpty()) {
-            return ajustes.stream()
-                            .filter(AjusteCobranca::isAjusteValor)
-                            .max(Comparator.comparing(AjusteCobranca::getId))
-                            .orElse(null);
-        }
-        return null;
-    }
-
-    /**
-     * Retorna o último ajuste efetuado com alteração da data de vencimento.
-     * @return ajuste de data encontrado.
-     */
-    @Transient
-    public AjusteCobranca getUltimoAjusteData() {
-        if(ajustes != null && !ajustes.isEmpty()) {
-            return ajustes.stream()
-                            .filter(AjusteCobranca::isProrrogacaoVencimento)
-                            .max(Comparator.comparing(AjusteCobranca::getId))
-                            .orElse(null);
-        }
-        return null;
-    }
-
-    /**
      * Verifica se houve um ajuste para a cobrança.
      * @return o valor total ajustado caso tenha ocorrido ajuste desta cobrança e valor total da cobrança, caso contrário.
      */
@@ -363,24 +313,6 @@ public class CobrancaConectcar implements IPersistente, IPertenceFrota {
     }
 
     /**
-     * Verifica se a cobrança possui um ajuste de desconto.
-     * @return true caso exista um ajuste de desconto, false caso contrário.
-     */
-    @Transient
-    public Boolean possuiDesconto(){
-        return ajustes != null && ajustes.stream().anyMatch(AjusteCobranca::isDesconto);
-    }
-
-    /**
-     * Verifica se a cobrança possui um ajuste de acréscimo.
-     * @return true caso exista um ajuste de acréscimo, false caso contrário.
-     */
-    @Transient
-    public Boolean possuiAcrescimo(){
-        return ajustes != null && ajustes.stream().anyMatch(AjusteCobranca::isAcrescimo);
-    }
-
-    /**
      * Incrementa o número de tentativas de envio para o JDE
      */
     public void incrementarNumeroTentativasEnvio() {
@@ -389,19 +321,6 @@ public class CobrancaConectcar implements IPersistente, IPertenceFrota {
         } else {
             this.setNumeroTentativasEnvio(1);
         }
-    }
-
-    /**
-     * Retorna a lista de ajustes de acréscimo ou desconto realizados na cobrança.
-     *
-     * @return lista de ajustes
-     */
-    @Transient
-    public List<AjusteCobranca> getAjustesComValor() {
-        if(ajustes != null && !ajustes.isEmpty()) {
-            return ajustes.stream().filter(AjusteCobranca::isAjusteValor).collect(Collectors.toList());
-        }
-        return Collections.emptyList();
     }
 
 	public BigDecimal getCreditoDisponivel() {

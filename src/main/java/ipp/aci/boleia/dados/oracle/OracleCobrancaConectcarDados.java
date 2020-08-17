@@ -80,7 +80,7 @@ public class OracleCobrancaConectcarDados extends OracleRepositorioBoleiaDados<C
 		}
 
 		if (filtro.getFrota() != null && filtro.getFrota().getId() != null) {
-			parametros.add(new ParametroPesquisaIgual("transacoesConsolidadas.frotaPtov.frota.id", filtro.getFrota().getId()));
+			parametros.add(new ParametroPesquisaIgual("transacoesConsolidadas.frota.id", filtro.getFrota().getId()));
 		}
 
 		if (StringUtils.isNotBlank(filtro.getNumeroDocumento())) {
@@ -92,7 +92,7 @@ public class OracleCobrancaConectcarDados extends OracleRepositorioBoleiaDados<C
         if (filtro.getIgnorarFrotaControle()) {
 			parametros.add(
 					new ParametroPesquisaDiferente(
-							"transacoesConsolidadas.frotaPtov.frota.cnpj", cnpjFrotaControle
+							"transacoesConsolidadas.frota.cnpj", cnpjFrotaControle
 					));
 		}
 
@@ -102,7 +102,7 @@ public class OracleCobrancaConectcarDados extends OracleRepositorioBoleiaDados<C
 	@Override
 	public CobrancaConectcar obterUltimaCobranca(Long idFrota) {
 		List<ParametroPesquisa> parametros = new ArrayList<>();
-		parametros.add(new ParametroPesquisaIgual("transacoesConsolidadas.frotaPtov.frota.id", idFrota));
+		parametros.add(new ParametroPesquisaIgual("transacoesConsolidadas.frota.id", idFrota));
 		InformacaoPaginacao paginacao = new InformacaoPaginacao();
 		paginacao.setPagina(1);
 		paginacao.setTamanhoPagina(1);

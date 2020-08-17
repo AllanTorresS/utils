@@ -25,10 +25,12 @@ public class OracleCondicoesComerciais extends OracleRepositorioBoleiaDados<Cond
     }
 
 	@Override
-	public List<CondicoesComerciais> buscarPorFrota(Long idFrota) {	
-        		
-        return pesquisar(new ParametroOrdenacaoColuna("versao", Ordenacao.DECRESCENTE), new ParametroPesquisaIgual("frota.id", idFrota));
+	public CondicoesComerciais buscarPorFrota(Long idFrota) {	
+        List<CondicoesComerciais> lista = pesquisar(new ParametroOrdenacaoColuna("versao", Ordenacao.DECRESCENTE), new ParametroPesquisaIgual("frota.id", idFrota));
+        if (lista != null && !lista.isEmpty()) {
+        	return lista.get(0);
+        }
+        return new CondicoesComerciais();
 	}
 
-   
 }

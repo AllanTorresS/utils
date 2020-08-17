@@ -1,8 +1,5 @@
 package ipp.aci.boleia.dados;
 
-
-import java.util.List;
-
 import ipp.aci.boleia.dominio.CondicoesComerciais;
 
 /**
@@ -16,5 +13,5 @@ public interface ICondicoesComerciaisDados extends IRepositorioBoleiaDados<Condi
      * @param id da frota 
      * @return CondicoesComerciais objeto pedido
      */
-	List<CondicoesComerciais> buscarPorFrota(Long idFrota);   
+	CondicoesComerciais buscarPorFrota(Long idFrota);   
 }
