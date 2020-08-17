@@ -661,11 +661,6 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         return pesquisar((InformacaoPaginacao) null, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
 
-    @Override
-    public List<AutorizacaoPagamento> obterAbastecimentosPostergadosParaCiclo(TransacaoConsolidada transacaoConsolidada) {
-        return pesquisar((ParametroOrdenacaoColuna) null, new ParametroPesquisaIgual("transacaoConsolidadaPostergada.id", transacaoConsolidada.getId()));
-    }
-
     /**
      * Cria a lista de parametros para a pesquisa da tela de listagem de autorizacoes de pagamento
      * @param filtro O filtro de pesquisa
