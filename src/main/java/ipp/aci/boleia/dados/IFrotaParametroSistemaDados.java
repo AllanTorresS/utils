@@ -36,4 +36,12 @@ public interface IFrotaParametroSistemaDados extends IRepositorioBoleiaDados<Fro
      * @return Parametro sistema da frota
      */
     FrotaParametroSistema obterPorParametroSistema(Long idFrota, ParametroSistema parametroSistema);
+    
+    /**
+     * Altera o estado da entidade para desanexado
+     *
+     * @param entidade entidade transiente
+     * @return A entidade desanexada
+     */
+    FrotaParametroSistema desanexar(FrotaParametroSistema parametroSistema);
 }
