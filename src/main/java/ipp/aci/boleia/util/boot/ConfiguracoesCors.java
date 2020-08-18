@@ -27,19 +27,21 @@ public class ConfiguracoesCors {
                         .addMapping("/**")
                         .allowedOrigins(allowedOrigins)
                         .allowedMethods(HTTP_METHODS)
-                        .allowedHeaders("authorization", "content-type")
+                        .allowedHeaders("*")
                         .allowCredentials(true).maxAge(3600);
 
                 registry
                         .addMapping("/api/frotista/**")
                         .allowedOrigins("*")
                         .allowedMethods(HTTP_METHODS)
+                        .allowedHeaders("*")
                         .allowCredentials(false).maxAge(3600);
 
                 registry
                         .addMapping("/api/externo/**")
                         .allowedOrigins("*")
                         .allowedMethods(HTTP_METHODS)
+                        .allowedHeaders("*")
                         .allowCredentials(false).maxAge(3600);
             }
         };
