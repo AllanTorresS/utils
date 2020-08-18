@@ -1,7 +1,9 @@
 package ipp.aci.boleia.dados.servicos.agenciadorfrete;
 
 import ipp.aci.boleia.dados.IAgenciadorFreteExternoDados;
+import ipp.aci.boleia.dados.IChaveValorDados;
 import ipp.aci.boleia.dados.IClienteHttpDados;
+import ipp.aci.boleia.dados.servicos.chavevalor.ChaveValorDados;
 import ipp.aci.boleia.dominio.agenciadorfrete.Abastecimento;
 import ipp.aci.boleia.dominio.agenciadorfrete.Pedido;
 import ipp.aci.boleia.dominio.agenciadorfrete.Transacao;
@@ -43,6 +45,7 @@ public class AgenciadorFreteExternoNddDados implements IAgenciadorFreteExternoDa
     private static final Logger LOGGER = LoggerFactory.getLogger(AgenciadorFreteExternoNddDados.class);
 
     private static final String CHAVE_TOKEN_AUTENTICACAO = "NDD_TOKEN_AUTENTICACAO";
+    private static final String NOME_CHAVE_NDD = "NDD";
 
     @Value("${ndd.api.endereco.url}")
     private String nddBaseUrl;
@@ -71,10 +74,13 @@ public class AgenciadorFreteExternoNddDados implements IAgenciadorFreteExternoDa
     @Autowired
     private IClienteHttpDados clienteRest;
 
+    @Autowired
+    private IChaveValorDados<TokenNddVo> chaveValorDados;
+
     @Override
     public BigDecimal obterSaldoDeSaqueDisponivel(Transacao transacao) throws ExcecaoServicoIndisponivel, ExcecaoValidacao {
-        this.atualizarSaldo(transacao);
         String token = obterTokenAutenticacao();
+        this.atualizarSaldo(transacao, token);
         String url = nddBaseUrl + apiPath + ConstantesNdd.SALDO_API_ENDPOINT.replace("{orderNumber}", transacao.getPedido().getNumero());
         SaldoNddVo saldo = clienteRest.doGet(url, montarHeader(token), this::obterSaldoNdd);
         if(saldo == null || saldo.getAmountAvailable() == null) {
@@ -86,13 +92,13 @@ public class AgenciadorFreteExternoNddDados implements IAgenciadorFreteExternoDa
     /**
      * Atualiza o saldo no fornecedor através da transação
      * @param transacao A Tramsação a ser atualizada
+     * @param token o token para atualizar o saldo
      * @throws ExcecaoValidacao Caso os dados de entrada estejam inconsistentes
      * @throws ExcecaoServicoIndisponivel Caso o fornecedor esteja indisponível
      */
-    private void atualizarSaldo(Transacao transacao) throws ExcecaoValidacao, ExcecaoServicoIndisponivel {
+    private void atualizarSaldo(Transacao transacao , String token) throws ExcecaoValidacao, ExcecaoServicoIndisponivel {
         validaTransacao(transacao);
         TransacaoSaldoNddVo body = new TransacaoSaldoNddVo(transacao);
-        String token = obterTokenAutenticacao();
         String url = nddBaseUrl + apiPath + ConstantesNdd.ATUALIZAR_TRANSACAO;
         trataResposta(clienteRest.doPutJson(url, body, montarHeader(token), this::obterRespostaTransacao));
     }
@@ -188,7 +194,7 @@ public class AgenciadorFreteExternoNddDados implements IAgenciadorFreteExternoDa
      * @throws ExcecaoServicoIndisponivel Caso a NDD não responda corretamente
      */
     private String obterTokenAutenticacao() throws ExcecaoServicoIndisponivel {
-        TokenNddVo token = (TokenNddVo) UtilitarioSessao.obterAtributoDaSessao(CHAVE_TOKEN_AUTENTICACAO);
+        TokenNddVo token = chaveValorDados.obter(NOME_CHAVE_NDD ,CHAVE_TOKEN_AUTENTICACAO);
         if(token == null || token.getToken() == null) {
             TokenNddBodyVo body = new TokenNddBodyVo(clientId, ConstantesNdd.TIPO_AUTENTICACAO_CRIACAO);
             body.setClientSecret(clientSecret);
@@ -219,7 +225,7 @@ public class AgenciadorFreteExternoNddDados implements IAgenciadorFreteExternoDa
         try {
             Date dataExpiracao = new Date(Integer.parseInt(response.getExpiresIn()));
             TokenNddVo tokenNdd = new TokenNddVo(token, refreshToken, dataExpiracao);
-            UtilitarioSessao.atualizaAtributoDaSessao(CHAVE_TOKEN_AUTENTICACAO, tokenNdd);
+            chaveValorDados.inserir(NOME_CHAVE_NDD ,CHAVE_TOKEN_AUTENTICACAO, tokenNdd);
             return tokenNdd;
         } catch (NumberFormatException e) {
             throw new ExcecaoServicoIndisponivel(mensagens.obterMensagem("agenciador.frete.ndd.servico.inexistente"));

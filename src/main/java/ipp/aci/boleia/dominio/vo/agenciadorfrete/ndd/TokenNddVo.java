@@ -1,12 +1,15 @@
 package ipp.aci.boleia.dominio.vo.agenciadorfrete.ndd;
 
+import java.io.Serializable;
 import java.util.Date;
 
 
 /**
  * Classe com informacoes relacionadas ao token de autenticação da NDD
  */
-public class TokenNddVo {
+public class TokenNddVo implements Serializable {
+
+    private static final long serialVersionUID = 407014635084403711L;
     private String token;
     private String refreshToken;
     private Date dataExpiracao;
