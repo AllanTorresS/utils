@@ -3,11 +3,15 @@ package ipp.aci.boleia.dados.servicos.agenciadorfrete;
 import ipp.aci.boleia.dados.IAgenciadorFreteExternoDados;
 import ipp.aci.boleia.dados.IClienteHttpDados;
 import ipp.aci.boleia.dominio.agenciadorfrete.Abastecimento;
+import ipp.aci.boleia.dominio.agenciadorfrete.Pedido;
 import ipp.aci.boleia.dominio.agenciadorfrete.Transacao;
+import ipp.aci.boleia.dominio.vo.agenciadorfrete.ndd.RespostaTransacaoNddVo;
 import ipp.aci.boleia.dominio.vo.agenciadorfrete.ndd.SaldoNddVo;
 import ipp.aci.boleia.dominio.vo.agenciadorfrete.ndd.TokenNddBodyVo;
 import ipp.aci.boleia.dominio.vo.agenciadorfrete.ndd.TokenNddResponseVo;
 import ipp.aci.boleia.dominio.vo.agenciadorfrete.ndd.TokenNddVo;
+import ipp.aci.boleia.dominio.vo.agenciadorfrete.ndd.TransacaoNddVo;
+import ipp.aci.boleia.dominio.vo.agenciadorfrete.ndd.TransacaoSaldoNddVo;
 import ipp.aci.boleia.util.ConstantesNdd;
 import ipp.aci.boleia.util.UtilitarioJson;
 import ipp.aci.boleia.util.excecao.ExcecaoServicoIndisponivel;
@@ -25,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -67,7 +72,65 @@ public class AgenciadorFreteExternoNddDados implements IAgenciadorFreteExternoDa
     private IClienteHttpDados clienteRest;
 
     @Override
-    public boolean temSaldoDisponivel(Transacao transacao) throws ExcecaoValidacao, ExcecaoServicoIndisponivel {
+    public BigDecimal obterSaldoDeSaqueDisponivel(Transacao transacao) throws ExcecaoServicoIndisponivel, ExcecaoValidacao {
+        this.atualizarSaldo(transacao);
+        String token = obterTokenAutenticacao();
+        String url = nddBaseUrl + apiPath + ConstantesNdd.SALDO_API_ENDPOINT.replace("{orderNumber}", transacao.getPedido().getNumero());
+        SaldoNddVo saldo = clienteRest.doGet(url, montarHeader(token), this::obterSaldoNdd);
+        if(saldo == null || saldo.getAmountAvailable() == null) {
+            throw new ExcecaoServicoIndisponivel(mensagens.obterMensagem("agenciador.frete.ndd.servico.inexistente"));
+        }
+        return saldo.getAmountAvailable();
+    }
+
+    /**
+     * Atualiza o saldo no fornecedor através da transação
+     * @param transacao A Tramsação a ser atualizada
+     * @throws ExcecaoValidacao Caso os dados de entrada estejam inconsistentes
+     * @throws ExcecaoServicoIndisponivel Caso o fornecedor esteja indisponível
+     */
+    private void atualizarSaldo(Transacao transacao) throws ExcecaoValidacao, ExcecaoServicoIndisponivel {
+        validaTransacao(transacao);
+        TransacaoSaldoNddVo body = new TransacaoSaldoNddVo(transacao);
+        String token = obterTokenAutenticacao();
+        String url = nddBaseUrl + apiPath + ConstantesNdd.ATUALIZAR_TRANSACAO;
+        trataResposta(clienteRest.doPutJson(url, body, montarHeader(token), this::obterRespostaTransacao));
+    }
+
+    @Override
+    public void confirmarTransacao(Transacao transacao) throws ExcecaoValidacao, ExcecaoServicoIndisponivel {
+        validaTransacao(transacao);
+        TransacaoNddVo body = new TransacaoNddVo(transacao);
+        String token = obterTokenAutenticacao();
+        String url = nddBaseUrl + apiPath + ConstantesNdd.CONFIRMAR_TRANSACAO;
+        trataResposta(clienteRest.doPostJson(url, body, montarHeader(token), this::obterRespostaTransacao));
+    }
+
+    @Override
+    public void cancelarTransacao(Pedido pedido) throws ExcecaoValidacao, ExcecaoServicoIndisponivel {
+        TransacaoNddVo body = new TransacaoNddVo(pedido);
+        String token = obterTokenAutenticacao();
+        String url = nddBaseUrl + apiPath + ConstantesNdd.CANCELAR_TRANSACAO;
+        trataResposta(clienteRest.doPostJson(url, body, montarHeader(token), this::obterRespostaTransacao));
+    }
+
+    /***
+     * Trata a resposta da NDD
+     * @param resposta
+     * @throws ExcecaoServicoIndisponivel
+     */
+    private void trataResposta(RespostaTransacaoNddVo resposta) throws ExcecaoServicoIndisponivel {
+        if(resposta == null || resposta.getCode() == null) {
+            throw new ExcecaoServicoIndisponivel(mensagens.obterMensagem("agenciador.frete.ndd.servico.inexistente"));
+        }
+    }
+
+    /***
+     * Valida a transação
+     * @param transacao a ser validada
+     * @throws ExcecaoValidacao
+     */
+    private void validaTransacao(Transacao transacao) throws ExcecaoValidacao {
         if(transacao == null || transacao.getPedido() == null || transacao.getAbastecimento() == null) {
             throw new ExcecaoValidacao(mensagens.obterMensagem("agentefrete.api.validacao.pedido.inexistente"));
         }
@@ -76,13 +139,6 @@ public class AgenciadorFreteExternoNddDados implements IAgenciadorFreteExternoDa
         if(numero == null || abastecimento.getPrecoCombustivel() == null || abastecimento.getLitragem() == null){
             throw new ExcecaoValidacao(mensagens.obterMensagem("agentefrete.api.validacao.pedido.invalido"));
         }
-        String token = obterTokenAutenticacao();
-        String url = nddBaseUrl + apiPath + ConstantesNdd.SALDO_API_ENDPOINT.replace("{orderNumber}", numero);
-        SaldoNddVo saldo = clienteRest.doGet(url, montarHeader(token), this::obterSaldoNdd);
-        if(saldo == null || saldo.getAmountAvailable() == null) {
-            throw new ExcecaoServicoIndisponivel(mensagens.obterMensagem("agenciador.frete.ndd.servico.inexistente"));
-        }
-        return saldo.getAmountAvailable().compareTo(abastecimento.getPrecoCombustivel().multiply(abastecimento.getLitragem())) > 0;
     }
 
     /**
@@ -104,6 +160,21 @@ public class AgenciadorFreteExternoNddDados implements IAgenciadorFreteExternoDa
     private SaldoNddVo obterSaldoNdd(CloseableHttpResponse response)  {
         try {
             return UtilitarioJson.toObjectWithConfigureFailOnUnknowProperties(response, SaldoNddVo.class, false);
+        } catch (Exception e) {
+            String prefixoErroLog = "NDD - Erro: ";
+            LOGGER.error(prefixoErroLog, e);
+            return null;
+        }
+    }
+
+    /**
+     * Obtém o saldo através de um request a Ndd
+     * @param response O retorno da Ndd
+     * @return Um vo que representa o saldo na Ndd
+     */
+    private RespostaTransacaoNddVo obterRespostaTransacao(CloseableHttpResponse response)  {
+        try {
+            return UtilitarioJson.toObjectWithConfigureFailOnUnknowProperties(response, RespostaTransacaoNddVo.class, false);
         } catch (Exception e) {
             String prefixoErroLog = "NDD - Erro: ";
             LOGGER.error(prefixoErroLog, e);
@@ -161,7 +232,7 @@ public class AgenciadorFreteExternoNddDados implements IAgenciadorFreteExternoDa
      * @return O Map convertido
      */
     private Map<String, String> converteBodyParaMap(TokenNddBodyVo body) {
-        Map<String, String> map = new HashMap<>();
+        Map<String,String> map = new HashMap<>();
         map.put("grant_type", body.getGrantType());
         map.put("client_id", body.getClientId());
         if(body.getClientSecret() != null) {
