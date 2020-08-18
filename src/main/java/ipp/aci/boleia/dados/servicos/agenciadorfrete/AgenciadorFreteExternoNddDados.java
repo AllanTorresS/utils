@@ -44,8 +44,6 @@ public class AgenciadorFreteExternoNddDados implements IAgenciadorFreteExternoDa
 
     private static final String CHAVE_TOKEN_AUTENTICACAO = "NDD_TOKEN_AUTENTICACAO";
 
-    private static final Integer RESPOSTA_NDD_SUCESSO = 0;
-
     @Value("${ndd.api.endereco.url}")
     private String nddBaseUrl;
 
@@ -122,7 +120,7 @@ public class AgenciadorFreteExternoNddDados implements IAgenciadorFreteExternoDa
      * @throws ExcecaoServicoIndisponivel
      */
     private void trataResposta(RespostaTransacaoNddVo resposta) throws ExcecaoServicoIndisponivel {
-        if(resposta == null || resposta.getCode() == null || resposta.getCode().equals(RESPOSTA_NDD_SUCESSO)) {
+        if(resposta == null || resposta.getCode() == null) {
             throw new ExcecaoServicoIndisponivel(mensagens.obterMensagem("agenciador.frete.ndd.servico.inexistente"));
         }
     }
