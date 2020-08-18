@@ -22,14 +22,6 @@ public interface IAgenciadorFreteExternoDados {
     BigDecimal obterSaldoDeSaqueDisponivel(Transacao transacao) throws ExcecaoValidacao, ExcecaoServicoIndisponivel;
 
     /**
-     * Atualiza o saldo no fornecedor através da transação
-     * @param transacao A Tramsação a ser atualizada
-     * @throws ExcecaoValidacao Caso os dados de entrada estejam inconsistentes
-     * @throws ExcecaoServicoIndisponivel Caso o fornecedor esteja indisponível
-     */
-    void atualizarSaldo(Transacao transacao) throws ExcecaoValidacao, ExcecaoServicoIndisponivel;
-
-    /**
      * Confirma a transação no fornecedor
      * @param transacao A Tramsação a ser confirmada
      * @throws ExcecaoValidacao Caso os dados de entrada estejam inconsistentes

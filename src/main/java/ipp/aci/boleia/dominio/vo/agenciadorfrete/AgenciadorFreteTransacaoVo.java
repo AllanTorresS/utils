@@ -12,6 +12,7 @@ import javax.validation.constraints.Size;
  */
 public class AgenciadorFreteTransacaoVo {
 
+    private Long id;
     @NotNull
     private String numeroPedido;
     @NotNull
@@ -36,6 +37,7 @@ public class AgenciadorFreteTransacaoVo {
     }
 
     public AgenciadorFreteTransacaoVo(Transacao transacao) {
+        this.id = transacao.getId();
         this.numeroPedido = transacao.getPedido() != null ? transacao.getPedido().getNumero() : null;
         this.cpfMotorista = transacao.getMotorista() != null ? transacao.getMotorista().getCpf() : null;
         this.posto = new AgenciadorFretePostoBasicoVo(transacao.getPosto());
@@ -45,6 +47,14 @@ public class AgenciadorFreteTransacaoVo {
         this.status = StatusAutorizacao.obterPorValor(transacao.getStatus()).getLabel();
         this.motivoRecusa = transacao.getMotivoRecusa();
         this.codigoVip = transacao.getCodigoVip();
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getNumeroPedido() {

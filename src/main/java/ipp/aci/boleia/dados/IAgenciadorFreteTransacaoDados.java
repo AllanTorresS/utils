@@ -17,10 +17,17 @@ public interface IAgenciadorFreteTransacaoDados extends IRepositorioBoleiaDados<
     /**
      * Obtém transações a partir do número do pedido isolado pelo cpf do motorista
      * @param cpfMotorista Cpf do motorista
-     * @param pedido Número do pedido
+     * @param numeroPedido Número do pedido
      * @return Lista de transações pertencentes a um pedido
      */
-    List<Transacao> obterPorPedido(String cpfMotorista, String pedido);
+    List<Transacao> obterPorPedido(String cpfMotorista, String numeroPedido);
+
+    /**
+     * Obtém transações a partir do número do pedido isolado pelo cpf do motorista
+     * @param numeroPedido Número do pedido
+     * @return Lista de transações pertencentes a um pedido
+     */
+    List<Transacao> obterPorPedido(String numeroPedido);
 
     /**
      * Obtém as transações a partir de um cpf do motorista

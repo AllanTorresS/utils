@@ -29,10 +29,16 @@ public class OracleAgenciadorFreteTransacaoDados extends OracleRepositorioBoleia
     }
 
     @Override
-    public List<Transacao> obterPorPedido(String cpfMotorista, String pedido) {
+    public List<Transacao> obterPorPedido(String cpfMotorista, String numeroPedido) {
         return pesquisar(new ParametroOrdenacaoColuna("dataCriacao"),
                 new ParametroPesquisaIgual("motorista.cpf", cpfMotorista),
-                new ParametroPesquisaIgual("pedido.numero", pedido));
+                new ParametroPesquisaIgual("pedido.numero", numeroPedido));
+    }
+
+    @Override
+    public List<Transacao> obterPorPedido(String numeroPedido) {
+        return pesquisar(new ParametroOrdenacaoColuna("dataCriacao"),
+                new ParametroPesquisaIgual("pedido.numero", numeroPedido));
     }
 
     @Override

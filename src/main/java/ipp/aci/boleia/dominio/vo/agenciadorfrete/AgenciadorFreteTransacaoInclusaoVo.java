@@ -7,6 +7,9 @@ import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 
 public class AgenciadorFreteTransacaoInclusaoVo {
+
+    @NotNull
+    private String numeroPedido;
     @NotNull
     private String codigoAbastecimento;
     @NotNull
@@ -83,5 +86,13 @@ public class AgenciadorFreteTransacaoInclusaoVo {
 
     public void setCodigoVip(String codigoVip) {
         this.codigoVip = codigoVip;
+    }
+
+    public String getNumeroPedido() {
+        return numeroPedido;
+    }
+
+    public void setNumeroPedido(String numeroPedido) {
+        this.numeroPedido = numeroPedido;
     }
 }

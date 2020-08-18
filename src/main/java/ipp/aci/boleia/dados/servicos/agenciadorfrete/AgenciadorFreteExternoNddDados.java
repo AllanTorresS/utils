@@ -74,7 +74,8 @@ public class AgenciadorFreteExternoNddDados implements IAgenciadorFreteExternoDa
     private IClienteHttpDados clienteRest;
 
     @Override
-    public BigDecimal obterSaldoDeSaqueDisponivel(Transacao transacao) throws ExcecaoServicoIndisponivel {
+    public BigDecimal obterSaldoDeSaqueDisponivel(Transacao transacao) throws ExcecaoServicoIndisponivel, ExcecaoValidacao {
+        this.atualizarSaldo(transacao);
         String token = obterTokenAutenticacao();
         String url = nddBaseUrl + apiPath + ConstantesNdd.SALDO_API_ENDPOINT.replace("{orderNumber}", transacao.getPedido().getNumero());
         SaldoNddVo saldo = clienteRest.doGet(url, montarHeader(token), this::obterSaldoNdd);
@@ -84,8 +85,13 @@ public class AgenciadorFreteExternoNddDados implements IAgenciadorFreteExternoDa
         return saldo.getAmountAvailable();
     }
 
-    @Override
-    public void atualizarSaldo(Transacao transacao) throws ExcecaoValidacao, ExcecaoServicoIndisponivel {
+    /**
+     * Atualiza o saldo no fornecedor através da transação
+     * @param transacao A Tramsação a ser atualizada
+     * @throws ExcecaoValidacao Caso os dados de entrada estejam inconsistentes
+     * @throws ExcecaoServicoIndisponivel Caso o fornecedor esteja indisponível
+     */
+    private void atualizarSaldo(Transacao transacao) throws ExcecaoValidacao, ExcecaoServicoIndisponivel {
         validaTransacao(transacao);
         TransacaoSaldoNddVo body = new TransacaoSaldoNddVo(transacao);
         String token = obterTokenAutenticacao();
