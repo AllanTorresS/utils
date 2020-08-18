@@ -173,7 +173,7 @@ public class ConfiguracoesSeguranca extends WebSecurityConfigurerAdapter {
         CorsConfiguration corsConfigGeral = new CorsConfiguration();
         corsConfigGeral.setAllowedOrigins(Arrays.asList(allowedOrigins));
         corsConfigGeral.setAllowedMethods(Arrays.asList(ConfiguracoesCors.HTTP_METHODS));
-        corsConfigGeral.setAllowedHeaders(Arrays.asList("authorization", "content-type"));
+        corsConfigGeral.addAllowedHeader("*");
         corsConfigGeral.setAllowCredentials(true);
         corsConfigGeral.setMaxAge(3600L);
         source.registerCorsConfiguration("/**", corsConfigGeral);
@@ -181,6 +181,7 @@ public class ConfiguracoesSeguranca extends WebSecurityConfigurerAdapter {
         CorsConfiguration corsConfigApiFrotista = new CorsConfiguration();
         corsConfigApiFrotista.setAllowedMethods(Arrays.asList(ConfiguracoesCors.HTTP_METHODS));
         corsConfigApiFrotista.addAllowedOrigin("*");
+        corsConfigApiFrotista.addAllowedHeader("*");
         corsConfigApiFrotista.setAllowCredentials(false);
         corsConfigApiFrotista.setMaxAge(3600L);
         source.registerCorsConfiguration("/api/frotista/**", corsConfigApiFrotista);
@@ -188,6 +189,7 @@ public class ConfiguracoesSeguranca extends WebSecurityConfigurerAdapter {
         CorsConfiguration corsConfigApiExterna = new CorsConfiguration();
         corsConfigApiExterna.setAllowedMethods(Arrays.asList(ConfiguracoesCors.HTTP_METHODS));
         corsConfigApiExterna.addAllowedOrigin("*");
+        corsConfigApiExterna.addAllowedHeader("*");
         corsConfigApiExterna.setAllowCredentials(false);
         corsConfigApiExterna.setMaxAge(3600L);
         source.registerCorsConfiguration("/api/externo/**", corsConfigApiExterna);
