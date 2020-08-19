@@ -16,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -31,6 +32,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -103,7 +105,22 @@ public class FiltroAutenticacaoJwt implements Filter {
             }
         }
 
+        adicionarSameSiteResponseHeader(request, response);
         chain.doFilter(request, response);
+    }
+
+    /**
+     * Adiciona no cabeçalho da resposta o cookie cross site da session como samesite none e secure (Google versão >=80)
+     * para todas as requisições
+     *
+     * @param response A resposta
+     */
+    private void adicionarSameSiteResponseHeader(HttpServletRequest request, HttpServletResponse response) {
+
+        HttpSession sessao = request.getSession(false);
+        if (sessao != null) {
+            response.setHeader(HttpHeaders.SET_COOKIE, "SESSION="+sessao.getId()+"; SameSite=None; Secure");
+        }
     }
 
     /**
