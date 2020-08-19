@@ -219,7 +219,7 @@ public class AgenciadorFreteExternoNddDados implements IAgenciadorFreteExternoDa
     }
 
     /**
-     * atualizar o token da Ndd
+     * Atualizar o token da Ndd
      * @param token o TokenNddVo
      * @return O vo que representa o token da Ndd
      * @throws ExcecaoServicoIndisponivel Caso a ndd não responda corretamente
