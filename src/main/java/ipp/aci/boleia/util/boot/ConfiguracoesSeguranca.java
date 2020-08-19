@@ -39,12 +39,16 @@ import org.springframework.session.ExpiringSession;
 import org.springframework.session.FindByIndexNameSessionRepository;
 import org.springframework.session.MapSessionRepository;
 import org.springframework.session.security.SpringSessionBackedSessionRegistry;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -80,6 +84,9 @@ public class ConfiguracoesSeguranca extends WebSecurityConfigurerAdapter {
 
     @Value("${max.sessions.per.user}")
     private Integer maximoSessoesPorUsuario;
+
+    @Value("${cors.allowed.origins}")
+    private String[] allowedOrigins;
 
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -151,6 +158,43 @@ public class ConfiguracoesSeguranca extends WebSecurityConfigurerAdapter {
                 .and()
                 .requiresChannel().anyRequest().requiresSecure();
         }
+    }
+
+    /**
+     * Define configurações de CORS para o Spring Security, nome do metodo deve se manter corsConfigurationSource conforme documentação.
+     *
+     * @return retorna as configurações de CORS mapeadas por padrões de url.
+     */
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource()
+    {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+
+        CorsConfiguration corsConfigGeral = new CorsConfiguration();
+        corsConfigGeral.setAllowedOrigins(Arrays.asList(allowedOrigins));
+        corsConfigGeral.setAllowedMethods(Arrays.asList(ConfiguracoesCors.HTTP_METHODS));
+        corsConfigGeral.addAllowedHeader("*");
+        corsConfigGeral.setAllowCredentials(true);
+        corsConfigGeral.setMaxAge(3600L);
+        source.registerCorsConfiguration("/**", corsConfigGeral);
+
+        CorsConfiguration corsConfigApiFrotista = new CorsConfiguration();
+        corsConfigApiFrotista.setAllowedMethods(Arrays.asList(ConfiguracoesCors.HTTP_METHODS));
+        corsConfigApiFrotista.addAllowedOrigin("*");
+        corsConfigApiFrotista.addAllowedHeader("*");
+        corsConfigApiFrotista.setAllowCredentials(false);
+        corsConfigApiFrotista.setMaxAge(3600L);
+        source.registerCorsConfiguration("/api/frotista/**", corsConfigApiFrotista);
+
+        CorsConfiguration corsConfigApiExterna = new CorsConfiguration();
+        corsConfigApiExterna.setAllowedMethods(Arrays.asList(ConfiguracoesCors.HTTP_METHODS));
+        corsConfigApiExterna.addAllowedOrigin("*");
+        corsConfigApiExterna.addAllowedHeader("*");
+        corsConfigApiExterna.setAllowCredentials(false);
+        corsConfigApiExterna.setMaxAge(3600L);
+        source.registerCorsConfiguration("/api/externo/**", corsConfigApiExterna);
+
+        return source;
     }
 
     /**
