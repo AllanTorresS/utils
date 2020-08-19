@@ -105,8 +105,21 @@ public class FiltroAutenticacaoJwt implements Filter {
             }
         }
 
-        adicionarSameSiteResponseHeader(request, response);
+        if (isMetodoDiferenteDeOptions(request) && isObjetoEstatico(request)) {
+            adicionarSameSiteResponseHeader(request, response);
+        }
+
         chain.doFilter(request, response);
+    }
+
+    /**
+     * Verifica se uma URL aponta para um recurso estático
+     * @param request a requisição
+     * @return true caso a URL aponte para um recurso estático, false caso contrário
+     */
+    private boolean isObjetoEstatico(HttpServletRequest request) {
+        String url = request.getRequestURL().toString();
+        return url.contains(Rotas.BASE_API_ESTATICA + "/");
     }
 
     /**
