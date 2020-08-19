@@ -67,4 +67,36 @@ public class DocumentoJde {
     public void setCia(String cia) {
         this.cia = cia;
     }
+
+    public String getMensagemErro() {
+        return mensagemErro;
+    }
+
+    public void setMensagemErro(String mensagemErro) {
+        this.mensagemErro = mensagemErro;
+    }
+
+    public Integer getNumeroTentativasEnvio() {
+        return numeroTentativasEnvio;
+    }
+
+    public void setNumeroTentativasEnvio(Integer numeroTentativasEnvio) {
+        this.numeroTentativasEnvio = numeroTentativasEnvio;
+    }
+
+    public Long getVersao() {
+        return versao;
+    }
+
+    public void setVersao(Long versao) {
+        this.versao = versao;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
 }
