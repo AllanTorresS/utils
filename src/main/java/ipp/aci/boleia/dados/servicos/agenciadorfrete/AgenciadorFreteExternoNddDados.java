@@ -196,15 +196,38 @@ public class AgenciadorFreteExternoNddDados implements IAgenciadorFreteExternoDa
     private String obterTokenAutenticacao() throws ExcecaoServicoIndisponivel {
         TokenNddVo token = chaveValorDados.obter(NOME_CHAVE_NDD ,CHAVE_TOKEN_AUTENTICACAO);
         if(token == null || token.getToken() == null) {
-            TokenNddBodyVo body = new TokenNddBodyVo(clientId, ConstantesNdd.TIPO_AUTENTICACAO_CRIACAO);
-            body.setClientSecret(clientSecret);
-            token = obterTokenNdd(body);
+            token = criarTokenNdd();
         } else if(DateUtils.addMinutes(ambiente.buscarDataAmbiente(), ConstantesNdd.MINUTOS_EXPIRACAO_TOKEN).compareTo(token.getDataExpiracao())>0){
-            TokenNddBodyVo body = new TokenNddBodyVo(clientId, ConstantesNdd.TIPO_AUTENTICACAO_ATUALIZACAO);
-            body.setRefreshToken(token.getRefreshToken());
-            token = obterTokenNdd(body);
+            try{
+                token = atualizarTokenNdd(token);
+            }catch (ExcecaoServicoIndisponivel e){
+                token = criarTokenNdd();
+            }
         }
         return token.getToken();
+    }
+
+    /**
+     * Criar token da Ndd
+     * @return O vo que representa o token da Ndd
+     * @throws ExcecaoServicoIndisponivel Caso a ndd não responda corretamente
+     */
+    private TokenNddVo criarTokenNdd() throws ExcecaoServicoIndisponivel {
+        TokenNddBodyVo body = new TokenNddBodyVo(clientId, ConstantesNdd.TIPO_AUTENTICACAO_CRIACAO);
+        body.setClientSecret(clientSecret);
+        return obterTokenNdd(body);
+    }
+
+    /**
+     * atualizar o token da Ndd
+     * @param token o TokenNddVo
+     * @return O vo que representa o token da Ndd
+     * @throws ExcecaoServicoIndisponivel Caso a ndd não responda corretamente
+     */
+    private TokenNddVo atualizarTokenNdd(TokenNddVo token) throws ExcecaoServicoIndisponivel {
+        TokenNddBodyVo body = new TokenNddBodyVo(clientId, ConstantesNdd.TIPO_AUTENTICACAO_ATUALIZACAO);
+        body.setRefreshToken(token.getRefreshToken());
+        return obterTokenNdd(body);
     }
 
     /**
