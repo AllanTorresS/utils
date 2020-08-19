@@ -102,7 +102,7 @@ public class FrotaPontoVendaSd {
         } else{
             retorno = frotaPontoVendaDados.armazenar(frotaPontoVenda);            
         }        
-        armazenarHistoricoFrotaPontoVenda(frotaPontoVenda);
+        armazenarHistoricoFrotaPontoVenda(frotaPontoVenda, justificativa != null);
         
         return retorno;
     }
@@ -129,6 +129,16 @@ public class FrotaPontoVendaSd {
      * @param entidade o {@link FrotaPontoVenda} que o historico sera salvo
      */
     public void armazenarHistoricoFrotaPontoVenda(FrotaPontoVenda entidade) {
+        armazenarHistoricoFrotaPontoVenda(entidade, true);
+    }
+    
+    /**
+     * Preenche e armazena o historico de um {@link FrotaPontoVenda}.
+     * 
+     * @param entidade o {@link FrotaPontoVenda} que o historico sera salvo
+     * @param gravarUsuario se deve gravar o usuário logado no historico
+     */
+    private void armazenarHistoricoFrotaPontoVenda(FrotaPontoVenda entidade, boolean gravarUsuario) {
         HistoricoFrotaPontoVenda historicoFrotaPontoVenda = new HistoricoFrotaPontoVenda();
         historicoFrotaPontoVenda.setFrotaPontoVenda(entidade);
         historicoFrotaPontoVenda.setUsuario(ambiente.getUsuarioLogado());
