@@ -13,7 +13,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -65,7 +64,7 @@ public class Consolidado implements IPersistente {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_COBRANCA")
-    private Cobranca cobranca;
+    private AgenciadorFreteCobranca cobranca;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_REEMBOLSO")
@@ -141,11 +140,11 @@ public class Consolidado implements IPersistente {
         this.agenciadorFrete = agenciadorFrete;
     }
 
-    public Cobranca getCobranca() {
+    public AgenciadorFreteCobranca getCobranca() {
         return cobranca;
     }
 
-    public void setCobranca(Cobranca cobranca) {
+    public void setCobranca(AgenciadorFreteCobranca cobranca) {
         this.cobranca = cobranca;
     }
 

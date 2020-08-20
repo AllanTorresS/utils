@@ -9,26 +9,26 @@ import java.util.Date;
  */
 public class FiltroRelatorioCobrancaVo extends BaseFiltroPaginado {
 
-    private Date de;
-    private Date ate;
+    private String de;
+    private String ate;
 
     public FiltroRelatorioCobrancaVo () {
-
+        //Construtor default
     }
 
-    public Date getDe() {
+    public String getDe() {
         return de;
     }
 
-    public void setDe(Date de) {
+    public void setDe(String de) {
         this.de = de;
     }
 
-    public Date getAte() {
+    public String getAte() {
         return ate;
     }
 
-    public void setAte(Date ate) {
+    public void setAte(String ate) {
         this.ate = ate;
     }
 }
