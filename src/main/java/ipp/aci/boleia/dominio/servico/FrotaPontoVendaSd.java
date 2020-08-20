@@ -185,6 +185,24 @@ public class FrotaPontoVendaSd {
     public boolean validarVisibilidade(Long idFrota, Long idPontoDeVenda) {
         return this.validarVisibilidade(idFrota, pontoDeVendaDados.obterPorId(idPontoDeVenda));
     }
+    
+    /**
+     * Realiza validação se um {@link PontoDeVenda} deve estar visível e não bloqueado para uma {@link Frota}
+     * 
+     * @param idFrota Identificador da frota
+     * @param pontoDeVenda o Ponto de venda
+     * @return true caso o posto esteja disponpivel para a frota.
+     */
+    public boolean validarDisponibilidade(Long idFrota, PontoDeVenda pontoDeVenda) {
+        FrotaPontoVenda frotaPontoVenda = frotaPontoVendaDados.obterFrotaPontoVenda(idFrota, pontoDeVenda.getId());
+        if (pontoDeVenda.isVisivelApenasParaFrotasVinculadas() && (frotaPontoVenda == null || !frotaPontoVenda.isVinculoAtivo())){
+            return false;
+        }
+        if (frotaPontoVenda != null && frotaPontoVenda.isBloqueado()){
+            return false;
+        }
+        return true;
+    }
 
     /**
      * Verifica se a relação FrotaPontoVenda estava bloqueada na data do abastecimento.
