@@ -30,7 +30,7 @@ public class ValidacaoAgenciadorFreteTemSaldoSaqueDisponivelSd {
      * @throws ExcecaoServicoIndisponivel Caso a validação falhe
      */
     public void validar(Transacao transacao) throws ExcecaoValidacao, ExcecaoServicoIndisponivel {
-        if(transacao.getSaque().getValorSolicitado() != null){
+        if(transacao.getSaque() != null && transacao.getSaque().getValorSolicitado() != null){
             BigDecimal saldoSaque = agenciadorFreteExternoDados.obterSaldoDeSaqueDisponivel(transacao);
             if(transacao.getSaque().getValorSolicitado().compareTo(saldoSaque) > 0){
                 throw new ExcecaoValidacao(mensagens.obterMensagem("agentefrete.api.validacao.saldo.insuficiente.agenciador",
