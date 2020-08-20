@@ -4,6 +4,7 @@ import ipp.aci.boleia.dominio.agenciadorfrete.Pedido;
 import ipp.aci.boleia.dominio.agenciadorfrete.Transacao;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 
 /**
@@ -20,7 +21,7 @@ public class TransacaoNddVo {
 
     public TransacaoNddVo(Transacao transacao) {
         this.orderNumber = transacao.getPedido().getNumero();
-        this.supplyValue = transacao.getAbastecimento().getPrecoCombustivel().multiply(transacao.getAbastecimento().getLitragem());
+        this.supplyValue = transacao.getAbastecimento().getPrecoCombustivel().multiply(transacao.getAbastecimento().getLitragem()).setScale(2, RoundingMode.HALF_UP);
         this.withdrawalAmount = transacao.getSaque().getValorSolicitado();
     }
 
