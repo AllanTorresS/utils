@@ -20,7 +20,7 @@ public class TransacaoNddVo {
 
     public TransacaoNddVo(Transacao transacao) {
         this.orderNumber = transacao.getPedido().getNumero();
-        this.supplyValue = transacao.getAbastecimento().getPrecoCombustivel().multiply(transacao.getAbastecimento().getLitragem());
+        this.supplyValue = transacao.getAbastecimento().getPrecoCombustivel().multiply(transacao.getAbastecimento().getLitragem()).setScale(2);
         this.withdrawalAmount = transacao.getSaque().getValorSolicitado();
     }
 
