@@ -54,6 +54,10 @@ import java.util.StringJoiner;
 @Table(name = "PONTO_VENDA")
 public class PontoDeVenda implements IPersistente, IExclusaoLogica, IPertenceRevendedor {
 
+    /**
+     * Foi necessário a utilização de uma subquery em um @Formula para que fosse possível realizar a ordenação paginada
+     * do ponto de venda por cnpj sem grandes mudanças na estrutura de pesquisa via Criteria.
+     */
     private static final String CNPJ_FORMULA = " (SELECT * FROM" +
             " 	(" +
             " 	SELECT" +
@@ -622,7 +626,7 @@ public class PontoDeVenda implements IPersistente, IExclusaoLogica, IPertenceRev
     }
 
     public Integer getStatusHabilitacao() {
-        return statusHabilitacao;
+        return statusHabilitacao != null ? statusHabilitacao : StatusHabilitacaoPontoVenda.DESABILITADO.getValue();
     }
 
     public void setStatusHabilitacao(Integer statusHabilitacao) {
