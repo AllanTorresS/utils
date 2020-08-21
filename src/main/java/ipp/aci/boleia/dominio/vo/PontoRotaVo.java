@@ -1,7 +1,5 @@
 package ipp.aci.boleia.dominio.vo;
 
-import ipp.aci.boleia.visao.dto.PontoRotaDTO;
-
 import java.math.BigDecimal;
 
 /**
@@ -19,15 +17,11 @@ public class PontoRotaVo {
     public PontoRotaVo() { }
 
     /**
-     * Cria um ponto a partir de {@link PontoRotaDTO}
-     * @param dto {@link PontoRotaDTO} DTO Utilizado para criar a representação do ponto
+     * Constroi um ponto geográfico para requisição ao roteirizador
+     * @param latitude Latitude do ponto da rota
+     * @param longitude Longitude do ponto da rota
+     * @param ordem Ordem do ponto na rota
      */
-    public PontoRotaVo(PontoRotaDTO dto) {
-        this.latitude = dto.getLatitude();
-        this.longitude = dto.getLongitude();
-        this.ordem = dto.getOrdem();
-    }
-
     public PontoRotaVo(BigDecimal latitude, BigDecimal longitude, Integer ordem) {
         this.latitude = latitude;
         this.longitude = longitude;

@@ -1,7 +1,5 @@
 package ipp.aci.boleia.dominio.vo;
 
-import ipp.aci.boleia.visao.dto.RotaCalculoDTO;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,18 +18,11 @@ public class RequisicaoRoteirizadorVo {
     public RequisicaoRoteirizadorVo() { }
 
     /**
-     * Representa uma requisição criada a partir de {@link RotaCalculoDTO}
-     * @param dto {@link RotaCalculoDTO} Utilizado para criar a requisição
+     * Constrói uma requisição para envio ao algoritmo de roteirização
+     * @param pontosRota Lista de pontos da rota
+     * @param infoVeiculo Informações do veículo
+     * @param frota Informações da Frota
      */
-    public RequisicaoRoteirizadorVo(RotaCalculoDTO dto) {
-        dto.getPontos()
-                .stream()
-                .map(pontoRotaDTO -> new PontoRotaVo(pontoRotaDTO))
-                .forEach(this.pontosRota::add);
-        this.infoVeiculo = new VeiculoRotaVo(dto.getVeiculo());
-        this.frota = dto.getFrota().getId();
-    }
-
     public RequisicaoRoteirizadorVo(List<PontoRotaVo> pontosRota, VeiculoRotaVo infoVeiculo, Long frota) {
         this.pontosRota = pontosRota;
         this.infoVeiculo = infoVeiculo;

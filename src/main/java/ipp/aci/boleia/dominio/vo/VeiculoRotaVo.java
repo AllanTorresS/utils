@@ -1,7 +1,5 @@
 package ipp.aci.boleia.dominio.vo;
 
-import ipp.aci.boleia.visao.dto.VeiculoCalculoDTO;
-
 /**
  * VO para obtenção de informações de veículos para cálculo de Rotas
  */
@@ -18,18 +16,17 @@ public class VeiculoRotaVo {
     public VeiculoRotaVo() { }
 
     /**
-     * Cria um VO a partir de um {@link VeiculoCalculoDTO}
-     * @param dto {@link} Representação do veículo
+     * Cria uma representação de veículo para a roteirização
+     * @param kmlVeiculo Consumo médio do veículo
+     * @param combustivel Tipo de combustível usado
+     * @param percentualTanque Percentual do tanque considerado para cálculo
+     * @param volumeTotalTanque Volume total do tanque
      */
-    public VeiculoRotaVo(VeiculoCalculoDTO dto) {
-        this.kmlVeiculo = dto.getConsumo();
-        this.percentualTanque = dto.getPercentual();
-        this.volumeTotalTanque = dto.getCapacidade();
-        dto.getCombustivelMotor()
-                .getTipoCombustiveis()
-                .stream()
-                .map(tipoCombustivelDTO -> tipoCombustivelDTO.getId())
-                .findFirst().ifPresent(this::setCombustivel);
+    public VeiculoRotaVo(String kmlVeiculo, Long combustivel, String percentualTanque, Integer volumeTotalTanque) {
+        this.kmlVeiculo = kmlVeiculo;
+        this.combustivel = combustivel;
+        this.percentualTanque = percentualTanque;
+        this.volumeTotalTanque = volumeTotalTanque;
     }
 
     public String getKmlVeiculo() {
