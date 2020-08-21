@@ -12,6 +12,7 @@ public class FiltroPesquisaRotaVo extends BaseFiltroPaginado {
     private String destino;
     private Boolean possuiPostos;
     private EntidadeVo pontoVenda;
+    private Boolean rotaInteligente;
 
     public String getNome() {
         return nome;
@@ -52,4 +53,9 @@ public class FiltroPesquisaRotaVo extends BaseFiltroPaginado {
     public void setPontoVenda(EntidadeVo pontoVenda) {
         this.pontoVenda = pontoVenda;
     }
+
+    public Boolean getRotaInteligente() { return rotaInteligente; }
+
+    public void setRotaInteligente(Boolean rotaInteligente) { this.rotaInteligente = rotaInteligente; }
+
 }

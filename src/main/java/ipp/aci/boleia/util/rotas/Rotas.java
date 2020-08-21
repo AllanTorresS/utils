@@ -25,7 +25,6 @@ public final  class Rotas {
     public static final  String SISTEMA_EXTERNO_ACESSO_API            = BASE_API_PUBLICA + "/externo/acesso";
     public static final  String CREDENCIAMENT0_POSTO_ACESSO_API       = BASE_API_PUBLICA + "/credenciamentoPosto/acesso";
     public static final  String CREDENCIAMENT0_FROTA_ACESSO_API       = BASE_API_PUBLICA + "/credenciamentoFrota/acesso";
-    public static final  String MODULO_INTERNO_ACESSO_API             = BASE_API_PUBLICA + "/moduloInterno/acesso";
 
     // APIs estaticas
     public static final  String API_ESTATICA_MOTORISTA       = BASE_API_ESTATICA + "/motorista";
@@ -93,6 +92,8 @@ public final  class Rotas {
     public static final  String QUESTIONARIO_API                     = BASE_API + "/questionario";
     public static final  String CEP_API                              = BASE_API + "/cep";
     public static final  String ROTA_API                             = BASE_API + "/rota";
+    public static final  String ROTEIRIZADOR_API                     = ROTA_API + "/ri";
+    public static final  String PLANO_VIAGEM_API                     = BASE_API + "/planoViagem";
     public static final  String SERVICO_API                          = BASE_API + "/servico";
     public static final  String ACEITAR_PV_API                       = BASE_API + "/aceitarPv";
     public static final  String TIPO_PESSOA_API                      = BASE_API + "/tipoPessoa";
@@ -106,7 +107,6 @@ public final  class Rotas {
     public static final  String PEDIDO_CREDITO_FROTA_API             = BASE_API + "/pedidoCreditoFrota";
     public static final  String CONFIGURACAO_API                     = BASE_API + "/configuracao";
     public static final  String SISTEMA_EXTERNO_API                  = BASE_API + "/sistemaExterno";
-    public static final  String MODULO_INTERNO_API                   = BASE_API + "/moduloInterno";
     public static final  String INTEGRADOR_API                       = BASE_API + "/integrador";
     public static final  String SALDO_FROTA_API                      = BASE_API + "/saldoFrota";
     public static final  String CONFIGURACAO_ROTINA_AVISO_DEBITO     = BASE_API + "/configuracaoRotinaAvisoDebito";

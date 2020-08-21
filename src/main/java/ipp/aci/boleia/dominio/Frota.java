@@ -335,6 +335,9 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @Column(name="ID_FROTA_LEVE")
     private Boolean frotaLeve;
 
+    @Column(name="ID_ROTEIRIZADOR_INTELIGENTE")
+    private Boolean roteirizadorInteligente;
+
     @Column(name="ID_EXIBIR_DESCONTO_TOTAL")
     private Boolean exibirDesconto;
 
@@ -1125,6 +1128,10 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     public void setFrotaLeve(Boolean frotaLeve) {
         this.frotaLeve = frotaLeve;
     }
+
+    public Boolean getRoteirizadorInteligente() { return roteirizadorInteligente != null ? roteirizadorInteligente : false; }
+
+    public void setRoteirizadorInteligente(Boolean roteirizadorInteligente) { this.roteirizadorInteligente = roteirizadorInteligente; }
 
     public Date getDataSaldoZerado() {
         return dataSaldoZerado;
