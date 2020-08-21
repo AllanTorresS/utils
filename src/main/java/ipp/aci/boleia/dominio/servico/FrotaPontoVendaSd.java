@@ -141,7 +141,7 @@ public class FrotaPontoVendaSd {
     private void armazenarHistoricoFrotaPontoVenda(FrotaPontoVenda entidade, boolean gravarUsuario) {
         HistoricoFrotaPontoVenda historicoFrotaPontoVenda = new HistoricoFrotaPontoVenda();
         historicoFrotaPontoVenda.setFrotaPontoVenda(entidade);
-        historicoFrotaPontoVenda.setUsuario(ambiente.getUsuarioLogado());
+        historicoFrotaPontoVenda.setUsuario(gravarUsuario ? ambiente.getUsuarioLogado() : null);
         historicoFrotaPontoVenda.setDataHistorico(ambiente.buscarDataAmbiente());
         historicoFrotaPontoVenda.setStatusVinculo(entidade.getStatusVinculo());
         historicoFrotaPontoVenda.setJustificativaVinculo(entidade.getJustificativaVinculo());
