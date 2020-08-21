@@ -205,6 +205,12 @@ public final class ChavePermissao {
     public static final String API_EXTERNO_TELEMETRIA_INCLUIR                       = API_EXTERNO_PREFIX + "API_EXTERNO_TELEMETRIA_INCLUIR" + SPRING_ROLE_SUFFIX;
     public static final String API_EXTERNO_CONSULTAR_MOTORISTA                      = API_EXTERNO_PREFIX + "API_EXTERNO_CONSULTAR_MOTORISTA" + SPRING_ROLE_SUFFIX;
 
+    // Permissão da API de Módulos Internos.
+    public static final String API_MODULO_INTERNO                                   = SPRING_ROLE_PREFIX + "API_MODULO_INTERNO" + SPRING_ROLE_SUFFIX;
+    public static final String API_MODULO_INTERNO_PREFIX                            = API_MODULO_INTERNO + " or " + SPRING_ROLE_PREFIX;
+    public static final String API_MODULO_INTERNO_INCLUIR                           = API_MODULO_INTERNO_PREFIX + "API_MODULO_INTERNO_INCLUIR" + SPRING_ROLE_SUFFIX;
+    public static final String API_MODULO_INTERNO_EXCLUIR                           = API_MODULO_INTERNO_PREFIX + "API_MODULO_INTERNO_EXCLUIR" + SPRING_ROLE_SUFFIX;
+    public static final String API_MODULO_INTERNO_EDITAR                            = API_MODULO_INTERNO_PREFIX + "API_MODULO_INTERNO_EDITAR" + SPRING_ROLE_SUFFIX;
 
     // Permissão da API de Sistemas Externos POS.
     public static final String API_EXTERNO_CONSULTAR_POSTO_ABADI                = SPRING_ROLE_PREFIX + "API_EXTERNO_CONSULTAR_POSTO_ABADI"               + SPRING_ROLE_SUFFIX;
@@ -244,6 +250,17 @@ public final class ChavePermissao {
     public static final String API_CREDENCIAMENTO_FROTA_ATUALIZAR_LEAD         = SPRING_ROLE_PREFIX + "API_CREDENCIAMENTO_FROTA_ATUALIZAR_LEAD"        + SPRING_ROLE_SUFFIX;
     public static final String API_CREDENCIAMENTO_FROTA_CONSULTAR_LEAD         = SPRING_ROLE_PREFIX + "API_CREDENCIAMENTO_FROTA_CONSULTAR_LEAD"        + SPRING_ROLE_SUFFIX;
     public static final String API_CREDENCIAMENTO_FROTA_PESQUISAR_CEP          = SPRING_ROLE_PREFIX + "API_CREDENCIAMENTO_FROTA_PESQUISAR_CEP"         + SPRING_ROLE_SUFFIX;
+
+    // Permissão da API de Sistema
+    public static final String API_SISTEMA_EXECUTAR_ROTINA                     = SPRING_ROLE_PREFIX + "API_SISTEMA_EXECUTAR_ROTINA"                    + SPRING_ROLE_SUFFIX;
+    public static final String API_SISTEMA_OBTER_ROTINAS                       = SPRING_ROLE_PREFIX + "API_SISTEMA_OBTER_ROTINAS"                      + SPRING_ROLE_SUFFIX;
+
+    //Permissão da API do Agendador
+    public static final String API_AGENDADOR_COMUNICAR_FIM_EXECUCAO            = SPRING_ROLE_PREFIX + "API_AGENDADOR_COMUNICAR_FIM_EXECUCAO"           + SPRING_ROLE_SUFFIX;
+    public static final String API_AGENDADOR_PAUSAR_TAREFA                     = SPRING_ROLE_PREFIX + "API_AGENDADOR_PAUSAR_TAREFA"                    + SPRING_ROLE_SUFFIX;
+    public static final String API_AGENDADOR_RETOMAR_TAREFA                    = SPRING_ROLE_PREFIX + "API_AGENDADOR_RETOMAR_TAREFA"                   + SPRING_ROLE_SUFFIX;
+    public static final String API_AGENDADOR_EXECUTAR_ROTINA_MANUALMENTE       = SPRING_ROLE_PREFIX + "API_AGENDADOR_EXECUTAR_ROTINA_MANUALMENTE"      + SPRING_ROLE_SUFFIX;
+    public static final String API_AGENDADOR_OBTER_TAREFAS_AGENDADAS           = SPRING_ROLE_PREFIX + "API_AGENDADOR_OBTER_TAREFAS_AGENDADAS"          + SPRING_ROLE_SUFFIX;
 
     // Permissão da API do roteirizador inteligente
     public static final String ROTA_INTELIGENTE_CONSULTAR_E_VISUALIZAR         = SPRING_ROLE_PREFIX + "ROTA_INTELIGENTE_CONSULTAR_E_VISUALIZAR" + SPRING_ROLE_SUFFIX;

@@ -25,6 +25,7 @@ public final  class Rotas {
     public static final  String SISTEMA_EXTERNO_ACESSO_API            = BASE_API_PUBLICA + "/externo/acesso";
     public static final  String CREDENCIAMENT0_POSTO_ACESSO_API       = BASE_API_PUBLICA + "/credenciamentoPosto/acesso";
     public static final  String CREDENCIAMENT0_FROTA_ACESSO_API       = BASE_API_PUBLICA + "/credenciamentoFrota/acesso";
+    public static final  String MODULO_INTERNO_ACESSO_API             = BASE_API_PUBLICA + "/moduloInterno/acesso";
 
     // APIs estaticas
     public static final  String API_ESTATICA_MOTORISTA       = BASE_API_ESTATICA + "/motorista";
@@ -107,6 +108,7 @@ public final  class Rotas {
     public static final  String PEDIDO_CREDITO_FROTA_API             = BASE_API + "/pedidoCreditoFrota";
     public static final  String CONFIGURACAO_API                     = BASE_API + "/configuracao";
     public static final  String SISTEMA_EXTERNO_API                  = BASE_API + "/sistemaExterno";
+    public static final  String MODULO_INTERNO_API                   = BASE_API + "/moduloInterno";
     public static final  String INTEGRADOR_API                       = BASE_API + "/integrador";
     public static final  String SALDO_FROTA_API                      = BASE_API + "/saldoFrota";
     public static final  String CONFIGURACAO_ROTINA_AVISO_DEBITO     = BASE_API + "/configuracaoRotinaAvisoDebito";
