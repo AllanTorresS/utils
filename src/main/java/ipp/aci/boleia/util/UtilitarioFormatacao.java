@@ -429,6 +429,20 @@ public final class UtilitarioFormatacao {
     }
 
     /**
+     * Formata um CPF para o formato de CPF oculto.
+     *
+     * @param cpf Um objeto contendo o CPF
+     * @return O CPF formatado
+     */
+    public static String formatarCpfOcultoApresentacao(Serializable cpf) {
+        if(cpf != null) {
+            String cpfTratado = formatarNumeroZerosEsquerda(cpf, 11);
+            return formatarNumero(cpfTratado.substring(8), 3, ConstantesFormatacao.FORMATO_CPF_OCULTO);
+        }
+        return null;
+    }
+
+    /**
      * Formata um CNPJ ou CPF
      *
      * @param valor O valor a ser formatado

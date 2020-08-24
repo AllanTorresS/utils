@@ -4,7 +4,6 @@ import ipp.aci.boleia.dados.IArmazenamentoDados;
 import ipp.aci.boleia.dados.IArquivoDados;
 import ipp.aci.boleia.dados.IDispositivoMotoristaPedidoDados;
 import ipp.aci.boleia.dados.IMotorGeracaoRelatoriosDados;
-import ipp.aci.boleia.dados.IMotoristaDados;
 import ipp.aci.boleia.dados.INotaFiscalDados;
 import ipp.aci.boleia.dados.IPontoDeVendaDados;
 import ipp.aci.boleia.dados.IRepositorioBoleiaDados;
@@ -37,9 +36,6 @@ public class ArmazenamentoArquivosSd {
     private IArmazenamentoDados armazenamentoArquivos;
 
     @Autowired
-    private IMotoristaDados motoristaDados;
-
-    @Autowired
     private INotaFiscalDados notaFiscalDados;
 
     @Autowired
@@ -62,7 +58,6 @@ public class ArmazenamentoArquivosSd {
     @PostConstruct
     public void montarMapaRepositorios() {
         repositoriosPorTipoArquivo = new HashMap<>();
-        repositoriosPorTipoArquivo.put(TipoArquivo.FOTO_MOTORISTA, motoristaDados);
         repositoriosPorTipoArquivo.put(TipoArquivo.NOTA_FISCAL, notaFiscalDados);
         repositoriosPorTipoArquivo.put(TipoArquivo.FOTO_HODOMETRO_HORIMETRO, dispositivoMotoristaPedidoDados);
         repositoriosPorTipoArquivo.put(TipoArquivo.FOTO_PONTO_VENDA, pontoVendaDados);

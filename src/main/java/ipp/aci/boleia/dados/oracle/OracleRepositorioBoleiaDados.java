@@ -4,6 +4,7 @@ import ipp.aci.boleia.dados.IRepositorioBoleiaDados;
 import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.interfaces.IExclusaoLogica;
+import ipp.aci.boleia.dominio.interfaces.IExclusaoLogicaComData;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
 import ipp.aci.boleia.dominio.interfaces.IPertenceMotorista;
@@ -144,6 +145,12 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
                 return null;
             }
         }
+        if (t instanceof IExclusaoLogicaComData) {
+            Boolean excluido = ((IExclusaoLogicaComData) t).getExcluido();
+            if (excluido != null && excluido) {
+                return null;
+            }
+        }
         if (comIsolamento) {
             UtilitarioIsolamentoInformacoes.exigirPermissaoAcesso(t, ambiente.getUsuarioLogado());
         }
@@ -175,6 +182,9 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
             if (t instanceof IExclusaoLogica) {
                 ((IExclusaoLogica) t).setExcluido(false);
             }
+            if (t instanceof IExclusaoLogicaComData) {
+                ((IExclusaoLogicaComData) t).setExcluido(false);
+            }
             if (t != null && t.getId() != null && t.getId() > 0) {
                 t = getGerenciadorDeEntidade().merge(t);
             } else {
@@ -195,6 +205,9 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
                 UtilitarioIsolamentoInformacoes.exigirPermissaoAcesso(t, ambiente.getUsuarioLogado());
                 if (t instanceof IExclusaoLogica) {
                     ((IExclusaoLogica) t).setExcluido(false);
+                }
+                if (t instanceof IExclusaoLogicaComData) {
+                    ((IExclusaoLogicaComData) t).setExcluido(false);
                 }
                 if (t != null && t.getId() != null && t.getId() > 0) {
                     t = getGerenciadorDeEntidade().merge(t);
@@ -238,6 +251,10 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
             }
             if (t instanceof IExclusaoLogica) {
                 ((IExclusaoLogica) t).setExcluido(true);
+                getGerenciadorDeEntidade().merge(t);
+            } else if (t instanceof IExclusaoLogicaComData) {
+                ((IExclusaoLogicaComData) t).setExcluido(true);
+                ((IExclusaoLogicaComData) t).setDataExclusao(new Date());
                 getGerenciadorDeEntidade().merge(t);
             } else {
                 getGerenciadorDeEntidade().remove(t);
@@ -530,6 +547,14 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
                 }
             }
             return result;
+        } else if (IExclusaoLogicaComData.class.isAssignableFrom(tipoRetorno)) {
+            List<K> result = new ArrayList<>();
+            for (K registro : totalRegistros) {
+                if (!((IExclusaoLogicaComData) registro).getExcluido()) {
+                    result.add(registro);
+                }
+            }
+            return result;
         } else {
             return totalRegistros;
         }
@@ -794,6 +819,9 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
 
         if (IExclusaoLogica.class.isAssignableFrom(getClassePersistente())) {
             predicados.add(builder.equal(entityRoot.get(IExclusaoLogica.NOME_CAMPO), Boolean.FALSE));
+        }
+        if (IExclusaoLogicaComData.class.isAssignableFrom(getClassePersistente())) {
+            predicados.add(builder.equal(entityRoot.get(IExclusaoLogicaComData.NOME_CAMPO), Boolean.FALSE));
         }
 
         Usuario usuarioLogado = ambiente.getUsuarioLogado();
