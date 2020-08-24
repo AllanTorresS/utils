@@ -263,7 +263,11 @@ public final class ChavePermissao {
     public static final String API_AGENDADOR_EXECUTAR_ROTINA_MANUALMENTE       = SPRING_ROLE_PREFIX + "API_AGENDADOR_EXECUTAR_ROTINA_MANUALMENTE"      + SPRING_ROLE_SUFFIX;
     public static final String API_AGENDADOR_OBTER_TAREFAS_AGENDADAS           = SPRING_ROLE_PREFIX + "API_AGENDADOR_OBTER_TAREFAS_AGENDADAS"          + SPRING_ROLE_SUFFIX;
 
-    
+    // Permissão da API do roteirizador inteligente
+    public static final String ROTA_INTELIGENTE_CONSULTAR_E_VISUALIZAR         = SPRING_ROLE_PREFIX + "ROTA_INTELIGENTE_CONSULTAR_E_VISUALIZAR" + SPRING_ROLE_SUFFIX;
+    public static final String ROTA_INTELIGENTE_EXCLUIR                        = SPRING_ROLE_PREFIX + "ROTA_INTELIGENTE_EXCLUIR" + SPRING_ROLE_SUFFIX;
+    public static final String ROTA_INTELIGENTE_INCLUIR                        = SPRING_ROLE_PREFIX + "ROTA_INTELIGENTE_INCLUIR" + SPRING_ROLE_SUFFIX;
+
     /**
      * Impede instanciacao e heranca
      */
