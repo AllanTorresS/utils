@@ -12,7 +12,8 @@ import java.util.List;
 public class RespostaRoteirizadorVo {
 
     private List<PontoRoteirizadorVo> postos = new ArrayList<>();
-    private String message;
+    private Integer codigo;
+    private String mensagem;
     private Integer statusRequisicao;
 
     /**
@@ -30,9 +31,21 @@ public class RespostaRoteirizadorVo {
 
     public void setPostos(List<PontoRoteirizadorVo> postos) { this.postos = postos; }
 
-    public String getMessage() { return message; }
+    public Integer getCodigo() {
+        return codigo;
+    }
 
-    public void setMessage(String message) { this.message = message; }
+    public void setCodigo(Integer codigo) {
+        this.codigo = codigo;
+    }
+
+    public String getMensagem() {
+        return mensagem;
+    }
+
+    public void setMensagem(String mensagem) {
+        this.mensagem = mensagem;
+    }
 
     public Integer getStatusRequisicao() { return statusRequisicao; }
 
