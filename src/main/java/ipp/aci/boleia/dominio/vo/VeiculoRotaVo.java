@@ -1,11 +1,13 @@
 package ipp.aci.boleia.dominio.vo;
 
+import java.math.BigDecimal;
+
 /**
  * VO para obtenção de informações de veículos para cálculo de Rotas
  */
 public class VeiculoRotaVo {
 
-    private String kmlVeiculo;
+    private BigDecimal kmlVeiculo;
     private Long combustivel;
     private String percentualTanque;
     private Integer volumeTotalTanque;
@@ -22,18 +24,18 @@ public class VeiculoRotaVo {
      * @param percentualTanque Percentual do tanque considerado para cálculo
      * @param volumeTotalTanque Volume total do tanque
      */
-    public VeiculoRotaVo(String kmlVeiculo, Long combustivel, String percentualTanque, Integer volumeTotalTanque) {
+    public VeiculoRotaVo(BigDecimal kmlVeiculo, Long combustivel, String percentualTanque, Integer volumeTotalTanque) {
         this.kmlVeiculo = kmlVeiculo;
         this.combustivel = combustivel;
         this.percentualTanque = percentualTanque;
         this.volumeTotalTanque = volumeTotalTanque;
     }
 
-    public String getKmlVeiculo() {
+    public BigDecimal getKmlVeiculo() {
         return kmlVeiculo;
     }
 
-    public void setKmlVeiculo(String kmlVeiculo) {
+    public void setKmlVeiculo(BigDecimal kmlVeiculo) {
         this.kmlVeiculo = kmlVeiculo;
     }
 
