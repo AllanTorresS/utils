@@ -63,7 +63,7 @@ public class NfeAnexosArmazem implements IPersistente {
     private String serieNota;
 
     @Column(name = "NO_CHAVE_ACESSO")
-    @Size(min = 44, max = 44)
+    @Size(max = 44)
     private String chaveAcesso;
 
     @Digits(integer = 12, fraction = 4)

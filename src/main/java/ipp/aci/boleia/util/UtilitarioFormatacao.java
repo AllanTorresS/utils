@@ -61,6 +61,20 @@ public final class UtilitarioFormatacao {
     }
 
     /**
+     * Obtém o valor do intervalo em km a partir de string fornecida
+     * @param campo String com o valor recebido
+     * @return O valor convertido
+     */
+    public static Long obterLongIntervaloKm(String campo) {
+        if(campo != null) {
+            return Long.parseLong(campo);
+        }
+        else {
+            return null;
+        }
+    }
+
+    /**
      * Obtém o valor de horímetro através da string informada.
      * @param campo string com o valor recebido.
      * @return o valor do horímetro convertido.

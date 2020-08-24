@@ -28,4 +28,19 @@ public enum MotivoAbastecimentoSemSenhaOuCodigo implements IEnumComLabel<MotivoA
     public Integer getValue() {
         return value;
     }
+
+    /**
+     * Obtem por valor
+     * @param value value
+     * @return Enum para o valor
+     */
+    public static MotivoAbastecimentoSemSenhaOuCodigo obterPorValor(Integer value) {
+        for(MotivoAbastecimentoSemSenhaOuCodigo motivoContingencia : MotivoAbastecimentoSemSenhaOuCodigo.values()) {
+            if(motivoContingencia.value.equals(value)) {
+                return motivoContingencia;
+            }
+        }
+        return null;
+    }
+
 }
