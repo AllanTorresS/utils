@@ -7,8 +7,6 @@ public class SaldoKmvVo {
 
     private Integer saldo;
 
-    private Integer statusCode;
-
     public SaldoKmvVo() {
         //Construtor default
     }
@@ -29,8 +27,4 @@ public class SaldoKmvVo {
     public void setSaldo(Integer saldo) {
         this.saldo = saldo;
     }
-
-    public Integer getStatusCode() { return statusCode; }
-
-    public void setStatusCode(Integer statusCode) { this.statusCode = statusCode; }
 }
