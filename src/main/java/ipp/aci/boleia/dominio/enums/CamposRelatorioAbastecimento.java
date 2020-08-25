@@ -89,11 +89,10 @@ public enum CamposRelatorioAbastecimento {
     VALOR_TOTAL_TRANSACAO(732, "enum.CamposRelatorioAbastecimento.VALOR_TOTAL_TRANSACAO.label", true, true, 7, 30, false),
     STATUS(733, "enum.CamposRelatorioAbastecimento.STATUS.label", true, true, 7, 25, false),
     MOTIVO_RECUSA(734, "enum.CamposRelatorioAbastecimento.MOTIVO_RECUSA.label", true, true, 7, 30, false),
-    RESUMO_OPERACAO(735, "enum.CamposRelatorioAbastecimento.RESUMO_OPERACAO.label", true, true, 7, 100, false),
+    MOTIVO_CONTINGENCIA(735, "enum.CamposRelatorioAbastecimento.MOTIVO_CONTINGENCIA.label", true, true, 7, 30, false),
     VALOR_DESCONTO_FROTAS_LEVES(736, "enum.CamposRelatoriosAbastecimento.VALOR_DESCONTO_FROTAS_LEVES.label", false, true, 7, 30, true),
     VALOR_COM_DESCONTO_FROTAS_LEVES(737, "enum.CamposRelatorioAbastecimento.VALOR_TOTAL_DESCONTO_FROTAS_LEVES.label", false, true, 7, 30, true),
-    MOTIVO_CONTINGENCIA(738, "enum.CamposRelatorioAbastecimento.categoria.MOTIVO_CONTINGENCIA.label", false, true, 7, 30, false);
-
+    RESUMO_OPERACAO(738, "enum.CamposRelatorioAbastecimento.RESUMO_OPERACAO.label", true, true, 7, 100, false);
 
 
     private int codigo;
