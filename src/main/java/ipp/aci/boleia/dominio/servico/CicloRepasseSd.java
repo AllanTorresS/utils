@@ -1,5 +1,6 @@
 package ipp.aci.boleia.dominio.servico;
 
+import ipp.aci.boleia.dados.IAutorizacaoPagamentoDados;
 import ipp.aci.boleia.dados.ICicloRepasseDados;
 import ipp.aci.boleia.dados.IEntidadeRepasseDados;
 import ipp.aci.boleia.dominio.AutorizacaoPagamento;
@@ -27,6 +28,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
+import java.util.stream.Collectors;
 
 import static ipp.aci.boleia.util.UtilitarioCalculo.calcularPorcentagem;
 import static ipp.aci.boleia.util.UtilitarioCalculo.somarValoresLista;
@@ -58,6 +60,9 @@ public class CicloRepasseSd {
 
     @Autowired
     private IEntidadeRepasseDados repositorioEntidadeRepasse;
+
+    @Autowired
+    private IAutorizacaoPagamentoDados repositorioAutorizacaoPagamento;
 
     @Autowired
     private Mensagens mensagens;
@@ -115,22 +120,24 @@ public class CicloRepasseSd {
      * Cria um novo {@link CicloRepasse} a partir de uma {@link AutorizacaoPagamento}
      *
      * @param autorizacaoPagamento A autorização de pagamento
+     * @param dataReferencia A data de referência para criação do ciclo de repasse,
+     * sendo a data de processamento para abastecimentos novos e a data de postergação para abastecimentos postergados.
      * @return O novo ciclo de repasse criado
      */
-    public CicloRepasse criarCicloRepasse(AutorizacaoPagamento autorizacaoPagamento){
+    public CicloRepasse criarCicloRepasse(AutorizacaoPagamento autorizacaoPagamento, Date dataReferencia){
         CicloRepasse novoCiclo = new CicloRepasse();
 
         EntidadeRepasse entidadeRepasse = repositorioEntidadeRepasse.obtemEntidadeDeRepassePadrao();
         ConfiguracaoRepasse configuracaoRepasse = entidadeRepasse.getConfiguracaoRepasse();
 
-        CicloRepasse ultimoCicloAnteriorAoAbastecimento = repositorio.obterUltimoCicloRepasseAnteriorAData(autorizacaoPagamento.getDataProcessamento(), entidadeRepasse.getId(), autorizacaoPagamento.getPontoVenda().getId());
+        CicloRepasse ultimoCicloAnteriorAoAbastecimento = repositorio.obterUltimoCicloRepasseAnteriorAData(dataReferencia, entidadeRepasse.getId(), autorizacaoPagamento.getPontoVenda().getId());
 
         Date dataInicio;
         if(ultimoCicloAnteriorAoAbastecimento != null && ultimoCicloAnteriorAoAbastecimento.getDataFim() != null){
             dataInicio = obterPrimeiroInstanteDia(adicionarDiasData(ultimoCicloAnteriorAoAbastecimento.getDataFim(),1));
         }
         else{
-            dataInicio = calcularDataInicioCiclo(autorizacaoPagamento.getDataProcessamento(), configuracaoRepasse.getParametroCiclo());
+            dataInicio = calcularDataInicioCiclo(dataReferencia, configuracaoRepasse.getParametroCiclo());
         }
 
         Date dataFim = calcularDataFimCiclo(dataInicio, configuracaoRepasse.getParametroCiclo());
@@ -138,9 +145,9 @@ public class CicloRepasseSd {
         novoCiclo.setConfiguracaoRepasse(configuracaoRepasse);
         novoCiclo.setDataInicio(dataInicio);
         novoCiclo.setDataFim(dataFim);
-        novoCiclo.setStatus(StatusPagamentoCobranca.EM_ABERTO.getValue());
+        novoCiclo.setStatus(StatusPagamentoCobranca.EM_ABERTO.getValue()); //TODO: CRIAR enum?
 
-        novoCiclo.setDataVencimento(adicionarDiasData(dataFim,configuracaoRepasse.getParametroCiclo().getPrazoPagamento().intValue()));
+        novoCiclo.setDataVencimento(adicionarDiasData(dataFim, configuracaoRepasse.getParametroCiclo().getPrazoPagamento().intValue()));
 
         BigDecimal valorCredito = (ultimoCicloAnteriorAoAbastecimento != null && ultimoCicloAnteriorAoAbastecimento.getValorNominalRepasse().compareTo(BigDecimal.ZERO) < 0)? ultimoCicloAnteriorAoAbastecimento.getValorNominalRepasse().negate():null;
         novoCiclo.setValorCredito(valorCredito);
@@ -160,6 +167,73 @@ public class CicloRepasseSd {
     }
 
     /**
+     * É feita a validação do ciclo de repasse de um abastecimento que será postergado.
+     * Caso ele se mantenha o mesmo, nenhuma ação é tomada. Do contrário, é gerado um novo ciclo de repasse e o original é alterado.
+     * @param autorizacoesPagamentoParaPostergacao autorizações de pagamento que serão postergadas para o próximo ciclo.
+     * @param dataPostergacao a data de postergação dos abastecimentos não emitidos.
+     */
+    public void verificarCicloRepasseAbastecimentosParaPostergacao(List<AutorizacaoPagamento> autorizacoesPagamentoParaPostergacao, Date dataPostergacao){
+        List<AutorizacaoPagamento> abastecimentosParaPostergacaoComCicloRepasse = autorizacoesPagamentoParaPostergacao
+                .stream().filter(autorizacaoPagamento -> autorizacaoPagamento.isPendenteEmissaoNF() && autorizacaoPagamento.getCicloRepasse() != null)
+                .collect(Collectors.toList());
+
+        for(AutorizacaoPagamento autorizacaoPagamento : abastecimentosParaPostergacaoComCicloRepasse){
+            CicloRepasse cicloRepasseOriginal = autorizacaoPagamento.getCicloRepasse();
+            CicloRepasse cicloRepasseAtual = obterCicloRepasseDeAbastecimentoPostergadoParaProximoCiclo(autorizacaoPagamento, dataPostergacao);
+
+            //Verifica se houve troca de ciclo de repasse do abastecimento.
+            if(cicloRepasseAtual != null && !cicloRepasseOriginal.getId().equals(cicloRepasseAtual.getId())){
+                //Desvinculando abastecimento a um ciclo de repasse.
+                removerAutorizacaoPagamentoDeCicloRepasse(cicloRepasseOriginal, autorizacaoPagamento);
+            }
+
+            //Atualizando o ciclo de repasse do abastecimento.
+            autorizacaoPagamento.setCicloRepasse(cicloRepasseAtual);
+            repositorioAutorizacaoPagamento.armazenar(autorizacaoPagamento); //TODO?
+        }
+    }
+
+    /**
+     * É efetuada a desvinculação de um abastecimento de determinado ciclo de repasse, que tem os seus valores recalculados.
+     * Caso o ciclo de repasse possua apenas um abastecimento, o mesmo deve ser removido.
+     *
+     * @param cicloRepasseOriginal o ciclo de repasse que será recalculado.
+     * @param autorizacaoPagamento a autorização de pagamento que será desvinculada do ciclo de repasse informado.
+     */
+    private void removerAutorizacaoPagamentoDeCicloRepasse(CicloRepasse cicloRepasseOriginal, AutorizacaoPagamento autorizacaoPagamento){
+        BigDecimal valorTotalRepasse = cicloRepasseOriginal.getValorTotal().subtract(autorizacaoPagamento.getValorTotal());
+
+        //Verifica se o ciclo de repasse continha apenas 1 abastecimento.
+        if(valorTotalRepasse.compareTo(BigDecimal.ZERO) == 0){
+            repositorio.excluir(cicloRepasseOriginal.getId()); //TODO?
+
+        } else{
+            cicloRepasseOriginal.setValorTotal(valorTotalRepasse);
+            BigDecimal valorNominalRepasse = calcularPorcentagem(valorTotalRepasse, cicloRepasseOriginal.getValorPercentualRepasse());
+            cicloRepasseOriginal.setValorNominalRepasse(valorNominalRepasse);
+        }
+        autorizacaoPagamento.setCicloRepasse(null);
+    }
+
+    /**
+     * Retorna o ciclo de repasse de um abastecimento postergado para o próximo ciclo.
+     * @param autorizacaoPagamento o abastecimento que será postergado.
+     * @param dataPostergacao a data de postergação do abastecimento para o próximo ciclo.
+     * @return o ciclo de repasse do abastecimento postergado, que pode ser o mesmo ou um novo.
+     */
+    public CicloRepasse obterCicloRepasseDeAbastecimentoPostergadoParaProximoCiclo(AutorizacaoPagamento autorizacaoPagamento, Date dataPostergacao){
+        EntidadeRepasse entidadeRepasse = repositorioEntidadeRepasse.obtemEntidadeDeRepassePadrao();
+        CicloRepasse cicloRepasse = repositorio.obterCicloRepassePorDataEEntidade(dataPostergacao, entidadeRepasse.getId(), autorizacaoPagamento.getPontoVenda().getId());
+
+        //Será criado um novo ciclo de repasse para o abastecimento postergado.
+        if(cicloRepasse == null){
+            cicloRepasse = criarCicloRepasse(autorizacaoPagamento, dataPostergacao);
+        }
+        //Será retornado um ciclo de repasse existente, que pode ser o mesmo.
+        return cicloRepasse;
+    }
+
+    /**
      * Calcula a data de inicio de um novo ciclo de repasse a ser aberto, baseado na data vigente
      *
      * @param dataVigente A data vigente
@@ -175,7 +249,7 @@ public class CicloRepasseSd {
         datasInicioNoMes.add(diaInicioCiclo);
 
         while(diaInicioCiclo.before(ultimoDiaMes)){
-            diaInicioCiclo = adicionarDiasData(diaInicioCiclo,quantidadeDiasCiclo);
+            diaInicioCiclo = adicionarDiasData(diaInicioCiclo, quantidadeDiasCiclo);
             datasInicioNoMes.add(diaInicioCiclo);
         }
 
