@@ -30,4 +30,11 @@ public interface INfeAnexosArmazemDados extends IRepositorioBoleiaDados<NfeAnexo
      * @return A lista de anexos encontrados
      */
     List<NfeAnexosArmazem> buscarAnexosImportadosParaConciliacao();
+
+    /**
+     * Busca o anexo que gerou a nota, em caso de conciliação automática
+     * @param idNota o id da nota fiscal
+     * @return o anexo associado à nota fiscal informada
+     */
+    NfeAnexosArmazem obterPorNotaFiscal(Long idNota);
 }

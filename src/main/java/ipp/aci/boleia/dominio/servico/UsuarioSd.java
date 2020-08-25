@@ -11,6 +11,7 @@ import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.UsuarioMotorista;
 import ipp.aci.boleia.dominio.enums.StatusAtivacao;
+import ipp.aci.boleia.dominio.enums.TipoPerfilUsuario;
 import ipp.aci.boleia.dominio.enums.TipoToken;
 import ipp.aci.boleia.dominio.vo.TokenVo;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
@@ -209,7 +210,7 @@ public class UsuarioSd {
 
         return usuario;
     }
-    
+
     /**
      * Valida as informações pertinentes ao usuário do credenciamento de postos.
      *
@@ -218,11 +219,11 @@ public class UsuarioSd {
      * @throws ExcecaoValidacao Em caso de violacao nas regras de preenchimento dos dados.
      */
     public Usuario validarUsuarioCredenciamento(Usuario usuario) throws ExcecaoValidacao {
-    	validadorEntidade.validarDados(usuario, false);
+        validadorEntidade.validarDados(usuario, false);
         existenteCpf(usuario.getId(), usuario.getCpf() != null ? usuario.getCpf().toString() : null, usuario.isMotorista());
         verificarEmailObrigatorio(usuario.getEmail());
         existenteEmail(usuario.getId(), usuario.getEmail());
-        
+
         return usuario;
     }
 
@@ -413,7 +414,7 @@ public class UsuarioSd {
         usuarioMotorista.setDataExpiracaoSenhaTemporaria(dataExpiracaoSenhaTemporaria);
         usuarioMotoristaDados.armazenar(usuarioMotorista);
     }
-    
+
     /**
      * Caso o ponto de venda já exista no usuário, atualiza-a.
      * Caso contrario insere-a como um novo relacionamento.
@@ -424,13 +425,13 @@ public class UsuarioSd {
      */
     public Usuario atualizarPontosDeVenda(Usuario usuario, PontoDeVenda pontoDeVenda) {
         if (pontoDeVenda != null) {
-        	if(usuario.getPontosDeVenda() == null) {
-            	usuario.setPontosDeVenda(new ArrayList<>());
+            if(usuario.getPontosDeVenda() == null) {
+                usuario.setPontosDeVenda(new ArrayList<>());
             }
 
             int posicao = -1;
             for(int i = 0; i < usuario.getPontosDeVenda().size(); i++) {
-            	PontoDeVenda pdv = usuario.getPontosDeVenda().get(i);
+                PontoDeVenda pdv = usuario.getPontosDeVenda().get(i);
                 if(pdv.getId().equals(pontoDeVenda.getId())) {
                     posicao = i;
                     break;
@@ -438,11 +439,29 @@ public class UsuarioSd {
             }
 
             if(posicao >= 0) {
-            	usuario.getPontosDeVenda().set(posicao, pontoDeVenda);
+                usuario.getPontosDeVenda().set(posicao, pontoDeVenda);
             } else {
-            	usuario.getPontosDeVenda().add(pontoDeVenda);
+                usuario.getPontosDeVenda().add(pontoDeVenda);
             }
         }
         return usuario;
+    }
+
+    /**
+     * Obtém a quantidade total de usuarios do sistema.
+     *
+     * @return Quantidade total de usuarios
+     */
+    public long obterQuantidadeTotal(){
+        return repositorio.obterQuantidadeTotal();
+    }
+
+    /**
+     * Obtém a quantidade total de usuarios de um tipo de perfil.
+     *
+     * @return Quantidade total de usuarios de um tipo de perfil
+     */
+    public long obterQuantidadeTotalAtivosDeTipoPerfil(TipoPerfilUsuario tipoPerfilUsuario){
+        return repositorio.obterQuantidadeTotalAtivosDeTipoPerfil(tipoPerfilUsuario);
     }
 }
