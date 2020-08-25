@@ -22,7 +22,7 @@ import java.util.List;
 @Entity
 @Audited
 @Table(name = "AG_FRETE_REEMBOLSO")
-public class Reembolso implements IPersistente {
+public class AgenciadorFreteReembolso implements IPersistente {
 
     @Id
     @Column(name = "CD_REEMBOLSO")

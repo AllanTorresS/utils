@@ -68,7 +68,7 @@ public class Consolidado implements IPersistente {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_REEMBOLSO")
-    private Reembolso reembolso;
+    private AgenciadorFreteReembolso reembolso;
 
     @Column(name = "NO_VERSAO")
     @Version
@@ -148,11 +148,11 @@ public class Consolidado implements IPersistente {
         this.cobranca = cobranca;
     }
 
-    public Reembolso getReembolso() {
+    public AgenciadorFreteReembolso getReembolso() {
         return reembolso;
     }
 
-    public void setReembolso(Reembolso reembolso) {
+    public void setReembolso(AgenciadorFreteReembolso reembolso) {
         this.reembolso = reembolso;
     }
 }
