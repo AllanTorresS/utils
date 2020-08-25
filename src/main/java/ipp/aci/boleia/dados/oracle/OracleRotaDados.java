@@ -31,7 +31,6 @@ public class OracleRotaDados extends OracleRepositorioBoleiaDados<Rota> implemen
     @Autowired
     private UtilitarioAmbiente ambiente;
 
-    private static final String ORDER_BY_VALUE = "2";
     private static final String PRINCIPAL_VALUE = "1";
     
     private static final String COUNT_PVS      =
@@ -69,12 +68,28 @@ public class OracleRotaDados extends OracleRepositorioBoleiaDados<Rota> implemen
             "       (SELECT ponto.nome FROM PontoRota ponto JOIN ponto.rota rota WHERE ponto.tipo = "+TipoPontoRota.DESTINO.getValue()+" AND rota.id = r.id AND ROWNUM <= 1) " +
             ") ";
 
-    private static final String MINUTOS = " ( TO_NUMBER( TRIM( SUBSTR(r.tempo, 0, INSTR(r.tempo, 'hora', 1, 1) - 1 ) ) ) * 60 + " +
-            "TO_NUMBER( TRIM( SUBSTR(r.tempo, INSTR(r.tempo, 'hora', 1, 1) + 5, INSTR(r.tempo, 'minuto', 1, 1) - INSTR(r.tempo, 'hora', 1, 1) - 5) ) ) )";
+    private static final String MINUTOS = " ( " +
+            "TO_NUMBER( " +
+            "    TRIM( " +
+            "        SUBSTR(   r.tempo, " +
+            "                        0, " +
+            "                  INSTR(r.tempo, 'hora', 1, 1) - 1 " +
+            "        ) " +
+            "    ) " +
+            ") * 60 + " +
+            "TO_NUMBER( " +
+            "    TRIM( " +
+            "        SUBSTR(   r.tempo, " +
+            "                  INSTR(r.tempo, 'hora', 1, 1) + 5, " +
+            "                  INSTR(r.tempo, 'minuto', 1, 1) - INSTR(r.tempo, 'hora', 1, 1) - 5" +
+            "        ) " +
+            "    ) " +
+            ") " +
+    ")";
 
     private static final String CONSULTA_ROTAS =
             " SELECT " +
-                    "    r, " + COUNT_PVS + ", " + NOME_ORIGEM_DESTINO + ", " + MINUTOS +
+                    "    r, " + COUNT_PVS + " AS PVS, " + NOME_ORIGEM_DESTINO + " AS NOME_ORIGEM_DESTINO, " + MINUTOS + "AS MINUTOS " +
                     " FROM Rota r " +
                     " JOIN r.frota f " +
                     " WHERE " +
@@ -116,10 +131,10 @@ public class OracleRotaDados extends OracleRepositorioBoleiaDados<Rota> implemen
 
     private static final String ORDER_BY_NOME           = " ORDER BY LOWER(" + removerAcentosCampo("r.nome") + ") ";
     private static final String ORDER_BY_DISTANCIA      = " ORDER BY r.distancia ";
-    private static final String ORDER_BY_POSTOS         = " ORDER BY " + ORDER_BY_VALUE;
+    private static final String ORDER_BY_POSTOS         = " ORDER BY PVS ";
     private static final String ORDER_BY_TEMPO          = " ORDER BY r.tempo ";
-    private static final String ORDER_BY_ORIGEM_DESTINO = " ORDER BY 3 ";
-    private static final String ORDER_BY_MINUTOS        = " ORDER BY 4 ";
+    private static final String ORDER_BY_ORIGEM_DESTINO = " ORDER BY NOME_ORIGEM_DESTINO ";
+    private static final String ORDER_BY_MINUTOS        = " ORDER BY MINUTOS ";
 
     private static final String PLANO_VIAGEM_NULL = "AND r.planoViagem IS NULL";
     private static final String PLANO_VIAGEM_EXISTS = "AND r.planoViagem IS NOT NULL AND r.principal = " + PRINCIPAL_VALUE;
