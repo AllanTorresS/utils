@@ -1,6 +1,6 @@
 package ipp.aci.boleia.dados;
 
-import ipp.aci.boleia.dominio.agenciadorfrete.Reembolso;
+import ipp.aci.boleia.dominio.agenciadorfrete.AgenciadorFreteReembolso;
 
-public interface IReembolsoAgenciadorFreteDados extends IRepositorioBoleiaDados<Reembolso> {
+public interface IReembolsoAgenciadorFreteDados extends IRepositorioBoleiaDados<AgenciadorFreteReembolso> {
 }

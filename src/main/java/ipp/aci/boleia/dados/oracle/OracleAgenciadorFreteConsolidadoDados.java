@@ -1,7 +1,6 @@
 package ipp.aci.boleia.dados.oracle;
 
 import ipp.aci.boleia.dados.IAgenciadorFreteConsolidadoDados;
-import ipp.aci.boleia.dados.IAmbienteDados;
 import ipp.aci.boleia.dominio.agenciadorfrete.Consolidado;
 import ipp.aci.boleia.dominio.agenciadorfrete.Transacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
