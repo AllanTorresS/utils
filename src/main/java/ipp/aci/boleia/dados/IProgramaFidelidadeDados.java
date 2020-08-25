@@ -2,6 +2,7 @@ package ipp.aci.boleia.dados;
 
 import ipp.aci.boleia.dominio.vo.KmvAcumuloVo;
 import ipp.aci.boleia.dominio.vo.KmvVo;
+import ipp.aci.boleia.dominio.vo.SaldoKmvVo;
 
 import java.util.List;
 
@@ -29,13 +30,13 @@ public interface IProgramaFidelidadeDados {
     String pesquisaCep(String cep);
 
     /**
-     * Retorna o saldo do Km de Vantagens do mostorista
+     * Retorna o saldo do Km de Vantagens e o status da requisição
      *
      * @param cpf o cpf do motorista registrado na KMV
      * @param senha a senha utilizada no KMV pelo motorista
-     * @return O saldo do motorista no Km de Vantagens
+     * @return VO contendo o saldo do motorista e o status da requisição
      */
-    Integer mostrarSaldo(String cpf, String senha);
+    SaldoKmvVo mostrarSaldo(String cpf, String senha);
 
     /**
      * Acumula pontos para o dono da frota.
