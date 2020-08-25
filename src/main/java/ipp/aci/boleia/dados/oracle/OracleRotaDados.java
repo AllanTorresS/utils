@@ -63,9 +63,18 @@ public class OracleRotaDados extends OracleRepositorioBoleiaDados<Rota> implemen
             "     pontoVenda.id = :idPontoVenda " + 
             "     AND frota.id = :idFrota";
 
+    private static final String NOME_ORIGEM_DESTINO = " CONCAT( " +
+            "       (SELECT ponto.nome FROM PontoRota ponto JOIN ponto.rota rota WHERE ponto.tipo = "+TipoPontoRota.ORIGEM.getValue()+" AND rota.id = r.id AND ROWNUM <= 1)," +
+            "       ' - ', " +
+            "       (SELECT ponto.nome FROM PontoRota ponto JOIN ponto.rota rota WHERE ponto.tipo = "+TipoPontoRota.DESTINO.getValue()+" AND rota.id = r.id AND ROWNUM <= 1) " +
+            ") ";
+
+    private static final String MINUTOS = " ( TO_NUMBER( TRIM( SUBSTR(r.tempo, 0, INSTR(r.tempo, 'hora', 1, 1) - 1 ) ) ) * 60 + " +
+            "TO_NUMBER( TRIM( SUBSTR(r.tempo, INSTR(r.tempo, 'hora', 1, 1) + 5, INSTR(r.tempo, 'minuto', 1, 1) - INSTR(r.tempo, 'hora', 1, 1) - 5) ) ) )";
+
     private static final String CONSULTA_ROTAS =
             " SELECT " +
-                    "    r, " + COUNT_PVS +
+                    "    r, " + COUNT_PVS + ", " + NOME_ORIGEM_DESTINO + ", " + MINUTOS +
                     " FROM Rota r " +
                     " JOIN r.frota f " +
                     " WHERE " +
@@ -105,10 +114,12 @@ public class OracleRotaDados extends OracleRepositorioBoleiaDados<Rota> implemen
                     "    %s %s ";
 
 
-    private static final String ORDER_BY_NOME = " ORDER BY LOWER(" + removerAcentosCampo("r.nome") + ") ";
-    private static final String ORDER_BY_DISTANCIA = " ORDER BY r.distancia ";
-    private static final String ORDER_BY_POSTOS = " ORDER BY " + ORDER_BY_VALUE;
-    private static final String  ORDER_BY_TEMPO = " ORDER BY r.tempo ";
+    private static final String ORDER_BY_NOME           = " ORDER BY LOWER(" + removerAcentosCampo("r.nome") + ") ";
+    private static final String ORDER_BY_DISTANCIA      = " ORDER BY r.distancia ";
+    private static final String ORDER_BY_POSTOS         = " ORDER BY " + ORDER_BY_VALUE;
+    private static final String ORDER_BY_TEMPO          = " ORDER BY r.tempo ";
+    private static final String ORDER_BY_ORIGEM_DESTINO = " ORDER BY 3 ";
+    private static final String ORDER_BY_MINUTOS        = " ORDER BY 4 ";
 
     private static final String PLANO_VIAGEM_NULL = "AND r.planoViagem IS NULL";
     private static final String PLANO_VIAGEM_EXISTS = "AND r.planoViagem IS NOT NULL AND r.principal = " + PRINCIPAL_VALUE;
@@ -166,6 +177,12 @@ public class OracleRotaDados extends OracleRepositorioBoleiaDados<Rota> implemen
                     break;
                 case "tempo":
                     orderBy = ORDER_BY_TEMPO;
+                    break;
+                case "origemEDestino":
+                    orderBy = ORDER_BY_ORIGEM_DESTINO;
+                    break;
+                case "minutos":
+                    orderBy = ORDER_BY_MINUTOS;
                     break;
                 default:
                     orderBy = "";
