@@ -40,42 +40,33 @@ public class Rota implements IPersistente, IExclusaoLogica, IPertenceFrota {
 
     private static final long serialVersionUID = -2992575318587803234L;
 
-    private static final String FORMULA_DURACAO_EM_MINUTOS = " ( " +
-            "CASE WHEN ( TEMPO_TOTAL IS NULL )" +
-            "    THEN ( 0 ) ELSE (" +
-            "        CASE WHEN ( INSTR(TEMPO_TOTAL, 'hora', 1, 1) = 0 ) " +
-            "            THEN ( " +
-            "                TO_NUMBER( " +
-            "                    LTRIM(RTRIM( " +
-            "                        SUBSTR(   TEMPO_TOTAL, " +
-            "                                       0, " +
-            "                                  INSTR(TEMPO_TOTAL, 'minuto', 1, 1) - 1 " +
-            "                        ) " +
-            "                    )) " +
-            "                )" +
-            "            ) " +
-            "            ELSE ( " +
-            "                TO_NUMBER( " +
-            "                    LTRIM(RTRIM( " +
-            "                        SUBSTR(   TEMPO_TOTAL, " +
-            "                                       0, " +
-            "                                  INSTR(TEMPO_TOTAL, 'hora', 1, 1) - 1 " +
-            "                        ) " +
-            "                    )) " +
-            "                ) * 60 + " +
-            "                TO_NUMBER( " +
-            "                    LTRIM(RTRIM( " +
-            "                        SUBSTR(   TEMPO_TOTAL, " +
-            "                                  INSTR(TEMPO_TOTAL, 'hora', 1, 1) + 5, " +
-            "                          INSTR(TEMPO_TOTAL, 'minuto', 1, 1) - INSTR(TEMPO_TOTAL, 'hora', 1, 1) - 5" +
-            "                        ) " +
-            "                    )) " +
-            "                ) " +
-            "            )" +
-            "        END " +
-            "    ) " +
-            "END" +
-    ") ";
+    private static final String FORMULA_DURACAO_EM_MINUTOS = 
+        "( CASE " +
+        "  WHEN ( TEMPO_TOTAL IS NULL ) " +
+        "  THEN ( 0 ) " +
+        "  ELSE (" +
+        "      CASE " +
+        "      WHEN ( INSTR(TEMPO_TOTAL, 'hora') = 0 ) " +
+        "      THEN ( " +
+        "          CASE " +
+        "          WHEN ( INSTR(TEMPO_TOTAL, 'minuto') = 0 ) " +
+        "          THEN ( 0 )" +
+        "          ELSE ( TO_NUMBER( LTRIM( RTRIM( SUBSTR( TEMPO_TOTAL, 0, INSTR( TEMPO_TOTAL, 'minuto' ) - 1 ) ) ) ) )" +
+        "          END " +
+        "      ) ELSE ( " +
+        "          CASE " +
+        "          WHEN ( INSTR(TEMPO_TOTAL, 'minuto') = 0 ) " +
+        "          THEN ( TO_NUMBER( LTRIM( RTRIM( SUBSTR( TEMPO_TOTAL, 0, INSTR( TEMPO_TOTAL, 'hora' ) - 1 ) ) ) ) * 60 ) " +
+        "          ELSE ( " +
+        "              TO_NUMBER( LTRIM( RTRIM( SUBSTR( TEMPO_TOTAL, 0, INSTR( TEMPO_TOTAL, 'hora' ) - 1 ) ) ) ) * 60 + " +
+        "              TO_NUMBER( LTRIM( RTRIM( SUBSTR( " +
+        "                                           TEMPO_TOTAL, INSTR( TEMPO_TOTAL, 'hora' ) + 5 ," +
+        "                                           INSTR( TEMPO_TOTAL, 'minuto') - INSTR(TEMPO_TOTAL, 'hora') - 5" +
+        "                                       )" +
+        "              ) ) )" +
+        "          ) END " +
+        "      ) END " +
+        "  ) END ) ";
 
     @Id
     @Column(name = "CD_ROTA")
