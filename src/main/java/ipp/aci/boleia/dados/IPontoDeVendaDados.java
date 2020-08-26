@@ -112,7 +112,7 @@ public interface IPontoDeVendaDados extends IRepositorioBoleiaDados<PontoDeVenda
      * @param filtro O filtro da pesquisa
      * @return Lista de Pontos de Venda encontrados
      */
-    public List<PontoDeVenda> pesquisarSemVinculoComFrota(FiltroPesquisaParcialPtovVo filtro);
+    List<PontoDeVenda> pesquisarSemVinculoComFrota(FiltroPesquisaParcialPtovVo filtro);
 
     /**
      * Obtem todos PVs habilitados da solução

@@ -26,19 +26,19 @@ public class PontoRoteirizadorVo extends PontoRotaVo {
         this.pv = pv;
     }
 
-    public String getDt_atualizacao() {
+    public String getDtAtualizacao() {
         return dt_atualizacao;
     }
 
-    public void setDt_atualizacao(String dt_atualizacao) {
+    public void setDtAtualizacao(String dt_atualizacao) {
         this.dt_atualizacao = dt_atualizacao;
     }
 
-    public String getNm_ptov() {
+    public String getNmPtov() {
         return nm_ptov;
     }
 
-    public void setNm_ptov(String nm_ptov) {
+    public void setNmPtov(String nm_ptov) {
         this.nm_ptov = nm_ptov;
     }
 
@@ -58,11 +58,11 @@ public class PontoRoteirizadorVo extends PontoRotaVo {
         this.litros = litros;
     }
 
-    public BigDecimal getValor_litro() {
+    public BigDecimal getValorLitro() {
         return valor_litro;
     }
 
-    public void setValor_litro(BigDecimal valor_litro) {
+    public void setValorLitro(BigDecimal valor_litro) {
         this.valor_litro = valor_litro;
     }
 

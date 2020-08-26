@@ -61,8 +61,6 @@ import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarDecimalMoedaReal;
 import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarNumeroTelefone;
 import static ipp.aci.boleia.util.UtilitarioFormatacao.obterString;
 import static ipp.aci.boleia.util.UtilitarioFormatacaoData.formatarDataHora;
-import java.math.BigDecimal;
-import org.springframework.scheduling.annotation.Async;
 
 /**
  * Oferece funcionalidades para envio de emails
