@@ -12,6 +12,6 @@ public interface IRoteirizadorDados {
      * @param requisicao Parâmetros e serem considerados para o cálculo
      * @return Pontos geográficos da rota e informações adicionais
      */
-    public RespostaRoteirizadorVo calcularRota(RequisicaoRoteirizadorVo requisicao);
+    RespostaRoteirizadorVo calcularRota(RequisicaoRoteirizadorVo requisicao);
 
 }

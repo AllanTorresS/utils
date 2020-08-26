@@ -1,5 +1,7 @@
 package ipp.aci.boleia.dominio.vo;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.math.BigDecimal;
 
 /**
@@ -8,12 +10,22 @@ import java.math.BigDecimal;
 public class PontoRoteirizadorVo extends PontoRotaVo {
 
     private Long pv;
+
     private BigDecimal valor;
+
     private BigDecimal litros;
-    private BigDecimal valor_litro;
-    private String dt_atualizacao;
-    private String nm_ptov;
+
+    @JsonProperty("valor_litro")
+    private BigDecimal valorLitro;
+
+    @JsonProperty("dt_atualizacao")
+    private String dtAtualizacao;
+
+    @JsonProperty("nm_ptov")
+    private String nomePtov;
+
     private BigDecimal latitude;
+
     private BigDecimal longitude;
 
     public PontoRoteirizadorVo() { }
@@ -26,20 +38,20 @@ public class PontoRoteirizadorVo extends PontoRotaVo {
         this.pv = pv;
     }
 
-    public String getDt_atualizacao() {
-        return dt_atualizacao;
+    public String getDtAtualizacao() {
+        return dtAtualizacao;
     }
 
-    public void setDt_atualizacao(String dt_atualizacao) {
-        this.dt_atualizacao = dt_atualizacao;
+    public void setDtAtualizacao(String dtAtualizacao) {
+        this.dtAtualizacao = dtAtualizacao;
     }
 
-    public String getNm_ptov() {
-        return nm_ptov;
+    public String getNomePtov() {
+        return nomePtov;
     }
 
-    public void setNm_ptov(String nm_ptov) {
-        this.nm_ptov = nm_ptov;
+    public void setNomePtov(String nomePtov) {
+        this.nomePtov = nomePtov;
     }
 
     public BigDecimal getValor() {
@@ -58,12 +70,12 @@ public class PontoRoteirizadorVo extends PontoRotaVo {
         this.litros = litros;
     }
 
-    public BigDecimal getValor_litro() {
-        return valor_litro;
+    public BigDecimal getValorLitro() {
+        return valorLitro;
     }
 
-    public void setValor_litro(BigDecimal valor_litro) {
-        this.valor_litro = valor_litro;
+    public void setValorLitro(BigDecimal valorLitro) {
+        this.valorLitro = valorLitro;
     }
 
     @Override
