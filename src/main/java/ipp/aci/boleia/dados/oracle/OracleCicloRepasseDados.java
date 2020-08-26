@@ -69,7 +69,7 @@ public class OracleCicloRepasseDados extends OracleRepositorioBoleiaDados<CicloR
     }
 
     @Override
-    public List<CicloRepasse> obterCiclosRepasseFechadosNaoEnviados() {
+    public List<CicloRepasse> obterCiclosRepasseNaoEnviados() {
         return pesquisar((ParametroOrdenacaoColuna) null,
                 new ParametroPesquisaNulo("numeroDocumento"),
                 new ParametroPesquisaDataMenor("dataFim", ambiente.buscarDataAmbiente()),
