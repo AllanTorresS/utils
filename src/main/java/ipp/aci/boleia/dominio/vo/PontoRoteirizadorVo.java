@@ -9,13 +9,10 @@ import java.math.BigDecimal;
  */
 public class PontoRoteirizadorVo extends PontoRotaVo {
 
-    @JsonProperty("pv")
     private Long pv;
 
-    @JsonProperty("valor")
     private BigDecimal valor;
 
-    @JsonProperty("litros")
     private BigDecimal litros;
 
     @JsonProperty("valor_litro")
@@ -27,10 +24,8 @@ public class PontoRoteirizadorVo extends PontoRotaVo {
     @JsonProperty("nm_ptov")
     private String nomePtov;
 
-    @JsonProperty("latitude")
     private BigDecimal latitude;
 
-    @JsonProperty("longitude")
     private BigDecimal longitude;
 
     public PontoRoteirizadorVo() { }
