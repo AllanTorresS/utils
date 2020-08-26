@@ -41,22 +41,36 @@ public class Rota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     private static final long serialVersionUID = -2992575318587803234L;
 
     private static final String FORMULA_DURACAO_EM_MINUTOS = " ( " +
-            "TO_NUMBER( " +
-            "    LTRIM(RTRIM( " +
-            "        SUBSTR(   TEMPO_TOTAL, " +
-            "                        0, " +
-            "                  INSTR(TEMPO_TOTAL, 'hora', 1, 1) - 1 " +
+            "CASE WHEN INSTR(TEMPO_TOTAL, 'hora', 1, 1) = 0 " +
+            "    THEN ( " +
+            "        TO_NUMBER( " +
+            "            LTRIM(RTRIM( " +
+            "                SUBSTR(   TEMPO_TOTAL, " +
+            "                               0, " +
+            "                          INSTR(TEMPO_TOTAL, 'minuto', 1, 1) - 1 " +
+            "                ) " +
+            "            )) " +
+            "        )" +
+            "    ) " +
+            "    ELSE ( " +
+            "        TO_NUMBER( " +
+            "            LTRIM(RTRIM( " +
+            "                SUBSTR(   TEMPO_TOTAL, " +
+            "                               0, " +
+            "                          INSTR(TEMPO_TOTAL, 'hora', 1, 1) - 1 " +
+            "                ) " +
+            "            )) " +
+            "        ) * 60 + " +
+            "        TO_NUMBER( " +
+            "            LTRIM(RTRIM( " +
+            "                SUBSTR(   TEMPO_TOTAL, " +
+            "                          INSTR(TEMPO_TOTAL, 'hora', 1, 1) + 5, " +
+            "                          INSTR(TEMPO_TOTAL, 'minuto', 1, 1) - instr(TEMPO_TOTAL, 'hora', 1, 1) - 5" +
+            "                ) " +
+            "            )) " +
             "        ) " +
-            "    )) " +
-            ") * 60 + " +
-            "TO_NUMBER( " +
-            "    LTRIM(RTRIM( " +
-            "        SUBSTR(   TEMPO_TOTAL, " +
-            "                  INSTR(TEMPO_TOTAL, 'hora', 1, 1) + 5, " +
-            "                  INSTR(TEMPO_TOTAL, 'minuto', 1, 1) - instr(TEMPO_TOTAL, 'hora', 1, 1) - 5" +
-            "        ) " +
-            "    )) " +
-            ") " +
+            "    )" +
+            "END " +
     ") ";
 
     @Id
