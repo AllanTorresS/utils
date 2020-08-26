@@ -26,6 +26,7 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgualIgnoreCase;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaEntre;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaior;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaiorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMenor;
@@ -1137,6 +1138,11 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
     private void povoarParametroComparacaoMagnitude(ParametroPesquisa param, CriteriaBuilder builder, Root<?> entityRoot, List<Predicate> predicates, Map<String, Path<?>> cachePaths, boolean usarLeftJoins) {
         String campo = param.getNome();
         Object valor = param.getValor();
+        if (param instanceof ParametroPesquisaEntre) {
+            Path<BigDecimal> navegacaoCampo = obterAtributoEntidade(campo, entityRoot, usarLeftJoins, false, cachePaths);
+            Predicate greaterThan = builder.between(navegacaoCampo, (BigDecimal) valor, ((ParametroPesquisaEntre) param).getValorSecundario());
+            predicates.add(greaterThan);
+        }
         if (param instanceof ParametroPesquisaMaior) {
             Path<BigDecimal> navegacaoCampo = obterAtributoEntidade(campo, entityRoot, usarLeftJoins, false, cachePaths);
             Predicate greaterThan = builder.greaterThan(navegacaoCampo, (BigDecimal) valor);
