@@ -8,7 +8,7 @@ import ipp.aci.boleia.dominio.CicloRepasse;
 import ipp.aci.boleia.dominio.ConfiguracaoRepasse;
 import ipp.aci.boleia.dominio.EntidadeRepasse;
 import ipp.aci.boleia.dominio.ParametroCiclo;
-import ipp.aci.boleia.dominio.enums.StatusPagamentoCobranca;
+import ipp.aci.boleia.dominio.enums.StatusCicloRepasse;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaCicloRepasseVo;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
@@ -145,7 +145,7 @@ public class CicloRepasseSd {
         novoCiclo.setConfiguracaoRepasse(configuracaoRepasse);
         novoCiclo.setDataInicio(dataInicio);
         novoCiclo.setDataFim(dataFim);
-        novoCiclo.setStatus(StatusPagamentoCobranca.EM_ABERTO.getValue()); //TODO: CRIAR enum?
+        novoCiclo.setStatus(StatusCicloRepasse.EM_ABERTO.getValue());
 
         novoCiclo.setDataVencimento(adicionarDiasData(dataFim, configuracaoRepasse.getParametroCiclo().getPrazoPagamento().intValue()));
 
@@ -189,7 +189,7 @@ public class CicloRepasseSd {
 
             //Atualizando o ciclo de repasse do abastecimento.
             autorizacaoPagamento.setCicloRepasse(cicloRepasseAtual);
-            repositorioAutorizacaoPagamento.armazenar(autorizacaoPagamento); //TODO?
+            repositorioAutorizacaoPagamento.armazenar(autorizacaoPagamento);
         }
     }
 
@@ -205,12 +205,13 @@ public class CicloRepasseSd {
 
         //Verifica se o ciclo de repasse continha apenas 1 abastecimento.
         if(valorTotalRepasse.compareTo(BigDecimal.ZERO) == 0){
-            repositorio.excluir(cicloRepasseOriginal.getId()); //TODO?
+            repositorio.excluir(cicloRepasseOriginal.getId());
 
         } else{
             cicloRepasseOriginal.setValorTotal(valorTotalRepasse);
             BigDecimal valorNominalRepasse = calcularPorcentagem(valorTotalRepasse, cicloRepasseOriginal.getValorPercentualRepasse());
             cicloRepasseOriginal.setValorNominalRepasse(valorNominalRepasse);
+            repositorio.armazenar(cicloRepasseOriginal);
         }
         autorizacaoPagamento.setCicloRepasse(null);
     }
