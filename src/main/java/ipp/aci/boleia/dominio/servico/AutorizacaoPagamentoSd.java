@@ -178,4 +178,22 @@ public class AutorizacaoPagamentoSd {
         autorizacao = repositorioAutorizacaoPagamento.armazenar(autorizacao);
         notificacaoUsuarioSd.enviarNotificacaoNotaFiscalEmitida(autorizacao, notaFiscal);
     }
+
+    /**
+     * Verifica se a transacao ajustada oriunda de um estorno esta no mesmo ciclo da transacao estornada
+     *
+     * @param autorizacaoOriginal Um abastecimento
+     * @return O código de status de abastecimento
+     */
+    public boolean transacaoAjustadaEstaNoMesmoCicloDaTransacaoEstornadaOriginal(AutorizacaoPagamento autorizacaoOriginal) {
+
+        AutorizacaoPagamento transacaoAjustada = repositorioAutorizacaoPagamento.obterTransacaoAjustadaOriundaDeEstorno(autorizacaoOriginal);
+
+        if(transacaoAjustada != null && transacaoAjustada.getTransacaoConsolidadaVigente().getId().equals(autorizacaoOriginal.getTransacaoConsolidadaVigente().getId())){
+            return true;
+        }else{
+            return false;
+        }
+
+    }
 }
