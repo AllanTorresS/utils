@@ -1490,13 +1490,12 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
 
     /**
      * verifica se uma transacao foi emitida em um ciclo com status consolidacao FECHADO
-     * @param transacao transacao que deve ser avaliada
      * @return true, caso a transacao nao tenha pendencia de emissao e seu ciclo mais atual (de origem ou postergacao) esteja FECHADO
      */
-    public boolean emitidaEmCicloFechado(AutorizacaoPagamento transacao){
-        if((transacao.getTransacaoConsolidadaVigente().getStatusConsolidacao().equals(StatusTransacaoConsolidada.FECHADA.getValue())
+    public boolean emitidaEmCicloFechado(){
+        if((this.getTransacaoConsolidadaVigente().getStatusConsolidacao().equals(StatusTransacaoConsolidada.FECHADA.getValue())
                 && !isPendenteEmissaoNF(true))
-                || (transacao.getTransacaoConsolidadaPostergada() != null)){
+                || (this.getTransacaoConsolidadaPostergada() != null)){
             return true;
         }else{
             return false;
