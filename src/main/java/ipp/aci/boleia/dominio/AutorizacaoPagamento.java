@@ -6,6 +6,7 @@ import ipp.aci.boleia.dominio.enums.ModalidadePagamento;
 import ipp.aci.boleia.dominio.enums.StatusAutorizacao;
 import ipp.aci.boleia.dominio.enums.StatusEdicao;
 import ipp.aci.boleia.dominio.enums.StatusNotaFiscalAbastecimento;
+import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
 import ipp.aci.boleia.dominio.enums.TipoErroAutorizacaoPagamento;
 import ipp.aci.boleia.dominio.enums.TipoPreenchimentoLitragem;
 import ipp.aci.boleia.dominio.enums.TipoRealizacaoPedido;
@@ -1473,7 +1474,7 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     /**
      * Informa se a autorização de pagamento possui pendência de emissão de nota fiscal
      * levando em consideração a exigência de emissão e status de autorização.
-     * @param considerarCancelados indica se a pendência de NF deve ser avaliada também para abastecimentos
+     * @param considerarCancelado indica se a pendência de NF deve ser avaliada também para abastecimentos
      * cancelados
      *
      * @return true, caso possua pendencia.
@@ -1485,6 +1486,21 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
                 valorTotal.compareTo(BigDecimal.ZERO) > 0 &&
                 exigeEmissaoNF() &&
                 (statusNotaFiscalEsta(StatusNotaFiscalAbastecimento.PENDENTE));
+    }
+
+    /**
+     * verifica se uma transacao foi emitida em um ciclo com status consolidacao FECHADO
+     * @param transacao transacao que deve ser avaliada
+     * @return true, caso a transacao nao tenha pendencia de emissao e seu ciclo mais atual (de origem ou postergacao) esteja FECHADO
+     */
+    private boolean emitidaEmCicloFechado(AutorizacaoPagamento transacao){
+        if((transacao.getTransacaoConsolidadaVigente().getStatusConsolidacao().equals(StatusTransacaoConsolidada.FECHADA.getValue())
+                && !isPendenteEmissaoNF(true))
+                || (transacao.getTransacaoConsolidadaPostergada() != null)){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     /**
