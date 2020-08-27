@@ -7,11 +7,19 @@ import ipp.aci.boleia.dominio.agenciadorfrete.Transacao;
 import ipp.aci.boleia.dominio.enums.StatusAutorizacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
+import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgual;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
+import ipp.aci.boleia.dominio.vo.agenciadorfrete.FiltroRelatorioTransacaoVo;
+import ipp.aci.boleia.util.UtilitarioCalculoData;
+import ipp.aci.boleia.util.UtilitarioFormatacaoData;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -58,6 +66,20 @@ public class OracleAgenciadorFreteTransacaoDados extends OracleRepositorioBoleia
                 new ParametroPesquisaIgual("status", status.getValue()),
                 new ParametroPesquisaIgual("abastecimento.litragem", litragem),
                 new ParametroPesquisaIgual("abastecimento.precoCombustivel", precoCombustivel));
+    }
+
+    @Override
+    public ResultadoPaginado<Transacao> pesquisar(FiltroRelatorioTransacaoVo filtro) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        if (filtro.getAte() != null) {
+            Date data = UtilitarioFormatacaoData.lerDataIso8601(filtro.getAte());
+            parametros.add(new ParametroPesquisaDataMenorOuIgual("dataCriacao", data));
+        }
+        if (filtro.getDe()!= null) {
+            Date data = UtilitarioFormatacaoData.lerDataIso8601(filtro.getDe());
+            parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataCriacao", data));
+        }
+        return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
 }
