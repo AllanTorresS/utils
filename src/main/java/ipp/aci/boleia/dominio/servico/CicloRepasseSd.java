@@ -9,6 +9,7 @@ import ipp.aci.boleia.dominio.ConfiguracaoRepasse;
 import ipp.aci.boleia.dominio.EntidadeRepasse;
 import ipp.aci.boleia.dominio.ParametroCiclo;
 import ipp.aci.boleia.dominio.enums.StatusCicloRepasse;
+import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaCicloRepasseVo;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
@@ -16,6 +17,7 @@ import ipp.aci.boleia.util.concorrencia.MapeadorLock;
 import ipp.aci.boleia.util.concorrencia.Sincronizador;
 import ipp.aci.boleia.util.excecao.ExcecaoRecursoBloqueado;
 import ipp.aci.boleia.util.i18n.Mensagens;
+import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -66,6 +68,9 @@ public class CicloRepasseSd {
 
     @Autowired
     private Mensagens mensagens;
+
+    @Autowired
+    private UtilitarioAmbiente ambiente;
 
     /**
      * Configura o monitor de autorização de pagamento
@@ -167,21 +172,35 @@ public class CicloRepasseSd {
     }
 
     /**
-     * É feita a validação do ciclo de repasse de um abastecimento que será postergado.
-     * Caso ele se mantenha o mesmo, nenhuma ação é tomada. Do contrário, é gerado um novo ciclo de repasse e o original é alterado.
-     * @param autorizacoesPagamentoParaPostergacao autorizações de pagamento que serão postergadas para o próximo ciclo.
-     * @param dataPostergacao a data de postergação dos abastecimentos não emitidos.
+     * É feita a validação dos ciclos de repasse que serão enviados ao Jde.
+     * Os abastecimentos pendentes de emissão, ou que não estejam em uma transação consolidada fechada,
+     * terão os seus ciclos de repasse alterados e serão enviados para ciclos de repasse futuros.
+     *
+     * @param autorizacoesPagamentoCicloRepasse abastecimentos de um ciclo de repasse.
      */
-    public void verificarCicloRepasseAbastecimentosParaPostergacao(List<AutorizacaoPagamento> autorizacoesPagamentoParaPostergacao, Date dataPostergacao){
-        List<AutorizacaoPagamento> abastecimentosParaPostergacaoComCicloRepasse = autorizacoesPagamentoParaPostergacao
-                .stream().filter(autorizacaoPagamento -> autorizacaoPagamento.isPendenteEmissaoNF() && autorizacaoPagamento.getCicloRepasse() != null)
-                .collect(Collectors.toList());
+    public void verificarPostergacaoCicloRepasse(List<AutorizacaoPagamento> autorizacoesPagamentoCicloRepasse){
+        List<AutorizacaoPagamento> autorizacoesPagamentosParaPostergacaoCicloRepasse = autorizacoesPagamentoCicloRepasse.stream()
+                .filter(autorizacaoPagamento -> autorizacaoPagamento.isPendenteEmissaoNF() ||
+                        (!autorizacaoPagamento.isPendenteEmissaoNF() &&
+                         !autorizacaoPagamento.getTransacaoConsolidada().getStatusConsolidacao().equals(StatusTransacaoConsolidada.FECHADA.getValue())))
+        .collect(Collectors.toList());
 
-        for(AutorizacaoPagamento autorizacaoPagamento : abastecimentosParaPostergacaoComCicloRepasse){
+        verificarCicloRepasseAbastecimentos(autorizacoesPagamentosParaPostergacaoCicloRepasse, ambiente.buscarDataAmbiente());
+    }
+
+    /**
+     * É feita a validação dos abastecimentos presentes em um ciclo de repasse.
+     *
+     * @param autorizacoesPagamentosParaPostergacaoCicloRepasse autorizações de pagamento que serão postergadas para o próximo ciclo de repasse.
+     * @param dataEnvioJde a data em que os ciclos de repasse serão enviados ao JDE.
+     */
+    public void verificarCicloRepasseAbastecimentos(List<AutorizacaoPagamento> autorizacoesPagamentosParaPostergacaoCicloRepasse, Date dataEnvioJde){
+        for(AutorizacaoPagamento autorizacaoPagamento : autorizacoesPagamentosParaPostergacaoCicloRepasse){
             CicloRepasse cicloRepasseOriginal = autorizacaoPagamento.getCicloRepasse();
-            CicloRepasse cicloRepasseAtual = obterCicloRepasseDeAbastecimentoPostergadoParaProximoCiclo(autorizacaoPagamento, dataPostergacao);
+            CicloRepasse cicloRepasseAtual = obterCicloRepasseDeAbastecimentoPorData(autorizacaoPagamento, dataEnvioJde);
 
             //Verifica se houve troca de ciclo de repasse do abastecimento.
+            //Nota: Validação necessária quando entrarem outros parceiros no ciclo de repasse.
             if(cicloRepasseAtual != null && !cicloRepasseOriginal.getId().equals(cicloRepasseAtual.getId())){
                 //Desvinculando abastecimento a um ciclo de repasse.
                 removerAutorizacaoPagamentoDeCicloRepasse(cicloRepasseOriginal, autorizacaoPagamento);
@@ -191,6 +210,25 @@ public class CicloRepasseSd {
             autorizacaoPagamento.setCicloRepasse(cicloRepasseAtual);
             repositorioAutorizacaoPagamento.armazenar(autorizacaoPagamento);
         }
+    }
+
+    /**
+     * Retorna o ciclo de repasse de um abastecimento com base na data informada.
+     *
+     * @param autorizacaoPagamento o abastecimento que terá o ciclo de repasse pesquisado.
+     * @param dataEnvioJde a data em que o ciclo de repasse será enviado ao Jde.
+     * @return o ciclo de repasse do abastecimento.
+     */
+    public CicloRepasse obterCicloRepasseDeAbastecimentoPorData(AutorizacaoPagamento autorizacaoPagamento, Date dataEnvioJde){
+        EntidadeRepasse entidadeRepasse = repositorioEntidadeRepasse.obtemEntidadeDeRepassePadrao();
+        CicloRepasse cicloRepasse = repositorio.obterCicloRepassePorDataEEntidade(dataEnvioJde, entidadeRepasse.getId(), autorizacaoPagamento.getPontoVenda().getId());
+
+        //Será criado um novo ciclo de repasse para o abastecimento.
+        if(cicloRepasse == null){
+            cicloRepasse = criarCicloRepasse(autorizacaoPagamento, dataEnvioJde);
+        }
+        //Será retornado um ciclo de repasse existente, que pode ser o mesmo.
+        return cicloRepasse;
     }
 
     /**
@@ -214,24 +252,6 @@ public class CicloRepasseSd {
             repositorio.armazenar(cicloRepasseOriginal);
         }
         autorizacaoPagamento.setCicloRepasse(null);
-    }
-
-    /**
-     * Retorna o ciclo de repasse de um abastecimento postergado para o próximo ciclo.
-     * @param autorizacaoPagamento o abastecimento que será postergado.
-     * @param dataPostergacao a data de postergação do abastecimento para o próximo ciclo.
-     * @return o ciclo de repasse do abastecimento postergado, que pode ser o mesmo ou um novo.
-     */
-    public CicloRepasse obterCicloRepasseDeAbastecimentoPostergadoParaProximoCiclo(AutorizacaoPagamento autorizacaoPagamento, Date dataPostergacao){
-        EntidadeRepasse entidadeRepasse = repositorioEntidadeRepasse.obtemEntidadeDeRepassePadrao();
-        CicloRepasse cicloRepasse = repositorio.obterCicloRepassePorDataEEntidade(dataPostergacao, entidadeRepasse.getId(), autorizacaoPagamento.getPontoVenda().getId());
-
-        //Será criado um novo ciclo de repasse para o abastecimento postergado.
-        if(cicloRepasse == null){
-            cicloRepasse = criarCicloRepasse(autorizacaoPagamento, dataPostergacao);
-        }
-        //Será retornado um ciclo de repasse existente, que pode ser o mesmo.
-        return cicloRepasse;
     }
 
     /**
