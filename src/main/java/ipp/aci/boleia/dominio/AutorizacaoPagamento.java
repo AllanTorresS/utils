@@ -1473,12 +1473,15 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     /**
      * Informa se a autorização de pagamento possui pendência de emissão de nota fiscal
      * levando em consideração a exigência de emissão e status de autorização.
+     * @param considerarCancelados indica se a pendência de NF deve ser avaliada também para abastecimentos
+     * cancelados
      *
      * @return true, caso possua pendencia.
      */
     @Transient
-    public boolean isPendenteEmissaoNF() {
-        return estaAutorizado() &&
+    public boolean isPendenteEmissaoNF(boolean considerarCancelado) {
+        boolean statusAutorizacao = considerarCancelado ? estaAutorizadaOuCancelada() : estaAutorizado();
+        return statusAutorizacao &&
                 valorTotal.compareTo(BigDecimal.ZERO) > 0 &&
                 exigeEmissaoNF() &&
                 (statusNotaFiscalEsta(StatusNotaFiscalAbastecimento.PENDENTE));
