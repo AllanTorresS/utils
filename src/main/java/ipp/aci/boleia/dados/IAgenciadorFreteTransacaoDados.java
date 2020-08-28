@@ -1,10 +1,12 @@
 package ipp.aci.boleia.dados;
 
 import ipp.aci.boleia.dominio.PontoDeVenda;
+import ipp.aci.boleia.dominio.agenciadorfrete.AgenciadorFreteCobranca;
 import ipp.aci.boleia.dominio.agenciadorfrete.MotoristaAutonomo;
 import ipp.aci.boleia.dominio.agenciadorfrete.Transacao;
 import ipp.aci.boleia.dominio.enums.StatusAutorizacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
+import ipp.aci.boleia.dominio.vo.agenciadorfrete.FiltroRelatorioTransacaoVo;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -49,4 +51,11 @@ public interface IAgenciadorFreteTransacaoDados extends IRepositorioBoleiaDados<
      * @return Uma lista de transações
      */
     List<Transacao> obterTransacao(PontoDeVenda pontoDeVenda, MotoristaAutonomo motorista, String placaVeiculo, StatusAutorizacao status, BigDecimal litragem, BigDecimal precoCombustivel);
+
+    /**
+     * Pesquisa todas as transações
+     * @param filtro Filtro que representa um critério de busca por abastecimento
+     * @return Resultado paginado das transações
+     */
+    ResultadoPaginado<Transacao> pesquisar(FiltroRelatorioTransacaoVo filtro);
 }
