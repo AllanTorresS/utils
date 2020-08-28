@@ -258,6 +258,9 @@ public class CicloRepasseSd {
         //Atualiza o ciclo repasse dos abastecimentos pendentes de emissão ou cm consolidado em ajuste.
         for(AutorizacaoPagamento autorizacaoPagamento : autorizacoesPagamentosParaPostergacaoCicloRepasse){
             autorizacaoPagamento.setCicloRepasse(novoCicloRepasse);
+            autorizacaoPagamento.setCicloRepasseOriginal(cicloRepasse);
+            autorizacaoPagamento.setDataPostergacaoRepasse(dataEnvioJde);
+            repositorioAutorizacaoPagamento.armazenar(autorizacaoPagamento);
         }
 
         //Atualiza os valores do ciclo repasse informado.
@@ -268,7 +271,6 @@ public class CicloRepasseSd {
         } else{
             return cicloRepasse;
             //TODO: DÚVIDA: AO RETORNAR O CICLO REPASSE, cicloRepasse.getAutorizacaoPagamentos() JÁ RETORNA SEM OS ABASTECIMENTOS POSTERGADOS?
-            //TODO: É INTERESSANTE ESTABELECER ALGUMA RELAÇÃO ENTRE A POSTERGAÇÃO DE CICLOS DE REPASSE? Caso sim, onde seria?
         }
     }
 
