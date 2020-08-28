@@ -1023,7 +1023,19 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         List<ParametroPesquisa> params = new ArrayList<>();
 
         params.add(new ParametroPesquisaIgual("idAutorizacaoEstorno", transacaoEstornada.getId()));
-        params.add(new ParametroPesquisaMaiorOuIgual("valorTotal", BigDecimal.ZERO));
+        params.add(new ParametroPesquisaMaior("valorTotal", BigDecimal.ZERO));
+
+        return pesquisarUnicoSemIsolamentoDados(params.toArray(new ParametroPesquisa[params.size()]));
+
+    }
+
+    @Override
+    public AutorizacaoPagamento obterTransacaoNegativaOriundaDeEstorno(AutorizacaoPagamento transacaoEstornada) {
+
+        List<ParametroPesquisa> params = new ArrayList<>();
+
+        params.add(new ParametroPesquisaIgual("idAutorizacaoEstorno", transacaoEstornada.getId()));
+        params.add(new ParametroPesquisaMenor("valorTotal", BigDecimal.ZERO));
 
         return pesquisarUnicoSemIsolamentoDados(params.toArray(new ParametroPesquisa[params.size()]));
 

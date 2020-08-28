@@ -180,17 +180,36 @@ public class AutorizacaoPagamentoSd {
     }
 
     /**
-     * Verifica se a transacao ajustada oriunda de um estorno esta no mesmo ciclo da transacao estornada
+     * Verifica se a transacao positiva ajustada oriunda de um estorno esta no mesmo ciclo da transacao estornada
      *
-     * @param autorizacaoOriginal Um abastecimento
-     * @return O código de status de abastecimento
+     * @param autorizacaoOriginal abastecimento estornado
+     * @return true, se estiver no mesmo ciclo
      */
     public boolean transacaoAjustadaEstaNoMesmoCicloDaTransacaoEstornadaOriginal(AutorizacaoPagamento autorizacaoOriginal) {
 
         AutorizacaoPagamento transacaoAjustada = repositorioAutorizacaoPagamento.obterTransacaoAjustadaOriundaDeEstorno(autorizacaoOriginal);
 
-        //verifica se o ciclo em que a transacao positiva ajustada foi criada coincide com o cilo mais atual (original ou de postergacao) da transacao positiva estornada
+        //verifica se o ciclo em que a transacao positiva ajustada foi criada coincide com o cilo mais atual (original ou de postergacao) da transacao estornada
         if(transacaoAjustada != null && transacaoAjustada.getTransacaoConsolidada().getId().equals(autorizacaoOriginal.getTransacaoConsolidadaVigente().getId())){
+            return true;
+        }else{
+            return false;
+        }
+
+    }
+
+    /**
+     * Verifica se a transacao negativa oriunda de um estorno esta no mesmo ciclo da transacao estornada
+     *
+     * @param autorizacaoOriginal abastecimento estornado
+     * @return true, se estiver no mesmo ciclo
+     */
+    public boolean transacaoNegativaEstaNoMesmoCicloDaTransacaoEstornadaOriginal(AutorizacaoPagamento autorizacaoOriginal) {
+
+        AutorizacaoPagamento transacaoNegativa = repositorioAutorizacaoPagamento.obterTransacaoAjustadaOriundaDeEstorno(autorizacaoOriginal);
+
+        //verifica se o ciclo em que a transacao negativa foi criada coincide com o cilo mais atual (original ou de postergacao) da transacao estornada
+        if(transacaoNegativa != null && transacaoNegativa.getTransacaoConsolidada().getId().equals(autorizacaoOriginal.getTransacaoConsolidadaVigente().getId())){
             return true;
         }else{
             return false;

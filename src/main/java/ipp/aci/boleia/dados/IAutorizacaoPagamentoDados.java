@@ -382,4 +382,11 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
      * @return transacao positiva ajustada
      */
     AutorizacaoPagamento obterTransacaoAjustadaOriundaDeEstorno(AutorizacaoPagamento transacaoEstornada);
+
+    /**
+     * Retorna a transacao negativa oriunda do estorno da transacao original
+     * @param transacaoEstornada transacao original, que foi estornada
+     * @return transacao negativa
+     */
+    AutorizacaoPagamento obterTransacaoNegativaOriundaDeEstorno(AutorizacaoPagamento transacaoEstornada);
 }
