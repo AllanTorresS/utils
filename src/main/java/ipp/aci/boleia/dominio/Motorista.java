@@ -20,7 +20,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -157,10 +156,6 @@ public class Motorista implements IPersistente, IExclusaoLogica, IPertenceFrota,
 
     @Column(name = "DS_SENHA_SALT")
     private String saltSenhaCriptografada;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CD_ARQUIVO_FOTO")
-    private Arquivo foto;
 
     @Column(name = "ID_EXCLUIDO")
     private Boolean excluido;
@@ -422,14 +417,6 @@ public class Motorista implements IPersistente, IExclusaoLogica, IPertenceFrota,
 
     public void setSenhaCriptografada(String senhaCriptografada) {
         this.senhaCriptografada = senhaCriptografada;
-    }
-
-    public Arquivo getFoto() {
-        return foto;
-    }
-
-    public void setFoto(Arquivo foto) {
-        this.foto = foto;
     }
 
     @Override
