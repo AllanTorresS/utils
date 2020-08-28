@@ -264,7 +264,8 @@ public class CicloRepasseSd {
         }
 
         //Atualiza os valores do ciclo repasse informado.
-        atualizarValoresCicloRepasseOriginal(cicloRepasse, novoCicloRepasse);
+        BigDecimal valorPostergado = novoCicloRepasse.getValorTotal();
+        atualizarValoresCicloRepasseOriginal(cicloRepasse, valorPostergado);
 
         if(cicloRepasse.getValorTotal().compareTo(BigDecimal.ZERO) == 0){
             return null;
@@ -279,11 +280,11 @@ public class CicloRepasseSd {
      * presentes em uma transação consolidada que não esteja fechada.
      *
      * @param cicloRepasse o ciclo de repasse original.
-     * @param novoCicloRepasse o novo ciclo de repasse.
+     * @param valorPostergado o valor que será postergado para o próximo ciclo de repasse.
      * @return retorna o ciclo de repasse original com os seus valores atualizados.
      */
-    private CicloRepasse atualizarValoresCicloRepasseOriginal(CicloRepasse cicloRepasse, CicloRepasse novoCicloRepasse) {
-        BigDecimal valorTotalRepasse = cicloRepasse.getValorTotal().subtract(novoCicloRepasse.getValorTotal());
+    private CicloRepasse atualizarValoresCicloRepasseOriginal(CicloRepasse cicloRepasse, BigDecimal valorPostergado) {
+        BigDecimal valorTotalRepasse = cicloRepasse.getValorTotal().subtract(valorPostergado);
         cicloRepasse.setValorTotal(valorTotalRepasse);
 
         BigDecimal valorNominalRepasse = calcularPorcentagem(valorTotalRepasse, cicloRepasse.getValorPercentualRepasse());
