@@ -3,6 +3,7 @@ package ipp.aci.boleia.dominio.agenciadorfrete;
 import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +12,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
@@ -62,13 +65,15 @@ public class Consolidado implements IPersistente {
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataCriacao;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CD_COBRANCA")
-    private AgenciadorFreteCobranca cobranca;
+    @NotAudited
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name="CONSOL_COBR", joinColumns={@JoinColumn(name="CD_COBRANCA")}, inverseJoinColumns={@JoinColumn(name="CD_CONSOLIDADO")})
+    private List<AgenciadorFreteCobranca> cobrancas;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CD_REEMBOLSO")
-    private AgenciadorFreteReembolso reembolso;
+    @NotAudited
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name="CONSOL_REEMB", joinColumns={@JoinColumn(name="CD_REEMBOLSO")}, inverseJoinColumns={@JoinColumn(name="CD_CONSOLIDADO")})
+    private List<AgenciadorFreteReembolso> reembolsos;
 
     @Column(name = "NO_VERSAO")
     @Version
@@ -140,19 +145,19 @@ public class Consolidado implements IPersistente {
         this.agenciadorFrete = agenciadorFrete;
     }
 
-    public AgenciadorFreteCobranca getCobranca() {
-        return cobranca;
+    public List<AgenciadorFreteCobranca> getCobrancas() {
+        return cobrancas;
     }
 
-    public void setCobranca(AgenciadorFreteCobranca cobranca) {
-        this.cobranca = cobranca;
+    public void setCobrancas(List<AgenciadorFreteCobranca> cobrancas) {
+        this.cobrancas = cobrancas;
     }
 
-    public AgenciadorFreteReembolso getReembolso() {
-        return reembolso;
+    public List<AgenciadorFreteReembolso> getReembolsos() {
+        return reembolsos;
     }
 
-    public void setReembolso(AgenciadorFreteReembolso reembolso) {
-        this.reembolso = reembolso;
+    public void setReembolsos(List<AgenciadorFreteReembolso> reembolsos) {
+        this.reembolsos = reembolsos;
     }
 }

@@ -2,6 +2,7 @@ package ipp.aci.boleia.dominio.agenciadorfrete;
 
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,6 +11,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
@@ -30,12 +33,18 @@ public class AgenciadorFreteCobranca implements IPersistente {
     @SequenceGenerator(name = "SEQ_AG_COBRANCA", sequenceName = "SEQ_AG_COBRANCA", allocationSize = 1)
     private Long id;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "cobranca")
+    @Column(name = "ID_TIPO")
+    private Integer tipo;
+
+    @NotAudited
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name="CONSOL_COBR", joinColumns={@JoinColumn(name="CD_CONSOLIDADO")}, inverseJoinColumns={@JoinColumn(name="CD_COBRANCA")})
     private List<Consolidado> consolidados;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_DOCUMENTO")
     private DocumentoJde documentoJde;
+
 
     @Column(name = "QT_PARCELAS")
     private Integer quantidadeParcelas;
@@ -139,5 +148,13 @@ public class AgenciadorFreteCobranca implements IPersistente {
 
     public void setDataCriacao(Date dataCriacao) {
         this.dataCriacao = dataCriacao;
+    }
+
+    public Integer getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(Integer tipo) {
+        this.tipo = tipo;
     }
 }
