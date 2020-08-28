@@ -242,7 +242,8 @@ public class CicloRepasseSd {
      * @return o ciclo repasse atualizado ou nulo, caso todos os seus abastecimentos tenham o repasse postergado.
      */
     private CicloRepasse validarAbastecimentosCicloRepasse(CicloRepasse cicloRepasse, Date dataEnvioJde){
-        List<AutorizacaoPagamento> autorizacoesPagamentosParaPostergacaoCicloRepasse = cicloRepasse.getAutorizacaoPagamentos().stream()
+        List<AutorizacaoPagamento> autorizacoesPagamentoRepasse = cicloRepasse.getAutorizacaoPagamentos();
+        List<AutorizacaoPagamento> autorizacoesPagamentosParaPostergacaoCicloRepasse = autorizacoesPagamentoRepasse.stream()
                 .filter(autorizacaoPagamento -> autorizacaoPagamento.isPendenteEmissaoNF() ||
                         (!autorizacaoPagamento.isPendenteEmissaoNF() &&
                                 !autorizacaoPagamento.getTransacaoConsolidada().getStatusConsolidacao().equals(StatusTransacaoConsolidada.FECHADA.getValue())))
@@ -263,15 +264,19 @@ public class CicloRepasseSd {
             repositorioAutorizacaoPagamento.armazenar(autorizacaoPagamento);
         }
 
+        //Atualiza a lista de abastecimentos do ciclo repasse informado.
+        autorizacoesPagamentoRepasse.removeIf(autorizacaoPagamento -> !autorizacaoPagamento.getCicloRepasse().getId().equals(cicloRepasse.getId()));
+        cicloRepasse.setAutorizacaoPagamentos(autorizacoesPagamentoRepasse);
+
         //Atualiza os valores do ciclo repasse informado.
         BigDecimal valorPostergado = novoCicloRepasse.getValorTotal();
         atualizarValoresCicloRepasseOriginal(cicloRepasse, valorPostergado);
 
         if(cicloRepasse.getValorTotal().compareTo(BigDecimal.ZERO) == 0){
+            //Todos os abastecimentos do ciclo tiveram o seu repasse postergado.
             return null;
         } else{
             return cicloRepasse;
-            //TODO: DÚVIDA: AO RETORNAR O CICLO REPASSE, cicloRepasse.getAutorizacaoPagamentos() JÁ RETORNA SEM OS ABASTECIMENTOS POSTERGADOS?
         }
     }
 
