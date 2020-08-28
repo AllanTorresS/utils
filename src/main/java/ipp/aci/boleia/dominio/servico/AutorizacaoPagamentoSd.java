@@ -247,12 +247,12 @@ public class AutorizacaoPagamentoSd {
      * Verifica se o valor de uma transacao cancelada/estornada deve ser descontado em ciclos posteriores
      *
      * @param autorizacaoOriginal abastecimento original
-     * @return true, se o valor da transacao deve ser descontado em ciclos posteriores
+     * @return true, se o valor da transacao tiver sido contemplado em algum reembolso gerado
      */
-    public boolean valorDaTransacaoDeveSerDescontadoEmCiclosPosteriores(AutorizacaoPagamento autorizacaoOriginal) {
+    public boolean valorDaTransacaoFoiContempladoEmReembolsoGerado(AutorizacaoPagamento autorizacaoOriginal) {
 
         if(autorizacaoOriginal.getStatus().equals(StatusAutorizacao.CANCELADO.getValue())) {
-            //Nota: se a transacao nao tem pendencia de emissao e se ela estava autorizada no momento do fechamento de seu ciclo mais atual (original ou de postergacao), entao ela deve ser descontada em ciclos futuros
+            //Nota: se a transacao nao tem pendencia de emissao e se ela estava autorizada no momento do fechamento de seu ciclo mais atual (original ou de postergacao), entao seu valor foi contemplado no reembolso gerado para esse ciclo
             if (autorizacaoOriginal.emitidaEmCicloFechado()
                     && !transacaoEstavaCanceladaOuEstornadaQuandoCiCloFoiFechado(autorizacaoOriginal)) {
                 return true;
