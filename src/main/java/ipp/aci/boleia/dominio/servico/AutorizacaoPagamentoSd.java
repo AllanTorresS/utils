@@ -206,10 +206,32 @@ public class AutorizacaoPagamentoSd {
      */
     public boolean transacaoNegativaEstaNoMesmoCicloDaTransacaoEstornadaOriginal(AutorizacaoPagamento autorizacaoOriginal) {
 
-        AutorizacaoPagamento transacaoNegativa = repositorioAutorizacaoPagamento.obterTransacaoAjustadaOriundaDeEstorno(autorizacaoOriginal);
+        AutorizacaoPagamento transacaoNegativa = repositorioAutorizacaoPagamento.obterTransacaoNegativaOriundaDeEstorno(autorizacaoOriginal);
 
         //verifica se o ciclo em que a transacao negativa foi criada coincide com o cilo mais atual (original ou de postergacao) da transacao estornada
         if(transacaoNegativa != null && transacaoNegativa.getTransacaoConsolidada().getId().equals(autorizacaoOriginal.getTransacaoConsolidadaVigente().getId())){
+            return true;
+        }else{
+            return false;
+        }
+
+    }
+
+    /**
+     * Verifica se uma transacao sem pendencia de emissao ja estava cancelada ou estornada quando seu ciclo mais atual (original ou de postergacao) foi fechado
+     *
+     * @param autorizacaoOriginal abastecimento original
+     * @return true, se a transacao original nao tinha pendencia de emissao e se ja estava cancelada/estornada quando o ciclo foi fechado
+     */
+    public boolean transacaoEstavaCanceladaOuEstornadaESemPendenciaDeEmissaoQuandoCiCloFoiFechado(AutorizacaoPagamento autorizacaoOriginal) {
+
+        AutorizacaoPagamento transacaoNegativa = repositorioAutorizacaoPagamento.obterTransacaoNegativaOriundaDeEstorno(autorizacaoOriginal);
+
+        //Nota: se a transacao negativa estiver no mesmo ciclo da transacao otiginal (cancelada/estornada), isso significa que a transacao original ja estava com status CANCELADO quando o ciclo foi fechado
+        // Continuacao: ou seja, isso significa que a transacao original nao foi considerada para o calculo do reembolso do ciclo FECHADO
+        if(autorizacaoOriginal.emitidaEmCicloFechado()
+                && transacaoNegativa != null
+                && transacaoNegativa.getTransacaoConsolidada().getId().equals(autorizacaoOriginal.getTransacaoConsolidadaVigente().getId())){
             return true;
         }else{
             return false;
