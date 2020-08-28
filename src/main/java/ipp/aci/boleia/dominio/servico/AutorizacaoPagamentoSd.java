@@ -189,7 +189,8 @@ public class AutorizacaoPagamentoSd {
 
         AutorizacaoPagamento transacaoAjustada = repositorioAutorizacaoPagamento.obterTransacaoAjustadaOriundaDeEstorno(autorizacaoOriginal);
 
-        if(transacaoAjustada != null && transacaoAjustada.getTransacaoConsolidadaVigente().getId().equals(autorizacaoOriginal.getTransacaoConsolidadaVigente().getId())){
+        //verifica se o ciclo em que a transacao positiva ajustada foi criada coincide com o cilo mais atual (original ou de postergacao) da transacao positiva estornada
+        if(transacaoAjustada != null && transacaoAjustada.getTransacaoConsolidada().getId().equals(autorizacaoOriginal.getTransacaoConsolidadaVigente().getId())){
             return true;
         }else{
             return false;
