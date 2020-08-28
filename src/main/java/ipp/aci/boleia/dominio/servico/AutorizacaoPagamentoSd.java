@@ -225,12 +225,18 @@ public class AutorizacaoPagamentoSd {
      */
     private boolean transacaoEstavaCanceladaOuEstornadaQuandoCiCloFoiFechado(AutorizacaoPagamento autorizacaoOriginal) {
 
-        AutorizacaoPagamento transacaoNegativa = repositorioAutorizacaoPagamento.obterTransacaoNegativaOriundaDeEstorno(autorizacaoOriginal);
+        if(autorizacaoOriginal.getStatus().equals(StatusAutorizacao.CANCELADO.getValue())){
 
-        //Nota: se a transacao negativa estiver no ciclo mais atual da transacao original (cancelada/estornada), isso significa que a transacao original ja estava com status CANCELADO quando o ciclo foi fechado
-        if(transacaoNegativa != null
-                && transacaoNegativa.getTransacaoConsolidada().getId().equals(autorizacaoOriginal.getTransacaoConsolidadaVigente().getId())){
-            return true;
+            AutorizacaoPagamento transacaoNegativa = repositorioAutorizacaoPagamento.obterTransacaoNegativaOriundaDeEstorno(autorizacaoOriginal);
+
+            //Nota: se a transacao negativa estiver no ciclo mais atual da transacao original (cancelada/estornada), isso significa que a transacao original ja estava com status CANCELADO quando o ciclo foi fechado
+            if(transacaoNegativa != null
+                    && transacaoNegativa.getTransacaoConsolidada().getId().equals(autorizacaoOriginal.getTransacaoConsolidadaVigente().getId())){
+                return true;
+            }else{
+                return false;
+            }
+
         }else{
             return false;
         }
@@ -238,19 +244,23 @@ public class AutorizacaoPagamentoSd {
     }
 
     /**
-     * Verifica se uma transacao sem pendencia de emissao ja estava cancelada ou estornada quando seu ciclo mais atual (original ou de postergacao) foi fechado
+     * Verifica se o valor de uma transacao cancelada/estornada deve ser descontado em ciclos posteriores
      *
      * @param autorizacaoOriginal abastecimento original
-     * @return true, se a transacao original nao tinha pendencia de emissao e se ja estava cancelada/estornada quando o ciclo foi fechado
+     * @return true, se o valor da transacao deve ser descontado em ciclos posteriores
      */
-    public boolean transacaoDeveSerDescontadaEmReembolsosFuturos(AutorizacaoPagamento autorizacaoOriginal) {
+    public boolean valorDaTransacaoDeveSerDescontadoEmCiclosPosteriores(AutorizacaoPagamento autorizacaoOriginal) {
 
-        //Nota: se a transacao nao tem pendencia de emissao e se ela estava autorizada no momento do fechamento de seu ciclo mais atual (original ou de postergacao), entao ela deve ser descontada em ciclos futuros
-        if(autorizacaoOriginal.emitidaEmCicloFechado()
-                && !transacaoEstavaCanceladaOuEstornadaQuandoCiCloFoiFechado(autorizacaoOriginal)){
-            return true;
+        if(autorizacaoOriginal.getStatus().equals(StatusAutorizacao.CANCELADO.getValue())) {
+            //Nota: se a transacao nao tem pendencia de emissao e se ela estava autorizada no momento do fechamento de seu ciclo mais atual (original ou de postergacao), entao ela deve ser descontada em ciclos futuros
+            if (autorizacaoOriginal.emitidaEmCicloFechado()
+                    && !transacaoEstavaCanceladaOuEstornadaQuandoCiCloFoiFechado(autorizacaoOriginal)) {
+                return true;
+            } else {
+                return false;
+            }
         }else{
-            return false;
+           return false;
         }
 
     }
