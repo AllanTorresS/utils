@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Digits;
@@ -44,6 +45,10 @@ public class PedidoTag implements IPersistente {
 
 	@Column(name = "ID_STATUS")
 	private Integer status;
+
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "CD_TRANS_CONSOL")
+	private TransacaoConectcarConsolidada transacao;
 
 	@Digits(integer = 12, fraction = 4)
 	@Column(name = "VR_TOTAL")
@@ -262,6 +267,14 @@ public class PedidoTag implements IPersistente {
 
 	public void setValorFrete(BigDecimal valorFrete) {
 		this.valorFrete = valorFrete;
+	}
+
+	public TransacaoConectcarConsolidada getTransacao() {
+		return transacao;
+	}
+
+	public void setTransacao(TransacaoConectcarConsolidada transacao) {
+		this.transacao = transacao;
 	}
 
 	@Override

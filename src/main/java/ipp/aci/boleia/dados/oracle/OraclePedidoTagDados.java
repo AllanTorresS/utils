@@ -3,11 +3,13 @@ package ipp.aci.boleia.dados.oracle;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Repository;
 
 import ipp.aci.boleia.dados.IPedidoTagDados;
 import ipp.aci.boleia.dominio.PedidoTag;
 import ipp.aci.boleia.dominio.enums.StatusPedidoTag;
+import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgual;
@@ -48,10 +50,34 @@ public class OraclePedidoTagDados extends OracleRepositorioBoleiaDados<PedidoTag
         if (filtro.getId() != null) {
             parametros.add(new ParametroPesquisaIgual("id", filtro.getId()));
         }
+        
         if (filtro.getStatus() != null && filtro.getStatus().getName() != null) {
             parametros.add(new ParametroPesquisaIgual("status", StatusPedidoTag.valueOf(filtro.getStatus().getName()).getValue()));
         }
+        
+        povoarParametrosOrdenacao(filtro);        
         return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+    
+    /**
+     * Povoa os parametros de pesquisa referente a paginacao no filtro
+     *
+     * @param filtro de pesquisa pedido tag
+     */
+    private void povoarParametrosOrdenacao(FiltroPesquisaPedidoTagVo filtro) {
+        if (filtro.getPaginacao() != null && CollectionUtils.isNotEmpty(filtro.getPaginacao().getParametrosOrdenacaoColuna())) {
+            ParametroOrdenacaoColuna parametro = filtro.getPaginacao().getParametrosOrdenacaoColuna().get(0);
+            String nomeOrdenacao = parametro.getNome();
+            if (nomeOrdenacao != null) {
+            	if (nomeOrdenacao.contentEquals("quantidade")) {
+            		filtro.getPaginacao().getParametrosOrdenacaoColuna().remove(0);
+                    filtro.getPaginacao().getParametrosOrdenacaoColuna().add(0, new ParametroOrdenacaoColuna("quantidadeTag", parametro.getSentidoOrdenacao()));                    
+                } else if (nomeOrdenacao.contentEquals("statusPedido")) {
+                	filtro.getPaginacao().getParametrosOrdenacaoColuna().remove(0);
+                    filtro.getPaginacao().getParametrosOrdenacaoColuna().add(0, new ParametroOrdenacaoColuna("status", parametro.getSentidoOrdenacao()));                    
+                }
+            }
+        }
     }
 
    

@@ -7,9 +7,9 @@ import ipp.aci.boleia.util.i18n.IEnumComLabel;
  */
 public enum StatusPedidoTag implements IEnumComLabel<StatusPedidoTag> {
 
-    CONFIRMADO(1),
-    EXPIRADO(2),
-    PENDENTE(3);	
+	PENDENTE(1),
+    VENCIDO(2),
+    CONFIRMADO(3);	
 
     private final Integer value;
 
