@@ -272,12 +272,8 @@ public class CicloRepasseSd {
         BigDecimal valorPostergado = novoCicloRepasse.getValorTotal();
         atualizarValoresCicloRepasseOriginal(cicloRepasse, valorPostergado);
 
-        if(cicloRepasse.getValorTotal().compareTo(BigDecimal.ZERO) == 0){
-            //Todos os abastecimentos do ciclo tiveram o seu repasse postergado.
-            return null;
-        } else{
-            return cicloRepasse;
-        }
+        //É retornado nulo se todos os abastecimentos do ciclo tiveram o seu repasse postergado.
+        return cicloRepasse.getValorTotal().compareTo(BigDecimal.ZERO) == 0 ? null : cicloRepasse;
     }
 
     /**
