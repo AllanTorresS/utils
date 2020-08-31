@@ -61,6 +61,20 @@ public final class UtilitarioFormatacao {
     }
 
     /**
+     * Obtém o valor do intervalo em km a partir de string fornecida
+     * @param campo String com o valor recebido
+     * @return O valor convertido
+     */
+    public static Long obterLongIntervaloKm(String campo) {
+        if(campo != null) {
+            return Long.parseLong(campo);
+        }
+        else {
+            return null;
+        }
+    }
+
+    /**
      * Obtém o valor de horímetro através da string informada.
      * @param campo string com o valor recebido.
      * @return o valor do horímetro convertido.
@@ -412,6 +426,20 @@ public final class UtilitarioFormatacao {
     public static String formatarCnpjApresentacao(Serializable cnpj) {
         String cnpjTratado = formatarNumeroZerosEsquerda(cnpj, 14);
         return formatarNumero(cnpjTratado, 14, ConstantesFormatacao.FORMATO_CNPJ);
+    }
+
+    /**
+     * Formata um CPF para o formato de CPF oculto.
+     *
+     * @param cpf Um objeto contendo o CPF
+     * @return O CPF formatado
+     */
+    public static String formatarCpfOcultoApresentacao(Serializable cpf) {
+        if(cpf != null) {
+            String cpfTratado = formatarNumeroZerosEsquerda(cpf, 11);
+            return formatarNumero(cpfTratado.substring(8), 3, ConstantesFormatacao.FORMATO_CPF_OCULTO);
+        }
+        return null;
     }
 
     /**

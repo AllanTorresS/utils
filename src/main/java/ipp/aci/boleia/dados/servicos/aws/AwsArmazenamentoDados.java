@@ -256,8 +256,8 @@ public class AwsArmazenamentoDados implements InitializingBean, IArmazenamentoDa
     }
 
     @Override
-    public void moverArquivo(TipoArquivo origem, Long idOrigem, TipoArquivo destino) {
-        copiarArquivo(origem, idOrigem, destino, true, null);
+    public void moverArquivo(TipoArquivo origem, Long idOrigem, TipoArquivo destino, Long idDestino) {
+        copiarArquivo(origem, idOrigem, destino, true, idDestino != null ? idDestino.toString() : null);
     }
 
     /**

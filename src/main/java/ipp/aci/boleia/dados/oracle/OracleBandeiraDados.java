@@ -4,15 +4,15 @@ import ipp.aci.boleia.dados.IBandeiraDados;
 import ipp.aci.boleia.dominio.Bandeira;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialVo;
+import ipp.aci.boleia.util.Ordenacao;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
-import ipp.aci.boleia.util.Ordenacao;
 
 
 /**
@@ -39,6 +39,13 @@ public class OracleBandeiraDados extends OracleRepositorioBoleiaDados<Bandeira> 
         List<ParametroPesquisa> params = new ArrayList<>();
         povoarParametrosParaAutocomplete(filtro, params);
         return pesquisar(new ParametroOrdenacaoColuna("descricao"), params.toArray(new ParametroPesquisa[params.size()]));
+    }
+
+    @Override
+    public Bandeira obterPorCodigoCorporativo(Long codigoCorporativo) {
+        List<ParametroPesquisa> params = new ArrayList<>();
+        params.add(new ParametroPesquisaIgual("codigoCorporativo", codigoCorporativo));
+        return pesquisarUnico(params.toArray(new ParametroPesquisa[params.size()]));
     }
 
     /**

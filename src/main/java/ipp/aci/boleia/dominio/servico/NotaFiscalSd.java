@@ -748,6 +748,10 @@ public class NotaFiscalSd {
             return mensagens.obterMensagem(Erro.ERRO_VALIDACAO_DATA_EMISSAO.getChaveMensagem());
         } else if (danfe.getSerieNota() == null ||StringUtils.isEmpty(danfe.getSerieNota()) ) {
             return mensagens.obterMensagem(Erro.ERRO_VALIDACAO_SERIE_NOTA.getChaveMensagem());
+        } else if (danfe.getChaveAcesso() == null
+                || StringUtils.isEmpty(danfe.getChaveAcesso())
+                || danfe.getChaveAcesso().replaceAll(" ", "").length() != ConstantesNotaFiscal.TAMANHO_CHAVE_ACESSO) {
+            return mensagens.obterMensagem(Erro.ERRO_VALIDACAO_CHAVE_ACESSO_NOTA.getChaveMensagem());
         } else {
             return null;
         }
