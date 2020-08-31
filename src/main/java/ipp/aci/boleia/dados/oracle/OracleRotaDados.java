@@ -115,7 +115,6 @@ public class OracleRotaDados extends OracleRepositorioBoleiaDados<Rota> implemen
     private static final String ORDER_BY_POSTOS         = " ORDER BY QTD_PVS ";
     private static final String ORDER_BY_TEMPO          = " ORDER BY r.tempo ";
     private static final String ORDER_BY_ORIGEM_DESTINO = " ORDER BY NOME_ORIGEM_DESTINO ";
-    private static final String ORDER_BY_MINUTOS        = " ORDER BY r.duracaoEmMinutos ";
 
     private static final String PLANO_VIAGEM_NULL = "AND r.planoViagem IS NULL";
     private static final String PLANO_VIAGEM_EXISTS = "AND r.planoViagem IS NOT NULL AND r.principal = " + PRINCIPAL_VALUE;
@@ -148,6 +147,11 @@ public class OracleRotaDados extends OracleRepositorioBoleiaDados<Rota> implemen
         return pesquisarUnico(new ParametroPesquisaIgualIgnoreCase("nome", nome), new ParametroPesquisaIgual("frota.id", idFrota));
     }
 
+    @Override
+    public List<Rota> pesquisarPorNomeFrota(String nome, Long idFrota) {
+        return pesquisar(new ParametroOrdenacaoColuna("nome"), new ParametroPesquisaIgualIgnoreCase("nome", nome), new ParametroPesquisaIgual("frota.id", idFrota));
+    }
+
     /**
      * Altera a consulta, adicionando a clausula de ordenacao de acordo com o filtro recebido
      *
@@ -176,9 +180,6 @@ public class OracleRotaDados extends OracleRepositorioBoleiaDados<Rota> implemen
                     break;
                 case "origemEDestino":
                     orderBy = ORDER_BY_ORIGEM_DESTINO;
-                    break;
-                case "minutos":
-                    orderBy = ORDER_BY_MINUTOS;
                     break;
                 default:
                     orderBy = "";

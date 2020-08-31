@@ -5,6 +5,8 @@ import ipp.aci.boleia.dominio.Rota;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaRotaVo;
 
+import java.util.List;
+
 /**
  * Contrato para implementacao de repositorios de entidades Rota
  */
@@ -25,6 +27,14 @@ public interface IRotaDados extends IRepositorioBoleiaDados<Rota> {
      * @return A rota para o nome
      */
     Rota buscarPorNome(String nome, Long idFrota);
+
+    /**
+     * Pesquisa rotas com o nome informado que pertencem a uma determinada frota
+     * @param nome da rota
+     * @param idFrota identificador da frota corrente
+     * @return A lista de rotas para o nome
+     */
+    List<Rota> pesquisarPorNomeFrota(String nome, Long idFrota);
 
     /**
      * Obtem a quantidade de rotas de uma frota que contem um determinado ponto de venda.

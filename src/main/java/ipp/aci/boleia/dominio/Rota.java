@@ -4,9 +4,7 @@ package ipp.aci.boleia.dominio;
 import ipp.aci.boleia.dominio.interfaces.IExclusaoLogica;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
-import org.hibernate.annotations.Formula;
 import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,7 +23,6 @@ import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
@@ -39,34 +36,6 @@ import java.util.List;
 public class Rota implements IPersistente, IExclusaoLogica, IPertenceFrota {
 
     private static final long serialVersionUID = -2992575318587803234L;
-
-    private static final String FORMULA_DURACAO_EM_MINUTOS = 
-        "( CASE " +
-        "  WHEN ( TEMPO_TOTAL IS NULL ) " +
-        "  THEN ( 0 ) " +
-        "  ELSE (" +
-        "      CASE " +
-        "      WHEN ( INSTR(TEMPO_TOTAL, 'hora') = 0 ) " +
-        "      THEN ( " +
-        "          CASE " +
-        "          WHEN ( INSTR(TEMPO_TOTAL, 'minuto') = 0 ) " +
-        "          THEN ( 0 )" +
-        "          ELSE ( TO_NUMBER( LTRIM( RTRIM( SUBSTR( TEMPO_TOTAL, 0, INSTR( TEMPO_TOTAL, 'minuto' ) - 1 ) ) ) ) )" +
-        "          END " +
-        "      ) ELSE ( " +
-        "          CASE " +
-        "          WHEN ( INSTR(TEMPO_TOTAL, 'minuto') = 0 ) " +
-        "          THEN ( TO_NUMBER( LTRIM( RTRIM( SUBSTR( TEMPO_TOTAL, 0, INSTR( TEMPO_TOTAL, 'hora' ) - 1 ) ) ) ) * 60 ) " +
-        "          ELSE ( " +
-        "              TO_NUMBER( LTRIM( RTRIM( SUBSTR( TEMPO_TOTAL, 0, INSTR( TEMPO_TOTAL, 'hora' ) - 1 ) ) ) ) * 60 + " +
-        "              TO_NUMBER( LTRIM( RTRIM( SUBSTR( " +
-        "                                           TEMPO_TOTAL, INSTR( TEMPO_TOTAL, 'hora' ) + 5 ," +
-        "                                           INSTR( TEMPO_TOTAL, 'minuto') - INSTR(TEMPO_TOTAL, 'hora') - 5" +
-        "                                       )" +
-        "              ) ) )" +
-        "          ) END " +
-        "      ) END " +
-        "  ) END ) ";
 
     @Id
     @Column(name = "CD_ROTA")
@@ -108,16 +77,12 @@ public class Rota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @JoinColumn(name = "CD_PLANO")
     private PlanoViagem planoViagem;
 
-    @Size(max=100)
-    @Column(name = "TEMPO_TOTAL")
-    private String tempo;
+    @NotNull
+    @Column(name = "TEMPO_SEGUNDOS")
+    private BigDecimal tempo;
 
     @Column(name = "ID_PRINCIPAL")
     private Boolean principal;
-
-    @NotAudited
-    @Formula(FORMULA_DURACAO_EM_MINUTOS)
-    private BigDecimal duracaoEmMinutos;
 
     @Transient
     private Long quantidadePostos;
@@ -195,17 +160,13 @@ public class Rota implements IPersistente, IExclusaoLogica, IPertenceFrota {
 
     public void setPlanoViagem(PlanoViagem planoViagem) { this.planoViagem = planoViagem; }
 
-    public String getTempo() { return tempo; }
+    public BigDecimal getTempo() { return tempo; }
 
-    public void setTempo(String tempo) { this.tempo = tempo; }
+    public void setTempo(BigDecimal tempo) { this.tempo = tempo; }
 
     public Boolean getPrincipal() { return principal; }
 
     public void setPrincipal(Boolean principal) { this.principal = principal; }
-
-    public BigDecimal getDuracaoEmMinutos() { return duracaoEmMinutos; }
-
-    public void setDuracaoEmMinutos(BigDecimal duracaoEmMinutos) { this.duracaoEmMinutos = duracaoEmMinutos; }
 
     @Transient
     public Long getQuantidadePostos() {
