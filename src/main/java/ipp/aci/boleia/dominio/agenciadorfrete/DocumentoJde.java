@@ -1,5 +1,6 @@
 package ipp.aci.boleia.dominio.agenciadorfrete;
 
+import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.Column;
@@ -14,7 +15,7 @@ import javax.persistence.Version;
 @Entity
 @Audited
 @Table(name = "AG_DOC_JDE")
-public class DocumentoJde {
+public class DocumentoJde implements IPersistente {
 
     @Id
     @Column(name = "CD_DOCUMENTO")
@@ -98,5 +99,15 @@ public class DocumentoJde {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    @Override
+    public Long getId() {
+        return null;
+    }
+
+    @Override
+    public void setId(Long id) {
+
     }
 }
