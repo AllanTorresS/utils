@@ -2,6 +2,7 @@ package ipp.aci.boleia.dominio.agenciadorfrete;
 
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,6 +11,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
@@ -30,7 +33,12 @@ public class AgenciadorFreteReembolso implements IPersistente {
     @SequenceGenerator(name = "SEQ_AG_REEMBOLSO", sequenceName = "SEQ_AG_REEMBOLSO", allocationSize = 1)
     private Long id;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "reembolso")
+    @Column(name = "ID_TIPO")
+    private Integer tipo;
+
+    @NotAudited
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name="CONSOL_REEMB", joinColumns={@JoinColumn(name="CD_CONSOLIDADO")}, inverseJoinColumns={@JoinColumn(name="CD_REEMBOLSO")})
     private List<Consolidado> consolidados;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -139,5 +147,13 @@ public class AgenciadorFreteReembolso implements IPersistente {
 
     public void setDataCriacao(Date dataCriacao) {
         this.dataCriacao = dataCriacao;
+    }
+
+    public Integer getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(Integer tipo) {
+        this.tipo = tipo;
     }
 }
