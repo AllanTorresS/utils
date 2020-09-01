@@ -375,4 +375,18 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
      * @return Data do último abastecimento realizado pelo motorista
      */
     Date obterDataUltimoAbastecimentoAutorizadoMotorista(Long cpfMotorista);
+
+    /**
+     * Retorna a transacao positiva ajustada oriunda do estorno da transacao original
+     * @param transacaoEstornada transacao original, que foi estornada
+     * @return transacao positiva ajustada
+     */
+    AutorizacaoPagamento obterTransacaoAjustadaOriundaDeEstorno(AutorizacaoPagamento transacaoEstornada);
+
+    /**
+     * Retorna a transacao negativa oriunda do estorno da transacao original
+     * @param transacaoEstornada transacao original, que foi estornada
+     * @return transacao negativa
+     */
+    AutorizacaoPagamento obterTransacaoNegativaOriundaDeEstorno(AutorizacaoPagamento transacaoEstornada);
 }

@@ -178,4 +178,72 @@ public class AutorizacaoPagamentoSd {
         autorizacao = repositorioAutorizacaoPagamento.armazenar(autorizacao);
         notificacaoUsuarioSd.enviarNotificacaoNotaFiscalEmitida(autorizacao, notaFiscal);
     }
+
+    /**
+     * Verifica se a transacao positiva ajustada oriunda de um estorno esta no mesmo ciclo da transacao estornada
+     *
+     * @param autorizacaoOriginal abastecimento estornado
+     * @return true, se estiver no mesmo ciclo
+     */
+    public boolean transacaoAjustadaEstaNoMesmoCicloDaTransacaoEstornadaOriginal(AutorizacaoPagamento autorizacaoOriginal) {
+
+        AutorizacaoPagamento transacaoAjustada = repositorioAutorizacaoPagamento.obterTransacaoAjustadaOriundaDeEstorno(autorizacaoOriginal);
+
+        //verifica se o ciclo em que a transacao positiva ajustada foi criada coincide com o cilo mais atual (original ou de postergacao) da transacao estornada
+        return transacaoAjustada != null && transacaoAjustada.getTransacaoConsolidada().getId().equals(autorizacaoOriginal.getTransacaoConsolidadaVigente().getId());
+
+    }
+
+    /**
+     * Verifica se a transacao negativa oriunda de um estorno esta no mesmo ciclo da transacao estornada
+     *
+     * @param autorizacaoOriginal abastecimento estornado
+     * @return true, se estiver no mesmo ciclo
+     */
+    public boolean transacaoNegativaEstaNoMesmoCicloDaTransacaoEstornadaOriginal(AutorizacaoPagamento autorizacaoOriginal) {
+
+        AutorizacaoPagamento transacaoNegativa = repositorioAutorizacaoPagamento.obterTransacaoNegativaOriundaDeEstorno(autorizacaoOriginal);
+
+        //verifica se o ciclo em que a transacao negativa foi criada coincide com o cilo mais atual (original ou de postergacao) da transacao estornada
+        return transacaoNegativa != null && transacaoNegativa.getTransacaoConsolidada().getId().equals(autorizacaoOriginal.getTransacaoConsolidadaVigente().getId());
+    }
+
+    /**
+     * Verifica se uma transacao ja estava cancelada ou estornada quando seu ciclo mais atual (original ou de postergacao) foi fechado
+     *
+     * @param autorizacaoOriginal abastecimento original
+     * @return true, se a transacao original ja estava cancelada/estornada quando o ciclo foi fechado
+     */
+    private boolean transacaoEstavaCanceladaOuEstornadaQuandoCiCloFoiFechado(AutorizacaoPagamento autorizacaoOriginal) {
+
+        if(autorizacaoOriginal.estaCancelado()){
+
+            AutorizacaoPagamento transacaoNegativa = repositorioAutorizacaoPagamento.obterTransacaoNegativaOriundaDeEstorno(autorizacaoOriginal);
+
+            //Nota: se a transacao negativa estiver no ciclo mais atual da transacao original (cancelada/estornada), isso significa que a transacao original ja estava com status CANCELADO quando o ciclo foi fechado
+            return transacaoNegativa != null
+                    && transacaoNegativa.getTransacaoConsolidada().getId().equals(autorizacaoOriginal.getTransacaoConsolidadaVigente().getId());
+        }else{
+            return false;
+        }
+
+    }
+
+    /**
+     * Verifica se o valor de uma transacao cancelada/estornada deve ser descontado em ciclos posteriores
+     *
+     * @param autorizacaoOriginal abastecimento original
+     * @return true, se o valor da transacao tiver sido contemplado em algum reembolso gerado
+     */
+    public boolean valorDaTransacaoFoiContempladoEmReembolsoGerado(AutorizacaoPagamento autorizacaoOriginal) {
+
+        if(autorizacaoOriginal.estaCancelado()) {
+            //Nota: se a transacao nao tem pendencia de emissao e se ela estava autorizada no momento do fechamento de seu ciclo mais atual (original ou de postergacao), entao seu valor foi contemplado no reembolso gerado para esse ciclo
+            return autorizacaoOriginal.emitidaEmCicloFechado()
+                        && !transacaoEstavaCanceladaOuEstornadaQuandoCiCloFoiFechado(autorizacaoOriginal);
+        }else{
+           return false;
+        }
+
+    }
 }

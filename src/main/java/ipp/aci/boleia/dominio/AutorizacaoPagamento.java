@@ -6,6 +6,7 @@ import ipp.aci.boleia.dominio.enums.ModalidadePagamento;
 import ipp.aci.boleia.dominio.enums.StatusAutorizacao;
 import ipp.aci.boleia.dominio.enums.StatusEdicao;
 import ipp.aci.boleia.dominio.enums.StatusNotaFiscalAbastecimento;
+import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
 import ipp.aci.boleia.dominio.enums.TipoErroAutorizacaoPagamento;
 import ipp.aci.boleia.dominio.enums.TipoPreenchimentoLitragem;
 import ipp.aci.boleia.dominio.enums.TipoRealizacaoPedido;
@@ -1439,7 +1440,7 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     @Transient
     public boolean estaAutorizadaOuCancelada() {
         if(getStatus() != null) {
-            return getStatus().equals(StatusAutorizacao.AUTORIZADO.getValue()) || getStatus().equals(StatusAutorizacao.CANCELADO.getValue());
+            return estaAutorizado() || estaCancelado();
         }
         return false;
     }
@@ -1453,6 +1454,19 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     public boolean estaAutorizado() {
         if (getStatus() != null) {
             return getStatus().equals(StatusAutorizacao.AUTORIZADO.getValue());
+        }
+        return false;
+    }
+
+    /**
+     * Verifica se a autorização de pagamento está cancelada.
+     *
+     * @return True, caso esteja cancelada.
+     */
+    @Transient
+    public boolean estaCancelado() {
+        if (getStatus() != null) {
+            return getStatus().equals(StatusAutorizacao.CANCELADO.getValue());
         }
         return false;
     }
@@ -1481,15 +1495,27 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     /**
      * Informa se a autorização de pagamento possui pendência de emissão de nota fiscal
      * levando em consideração a exigência de emissão e status de autorização.
+     * @param considerarCancelado indica se a pendência de NF deve ser avaliada também para abastecimentos
+     * cancelados
      *
      * @return true, caso possua pendencia.
      */
     @Transient
-    public boolean isPendenteEmissaoNF() {
-        return estaAutorizado() &&
+    public boolean isPendenteEmissaoNF(boolean considerarCancelado) {
+        boolean statusAutorizacao = considerarCancelado ? estaAutorizadaOuCancelada() : estaAutorizado();
+        return statusAutorizacao &&
                 valorTotal.compareTo(BigDecimal.ZERO) > 0 &&
                 exigeEmissaoNF() &&
                 (statusNotaFiscalEsta(StatusNotaFiscalAbastecimento.PENDENTE));
+    }
+
+    /**
+     * verifica se uma transacao foi emitida em um ciclo com status consolidacao FECHADO (ou seja, se seu valor foi considerado em algum reembolso gerado)
+     * @return true, caso a transacao nao tenha pendencia de emissao e seu ciclo mais atual (de origem ou postergacao) esteja FECHADO
+     */
+    public boolean emitidaEmCicloFechado(){
+        return this.getTransacaoConsolidadaVigente().getStatusConsolidacao().equals(StatusTransacaoConsolidada.FECHADA.getValue())
+                            && !isPendenteEmissaoNF(true);
     }
 
     /**
