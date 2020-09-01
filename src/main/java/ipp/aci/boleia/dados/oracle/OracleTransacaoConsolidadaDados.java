@@ -18,12 +18,14 @@ import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaAnd;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenor;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
 import ipp.aci.boleia.dominio.vo.AgrupamentoTransacaoConsolidadaPvVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFinanceiroVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaReembolsoGraficoVo;
@@ -372,7 +374,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
 
     /**
      * Realiza a pesquisa de Transacoes Consolidadas através de um filtor
-     * 
+     *
      * @param filtro parâmetros utilizados na consulta
      * @param usuarioLogado usuário que está realizando a consulta
      * @return retorna o resultado paginado da consulta
@@ -544,8 +546,18 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
     public List<TransacaoConsolidada> obterConsolidacoesComCicloAbastecimentoEncerrado(
             Date dataIntervaloMin, Date dataIntervaloMax) {
         ParametroPesquisa[] parametros = new ParametroPesquisa[] {
-                new ParametroPesquisaDataMaiorOuIgual("prazos.dataLimiteEmissaoNfe", dataIntervaloMin),
-                new ParametroPesquisaDataMenorOuIgual("prazos.dataLimiteEmissaoNfe", dataIntervaloMax)
+                new ParametroPesquisaOr(
+                        new ParametroPesquisaAnd(
+                                new ParametroPesquisaIgual("prazos.possuiPrazoAjuste", true),
+                                new ParametroPesquisaDataMaiorOuIgual("prazos.dataLimiteEmissaoNfe", dataIntervaloMin),
+                                new ParametroPesquisaDataMenorOuIgual("prazos.dataLimiteEmissaoNfe", dataIntervaloMax)
+                        ),
+                        new ParametroPesquisaAnd(
+                                new ParametroPesquisaIgual("prazos.possuiPrazoAjuste", false),
+                                new ParametroPesquisaDataMaiorOuIgual("dataFimPeriodo", dataIntervaloMin),
+                                new ParametroPesquisaDataMenorOuIgual("dataFimPeriodo", dataIntervaloMax)
+                        )
+                )
         };
         return pesquisar((ParametroOrdenacaoColuna) null, parametros);
     }
