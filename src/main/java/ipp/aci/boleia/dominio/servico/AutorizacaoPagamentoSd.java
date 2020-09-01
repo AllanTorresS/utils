@@ -190,11 +190,7 @@ public class AutorizacaoPagamentoSd {
         AutorizacaoPagamento transacaoAjustada = repositorioAutorizacaoPagamento.obterTransacaoAjustadaOriundaDeEstorno(autorizacaoOriginal);
 
         //verifica se o ciclo em que a transacao positiva ajustada foi criada coincide com o cilo mais atual (original ou de postergacao) da transacao estornada
-        if(transacaoAjustada != null && transacaoAjustada.getTransacaoConsolidada().getId().equals(autorizacaoOriginal.getTransacaoConsolidadaVigente().getId())){
-            return true;
-        }else{
-            return false;
-        }
+        return transacaoAjustada != null && transacaoAjustada.getTransacaoConsolidada().getId().equals(autorizacaoOriginal.getTransacaoConsolidadaVigente().getId());
 
     }
 
@@ -209,12 +205,7 @@ public class AutorizacaoPagamentoSd {
         AutorizacaoPagamento transacaoNegativa = repositorioAutorizacaoPagamento.obterTransacaoNegativaOriundaDeEstorno(autorizacaoOriginal);
 
         //verifica se o ciclo em que a transacao negativa foi criada coincide com o cilo mais atual (original ou de postergacao) da transacao estornada
-        if(transacaoNegativa != null && transacaoNegativa.getTransacaoConsolidada().getId().equals(autorizacaoOriginal.getTransacaoConsolidadaVigente().getId())){
-            return true;
-        }else{
-            return false;
-        }
-
+        return transacaoNegativa != null && transacaoNegativa.getTransacaoConsolidada().getId().equals(autorizacaoOriginal.getTransacaoConsolidadaVigente().getId());
     }
 
     /**
@@ -230,13 +221,8 @@ public class AutorizacaoPagamentoSd {
             AutorizacaoPagamento transacaoNegativa = repositorioAutorizacaoPagamento.obterTransacaoNegativaOriundaDeEstorno(autorizacaoOriginal);
 
             //Nota: se a transacao negativa estiver no ciclo mais atual da transacao original (cancelada/estornada), isso significa que a transacao original ja estava com status CANCELADO quando o ciclo foi fechado
-            if(transacaoNegativa != null
-                    && transacaoNegativa.getTransacaoConsolidada().getId().equals(autorizacaoOriginal.getTransacaoConsolidadaVigente().getId())){
-                return true;
-            }else{
-                return false;
-            }
-
+            return transacaoNegativa != null
+                    && transacaoNegativa.getTransacaoConsolidada().getId().equals(autorizacaoOriginal.getTransacaoConsolidadaVigente().getId());
         }else{
             return false;
         }
@@ -253,12 +239,8 @@ public class AutorizacaoPagamentoSd {
 
         if(autorizacaoOriginal.getStatus().equals(StatusAutorizacao.CANCELADO.getValue())) {
             //Nota: se a transacao nao tem pendencia de emissao e se ela estava autorizada no momento do fechamento de seu ciclo mais atual (original ou de postergacao), entao seu valor foi contemplado no reembolso gerado para esse ciclo
-            if (autorizacaoOriginal.emitidaEmCicloFechado()
-                    && !transacaoEstavaCanceladaOuEstornadaQuandoCiCloFoiFechado(autorizacaoOriginal)) {
-                return true;
-            } else {
-                return false;
-            }
+            return autorizacaoOriginal.emitidaEmCicloFechado()
+                        && !transacaoEstavaCanceladaOuEstornadaQuandoCiCloFoiFechado(autorizacaoOriginal);
         }else{
            return false;
         }
