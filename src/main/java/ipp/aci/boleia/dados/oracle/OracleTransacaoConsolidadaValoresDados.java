@@ -1,6 +1,5 @@
 package ipp.aci.boleia.dados.oracle;
 
-import ipp.aci.boleia.dados.IRepositorioBoleiaDados;
 import ipp.aci.boleia.dados.ITransacaoConsolidadaValoresDados;
 import ipp.aci.boleia.dominio.TransacaoConsolidadaValores;
 import org.springframework.stereotype.Repository;

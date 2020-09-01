@@ -452,6 +452,14 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     @JoinColumn(name = "CD_CICLO_REPASSE")
     private CicloRepasse cicloRepasse;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_CICLO_REPASSE_ORIGINAL")
+    private CicloRepasse cicloRepasseOriginal;
+
+    @Column(name = "DT_POSTERGACAO_REPASSE")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataPostergacaoRepasse;
+
     @Column(name = "ID_PROCESSADO_CAMPANHA")
     private Boolean foiProcessadoPeloGeradorDeCampanhas;
 
@@ -1554,6 +1562,22 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
 
     public void setCicloRepasse(CicloRepasse cicloRepasse) {
         this.cicloRepasse = cicloRepasse;
+    }
+
+    public CicloRepasse getCicloRepasseOriginal() {
+        return cicloRepasseOriginal;
+    }
+
+    public void setCicloRepasseOriginal(CicloRepasse cicloRepasseOriginal) {
+        this.cicloRepasseOriginal = cicloRepasseOriginal;
+    }
+
+    public Date getDataPostergacaoRepasse() {
+        return dataPostergacaoRepasse;
+    }
+
+    public void setDataPostergacaoRepasse(Date dataPostergacaoRepasse) {
+        this.dataPostergacaoRepasse = dataPostergacaoRepasse;
     }
 
     public Boolean getFoiProcessadoPeloGeradorDeCampanhas() {

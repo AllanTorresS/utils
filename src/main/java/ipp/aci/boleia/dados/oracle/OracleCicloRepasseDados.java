@@ -3,8 +3,8 @@ package ipp.aci.boleia.dados.oracle;
 import ipp.aci.boleia.dados.ICicloRepasseDados;
 import ipp.aci.boleia.dominio.AutorizacaoPagamento;
 import ipp.aci.boleia.dominio.CicloRepasse;
+import ipp.aci.boleia.dominio.enums.StatusCicloRepasse;
 import ipp.aci.boleia.dominio.enums.StatusIntegracaoJde;
-import ipp.aci.boleia.dominio.enums.StatusPagamentoCobranca;
 import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
@@ -69,7 +69,7 @@ public class OracleCicloRepasseDados extends OracleRepositorioBoleiaDados<CicloR
     }
 
     @Override
-    public List<CicloRepasse> obterCiclosRepasseFechadosNaoEnviados() {
+    public List<CicloRepasse> obterCiclosRepasseNaoEnviados() {
         return pesquisar((ParametroOrdenacaoColuna) null,
                 new ParametroPesquisaNulo("numeroDocumento"),
                 new ParametroPesquisaDataMenor("dataFim", ambiente.buscarDataAmbiente()),
@@ -81,7 +81,7 @@ public class OracleCicloRepasseDados extends OracleRepositorioBoleiaDados<CicloR
     public List<CicloRepasse> buscarCiclosRepasseParaConsultarAvisoDebito(){
         return pesquisar(new ParametroOrdenacaoColuna("dataVencimento", Ordenacao.DECRESCENTE),
             new ParametroPesquisaNulo("numeroDocumento", true),
-            new ParametroPesquisaDiferente("status", StatusPagamentoCobranca.PAGO.getValue()));
+            new ParametroPesquisaDiferente("status", StatusCicloRepasse.PAGO.getValue()));
     }
 
 	@Override
@@ -117,7 +117,7 @@ public class OracleCicloRepasseDados extends OracleRepositorioBoleiaDados<CicloR
         }
 
         if (filtro.getStatusPagamento() != null && filtro.getStatusPagamento().getName() != null) {
-            parametros.add(new ParametroPesquisaIgual("status", StatusPagamentoCobranca.valueOf(filtro.getStatusPagamento().getName()).getValue()));
+            parametros.add(new ParametroPesquisaIgual("status", StatusCicloRepasse.valueOf(filtro.getStatusPagamento().getName()).getValue()));
         }
 
         if (filtro.getStatusIntegracao() != null && filtro.getStatusIntegracao().getName() != null) {
