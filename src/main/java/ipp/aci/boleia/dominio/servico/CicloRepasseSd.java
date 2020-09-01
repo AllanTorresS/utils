@@ -244,8 +244,8 @@ public class CicloRepasseSd {
     private CicloRepasse validarAbastecimentosCicloRepasse(CicloRepasse cicloRepasse, Date dataEnvioJde){
         List<AutorizacaoPagamento> autorizacoesPagamentoRepasse = cicloRepasse.getAutorizacaoPagamentos();
         List<AutorizacaoPagamento> autorizacoesPagamentosParaPostergacaoCicloRepasse = autorizacoesPagamentoRepasse.stream()
-                .filter(autorizacaoPagamento -> autorizacaoPagamento.isPendenteEmissaoNF() ||
-                        (!autorizacaoPagamento.isPendenteEmissaoNF() &&
+                .filter(autorizacaoPagamento -> autorizacaoPagamento.isPendenteEmissaoNF(false) ||
+                        (!autorizacaoPagamento.isPendenteEmissaoNF(false) &&
                                 !autorizacaoPagamento.getTransacaoConsolidada().getStatusConsolidacao().equals(StatusTransacaoConsolidada.FECHADA.getValue())))
                 .collect(Collectors.toList());
 
