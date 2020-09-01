@@ -2,6 +2,7 @@ package ipp.aci.boleia.dados;
 
 import ipp.aci.boleia.dominio.Cobranca;
 import ipp.aci.boleia.dominio.CobrancaConectcar;
+import ipp.aci.boleia.dominio.vo.BoletoConectcarVo;
 import ipp.aci.boleia.dominio.vo.BoletoVo;
 
 /**
@@ -24,6 +25,6 @@ public interface IBoletoDados {
      * @param cobranca Cobrança para qual será gerado boleto.
      * @return Dados do boleto da cobrança
      */
-    BoletoVo recuperar(CobrancaConectcar cobranca);
+    BoletoConectcarVo recuperar(CobrancaConectcar cobranca);
 
 }

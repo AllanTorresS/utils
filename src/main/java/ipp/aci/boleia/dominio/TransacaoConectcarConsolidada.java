@@ -167,6 +167,18 @@ public class TransacaoConectcarConsolidada implements IPersistente, IPertenceFro
 	@Column(name = "VR_DESCONTO_NOTA_FISCAL")
 	private BigDecimal valorDescontoNotaFiscal;
 
+	@Column(name = "DS_PLACA_VEICULO")
+    private String placa;
+
+	@Column(name = "DS_NUMERO_TAG")
+    private String tag;
+
+	@Column(name = "DS_PRACA")
+    private String praca;
+
+	@Column(name = "VR_ESTORNO")
+    private BigDecimal estorno;
+	
 	@Override
 	public Long getId() {
 		return id;
@@ -423,6 +435,38 @@ public class TransacaoConectcarConsolidada implements IPersistente, IPertenceFro
 
 	public void setTipoTransacao(Integer tipoTransacao) {
 		this.tipoTransacao = tipoTransacao;
+	}
+
+	public String getPlaca() {
+		return placa;
+	}
+
+	public void setPlaca(String placa) {
+		this.placa = placa;
+	}
+
+	public String getTag() {
+		return tag;
+	}
+
+	public void setTag(String tag) {
+		this.tag = tag;
+	}
+
+	public String getPraca() {
+		return praca;
+	}
+
+	public void setPraca(String praca) {
+		this.praca = praca;
+	}
+
+	public BigDecimal getEstorno() {
+		return estorno;
+	}
+
+	public void setEstorno(BigDecimal estorno) {
+		this.estorno = estorno;
 	}
 
 	/**

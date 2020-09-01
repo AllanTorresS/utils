@@ -1,6 +1,7 @@
 package ipp.aci.boleia.dominio;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -23,6 +24,7 @@ import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
+import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
 
 /**
  * Representa a tabela de Cobranca Conectcar
@@ -30,7 +32,7 @@ import ipp.aci.boleia.dominio.interfaces.IPersistente;
 @Audited
 @Entity
 @Table(name = "COBRANCA_CONECTCAR")
-public class CobrancaConectcar implements IPersistente {
+public class CobrancaConectcar implements IPersistente, IPertenceFrota {
 
 	private static final long serialVersionUID = -4270486293974995429L;
 
@@ -120,6 +122,9 @@ public class CobrancaConectcar implements IPersistente {
 
 	@Column(name = "VR_MENSALIDADE")
 	private BigDecimal valorMensalidade;
+
+	@Column(name = "ID_TIPO_COBR")
+	private Integer tipo;
 
 	@Override
 	public Long getId() {
@@ -344,6 +349,19 @@ public class CobrancaConectcar implements IPersistente {
 
 	public void setValorMensalidade(BigDecimal valorMensalidade) {
 		this.valorMensalidade = valorMensalidade;
-	}	
+	}
+	
+    @Override
+    public List<Frota> getFrotas() {
+        return transacoesConsolidadas != null ? transacoesConsolidadas.get(0).getFrotas() : Collections.emptyList();
+    }
+
+	public Integer getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(Integer tipo) {
+		this.tipo = tipo;
+	}
 
 }

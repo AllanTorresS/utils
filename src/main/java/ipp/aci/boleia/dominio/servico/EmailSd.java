@@ -1,7 +1,35 @@
 package ipp.aci.boleia.dominio.servico;
 
 
+import static ipp.aci.boleia.dominio.enums.ChaveConfiguracaoSistema.CELULAR_CENTRAL_ATENDIMENTO_DDD;
+import static ipp.aci.boleia.dominio.enums.ChaveConfiguracaoSistema.CELULAR_CENTRAL_ATENDIMENTO_NUMERO;
+import static ipp.aci.boleia.dominio.enums.ChaveConfiguracaoSistema.TELEFONE_CENTRAL_ATENDIMENTO_DDD;
+import static ipp.aci.boleia.dominio.enums.ChaveConfiguracaoSistema.TELEFONE_CENTRAL_ATENDIMENTO_NUMERO;
+import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarCnpjApresentacao;
+import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarCpfApresentacao;
+import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarDecimal;
+import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarDecimalMoedaReal;
+import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarNumeroTelefone;
+import static ipp.aci.boleia.util.UtilitarioFormatacao.obterString;
+import static ipp.aci.boleia.util.UtilitarioFormatacaoData.formatarDataHora;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import javax.mail.util.ByteArrayDataSource;
+
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import ipp.aci.boleia.dados.IConfiguracaoSistemaDados;
+import ipp.aci.boleia.dados.IFrotaDados;
 import ipp.aci.boleia.dados.IFrotaPontoVendaDados;
 import ipp.aci.boleia.dados.ITokenDados;
 import ipp.aci.boleia.dados.IUsuarioDados;
@@ -9,6 +37,7 @@ import ipp.aci.boleia.dados.servicos.aws.AwsEmailEnvioDados;
 import ipp.aci.boleia.dominio.AutorizacaoPagamento;
 import ipp.aci.boleia.dominio.AutorizacaoPagamentoEdicao;
 import ipp.aci.boleia.dominio.Cobranca;
+import ipp.aci.boleia.dominio.CobrancaConectcar;
 import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.FrotaPontoVenda;
 import ipp.aci.boleia.dominio.GapPontoDeVenda;
@@ -19,6 +48,7 @@ import ipp.aci.boleia.dominio.ParametroCiclo;
 import ipp.aci.boleia.dominio.PedidoCreditoFrota;
 import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.SistemaExterno;
+import ipp.aci.boleia.dominio.TransacaoConectcarConsolidada;
 import ipp.aci.boleia.dominio.TransacaoConsolidada;
 import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.enums.StatusAtivacao;
@@ -34,31 +64,6 @@ import ipp.aci.boleia.util.UtilitarioFormatacaoData;
 import ipp.aci.boleia.util.i18n.Mensagens;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import ipp.aci.boleia.util.rotas.Paginas;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
-import javax.mail.util.ByteArrayDataSource;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-import static ipp.aci.boleia.dominio.enums.ChaveConfiguracaoSistema.CELULAR_CENTRAL_ATENDIMENTO_DDD;
-import static ipp.aci.boleia.dominio.enums.ChaveConfiguracaoSistema.CELULAR_CENTRAL_ATENDIMENTO_NUMERO;
-import static ipp.aci.boleia.dominio.enums.ChaveConfiguracaoSistema.TELEFONE_CENTRAL_ATENDIMENTO_DDD;
-import static ipp.aci.boleia.dominio.enums.ChaveConfiguracaoSistema.TELEFONE_CENTRAL_ATENDIMENTO_NUMERO;
-import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarCnpjApresentacao;
-import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarCpfApresentacao;
-import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarDecimal;
-import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarDecimalMoedaReal;
-import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarNumeroTelefone;
-import static ipp.aci.boleia.util.UtilitarioFormatacao.obterString;
-import static ipp.aci.boleia.util.UtilitarioFormatacaoData.formatarDataHora;
 
 /**
  * Oferece funcionalidades para envio de emails
@@ -115,6 +120,9 @@ public class EmailSd {
 
     @Autowired
     private IFrotaPontoVendaDados repositorioFrotaPtov;
+
+    @Autowired
+    private IFrotaDados repositorioFrota;
 
     /**
      * Gera um token e envia um link com token para acesso pelo usuario em email
@@ -506,6 +514,23 @@ public class EmailSd {
     }
 
     /**
+     * Envia um email para o responsável e para os usuários responsáveis da frota
+     * avisando sobre as cobranças geradas, com o boleto em anexo
+     * @param cobranca a cobrança que é referenciada no email
+     * @param anexoBytes o arquivo a ser anexado ao email
+     */
+    public void enviarEmailCobrancaFrota(CobrancaConectcar cobranca, byte[] anexoBytes) {
+        enviarEmailCobrancaFrota(cobranca, anexoBytes,
+                cobranca.getFrota().getNomeResponsavelFrota(), cobranca.getFrota().getEmailResponsavelFrota());
+        for (Usuario usuario: repositorio.obterGestorPorFrota(cobranca.getFrota().getId())) {
+            String emailDestinatario = usuario.getEmail();
+            if (StringUtils.isNotBlank(emailDestinatario) && !emailDestinatario.equals(cobranca.getFrota().getEmailResponsavelFrota())) {
+                enviarEmailCobrancaFrota(cobranca, anexoBytes, usuario.getNome(), usuario.getEmail());
+            }
+        }
+    }
+
+    /**
      * Envia um e-mail para o responsável e para os usuários responsaveis pela frota
      * avisando sobre um ajuste que tenha ocorrido no boleto
      * @param cobranca a cobrança que foi ajustada
@@ -590,6 +615,38 @@ public class EmailSd {
         emailDados.enviarEmail(assunto, corpo, Collections.singletonList(emailDestinatario), anexo, nomeAnexo);
     }
 
+    /**
+     * Envia um email de cobrança para um usuário específico, com o boleto em anexo
+     * @param cobranca a cobrança que é referenciada no email
+     * @param anexoBytes o arquivo a ser anexado no email
+     * @param nomeDestinatario nome do destinatário
+     * @param emailDestinatario email do destinatário
+     */
+    private void enviarEmailCobrancaFrota(CobrancaConectcar cobranca, byte[] anexoBytes, String nomeDestinatario, String emailDestinatario) {
+        String assunto = mensagens.obterMensagem("frota.cobranca.fim.ciclo.email.assunto");
+        ByteArrayDataSource anexo = null;
+        String nomeAnexo = null;
+        String valorTotal = UtilitarioFormatacao.formatarDecimalMoedaReal(cobranca.getValorTotal());
+        String informacaoCiclo = UtilitarioFormatacaoData.formatarDataPeriodoMes(cobranca.getDataInicioPeriodo(), cobranca.getDataFimPeriodo());
+        Date dataVencimento = cobranca.getDataVencimentoPagto();
+        String corpo;
+
+        if (dataVencimento != null) {
+            corpo = mensagens.obterMensagem("frota.cobranca.fim.ciclo.email.corpo.sucesso",
+                    nomeDestinatario, informacaoCiclo, valorTotal,
+                    UtilitarioFormatacaoData.formatarDataCurta(dataVencimento),
+                    utilitarioAmbiente.getURLContextoAplicacao());
+
+            anexo = new ByteArrayDataSource(anexoBytes, APPLICATION_TYPE_PDF);
+            nomeAnexo = mensagens.obterMensagem("frota.cobranca.fim.ciclo.email.anexo", UtilitarioFormatacaoData.formatarDataCurtaHifen(dataVencimento));
+        } else {
+            corpo = mensagens.obterMensagem("frota.cobranca.fim.ciclo.email.corpo.falha",
+                    nomeDestinatario, informacaoCiclo, valorTotal,
+                    utilitarioAmbiente.getURLContextoAplicacao());
+        }
+
+        emailDados.enviarEmail(assunto, corpo, Collections.singletonList(emailDestinatario), anexo, nomeAnexo);
+    }
 
     /**
      * Envia um e-mail para o responsável da frota informando a alteração do ciclo da frota.
@@ -633,6 +690,39 @@ public class EmailSd {
                                                     frotaPtov.getFrota().getRazaoSocial(),
                                                     formatarCnpjApresentacao(frotaPtov.getPontoVenda().getComponenteAreaAbastecimento().getCodigoPessoa()),
                                                     frotaPtov.getPontoVenda().getNome().trim()));
+        abastecimentos.forEach(abastecimentoPendente -> {
+            AutorizacaoPagamento autorizacaoPagamento = abastecimentoPendente.getAutorizacaoPagamento();
+            EdicaoAbastecimentoVo edicaoAbastecimentoVo = edicaoAbastecimentoSd.construirEdicaoAbastecimento(abastecimentoPendente, autorizacaoPagamento);
+            edicaoAbastecimentoSd.ordenarCamposEdicao(edicaoAbastecimentoVo);
+            corpo.append(mensagens.obterMensagem("email.alteracao.invalidada.corpo2", autorizacaoPagamento.getId().toString()));
+            edicaoAbastecimentoVo.getCamposEditados().forEach(campoEditado -> {
+                String campo = campoEditado.getCategoria() == null ? campoEditado.getCampo() : campoEditado.getCategoria() + " - " + campoEditado.getCampo();
+                String valorAntigo = campoEditado.getValorAutorizacao() == null ? "-" : campoEditado.getValorAutorizacao();
+                String valorNovo = campoEditado.getValorEdicao() == null ? "-" : campoEditado.getValorEdicao();
+                corpo.append(mensagens.obterMensagem("email.alteracao.invalidada.corpo3",
+                        campo,
+                        valorAntigo,
+                        valorNovo));
+            });
+            corpo.append(mensagens.obterMensagem("email.alteracao.invalidada.corpo4"));
+        });
+        corpo.append(mensagens.obterMensagem("email.alteracao.invalidada.corpo5"));
+
+        emailDados.enviarEmail(assunto, corpo.toString(), Arrays.asList(destinatario));
+    }
+
+    /**
+     * Envia um email quando uma alteração de abastecimento pendente de aprovação é invalidada devido ao fechamento do ciclo
+     *
+     * @param destinatario destinatário do e-mail
+     * @param transacaoConsolidada Ciclo que fechou
+     * @param abastecimentos abastecimentos pendentes de autorização do ciclo
+     */
+    public void enviarEmailCicloFechadoSemAprovacaoDeAlteracao(String destinatario, TransacaoConectcarConsolidada transacaoConsolidada, List<AutorizacaoPagamentoEdicao> abastecimentos){
+        Frota frota = repositorioFrota.obterPorId(transacaoConsolidada.getFrota().getId());
+        String assunto = mensagens.obterMensagem("email.alteracao.invalidada.assunto");
+
+        StringBuilder corpo = new StringBuilder(mensagens.obterMensagem("email.conectcar.alteracao.invalidada.corpo1", frota.getRazaoSocial()));
         abastecimentos.forEach(abastecimentoPendente -> {
             AutorizacaoPagamento autorizacaoPagamento = abastecimentoPendente.getAutorizacaoPagamento();
             EdicaoAbastecimentoVo edicaoAbastecimentoVo = edicaoAbastecimentoSd.construirEdicaoAbastecimento(abastecimentoPendente, autorizacaoPagamento);

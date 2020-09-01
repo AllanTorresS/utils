@@ -5,11 +5,14 @@ package ipp.aci.boleia.dominio.enums;
  *
  */
 public enum TipoTransacaoConectcarConsolidada {
-    PEDIDO_TAG(1);
+
+    PEDIDO_TAG(1),
+	PEDAGIO(2),
+	ESTACIONAMENTO(3);
 
     private Integer value;
 
-    /**
+	/**
      * Construtor do enum.
      *
      * @param value Valor do enum.
@@ -26,4 +29,19 @@ public enum TipoTransacaoConectcarConsolidada {
     public Integer getValue() {
         return value;
     }
+
+    /**
+     * Obtem por value
+     * @param value value
+     * @return Enum para o value
+     */
+    public static TipoTransacaoConectcarConsolidada obterPorValue(Integer value) {
+    	for (TipoTransacaoConectcarConsolidada tipo : TipoTransacaoConectcarConsolidada.values()) {
+            if(tipo.getValue().equals(value)) {
+                return tipo;
+            }
+    	}
+    	return null;
+    }
+
 }
