@@ -1440,7 +1440,7 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     @Transient
     public boolean estaAutorizadaOuCancelada() {
         if(getStatus() != null) {
-            return getStatus().equals(StatusAutorizacao.AUTORIZADO.getValue()) || getStatus().equals(StatusAutorizacao.CANCELADO.getValue());
+            return estaAutorizado() || estaCancelado();
         }
         return false;
     }
@@ -1454,6 +1454,19 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     public boolean estaAutorizado() {
         if (getStatus() != null) {
             return getStatus().equals(StatusAutorizacao.AUTORIZADO.getValue());
+        }
+        return false;
+    }
+
+    /**
+     * Verifica se a autorização de pagamento está cancelada.
+     *
+     * @return True, caso esteja cancelada.
+     */
+    @Transient
+    public boolean estaCancelado() {
+        if (getStatus() != null) {
+            return getStatus().equals(StatusAutorizacao.CANCELADO.getValue());
         }
         return false;
     }

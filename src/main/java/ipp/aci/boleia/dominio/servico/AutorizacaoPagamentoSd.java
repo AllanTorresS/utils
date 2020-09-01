@@ -216,7 +216,7 @@ public class AutorizacaoPagamentoSd {
      */
     private boolean transacaoEstavaCanceladaOuEstornadaQuandoCiCloFoiFechado(AutorizacaoPagamento autorizacaoOriginal) {
 
-        if(autorizacaoOriginal.getStatus().equals(StatusAutorizacao.CANCELADO.getValue())){
+        if(autorizacaoOriginal.estaCancelado()){
 
             AutorizacaoPagamento transacaoNegativa = repositorioAutorizacaoPagamento.obterTransacaoNegativaOriundaDeEstorno(autorizacaoOriginal);
 
@@ -237,7 +237,7 @@ public class AutorizacaoPagamentoSd {
      */
     public boolean valorDaTransacaoFoiContempladoEmReembolsoGerado(AutorizacaoPagamento autorizacaoOriginal) {
 
-        if(autorizacaoOriginal.getStatus().equals(StatusAutorizacao.CANCELADO.getValue())) {
+        if(autorizacaoOriginal.estaCancelado()) {
             //Nota: se a transacao nao tem pendencia de emissao e se ela estava autorizada no momento do fechamento de seu ciclo mais atual (original ou de postergacao), entao seu valor foi contemplado no reembolso gerado para esse ciclo
             return autorizacaoOriginal.emitidaEmCicloFechado()
                         && !transacaoEstavaCanceladaOuEstornadaQuandoCiCloFoiFechado(autorizacaoOriginal);
