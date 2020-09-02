@@ -35,6 +35,9 @@ public class DocumentoJde implements IPersistente {
     @Column(name = "ID_STATUS")
     private Integer status;
 
+    @Column(name = "QT_PARCELAS")
+    private Integer quantidadeParcelas;
+
     @Column(name = "DS_MSG_ERRO")
     private String mensagemErro;
 
@@ -109,5 +112,13 @@ public class DocumentoJde implements IPersistente {
     @Override
     public void setId(Long id) {
 
+    }
+
+    public Integer getQuantidadeParcelas() {
+        return quantidadeParcelas;
+    }
+
+    public void setQuantidadeParcelas(Integer quantidadeParcelas) {
+        this.quantidadeParcelas = quantidadeParcelas;
     }
 }
