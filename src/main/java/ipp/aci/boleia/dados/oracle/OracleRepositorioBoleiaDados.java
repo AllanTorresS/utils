@@ -796,6 +796,7 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
 
         Usuario usuarioLogado = ambiente.getUsuarioLogado();
         if (comIsolamentoDados && usuarioLogado != null) {
+            adicionarParametroIsolamentoUsuarioAssessorOuCoordenador(parametros, usuarioLogado);
             adicionarParametroIsolamentoFrotista(parametros);
             adicionarParametroIsolamentoRevendedor(parametros, usuarioLogado);
             adicionarParametroIsolamentoMotorista(parametros, usuarioLogado);
@@ -818,6 +819,22 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
         if (IPertenceMotorista.class.isAssignableFrom(getClassePersistente()) && usuarioLogado.getMotorista() != null) {
             String nomeCampo = IPertenceMotorista.obterCaminhoMotorista(getClassePersistente());
             parametros.add(new ParametroPesquisaIgual(nomeCampo, usuarioLogado.getMotorista().getId()));
+        }
+    }
+    private void adicionarParametroIsolamentoUsuarioAssessorOuCoordenador(List<ParametroPesquisa> parametros, Usuario usuarioLogado){
+        if (IPertenceFrota.class.isAssignableFrom(getClassePersistente()) &&
+                usuarioLogado.getTipoPerfil().isInterno()) {
+
+            if(usuarioLogado.getCoordenadoria() != null && usuarioLogado.getId().equals(usuarioLogado.getCoordenadoria().getCoordenador().getId())){
+                String nomeCampo = IPertenceFrota.obterCaminhoFrota(getClassePersistente());
+                parametros.add(new ParametroPesquisaIn(nomeCampo, usuarioLogado.getCoordenadoria().listarFrotas()));
+            }
+
+            else if (CollectionUtils.isNotEmpty(usuarioLogado.getFrotasAssessoradas())) {
+                String nomeCampo = IPertenceFrota.obterCaminhoFrota(getClassePersistente());
+                parametros.add(new ParametroPesquisaIn(nomeCampo, usuarioLogado.listarIdsFrotasAssessoradas()));
+            }
+
         }
     }
 
