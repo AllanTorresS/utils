@@ -162,7 +162,7 @@ public class AutorizacaoPagamentoEdicaoSd {
             } else {
                 quantidadeItensAdicionais++;
             }
-            valorTotal = valorTotal.add(item.getValorTotal());
+            valorTotal = abastecimento.isPostoInterno()? null : valorTotal.add(item.getValorTotal());
             item.setAutorizacaoPagamento(abastecimento);
             item.removeCampanha();
         }
@@ -177,7 +177,7 @@ public class AutorizacaoPagamentoEdicaoSd {
      * @param codigoVip o codigo vip a ser editado
      */
     public void alterarDadosVip(AutorizacaoPagamento abastecimento, String codigoVip) {
-            abastecimento.setCodigoVip(codigoVip);
+        abastecimento.setCodigoVip(codigoVip);
     }
 
     /**

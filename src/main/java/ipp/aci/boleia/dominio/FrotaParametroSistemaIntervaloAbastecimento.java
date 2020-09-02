@@ -48,6 +48,9 @@ public class FrotaParametroSistemaIntervaloAbastecimento implements IPersistente
     @Column(name = "VA_MINS_INTRV_ABAST")
     private Integer minutosIntervaloAbastecimento;
 
+    @Column(name = "VA_KM_INTRV_ABAST")
+    private Long quilometrosIntervaloAbastecimento;
+
     @NotNull
     @Column(name = "ID_ATIVO")
     private Boolean ativo;
@@ -116,4 +119,11 @@ public class FrotaParametroSistemaIntervaloAbastecimento implements IPersistente
         return frotaParametroSistema.getFrotas();
     }
 
+    public Long getQuilometrosIntervaloAbastecimento() {
+        return quilometrosIntervaloAbastecimento;
+    }
+
+    public void setQuilometrosIntervaloAbastecimento(Long quilometrosIntervaloAbastecimento) {
+        this.quilometrosIntervaloAbastecimento = quilometrosIntervaloAbastecimento;
+    }
 }

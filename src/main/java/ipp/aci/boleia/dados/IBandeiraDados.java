@@ -25,4 +25,11 @@ public interface IBandeiraDados extends IRepositorioBoleiaDados<Bandeira> {
      * @return Lista de bandeiras encontradas
      */
     List<Bandeira> pesquisarPorDescricao(FiltroPesquisaParcialVo filtro);
+
+    /**
+     * Obtém uma bandeira a partir do seu código corporativo
+     * @param codigoCorporativo código corporativo da bandeira
+     * @return a bandeira encontrada
+     */
+    Bandeira obterPorCodigoCorporativo(Long codigoCorporativo);
 }

@@ -52,8 +52,9 @@ public interface IArmazenamentoDados {
      * @param origem Tipo de arquivo de origem
      * @param idOrigem Identificador do arquivo de origem
      * @param destino Tipo de arquivo de destino
+     * @param idDestino Identificador do arquivo de destino
      */
-    void moverArquivo(TipoArquivo origem, Long idOrigem, TipoArquivo destino);
+    void moverArquivo(TipoArquivo origem, Long idOrigem, TipoArquivo destino, Long idDestino);
 
     /**
      * Obtem o link para o download de um arquivo no bucket do boleia amazon
