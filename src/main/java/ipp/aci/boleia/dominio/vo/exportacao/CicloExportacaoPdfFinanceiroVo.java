@@ -52,12 +52,12 @@ public class CicloExportacaoPdfFinanceiroVo {
         BigDecimal valorTotalNf = null;
         this.setTotalEmitido("-");
         this.setExigeNf(consolidado.getFrota().exigeNotaFiscal());
-        if (verificarTodosNaoNulos(consolidado.getValores().getValorTotalNotaFiscal(), consolidado.getValores().getValorEmitidoNotaFiscal())
-                && consolidado.getValores().getValorTotalNotaFiscal().compareTo(BigDecimal.ZERO) != 0) {
-            valorEmitidoNf = consolidado.getValores().getValorEmitidoNotaFiscal();
-            valorTotalNf = consolidado.getValores().getValorTotalNotaFiscal();
-            this.setTotalEmitido(UtilitarioFormatacao.formatarDecimalMoedaReal(consolidado.getValores().getValorEmitidoNotaFiscal(), 2).replace(" ",""));
-            this.setTotalNf(UtilitarioFormatacao.formatarDecimalMoedaReal(consolidado.getValores().getValorTotalNotaFiscal(), 2).replace(" ",""));
+        if (verificarTodosNaoNulos(consolidado.getValorTotalNotaFiscal(), consolidado.getValorEmitidoNotaFiscal())
+                && consolidado.getValorTotalNotaFiscal().compareTo(BigDecimal.ZERO) != 0) {
+            valorEmitidoNf = consolidado.getValorEmitidoNotaFiscal();
+            valorTotalNf = consolidado.getValorTotalNotaFiscal();
+            this.setTotalEmitido(UtilitarioFormatacao.formatarDecimalMoedaReal(consolidado.getValorEmitidoNotaFiscal(), 2).replace(" ",""));
+            this.setTotalNf(UtilitarioFormatacao.formatarDecimalMoedaReal(consolidado.getValorTotalNotaFiscal(), 2).replace(" ",""));
 
         }
 
@@ -71,12 +71,12 @@ public class CicloExportacaoPdfFinanceiroVo {
         }
 
 
-        String faturamento = consolidado.getValores().getValorFaturamento() != null ?
-                UtilitarioFormatacao.formatarDecimalMoedaReal(consolidado.getValores().getValorFaturamento(), 2).replace(" ","") : "-";
-        String taxa = consolidado.getValores().getValorDesconto() != null ?
-                UtilitarioFormatacao.formatarDecimalMoedaReal(consolidado.getValores().getValorDesconto(), 2).replace(" ","") : "-";
-        String reembolso =  consolidado.getValores().getValorReembolso() != null ?
-                UtilitarioFormatacao.formatarDecimalMoedaReal(consolidado.getValores().getValorReembolso(), 2).replace(" ","") : "-";
+        String faturamento = consolidado.getValorFaturamento() != null ?
+                UtilitarioFormatacao.formatarDecimalMoedaReal(consolidado.getValorFaturamento(), 2).replace(" ","") : "-";
+        String taxa = consolidado.getValorDesconto() != null ?
+                UtilitarioFormatacao.formatarDecimalMoedaReal(consolidado.getValorDesconto(), 2).replace(" ","") : "-";
+        String reembolso =  consolidado.getValorReembolso() != null ?
+                UtilitarioFormatacao.formatarDecimalMoedaReal(consolidado.getValorReembolso(), 2).replace(" ","") : "-";
 
 
         this.setPeriodo(UtilitarioFormatacaoData.formatarPeriodoDiasMes(consolidado.getDataInicioPeriodo(), consolidado.getDataFimPeriodo(), true));

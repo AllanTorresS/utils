@@ -32,7 +32,7 @@ public class ConciliacaoCobrancasVo {
         this.consolidadoFrotaRevendedor = cobrancas.stream()
                 .flatMap(trans ->
                     trans.getTransacoesConsolidadas().stream()
-                            .filter(tc -> tc.getValores().getValorTotal().compareTo(BigDecimal.ZERO) > 0)
+                            .filter(tc -> tc.getValorTotal().compareTo(BigDecimal.ZERO) > 0)
                             .map(ConciliacaoCobrancasFrotaRevendedorVo::new))
                 .collect(Collectors.toList());
 
