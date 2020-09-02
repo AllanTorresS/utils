@@ -2,7 +2,6 @@ package ipp.aci.boleia.dados.oracle;
 
 import ipp.aci.boleia.dados.IReembolsoAgenciadorFreteDados;
 import ipp.aci.boleia.dominio.agenciadorfrete.AgenciadorFreteReembolso;
-import ipp.aci.boleia.dominio.enums.TipoEntidadeUnidadeEmpresaAgregada;
 import ipp.aci.boleia.dominio.enums.agenciadorfrete.TipoReembolso;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
@@ -11,7 +10,6 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgu
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.vo.EnumVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaReembolsoAgenciadorFreteVo;
-import ipp.aci.boleia.dominio.vo.FiltroPesquisaUnidadeEmpresaAgregadaVo;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioFormatacaoData;
 import org.springframework.stereotype.Repository;
