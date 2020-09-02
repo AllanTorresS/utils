@@ -821,6 +821,13 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
             parametros.add(new ParametroPesquisaIgual(nomeCampo, usuarioLogado.getMotorista().getId()));
         }
     }
+
+    /**
+     * Cria e adiciona o parametro de pesquisa para isolamento de dados dos assessores e coordenadores
+     *
+     * @param parametros    Os parametros atuais
+     * @param usuarioLogado O usuario logado
+     */
     private void adicionarParametroIsolamentoUsuarioAssessorOuCoordenador(List<ParametroPesquisa> parametros, Usuario usuarioLogado){
         if (IPertenceFrota.class.isAssignableFrom(getClassePersistente()) &&
                 usuarioLogado.getTipoPerfil().isInterno()) {
