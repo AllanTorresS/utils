@@ -155,6 +155,21 @@ public class DocumentoSd {
     }
 
     /**
+     * Obtém um documento de integração de acordo com seu tipo,
+     * e tipo de perfil do usuário, se existir.
+     *
+     * Note que, integrações podem ser aceitas mesmo que
+     * o seu status não esteja vigente
+     *
+     * @param tipo O tipo de documento
+     * @param idTipoPerfil O id referente ao tipo de perfil do usuário
+     * @return Um documento aguardando publicação equivalente
+     */
+    public List<Documento> obterDocumentosIntegracao(DocumentoTipo tipo, Long idTipoPerfil) {
+        return repositorio.obterDocumentosIntegracao(tipo, idTipoPerfil).getRegistros();
+    }
+
+    /**
      * Obtém uma lista de documentos de acordo com seu tipo, tipo de perfil do usuário  e status, se existir.
      *
      * @param tipo O tipo de documento
