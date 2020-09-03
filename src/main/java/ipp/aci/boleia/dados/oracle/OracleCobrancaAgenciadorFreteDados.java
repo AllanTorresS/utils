@@ -2,10 +2,15 @@ package ipp.aci.boleia.dados.oracle;
 
 import ipp.aci.boleia.dados.ICobrancaAgenciadorFreteDados;
 import ipp.aci.boleia.dominio.agenciadorfrete.AgenciadorFreteCobranca;
+import ipp.aci.boleia.dominio.enums.StatusAnexo;
+import ipp.aci.boleia.dominio.enums.agenciadorfrete.StatusDocumento;
+import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaFetch;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.vo.agenciadorfrete.FiltroRelatorioCobrancaVo;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioFormatacaoData;
@@ -42,5 +47,12 @@ public class OracleCobrancaAgenciadorFreteDados extends OracleRepositorioBoleiaD
             parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataCriacao", data));
         }
         return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+    @Override
+    public List<AgenciadorFreteCobranca> obterCobrancasSemDocumentos() {
+        return pesquisar((InformacaoPaginacao)null,
+                new ParametroPesquisaIgual("status", StatusDocumento.NAO_INTEGRADO.getValue()))
+                .getRegistros();
     }
 }

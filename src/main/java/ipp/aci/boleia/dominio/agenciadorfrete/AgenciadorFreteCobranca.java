@@ -45,10 +45,6 @@ public class AgenciadorFreteCobranca implements IPersistente {
     @JoinColumn(name = "CD_DOCUMENTO")
     private DocumentoJde documentoJde;
 
-
-    @Column(name = "QT_PARCELAS")
-    private Integer quantidadeParcelas;
-
     @Column(name = "DT_CRIACAO")
     private Date dataCriacao;
 
@@ -92,14 +88,6 @@ public class AgenciadorFreteCobranca implements IPersistente {
 
     public void setDocumentoJde(DocumentoJde documentoJde) {
         this.documentoJde = documentoJde;
-    }
-
-    public Integer getQuantidadeParcelas() {
-        return quantidadeParcelas;
-    }
-
-    public void setQuantidadeParcelas(Integer quantidadeParcelas) {
-        this.quantidadeParcelas = quantidadeParcelas;
     }
 
     public Date getDataVencimento() {

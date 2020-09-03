@@ -33,6 +33,9 @@ public class AgenciadorFrete implements IPersistente {
     @Column(name="CD_CNPJ")
     private Long cnpj;
 
+    @Column(name = "CD_JDE_INT")
+    private Integer numeroJdeInterno;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_SISTEMA")
     private SistemaExterno sistemaExterno;
@@ -83,5 +86,13 @@ public class AgenciadorFrete implements IPersistente {
 
     public void setTiposCombustivel(List<TipoCombustivel> tiposCombustivel) {
         this.tiposCombustivel = tiposCombustivel;
+    }
+
+    public Integer getNumeroJdeInterno() {
+        return numeroJdeInterno;
+    }
+
+    public void setNumeroJdeInterno(Integer numeroJdeInterno) {
+        this.numeroJdeInterno = numeroJdeInterno;
     }
 }
