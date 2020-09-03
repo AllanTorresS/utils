@@ -91,7 +91,7 @@ public class ConfiguracoesSeguranca extends WebSecurityConfigurerAdapter {
     @Value("${cors.allowed.origins}")
     private String[] allowedOrigins;
 
-    @Value("${dominio.principal}")
+    @Value("${dominio.cookie.sessao}")
     private String dominioSessao;
 
     @Override
