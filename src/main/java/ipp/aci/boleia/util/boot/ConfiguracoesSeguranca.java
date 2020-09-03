@@ -316,6 +316,10 @@ public class ConfiguracoesSeguranca extends WebSecurityConfigurerAdapter {
         this.maximoSessoesPorUsuario = maximoSessoesPorUsuario;
     }
 
+    /**
+     * Permite customizar as propriedades dos cookies
+     * @return o serializador de cookies
+     */
     @Bean
     public CookieSerializer cookieSerializer() {
         DefaultCookieSerializer serializer = new DefaultCookieSerializer();
