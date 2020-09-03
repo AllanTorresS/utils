@@ -50,6 +50,17 @@ public class OracleUsuarioDados extends OracleRepositorioBoleiaDados<Usuario> im
                     " LEFT JOIN u.pontosDeVenda ptov " +
                     " LEFT JOIN u.perfis p " +
                     " WHERE u.excluido = 0 ";
+
+    private static final String QUERY_TOTAL_USUARIOS_DONOS_FROTA =
+            " SELECT COUNT(0) " +
+                    "FROM Usuario u " +
+                    "LEFT JOIN u.frota f " +
+                    "WHERE u.status = :idStatusUsuario " +
+                    "AND u.tipoPerfil.id = :idTipoPerfil " +
+                    "AND u.excluido = :excluido " +
+                    "AND f.status = :idStatusFrota " +
+                    "AND u.cpf = f.cpfDonoFrota";
+
     /**
      * Instancia o repositório
      */
@@ -151,6 +162,15 @@ public class OracleUsuarioDados extends OracleRepositorioBoleiaDados<Usuario> im
     }
 
     @Override
+    public Long obterTotalUsuariosDonosFrota() {
+        return pesquisarUnicoSemIsolamentoDados(QUERY_TOTAL_USUARIOS_DONOS_FROTA,
+                new ParametroPesquisaIgual("idTipoPerfil", TipoPerfilUsuario.FROTA.getValue()),
+                new ParametroPesquisaIgual("idStatusUsuario", StatusAtivacao.ATIVO.getValue()),
+                new ParametroPesquisaIgual("excluido", false),
+                new ParametroPesquisaIgual("idStatusFrota", StatusAtivacao.ATIVO.getValue()));
+    }
+
+    @Override
     public List<Usuario> obterGestorPorFrota(Long idFrota) {
         return pesquisarSemIsolamentoDados(new ParametroOrdenacaoColuna("nome"),
                 new ParametroPesquisaIgual("frota", idFrota),
@@ -224,6 +244,18 @@ public class OracleUsuarioDados extends OracleRepositorioBoleiaDados<Usuario> im
     public List<Usuario> obterPorFrota(Long idFrota) {
         return pesquisarSemIsolamentoDados(new ParametroOrdenacaoColuna("nome"),
                 new ParametroPesquisaIgual("frota", idFrota));
+    }
+
+    @Override
+    public Long obterQuantidadeTotal() {
+        return pesquisarTotalRegistros();
+    }
+
+    @Override
+    public Long obterQuantidadeTotalAtivosDeTipoPerfil(TipoPerfilUsuario tipoPerfilUsuario) {
+        return pesquisarTotalRegistros(new ParametroPesquisaIgual("tipoPerfil", tipoPerfilUsuario.getValue()),
+                new ParametroPesquisaIgual("status", StatusAtivacao.ATIVO.getValue()),
+                new ParametroPesquisaIgual("excluido", false));
     }
 
     @Override
