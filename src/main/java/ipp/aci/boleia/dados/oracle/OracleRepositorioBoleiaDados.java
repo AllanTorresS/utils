@@ -26,6 +26,7 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgualIgnoreCase;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaEntre;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaior;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaiorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMenor;
@@ -93,6 +94,8 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
     private final Class<T> classeAlvo;
     private static final Logger LOGGER = LoggerFactory.getLogger(OracleRepositorioBoleiaDados.class);
 
+    private static final String LOWER_FUNCTION = "LOWER";
+    private static final String LOWER_FUNCTION_CALL = LOWER_FUNCTION + "(%s)";
     private static final String TRANSLATE_FUNCTION = "TRANSLATE";
     private static final String TRANSLATE_ACCENTS_FROM = "'áàâãäéèêëíìïóòôõöúùûüÁÀÂÃÄÉÈÊËÍÌÏÓÒÔÕÖÚÙÛÜçÇ'";
     private static final String TRANSLATE_ACCENTS_TO = "'aaaaaeeeeiiiooooouuuuAAAAAEEEEIIIOOOOOUUUUcC'";
@@ -1135,6 +1138,11 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
     private void povoarParametroComparacaoMagnitude(ParametroPesquisa param, CriteriaBuilder builder, Root<?> entityRoot, List<Predicate> predicates, Map<String, Path<?>> cachePaths, boolean usarLeftJoins) {
         String campo = param.getNome();
         Object valor = param.getValor();
+        if (param instanceof ParametroPesquisaEntre) {
+            Path<BigDecimal> navegacaoCampo = obterAtributoEntidade(campo, entityRoot, usarLeftJoins, false, cachePaths);
+            Predicate greaterThan = builder.between(navegacaoCampo, (BigDecimal) valor, ((ParametroPesquisaEntre) param).getValorSecundario());
+            predicates.add(greaterThan);
+        }
         if (param instanceof ParametroPesquisaMaior) {
             Path<BigDecimal> navegacaoCampo = obterAtributoEntidade(campo, entityRoot, usarLeftJoins, false, cachePaths);
             Predicate greaterThan = builder.greaterThan(navegacaoCampo, (BigDecimal) valor);
@@ -1457,6 +1465,29 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
     protected static String removerAcentosCampo(String nomeCampo) {
         return String.format(TRANSLATE_FUNCTION_CALL, nomeCampo);
     }
+    
+    /**
+     * Cria uma string representando a chamada de uma funcao que
+     * remove o case de um dado campo de um registor no banco,
+     * para construcao de consultas JPQL que utilizem buscas por
+     * campos textuais.
+     * @param nomeCampo O nome do campo alvo
+     * @return O compo sem case
+     */
+    protected static String removerCaseCampo(String nomeCampo) {
+        return String.format(LOWER_FUNCTION_CALL, nomeCampo);
+    }
+    
+    /**
+     * Prepara o termo de consulta de cnpj para ser buscado no banco.
+     * 
+     * @param termo o termo de busca do cpnj
+     * @return o termo formatado removendo a pontuação e os zeros a esquerda.
+     */
+    protected static String preparaTermoCnpj(String termo){
+        return (termo == null) ? null : termo.replaceAll("[-./]+", "").replaceFirst("^0+(?!$)", "");
+    }
+
 
     /**
      * Retorna a classe da entidade persistente

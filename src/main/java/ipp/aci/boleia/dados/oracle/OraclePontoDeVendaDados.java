@@ -25,13 +25,16 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaior;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMenor;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaEntre;
 import ipp.aci.boleia.dominio.vo.EntidadeVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialPtovVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaLocalizacaoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaPontoDeVendaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaRotaPontoVendaServicosVo;
+import ipp.aci.boleia.dominio.vo.CoordenadaVo;
 import ipp.aci.boleia.util.Ordenacao;
 import ipp.aci.boleia.util.UtilitarioLambda;
+import ipp.aci.boleia.util.UtilitarioParse;
 import ipp.aci.boleia.util.negocio.ParametrosPesquisaBuilder;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -52,6 +55,25 @@ public class OraclePontoDeVendaDados extends OracleRepositorioBoleiaDados<PontoD
     private static final String UF = "uf";
     private static final String STATUS = "status";
     private static final String FOTOS = "fotos";
+    
+    /**
+     * O resultado dessa consulta sempre precisara dos valores dos relacionamentos com componentes, atividade componente e avaliacao.
+     * Sendo assim, para evitar consultas posteriores por registro, ja fazemos o fetch nessas duas entidades.
+     */
+    private static final String PESQUISA_PARA_AUTOCOMPLETE_VINCULAR = 
+        " SELECT " +
+        "     p " +
+        " FROM PontoDeVenda p " + 
+        " INNER JOIN FETCH p.componentes c" +
+        " INNER JOIN FETCH c.atividadeComponente " +
+        " LEFT JOIN FETCH p.avaliacao " +
+        " LEFT JOIN p.negociacoes n WITH n.frota.id = :idFrota" +
+        " WHERE " + 
+        "     n.statusVinculo IS NULL " +
+        "     AND ( " + removerCaseCampo(removerAcentosCampo("p.nome")) + " like :nome " +
+        "           OR cast(c.codigoPessoa as string) like :cnpj )" +
+        "     %s " +
+        " ORDER BY p.nome ";
 
     /**
      * Instancia o repositorio
@@ -91,8 +113,7 @@ public class OraclePontoDeVendaDados extends OracleRepositorioBoleiaDados<PontoD
 
     @Override
     public List<PontoDeVenda> pesquisarPorCnpjRazaoSocial(FiltroPesquisaParcialPtovVo filtro) {
-        String termoCnpj = (filtro.getTermo() == null) ? null : filtro.getTermo().replaceAll("[-./]+", "")
-                                                                                 .replaceFirst("^0+(?!$)", "");
+        String termoCnpj = preparaTermoCnpj(filtro.getTermo());
         List<ParametroPesquisa> parametros = new ArrayList<>();
 
         parametros.add(
@@ -236,6 +257,33 @@ public class OraclePontoDeVendaDados extends OracleRepositorioBoleiaDados<PontoD
             }
         }
 
+        if(CollectionUtils.isNotEmpty(filtro.getFiltrosCoordenadas())) {
+            ParametroPesquisaOr condicoesOr = new ParametroPesquisaOr();
+            BigDecimal margem = filtro.getMargemGrausFiltroCoordenadas() != null ? filtro.getMargemGrausFiltroCoordenadas() : BigDecimal.valueOf(0);
+
+            for (List<CoordenadaVo> listaCoordenadas: filtro.getFiltrosCoordenadas()) {
+                for (int i = 0; i < listaCoordenadas.size() - 1; i++) {
+                    CoordenadaVo ca = listaCoordenadas.get(i);
+                    BigDecimal caLat = ca.getLatitude();
+                    BigDecimal caLong = ca.getLongitude();
+                    CoordenadaVo cb = listaCoordenadas.get(i+1);
+                    BigDecimal cbLat = cb.getLatitude();
+                    BigDecimal cbLong = cb.getLongitude();
+                    BigDecimal xa = (cbLat.compareTo(caLat) > 0 ? caLat : cbLat).subtract(margem);
+                    BigDecimal xb = (cbLat.compareTo(caLat) > 0 ? cbLat : caLat).add(margem);
+                    BigDecimal ya = (cbLong.compareTo(caLong) > 0 ? caLong : cbLong).subtract(margem);
+                    BigDecimal yb = (cbLong.compareTo(caLong) > 0 ? cbLong : caLong).add(margem);
+
+                    condicoesOr.addParametro(new ParametroPesquisaAnd(
+                            new ParametroPesquisaEntre("latitude", xa, xb),
+                            new ParametroPesquisaEntre("longitude", ya, yb)
+                    ));
+                }
+            }
+
+            params.add(condicoesOr);
+        }
+
         params.add(new ParametroPesquisaFetch("avaliacao"));
 
         return pesquisar((ParametroOrdenacaoColuna)null, params.toArray(new ParametroPesquisa[params.size()]));
@@ -263,6 +311,23 @@ public class OraclePontoDeVendaDados extends OracleRepositorioBoleiaDados<PontoD
         ParametroOrdenacaoColuna ordenacao = new ParametroOrdenacaoColuna("nome");
 
         return pesquisar(ordenacao, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+    @Override
+    public List<PontoDeVenda> pesquisarSemVinculoComFrota(FiltroPesquisaParcialPtovVo filtro) {
+        String termoCnpj = preparaTermoCnpj(filtro.getTermo());
+        String criterioHabilitados = "";
+        if (filtro.getApenasPVsHabilitados()){
+            criterioHabilitados = "     AND p.statusHabilitacao = " + StatusHabilitacaoPontoVenda.HABILITADO.getValue() 
+                                + "     AND p.status = " + StatusAtivacao.ATIVO.getValue();
+        }
+        String queryString = String.format(PESQUISA_PARA_AUTOCOMPLETE_VINCULAR, criterioHabilitados);
+        return pesquisarSemIsolamentoDados( null
+            , queryString
+            , new ParametroPesquisaIgual("idFrota", UtilitarioParse.tryParseLong(filtro.getIdFrota()))
+            , new ParametroPesquisaLike("nome", filtro.getTermo())
+            , new ParametroPesquisaLike("cnpj", termoCnpj)
+        ).getRegistros();
     }
 
     @Override

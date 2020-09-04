@@ -120,8 +120,7 @@ public class OracleEmpresaAgregadaDados extends OracleRepositorioBoleiaDados<Emp
     @Override
     public List<EmpresaAgregada> pesquisarPorCnpjRazaoSocialFrota(String termo, Long idFrota){
         List<ParametroPesquisa> parametros = new ArrayList<>();
-        String termoCnpj = (termo == null) ? null : termo.replaceAll("[-./]+", "")
-                .replaceFirst("^0+(?!$)", "");
+        String termoCnpj = preparaTermoCnpj(termo);
         parametros.add(new ParametroPesquisaOr(
                 new ParametroPesquisaLike("cnpj", termoCnpj),
                 new ParametroPesquisaLike("razaoSocial", termo)));

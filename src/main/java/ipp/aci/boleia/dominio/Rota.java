@@ -69,6 +69,21 @@ public class Rota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @Column(name = "NO_VERSAO")
     private Long versao;
 
+    @NotNull
+    @Column(name = "ID_TIPO")
+    private Integer tipo;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_PLANO")
+    private PlanoViagem planoViagem;
+
+    @NotNull
+    @Column(name = "TEMPO_SEGUNDOS")
+    private BigDecimal tempo;
+
+    @Column(name = "ID_PRINCIPAL")
+    private Boolean principal;
+
     @Transient
     private Long quantidadePostos;
 
@@ -137,6 +152,22 @@ public class Rota implements IPersistente, IExclusaoLogica, IPertenceFrota {
         this.pontos = pontos;
     }
 
+    public Integer getTipo() { return tipo; }
+
+    public void setTipo(Integer tipo) { this.tipo = tipo; }
+
+    public PlanoViagem getPlanoViagem() { return planoViagem; }
+
+    public void setPlanoViagem(PlanoViagem planoViagem) { this.planoViagem = planoViagem; }
+
+    public BigDecimal getTempo() { return tempo; }
+
+    public void setTempo(BigDecimal tempo) { this.tempo = tempo; }
+
+    public Boolean getPrincipal() { return principal; }
+
+    public void setPrincipal(Boolean principal) { this.principal = principal; }
+
     @Transient
     public Long getQuantidadePostos() {
         return quantidadePostos;
@@ -146,4 +177,5 @@ public class Rota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     public void setQuantidadePostos(Long quantidadePostos) {
         this.quantidadePostos = quantidadePostos;
     }
+
 }

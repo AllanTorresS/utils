@@ -418,7 +418,7 @@ public class DispositivoMotoristaSd {
      * @throws ExcecaoValidacao Caso nao exista nenhum posto autorizado proximo
      */
     public void validarPostoAutorizado(Frota frota, FrotaParametroSistema restricaoPosto, CoordenadaGeograficaVo ponto, BigDecimal precisao) throws ExcecaoValidacao {
-        List<PontoDeVenda> postosHabilitados = temPostoHabilitadoProximo(ponto, precisao);
+        List<PontoDeVenda> postosHabilitados = temPostoHabilitadoProximo(ponto, precisao, frota);
         validarPostosBloqueados(frota, postosHabilitados);
         if (restricaoPosto != null) {
             temPostoPermitidoProximo(restricaoPosto, postosHabilitados);
@@ -447,17 +447,18 @@ public class DispositivoMotoristaSd {
      * Verifica se há algum posto habilitado dentro de um determinado raio de proximidade da localização do pedido
      * @param ponto O posto em questão
      * @param precisao Precisão da Localização do GPS
+     * @param frota A frota do motorista
      * @return A lista dos pontos de venda próximos
      * @throws ExcecaoValidacao Quando não há nenhum posto dentro do raio de proximidade, ou nenhum habilitado.
      */
-    private List<PontoDeVenda> temPostoHabilitadoProximo(CoordenadaGeograficaVo ponto, BigDecimal precisao) throws ExcecaoValidacao {
+    private List<PontoDeVenda> temPostoHabilitadoProximo(CoordenadaGeograficaVo ponto, BigDecimal precisao, Frota frota) throws ExcecaoValidacao {
         Double distancia = precisao != null && precisao.doubleValue() <= 250 ? 0.5 : 1.0;
         List<PontoDeVenda> postosProximos;
         FiltroPesquisaLocalizacaoVo filtro;
         filtro = new FiltroPesquisaLocalizacaoVo(ponto, distancia);
         postosProximos = repositorioPontoDeVenda.obterPontoDeVendaPorLimitesLocalizacao(filtro);
+        postosProximos = postosProximos.stream().filter(p-> frotaPontoVendaSd.validarVisibilidade(frota.getId(), p)).collect(Collectors.toList());
         List<PontoDeVenda> postosHabilitados = new ArrayList<>();
-
         if (postosProximos.isEmpty()) {
             throw new ExcecaoValidacao(Erro.SEM_PV_PROXIMO);
         } else {
