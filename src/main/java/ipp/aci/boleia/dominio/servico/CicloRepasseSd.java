@@ -184,13 +184,7 @@ public class CicloRepasseSd {
         ConfiguracaoRepasse configuracaoRepasse = entidadeRepasse.getConfiguracaoRepasse();
 
         CicloRepasse ultimoCicloAnteriorAoAbastecimento = repositorio.obterUltimoCicloRepasseAnteriorAData(dataEnvioJde, entidadeRepasse.getId(), pontoDeVenda.getId());
-
-        Date dataInicio;
-        if(ultimoCicloAnteriorAoAbastecimento != null && ultimoCicloAnteriorAoAbastecimento.getDataFim() != null){
-            dataInicio = obterPrimeiroInstanteDia(adicionarDiasData(ultimoCicloAnteriorAoAbastecimento.getDataFim(),1));
-        } else{
-            dataInicio = calcularDataInicioCiclo(dataEnvioJde, configuracaoRepasse.getParametroCiclo());
-        }
+        Date dataInicio = calcularDataInicioCiclo(dataEnvioJde, configuracaoRepasse.getParametroCiclo());
         Date dataFim = calcularDataFimCiclo(dataInicio, configuracaoRepasse.getParametroCiclo());
 
         novoCiclo.setConfiguracaoRepasse(configuracaoRepasse);
