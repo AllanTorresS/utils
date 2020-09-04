@@ -283,7 +283,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "WHERE tc.dataInicioPeriodo >= :dataInicioPeriodo AND tc.dataFimPeriodo <= :dataFimPeriodo " +
                     "AND (fpv.pontoVenda.id IN :idsPvs) " +
                     "AND (fpv.frota.id = :idFrota OR :idFrota is null) " +
-                    "AND ((tv.valorTotal <> 0 OR tv.valorTotalNotaFiscal <> 0) OR (r.valorDescontoCredito IS NOT NULL AND r.valorDescontoCredito <> 0)) " +
+                    "AND ((tv.valorFaturamento <> 0 OR tv.valorReembolso <> 0 OR tv.valorTotalNotaFiscal <> 0) OR (r.valorDescontoCredito IS NOT NULL AND r.valorDescontoCredito <> 0)) " +
                     "AND (tc.statusConsolidacao = :statusConsolidacao or :statusConsolidacao is null) " +
                     "ORDER BY " +
                     "   %s ";
