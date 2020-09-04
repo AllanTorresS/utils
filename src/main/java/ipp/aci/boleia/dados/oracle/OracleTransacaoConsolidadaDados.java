@@ -339,12 +339,13 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
      * Busca uma lista de transações consolidadas de um ponto de venda agrupadas por data e status.
      */
     private static final String CONSULTA_TRANSACOES_CONSOLIDADAS_AGRUPADAS_POR_PV =
-            "SELECT new ipp.aci.boleia.dominio.vo.AgrupamentoTransacaoConsolidadaPvVo(TC.dataInicioPeriodo, TC.dataFimPeriodo, MIN(TCP.dataLimiteEmissaoNfe), TC.statusConsolidacao, SUM(TCV.valorFaturamento), SUM(TCV.valorReembolso), SUM(TCV.valorDesconto), SUM(TCV.valorTotalNotaFiscal), SUM(TCV.valorEmitidoNotaFiscal)) " +
+            "SELECT new ipp.aci.boleia.dominio.vo.AgrupamentoTransacaoConsolidadaPvVo(TC.dataInicioPeriodo, TC.dataFimPeriodo, MIN(TCP.dataLimiteEmissaoNfe), TC.statusConsolidacao, SUM(TCV.valorFaturamento), SUM(CASE WHEN RM.valorReembolso IS NULL THEN TCV.valorReembolso ELSE RM.valorReembolso END), SUM(CASE WHEN RM.valorDesconto IS NULL THEN TCV.valorDesconto ELSE RM.valorDesconto END), SUM(TCV.valorTotalNotaFiscal), SUM(TCV.valorEmitidoNotaFiscal)) " +
                     "FROM TransacaoConsolidada TC " +
                     "JOIN TC.frotaPtov FP " +
                     "JOIN FP.frota F " +
                     "JOIN TC.valores TCV " +
                     "JOIN TC.prazos TCP " +
+                    "LEFT JOIN TC.reembolso RM	" +
                     "WHERE FP.pontoVenda.id IN :idsPvs AND " +
                     "      TRUNC(TC.dataInicioPeriodo) >= TRUNC(:dataInicio) AND " +
                     "      TRUNC(TC.dataFimPeriodo) <= TRUNC(:dataFim) AND " +
