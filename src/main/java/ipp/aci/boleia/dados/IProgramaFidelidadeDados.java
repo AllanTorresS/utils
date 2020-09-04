@@ -2,6 +2,7 @@ package ipp.aci.boleia.dados;
 
 import ipp.aci.boleia.dominio.vo.KmvAcumuloVo;
 import ipp.aci.boleia.dominio.vo.KmvVo;
+import ipp.aci.boleia.util.excecao.ExcecaoIntegracaoKmv;
 
 import java.util.List;
 
@@ -34,8 +35,9 @@ public interface IProgramaFidelidadeDados {
      * @param cpf o cpf do motorista registrado na KMV
      * @param senha a senha utilizada no KMV pelo motorista
      * @return O saldo do motorista no Km de Vantagens
+     * @throws ExcecaoIntegracaoKmv Se der algum erro na integracao com o KMV
      */
-    Integer mostrarSaldo(String cpf, String senha);
+    Integer mostrarSaldo(String cpf, String senha) throws ExcecaoIntegracaoKmv;
 
     /**
      * Acumula pontos para o dono da frota.

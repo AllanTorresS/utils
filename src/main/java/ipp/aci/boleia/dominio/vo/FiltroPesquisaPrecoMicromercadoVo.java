@@ -15,6 +15,7 @@ public class FiltroPesquisaPrecoMicromercadoVo extends BaseFiltroPaginado {
     private Date dataAtualizacao;
     private EnumVo ufPontoDeVenda;
     private String municipioPontoDeVenda;
+    private Long idPontoDeVenda;
 
     private Date dataAtualizacaoInicial;
     private Date dataAtualizacaoFinal;
@@ -61,6 +62,14 @@ public class FiltroPesquisaPrecoMicromercadoVo extends BaseFiltroPaginado {
 
     public void setMunicipioPontoDeVenda(String municipioPontoDeVenda) {
         this.municipioPontoDeVenda = municipioPontoDeVenda;
+    }
+
+    public Long getIdPontoDeVenda() {
+        return idPontoDeVenda;
+    }
+
+    public void setIdPontoDeVenda(Long idPontoDeVenda) {
+        this.idPontoDeVenda = idPontoDeVenda;
     }
 
     public void setDataAtualizacaoInicial(Date dataAtualizacaoInicial) {

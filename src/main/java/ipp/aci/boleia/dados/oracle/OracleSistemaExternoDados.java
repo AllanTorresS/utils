@@ -67,7 +67,7 @@ public class OracleSistemaExternoDados extends OracleRepositorioBoleiaDados<Sist
      * @param parametros parâmetro de pesquisa no repositório.
      */
     private void povoarParametrosParaAutocomplete(FiltroPesquisaParcialVo filtro, List<ParametroPesquisa> parametros) {
-        String termoCnpj = (filtro.getTermo() == null) ? null : filtro.getTermo().replaceAll("[-./]+", "").replaceFirst("^0+(?!$)", "");
+        String termoCnpj = preparaTermoCnpj(filtro.getTermo());
         ParametroPesquisa paramCnpj = new ParametroPesquisaLike("cnpj", termoCnpj);
         ParametroPesquisa paramRazao = new ParametroPesquisaLike("nomeSistema", filtro.getTermo());
 
