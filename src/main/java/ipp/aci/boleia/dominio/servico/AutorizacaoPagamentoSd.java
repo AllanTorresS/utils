@@ -238,15 +238,19 @@ public class AutorizacaoPagamentoSd {
 
             AutorizacaoPagamento transacaoNegativa = repositorioAutorizacaoPagamento.obterTransacaoNegativaOriundaDeEstorno(autorizacaoOriginal);
 
-            if(transacaoNegativa.getTransacaoConsolidada() != null){
-                //Nota: se a transacao nao tem pendencia de emissao e se ela estava autorizada no momento do fechamento de seu ciclo mais atual (original ou de postergacao), entao seu valor foi contemplado no reembolso gerado para esse ciclo
-                return autorizacaoOriginal.emitidaEmCicloFechado()
-                        && !transacaoEstavaCanceladaOuEstornadaQuandoCiCloFoiFechado(autorizacaoOriginal,transacaoNegativa);
+            if(transacaoNegativa != null){
+                if(transacaoNegativa.getTransacaoConsolidada() != null){
+                    //Nota: se a transacao nao tem pendencia de emissao e se ela estava autorizada no momento do fechamento de seu ciclo mais atual (original ou de postergacao), entao seu valor foi contemplado no reembolso gerado para esse ciclo
+                    return autorizacaoOriginal.emitidaEmCicloFechado()
+                            && !transacaoEstavaCanceladaOuEstornadaQuandoCiCloFoiFechado(autorizacaoOriginal,transacaoNegativa);
+                }else{
+                    //caso a transacao negativa ainda nao tenha ciclo definido (ainda esteja sendo processado na fila), nao exibe o cancelado que a originou
+                    return false;
+                }
             }else{
-                //caso a transacao negativa ainda nao tenha ciclo definido (ainda esteja sendo processado na fila), nao exibe o cancelado que a originou
                 return false;
             }
-
+            
         }else{
            return false;
         }
