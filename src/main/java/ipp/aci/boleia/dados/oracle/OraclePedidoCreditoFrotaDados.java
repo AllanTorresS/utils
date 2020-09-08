@@ -8,11 +8,11 @@ import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
-import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaAnd;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenor;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDiferente;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaFetch;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaior;
@@ -51,9 +51,12 @@ public class OraclePedidoCreditoFrotaDados extends OracleRepositorioBoleiaDados<
 
     @Override
     public List<PedidoCreditoFrota> obterTodosAbertos(Date dataAtual) {
-        return pesquisar(new ParametroOrdenacaoColuna("id", Ordenacao.DECRESCENTE), new ParametroPesquisaDataMaiorOuIgual("validadePedido", dataAtual),
-                new ParametroPesquisaOr( new ParametroPesquisaIgual("status", StatusPedidoCredito.PENDENTE.getValue()),
-                        new ParametroPesquisaIgual("status", StatusPedidoCredito.PROCESSANDO.getValue())));
+        return pesquisarSemIsolamentoDados(new ParametroOrdenacaoColuna("id", Ordenacao.DECRESCENTE),
+                new ParametroPesquisaDataMaiorOuIgual("validadePedido", dataAtual),
+                new ParametroPesquisaOr(
+                        new ParametroPesquisaIgual("status", StatusPedidoCredito.PENDENTE.getValue()),
+                        new ParametroPesquisaIgual("status", StatusPedidoCredito.PROCESSANDO.getValue())),
+                new ParametroPesquisaFetch("frota"));
     }
 
     @Override
@@ -84,13 +87,14 @@ public class OraclePedidoCreditoFrotaDados extends OracleRepositorioBoleiaDados<
 
     @Override
     public List<PedidoCreditoFrota> obterPagosNaoVencidosPendentesJDE(Date dataAtual) {
-        return pesquisar(new ParametroOrdenacaoColuna("id", Ordenacao.DECRESCENTE),
+        return pesquisarSemIsolamentoDados(new ParametroOrdenacaoColuna("id", Ordenacao.DECRESCENTE),
                 new ParametroPesquisaDataMaiorOuIgual("validadePedido", dataAtual),
                 new ParametroPesquisaIgual("status", StatusPedidoCredito.PAGO.getValue()),
                 new ParametroPesquisaOr(
                         new ParametroPesquisaDiferente("statusJde", StatusIntegracaoJde.REALIZADO.getValue()),
                         new ParametroPesquisaNulo("statusJde")),
-                new ParametroPesquisaNulo("mensagemErroJde"));
+                new ParametroPesquisaNulo("mensagemErroJde"),
+                new ParametroPesquisaFetch("frota"));
     }
 
     @Override
