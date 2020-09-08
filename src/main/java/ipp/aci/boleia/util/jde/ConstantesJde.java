@@ -93,6 +93,6 @@ public final class ConstantesJde {
      * Impede instanciacao e heranca
      */
     private ConstantesJde() {
-        // Impede instanciacao e heranca
+        // Impede instanciacao
     }
 }
