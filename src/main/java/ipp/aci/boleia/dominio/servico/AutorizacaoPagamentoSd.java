@@ -214,12 +214,9 @@ public class AutorizacaoPagamentoSd {
      * @param autorizacaoOriginal abastecimento original
      * @return true, se a transacao original ja estava cancelada/estornada quando o ciclo foi fechado
      */
-    private boolean transacaoEstavaCanceladaOuEstornadaQuandoCiCloFoiFechado(AutorizacaoPagamento autorizacaoOriginal) {
+    private boolean transacaoEstavaCanceladaOuEstornadaQuandoCiCloFoiFechado(AutorizacaoPagamento autorizacaoOriginal, AutorizacaoPagamento transacaoNegativa) {
 
         if(autorizacaoOriginal.estaCancelado()){
-
-            AutorizacaoPagamento transacaoNegativa = repositorioAutorizacaoPagamento.obterTransacaoNegativaOriundaDeEstorno(autorizacaoOriginal);
-
             //Nota: se a transacao negativa estiver no ciclo mais atual da transacao original (cancelada/estornada), isso significa que a transacao original ja estava com status CANCELADO quando o ciclo foi fechado
             return transacaoNegativa != null
                     && transacaoNegativa.getTransacaoConsolidada().getId().equals(autorizacaoOriginal.getTransacaoConsolidadaVigente().getId());
@@ -238,9 +235,18 @@ public class AutorizacaoPagamentoSd {
     public boolean valorDaTransacaoFoiContempladoEmReembolsoGerado(AutorizacaoPagamento autorizacaoOriginal) {
 
         if(autorizacaoOriginal.estaCancelado()) {
-            //Nota: se a transacao nao tem pendencia de emissao e se ela estava autorizada no momento do fechamento de seu ciclo mais atual (original ou de postergacao), entao seu valor foi contemplado no reembolso gerado para esse ciclo
-            return autorizacaoOriginal.emitidaEmCicloFechado()
-                        && !transacaoEstavaCanceladaOuEstornadaQuandoCiCloFoiFechado(autorizacaoOriginal);
+
+            AutorizacaoPagamento transacaoNegativa = repositorioAutorizacaoPagamento.obterTransacaoNegativaOriundaDeEstorno(autorizacaoOriginal);
+
+            if(transacaoNegativa != null && transacaoNegativa.getTransacaoConsolidada() != null){
+                //Nota: se a transacao nao tem pendencia de emissao e se ela estava autorizada no momento do fechamento de seu ciclo mais atual (original ou de postergacao), entao seu valor foi contemplado no reembolso gerado para esse ciclo
+                return autorizacaoOriginal.emitidaEmCicloFechado()
+                        && !transacaoEstavaCanceladaOuEstornadaQuandoCiCloFoiFechado(autorizacaoOriginal,transacaoNegativa);
+            }else{
+                //caso a transacao negativa ainda nao tenha ciclo definido (ainda esteja sendo processado na fila), nao exibe o cancelado que a originou
+                return false;
+            }
+
         }else{
            return false;
         }
