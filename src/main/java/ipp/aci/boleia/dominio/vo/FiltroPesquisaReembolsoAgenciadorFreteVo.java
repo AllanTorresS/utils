@@ -3,7 +3,7 @@ package ipp.aci.boleia.dominio.vo;
 import ipp.aci.boleia.dominio.pesquisa.comum.BaseFiltroPaginado;
 
 /**
- * Filtro para pesquisa de unidades e empresas agregadas.
+ * Filtro para pesquisa o reembolso do agenciador de frete
  */
 public class FiltroPesquisaReembolsoAgenciadorFreteVo extends BaseFiltroPaginado {
     private String de;
