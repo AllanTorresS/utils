@@ -2,7 +2,9 @@ package ipp.aci.boleia.dados.oracle;
 
 import ipp.aci.boleia.dados.IReembolsoAgenciadorFreteDados;
 import ipp.aci.boleia.dominio.agenciadorfrete.AgenciadorFreteReembolso;
+import ipp.aci.boleia.dominio.enums.agenciadorfrete.StatusDocumento;
 import ipp.aci.boleia.dominio.enums.agenciadorfrete.TipoReembolso;
+import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgual;
@@ -74,5 +76,13 @@ public class OracleReembolsoAgenciadorFreteDados extends OracleRepositorioBoleia
             tipoEntidade = TipoReembolso.valueOf(filtroTipoEntidade.getName());
         }
         parametros.add(new ParametroPesquisaIgual("tipo", tipoEntidade != null ? tipoEntidade.getValue() : null));
+    }
+
+
+    @Override
+    public List<AgenciadorFreteReembolso> obterReembolsosSemDocumentos() {
+        return pesquisar((InformacaoPaginacao)null,
+                new ParametroPesquisaIgual("status", StatusDocumento.NAO_INTEGRADO.getValue()))
+                .getRegistros();
     }
 }
