@@ -1,6 +1,7 @@
 package ipp.aci.boleia.dados.oracle;
 
 import ipp.aci.boleia.dados.IReembolsoAgenciadorFreteDados;
+import ipp.aci.boleia.dominio.agenciadorfrete.AgenciadorFreteCobranca;
 import ipp.aci.boleia.dominio.agenciadorfrete.AgenciadorFreteReembolso;
 import ipp.aci.boleia.dominio.enums.agenciadorfrete.StatusDocumento;
 import ipp.aci.boleia.dominio.enums.agenciadorfrete.TipoReembolso;
@@ -83,6 +84,13 @@ public class OracleReembolsoAgenciadorFreteDados extends OracleRepositorioBoleia
     public List<AgenciadorFreteReembolso> obterReembolsosSemDocumentos() {
         return pesquisar((InformacaoPaginacao)null,
                 new ParametroPesquisaIgual("status", StatusDocumento.NAO_INTEGRADO.getValue()))
+                .getRegistros();
+    }
+
+    @Override
+    public List<AgenciadorFreteReembolso> obterReembolsosPorStatus(StatusDocumento status) {
+        return pesquisar((InformacaoPaginacao)null,
+                new ParametroPesquisaIgual("status", status.getValue()))
                 .getRegistros();
     }
 }
