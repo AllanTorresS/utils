@@ -275,7 +275,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "WHERE tc.dataInicioPeriodo >= :dataInicioPeriodo AND tc.dataFimPeriodo <= :dataFimPeriodo " +
                     "AND (fpv.pontoVenda.id IN :idsPvs) " +
                     "AND (fpv.frota.id = :idFrota OR :idFrota is null) " +
-                    "AND (tc.valorTotal <> 0 OR tc.valorTotalNotaFiscal <> 0) " +
+                    "AND ((tc.valorFaturamento <> 0 OR tc.valorReembolso <> 0 OR tc.valorTotalNotaFiscal <> 0) OR (r.valorDescontoCredito IS NOT NULL AND r.valorDescontoCredito <> 0)) " +
                     "AND (tc.statusConsolidacao = :statusConsolidacao or :statusConsolidacao is null) " +
                     "ORDER BY " +
                     "   %s ";
@@ -330,11 +330,12 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
      * Busca uma lista de transações consolidadas de um ponto de venda agrupadas por data e status.
      */
     private static final String CONSULTA_TRANSACOES_CONSOLIDADAS_AGRUPADAS_POR_PV =
-            "SELECT new ipp.aci.boleia.dominio.vo.AgrupamentoTransacaoConsolidadaPvVo(TC.dataInicioPeriodo, TC.dataFimPeriodo, MIN(TCP.dataLimiteEmissaoNfe), TC.statusConsolidacao, SUM(TC.valorFaturamento), SUM(TC.valorReembolso), SUM(TC.valorDesconto), SUM(TC.valorTotalNotaFiscal), SUM(TC.valorEmitidoNotaFiscal)) " +
+            "SELECT new ipp.aci.boleia.dominio.vo.AgrupamentoTransacaoConsolidadaPvVo(TC.dataInicioPeriodo, TC.dataFimPeriodo, MIN(TCP.dataLimiteEmissaoNfe), TC.statusConsolidacao, SUM(TC.valorFaturamento), SUM(CASE WHEN RM.valorReembolso IS NULL THEN TC.valorReembolso ELSE RM.valorReembolso END), SUM(CASE WHEN RM.valorDesconto IS NULL THEN TC.valorDesconto ELSE RM.valorDesconto END), SUM(TC.valorTotalNotaFiscal), SUM(TC.valorEmitidoNotaFiscal)) " +
                     "FROM TransacaoConsolidada TC " +
                     "JOIN TC.frotaPtov FP " +
                     "JOIN FP.frota F " +
                     "JOIN TC.prazos TCP " +
+                    "LEFT JOIN TC.reembolso RM	" +
                     "WHERE FP.pontoVenda.id IN :idsPvs AND " +
                     "      TRUNC(TC.dataInicioPeriodo) >= TRUNC(:dataInicio) AND " +
                     "      TRUNC(TC.dataFimPeriodo) <= TRUNC(:dataFim) AND " +
