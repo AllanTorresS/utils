@@ -252,7 +252,9 @@ public class CicloRepasseSd {
         if(novoCicloRepasse == null){
             novoCicloRepasse = criarCicloRepassePostergado(autorizacoesPagamentoParaPostergacaoCicloRepasse, cicloRepasse.getPontoDeVenda(), dataEnvioJde);
         } else{
-            novoCicloRepasse.setValorTotal(novoCicloRepasse.getValorTotal().add(valorPostergado));
+            BigDecimal novoValorTotalCiclo = novoCicloRepasse.getValorTotal().add(valorPostergado);
+            novoCicloRepasse.setValorTotal(novoValorTotalCiclo);
+            novoCicloRepasse.setValorNominalRepasse(calcularPorcentagem(novoValorTotalCiclo, novoCicloRepasse.getValorPercentualRepasse()));
         }
 
         //Atualiza o ciclo repasse dos abastecimentos pendentes de emissão ou cm consolidado em ajuste.
