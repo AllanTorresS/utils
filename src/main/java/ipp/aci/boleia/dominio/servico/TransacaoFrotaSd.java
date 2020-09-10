@@ -350,11 +350,11 @@ public class TransacaoFrotaSd {
         if (frota.isPrePago()) {
             boolean usoDeCredito = tipo.isDebito() && OperacaoDeCredito.USO_DE_CREDITO_PRE_PAGO.equals(tipo.getTipoOperacao());
             if (usoDeCredito) {
-                return registraExtratosParaPedidosPrePagos(transacao, valorTotal);
+                return registrarExtratosParaPedidosPrePagos(transacao, valorTotal);
             }
             boolean isEstorno = !tipo.isDebito() && transacaoOriginal != null;
             if (isEstorno) {
-                return registraExtratosEstornoEmPedidosPrePagaos(transacao, valorTotal, transacaoOriginal);
+                return registrarExtratosEstornoEmPedidosPrePagos(transacao, valorTotal, transacaoOriginal);
             }
         }
         return registrarExtratoTransacaoPedido(valorTotal, transacao, pedido);
@@ -370,7 +370,7 @@ public class TransacaoFrotaSd {
      * @param transacaoOriginal transacao original que esta sendo estornada
      * @return A transacao atualizada
      */
-    private TransacaoFrota registraExtratosEstornoEmPedidosPrePagaos(TransacaoFrota transacao, BigDecimal valorTotal, TransacaoFrota transacaoOriginal) {
+    private TransacaoFrota registrarExtratosEstornoEmPedidosPrePagos(TransacaoFrota transacao, BigDecimal valorTotal, TransacaoFrota transacaoOriginal) {
         List<PedidoCreditoFrota> pedidos
                 = transacaoOriginal.getExtratosTransacao().stream().map(ExtratoPedidoTransacao::getPedido).collect(Collectors.toList());
         for (PedidoCreditoFrota pedido : pedidos) {
@@ -407,7 +407,7 @@ public class TransacaoFrotaSd {
      * @param transacao responsavel pelo debito
      * @return A transacao atualizada
      */
-    private TransacaoFrota registraExtratosParaPedidosPrePagos(TransacaoFrota transacao, BigDecimal valorTotal) {
+    private TransacaoFrota registrarExtratosParaPedidosPrePagos(TransacaoFrota transacao, BigDecimal valorTotal) {
         List<PedidoCreditoFrota> pedidosPagos = repositorioPedido.obterPagosComSaldo(transacao.getFrota().getId());
         BigDecimal somaSaldosPre = pedidosPagos.stream().map(PedidoCreditoFrota::getSaldoPedido).reduce(BigDecimal.ZERO, BigDecimal::add);
         if(somaSaldosPre.compareTo(valorTotal.negate()) >= 0) {
