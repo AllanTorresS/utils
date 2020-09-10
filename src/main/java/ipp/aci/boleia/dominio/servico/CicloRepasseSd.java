@@ -135,14 +135,7 @@ public class CicloRepasseSd {
         ConfiguracaoRepasse configuracaoRepasse = entidadeRepasse.getConfiguracaoRepasse();
 
         CicloRepasse ultimoCicloAnteriorAoAbastecimento = repositorio.obterUltimoCicloRepasseAnteriorAData(autorizacaoPagamento.getDataProcessamento(), entidadeRepasse.getId(), autorizacaoPagamento.getPontoVenda().getId());
-
-        Date dataInicio;
-        if(ultimoCicloAnteriorAoAbastecimento != null && ultimoCicloAnteriorAoAbastecimento.getDataFim() != null){
-            dataInicio = obterPrimeiroInstanteDia(adicionarDiasData(ultimoCicloAnteriorAoAbastecimento.getDataFim(),1));
-        } else{
-            dataInicio = calcularDataInicioCiclo(autorizacaoPagamento.getDataProcessamento(), configuracaoRepasse.getParametroCiclo());
-        }
-
+        Date dataInicio = calcularDataInicioCiclo(autorizacaoPagamento.getDataProcessamento(), configuracaoRepasse.getParametroCiclo());
         Date dataFim = calcularDataFimCiclo(dataInicio, configuracaoRepasse.getParametroCiclo());
 
         novoCiclo.setConfiguracaoRepasse(configuracaoRepasse);
@@ -252,7 +245,9 @@ public class CicloRepasseSd {
         if(novoCicloRepasse == null){
             novoCicloRepasse = criarCicloRepassePostergado(autorizacoesPagamentoParaPostergacaoCicloRepasse, cicloRepasse.getPontoDeVenda(), dataEnvioJde);
         } else{
-            novoCicloRepasse.setValorTotal(novoCicloRepasse.getValorTotal().add(valorPostergado));
+            BigDecimal novoValorTotalCiclo = novoCicloRepasse.getValorTotal().add(valorPostergado);
+            novoCicloRepasse.setValorTotal(novoValorTotalCiclo);
+            novoCicloRepasse.setValorNominalRepasse(calcularPorcentagem(novoValorTotalCiclo, novoCicloRepasse.getValorPercentualRepasse()));
         }
 
         //Atualiza o ciclo repasse dos abastecimentos pendentes de emissão ou cm consolidado em ajuste.
