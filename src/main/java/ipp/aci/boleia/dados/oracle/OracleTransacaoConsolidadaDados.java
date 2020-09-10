@@ -103,13 +103,12 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
     private static final String CONSULTA_CONSOLIDADO_SEM_COBRANCA =
             " select t " +
                     " from TransacaoConsolidada t" +
-                    "     join FETCH t.valores tcv" +
                     "     join FETCH t.frotaPtov fpv  " +
                     "     join fpv.frota ft  " +
                     "     left join t.cobranca c  " +
                     " where " +
                     "     c.id is null  " +
-                    "     and tcv.valorTotal is not null " +
+                    "     and t.valorTotal is not null " +
                     "     and ft.numeroJdeInterno is not null" +
                     "     and t.modalidadePagamento = " + ModalidadePagamento.POS_PAGO.getValue() +
                     "     and t.dataFimPeriodo < :hoje " +
@@ -119,17 +118,16 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
     private static final String CONSULTA_CONSOLIDADO_SEM_REEMBOLSO =
             " SELECT t " +
                     " FROM TransacaoConsolidada t " +
-                    "     JOIN FETCH t.valores tcv" +
                     "     JOIN FETCH t.frotaPtov fpv " +
                     "     join fpv.pontoVenda pv  " +
                     "     join fpv.frota fr  " +
                     " WHERE " +
                     "     t.reembolso IS NULL " +
-                    "     AND tcv.valorReembolso IS NOT NULL " +
-                    "     AND tcv.valorDesconto IS NOT NULL " +
+                    "     AND t.valorReembolso IS NOT NULL " +
+                    "     AND t.valorDesconto IS NOT NULL " +
                     "     AND pv.numeroJdeInterno IS NOT NULL " +
                     "     AND fr.numeroJdeInterno IS NOT NULL " +
-                    "     AND tcv.valorTotal IS NOT NULL " +
+                    "     AND t.valorTotal IS NOT NULL " +
                     "     AND t.dataFimPeriodo < :hoje " +
                     "     AND t.statusConsolidacao = " + StatusTransacaoConsolidada.FECHADA.getValue();
 
@@ -146,14 +144,13 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
     private static final String CONSULTA_PESQUISA_GRID =
             "SELECT TC " +
                     " FROM TransacaoConsolidada TC " +
-                    "   LEFT JOIN FETCH TC.valores TCV" +
                     "   LEFT JOIN FETCH TC.prazos TCP " +
                     "   LEFT JOIN TC.frotaPtov FR " +
                     "   LEFT JOIN FR.frota F " +
                     "   LEFT JOIN FR.pontoVenda PV " +
                     " WHERE " +
                     "   ( " + CLAUSULA_NOTA_SEM_EMISSAO +
-                    "       OR (TCV.valorTotalNotaFiscal is not null AND TCV.valorTotalNotaFiscal > 0))" +
+                    "       OR (TC.valorTotalNotaFiscal is not null AND TC.valorTotalNotaFiscal > 0))" +
                     "   AND (TC.dataInicioPeriodo <= :dataFimPeriodo OR :dataFimPeriodo is null) " +
                     "   AND (TC.dataFimPeriodo >= :dataInicioPeriodo OR :dataInicioPeriodo is null) " +
                     "   AND (F.id = :idFrota OR :idFrota is null) " +
@@ -176,11 +173,10 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
     private static final String CONSULTA_PESQUISA_FROTISTA =
             "SELECT TC " +
                     " FROM TransacaoConsolidada TC " +
-                    "   LEFT JOIN TC.valores TCV" +
                     "   LEFT JOIN TC.frotaPtov FR " +
                     " WHERE " +
                     "   ( " + CLAUSULA_NOTA_SEM_EMISSAO +
-                    "       OR (TCV.valorTotalNotaFiscal is not null AND TCV.valorTotalNotaFiscal > 0))" +
+                    "       OR (TC.valorTotalNotaFiscal is not null AND TC.valorTotalNotaFiscal > 0))" +
                     "   AND (TC.dataInicioPeriodo >= :dataInicioPeriodo OR :dataInicioPeriodo is null) " +
                     "   AND (TC.dataFimPeriodo <= :dataFimPeriodo OR :dataFimPeriodo is null) " +
                     "   AND (FR.frota.id = :idFrota OR :idFrota is null) " +
@@ -210,7 +206,6 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
     private static final String CONSULTA_REEMBOLSO_PENDENTE_GRID =
             "SELECT TC " +
                     " FROM TransacaoConsolidada TC " +
-                    "   LEFT JOIN FETCH TC.valores TCV" +
                     "   LEFT JOIN FETCH TC.reembolso RE " +
                     "   LEFT JOIN TC.frotaPtov FR " +
                     "   LEFT JOIN FR.frota FT " +
@@ -218,7 +213,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     " WHERE " +
                     "   TC.dataFimPeriodo < :hoje " +
                     "   AND TC.statusConsolidacao = " + StatusTransacaoConsolidada.FECHADA.getValue() +
-                    "   AND TCV.valorTotal is not null and TCV.valorTotal <> 0 " +
+                    "   AND TC.valorTotal is not null and TC.valorTotal <> 0 " +
                     "   AND RE.dataPagamento is null " +
                     "   AND (TC.dataInicioPeriodo >= :dataInicioPeriodo OR :dataInicioPeriodo is null) " +
                     "   AND (TC.dataFimPeriodo <= :dataFimPeriodo OR :dataFimPeriodo is null) " +
@@ -247,17 +242,16 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "     ) " ;
 
     private static final String CONSULTA_TOTAL_REEMBOLSO_PERIODO =
-            " SELECT SUM(CASE WHEN r.valorReembolso IS NULL THEN tv.valorReembolso "+
+            " SELECT SUM(CASE WHEN r.valorReembolso IS NULL THEN tc.valorReembolso "+
                     "ELSE r.valorReembolso END) " +
                     "FROM TransacaoConsolidada tc " +
                     "LEFT JOIN tc.frotaPtov fpv " +
                     "LEFT JOIN tc.reembolso r " +
-                    "LEFT JOIN tc.valores tv " +
                     "WHERE tc.dataInicioPeriodo >= :dataInicioPeriodo AND tc.dataFimPeriodo <= :dataFimPeriodo " +
                     "AND (fpv.pontoVenda.id IN :idsPvs) " +
                     "AND (fpv.frota.id = :idFrota OR :idFrota is null) " +
                     "AND (tc.statusConsolidacao = :statusConsolidacao or :statusConsolidacao is null) " +
-                    "AND (tv.valorTotal <> 0 OR tv.valorTotalNotaFiscal <> 0) " +
+                    "AND (tc.valorTotal <> 0 OR tc.valorTotalNotaFiscal <> 0) " +
                     "AND r.status = 1";
 
     private static final String CONSULTA_NUMERO_REEMBOLSOS_POR_STATUS =
@@ -265,12 +259,11 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "FROM TransacaoConsolidada tc " +
                     "LEFT JOIN tc.frotaPtov fpv " +
                     "LEFT JOIN tc.reembolso r " +
-                    "LEFT JOIN tc.valores tv " +
                     "WHERE tc.dataInicioPeriodo >= :dataInicioPeriodo AND tc.dataFimPeriodo <= :dataFimPeriodo " +
                     "AND (fpv.pontoVenda.id IN :idsPvs) " +
                     "AND (fpv.frota.id = :idFrota OR :idFrota is null) " +
                     "AND (tc.statusConsolidacao = :statusConsolidacao or :statusConsolidacao is null) " +
-                    "AND (tv.valorTotal <> 0 OR tv.valorTotalNotaFiscal <> 0) " +
+                    "AND (tc.valorTotal <> 0 OR tc.valorTotalNotaFiscal <> 0) " +
                     "AND (r.status in :statusReembolso)";
 
 
@@ -279,11 +272,10 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "FROM TransacaoConsolidada tc " +
                     "LEFT JOIN tc.frotaPtov fpv " +
                     "LEFT JOIN tc.reembolso r " +
-                    "LEFT JOIN tc.valores tv " +
                     "WHERE tc.dataInicioPeriodo >= :dataInicioPeriodo AND tc.dataFimPeriodo <= :dataFimPeriodo " +
                     "AND (fpv.pontoVenda.id IN :idsPvs) " +
                     "AND (fpv.frota.id = :idFrota OR :idFrota is null) " +
-                    "AND ((tv.valorFaturamento <> 0 OR tv.valorReembolso <> 0 OR tv.valorTotalNotaFiscal <> 0) OR (r.valorDescontoCredito IS NOT NULL AND r.valorDescontoCredito <> 0)) " +
+                    "AND ((tc.valorFaturamento <> 0 OR tc.valorReembolso <> 0 OR tc.valorTotalNotaFiscal <> 0) OR (r.valorDescontoCredito IS NOT NULL AND r.valorDescontoCredito <> 0)) " +
                     "AND (tc.statusConsolidacao = :statusConsolidacao or :statusConsolidacao is null) " +
                     "ORDER BY " +
                     "   %s ";
@@ -296,7 +288,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "WHEN rm.dataVencimentoPgto IS NOT NULL THEN trunc(rm.dataVencimentoPgto) " +
                     "ELSE trunc(prz.dataLimiteEmissaoNfe+ 2) " +
                 "END) AS dataPagamento, " +
-                "SUM(CASE WHEN rm.valorReembolso IS NULL THEN tc_vr.valorReembolso "+
+                "SUM(CASE WHEN rm.valorReembolso IS NULL THEN tc.valorReembolso "+
                     "ELSE rm.valorReembolso END), " +
                 "CASE " +
                     "WHEN rm.status=0 THEN 'PREVISTO' " +
@@ -307,7 +299,6 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                 "END) " +
                 "FROM " +
                     "TransacaoConsolidada tc " +
-                    "LEFT JOIN tc.valores tc_vr " +
                     "LEFT JOIN tc.prazos prz " +
                     "LEFT JOIN tc.reembolso rm	" +
                     "LEFT JOIN tc.frotaPtov f_ptov	" +
@@ -317,8 +308,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "AND trunc(tc.dataFimPeriodo) 	<= :dataFimPeriodo " +
                     "AND (f_ptov.pontoVenda.id IN :idsPvs) " +
                     "AND (f_ptov.frota.id = :idFrota OR :idFrota is null) " +
-                    "AND (tc_vr.valorReembolso <> 0 or rm.valorReembolso <> 0) " +
-                    "AND tc_vr.valorReembolso is not null " +
+                    "AND (tc.valorReembolso <> 0 or rm.valorReembolso <> 0) " +
+                    "AND tc.valorReembolso is not null " +
                     "AND (tc.statusConsolidacao = :statusConsolidacao or :statusConsolidacao is null) " +
                 "GROUP BY " +
                     "CASE " +
@@ -339,11 +330,10 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
      * Busca uma lista de transações consolidadas de um ponto de venda agrupadas por data e status.
      */
     private static final String CONSULTA_TRANSACOES_CONSOLIDADAS_AGRUPADAS_POR_PV =
-            "SELECT new ipp.aci.boleia.dominio.vo.AgrupamentoTransacaoConsolidadaPvVo(TC.dataInicioPeriodo, TC.dataFimPeriodo, MIN(TCP.dataLimiteEmissaoNfe), TC.statusConsolidacao, SUM(TCV.valorFaturamento), SUM(CASE WHEN RM.valorReembolso IS NULL THEN TCV.valorReembolso ELSE RM.valorReembolso END), SUM(CASE WHEN RM.valorDesconto IS NULL THEN TCV.valorDesconto ELSE RM.valorDesconto END), SUM(TCV.valorTotalNotaFiscal), SUM(TCV.valorEmitidoNotaFiscal)) " +
+            "SELECT new ipp.aci.boleia.dominio.vo.AgrupamentoTransacaoConsolidadaPvVo(TC.dataInicioPeriodo, TC.dataFimPeriodo, MIN(TCP.dataLimiteEmissaoNfe), TC.statusConsolidacao, SUM(TC.valorFaturamento), SUM(CASE WHEN RM.valorReembolso IS NULL THEN TC.valorReembolso ELSE RM.valorReembolso END), SUM(CASE WHEN RM.valorDesconto IS NULL THEN TC.valorDesconto ELSE RM.valorDesconto END), SUM(TC.valorTotalNotaFiscal), SUM(TC.valorEmitidoNotaFiscal)) " +
                     "FROM TransacaoConsolidada TC " +
                     "JOIN TC.frotaPtov FP " +
                     "JOIN FP.frota F " +
-                    "JOIN TC.valores TCV " +
                     "JOIN TC.prazos TCP " +
                     "LEFT JOIN TC.reembolso RM	" +
                     "WHERE FP.pontoVenda.id IN :idsPvs AND " +
@@ -606,16 +596,16 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "    AND CASE " +
                     "        WHEN TC.statusNotaFiscal = " + StatusNotaFiscal.EMITIDA.getValue() + " AND RE.status = " + StatusPagamentoReembolso.PAGO.getValue() + " THEN  " + StatusPagamentoReembolso.PAGO.getValue() +
 
-                    "        WHEN " + exigeNF + " AND TC.statusNotaFiscal = 0 AND TCV.valorTotal > 0 AND TC.prazos.dataLimiteEmissaoNfe >= TRUNC(SYSDATE) THEN " + StatusPagamentoReembolso.AGUARDANDO_NF.getValue() +
-                    "        WHEN " + exigeNF + " AND TC.statusNotaFiscal = 0 AND TCV.valorTotal < 0 THEN " + StatusPagamentoReembolso.A_DESCONTAR.getValue() +
-                    "        WHEN " + exigeNF + " AND TC.statusNotaFiscal = 0 AND TCV.valorTotal > 0 AND TC.prazos.dataLimiteEmissaoNfe < TRUNC(SYSDATE) THEN " + StatusPagamentoReembolso.NF_ATRASADA.getValue() +
+                    "        WHEN " + exigeNF + " AND TC.statusNotaFiscal = 0 AND TC.valorTotal > 0 AND TC.prazos.dataLimiteEmissaoNfe >= TRUNC(SYSDATE) THEN " + StatusPagamentoReembolso.AGUARDANDO_NF.getValue() +
+                    "        WHEN " + exigeNF + " AND TC.statusNotaFiscal = 0 AND TC.valorTotal < 0 THEN " + StatusPagamentoReembolso.A_DESCONTAR.getValue() +
+                    "        WHEN " + exigeNF + " AND TC.statusNotaFiscal = 0 AND TC.valorTotal > 0 AND TC.prazos.dataLimiteEmissaoNfe < TRUNC(SYSDATE) THEN " + StatusPagamentoReembolso.NF_ATRASADA.getValue() +
 
-                    "        WHEN " + naoExigeNF + " AND TC.statusConsolidacao = 1 AND TCV.valorTotal > 0 AND (TC.prazos.dataLimiteEmissaoNfe + 2) < TRUNC(SYSDATE) THEN " + StatusPagamentoReembolso.ATRASADO.getValue() +
-                    "        WHEN " + naoExigeNF + " AND TC.statusConsolidacao = 1 AND TCV.valorTotal > 0 AND (TC.prazos.dataLimiteEmissaoNfe + 2) >= TRUNC(SYSDATE) THEN " + StatusPagamentoReembolso.EM_ABERTO.getValue() +
+                    "        WHEN " + naoExigeNF + " AND TC.statusConsolidacao = 1 AND TC.valorTotal > 0 AND (TC.prazos.dataLimiteEmissaoNfe + 2) < TRUNC(SYSDATE) THEN " + StatusPagamentoReembolso.ATRASADO.getValue() +
+                    "        WHEN " + naoExigeNF + " AND TC.statusConsolidacao = 1 AND TC.valorTotal > 0 AND (TC.prazos.dataLimiteEmissaoNfe + 2) >= TRUNC(SYSDATE) THEN " + StatusPagamentoReembolso.EM_ABERTO.getValue() +
 
-                    "        WHEN TC.statusNotaFiscal = 1 AND TCV.valorTotal < 0 THEN " + StatusPagamentoReembolso.A_DESCONTAR.getValue() +
-                    "        WHEN TC.statusNotaFiscal = 1 AND TCV.valorTotal > 0 AND (TC.prazos.dataLimiteEmissaoNfe + 2) < TRUNC(SYSDATE) THEN " + StatusPagamentoReembolso.ATRASADO.getValue() +
-                    "        WHEN TC.statusNotaFiscal = 1 AND TCV.valorTotal > 0 AND (TC.prazos.dataLimiteEmissaoNfe + 2) >= TRUNC(SYSDATE) THEN " + StatusPagamentoReembolso.EM_ABERTO.getValue() +
+                    "        WHEN TC.statusNotaFiscal = 1 AND TC.valorTotal < 0 THEN " + StatusPagamentoReembolso.A_DESCONTAR.getValue() +
+                    "        WHEN TC.statusNotaFiscal = 1 AND TC.valorTotal > 0 AND (TC.prazos.dataLimiteEmissaoNfe + 2) < TRUNC(SYSDATE) THEN " + StatusPagamentoReembolso.ATRASADO.getValue() +
+                    "        WHEN TC.statusNotaFiscal = 1 AND TC.valorTotal > 0 AND (TC.prazos.dataLimiteEmissaoNfe + 2) >= TRUNC(SYSDATE) THEN " + StatusPagamentoReembolso.EM_ABERTO.getValue() +
                     "    END IN :filtroStatusReembolso ";
 
             parametros.add(new ParametroPesquisaIn("filtroStatusReembolso", filtro.getStatusPagamento().stream().map(f -> StatusPagamentoReembolso.valueOf(f.getName()).getValue()).collect(Collectors.toList())));

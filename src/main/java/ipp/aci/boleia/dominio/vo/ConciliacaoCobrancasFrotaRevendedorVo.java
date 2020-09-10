@@ -1,7 +1,6 @@
 package ipp.aci.boleia.dominio.vo;
 
 import ipp.aci.boleia.dominio.TransacaoConsolidada;
-import ipp.aci.boleia.dominio.TransacaoConsolidadaValores;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
 import ipp.aci.boleia.util.jde.ConstantesJde;
 
@@ -36,7 +35,6 @@ public class ConciliacaoCobrancasFrotaRevendedorVo {
      * @param transacaoConsolidada A transacao consolidada da frota e do revendedor
      */
     public ConciliacaoCobrancasFrotaRevendedorVo(TransacaoConsolidada transacaoConsolidada){
-        TransacaoConsolidadaValores valores = transacaoConsolidada.getValores();
         this.dataContabil = formatarDataCurta(transacaoConsolidada.getDataFimPeriodo());
         this.periodoCiclo = formatarPeriodoDiasMes(transacaoConsolidada.getDataInicioPeriodo(),transacaoConsolidada.getDataFimPeriodo(), true);
         this.conta = CONTA_CONTABIL;
@@ -46,9 +44,9 @@ public class ConciliacaoCobrancasFrotaRevendedorVo {
         this.descricaoFrotista = transacaoConsolidada.getFrota().getNomeRazaoFrota();
         this.postoRevendedor = transacaoConsolidada.getPontoVenda().getNumeroJdeInterno().toString();
         this.descricaoPostoRevendedor = transacaoConsolidada.getPontoVenda().getNome();
-        this.valor = valores.getValorTotal().negate();
-        this.mdr = UtilitarioFormatacao.formatarDecimalPercentual(valores.getMdr().divide(new BigDecimal("100")));
-        this.valorMdr = valores.getValorTotal().subtract(valores.getValorReembolso()).negate();
+        this.valor = transacaoConsolidada.getValorTotal().negate();
+        this.mdr = UtilitarioFormatacao.formatarDecimalPercentual(transacaoConsolidada.getMdr().divide(new BigDecimal("100")));
+        this.valorMdr = transacaoConsolidada.getValorTotal().subtract(transacaoConsolidada.getValorReembolso()).negate();
     }
 
     public ConciliacaoCobrancasFrotaRevendedorVo(){

@@ -29,7 +29,11 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.Version;
+import javax.validation.constraints.DecimalMax;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -121,10 +125,43 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     @OneToMany(mappedBy = "transacaoConsolidadaPostergada", fetch = FetchType.LAZY)
     private List<AutorizacaoPagamento> autorizacoesPagamentoPostergadas;
 
-    @NotNull
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CD_TRANS_CONSOL_VR")
-    private TransacaoConsolidadaValores valores;
+    @DecimalMin("-999999999999.9999")
+    @DecimalMax("999999999999.9999")
+    @Digits(integer = 12, fraction = 4)
+    @Column(name = "VR_TOTAL")
+    private BigDecimal valorTotal;
+
+    @Column(name = "VR_REEMB")
+    private BigDecimal valorReembolso;
+
+    @Column(name = "VR_DESC")
+    private BigDecimal valorDesconto;
+
+    @Column(name = "VR_FATURAMENTO")
+    private BigDecimal valorFaturamento;
+
+    @Column(name = "MDR")
+    private BigDecimal mdr;
+
+    @Digits(integer = 12, fraction = 4)
+    @Column(name = "VR_TOTAL_NF")
+    private BigDecimal valorTotalNotaFiscal;
+
+    @Digits(integer = 12, fraction = 4)
+    @Column(name = "VR_EMITIDO_NF")
+    private BigDecimal valorEmitidoNotaFiscal;
+
+    @DecimalMin("-999999999999.9999")
+    @DecimalMax("999999999999.9999")
+    @Digits(integer = 12, fraction = 4)
+    @Column(name = "VR_DESCONTO_ABASTECIMENTOS")
+    private BigDecimal valorDescontoAbastecimentos;
+
+    @DecimalMin("-999999999999.9999")
+    @DecimalMax("999999999999.9999")
+    @Digits(integer = 12, fraction = 4)
+    @Column(name = "VR_DESCONTO_NOTA_FISCAL")
+    private BigDecimal valorDescontoNotaFiscal;
 
     @NotNull
     @OneToOne(fetch = FetchType.LAZY)
@@ -335,12 +372,76 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
         this.chave = chave;
     }
 
-    public TransacaoConsolidadaValores getValores() {
-        return valores;
+    public BigDecimal getValorTotal() {
+        return valorTotal;
     }
 
-    public void setValores(TransacaoConsolidadaValores valores) {
-        this.valores = valores;
+    public void setValorTotal(BigDecimal valorTotal) {
+        this.valorTotal = valorTotal;
+    }
+
+    public BigDecimal getValorReembolso() {
+        return valorReembolso;
+    }
+
+    public void setValorReembolso(BigDecimal valorReembolso) {
+        this.valorReembolso = valorReembolso;
+    }
+
+    public BigDecimal getValorDesconto() {
+        return valorDesconto;
+    }
+
+    public void setValorDesconto(BigDecimal valorDesconto) {
+        this.valorDesconto = valorDesconto;
+    }
+
+    public BigDecimal getValorFaturamento() {
+        return valorFaturamento;
+    }
+
+    public void setValorFaturamento(BigDecimal valorFaturamento) {
+        this.valorFaturamento = valorFaturamento;
+    }
+
+    public BigDecimal getMdr() {
+        return mdr;
+    }
+
+    public void setMdr(BigDecimal mdr) {
+        this.mdr = mdr;
+    }
+
+    public BigDecimal getValorTotalNotaFiscal() {
+        return valorTotalNotaFiscal;
+    }
+
+    public void setValorTotalNotaFiscal(BigDecimal valorTotalNotaFiscal) {
+        this.valorTotalNotaFiscal = valorTotalNotaFiscal;
+    }
+
+    public BigDecimal getValorEmitidoNotaFiscal() {
+        return valorEmitidoNotaFiscal;
+    }
+
+    public void setValorEmitidoNotaFiscal(BigDecimal valorEmitidoNotaFiscal) {
+        this.valorEmitidoNotaFiscal = valorEmitidoNotaFiscal;
+    }
+
+    public BigDecimal getValorDescontoAbastecimentos() {
+        return valorDescontoAbastecimentos;
+    }
+
+    public void setValorDescontoAbastecimentos(BigDecimal valorDescontoAbastecimentos) {
+        this.valorDescontoAbastecimentos = valorDescontoAbastecimentos;
+    }
+
+    public BigDecimal getValorDescontoNotaFiscal() {
+        return valorDescontoNotaFiscal;
+    }
+
+    public void setValorDescontoNotaFiscal(BigDecimal valorDescontoNotaFiscal) {
+        this.valorDescontoNotaFiscal = valorDescontoNotaFiscal;
     }
 
     public TransacaoConsolidadaPrazos getPrazos() {
