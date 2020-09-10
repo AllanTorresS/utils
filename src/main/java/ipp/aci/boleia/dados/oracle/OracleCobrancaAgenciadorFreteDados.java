@@ -55,4 +55,11 @@ public class OracleCobrancaAgenciadorFreteDados extends OracleRepositorioBoleiaD
                 new ParametroPesquisaIgual("status", StatusDocumento.NAO_INTEGRADO.getValue()))
                 .getRegistros();
     }
+
+    @Override
+    public List<AgenciadorFreteCobranca> obterCobrancasPorStatus(StatusDocumento status) {
+        return pesquisar((InformacaoPaginacao)null,
+                new ParametroPesquisaIgual("status", status.getValue()))
+                .getRegistros();
+    }
 }

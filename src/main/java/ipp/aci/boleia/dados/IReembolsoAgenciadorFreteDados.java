@@ -1,6 +1,8 @@
 package ipp.aci.boleia.dados;
 
+import ipp.aci.boleia.dominio.agenciadorfrete.AgenciadorFreteCobranca;
 import ipp.aci.boleia.dominio.agenciadorfrete.AgenciadorFreteReembolso;
+import ipp.aci.boleia.dominio.enums.agenciadorfrete.StatusDocumento;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaReembolsoAgenciadorFreteVo;
 
@@ -20,4 +22,12 @@ public interface IReembolsoAgenciadorFreteDados extends IRepositorioBoleiaDados<
      * @return Lista de reembolsos
      */
     List<AgenciadorFreteReembolso> obterReembolsosSemDocumentos();
+
+
+    /**
+     * Obtém todas os reembolsos filtrados pelo status
+     * @param status o status do documento do reembolso
+     * @return A lista de reembolso
+     */
+    List<AgenciadorFreteReembolso> obterReembolsosPorStatus(StatusDocumento status);
 }
