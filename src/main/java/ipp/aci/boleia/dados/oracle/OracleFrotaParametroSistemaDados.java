@@ -69,4 +69,9 @@ public class OracleFrotaParametroSistemaDados extends OracleRepositorioBoleiaDad
     public FrotaParametroSistema obterPorParametroSistema(Long idFrota, ParametroSistema parametroSistema) {
         return pesquisarUnico(new ParametroPesquisaIgual("frota.id", idFrota), new ParametroPesquisaIgual("parametroSistema", parametroSistema.getCodigo()));
     }
+
+    @Override
+    public FrotaParametroSistema desanexar(FrotaParametroSistema entidade) {
+        return super.desanexar(entidade);
+    }
 }

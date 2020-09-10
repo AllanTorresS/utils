@@ -83,6 +83,10 @@ public class PontoRota implements IPersistente, IPertenceFrota {
     @Column(name = "QT_GRAU_LONGIT")
     private BigDecimal longitude;
 
+    @NotNull
+    @Column(name = "ID_API")
+    private Integer api;
+
     @Override
     public Long getId() {
         return id;
@@ -169,4 +173,8 @@ public class PontoRota implements IPersistente, IPertenceFrota {
     public void setComentario(String comentario) {
         this.comentario = comentario;
     }
+
+    public Integer getApi() { return api; }
+
+    public void setApi(Integer api) { this.api = api; }
 }

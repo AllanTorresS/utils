@@ -126,6 +126,7 @@ public class FiltroAutenticacaoJwt implements Filter {
      * Adiciona no cabeçalho da resposta o cookie cross site da session como samesite none e secure (Google versão >=80)
      * para todas as requisições
      *
+     * @param request A requisição
      * @param response A resposta
      */
     private void adicionarSameSiteResponseHeader(HttpServletRequest request, HttpServletResponse response) {
