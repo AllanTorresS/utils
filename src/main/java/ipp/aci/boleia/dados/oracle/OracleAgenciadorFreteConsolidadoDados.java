@@ -44,14 +44,14 @@ public class OracleAgenciadorFreteConsolidadoDados extends OracleRepositorioBole
     @Override
     public List<Consolidado> obterAbertosParaCobranca() {
         return pesquisar(new ParametroOrdenacaoColuna(),
-                new ParametroPesquisaNulo("cobranca"),
+                new ParametroPesquisaNulo("cobrancas"),
                 new ParametroPesquisaDataMenor("dataFimPeriodo", utilitarioAmbiente.buscarDataAmbiente()));
     }
 
     @Override
     public List<Consolidado> obterAbertosParaReembolsos() {
         return pesquisar(new ParametroOrdenacaoColuna(),
-                new ParametroPesquisaNulo("reembolso"),
+                new ParametroPesquisaNulo("reembolsos"),
                 new ParametroPesquisaDataMenor("dataFimPeriodo", utilitarioAmbiente.buscarDataAmbiente()));
 
     }
