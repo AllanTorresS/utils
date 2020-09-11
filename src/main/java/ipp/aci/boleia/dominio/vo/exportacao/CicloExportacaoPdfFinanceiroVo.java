@@ -46,8 +46,9 @@ public class CicloExportacaoPdfFinanceiroVo {
      * @param consolidado A transacao consolidada do ciclo
      * @param dataAtual a data no momento que a requisição foi feita.
      * @param observacao Mensagem para o parametro observação.
+     * @param quantidadeDeAbastecimentosCanceladosOuEstornadosQueDevemSerContabilizados Quantidade de abastecimentos cancelados ou estornados que devem ser contabilizados no ciclo no relatorio
      */
-    public CicloExportacaoPdfFinanceiroVo(TransacaoConsolidada consolidado, Date dataAtual, String observacao){
+    public CicloExportacaoPdfFinanceiroVo(TransacaoConsolidada consolidado, Date dataAtual, String observacao, Integer quantidadeDeAbastecimentosCanceladosOuEstornadosQueDevemSerContabilizados){
         BigDecimal valorEmitidoNf = null;
         BigDecimal valorTotalNf = null;
         this.setTotalEmitido("-");
@@ -98,7 +99,7 @@ public class CicloExportacaoPdfFinanceiroVo {
         this.setFaturamento(faturamento);
         this.setTaxa(taxa);
         this.setReembolso(reembolso);
-        this.setNumTransacoes(consolidado.getQuantidadeAbastecimentos().intValue());
+        this.setNumTransacoes(consolidado.getQuantidadeAbastecimentos().intValue() + quantidadeDeAbastecimentosCanceladosOuEstornadosQueDevemSerContabilizados);
         this.setPrazoReembolso(UtilitarioFormatacaoData.formatarDataCurta(
                 UtilitarioCalculoData.adicionarDiasData(consolidado.getDataFimPeriodo(), consolidado.getPrazos().getPrazoReembolso().intValue())));
         this.setPrazoNotaFiscal(UtilitarioFormatacaoData.formatarDataCurta(consolidado.getPrazos().getDataLimiteEmissaoNfe()));
