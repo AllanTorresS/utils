@@ -252,4 +252,39 @@ public class AutorizacaoPagamentoSd {
         }
 
     }
+
+    /**
+     * Indica se uma transacao cancelada deve ser exibida no detalhamento de notas fiscais
+     * @param transacao transacao cancelada que deve ser avaliada quanto aos criterios de exibicao
+     * @return true, se a transacao deve ser exibida
+     */
+    public boolean abastecimentoCanceladoDeveSerExibidoEContabilizadoNoFinanceiro(AutorizacaoPagamento transacao){
+
+        //se o abastecimento for cancelado, o positivo cancelado so deve ser exibido na tela de NF na visao da revenda se seu valor tiver sido considerado para reembolso gerado ou se ele tiver sido postergado
+        return valorDaTransacaoFoiContempladoEmReembolsoGerado(transacao)
+                || transacao.getTransacaoConsolidadaPostergada() != null;
+    }
+
+    /**
+     * Indica se uma transacao estornada deve ser exibida no detalhamento de notas fiscais
+     * @param transacao transacao estornada que deve ser avaliada quanto aos criterios de exibicao
+     * @param idConsolidadoQueEstaSendoVisualizado identificador do ciclo a partir do qual se deseja visualizar o detalhamento de notas fiscais
+     * @return true, se a transacao deve ser exibida
+     */
+    public boolean abastecimentoEstornadoDeveSerExibidoEContabilizadoNoFinanceiro(AutorizacaoPagamento transacao,Long idConsolidadoQueEstaSendoVisualizado){
+
+        //abastecimentos estornados sempre devem ser exibidos no ciclo de origem
+        if(transacao.getTransacaoConsolidada().getId().equals(idConsolidadoQueEstaSendoVisualizado)){
+            return true;
+        }else{
+            //se o abastecimento for estornado, o positivo cancelado so vai ser exibido na tela de NF do ciclo de postergacao na visao da revenda se
+            //ele nao tiver pendencia de emissao e se a transacao positiva ajustada nao estiver no ciclo mais atual (de origem ou postergacao) do abastecimento estornado que a originou e se a transacao negativa estiver no ciclo mais atual (de origem ou postergacao) do abastecimento estornado que a originou
+            //(cenario de estorno de abastecimento postergado com emissao em ciclo em ajuste)
+            return !transacao.isPendenteEmissaoNF(true)
+                    && !transacaoAjustadaEstaNoMesmoCicloDaTransacaoEstornadaOriginal(transacao)
+                    && transacaoNegativaEstaNoMesmoCicloDaTransacaoEstornadaOriginal(transacao);
+
+        }
+
+    }
 }
