@@ -1,6 +1,7 @@
 package ipp.aci.boleia.util;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 
 /**
  * TemplatesImportacao de planilhas para importacao de dados do Excel
@@ -68,6 +69,8 @@ public enum TemplatePlanilha {
         return path;
     }
 
+    public String getName() { return name; }
+
     /**
      * Configura response para download do template
      *
@@ -76,5 +79,19 @@ public enum TemplatePlanilha {
     public void configurarResponse(HttpServletResponse response) {
         response.setContentType("application/vnd.ms-excel");
         response.setHeader("content-disposition", "attachment; filename=" + this.name);
+    }
+
+    /**
+     * Obtém o template pelo nome do arquivo
+     *
+     * @param nomeArquivo O nome do arquivo a ser procurado
+     * @return O template correspondente
+     */
+    public static TemplatePlanilha obterPorNomeArquivo(String nomeArquivo) {
+        return Arrays.asList(TemplatePlanilha.values())
+                .stream()
+                .filter(t -> t.getName().equals(nomeArquivo))
+                .findFirst()
+                .orElse(null);
     }
 }
