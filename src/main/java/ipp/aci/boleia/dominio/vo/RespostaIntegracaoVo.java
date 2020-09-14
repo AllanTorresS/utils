@@ -7,6 +7,7 @@ public class RespostaIntegracaoVo {
 
     private Integer statusResposta;
     private String tokenJwt;
+    private Object conteudoResposta;
 
     /**
      * Construtor padrão
@@ -28,5 +29,13 @@ public class RespostaIntegracaoVo {
 
     public void setTokenJwt(String tokenJwt) {
         this.tokenJwt = tokenJwt;
+    }
+
+    public Object getConteudoResposta() {
+        return conteudoResposta;
+    }
+
+    public void setConteudoResposta(Object conteudoResposta) {
+        this.conteudoResposta = conteudoResposta;
     }
 }

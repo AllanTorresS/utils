@@ -1,0 +1,76 @@
+package ipp.aci.boleia.util.mensageria;
+
+import com.rabbitmq.client.Channel;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+
+@Component
+public class FilaRabbitMQ {
+    /**
+     * Nome do host da fila
+     */
+    @Value("${rabbitmq.hostname}")
+    private String nomeHost;
+
+    @Value("${topico.motor-geracao-relatorios}")
+    private String nomeTopicoRelatorio;
+
+    @Value("${rabbitmq.prefixo.fila}")
+    private String prefixoFila;
+
+    @Value("${rabbitmq.prefixo.chave-rota}")
+    private String prefixoChaveRota;
+
+    @Value("${rabbitmq.tipo-exchange}")
+    private String tipoExchange;
+
+    private Channel canal;
+
+    protected String getNomeHost() {
+        return nomeHost;
+    }
+
+    protected String getNomeTopicoRelatorio() {
+        return nomeTopicoRelatorio;
+    }
+
+    protected String getPrefixoFila() {
+        return prefixoFila;
+    }
+
+    protected String getPrefixoChaveRota() {
+        return prefixoChaveRota;
+    }
+
+    protected String getNomeFila() {
+        return this.prefixoFila + this.nomeTopicoRelatorio;
+    }
+
+    protected Channel getCanal() {
+        return canal;
+    }
+
+    protected void setCanal(Channel canal) {
+        this.canal = canal;
+    }
+
+    protected String getTipoExchange() {
+        return tipoExchange;
+    }
+
+    /**
+     * Envia mensagem para fila
+     *
+     * @param chaveRota A chave da fila
+     * @param mensagem A mensagem a ser enviada
+     * @throws IOException em caso de erro de envio da mensagem
+     */
+    public void enviarMensagem(String chaveRota, String mensagem) throws IOException {
+        StringBuilder nomeChaveRota = new StringBuilder(prefixoChaveRota);
+        nomeChaveRota.append(chaveRota);
+
+        canal.basicPublish(nomeTopicoRelatorio, nomeChaveRota.toString(), null, mensagem.getBytes());
+    }
+}
