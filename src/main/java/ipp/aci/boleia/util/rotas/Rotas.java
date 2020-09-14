@@ -125,6 +125,7 @@ public final  class Rotas {
     public static final String MUNICIPIO_API                         = BASE_API + "/municipio";
     public static final String PARAMETRO_CAMPANHA_API                = BASE_API + "/parametroCampanha";
     public static final String COORDENADORIA_API                     = BASE_API + "/coordenadoria";
+    public static final String DETALHAMENTO_NF_API                   = BASE_API + "/detalhamentoNotaFiscal";
 
     /**
      * Construtor privado, impede instanciacao e heranca
