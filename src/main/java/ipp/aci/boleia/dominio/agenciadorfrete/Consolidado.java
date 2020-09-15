@@ -67,12 +67,12 @@ public class Consolidado implements IPersistente {
 
     @NotAudited
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name="CONSOL_COBR", joinColumns={@JoinColumn(name="CD_COBRANCA")}, inverseJoinColumns={@JoinColumn(name="CD_CONSOLIDADO")})
+    @JoinTable(name="CONSOL_COBR", joinColumns={@JoinColumn(name="CD_CONSOLIDADO")}, inverseJoinColumns={@JoinColumn(name="CD_COBRANCA")})
     private List<AgenciadorFreteCobranca> cobrancas;
 
     @NotAudited
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name="CONSOL_REEMB", joinColumns={@JoinColumn(name="CD_REEMBOLSO")}, inverseJoinColumns={@JoinColumn(name="CD_CONSOLIDADO")})
+    @JoinTable(name="CONSOL_REEMB", joinColumns={@JoinColumn(name="CD_CONSOLIDADO")}, inverseJoinColumns={@JoinColumn(name="CD_REEMBOLSO")})
     private List<AgenciadorFreteReembolso> reembolsos;
 
     @Column(name = "NO_VERSAO")

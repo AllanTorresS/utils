@@ -3,10 +3,7 @@ package ipp.aci.boleia.dados.oracle;
 import ipp.aci.boleia.dados.IAgenciadorFreteConsolidadoDados;
 import ipp.aci.boleia.dominio.agenciadorfrete.Consolidado;
 import ipp.aci.boleia.dominio.agenciadorfrete.Transacao;
-import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
-import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenor;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
-import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.util.ConstantesNdd;
 import ipp.aci.boleia.util.UtilitarioConsolidado;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
@@ -21,6 +18,25 @@ import java.util.List;
 
 @Repository
 public class OracleAgenciadorFreteConsolidadoDados extends OracleRepositorioBoleiaDados<Consolidado> implements IAgenciadorFreteConsolidadoDados {
+
+
+    private static final String CONSULTA_ABERTOS_PARA_REEMBOLSO =
+            " select c " +
+                    " from Consolidado c " +
+                    "     left join FETCH c.reembolsos reemb  " +
+                    " where " +
+                    "     reemb.id is null  " +
+                    "     and c.dataFimPeriodo < :hoje " +
+                    " order by c.dataFimPeriodo";
+
+    private static final String CONSULTA_ABERTOS_PARA_COBRANCA =
+            " select c " +
+                    " from Consolidado c " +
+                    "     left join FETCH c.cobrancas cob  " +
+                    " where " +
+                    "     cob.id is null  " +
+                    "     and c.dataFimPeriodo < :hoje " +
+                    " order by c.dataFimPeriodo";
 
     @Autowired
     private UtilitarioAmbiente utilitarioAmbiente;
@@ -43,18 +59,11 @@ public class OracleAgenciadorFreteConsolidadoDados extends OracleRepositorioBole
 
     @Override
     public List<Consolidado> obterAbertosParaCobranca() {
-        return pesquisar(new ParametroOrdenacaoColuna(),
-                new ParametroPesquisaNulo("cobrancas"),
-                new ParametroPesquisaDataMenor("dataFimPeriodo", utilitarioAmbiente.buscarDataAmbiente()));
+        return pesquisarSemIsolamentoDados(null, CONSULTA_ABERTOS_PARA_COBRANCA, new ParametroPesquisaIgual("hoje", utilitarioAmbiente.buscarDataAmbiente())).getRegistros();
     }
 
     @Override
     public List<Consolidado> obterAbertosParaReembolsos() {
-        return pesquisar(new ParametroOrdenacaoColuna(),
-                new ParametroPesquisaNulo("reembolsos"),
-                new ParametroPesquisaDataMenor("dataFimPeriodo", utilitarioAmbiente.buscarDataAmbiente()));
-
+        return pesquisarSemIsolamentoDados(null, CONSULTA_ABERTOS_PARA_REEMBOLSO, new ParametroPesquisaIgual("hoje", utilitarioAmbiente.buscarDataAmbiente())).getRegistros();
     }
-
-
 }
