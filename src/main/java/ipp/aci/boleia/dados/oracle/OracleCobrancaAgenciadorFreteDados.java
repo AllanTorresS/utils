@@ -52,14 +52,14 @@ public class OracleCobrancaAgenciadorFreteDados extends OracleRepositorioBoleiaD
     @Override
     public List<AgenciadorFreteCobranca> obterCobrancasSemDocumentos() {
         return pesquisar((InformacaoPaginacao)null,
-                new ParametroPesquisaIgual("status", StatusDocumento.NAO_INTEGRADO.getValue()))
+                new ParametroPesquisaIgual("documentoJde.status", StatusDocumento.NAO_INTEGRADO.getValue()))
                 .getRegistros();
     }
 
     @Override
     public List<AgenciadorFreteCobranca> obterCobrancasPorStatus(StatusDocumento status) {
         return pesquisar((InformacaoPaginacao)null,
-                new ParametroPesquisaIgual("status", status.getValue()))
+                new ParametroPesquisaIgual("documentoJde.status", status.getValue()))
                 .getRegistros();
     }
 }
