@@ -1,6 +1,7 @@
 package ipp.aci.boleia.dominio;
 
 import ipp.aci.boleia.dominio.enums.StatusBloqueio;
+import ipp.aci.boleia.dominio.enums.StatusVinculoFrotaPontoVenda;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
 import ipp.aci.boleia.dominio.interfaces.IPertenceRevendedor;
@@ -25,6 +26,7 @@ import javax.persistence.Version;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import org.hibernate.annotations.JoinFormula;
 
 /**
  * Representa a tabela de relacao entre Frota e Ponto de Venda
@@ -35,6 +37,11 @@ import java.util.List;
 public class FrotaPontoVenda implements IPersistente, IPertenceFrota, IPertenceRevendedor {
 
     private static final long serialVersionUID = 2740533603845751255L;
+    
+    /**
+     * Query que busca o histórico mais recente para popular o atributo.
+     */
+    private static final String HISTORICO_FORMULA = "( SELECT * FROM (SELECT h.CD_HISTORICO_FROTA_PTOV FROM BOLEIA_SCHEMA.HISTORICO_FROTA_PTOV h WHERE h.CD_FROTA_PTOV = CD_FROTA_PTOV ORDER BY h.DT_HISTORICO DESC) WHERE ROWNUM <= 1 )";
 
     @Id
     @Column(name = "CD_FROTA_PTOV")
@@ -59,6 +66,12 @@ public class FrotaPontoVenda implements IPersistente, IPertenceFrota, IPertenceR
 
     @Column(name = "ID_BLOQUEADO")
     private Integer statusBloqueio;
+    
+    @Column(name = "ID_STATUS")
+    private Integer statusVinculo;
+    
+    @Column(name = "DS_JUSTIFICATIVA_VINCULO")
+    private String justificativaVinculo;
 
     @NotAudited
     @Formula(StatusBloqueio.DECODE_FORMULA)
@@ -70,6 +83,11 @@ public class FrotaPontoVenda implements IPersistente, IPertenceFrota, IPertenceR
 
     @Column(name ="DT_ATUALIZACAO")
     private Date dataAtualizacao;
+    
+    @NotAudited
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinFormula(HISTORICO_FORMULA)
+    private HistoricoFrotaPontoVenda ultimoHistorico;
 
     @Override
     public Long getId() {
@@ -157,11 +175,55 @@ public class FrotaPontoVenda implements IPersistente, IPertenceFrota, IPertenceR
         return statusBloqueio != null && StatusBloqueio.obterPorValor(statusBloqueio).isBloqueado();
     }
 
+    public Integer getStatusVinculo() {
+        return statusVinculo;
+    }
+
+    public void setStatusVinculo(Integer statusVinculo) {
+        this.statusVinculo = statusVinculo;
+    }
+    
+    /**
+     * Informa se a relacao {@link FrotaPontoVenda} esta ativa.
+     *
+     * @return true, caso esteja ativa.
+     */
+    @Transient
+    public boolean isVinculoAtivo(){
+        return StatusVinculoFrotaPontoVenda.ATIVO.equals(StatusVinculoFrotaPontoVenda.obterPorValor(this.statusVinculo));
+    }
+    
+    /**
+     * Informa se o {@link PontoDeVenda} deve estar visivel para a {@link Frota} 
+     * 
+     * @return true, caso deva estar visivel.
+     */
+    @Transient
+    public boolean isVisivelParaFrota(){
+        return this.isVinculoAtivo() || !this.getPontoVenda().isVisivelApenasParaFrotasVinculadas();
+    }
+
+    public String getJustificativaVinculo() {
+        return justificativaVinculo;
+    }
+
+    public void setJustificativaVinculo(String justificativaVinculo) {
+        this.justificativaVinculo = justificativaVinculo;
+    }
+
     public Date getDataAtualizacao() {
         return dataAtualizacao;
     }
 
     public void setDataAtualizacao(Date dataAtualizacao) {
         this.dataAtualizacao = dataAtualizacao;
+    }
+
+    public HistoricoFrotaPontoVenda getUltimoHistorico() {
+        return ultimoHistorico;
+    }
+
+    public void setUltimoHistorico(HistoricoFrotaPontoVenda ultimoHistorico) {
+        this.ultimoHistorico = ultimoHistorico;
     }
 }

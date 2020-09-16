@@ -12,6 +12,7 @@ import ipp.aci.boleia.util.seguranca.FiltroAutorizacaoApiDocs;
 import ipp.aci.boleia.util.seguranca.InformacoesAutenticacao;
 import ipp.aci.boleia.util.seguranca.ProvedorAutenticacao;
 import ipp.aci.boleia.util.seguranca.UtilitarioJwt;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -39,6 +40,8 @@ import org.springframework.session.ExpiringSession;
 import org.springframework.session.FindByIndexNameSessionRepository;
 import org.springframework.session.MapSessionRepository;
 import org.springframework.session.security.SpringSessionBackedSessionRegistry;
+import org.springframework.session.web.http.CookieSerializer;
+import org.springframework.session.web.http.DefaultCookieSerializer;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -87,6 +90,9 @@ public class ConfiguracoesSeguranca extends WebSecurityConfigurerAdapter {
 
     @Value("${cors.allowed.origins}")
     private String[] allowedOrigins;
+
+    @Value("${dominio.cookie.sessao}")
+    private String dominioSessao;
 
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -308,5 +314,18 @@ public class ConfiguracoesSeguranca extends WebSecurityConfigurerAdapter {
      */
     public void setMaximoSessoesPorUsuario(Integer maximoSessoesPorUsuario) {
         this.maximoSessoesPorUsuario = maximoSessoesPorUsuario;
+    }
+
+    /**
+     * Permite customizar as propriedades dos cookies
+     * @return o serializador de cookies
+     */
+    @Bean
+    public CookieSerializer cookieSerializer() {
+        DefaultCookieSerializer serializer = new DefaultCookieSerializer();
+        if (!StringUtils.isEmpty(dominioSessao)) {
+            serializer.setDomainName(dominioSessao);
+        }
+        return serializer;
     }
 }

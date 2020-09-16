@@ -1,6 +1,7 @@
 package ipp.aci.boleia.dominio;
 
 
+import ipp.aci.boleia.dominio.enums.RestricaoVisibilidadePontoVenda;
 import ipp.aci.boleia.dominio.enums.StatusAtivacao;
 import ipp.aci.boleia.dominio.enums.StatusHabilitacaoPontoVenda;
 import ipp.aci.boleia.dominio.enums.TiposBandeiras;
@@ -58,22 +59,22 @@ public class PontoDeVenda implements IPersistente, IExclusaoLogica, IPertenceRev
      * do ponto de venda por cnpj sem grandes mudanças na estrutura de pesquisa via Criteria.
      */
     private static final String CNPJ_FORMULA = " (SELECT * FROM" +
-                                                " 	(" +
-                                                " 	SELECT" +
-                                                " 		C.CD_PESSOA" +
-                                                " 	FROM" +
-                                                " 		BOLEIA_SCHEMA.COMPONENTE C" +
-                                                " 	JOIN BOLEIA_SCHEMA.ATIVIDADE_COMPONENTE AC ON" +
-                                                " 		C.CD_ATIV_COMP = AC.CD_ATIV_COMP" +
-                                                " 	WHERE" +
-                                                " 		C.CD_PTOV = CD_PTOV" +
-                                                " 		AND (AC.CD_ATIV_COMP_CORP = 1" +
-                                                " 		OR AC.CD_ATIV_COMP_CORP = 99)" +
-                                                " 	ORDER BY" +
-                                                " 		ID_STATUS_CORP DESC," +
-                                                " 		DT_CRIACAO DESC" +
-                                                " 	)" +
-                                                " 	WHERE rownum = 1)";
+            " 	(" +
+            " 	SELECT" +
+            " 		C.CD_PESSOA" +
+            " 	FROM" +
+            " 		BOLEIA_SCHEMA.COMPONENTE C" +
+            " 	JOIN BOLEIA_SCHEMA.ATIVIDADE_COMPONENTE AC ON" +
+            " 		C.CD_ATIV_COMP = AC.CD_ATIV_COMP" +
+            " 	WHERE" +
+            " 		C.CD_PTOV = CD_PTOV" +
+            " 		AND (AC.CD_ATIV_COMP_CORP = 1" +
+            " 		OR AC.CD_ATIV_COMP_CORP = 99)" +
+            " 	ORDER BY" +
+            " 		ID_STATUS_CORP DESC," +
+            " 		DT_CRIACAO DESC" +
+            " 	)" +
+            " 	WHERE rownum = 1)";
 
     private static final long serialVersionUID = -6358128598442202483L;
 
@@ -324,6 +325,9 @@ public class PontoDeVenda implements IPersistente, IExclusaoLogica, IPertenceRev
 
     @Column(name = "NO_TELEFONE_RESP_LEGAL")
     private String telefoneResponsavelLegal;
+
+    @Column(name = "ID_RESTRICAO_VISIBILIDADE")
+    private Integer restricaoVisibilidade;
     
     public PontoDeVenda() {
         // construtor default
@@ -833,6 +837,14 @@ public class PontoDeVenda implements IPersistente, IExclusaoLogica, IPertenceRev
 		this.telefoneResponsavelLegal = telefoneResponsavelLegal;
 	}
 
+    public Integer getRestricaoVisibilidade() {
+        return restricaoVisibilidade;
+    }
+
+    public void setRestricaoVisibilidade(Integer restricaoVisibilidade) {
+        this.restricaoVisibilidade = restricaoVisibilidade;
+    }
+
 	/**
      * @return componente que representa a area de abastecimento
      */
@@ -974,5 +986,15 @@ public class PontoDeVenda implements IPersistente, IExclusaoLogica, IPertenceRev
             return false;
         }
         return bandeira.getCodigoCorporativo().equals(TiposBandeiras.IPIRANGA.getCodigoCorporativo());
+    }
+
+    /**
+     * Informa se um ponto de venda deve ser visivel apenas para frotas com vinculo ativo.
+     * 
+     * @return se um ponto de venda deve ser visivel apenas para frotas com vinculo ativo.
+     */
+    @Transient
+    public boolean isVisivelApenasParaFrotasVinculadas() {
+        return RestricaoVisibilidadePontoVenda.VISIVEL_APENAS_PARA_FROTAS_COM_VINCULO_ATIVO.getValue().equals( this.getRestricaoVisibilidade());
     }
 }
