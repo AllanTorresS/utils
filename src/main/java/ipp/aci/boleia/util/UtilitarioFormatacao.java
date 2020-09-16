@@ -571,7 +571,7 @@ public final class UtilitarioFormatacao {
      * Substitui caracteres acentuados de uma string por caracteres simples
      *
      * @param valor A string a ser tratada
-     * @return A sstring resultante
+     * @return A string resultante
      */
     public static String removerAcentos(String valor) {
         return StringUtils.stripAccents(valor);
