@@ -424,13 +424,13 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         if (filtro.getIdReembolso() != null) {
             parametros.add(new ParametroPesquisaIgual("transacaoConsolidada.reembolso.id", filtro.getIdReembolso()));
         }
-        if (filtro.getIdConsolidado() != null && filtro.getNotaFiscal() != null) {
+        if (filtro.getIdConsolidado() != null && (filtro.getNotaFiscal() != null || filtro.getIdCobranca() != null)) {
             parametros.add(new ParametroPesquisaOr(
                     new ParametroPesquisaAnd(
-                            new ParametroPesquisaIgual("transacaoConsolidada", filtro.getIdConsolidado()),
+                            new ParametroPesquisaIgual("transacaoConsolidada.id", filtro.getIdConsolidado()),
                             new ParametroPesquisaNulo("transacaoConsolidadaPostergada")
                     ),
-                    new ParametroPesquisaIgual("transacaoConsolidadaPostergada", filtro.getIdConsolidado())
+                    new ParametroPesquisaIgual("transacaoConsolidadaPostergada.id", filtro.getIdConsolidado())
             ));
         }
         return parametros;
