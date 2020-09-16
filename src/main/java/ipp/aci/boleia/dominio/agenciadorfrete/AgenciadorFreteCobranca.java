@@ -38,7 +38,7 @@ public class AgenciadorFreteCobranca implements IPersistente {
 
     @NotAudited
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name="CONSOL_COBR", joinColumns={@JoinColumn(name="CD_CONSOLIDADO")}, inverseJoinColumns={@JoinColumn(name="CD_COBRANCA")})
+    @JoinTable(name="CONSOL_COBR", joinColumns={@JoinColumn(name="CD_COBRANCA")}, inverseJoinColumns={@JoinColumn(name="CD_CONSOLIDADO")})
     private List<Consolidado> consolidados;
 
     @OneToOne(fetch = FetchType.LAZY)
