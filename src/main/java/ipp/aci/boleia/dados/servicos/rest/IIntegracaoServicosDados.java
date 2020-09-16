@@ -1,6 +1,6 @@
 package ipp.aci.boleia.dados.servicos.rest;
 
-import ipp.aci.boleia.dominio.vo.RespostaIntegracaoVo;
+import ipp.aci.boleia.dominio.vo.IRespostaModuloInternoVo;
 import org.apache.http.client.methods.CloseableHttpResponse;
 
 /**
@@ -17,5 +17,5 @@ public interface IIntegracaoServicosDados {
     /**
      * Consumidor para respostas de requisições oriundas da integração
      */
-    RespostaIntegracaoVo consumirResposta(CloseableHttpResponse resposta);
+    IRespostaModuloInternoVo consumirResposta(CloseableHttpResponse resposta);
 }

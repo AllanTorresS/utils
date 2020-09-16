@@ -33,7 +33,7 @@ public class MotorGeracaoRelatorioSd {
     private UtilitarioAmbiente ambiente;
 
     @Autowired
-    private  NotificacaoUsuarioSd notificacaoUsuarioSd;
+    private NotificacaoUsuarioSd notificacaoUsuarioSd;
 
     /**
      * Inclusão de relatório no motor de geração de relatórios
