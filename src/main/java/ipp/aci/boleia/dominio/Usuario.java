@@ -660,4 +660,23 @@ public class Usuario implements IPersistente, IExclusaoLogica, IPertenceFrota, I
         }
         return this.frotasAssessoradas.stream().map(Frota::getId).collect(Collectors.toList());
     }
+
+    /**
+     * Transforma um usuario em assessor, se ele ja nao tiver esse papel.
+     */
+    @JsonIgnore
+    public void transformarEmAssessor() {
+        if (!isAssessor()) {
+            this.tipoDashboard = null;
+        }
+    }
+
+    /**
+     * Valida se o usuario eh assessor de alguma frota.
+     * @return true se o usuario for assessor de alguma frota.
+     */
+    @JsonIgnore
+    public Boolean isAssessor() {
+        return !CollectionUtils.isEmpty(this.frotasAssessoradas);
+    }
 }

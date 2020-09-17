@@ -422,5 +422,6 @@ public class FrotaSd {
         if (!usuario.isInterno()) {
             throw new ExcecaoValidacao(mensagens.obterMensagem("frota.servico.preCadastro.emailAssessorResponsavel.usuarioNaoInterno"));
         }
+        usuario.transformarEmAssessor();
     }
 }
