@@ -42,6 +42,7 @@ public final class ConstantesJde {
     public static final String FATURA_CIA_DOCUMENTO = "74090";
     public static final String FATURA_TIPO_DOCUMENTO = "D3";
     public static final String FATURA_REPASSE_TIPO_DOCUMENTO = "DB";
+    public static final String FATURA_CONECTCAR_PEDIDO_TAG_TIPO_DOCUMENTO = "F5";
     public static final String FATURA_CENARIO = "140";
     public static final String FATURA_SISTEMA_GERADOR = BOLEIA;
     public static final String FATURA_REPASSE_OBSERVACAO = "REPASSE CONCEDIDO";

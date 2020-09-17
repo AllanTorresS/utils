@@ -7,7 +7,8 @@ import ipp.aci.boleia.dominio.pesquisa.comum.BaseFiltroPaginado;
  */
 public class FiltroPesquisaTagConectcarVo extends BaseFiltroPaginado {
 
-	private Long id;//tag
+	private Long id;// tag
+	private EntidadeVo frota;
 	private String placa;
 	private EnumVo status;
 
@@ -22,7 +23,7 @@ public class FiltroPesquisaTagConectcarVo extends BaseFiltroPaginado {
 	public String getPlaca() {
 		return placa;
 	}
-	
+
 	public void setPlaca(String placa) {
 		this.placa = placa;
 	}
@@ -33,6 +34,14 @@ public class FiltroPesquisaTagConectcarVo extends BaseFiltroPaginado {
 
 	public void setStatus(EnumVo status) {
 		this.status = status;
+	}
+
+	public EntidadeVo getFrota() {
+		return frota;
+	}
+
+	public void setFrota(EntidadeVo frota) {
+		this.frota = frota;
 	}
 
 }

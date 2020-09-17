@@ -53,7 +53,8 @@ public enum TemplatePlanilha {
     TEMPLATE_RELATORIO_POSTO_CREDENCIADO_SOLUCAO("template-relatorio-posto-credenciado-solucao.xlsx"),
     TEMPLATE_RELATORIO_ABASTECIMENTOS_ESTORNADOS("template-relatorio-abastecimentos-estornados.xlsx"),
     TEMPLATE_RELATORIO_ABASTECIMENTOS_AJUSTADOS("template-relatorio-abastecimentos-ajustados.xlsx"),
-    TEMPLATE_ATIVACAO_TAG("template-ativacao-tag.xlsx");
+    TEMPLATE_ATIVACAO_TAG("template-ativacao-tag.xlsx"),
+	TEMPLATE_RELATORIO_ATIVACAO_TAG("template-relatorio-ativacao-tag.xlsx");
 
     private static final String BASE_TEMPLATE = "/template-planilhas/";
 
