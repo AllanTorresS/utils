@@ -275,10 +275,43 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "WHERE tc.dataInicioPeriodo >= :dataInicioPeriodo AND tc.dataFimPeriodo <= :dataFimPeriodo " +
                     "AND (fpv.pontoVenda.id IN :idsPvs) " +
                     "AND (fpv.frota.id = :idFrota OR :idFrota is null) " +
-                    "AND ((tc.valorFaturamento <> 0 OR tc.valorReembolso <> 0 OR tc.valorTotalNotaFiscal <> 0) OR (r.valorDescontoCredito IS NOT NULL AND r.valorDescontoCredito <> 0)) " +
                     "AND (tc.statusConsolidacao = :statusConsolidacao or :statusConsolidacao is null) " +
-                    "ORDER BY " +
-                    "   %s ";
+                    "AND ((tc.valorFaturamento <> 0 OR tc.valorReembolso <> 0 OR tc.valorTotalNotaFiscal <> 0) OR " +
+                          "(tc.id in (%QUERYCANCELADOS%)) " +
+                         ") " +
+                    "ORDER BY %s ";
+
+    private static final String CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO_CICLOS_QUE_SO_CONTEM_CANCELADOS_QUE_DEVEM_SER_EXIBIDOS_E_CONTABILIZADOS =
+            "SELECT DISTINCT " +
+                    "CASE " +
+                    "WHEN AP.transacaoConsolidadaPostergada IS NULL THEN AP.transacaoConsolidada.id " +
+                    "ELSE AP.transacaoConsolidadaPostergada.id " +
+                    "END " +
+                    "FROM " +
+                    "AutorizacaoPagamento AP " +
+                    "JOIN AP.transacaoConsolidada TC " +
+                    "JOIN TC.frotaPtov FP " +
+                    "JOIN FP.frota F " +
+                    "LEFT JOIN TC.unidade U " +
+                    "LEFT JOIN TC.empresaAgregada EA " +
+                    "WHERE " +
+                    //"TC.dataInicioPeriodo >= :dataInicioPeriodo AND TC.dataFimPeriodo <= :dataFimPeriodo " +
+                    //"AND (FP.pontoVenda.id IN :idsPvs) " +
+                    //"AND (FP.frota.id = :idFrota OR :idFrota is null) " +
+                    //"AND (TC.statusConsolidacao = :statusConsolidacao or :statusConsolidacao is null) " +
+                    "AP.status = -1 " +
+                    "AND AP.motivoEstorno IN (0,1,2) " +
+                    "AND (F.semNotaFiscal = 0 OR U.exigeNotaFiscal = 1 OR EA.exigeNotaFiscal = 1) " +
+                    "AND ( " +
+                            "(AP.transacaoConsolidada IS NOT NULL AND AP.transacaoConsolidadaPostergada IS NULL AND AP.transacaoConsolidada.quantidadeAbastecimentos = 0 AND" +
+                                "(TC.statusConsolidacao = 1 AND AP.statusNotaFiscal = 1 AND " +
+                                        "AP.transacaoConsolidada.id <> (SELECT DISTINCT APNEG.transacaoConsolidada.id FROM AutorizacaoPagamento APNEG WHERE " +
+                                                                        "APNEG.idAutorizacaoEstorno = AP.id AND APNEG.valorTotal < 0 " +
+                                                                       ") "+
+                                ") "+
+                            ") "+
+                            "OR (AP.transacaoConsolidadaPostergada IS NOT NULL AND AP.transacaoConsolidadaPostergada.quantidadeAbastecimentos = 0)"+
+                         ") ";
 
 
     private static final String CONSULTA_PONTOS_GRAFICO =
@@ -899,7 +932,10 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             ordenacao = String.format(campoOrdenacao, direcaoOrdenacao, direcaoOrdenacao);
         }
 
-        String consultaPesquisa = String.format(CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO, ordenacao);
+        String consultaPesquisa = CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO;
+        consultaPesquisa = consultaPesquisa.replace("%QUERYCANCELADOS%",CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO_CICLOS_QUE_SO_CONTEM_CANCELADOS_QUE_DEVEM_SER_EXIBIDOS_E_CONTABILIZADOS);
+        consultaPesquisa = String.format(consultaPesquisa, ordenacao);
+
         return pesquisar(filtro.getPaginacao(), consultaPesquisa, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
