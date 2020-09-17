@@ -860,19 +860,13 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
      * @param usuarioLogado O usuario logado
      */
     private void adicionarParametroIsolamentoUsuarioAssessorOuCoordenador(List<ParametroPesquisa> parametros, Usuario usuarioLogado){
-        if (IPertenceFrota.class.isAssignableFrom(getClassePersistente()) &&
-                usuarioLogado.getTipoPerfil().isInterno()) {
-
-            if(usuarioLogado.getCoordenadoria() != null && usuarioLogado.getId().equals(usuarioLogado.getCoordenadoria().getCoordenador().getId())){
-                String nomeCampo = IPertenceFrota.obterCaminhoFrota(getClassePersistente());
-                parametros.add(new ParametroPesquisaIn(nomeCampo, usuarioLogado.getCoordenadoria().listarFrotas()));
-            }
-
-            else if (CollectionUtils.isNotEmpty(usuarioLogado.getFrotasAssessoradas())) {
-                String nomeCampo = IPertenceFrota.obterCaminhoFrota(getClassePersistente());
+        if (IPertenceFrota.class.isAssignableFrom(getClassePersistente()) && usuarioLogado.isInterno()) {
+            String nomeCampo = IPertenceFrota.obterCaminhoFrota(getClassePersistente());
+            if (CollectionUtils.isNotEmpty(usuarioLogado.getCoordenadoriasCoordenador())) {
+                parametros.add(new ParametroPesquisaIn(nomeCampo, usuarioLogado.listarIdsFrotasCoordenadas()));
+            } else if (CollectionUtils.isNotEmpty(usuarioLogado.getFrotasAssessoradas())) {
                 parametros.add(new ParametroPesquisaIn(nomeCampo, usuarioLogado.listarIdsFrotasAssessoradas()));
             }
-
         }
     }
 

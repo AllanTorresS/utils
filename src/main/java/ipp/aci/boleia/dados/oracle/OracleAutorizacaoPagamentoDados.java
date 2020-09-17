@@ -44,6 +44,7 @@ import ipp.aci.boleia.util.Ordenacao;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
 import ipp.aci.boleia.util.negocio.ParametrosPesquisaBuilder;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
@@ -375,6 +376,9 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         }
         if (filtro.getIdReembolso() != null) {
             parametros.add(new ParametroPesquisaIgual("transacaoConsolidada.reembolso.id", filtro.getIdReembolso()));
+        }
+        if (CollectionUtils.isNotEmpty(filtro.getIdsFrotas())) {
+            parametros.add(new ParametroPesquisaIn("frota", filtro.getIdsFrotas()));
         }
         return parametros;
     }
