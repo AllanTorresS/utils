@@ -13,6 +13,7 @@ public class TransacaoSaldoNddVo {
     private BigDecimal liters;
     private String orderNumber;
     private BigDecimal unitPrice;
+    private BigDecimal mdr;
 
     public TransacaoSaldoNddVo() {
         //Construtor default
@@ -23,6 +24,7 @@ public class TransacaoSaldoNddVo {
         this.liters = transacao.getAbastecimento().getLitragem();
         this.orderNumber = transacao.getPedido().getNumero();
         this.unitPrice = transacao.getAbastecimento().getPrecoCombustivel();
+        this.mdr = transacao.getAbastecimento().getMdr();
     }
 
     public Long getFuelType() {
