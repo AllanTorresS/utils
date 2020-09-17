@@ -180,9 +180,19 @@ public class Usuario implements IPersistente, IExclusaoLogica, IPertenceFrota, I
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "usuario")
     private CodigoValidacaoTokenJwt codigoValidacaoTokenJwt;
 
+    /**
+     * Coordenadoria que um assessor esta associado.
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_COORDENADORIA")
     private Coordenadoria coordenadoria;
+
+    /**
+     * Coordenadorias que um coordenador esta associado.
+     */
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "coordenador")
+    @JsonIgnoreProperties("coordenador")
+    private List<Coordenadoria> coordenadoriasCoordenador;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "usuarioAssessorResponsavel")
     @JsonIgnoreProperties("usuarioAssessorResponsavel")
@@ -439,6 +449,14 @@ public class Usuario implements IPersistente, IExclusaoLogica, IPertenceFrota, I
 
     public void setCoordenadoria(Coordenadoria coordenadoria) {
         this.coordenadoria = coordenadoria;
+    }
+
+    public List<Coordenadoria> getCoordenadoriasCoordenador() {
+        return coordenadoriasCoordenador;
+    }
+
+    public void setCoordenadoriasCoordenador(List<Coordenadoria> coordenadoriasCoordenador) {
+        this.coordenadoriasCoordenador = coordenadoriasCoordenador;
     }
 
     public List<Frota> getFrotasAssessoradas() {
