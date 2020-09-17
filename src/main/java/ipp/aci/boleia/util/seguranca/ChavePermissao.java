@@ -128,7 +128,8 @@ public final class ChavePermissao {
     public static final String ROTA_INCLUIR                                 = SPRING_ROLE_PREFIX + "ROTA_INCLUIR" + SPRING_ROLE_SUFFIX;
     public static final String COBRANCA_CONSULTAR                           = SPRING_ROLE_PREFIX + "COBRANCA_CONSULTAR" + SPRING_ROLE_SUFFIX;
     public static final String COBRANCA_EXPORTAR                            = SPRING_ROLE_PREFIX + "COBRANCA_EXPORTAR" + SPRING_ROLE_SUFFIX;
-    public static final String REEMBOLSO_PARCEIRO_CONSULTAR                 = SPRING_ROLE_PREFIX + "COBRANCA_EXPORTAR" + SPRING_ROLE_SUFFIX;
+    public static final String REEMBOLSO_PARCEIRO_CONSULTAR                 = SPRING_ROLE_PREFIX + "REEMBOLSO_PARCEIRO_CONSULTAR" + SPRING_ROLE_SUFFIX;
+    public static final String REEMBOLSO_PARCEIRO_EXPORTAR                  = SPRING_ROLE_PREFIX + "REEMBOLSO_PARCEIRO_EXPORTAR" + SPRING_ROLE_SUFFIX;
     public static final String CICLO_REPASSE_EXPORTAR                       = SPRING_ROLE_PREFIX + "CICLO_REPASSE_EXPORTAR" + SPRING_ROLE_SUFFIX;
     public static final String COBRANCA_GERAR_FATURA                        = SPRING_ROLE_PREFIX + "COBRANCA_GERAR_FATURA" + SPRING_ROLE_SUFFIX;
     public static final String COBRANCA_GERAR_BOLETO                        = SPRING_ROLE_PREFIX + "COBRANCA_GERAR_BOLETO" + SPRING_ROLE_SUFFIX;
