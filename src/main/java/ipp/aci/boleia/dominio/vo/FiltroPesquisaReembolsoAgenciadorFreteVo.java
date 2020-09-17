@@ -2,6 +2,8 @@ package ipp.aci.boleia.dominio.vo;
 
 import ipp.aci.boleia.dominio.pesquisa.comum.BaseFiltroPaginado;
 
+import java.util.List;
+
 /**
  * Filtro para pesquisa o reembolso do agenciador de frete
  */
@@ -9,6 +11,7 @@ public class FiltroPesquisaReembolsoAgenciadorFreteVo extends BaseFiltroPaginado
     private String de;
     private String ate;
     private EnumVo tipoEntidade;
+    private List<Long> idsPontoVenda;
 
     public FiltroPesquisaReembolsoAgenciadorFreteVo() {
         //Construtor default
@@ -36,5 +39,13 @@ public class FiltroPesquisaReembolsoAgenciadorFreteVo extends BaseFiltroPaginado
 
     public void setTipoEntidade(EnumVo tipoEntidade) {
         this.tipoEntidade = tipoEntidade;
+    }
+
+    public List<Long> getIdsPontoVenda() {
+        return idsPontoVenda;
+    }
+
+    public void setIdsPontoVenda(List<Long> idsPontoVenda) {
+        this.idsPontoVenda = idsPontoVenda;
     }
 }
