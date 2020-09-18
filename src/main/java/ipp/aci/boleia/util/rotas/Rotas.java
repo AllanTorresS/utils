@@ -43,11 +43,13 @@ public final  class Rotas {
     public static final  String STATUS_PERMISSAO_PRECO_API           = BASE_API + "/statusPermissaoPreco";
     public static final  String STATUS_INTEGRACAO_API                = BASE_API + "/statusIntegracao";
     public static final  String STATUS_INTEGRACAO_REEMBOLSO_API      = BASE_API + "/statusIntegracaoReembolso";
+    public static final  String STATUS_INTEGRACAO_REEMBOLSO_CONECTCAR_API      = BASE_API + "/statusIntegracaoReembolsoConectcar";
     public static final  String STATUS_BLOQUEIO_API                  = BASE_API + "/statusBloqueio";
     public static final  String STATUS_HABILITACAO_API               = BASE_API + "/statusHabilitacao";
     public static final  String STATUS_POSSE_API                     = BASE_API + "/statusPosse";
     public static final  String STATUS_COBRANCA_API                  = BASE_API + "/statusCobranca";
     public static final  String STATUS_REEMBOLSO_API                 = BASE_API + "/statusReembolso";
+    public static final  String STATUS_REEMBOLSO_CONECTCAR_API       = BASE_API + "/statusReembolsoConectcar";
     public static final  String CLASSIFICACAO_API                    = BASE_API + "/classificacao";
     public static final  String ESTADOS_API                          = BASE_API + "/estado";
     public static final  String VEICULO_API                          = BASE_API + "/veiculo";
@@ -87,6 +89,7 @@ public final  class Rotas {
     public static final  String COBRANCA_CONECTCAR_API               = BASE_API + "/cobrancaConectcar";
     public static final  String CICLO_REPASSE_API                    = BASE_API + "/cicloRepasse";
     public static final  String REEMBOLSO_API                        = BASE_API + "/reembolso";
+    public static final  String REEMBOLSO_CONECTCAR_API              = BASE_API + "/reembolsoConectcar";
     public static final  String ABASTECIMENTO_API                    = BASE_API + "/abastecimento";
     public static final  String ABASTECIMENTO_FROTA_API              = BASE_API + "/abastecimentoFrota";
     public static final  String ABASTECIMENTO_REVENDA_API            = BASE_API + "/abastecimentoRevenda";
