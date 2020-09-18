@@ -1,37 +1,18 @@
 package ipp.aci.boleia.dominio.vo;
 
-import ipp.aci.boleia.dominio.pesquisa.comum.BaseFiltroPaginado;
+import ipp.aci.boleia.dominio.pesquisa.comum.FiltroBasePeriodoPaginado;
 
 import java.util.List;
 
 /**
  * Filtro para pesquisa de Ciclos de Repasse
  */
-public class FiltroPesquisaCicloRepasseVo extends BaseFiltroPaginado {
-
-	private String de;
-	private String ate;
+public class FiltroPesquisaCicloRepasseVo extends FiltroBasePeriodoPaginado {
 	private EntidadeVo pontoDeVenda;
 	private String numeroDocumento;
 	private List<EnumVo> produto;
 	private EnumVo statusPagamento;
 	private EnumVo statusIntegracao;
-
-	public String getDe() {
-		return de;
-	}
-
-	public void setDe(String de) {
-		this.de = de;
-	}
-
-	public String getAte() {
-		return ate;
-	}
-
-	public void setAte(String ate) {
-		this.ate = ate;
-	}
 
 	public String getNumeroDocumento() {
 		return numeroDocumento;

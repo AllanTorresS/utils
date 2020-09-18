@@ -93,6 +93,12 @@ public class MotorGeracaoRelatorios implements IPersistente {
     @Column(name="VA_REGISTROS_PROCESSADOS")
     private Long registrosProcessados;
 
+    @Column(name = "NO_ULTIMA_PAGINA_PROCESSADA")
+    private Integer ultimaPaginaProcessada;
+
+    @Column(name = "NO_ULTIMA_LINHA_PROCESSADA")
+    private Integer ultimaLinhaProcessada;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "motorGeracaoRelatorio", fetch = FetchType.EAGER, orphanRemoval = true)
     private List<AbaRelatorio> abasRelatorio;
 
@@ -184,6 +190,22 @@ public class MotorGeracaoRelatorios implements IPersistente {
 
     public void setAbasRelatorio(List<AbaRelatorio> abasRelatorio) {
         this.abasRelatorio = abasRelatorio;
+    }
+
+    public Integer getUltimaPaginaProcessada() {
+        return ultimaPaginaProcessada != null ? ultimaPaginaProcessada : 0;
+    }
+
+    public void setUltimaPaginaProcessada(Integer ultimaPaginaProcessada) {
+        this.ultimaPaginaProcessada = ultimaPaginaProcessada;
+    }
+
+    public Integer getUltimaLinhaProcessada() {
+        return ultimaLinhaProcessada != null ? ultimaLinhaProcessada : 0;
+    }
+
+    public void setUltimaLinhaProcessada(Integer ultimaLinhaProcessada) {
+        this.ultimaLinhaProcessada = ultimaLinhaProcessada;
     }
 
     @Transient

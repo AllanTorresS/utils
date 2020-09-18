@@ -1,7 +1,15 @@
 package ipp.aci.boleia.dominio.enums;
 
 
+import ipp.aci.boleia.util.TemplatePlanilha;
+import ipp.aci.boleia.util.UtilitarioLambda;
 import ipp.aci.boleia.util.i18n.IEnumComLabel;
+import org.hibernate.sql.Template;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Indica o tipo do relatório emitido pelo motor de geração de relatórios
@@ -25,14 +33,15 @@ public enum TipoRelatorioMotorGerador implements IEnumComLabel<TipoRelatorioMoto
     RELATORIO_NEGOCIACAO(14);
 
     private final Integer value;
+    private final Map<TipoPerfilUsuario, TemplatePlanilha> templatePerfil;
 
     /**
      * Construtor
-     *
-     * @param value O value do status
+     *  @param value O value do status
      */
     TipoRelatorioMotorGerador(Integer value) {
         this.value = value;
+        this.templatePerfil = new HashMap<>();
     }
 
     public Integer getValue() {

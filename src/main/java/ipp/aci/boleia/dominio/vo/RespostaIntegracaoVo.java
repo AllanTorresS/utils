@@ -1,5 +1,7 @@
 package ipp.aci.boleia.dominio.vo;
 
+import ipp.aci.boleia.dominio.enums.TipoRelatorioMotorGerador;
+
 /**
  * Resposta da tentativa de autenticação entre serviços do Pró-Frotas
  */

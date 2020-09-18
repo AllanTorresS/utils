@@ -1,6 +1,6 @@
 package ipp.aci.boleia.dominio.vo;
 
-import ipp.aci.boleia.dominio.pesquisa.comum.BaseFiltroPaginado;
+import ipp.aci.boleia.dominio.pesquisa.comum.FiltroBasePeriodoPaginado;
 
 import java.util.List;
 
@@ -8,31 +8,12 @@ import java.util.List;
 /**
  * Filtro para pesquisa de cobrancas
  */
-public class FiltroPesquisaCobrancaVo extends BaseFiltroPaginado {
-
-    private String de;
-    private String ate;
+public class FiltroPesquisaCobrancaVo extends FiltroBasePeriodoPaginado {
     private List<EnumVo> statusPagamento;
     private EnumVo statusIntegracao;
     private String numeroDocumento;
     private EntidadeVo frota;
     private Boolean ignorarFrotaControle;
-
-    public String getDe() {
-        return de;
-    }
-
-    public void setDe(String de) {
-        this.de = de;
-    }
-
-    public String getAte() {
-        return ate;
-    }
-
-    public void setAte(String ate) {
-        this.ate = ate;
-    }
 
     public List<EnumVo> getStatusPagamento() {
         return statusPagamento;

@@ -2,7 +2,7 @@ package ipp.aci.boleia.dominio.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import ipp.aci.boleia.dominio.enums.TipoPerfilUsuario;
-import ipp.aci.boleia.dominio.pesquisa.comum.BaseFiltroPaginado;
+import ipp.aci.boleia.dominio.pesquisa.comum.FiltroBasePeriodoPaginado;
 
 import java.util.Date;
 import java.util.List;
@@ -10,13 +10,11 @@ import java.util.List;
 /**
  * Filtro para pesquisa de abastecimento
  */
-public class FiltroPesquisaAbastecimentoVo extends BaseFiltroPaginado {
+public class FiltroPesquisaAbastecimentoVo extends FiltroBasePeriodoPaginado {
 
     private Long idConsolidado;
     private Long idCobranca;
     private Long idReembolso;
-    private Date de;
-    private Date ate;
     private Date requisicaoDe;
     private Date requisicaoAte;
     private Date processamentoDe;
@@ -54,22 +52,6 @@ public class FiltroPesquisaAbastecimentoVo extends BaseFiltroPaginado {
 
     public void setDataAbastecimento(Date dataAbastecimento) {
         this.dataAbastecimento = dataAbastecimento;
-    }
-
-    public Date getDe() {
-        return de;
-    }
-
-    public void setDe(Date de) {
-        this.de = de;
-    }
-
-    public Date getAte() {
-        return ate;
-    }
-
-    public void setAte(Date ate) {
-        this.ate = ate;
     }
 
     public String getPlaca() {
