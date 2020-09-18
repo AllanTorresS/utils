@@ -862,10 +862,8 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
     private void adicionarParametroIsolamentoUsuarioAssessorOuCoordenador(List<ParametroPesquisa> parametros, Usuario usuarioLogado){
         if (IPertenceFrota.class.isAssignableFrom(getClassePersistente()) && usuarioLogado.isInterno()) {
             String nomeCampo = IPertenceFrota.obterCaminhoFrota(getClassePersistente());
-            if (CollectionUtils.isNotEmpty(usuarioLogado.getCoordenadoriasCoordenador())) {
-                parametros.add(new ParametroPesquisaIn(nomeCampo, usuarioLogado.listarIdsFrotasCoordenadas()));
-            } else if (CollectionUtils.isNotEmpty(usuarioLogado.getFrotasAssessoradas())) {
-                parametros.add(new ParametroPesquisaIn(nomeCampo, usuarioLogado.listarIdsFrotasAssessoradas()));
+            if (usuarioLogado.possuiFrotasAssociadas()) {
+                parametros.add(new ParametroPesquisaIn(nomeCampo, usuarioLogado.listarIdsFrotasAssociadas()));
             }
         }
     }
