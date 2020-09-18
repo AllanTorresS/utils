@@ -7,7 +7,7 @@ import ipp.aci.boleia.dominio.vo.agenciadorfrete.FiltroRelatorioCobrancaVo;
 
 import java.util.List;
 
-public interface ICobrancaAgenciadorFreteDados extends IRepositorioBoleiaDados<AgenciadorFreteCobranca> {
+public interface IAgenciadorFreteCobrancaDados extends IRepositorioBoleiaDados<AgenciadorFreteCobranca> {
 
     /**
      * Pesquisa todas as cobranças

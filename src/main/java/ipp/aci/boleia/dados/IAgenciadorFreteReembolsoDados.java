@@ -8,7 +8,7 @@ import ipp.aci.boleia.dominio.vo.FiltroPesquisaReembolsoAgenciadorFreteVo;
 
 import java.util.List;
 
-public interface IReembolsoAgenciadorFreteDados extends IRepositorioBoleiaDados<AgenciadorFreteReembolso> {
+public interface IAgenciadorFreteReembolsoDados extends IRepositorioBoleiaDados<AgenciadorFreteReembolso> {
     /**
      * Pesquisa registros a partir do filtro informado
      *
