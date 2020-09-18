@@ -36,6 +36,7 @@ public enum CamposRelatorioAbastecimento {
     UF_ESTABELECIMENTO_CREDENCIADO(407, "enum.CamposRelatorioAbastecimento.UF_ESTABELECIMENTO_CREDENCIADO.label", true, true, 4, 30, false),
     PLACA_VEICULO(500, "enum.CamposRelatorioAbastecimento.PLACA_VEICULO.label", true, true, 5, 25, false),
     CLASSIFICACAO_VEICULO(501, "enum.CamposRelatorioAbastecimento.CLASSIFICACAO_VEICULO.label", false, true, 5, 30, false),
+    IDENTIFICADOR_INTERNO(502, "enum.CamposRelatorioAbastecimento.IDENTIFICADOR_INTERNO.label", false, true, 5, 30, false),
     CPF_MOTORISTA(600, "enum.CamposRelatorioAbastecimento.CPF_MOTORISTA.label", true, true, 6, 20, false),
     NOME_MOTORISTA(601, "enum.CamposRelatorioAbastecimento.NOME_MOTORISTA.label", true, true, 6, 30, false),
     MATRICULA_MOTORISTA(602, "enum.CamposRelatorioAbastecimento.MATRICULA_MOTORISTA.label", false, true, 6, 30, false),
