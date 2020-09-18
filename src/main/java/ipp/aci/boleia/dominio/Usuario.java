@@ -46,6 +46,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Representa a tabela de Usuario
@@ -668,29 +669,57 @@ public class Usuario implements IPersistente, IExclusaoLogica, IPertenceFrota, I
     }
 
     /**
+     * Lista os ids das frotas das coordenadorias que o usuario eh coordenador e as frotas que o usuario assessora.
+     *
+     * @return lista com os ids das frotas das coordenadorias que o usuario eh coordenador e as frotas que o usuario assessora.
+     */
+    @JsonIgnore
+    public List<Long> listarIdsFrotasAssociadas() {
+        return Stream.concat(listarIdsFrotasCoordenadas().stream(), listarIdsFrotasAssessoradas().stream()).collect(Collectors.toList());
+    }
+
+    /**
+     * Valida se o usuario possui frotas associadas, seja como coordenador ou assessor.
+     * @return true se o possuir frotas associadas.
+     */
+    @JsonIgnore
+    public Boolean possuiFrotasAssociadas() {
+        return isAssessor() || isCoordenador();
+    }
+
+    /**
      * Lista os ids das frotas das coordenadorias pelo usuario.
      *
-     * @return lista com  os ids das frotas assessoradas pelo usuario.
+     * @return lista com os ids das frotas assessoradas pelo usuario.
      */
     @JsonIgnore
     public List<Long> listarIdsFrotasCoordenadas() {
-        if (this.coordenadoriasCoordenador == null) {
-            return Collections.emptyList();
+        if (isCoordenador()) {
+            return this.coordenadoriasCoordenador.stream().map(Coordenadoria::listarFrotas).flatMap(List::stream).collect(Collectors.toList());
         }
-        return this.coordenadoriasCoordenador.stream().map(Coordenadoria::listarFrotas).flatMap(List::stream).collect(Collectors.toList());
+        return Collections.emptyList();
+    }
+
+    /**
+     * Valida se o usuario eh coordenador de alguma coordenadoria.
+     * @return true se o usuario for coordenador de alguma coordenadoria.
+     */
+    @JsonIgnore
+    private Boolean isCoordenador() {
+        return !CollectionUtils.isEmpty(this.coordenadoriasCoordenador);
     }
 
     /**
      * Lista os ids das frotas assessoradas pelo usuario.
      *
-     * @return lista com  os ids das frotas assessoradas pelo usuario.
+     * @return lista com os ids das frotas assessoradas pelo usuario.
      */
     @JsonIgnore
     public List<Long> listarIdsFrotasAssessoradas() {
-        if (this.frotasAssessoradas == null) {
-            return Collections.emptyList();
+        if (isAssessor()) {
+            return this.frotasAssessoradas.stream().map(Frota::getId).collect(Collectors.toList());
         }
-        return this.frotasAssessoradas.stream().map(Frota::getId).collect(Collectors.toList());
+        return Collections.emptyList();
     }
 
     /**
