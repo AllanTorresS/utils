@@ -668,7 +668,21 @@ public class Usuario implements IPersistente, IExclusaoLogica, IPertenceFrota, I
     }
 
     /**
+     * Lista os ids das frotas das coordenadorias pelo usuario.
+     *
+     * @return lista com  os ids das frotas assessoradas pelo usuario.
+     */
+    @JsonIgnore
+    public List<Long> listarIdsFrotasCoordenadas() {
+        if (this.coordenadoriasCoordenador == null) {
+            return Collections.emptyList();
+        }
+        return this.coordenadoriasCoordenador.stream().map(Coordenadoria::listarFrotas).flatMap(List::stream).collect(Collectors.toList());
+    }
+
+    /**
      * Lista os ids das frotas assessoradas pelo usuario.
+     *
      * @return lista com  os ids das frotas assessoradas pelo usuario.
      */
     @JsonIgnore

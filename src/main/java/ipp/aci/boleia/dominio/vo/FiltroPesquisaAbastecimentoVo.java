@@ -25,6 +25,7 @@ public class FiltroPesquisaAbastecimentoVo extends BaseFiltroPaginado {
     private String placa;
     private EnumVo statusAutorizacao;
     private EntidadeVo frota;
+    private List<Long> idsFrotas;
     private EntidadeVo pontoDeVenda;
     private List<Long> idsPontoVenda;
     private boolean contingencia;
@@ -94,6 +95,14 @@ public class FiltroPesquisaAbastecimentoVo extends BaseFiltroPaginado {
 
     public void setFrota(EntidadeVo frota) {
         this.frota = frota;
+    }
+
+    public List<Long> getIdsFrotas() {
+        return idsFrotas;
+    }
+
+    public void setIdsFrotas(List<Long> idsFrotas) {
+        this.idsFrotas = idsFrotas;
     }
 
     public EntidadeVo getPontoDeVenda() {
