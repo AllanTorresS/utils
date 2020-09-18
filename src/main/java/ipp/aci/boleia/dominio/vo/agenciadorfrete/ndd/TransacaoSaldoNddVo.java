@@ -58,4 +58,12 @@ public class TransacaoSaldoNddVo {
     public void setUnitPrice(BigDecimal unitPrice) {
         this.unitPrice = unitPrice;
     }
+
+    public BigDecimal getMdr() {
+        return mdr;
+    }
+
+    public void setMdr(BigDecimal mdr) {
+        this.mdr = mdr;
+    }
 }
