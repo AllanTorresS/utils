@@ -180,9 +180,19 @@ public class Usuario implements IPersistente, IExclusaoLogica, IPertenceFrota, I
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "usuario")
     private CodigoValidacaoTokenJwt codigoValidacaoTokenJwt;
 
+    /**
+     * Coordenadoria que um assessor esta associado.
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_COORDENADORIA")
     private Coordenadoria coordenadoria;
+
+    /**
+     * Coordenadorias que um coordenador esta associado.
+     */
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "coordenador")
+    @JsonIgnoreProperties("coordenador")
+    private List<Coordenadoria> coordenadoriasCoordenador;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "usuarioAssessorResponsavel")
     @JsonIgnoreProperties("usuarioAssessorResponsavel")
@@ -441,6 +451,14 @@ public class Usuario implements IPersistente, IExclusaoLogica, IPertenceFrota, I
         this.coordenadoria = coordenadoria;
     }
 
+    public List<Coordenadoria> getCoordenadoriasCoordenador() {
+        return coordenadoriasCoordenador;
+    }
+
+    public void setCoordenadoriasCoordenador(List<Coordenadoria> coordenadoriasCoordenador) {
+        this.coordenadoriasCoordenador = coordenadoriasCoordenador;
+    }
+
     public List<Frota> getFrotasAssessoradas() {
         return frotasAssessoradas;
     }
@@ -659,5 +677,24 @@ public class Usuario implements IPersistente, IExclusaoLogica, IPertenceFrota, I
             return Collections.emptyList();
         }
         return this.frotasAssessoradas.stream().map(Frota::getId).collect(Collectors.toList());
+    }
+
+    /**
+     * Transforma um usuario em assessor, se ele ja nao tiver esse papel.
+     */
+    @JsonIgnore
+    public void transformarEmAssessor() {
+        if (!isAssessor()) {
+            this.tipoDashboard = null;
+        }
+    }
+
+    /**
+     * Valida se o usuario eh assessor de alguma frota.
+     * @return true se o usuario for assessor de alguma frota.
+     */
+    @JsonIgnore
+    public Boolean isAssessor() {
+        return !CollectionUtils.isEmpty(this.frotasAssessoradas);
     }
 }
