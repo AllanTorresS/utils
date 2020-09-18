@@ -317,18 +317,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "AND (F.semNotaFiscal = 0 OR U.exigeNotaFiscal = 1 OR EA.exigeNotaFiscal = 1) " +
                     "AND AP.transacaoConsolidadaPostergada IS NOT NULL ";
 
-    //private static final String COMPLEMENTO_CLAUSULA_WHERE_CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO_CICLOS_ORIGINAIS_QUE_SO_CONTEM_CANCELADOS_QUE_DEVEM_SER_EXIBIDOS_E_CONTABILIZADOS =
-            //"AND (AP.transacaoConsolidadaPostergada IS NOT NULL AND AP.transacaoConsolidada.quantidadeAbastecimentos = 0) ";
-
-    //private static final String COMPLEMENTO_CLAUSULA_WHERE_CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO_CICLOS_DE_POSTERGACAO_QUE_SO_CONTEM_CANCELADOS_QUE_DEVEM_SER_EXIBIDOS_E_CONTABILIZADOS =
-            //"AND (AP.transacaoConsolidadaPostergada IS NOT NULL AND AP.transacaoConsolidadaPostergada.quantidadeAbastecimentos = 0) ";
-
-//    private static final String COMPLEMENTO_CLAUSULA_WHERE_CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO_CICLOS_ORIGINAIS_QUE_CONTEM_ESTORNADOS_QUE_DEVEM_SER_EXIBIDOS_E_CONTABILIZADOS =
-//            "AND AP.transacaoConsolidada.quantidadeAbastecimentos = 0 ";
-
     private static final String COMPLEMENTO_CLAUSULA_WHERE_CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO_CICLOS_DE_POSTERGACAO_QUE_CONTEM_ESTORNADOS_QUE_DEVEM_SER_EXIBIDOS_E_CONTABILIZADOS =
             "AND AP.transacaoConsolidadaPostergada IS NOT NULL " +
-                    //"AND AP.transacaoConsolidadaPostergada.quantidadeAbastecimentos = 0 " +
                     "AND AP.statusNotaFiscal = 1 " +
                     "AND AP.transacaoConsolidadaPostergada.id <> (SELECT DISTINCT APPOS.transacaoConsolidada.id FROM AutorizacaoPagamento APPOS WHERE APPOS.idAutorizacaoEstorno = AP.id AND APPOS.valorTotal > 0) " +
                     "AND AP.transacaoConsolidadaPostergada.id = (SELECT DISTINCT APNEG.transacaoConsolidada.id FROM AutorizacaoPagamento APNEG WHERE APNEG.idAutorizacaoEstorno = AP.id AND APNEG.valorTotal < 0) ";
