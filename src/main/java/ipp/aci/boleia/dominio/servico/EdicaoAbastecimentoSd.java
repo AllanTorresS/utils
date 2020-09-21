@@ -1,5 +1,6 @@
 package ipp.aci.boleia.dominio.servico;
 
+import ipp.aci.boleia.dados.IAutorizacaoPagamentoEdicaoDados;
 import ipp.aci.boleia.dados.IItemAutorizacaoPagamentoDados;
 import ipp.aci.boleia.dominio.AutorizacaoPagamento;
 import ipp.aci.boleia.dominio.AutorizacaoPagamentoEdicao;
@@ -31,6 +32,9 @@ public class EdicaoAbastecimentoSd {
 
     @Autowired
     private IItemAutorizacaoPagamentoDados repositorioItemAutorizacaoPagamento;
+
+    @Autowired
+    private IAutorizacaoPagamentoEdicaoDados repositorioAutorizacaoPagamentoEdicao;
 
     /**
      * Monta o objeto que mantém o conjunto de campos de abastecimento que sofreram edição
@@ -223,5 +227,15 @@ public class EdicaoAbastecimentoSd {
         EdicaoCampoAbastecimentoVo campoValorTotal = campos.remove(indexValorTotal);
         campos.add(campoValorTotal);
         edicaoAbastecimentoVo.setCamposEditados(campos);
+    }
+
+    /**
+     * Verifica se um abastecimento possui uma edição aprovada.
+     * Obs.: Essa verificação é importante para saber se um abastecimento com edição pendente ou rejeitada já foi editado anteriormente.
+     * @param id identificador do abastecimento.
+     * @return true caso possua uma edição aprovada e false caso contrário.
+     */
+    public boolean possuiEdicaoAprovada(Long id) {
+        return repositorioAutorizacaoPagamentoEdicao.verificarSeAbastecimentoPossuiEdicaoEfetuada(id);
     }
 }

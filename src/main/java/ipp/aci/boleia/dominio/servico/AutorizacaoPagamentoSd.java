@@ -190,7 +190,8 @@ public class AutorizacaoPagamentoSd {
         AutorizacaoPagamento transacaoAjustada = repositorioAutorizacaoPagamento.obterTransacaoAjustadaOriundaDeEstorno(autorizacaoOriginal);
 
         //verifica se o ciclo em que a transacao positiva ajustada foi criada coincide com o cilo mais atual (original ou de postergacao) da transacao estornada
-        return transacaoAjustada != null && transacaoAjustada.getTransacaoConsolidada().getId().equals(autorizacaoOriginal.getTransacaoConsolidadaVigente().getId());
+        return transacaoAjustada != null &&  transacaoAjustada.getTransacaoConsolidada() != null &&
+            transacaoAjustada.getTransacaoConsolidada().getId().equals(autorizacaoOriginal.getTransacaoConsolidadaVigente().getId());
 
     }
 
@@ -205,7 +206,8 @@ public class AutorizacaoPagamentoSd {
         AutorizacaoPagamento transacaoNegativa = repositorioAutorizacaoPagamento.obterTransacaoNegativaOriundaDeEstorno(autorizacaoOriginal);
 
         //verifica se o ciclo em que a transacao negativa foi criada coincide com o cilo mais atual (original ou de postergacao) da transacao estornada
-        return transacaoNegativa != null && transacaoNegativa.getTransacaoConsolidada().getId().equals(autorizacaoOriginal.getTransacaoConsolidadaVigente().getId());
+        return transacaoNegativa != null && transacaoNegativa.getTransacaoConsolidada() != null &&
+            transacaoNegativa.getTransacaoConsolidada().getId().equals(autorizacaoOriginal.getTransacaoConsolidadaVigente().getId());
     }
 
     /**
@@ -274,7 +276,7 @@ public class AutorizacaoPagamentoSd {
     public boolean abastecimentoEstornadoDeveSerExibidoEContabilizadoNoFinanceiro(AutorizacaoPagamento transacao,Long idConsolidadoQueEstaSendoVisualizado){
 
         //abastecimentos estornados sempre devem ser exibidos no ciclo de origem
-        if(transacao.getTransacaoConsolidada().getId().equals(idConsolidadoQueEstaSendoVisualizado)){
+        if(transacao.getTransacaoConsolidada() != null && transacao.getTransacaoConsolidada().getId().equals(idConsolidadoQueEstaSendoVisualizado)){
             return true;
         }else{
             //se o abastecimento for estornado, o positivo cancelado so vai ser exibido na tela de NF do ciclo de postergacao na visao da revenda se
