@@ -276,52 +276,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "AND (fpv.pontoVenda.id IN :idsPvs) " +
                     "AND (fpv.frota.id = :idFrota OR :idFrota is null) " +
                     "AND (tc.statusConsolidacao = :statusConsolidacao or :statusConsolidacao is null) " +
-                    "AND ((tc.valorFaturamento <> 0 OR tc.valorReembolso <> 0 OR tc.valorTotalNotaFiscal <> 0) OR " +
-                          "(tc.quantidadeAbastecimentos = 0 and tc.id in (%QUERY_IDS_CICLOS_ORIGINAIS_COM_CANCELADOS%)) OR " +
-                          "(tc.quantidadeAbastecimentos = 0 and tc.id in (%QUERY_IDS_CICLOS_DE_POSTERGACAO_COM_CANCELADOS%)) OR " +
-                          "(tc.quantidadeAbastecimentos = 0 and tc.id in (%QUERY_IDS_CICLOS_ORIGINAIS_COM_ESTORNADOS%)) OR " +
-                          "(tc.quantidadeAbastecimentos = 0 and tc.id in (%QUERY_IDS_CICLOS_DE_POSTERGACAO_COM_ESTORNADOS%)) " +
-                         ") " +
+                    "AND (tc.valorFaturamento <> 0 OR tc.valorReembolso <> 0 OR tc.valorTotalNotaFiscal <> 0 OR tc.quantidadeAbastecimentos <> 0)" +
                     "ORDER BY %s ";
-
-    private static final String BASE_CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO_CICLOS_QUE_CONTEM_ESTORNADOS_QUE_DEVEM_SER_EXIBIDOS_E_CONTABILIZADOS =
-            "FROM " +
-                    "AutorizacaoPagamento AP " +
-                    "JOIN AP.transacaoConsolidada TC " +
-                    "JOIN TC.frotaPtov FP " +
-                    "JOIN FP.frota F " +
-                    "LEFT JOIN TC.unidade U " +
-                    "LEFT JOIN TC.empresaAgregada EA " +
-                    "WHERE " +
-                    "AP.status = -1 " +
-                    "AND (AP.motivoEstorno IS NOT NULL AND AP.motivoEstorno NOT IN (0,1,2)) " +
-                    "AND (F.semNotaFiscal = 0 OR U.exigeNotaFiscal = 1 OR EA.exigeNotaFiscal = 1) ";
-
-    private static final String CLAUSULA_SELECT_CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO_CICLOS_ORIGINAIS_QUE_CONTEM_CANCELADOS_OU_ESTORNADOS_QUE_DEVEM_SER_EXIBIDOS_E_CONTABILIZADOS =
-            "SELECT DISTINCT AP.transacaoConsolidada.id ";
-
-    private static final String CLAUSULA_SELECT_CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO_CICLOS_DE_POSTERGACAO_QUE_CONTEM_CANCELADOS_OU_ESTORNADOS_QUE_DEVEM_SER_EXIBIDOS_E_CONTABILIZADOS =
-            "SELECT DISTINCT AP.transacaoConsolidadaPostergada.id ";
-
-    private static final String BASE_CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO_CICLOS_QUE_CONTEM_CANCELADOS_QUE_DEVEM_SER_EXIBIDOS_E_CONTABILIZADOS =
-                    "FROM " +
-                    "AutorizacaoPagamento AP " +
-                    "JOIN AP.transacaoConsolidada TC " +
-                    "JOIN TC.frotaPtov FP " +
-                    "JOIN FP.frota F " +
-                    "LEFT JOIN TC.unidade U " +
-                    "LEFT JOIN TC.empresaAgregada EA " +
-                    "WHERE " +
-                    "AP.status = -1 " +
-                    "AND AP.motivoEstorno IN (0,1,2) " +
-                    "AND (F.semNotaFiscal = 0 OR U.exigeNotaFiscal = 1 OR EA.exigeNotaFiscal = 1) " +
-                    "AND AP.transacaoConsolidadaPostergada IS NOT NULL ";
-
-    private static final String COMPLEMENTO_CLAUSULA_WHERE_CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO_CICLOS_DE_POSTERGACAO_QUE_CONTEM_ESTORNADOS_QUE_DEVEM_SER_EXIBIDOS_E_CONTABILIZADOS =
-            "AND AP.transacaoConsolidadaPostergada IS NOT NULL " +
-                    "AND AP.statusNotaFiscal = 1 " +
-                    "AND AP.transacaoConsolidadaPostergada.id <> (SELECT DISTINCT APPOS.transacaoConsolidada.id FROM AutorizacaoPagamento APPOS WHERE APPOS.idAutorizacaoEstorno = AP.id AND APPOS.valorTotal > 0) " +
-                    "AND AP.transacaoConsolidadaPostergada.id = (SELECT DISTINCT APNEG.transacaoConsolidada.id FROM AutorizacaoPagamento APNEG WHERE APNEG.idAutorizacaoEstorno = AP.id AND APNEG.valorTotal < 0) ";
 
     private static final String CONSULTA_PONTOS_GRAFICO =
             "SELECT new ipp.aci.boleia.dominio.vo.PontosGraficoFinanceiroVo( " +
@@ -942,54 +898,9 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         }
 
         //Monta a consulta completa da grid do financeiro
-        String consultaPesquisaGridFinanceiro = obterConsultaCompletaDoGridDoFinanceiro(ordenacao);
+        String consultaPesquisaGridFinanceiro = String.format(CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO, ordenacao);
 
         return pesquisar(filtro.getPaginacao(), consultaPesquisaGridFinanceiro, parametros.toArray(new ParametroPesquisa[parametros.size()]));
-    }
-
-    /**
-     * Monta a consulta completa da grid do financeiro
-     * @param ordenacao indica a ordenacao que deve ser utilizada para os registros retornados pela consulta
-     * @return consulta completa da grid do financeiro
-     */
-    private String obterConsultaCompletaDoGridDoFinanceiro(String ordenacao){
-
-        //Monta a consulta que lista os identificadores dos ciclos originais que so tem abastecimentos cancelados e cuja exibucao e contabilizacao desses cancelados e relevante para o financeiro
-        //Nota: A query segue a mesma logica utilizada para exibir ou nao exibir/contabilizar ou nao contabilizar os abastecimentos cancelados na quantidade de transacoes na grid do financeiro e na tela de notas fiscais na visao da revenda
-        String consultaCiclosOriginaisQueSoTemCancelados = CLAUSULA_SELECT_CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO_CICLOS_ORIGINAIS_QUE_CONTEM_CANCELADOS_OU_ESTORNADOS_QUE_DEVEM_SER_EXIBIDOS_E_CONTABILIZADOS
-                + BASE_CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO_CICLOS_QUE_CONTEM_CANCELADOS_QUE_DEVEM_SER_EXIBIDOS_E_CONTABILIZADOS;
-
-        //Monta a consulta que lista os identificadores dos ciclos de postergacao que so tem abastecimentos cancelados e cuja exibucao e contabilizacao desses cancelados e relevante para o financeiro
-        //Nota: A query segue a mesma logica utilizada para exibir ou nao exibir/contabilizar ou nao contabilizar os abastecimentos cancelados na quantidade de transacoes na grid do financeiro e na tela de notas fiscais na visao da revenda
-        String consultaCiclosDePostergacaoQueSoTemCancelados = CLAUSULA_SELECT_CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO_CICLOS_DE_POSTERGACAO_QUE_CONTEM_CANCELADOS_OU_ESTORNADOS_QUE_DEVEM_SER_EXIBIDOS_E_CONTABILIZADOS
-                + BASE_CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO_CICLOS_QUE_CONTEM_CANCELADOS_QUE_DEVEM_SER_EXIBIDOS_E_CONTABILIZADOS;
-
-        //Monta a consulta que lista os identificadores dos ciclos originais que so tem abastecimentos estornados e cuja exibucao e contabilizacao desses estornados e relevante para o financeiro
-        //Nota: A query segue a mesma logica utilizada para exibir ou nao exibir/contabilizar ou nao contabilizar os abastecimentos estornados na quantidade de transacoes na grid do financeiro e na tela de notas fiscais na visao da revenda
-        String consultaCiclosQueSoTemEstornados = CLAUSULA_SELECT_CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO_CICLOS_ORIGINAIS_QUE_CONTEM_CANCELADOS_OU_ESTORNADOS_QUE_DEVEM_SER_EXIBIDOS_E_CONTABILIZADOS
-                + BASE_CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO_CICLOS_QUE_CONTEM_ESTORNADOS_QUE_DEVEM_SER_EXIBIDOS_E_CONTABILIZADOS;
-
-        //Monta a consulta que lista os identificadores dos ciclos de postergacao que so tem abastecimentos estornados e cuja exibucao e contabilizacao desses estornados e relevante para o financeiro
-        //Nota: A query segue a mesma logica utilizada para exibir ou nao exibir/contabilizar ou nao contabilizar os abastecimentos estornados na quantidade de transacoes na grid do financeiro e na tela de notas fiscais na visao da revenda
-        String consultaCiclosDePostergacaoQueSoTemEstornados = CLAUSULA_SELECT_CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO_CICLOS_DE_POSTERGACAO_QUE_CONTEM_CANCELADOS_OU_ESTORNADOS_QUE_DEVEM_SER_EXIBIDOS_E_CONTABILIZADOS
-                + BASE_CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO_CICLOS_QUE_CONTEM_ESTORNADOS_QUE_DEVEM_SER_EXIBIDOS_E_CONTABILIZADOS
-                + COMPLEMENTO_CLAUSULA_WHERE_CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO_CICLOS_DE_POSTERGACAO_QUE_CONTEM_ESTORNADOS_QUE_DEVEM_SER_EXIBIDOS_E_CONTABILIZADOS;
-
-        //Query principal de popula da grid do financeiro
-        String consultaPesquisaGridFinanceiro = CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO;
-
-        //inclui, na query principal, as queries especificas dos ciclos vazios (sem nenhum abastecimento autorizado positivo) com cancelados que devem ser exibidos
-        consultaPesquisaGridFinanceiro = consultaPesquisaGridFinanceiro.replace("%QUERY_IDS_CICLOS_ORIGINAIS_COM_CANCELADOS%",consultaCiclosOriginaisQueSoTemCancelados);
-        consultaPesquisaGridFinanceiro = consultaPesquisaGridFinanceiro.replace("%QUERY_IDS_CICLOS_DE_POSTERGACAO_COM_CANCELADOS%",consultaCiclosDePostergacaoQueSoTemCancelados);
-
-        //inclui, na query principal, as queries especificas dos ciclos vazios (sem nenhum abastecimento autorizado positivo) com estornados que devem ser exibidos
-        consultaPesquisaGridFinanceiro = consultaPesquisaGridFinanceiro.replace("%QUERY_IDS_CICLOS_ORIGINAIS_COM_ESTORNADOS%",consultaCiclosQueSoTemEstornados);
-        consultaPesquisaGridFinanceiro = consultaPesquisaGridFinanceiro.replace("%QUERY_IDS_CICLOS_DE_POSTERGACAO_COM_ESTORNADOS%",consultaCiclosDePostergacaoQueSoTemEstornados);
-
-        //inclui a ordenacao na query
-        consultaPesquisaGridFinanceiro = String.format(consultaPesquisaGridFinanceiro, ordenacao);
-
-        return consultaPesquisaGridFinanceiro;
     }
 
     @Override
