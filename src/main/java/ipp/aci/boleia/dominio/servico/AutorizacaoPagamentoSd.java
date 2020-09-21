@@ -255,11 +255,11 @@ public class AutorizacaoPagamentoSd {
     }
 
     /**
-     * Indica se uma transacao cancelada deve ser exibida no detalhamento de notas fiscais
-     * @param transacao transacao cancelada que deve ser avaliada quanto aos criterios de exibicao
+     * Indica se uma transacao cancelada é relevante para exibição no detalhemento de notas fiscais e para contabilização na quantidade de transacoes do ciclo
+     * @param transacao transacao cancelada que deve ser avaliada quanto aos criterios de exibicao e contabilização
      * @return true, se a transacao deve ser exibida
      */
-    public boolean abastecimentoCanceladoDeveSerExibidoEContabilizadoNoFinanceiro(AutorizacaoPagamento transacao){
+    public boolean abastecimentoCanceladoDeveSerExibidoEContabilizado(AutorizacaoPagamento transacao){
 
         //se o abastecimento for cancelado, o positivo cancelado so deve ser exibido na tela de NF na visao da revenda se seu valor tiver sido considerado para reembolso gerado ou se ele tiver sido postergado
         return valorDaTransacaoFoiContempladoEmReembolsoGerado(transacao)
@@ -267,15 +267,15 @@ public class AutorizacaoPagamentoSd {
     }
 
     /**
-     * Indica se uma transacao estornada deve ser exibida no detalhamento de notas fiscais
-     * @param transacao transacao estornada que deve ser avaliada quanto aos criterios de exibicao
-     * @param idConsolidadoQueEstaSendoVisualizado identificador do ciclo a partir do qual se deseja visualizar o detalhamento de notas fiscais
+     * Indica se uma transacao estornada é relevante para exibição no detalhemento de notas fiscais e para contabilização na quantidade de transacoes do ciclo
+     * @param transacao transacao estornada que deve ser avaliada quanto aos criterios de exibicao e contabilização
+     * @param idConsolidadoQueEstaSendoVisualizadoOuProcessado identificador do ciclo que está sendo viauslizado ou processado
      * @return true, se a transacao deve ser exibida
      */
-    public boolean abastecimentoEstornadoDeveSerExibidoEContabilizadoNoFinanceiro(AutorizacaoPagamento transacao,Long idConsolidadoQueEstaSendoVisualizado){
+    public boolean abastecimentoEstornadoDeveSerExibidoEContabilizado(AutorizacaoPagamento transacao, Long idConsolidadoQueEstaSendoVisualizadoOuProcessado){
 
         //abastecimentos estornados sempre devem ser exibidos no ciclo de origem
-        if(transacao.getTransacaoConsolidada() != null && transacao.getTransacaoConsolidada().getId().equals(idConsolidadoQueEstaSendoVisualizado)){
+        if(transacao.getTransacaoConsolidada() != null && transacao.getTransacaoConsolidada().getId().equals(idConsolidadoQueEstaSendoVisualizadoOuProcessado)){
             return true;
         }else{
             //se o abastecimento for estornado, o positivo cancelado so vai ser exibido na tela de NF do ciclo de postergacao na visao da revenda se
