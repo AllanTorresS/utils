@@ -194,6 +194,14 @@ public class ConfiguracoesSeguranca extends WebSecurityConfigurerAdapter {
         corsConfigApiExterna.setMaxAge(3600L);
         source.registerCorsConfiguration("/api/externo/**", corsConfigApiExterna);
 
+        CorsConfiguration corsConfigApiAgenciadoFrete = new CorsConfiguration();
+        corsConfigApiAgenciadoFrete.setAllowedMethods(Arrays.asList(ConfiguracoesCors.HTTP_METHODS));
+        corsConfigApiAgenciadoFrete.addAllowedOrigin("*");
+        corsConfigApiAgenciadoFrete.addAllowedHeader("*");
+        corsConfigApiAgenciadoFrete.setAllowCredentials(false);
+        corsConfigApiAgenciadoFrete.setMaxAge(3600L);
+        source.registerCorsConfiguration("/api/agenciadorfrete/**", corsConfigApiAgenciadoFrete);
+
         return source;
     }
 
