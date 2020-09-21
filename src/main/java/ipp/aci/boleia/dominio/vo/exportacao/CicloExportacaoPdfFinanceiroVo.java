@@ -48,8 +48,9 @@ public class CicloExportacaoPdfFinanceiroVo {
      * @param dataAtual a data no momento que a requisição foi feita.
      * @param observacao Mensagem para o parametro observação.
      * @param quantidadeDeAbastecimentosCanceladosOuEstornadosQueDevemSerContabilizados Quantidade de abastecimentos cancelados ou estornados que devem ser contabilizados no ciclo no relatorio
+     * @param cicloTemApenasTransacoesNegativas indica se todas as transações do consolidado são negativas.
      */
-    public CicloExportacaoPdfFinanceiroVo(TransacaoConsolidada consolidado, Date dataAtual, String observacao, Integer quantidadeDeAbastecimentosCanceladosOuEstornadosQueDevemSerContabilizados){
+    public CicloExportacaoPdfFinanceiroVo(TransacaoConsolidada consolidado, Date dataAtual, String observacao, Integer quantidadeDeAbastecimentosCanceladosOuEstornadosQueDevemSerContabilizados, boolean cicloTemApenasTransacoesNegativas){
         BigDecimal valorEmitidoNf = null;
         BigDecimal valorTotalNf = null;
         this.setTotalEmitido("-");
@@ -104,9 +105,12 @@ public class CicloExportacaoPdfFinanceiroVo {
                 UtilitarioCalculoData.adicionarDiasData(consolidado.getDataFimPeriodo(), consolidado.getPrazos().getPrazoReembolso().intValue())));
         this.setPrazoNotaFiscal(UtilitarioFormatacaoData.formatarDataCurta(consolidado.getPrazos().getDataLimiteEmissaoNfe()));
         if(percentualEmitido != null){
-            if(consolidado.getStatusConsolidacao().equals(StatusTransacaoConsolidada.FECHADA.getValue())
-               && consolidado.pendenteNotaFiscal() && percentualEmitido > 0){
-                this.setStatusNotaFiscal(StatusTransacaoConsolidada.PARCIALMENTE_EMITIDA.getLabel());
+            if(consolidado.getStatusConsolidacao().equals(StatusTransacaoConsolidada.FECHADA.getValue()) && consolidado.pendenteNotaFiscal()){
+                if(percentualEmitido > 0){
+                    this.setStatusNotaFiscal(StatusTransacaoConsolidada.PARCIALMENTE_EMITIDA.getLabel());
+                } else{
+                    this.setStatusNotaFiscal(cicloTemApenasTransacoesNegativas ? "-" : StatusTransacaoConsolidada.SEM_EMISSAO.getLabel());
+                }
             } else{
                 this.setStatusNotaFiscal(consolidado.obterStatusNotaFiscal(dataAtual).getLabel());
             }
