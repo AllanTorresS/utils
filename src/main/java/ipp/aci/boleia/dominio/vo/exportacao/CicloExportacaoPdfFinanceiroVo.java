@@ -48,7 +48,7 @@ public class CicloExportacaoPdfFinanceiroVo {
      * @param dataAtual a data no momento que a requisição foi feita.
      * @param observacao Mensagem para o parametro observação.
      */
-    public CicloExportacaoPdfFinanceiroVo(TransacaoConsolidada consolidado, Date dataAtual, String observacao){
+    public CicloExportacaoPdfFinanceiroVo(TransacaoConsolidada consolidado, Date dataAtual, String observacao, boolean cicloTemApenasTransacoesNegativas){
         BigDecimal valorEmitidoNf = null;
         BigDecimal valorTotalNf = null;
         this.setTotalEmitido("-");
