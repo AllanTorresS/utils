@@ -274,6 +274,14 @@ public class AutorizacaoPagamentoEdicao implements IPersistente {
     private CicloRepasse cicloRepasse;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_CICLO_REPASSE_ORIGINAL")
+    private CicloRepasse cicloRepasseOriginal;
+
+    @Column(name = "DT_POSTERGACAO_REPASSE")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataPostergacaoRepasse;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_UNIDADE")
     private Unidade unidade;
 
@@ -404,6 +412,8 @@ public class AutorizacaoPagamentoEdicao implements IPersistente {
         this.setDataPostergacao(abastecimento.getDataPostergacao());
         this.setValorDescontoTotal(abastecimento.getValorDescontoTotal());
         this.setCicloRepasse(abastecimento.getCicloRepasse());
+        this.setCicloRepasseOriginal(abastecimento.getCicloRepasseOriginal());
+        this.setDataPostergacaoRepasse(abastecimento.getDataPostergacaoRepasse());
         this.setUnidade(abastecimento.getUnidade());
         this.setNomeUnidade(abastecimento.getNomeUnidade());
         this.setUnidadeExigeNf(abastecimento.getUnidadeExigeNf());
@@ -1015,6 +1025,22 @@ public class AutorizacaoPagamentoEdicao implements IPersistente {
     public Usuario getUsuarioRevisor() { return usuarioRevisor; }
 
     public void setUsuarioRevisor(Usuario usuarioRevisor) { this.usuarioRevisor = usuarioRevisor; }
+
+    public CicloRepasse getCicloRepasseOriginal() {
+        return cicloRepasseOriginal;
+    }
+
+    public void setCicloRepasseOriginal(CicloRepasse cicloRepasseOriginal) {
+        this.cicloRepasseOriginal = cicloRepasseOriginal;
+    }
+
+    public Date getDataPostergacaoRepasse() {
+        return dataPostergacaoRepasse;
+    }
+
+    public void setDataPostergacaoRepasse(Date dataPostergacaoRepasse) {
+        this.dataPostergacaoRepasse = dataPostergacaoRepasse;
+    }
 
     /**
      * Obtém o valor do abastecimento considerando o desconto
