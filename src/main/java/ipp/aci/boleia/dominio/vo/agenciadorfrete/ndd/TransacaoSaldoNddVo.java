@@ -1,6 +1,7 @@
 package ipp.aci.boleia.dominio.vo.agenciadorfrete.ndd;
 
 import ipp.aci.boleia.dominio.agenciadorfrete.Transacao;
+import ipp.aci.boleia.util.UtilitarioFormatacao;
 
 import java.math.BigDecimal;
 
@@ -27,7 +28,7 @@ public class TransacaoSaldoNddVo {
         this.orderNumber = transacao.getPedido().getNumero();
         this.unitPrice = transacao.getAbastecimento().getPrecoCombustivel();
         this.mdr = transacao.getAbastecimento().getMdr();
-        this.cnpjGasStation = transacao.getPosto().getCnpj().toString();
+        this.cnpjGasStation =  UtilitarioFormatacao.formatarNumeroZerosEsquerda( transacao.getPosto().getCnpj(), UtilitarioFormatacao.TAMANHO_CNPJ);
         this.gasStationName = transacao.getPosto().getNome();
     }
 
