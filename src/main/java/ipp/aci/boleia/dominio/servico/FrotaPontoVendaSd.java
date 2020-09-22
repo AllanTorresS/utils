@@ -115,12 +115,7 @@ public class FrotaPontoVendaSd {
      * @return O registro de {@link FrotaPontoVenda} criado.
      */
     public FrotaPontoVenda criarFrotaPontoVenda(AutorizacaoPagamento autorizacaoPagamento, boolean semIsolamento){
-        if (autorizacaoPagamento.getCodigoMotivoSemSenhaOuCodigo() != null){                
-            if (autorizacaoPagamento.getPontoVenda().isVisivelApenasParaFrotasVinculadas()){
-                return criarFrotaPontoVenda(autorizacaoPagamento.getFrota(), autorizacaoPagamento.getPontoVenda(), semIsolamento, null, StatusVinculoFrotaPontoVenda.INATIVO);
-            }            
-        }        
-        return criarFrotaPontoVenda(autorizacaoPagamento.getFrota(), autorizacaoPagamento.getPontoVenda(), semIsolamento, null, StatusVinculoFrotaPontoVenda.ATIVO) ;
+        return criarFrotaPontoVenda(autorizacaoPagamento.getFrota(), autorizacaoPagamento.getPontoVenda(), semIsolamento, null, StatusVinculoFrotaPontoVenda.INATIVO);
     }
     
     /**
