@@ -284,6 +284,37 @@ public class OraclePrecoBaseDados extends OracleOrdenacaoPrecosDados<PrecoBase> 
         return pesquisar(ordenacao, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
+
+    public ResultadoPaginado<PrecoBase> buscarPrecosPorFrotaLocalizacaoCombustivel(FiltroPesquisaLocalizacaoVo filtro, Long idCombustivel, Integer pagina, Integer tamanho){
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaMaior("pontoVenda.latitude", new BigDecimal(filtro.getLatitudeInicial())));
+        parametros.add(new ParametroPesquisaMenor("pontoVenda.latitude", new BigDecimal(filtro.getLatitudeFinal())));
+
+        parametros.add(new ParametroPesquisaMaior("pontoVenda.longitude", new BigDecimal(filtro.getLongitudeInicial())));
+        parametros.add(new ParametroPesquisaMenor("pontoVenda.longitude", new BigDecimal(filtro.getLongitudeFinal())));
+
+        parametros.add(new ParametroPesquisaIgual("pontoVenda.status", StatusAtivacao.ATIVO.getValue()));
+
+        parametros.add(new ParametroPesquisaIgual("pontoVenda.statusHabilitacao", StatusHabilitacaoPontoVenda.HABILITADO.getValue()));
+        parametros.add(new ParametroPesquisaIgual("precoMicromercado.tipoCombustivel.id", idCombustivel));
+
+
+        parametros.add(new ParametroPesquisaIn("status", Arrays.asList(StatusAlteracaoPrecoPosto.VIGENTE.getValue(),
+                StatusAlteracaoPrecoPosto.ACEITO.getValue())));
+        parametros.add(new ParametroPesquisaNulo("preco", true));
+
+        List<ParametroOrdenacaoColuna> parametroOrdenacaoColunas = new ArrayList<ParametroOrdenacaoColuna>();
+
+        parametroOrdenacaoColunas.add(new ParametroOrdenacaoColuna("id"));
+        InformacaoPaginacao informacaoPaginacao = new InformacaoPaginacao();
+        informacaoPaginacao.setPagina(pagina);
+        informacaoPaginacao.setTamanhoPagina(tamanho);
+        informacaoPaginacao.setParametrosOrdenacaoColuna(parametroOrdenacaoColunas);
+
+        return pesquisar(informacaoPaginacao, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+
     @Override
     public List<PrecoBase> buscarPrecosVigentesPorCombustiveis(Long idPtov, List<Long> idsTipoCombustivel) {
         List<Integer> statusVigentes = new ArrayList<>();
