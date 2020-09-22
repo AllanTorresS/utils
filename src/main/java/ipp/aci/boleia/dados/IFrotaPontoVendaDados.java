@@ -70,7 +70,7 @@ public interface IFrotaPontoVendaDados extends IRepositorioBoleiaDados<FrotaPont
 	List<FrotaPontoVenda> buscarPorDataMaisRecente(Date dataReferencia);
 
 	/**
-	 * Obtem todas frotaPontoVenda mais em relação a uma determinada Frota
+	 * Obtem todas frotaPontoVenda em relação a uma determinada Frota
 	 * @param frota a frota envolvida na associação
 	 * @return uma lista contendo as associaçãoes Frota x Posto dessa frota
 	 */

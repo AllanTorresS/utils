@@ -286,7 +286,7 @@ public class FrotaPontoVendaSd {
      *
      * @param frota a frota para qual a regra deve ser aplicada
      */
-    public void atuaAlizaFrotaPontoVendaAposHabilitarPrePaga(Frota frota){
+    public void atuaAlizaFrotaPontoVendaAposHabilitarPreCadastro(Frota frota){
         List<FrotaPontoVenda> associacoes = frotaPontoVendaDados.buscarPorFrota(frota);
         associacoes.forEach(a -> a.setDataAtualizacao(utilitarioAmbiente.buscarDataAmbiente()));
         frotaPontoVendaDados.armazenarLista(associacoes);
