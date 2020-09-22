@@ -5,6 +5,7 @@ import ipp.aci.boleia.dominio.agenciadorfrete.AgenciadorFreteReembolso;
 import ipp.aci.boleia.dominio.enums.agenciadorfrete.StatusDocumento;
 import ipp.aci.boleia.dominio.enums.agenciadorfrete.TipoReembolso;
 import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
+import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgual;
@@ -14,6 +15,7 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMenorOuIgual;
 import ipp.aci.boleia.dominio.vo.EnumVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaReembolsoAgenciadorFreteVo;
+import ipp.aci.boleia.util.Ordenacao;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioFormatacaoData;
 import org.springframework.stereotype.Repository;
@@ -41,6 +43,7 @@ public class OracleAgenciadorFreteReembolsoDados extends OracleRepositorioBoleia
 
     @Override
     public ResultadoPaginado<AgenciadorFreteReembolso> pesquisar(FiltroPesquisaReembolsoAgenciadorFreteVo filtro) {
+        filtro.getPaginacao().getParametrosOrdenacaoColuna().add(new ParametroOrdenacaoColuna("dataCriacao", Ordenacao.DECRESCENTE));
         List<ParametroPesquisa> parametros = montarParametrosPesquisa(filtro);
         return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
