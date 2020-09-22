@@ -2,12 +2,15 @@ package ipp.aci.boleia.dominio.servico;
 
 import ipp.aci.boleia.dados.IAutorizacaoPagamentoDados;
 import ipp.aci.boleia.dados.IAutorizacaoPagamentoEdicaoDados;
+import ipp.aci.boleia.dados.ITransacaoConsolidadaDados;
 import ipp.aci.boleia.dominio.AutorizacaoPagamento;
 import ipp.aci.boleia.dominio.AutorizacaoPagamentoEdicao;
 import ipp.aci.boleia.dominio.NotaFiscal;
+import ipp.aci.boleia.dominio.TransacaoConsolidada;
 import ipp.aci.boleia.dominio.enums.StatusAutorizacao;
 import ipp.aci.boleia.dominio.enums.StatusEdicao;
 import ipp.aci.boleia.dominio.enums.StatusNotaFiscalAbastecimento;
+import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
 import ipp.aci.boleia.dominio.enums.TipoPerfilUsuario;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
@@ -45,6 +48,9 @@ public class AutorizacaoPagamentoSd {
 
     @Autowired
     private IAutorizacaoPagamentoEdicaoDados repositorioAutorizacaoPagamentoEdicao;
+
+    @Autowired
+    private ITransacaoConsolidadaDados repositorioTransacaoConsolidada;
 
     /**
      * Obtém lista de abastecimentos para exportação de acordo com o filtro informado.
@@ -243,7 +249,7 @@ public class AutorizacaoPagamentoSd {
             if(transacaoNegativa != null){
                 //Nota: se a transacao nao tem pendencia de emissao e se ela estava autorizada no momento do fechamento de seu ciclo mais atual (original ou de postergacao), entao seu valor foi contemplado no reembolso gerado para esse ciclo
                 return autorizacaoOriginal.emitidaEmCicloFechado()
-                        && (transacaoNegativa.getTransacaoConsolidada() == null || !transacaoEstavaCanceladaOuEstornadaQuandoCiCloFoiFechado(autorizacaoOriginal,transacaoNegativa));
+                        && !transacaoEstavaCanceladaOuEstornadaQuandoCiCloFoiFechado(autorizacaoOriginal,transacaoNegativa);
             }else{
                 return false;
             }
@@ -255,7 +261,21 @@ public class AutorizacaoPagamentoSd {
     }
 
     /**
-     * Indica se uma transacao cancelada é relevante para exibição no detalhemento de notas fiscais e para contabilização na quantidade de transacoes do ciclo
+     * Verifica se o valor de uma transacao que esta sendo cancelada foi considerado para calculo de reembolso gerado
+     *
+     * @param autorizacaoQueEstaSendoCancelada abastecimento que esta sendo cancelado
+     * @param cicloQueEstaSendoProcessado transacao consolidada que esta sendo processada
+     * @return true, se o valor da transacao tiver sido contemplado em algum reembolso gerado
+     */
+    public boolean valorDaTransacaoQueEstaSendoCanceladaFoiContempladoEmReembolsoGerado(AutorizacaoPagamento autorizacaoQueEstaSendoCancelada,
+                                                                                        TransacaoConsolidada cicloQueEstaSendoProcessado) {
+        //Nota: se a transacao nao tem pendencia de emissao e se ela estava autorizada no momento do fechamento de seu ciclo mais atual (original ou de postergacao), entao seu valor foi contemplado no reembolso gerado para esse ciclo
+        return cicloQueEstaSendoProcessado.getStatusConsolidacao().equals(StatusTransacaoConsolidada.FECHADA.getValue())
+                && !autorizacaoQueEstaSendoCancelada.isPendenteEmissaoNF(true);
+    }
+
+    /**
+     * Indica se uma transacao cancelada é relevante para exibição no detalhamento de notas fiscais e para contabilização na quantidade de transacoes do ciclo
      * @param transacao transacao cancelada que deve ser avaliada quanto aos criterios de exibicao e contabilização
      * @return true, se a transacao deve ser exibida
      */
@@ -267,7 +287,21 @@ public class AutorizacaoPagamentoSd {
     }
 
     /**
-     * Indica se uma transacao estornada é relevante para exibição no detalhemento de notas fiscais e para contabilização na quantidade de transacoes do ciclo
+     * Indica se uma transacao cancelada é relevante para contabilização na quantidade de transacoes do ciclo na atualizacao da quantidade realizada logo apos o cancelamento
+     * @param transacaoQueEstaSendoCancelada transacao que esta sendo cancelada
+     * @param cicloQueEstaSendoProcessado transacao consolidada que esta sendo processada
+     * @return true, se a transacao deve ser contabilizada
+     */
+    public boolean abastecimentoCanceladoDeveSerContabilizadoNoCicloImediatamenteAposCancelamento(AutorizacaoPagamento transacaoQueEstaSendoCancelada,
+                                                                                                    TransacaoConsolidada cicloQueEstaSendoProcessado){
+
+        //se o abastecimento for cancelado, o positivo cancelado so deve ser exibido na tela de NF na visao da revenda se seu valor tiver sido considerado para reembolso gerado ou se ele tiver sido postergado
+        return valorDaTransacaoQueEstaSendoCanceladaFoiContempladoEmReembolsoGerado(transacaoQueEstaSendoCancelada, cicloQueEstaSendoProcessado)
+                || transacaoQueEstaSendoCancelada.getTransacaoConsolidadaPostergada() != null;
+    }
+
+    /**
+     * Indica se uma transacao estornada é relevante para exibição no detalhamento de notas fiscais e para contabilização na quantidade de transacoes do ciclo
      * @param transacao transacao estornada que deve ser avaliada quanto aos criterios de exibicao e contabilização
      * @param idConsolidadoQueEstaSendoVisualizadoOuProcessado identificador do ciclo que está sendo viauslizado ou processado
      * @return true, se a transacao deve ser exibida
@@ -284,6 +318,27 @@ public class AutorizacaoPagamentoSd {
             return !transacao.isPendenteEmissaoNF(true)
                     && !transacaoAjustadaEstaNoMesmoCicloDaTransacaoEstornadaOriginal(transacao)
                     && transacaoNegativaEstaNoMesmoCicloDaTransacaoEstornadaOriginal(transacao);
+
+        }
+
+    }
+
+    /**
+     * Indica se uma transacao estornada é relevante para contabilização na atualizacao da quantidade de transacoes do ciclo realizada imediatamente apos o estorno
+     * @param transacaoQueEstaSendoEstornada transacao que esta sendo estornada
+     * @param cicloQueEstaSendoProcessado ciclo que está sendo processado
+     * @return true, se a transacao deve ser contabilizada
+     */
+    public boolean abastecimentoEstornadoDeveSerContabilizadoNoCicloImediatamenteAposEstorno(AutorizacaoPagamento transacaoQueEstaSendoEstornada, TransacaoConsolidada cicloQueEstaSendoProcessado){
+
+        //abastecimentos estornados sempre devem ser exibidos no ciclo de origem
+        if(transacaoQueEstaSendoEstornada.getTransacaoConsolidada() != null && transacaoQueEstaSendoEstornada.getTransacaoConsolidada().getId().equals(cicloQueEstaSendoProcessado.getId())){
+            return true;
+        }else{
+            //se o abastecimento for estornado, o positivo cancelado so vai ser exibido na tela de NF do ciclo de postergacao na visao da revenda se
+            //ele nao tiver pendencia de emissao e se o estorno estiver sendo realizado com o ciclo em ajustes
+            return !transacaoQueEstaSendoEstornada.isPendenteEmissaoNF(true)
+                    && cicloQueEstaSendoProcessado.esta(StatusTransacaoConsolidada.EM_AJUSTE);
 
         }
 
