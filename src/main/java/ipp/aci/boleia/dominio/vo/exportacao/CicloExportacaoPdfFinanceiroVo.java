@@ -2,6 +2,7 @@ package ipp.aci.boleia.dominio.vo.exportacao;
 
 import ipp.aci.boleia.dominio.TransacaoConsolidada;
 import ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso;
+import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
 import ipp.aci.boleia.util.UtilitarioFormatacaoData;
@@ -65,11 +66,10 @@ public class CicloExportacaoPdfFinanceiroVo {
         if(valorEmitidoNf != null && valorTotalNf != null){
             percentualEmitido = valorEmitidoNf.divide(valorTotalNf, 2, BigDecimal.ROUND_HALF_DOWN).multiply(new BigDecimal(100)).intValue();
 
-        }else{
+        } else{
             percentualEmitido = null;
             this.setExigeNf(true);
         }
-
 
         String faturamento = consolidado.getValorFaturamento() != null ?
                 UtilitarioFormatacao.formatarDecimalMoedaReal(consolidado.getValorFaturamento(), 2).replace(" ","") : "-";
@@ -87,7 +87,7 @@ public class CicloExportacaoPdfFinanceiroVo {
             this.setFrotaNome(consolidado.getEmpresaAgregada().getRazaoSocial());
             this.setFrotaCnpj(UtilitarioFormatacao.formatarCnpjApresentacao(consolidado.getEmpresaAgregada().getCnpj()));
             this.setExigeNf(consolidado.getEmpresaAgregada().getExigeNotaFiscal());
-        }else if (consolidado.getUnidade() != null){
+        } else if (consolidado.getUnidade() != null){
             this.setFrotaNome(consolidado.getUnidade().getNome());
             this.setFrotaCnpj(UtilitarioFormatacao.formatarCnpjApresentacao(consolidado.getUnidade().getCnpj()));
             this.setExigeNf(consolidado.getUnidade().getExigeNotaFiscal());
@@ -103,7 +103,15 @@ public class CicloExportacaoPdfFinanceiroVo {
                 UtilitarioCalculoData.adicionarDiasData(consolidado.getDataFimPeriodo(), consolidado.getPrazos().getPrazoReembolso().intValue())));
         this.setPrazoNotaFiscal(UtilitarioFormatacaoData.formatarDataCurta(consolidado.getPrazos().getDataLimiteEmissaoNfe()));
         if(percentualEmitido != null){
-            this.setStatusNotaFiscal(consolidado.obterStatusNotaFiscal(dataAtual).getLabel());
+            if(consolidado.getStatusConsolidacao().equals(StatusTransacaoConsolidada.FECHADA.getValue()) && consolidado.pendenteNotaFiscal()){
+                if(percentualEmitido > 0){
+                    this.setStatusNotaFiscal(StatusTransacaoConsolidada.PARCIALMENTE_EMITIDA.getLabel());
+                } else{
+                    this.setStatusNotaFiscal(cicloTemApenasTransacoesNegativas ? "-" : StatusTransacaoConsolidada.SEM_EMISSAO.getLabel());
+                }
+            } else{
+                this.setStatusNotaFiscal(consolidado.obterStatusNotaFiscal(dataAtual).getLabel());
+            }
         } else{
             this.setStatusNotaFiscal("-");
         }
