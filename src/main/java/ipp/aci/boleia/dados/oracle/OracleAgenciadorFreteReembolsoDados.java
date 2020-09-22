@@ -43,7 +43,6 @@ public class OracleAgenciadorFreteReembolsoDados extends OracleRepositorioBoleia
 
     @Override
     public ResultadoPaginado<AgenciadorFreteReembolso> pesquisar(FiltroPesquisaReembolsoAgenciadorFreteVo filtro) {
-        filtro.getPaginacao().getParametrosOrdenacaoColuna().add(new ParametroOrdenacaoColuna("dataCriacao", Ordenacao.DECRESCENTE));
         List<ParametroPesquisa> parametros = montarParametrosPesquisa(filtro);
         return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
