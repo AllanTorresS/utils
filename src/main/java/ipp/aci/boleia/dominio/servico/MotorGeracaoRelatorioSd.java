@@ -63,6 +63,7 @@ public class MotorGeracaoRelatorioSd {
         m.setUsuario(usuarioLogado);
         m.setFiltro(UtilitarioJson.toJSON(filtroRelatorio));
         m.setExtensaoArquivo(tipoExtensaoArquivo.getValue());
+        m.setNomeTemplate(tipoRelatorioMotorGerador.obterTemplatePorTipoPerfilUsuario(usuarioLogado.getTipoPerfilUsuario()) != null ? tipoRelatorioMotorGerador.obterTemplatePorTipoPerfilUsuario(usuarioLogado.getTipoPerfilUsuario()).getName() : null);
 
         m.setArquivo(null);
         m.setDataDescarte(dataDescarte);
@@ -70,6 +71,16 @@ public class MotorGeracaoRelatorioSd {
         m = repositorio.armazenar(m);
 
         return m;
+    }
+
+    /**
+     * Armazena um registro de motor de relatórios no banco de dados
+     *
+     * @param motor A entidade a ser persistida
+     * @return A entidade persistida
+     */
+    public MotorGeracaoRelatorios armazenar(MotorGeracaoRelatorios motor) {
+        return repositorio.armazenar(motor);
     }
 
     /**

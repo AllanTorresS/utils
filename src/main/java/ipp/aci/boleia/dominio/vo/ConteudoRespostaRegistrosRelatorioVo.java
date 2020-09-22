@@ -16,9 +16,9 @@ public class ConteudoRespostaRegistrosRelatorioVo<T> extends RespostaIntegracaoV
         //construtor padrão
     }
 
-    public ConteudoRespostaRegistrosRelatorioVo(List<T> registros) {
+    public ConteudoRespostaRegistrosRelatorioVo(List<T> registros, Integer totalRegistros) {
         this.registros = registros;
-        this.totalRegistros = registros.size();
+        this.totalRegistros = totalRegistros;
     }
 
     public List<T> getRegistros() {
