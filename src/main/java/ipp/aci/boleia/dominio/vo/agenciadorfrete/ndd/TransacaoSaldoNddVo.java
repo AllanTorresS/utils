@@ -12,6 +12,8 @@ public class TransacaoSaldoNddVo {
     private Long fuelType;
     private BigDecimal liters;
     private String orderNumber;
+    private String gasStationName;
+    private String cnpjGasStation;
     private BigDecimal unitPrice;
     private BigDecimal mdr;
 
@@ -25,6 +27,8 @@ public class TransacaoSaldoNddVo {
         this.orderNumber = transacao.getPedido().getNumero();
         this.unitPrice = transacao.getAbastecimento().getPrecoCombustivel();
         this.mdr = transacao.getAbastecimento().getMdr();
+        this.cnpjGasStation = transacao.getPosto().getCnpj().toString();
+        this.gasStationName = transacao.getPosto().getNome();
     }
 
     public Long getFuelType() {
@@ -65,5 +69,21 @@ public class TransacaoSaldoNddVo {
 
     public void setMdr(BigDecimal mdr) {
         this.mdr = mdr;
+    }
+
+    public String getGasStationName() {
+        return gasStationName;
+    }
+
+    public void setGasStationName(String gasStationName) {
+        this.gasStationName = gasStationName;
+    }
+
+    public String getCnpjGasStation() {
+        return cnpjGasStation;
+    }
+
+    public void setCnpjGasStation(String cnpjGasStation) {
+        this.cnpjGasStation = cnpjGasStation;
     }
 }
