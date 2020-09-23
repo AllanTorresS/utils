@@ -56,4 +56,13 @@ public interface IDocumentoDados extends IRepositorioBoleiaDados<Documento> {
      * @return Lista de documentos encontrados
      */
     List<Documento> obterListaDocumentos(DocumentoTipo tipo, Long idTipoPerfil, DocumentoStatus status);
+
+    /**
+     * Pesquisa documentos de integração por tipo, e tipo de perfil do usuário.
+     *
+     * @param tipo O tipo de documento de integração
+     * @param idTipoPerfil O id referente ao tipo de perfil do usuário
+     * @return O documento encontrado ou nulo caso não exista
+     */
+    ResultadoPaginado<Documento> obterDocumentosIntegracao(DocumentoTipo tipo, Long idTipoPerfil);
 }
