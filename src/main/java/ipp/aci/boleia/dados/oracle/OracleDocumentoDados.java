@@ -11,6 +11,7 @@ import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDiferente;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaFetch;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
@@ -117,6 +118,21 @@ public class OracleDocumentoDados extends OracleRepositorioBoleiaDados<Documento
         ParametroOrdenacaoColuna parametroOrdenacaoColuna = new ParametroOrdenacaoColuna("versaoDocumento", Ordenacao.CRESCENTE);
 
         return pesquisar(parametroOrdenacaoColuna, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+    @Override
+    public ResultadoPaginado<Documento> obterDocumentosIntegracao(DocumentoTipo tipo, Long idTipoPerfil) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        if(tipo != null) {
+            parametros.add(new ParametroPesquisaIgual("tipo", tipo.getValor()));
+        }
+        parametros.add(new ParametroPesquisaDiferente("status", DocumentoStatus.REVOGADA.getValor()));
+
+        if(idTipoPerfil != null) {
+            parametros.add(new ParametroPesquisaIgual("tipoPerfil.id", idTipoPerfil));
+        }
+
+        return pesquisar((InformacaoPaginacao)null, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
     @Override
