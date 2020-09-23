@@ -275,11 +275,9 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "WHERE tc.dataInicioPeriodo >= :dataInicioPeriodo AND tc.dataFimPeriodo <= :dataFimPeriodo " +
                     "AND (fpv.pontoVenda.id IN :idsPvs) " +
                     "AND (fpv.frota.id = :idFrota OR :idFrota is null) " +
-                    "AND ((tc.valorFaturamento <> 0 OR tc.valorReembolso <> 0 OR tc.valorTotalNotaFiscal <> 0) OR (r.valorDescontoCredito IS NOT NULL AND r.valorDescontoCredito <> 0)) " +
                     "AND (tc.statusConsolidacao = :statusConsolidacao or :statusConsolidacao is null) " +
-                    "ORDER BY " +
-                    "   %s ";
-
+                    "AND (tc.valorFaturamento <> 0 OR tc.valorReembolso <> 0 OR tc.valorTotalNotaFiscal <> 0 OR tc.quantidadeAbastecimentos <> 0)" +
+                    "ORDER BY %s ";
 
     private static final String CONSULTA_PONTOS_GRAFICO =
             "SELECT new ipp.aci.boleia.dominio.vo.PontosGraficoFinanceiroVo( " +
@@ -899,8 +897,10 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             ordenacao = String.format(campoOrdenacao, direcaoOrdenacao, direcaoOrdenacao);
         }
 
-        String consultaPesquisa = String.format(CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO, ordenacao);
-        return pesquisar(filtro.getPaginacao(), consultaPesquisa, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        //Monta a consulta completa da grid do financeiro
+        String consultaPesquisaGridFinanceiro = String.format(CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO, ordenacao);
+
+        return pesquisar(filtro.getPaginacao(), consultaPesquisaGridFinanceiro, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
     @Override
