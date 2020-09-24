@@ -43,12 +43,22 @@ public interface ITransacaoConectcarConsolidadaDados extends IRepositorioBoleiaD
     List<TransacaoConectcarConsolidada> obterConsolidacoesComCicloAbastecimentoEncerrado(Date dataIntervaloMin, Date dataIntervaloMax);
 
 	/**
+	 * Obtem uma transacao por um código de transação da conectcar
+	 * 
+	 * @param codigoTransacaoConectcar Código de transação da conectCar
+	 * @return
+	 */
+	TransacaoConectcarConsolidada obterTransacoesPorIdConectcar(Long codigoTransacaoConectcar);
+	
+	/**
 	 * Obtem as transações de uma cobrança
 	 * 
 	 * @param idCobranca
 	 * @return
 	 */
 	List<TransacaoConectcarConsolidada> obterTransacoesPorCobranca(Long idCobranca);
+	
+	
 
     /**
      * Obtem as transações consolidadas com ciclo fechado que ainda não geraram cobrança

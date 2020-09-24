@@ -1,4 +1,4 @@
-package ipp.aci.boleia.dominio.vo;
+package ipp.aci.boleia.dominio.vo.conectcar;
 
 import java.util.List;
 

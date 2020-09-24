@@ -16,9 +16,7 @@ import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
-import ipp.aci.boleia.dominio.vo.FiltroPesquisaPedidoTagVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaReembolsoConectcarVo;
-import ipp.aci.boleia.util.Ordenacao;
 
 /**
  * Respositorio de entidades de Reembolso
@@ -51,14 +49,10 @@ public class OracleReembolsoConectcarDados extends OracleRepositorioBoleiaDados<
             ParametroOrdenacaoColuna parametro = filtro.getPaginacao().getParametrosOrdenacaoColuna().get(0);
             String nomeOrdenacao = parametro.getNome();
             if (nomeOrdenacao != null) {
-            	if (nomeOrdenacao.contentEquals("quantidade")) {
-            		filtro.getPaginacao().getParametrosOrdenacaoColuna().remove(0);
-                    filtro.getPaginacao().getParametrosOrdenacaoColuna().add(0, new ParametroOrdenacaoColuna("quantidadeTag", parametro.getSentidoOrdenacao()));                    
-                } else if (nomeOrdenacao.contentEquals("status")) {
+            	if (nomeOrdenacao.contentEquals("status")) {
                 	filtro.getPaginacao().getParametrosOrdenacaoColuna().remove(0);
                     filtro.getPaginacao().getParametrosOrdenacaoColuna().add(0, new ParametroOrdenacaoColuna("status", parametro.getSentidoOrdenacao()));                    
                 } else if (nomeOrdenacao.contentEquals("statusIntegracao")) {
-                	filtro.getPaginacao().getParametrosOrdenacaoColuna().remove(0);
                     filtro.getPaginacao().getParametrosOrdenacaoColuna().add(0, new ParametroOrdenacaoColuna("statusIntegracao", parametro.getSentidoOrdenacao()));                    
                 }
             	

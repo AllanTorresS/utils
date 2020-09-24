@@ -56,9 +56,8 @@ public class TransacaoConectcarConsolidada implements IPersistente, IPertenceFro
 	@SequenceGenerator(name = "SEQ_TRANS_CONECTCAR_CONSOL", sequenceName = "SEQ_TRANS_CONECTCAR_CONSOL", allocationSize = 1)
 	private Long id;
 
-	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "CD_FROTA")
+	@JoinColumn(name = "CD_FROTA_PTOV")
 	private Frota frota;
 
 	@DecimalMin("-999999999999.9999")
@@ -67,29 +66,24 @@ public class TransacaoConectcarConsolidada implements IPersistente, IPertenceFro
 	@Column(name = "VR_TOTAL")
 	private BigDecimal valorTotal;
 
-	@Column(name = "ID_TIPO_TRANS_CONECTCAR_CONSOL")
+	@Column(name = "CD_TIPO_TRANSACAO")
 	private Integer tipoTransacao;
-
-	@NotNull
+	
 	@Column(name = "DT_INI_PER")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dataInicioPeriodo;
 
-	@NotNull
 	@Column(name = "DT_FIM_PER")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dataFimPeriodo;
 
-	@NotNull
 	@Column(name = "DT_PRAZO_EMIS_NFE")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dataPrazoEmissaoNfe;
 
-	@NotNull
 	@Column(name = "QT_PRAZO_PGTO_DIAS")
 	private Long prazoPagtoDias;
 
-	@NotNull
 	@Column(name = "QT_PRAZO_REEMB_DIAS")
 	private Long prazoReembolsoDias;
 
@@ -131,12 +125,10 @@ public class TransacaoConectcarConsolidada implements IPersistente, IPertenceFro
 	@Column(name = "DT_ATUALIZACAO")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dataAtualizacao;
-
-	@NotNull
+	
 	@Column(name = "CD_MOD_PGTO")
 	private Integer modalidadePagamento;
 
-	@NotNull
 	@Column(name = "ID_STATUS_CONSOLIDACAO")
 	private Integer statusConsolidacao;
 
@@ -144,7 +136,6 @@ public class TransacaoConectcarConsolidada implements IPersistente, IPertenceFro
 	@JoinColumn(name = "CD_EMPR_AGREGADA")
 	private EmpresaAgregada empresaAgregada;
 
-	@NotNull
 	@Column(name = "CD_CHAVE")
 	private String chave;
 
@@ -167,17 +158,32 @@ public class TransacaoConectcarConsolidada implements IPersistente, IPertenceFro
 	@Column(name = "VR_DESCONTO_NOTA_FISCAL")
 	private BigDecimal valorDescontoNotaFiscal;
 
-	@Column(name = "DS_PLACA_VEICULO")
+	@Column(name = "DS_PLACA")
     private String placa;
 
-	@Column(name = "DS_NUMERO_TAG")
+	@Column(name = "CD_TAG_CONECTCAR")
     private String tag;
 
 	@Column(name = "DS_PRACA")
     private String praca;
 
 	@Column(name = "VR_ESTORNO")
-    private BigDecimal estorno;
+    private BigDecimal estorno;	
+	
+	@Column(name = "DT_TRANSACAO")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date dataTransacao;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "CD_TRANSACAO_ORIGEM")
+	private TransacaoConectcarConsolidada transacaoOrigem;
+	
+	/**
+	 * Código da transação originada da Conectcar
+	 */
+	@Column(name = "CD_TRANSACAO_CONECTCAR")
+    private Long codigoTransacaoConectcar;
+	
 	
 	@Override
 	public Long getId() {
@@ -492,6 +498,35 @@ public class TransacaoConectcarConsolidada implements IPersistente, IPertenceFro
 	public void setUnidade(Unidade unidade) {
 		this.unidade = unidade;
 	}
+	
+	
+	
+
+	public Date getDataTransacao() {
+		return dataTransacao;
+	}
+
+	public void setDataTransacao(Date dataTransacao) {
+		this.dataTransacao = dataTransacao;
+	}
+
+	public TransacaoConectcarConsolidada getTransacaoOrigem() {
+		return transacaoOrigem;
+	}
+
+	public void setTransacaoOrigem(TransacaoConectcarConsolidada transacaoOrigem) {
+		this.transacaoOrigem = transacaoOrigem;
+	}
+
+	public Long getCodigoTransacaoConectcar() {
+		return codigoTransacaoConectcar;
+	}
+
+	public void setCodigoTransacaoConectcar(Long codigoTransacaoConectcar) {
+		this.codigoTransacaoConectcar = codigoTransacaoConectcar;
+	}
+	
+	
 
 	/**
 	 * Verifica se a transação consolidada é pre-paga

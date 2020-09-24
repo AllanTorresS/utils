@@ -1,8 +1,8 @@
 package ipp.aci.boleia.dados;
 
-import ipp.aci.boleia.dominio.vo.AtivacaoLoteIntegracaoVo;
-import ipp.aci.boleia.dominio.vo.ConectCarBloqueioResponseVo;
-import ipp.aci.boleia.dominio.vo.TagDadosIntegracaoVo;
+import ipp.aci.boleia.dominio.vo.conectcar.AtivacaoLoteIntegracaoVo;
+import ipp.aci.boleia.dominio.vo.conectcar.ConectCarBloqueioResponseVo;
+import ipp.aci.boleia.dominio.vo.conectcar.TagDadosIntegracaoVo;
 import ipp.aci.boleia.util.excecao.ExcecaoValidacao;
 
 /**

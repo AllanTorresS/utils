@@ -1,9 +1,9 @@
-package ipp.aci.boleia.dominio.vo;
+package ipp.aci.boleia.dominio.vo.conectcar;
 
 /**
  * Vo para obtenção da resposta das requisições da ConectCar
  */
-public class ConectCarNotificacoesResponseVo {
+public class ConectCarErroResponseVo {
 
 	private String codigo;
 	private String mensagem;
@@ -11,7 +11,7 @@ public class ConectCarNotificacoesResponseVo {
 	/**
 	 * Construtor default da classe.
 	 */
-	public ConectCarNotificacoesResponseVo() {
+	public ConectCarErroResponseVo() {
 	}
 
 	public String getCodigo() {
@@ -29,4 +29,5 @@ public class ConectCarNotificacoesResponseVo {
 	public void setMensagem(String mensagem) {
 		this.mensagem = mensagem;
 	}
+
 }

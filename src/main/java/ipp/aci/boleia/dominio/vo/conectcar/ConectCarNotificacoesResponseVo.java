@@ -1,12 +1,9 @@
-package ipp.aci.boleia.dominio.vo;
-
-import ipp.aci.boleia.util.ConstantesCta;
-import java.util.List;
+package ipp.aci.boleia.dominio.vo.conectcar;
 
 /**
  * Vo para obtenção da resposta das requisições da ConectCar
  */
-public class ConectCarErroResponseVo {
+public class ConectCarNotificacoesResponseVo {
 
 	private String codigo;
 	private String mensagem;
@@ -14,7 +11,7 @@ public class ConectCarErroResponseVo {
 	/**
 	 * Construtor default da classe.
 	 */
-	public ConectCarErroResponseVo() {
+	public ConectCarNotificacoesResponseVo() {
 	}
 
 	public String getCodigo() {
@@ -32,5 +29,4 @@ public class ConectCarErroResponseVo {
 	public void setMensagem(String mensagem) {
 		this.mensagem = mensagem;
 	}
-
 }

@@ -328,4 +328,12 @@ public class OracleTransacaoConectcarConsolidadaDados extends OracleRepositorioB
         return UtilitarioCalculoData.obterPrimeiroInstanteDia(ambiente.buscarDataAmbiente());
     }
 
+	@Override
+	public TransacaoConectcarConsolidada obterTransacoesPorIdConectcar(Long codigoTransacaoConectcar) {
+		ParametroPesquisa[] parametros = new ParametroPesquisa[] {
+                new ParametroPesquisaIgual("codigoTransacaoConectcar", codigoTransacaoConectcar)
+        };
+        return pesquisarUnico(parametros);
+	}
+
 }
