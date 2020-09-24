@@ -73,11 +73,16 @@ public class CicloExportacaoPdfFinanceiroVo {
 
         String faturamento = consolidado.getValorFaturamento() != null ?
                 UtilitarioFormatacao.formatarDecimalMoedaReal(consolidado.getValorFaturamento(), 2).replace(" ","") : "-";
-        String taxa = consolidado.getValorDesconto() != null ?
-                UtilitarioFormatacao.formatarDecimalMoedaReal(consolidado.getValorDesconto(), 2).replace(" ","") : "-";
-        String reembolso =  consolidado.getValorReembolso() != null ?
-                UtilitarioFormatacao.formatarDecimalMoedaReal(consolidado.getValorReembolso(), 2).replace(" ","") : "-";
 
+        String taxa;
+        String reembolso;
+        if(consolidado.getReembolso() != null){
+            taxa = UtilitarioFormatacao.formatarDecimalMoedaReal(consolidado.getReembolso().getValorDesconto(), 2).replace(" ","");
+            reembolso = UtilitarioFormatacao.formatarDecimalMoedaReal(consolidado.getReembolso().getValorReembolso(), 2).replace(" ","");
+        }else{
+            taxa = UtilitarioFormatacao.formatarDecimalMoedaReal(consolidado.getValorDesconto(), 2).replace(" ","");
+            reembolso = UtilitarioFormatacao.formatarDecimalMoedaReal(consolidado.getValorReembolso(), 2).replace(" ","");
+        }
 
         this.setPeriodo(UtilitarioFormatacaoData.formatarPeriodoDiasMes(consolidado.getDataInicioPeriodo(), consolidado.getDataFimPeriodo(), true));
         this.setCicloFrota((UtilitarioCalculoData.diferencaEmDias(consolidado.getDataInicioPeriodo(), consolidado.getDataFimPeriodo()) + 1) + "+" + consolidado.getPrazos().getPrazoPgto());
