@@ -62,7 +62,7 @@ public class FrotaPontoVendaSd {
      * @return O registro de {@link FrotaPontoVenda} criado.
      */
     public FrotaPontoVenda criarFrotaPontoVenda(Frota frota, PontoDeVenda pontoVenda) {
-        return criarFrotaPontoVenda(frota, pontoVenda, null);
+        return criarFrotaPontoVenda(frota, pontoVenda, false, null, StatusVinculoFrotaPontoVenda.INATIVO);
     }
 
     /**
