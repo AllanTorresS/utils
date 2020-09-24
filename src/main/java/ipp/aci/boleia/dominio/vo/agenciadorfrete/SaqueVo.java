@@ -23,7 +23,7 @@ public class SaqueVo {
             this.id = saque.getId();
             this.valorSolicitado = saque.getValorSolicitado();
             this.valorRecebido = saque.getValorSolicitado().subtract(saque.getTaxa()).subtract(saque.getTaxaAgenciadorFrete()).setScale(2, RoundingMode.HALF_UP);
-            this.taxa = saque.getTaxa().add(saque.getTaxaAgenciadorFrete());
+            this.taxa = saque.getTaxa().add(saque.getTaxaAgenciadorFrete()).subtract(saque.getTaxaAgenciadorFrete()).setScale(2, RoundingMode.HALF_UP);
         }
     }
 
