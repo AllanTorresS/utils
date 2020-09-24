@@ -3,6 +3,7 @@ package ipp.aci.boleia.dominio.vo.agenciadorfrete;
 import ipp.aci.boleia.dominio.agenciadorfrete.Saque;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * Classe com informações referentes ao saque de um abastecimento de um motorista autonomo
@@ -21,8 +22,8 @@ public class SaqueVo {
         if(saque != null) {
             this.id = saque.getId();
             this.valorSolicitado = saque.getValorSolicitado();
-            this.valorRecebido = saque.getValorSolicitado().subtract(saque.getTaxa()).subtract(saque.getTaxaAgenciadorFrete());
-            this.taxa = saque.getTaxa();
+            this.valorRecebido = saque.getValorSolicitado().subtract(saque.getTaxa()).subtract(saque.getTaxaAgenciadorFrete()).setScale(2, RoundingMode.HALF_UP);
+            this.taxa = saque.getTaxa().add(saque.getTaxaAgenciadorFrete());
         }
     }
 
