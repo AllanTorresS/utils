@@ -32,7 +32,7 @@ public class ValidacaoSaqueTemValorPermitidoSd {
 
             if(transacao.getSaque().getValorSolicitado().compareTo(valorMaximoSaque) > 0){
                 throw new ExcecaoValidacao(mensagens.obterMensagem("agentefrete.api.validacao.saque.valorPemitido",
-                        UtilitarioFormatacao.formatarCnpjApresentacao(transacao.getMotorista().getAgenciadorFrete().getCnpj())));
+                        UtilitarioFormatacao.formatarCnpjApresentacao(transacao.getMotorista().getAgenciadorFrete().getSistemaExterno().getCnpj())));
             }
         }
     }

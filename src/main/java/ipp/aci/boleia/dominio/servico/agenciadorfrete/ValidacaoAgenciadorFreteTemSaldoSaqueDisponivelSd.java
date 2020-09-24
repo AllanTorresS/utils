@@ -34,7 +34,7 @@ public class ValidacaoAgenciadorFreteTemSaldoSaqueDisponivelSd {
             BigDecimal saldoSaque = agenciadorFreteExternoDados.obterSaldoDeSaqueDisponivel(transacao);
             if(transacao.getSaque().getValorSolicitado().compareTo(saldoSaque) > 0){
                 throw new ExcecaoValidacao(mensagens.obterMensagem("agentefrete.api.validacao.saldo.insuficiente.agenciador",
-                        UtilitarioFormatacao.formatarCnpjApresentacao(transacao.getMotorista().getAgenciadorFrete().getCnpj()),
+                        UtilitarioFormatacao.formatarCnpjApresentacao(transacao.getMotorista().getAgenciadorFrete().getSistemaExterno().getCnpj()),
                         transacao.getMotorista().getAgenciadorFrete().getSistemaExterno().getNomeSistema()));
             }
         }

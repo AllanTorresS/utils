@@ -38,10 +38,6 @@ public class Abastecimento implements IPersistente {
     @SequenceGenerator(name = "SEQ_AG_FRETE_ABAST", sequenceName = "SEQ_AG_FRETE_ABAST", allocationSize = 1)
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "CD_TRANSACAO")
-    private Transacao transacao;
-
     @NotNull
     @Column(name = "VA_LITRAGEM")
     private BigDecimal litragem;
@@ -120,15 +116,7 @@ public class Abastecimento implements IPersistente {
     public void setVersao(Long versao) {
         this.versao = versao;
     }
-
-    public Transacao getTransacao() {
-        return transacao;
-    }
-
-    public void setTransacao(Transacao transacao) {
-        this.transacao = transacao;
-    }
-
+    
     public BigDecimal getTaxaFee() {
         return taxaFee;
     }
