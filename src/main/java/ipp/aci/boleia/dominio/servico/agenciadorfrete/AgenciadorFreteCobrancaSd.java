@@ -18,7 +18,7 @@ public class AgenciadorFreteCobrancaSd {
 
     public BigDecimal obterDescontoSaque(List<Consolidado> consolidados) {
         return consolidados.stream().flatMap(c -> c.getTransacoes().stream())
-                .map(t -> t.getSaque().getTaxa().multiply(t.getSaque().getValorSolicitado()))
+                .map(t -> t.getSaque().getTaxaAgenciadorFrete())
                 .reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
     }
 

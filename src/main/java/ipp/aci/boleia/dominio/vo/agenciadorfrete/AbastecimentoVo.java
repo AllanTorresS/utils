@@ -13,7 +13,7 @@ public class AbastecimentoVo {
     private Date dataTransacao;
     private BigDecimal litragem;
     private CombustivelVo combustivel;
-    private BigDecimal precoCombustivel;
+    private BigDecimal mdr;
 
     public AbastecimentoVo() {
         //Construtor default
@@ -24,6 +24,7 @@ public class AbastecimentoVo {
             this.id = abastecimento.getId();
             this.dataTransacao = abastecimento.getDataCriacao();
             this.litragem = abastecimento.getLitragem();
+            this.mdr = abastecimento.getMdr();
             this.combustivel = new CombustivelVo(abastecimento.getCombustivel(), abastecimento.getPrecoCombustivel());
         }
     }
@@ -60,11 +61,11 @@ public class AbastecimentoVo {
         this.id = id;
     }
 
-    public BigDecimal getPrecoCombustivel() {
-        return precoCombustivel;
+    public BigDecimal getMdr() {
+        return mdr;
     }
 
-    public void setPrecoCombustivel(BigDecimal precoCombustivel) {
-        this.precoCombustivel = precoCombustivel;
+    public void setMdr(BigDecimal mdr) {
+        this.mdr = mdr;
     }
 }

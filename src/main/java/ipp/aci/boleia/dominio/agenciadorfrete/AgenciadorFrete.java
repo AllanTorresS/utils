@@ -30,9 +30,6 @@ public class AgenciadorFrete implements IPersistente {
     @SequenceGenerator(name = "SEQ_AGENCIADOR_FRETE", sequenceName = "SEQ_AGENCIADOR_FRETE", allocationSize = 1)
     private Long id;
 
-    @Column(name="CD_CNPJ")
-    private Long cnpj;
-
     @Column(name = "CD_JDE_INT")
     private Integer numeroJdeInterno;
 
@@ -62,14 +59,6 @@ public class AgenciadorFrete implements IPersistente {
 
     public void setVersao(Long versao) {
         this.versao = versao;
-    }
-
-    public Long getCnpj() {
-        return cnpj;
-    }
-
-    public void setCnpj(Long cnpj) {
-        this.cnpj = cnpj;
     }
 
     public SistemaExterno getSistemaExterno() {
