@@ -14,6 +14,7 @@ import ipp.aci.boleia.dominio.SaldoFrota;
 import ipp.aci.boleia.dominio.SaldoVeiculo;
 import ipp.aci.boleia.dominio.TransacaoFrota;
 import ipp.aci.boleia.dominio.enums.ModalidadePagamento;
+import ipp.aci.boleia.dominio.enums.OperacaoDeCredito;
 import ipp.aci.boleia.dominio.enums.StatusPedidoCredito;
 import ipp.aci.boleia.dominio.enums.TipoAutorizacaoPagamento;
 import ipp.aci.boleia.dominio.enums.TipoTransacao;
@@ -29,6 +30,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Executa operacoes de transacao financeira das frotas
@@ -195,17 +197,19 @@ public class TransacaoFrotaSd {
 
     /**
      * Registro um extrato simples de transacao da frota vinculado ou não a um pedido de credito de frota,
-     * no caso de frota pre-paga
+     * no caso de frota pre-paga.
      * @param valorPago da transacao em relacao ao pedido
      * @param transacaoFrota transacao total realizada
      * @param pedido vinculado a transacao
+     * @return transacao do extrado atualizada
      */
-    private void registrarExtratoTransacaoPedido(BigDecimal valorPago, TransacaoFrota transacaoFrota, PedidoCreditoFrota pedido) {
+    private TransacaoFrota registrarExtratoTransacaoPedido(BigDecimal valorPago, TransacaoFrota transacaoFrota, PedidoCreditoFrota pedido) {
         ExtratoPedidoTransacao extrato = new ExtratoPedidoTransacao();
         extrato.setTransacaoFrota(transacaoFrota);
         extrato.setPedido(pedido);
         extrato.setValor(valorPago);
         repositorioExtrato.armazenar(extrato);
+        return repositorioTrancacao.armazenar(transacaoFrota);
     }
 
     /**
@@ -307,52 +311,6 @@ public class TransacaoFrotaSd {
     }
 
     /**
-     * Dado um valor a ser debitado do saldo da frota, percorre os pedidos de compra de credito que ainda possuam
-     * saldo, do mais antigo para o mais rececente, consumindo o saldo desses pedidos ate que o valor total da transacao seja atingido.
-     * Cria um registro de {@link ExtratoPedidoTransacao} para cada pedido sujo saldo for afetado.
-     * Caso a soma dos saldos pre-pagos disponiveis nao seja suficiente para cobrir completamente o debito, entao
-     * nenhum pedido sera afetado. O debido passa a ser coberto integralmente pelo limite de credito da frota.
-     *
-     * @param valorTotal a debitar dos pedidos
-     * @param transacao responsavel pelo debito
-     * @return A transacao atualizada
-     */
-    private TransacaoFrota atualizarExtratoTransacaoPedido(BigDecimal valorTotal, TransacaoFrota transacao) {
-        List<PedidoCreditoFrota> pedidosPagos = repositorioPedido.obterPagosComSaldo(transacao.getFrota().getId());
-        BigDecimal somaSaldosPre = pedidosPagos.stream().map(PedidoCreditoFrota::getSaldoPedido).reduce(BigDecimal.ZERO, BigDecimal::add);
-        if(somaSaldosPre.compareTo(valorTotal.negate()) >= 0) {
-            for (PedidoCreditoFrota pedido : pedidosPagos) {
-                if (valorTotal.compareTo(BigDecimal.ZERO) < 0) {
-                    ExtratoPedidoTransacao extratoPedido = new ExtratoPedidoTransacao();
-                    extratoPedido.setTransacaoFrota(transacao);
-                    if (pedido.getValorConsumido() == null) {
-                        pedido.setValorConsumido(BigDecimal.ZERO);
-                    }
-
-                    if (pedido.getSaldoPedido().compareTo(valorTotal.negate()) > 0) {
-                        pedido.setValorConsumido(pedido.getValorConsumido().add(valorTotal.negate()));
-                        extratoPedido.setValor(valorTotal);
-                        valorTotal = BigDecimal.ZERO;
-                    } else {
-                        pedido.setValorConsumido(pedido.getValorConsumido().add(pedido.getSaldoPedido()));
-                        extratoPedido.setValor(pedido.getSaldoPedido().negate());
-                        valorTotal = valorTotal.add(pedido.getSaldoPedido());
-                    }
-                    extratoPedido.setPedido(repositorioPedido.armazenar(pedido));
-                    repositorioExtrato.armazenar(extratoPedido);
-                    transacao.setConsumiuCreditoPrePago(true);
-                }
-            }
-        }
-
-        if(valorTotal.compareTo(BigDecimal.ZERO)<0) {
-            registrarExtratoTransacaoPedido(valorTotal, transacao, null);
-        }
-
-        return repositorioTrancacao.armazenar(transacao);
-    }
-
-    /**
      * Registra uma transacao para uma frota, atualizando seu saldo corrente independente do saldo disponivel.
      *
      * @param frota a frota
@@ -386,17 +344,101 @@ public class TransacaoFrotaSd {
         transacao.setFrota(frota);
         transacao.setTipoTransacao(tipo.getValue());
         transacao.setValorTotal(valorTotal);
-        transacao.setConsumiuCreditoPrePago(transacaoOriginal !=null ? transacaoOriginal.getConsumiuCreditoPrePago() : false);
+        transacao.setConsumiuCreditoPrePago(transacaoOriginal != null ? transacaoOriginal.getConsumiuCreditoPrePago() : false);
 
         transacao = repositorioTrancacao.armazenar(transacao);
-        if(tipo.isDebito()) {
-            transacao = atualizarExtratoTransacaoPedido(valorTotal, transacao);
-        } else {
-            transacao = atualizarExtratoTransacaoPedido(valorTotal, transacao);
-            transacao = repositorioTrancacao.armazenar(transacao);
-            registrarExtratoTransacaoPedido(valorTotal, transacao, pedido);
+        if (frota.isPrePago()) {
+            boolean usoDeCredito = tipo.isDebito() && OperacaoDeCredito.USO_DE_CREDITO_PRE_PAGO.equals(tipo.getTipoOperacao());
+            if (usoDeCredito) {
+                return registrarExtratosParaPedidosPrePagos(transacao, valorTotal);
+            }
+            boolean isEstorno = !tipo.isDebito() && transacaoOriginal != null;
+            if (isEstorno) {
+                return registrarExtratosEstornoEmPedidosPrePagos(transacao, valorTotal, transacaoOriginal);
+            }
         }
-        return transacao;
+        return registrarExtratoTransacaoPedido(valorTotal, transacao, pedido);
+    }
+
+    /**
+     * Dado um valor a ser estornado do saldo da frota, percorre os pedidos de compra de credito da transação que está sendo estornada
+     * retornando o saldo desses pedidos ate que o valor total que precisa ser estornado seja atingido.
+     * Cria um registro de {@link ExtratoPedidoTransacao} para cada pedido sujo saldo for afetado.
+     *
+     * @param transacao responsavel pelo estorno
+     * @param valorTotal para estornar dos pedidos e registar no extratos
+     * @param transacaoOriginal transacao original que esta sendo estornada
+     * @return A transacao atualizada
+     */
+    private TransacaoFrota registrarExtratosEstornoEmPedidosPrePagos(TransacaoFrota transacao, BigDecimal valorTotal, TransacaoFrota transacaoOriginal) {
+        List<PedidoCreditoFrota> pedidos
+                = transacaoOriginal.getExtratosTransacao().stream().map(ExtratoPedidoTransacao::getPedido).collect(Collectors.toList());
+        for (PedidoCreditoFrota pedido : pedidos) {
+            if (valorTotal.compareTo(BigDecimal.ZERO) > 0) {
+                ExtratoPedidoTransacao extratoPedido = new ExtratoPedidoTransacao();
+                extratoPedido.setTransacaoFrota(transacao);
+                if (pedido.getValorConsumido() == null) {
+                    pedido.setValorConsumido(BigDecimal.ZERO);
+                }
+                if (valorTotal.compareTo(pedido.getValorConsumido()) < 0) {
+                    pedido.setValorConsumido(pedido.getValorConsumido().add(valorTotal.negate()));
+                    extratoPedido.setValor(valorTotal);
+                    valorTotal = BigDecimal.ZERO;
+                } else {
+                    extratoPedido.setValor(pedido.getValorConsumido());
+                    valorTotal = valorTotal.subtract(pedido.getValorConsumido());
+                    pedido.setValorConsumido(BigDecimal.ZERO);
+                }
+                extratoPedido.setPedido(repositorioPedido.armazenar(pedido));
+                repositorioExtrato.armazenar(extratoPedido);
+                transacao.setConsumiuCreditoPrePago(true);
+            }
+        }
+        return repositorioTrancacao.armazenar(transacao);
+    }
+
+    /**
+     * Dado um valor a ser debitado do saldo da frota, percorre os pedidos de compra de credito que ainda possuam
+     * saldo, do mais antigo para o mais rececente, consumindo o saldo desses pedidos ate que o valor total da transacao seja atingido.
+     * Cria um registro de {@link ExtratoPedidoTransacao} para cada pedido sujo saldo for afetado.
+     * Caso a soma dos saldos pre-pagos disponiveis nao seja suficiente para cobrir completamente o debito, entao a transação é recusada.
+     *
+     * @param valorTotal a debitar dos pedidos
+     * @param transacao responsavel pelo debito
+     * @return A transacao atualizada
+     */
+    private TransacaoFrota registrarExtratosParaPedidosPrePagos(TransacaoFrota transacao, BigDecimal valorTotal) {
+        List<PedidoCreditoFrota> pedidosPagos = repositorioPedido.obterPagosComSaldo(transacao.getFrota().getId());
+        BigDecimal somaSaldosPre = pedidosPagos.stream().map(PedidoCreditoFrota::getSaldoPedido).reduce(BigDecimal.ZERO, BigDecimal::add);
+        if(somaSaldosPre.compareTo(valorTotal.negate()) >= 0) {
+            for (PedidoCreditoFrota pedido : pedidosPagos) {
+                if (valorTotal.compareTo(BigDecimal.ZERO) < 0) {
+                    ExtratoPedidoTransacao extratoPedido = new ExtratoPedidoTransacao();
+                    extratoPedido.setTransacaoFrota(transacao);
+                    if (pedido.getValorConsumido() == null) {
+                        pedido.setValorConsumido(BigDecimal.ZERO);
+                    }
+                    if (pedido.getSaldoPedido().compareTo(valorTotal.negate()) > 0) {
+                        pedido.setValorConsumido(pedido.getValorConsumido().add(valorTotal.negate()));
+                        extratoPedido.setValor(valorTotal);
+                        valorTotal = BigDecimal.ZERO;
+                    } else {
+                        pedido.setValorConsumido(pedido.getValorConsumido().add(pedido.getSaldoPedido()));
+                        extratoPedido.setValor(pedido.getSaldoPedido().negate());
+                        valorTotal = valorTotal.add(pedido.getSaldoPedido());
+                    }
+                    extratoPedido.setPedido(repositorioPedido.armazenar(pedido));
+                    repositorioExtrato.armazenar(extratoPedido);
+                    transacao.setConsumiuCreditoPrePago(true);
+                }
+            }
+        }
+
+        if (valorTotal.compareTo(BigDecimal.ZERO) < 0) {
+            throw new ExcecaoBoleiaRuntime(Erro.FROTA_SALDO_INSUFICIENTE);
+        }
+
+        return repositorioTrancacao.armazenar(transacao);
     }
 
     /**

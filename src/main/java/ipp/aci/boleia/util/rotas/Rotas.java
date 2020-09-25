@@ -96,6 +96,8 @@ public final  class Rotas {
     public static final  String QUESTIONARIO_API                     = BASE_API + "/questionario";
     public static final  String CEP_API                              = BASE_API + "/cep";
     public static final  String ROTA_API                             = BASE_API + "/rota";
+    public static final  String ROTEIRIZADOR_API                     = ROTA_API + "/ri";
+    public static final  String PLANO_VIAGEM_API                     = BASE_API + "/planoViagem";
     public static final  String SERVICO_API                          = BASE_API + "/servico";
     public static final  String ACEITAR_PV_API                       = BASE_API + "/aceitarPv";
     public static final  String TIPO_PESSOA_API                      = BASE_API + "/tipoPessoa";
