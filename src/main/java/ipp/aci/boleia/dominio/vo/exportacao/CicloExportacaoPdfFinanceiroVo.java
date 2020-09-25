@@ -48,7 +48,7 @@ public class CicloExportacaoPdfFinanceiroVo {
      * @param dataAtual a data no momento que a requisição foi feita.
      * @param observacao Mensagem para o parametro observação.
      */
-    public CicloExportacaoPdfFinanceiroVo(TransacaoConsolidada consolidado, Date dataAtual, String observacao, boolean cicloTemApenasTransacoesNegativas){
+    public CicloExportacaoPdfFinanceiroVo(TransacaoConsolidada consolidado, Date dataAtual, String observacao){
         BigDecimal valorEmitidoNf = null;
         BigDecimal valorTotalNf = null;
         this.setTotalEmitido("-");
@@ -107,7 +107,7 @@ public class CicloExportacaoPdfFinanceiroVo {
                 if(percentualEmitido > 0){
                     this.setStatusNotaFiscal(StatusTransacaoConsolidada.PARCIALMENTE_EMITIDA.getLabel());
                 } else{
-                    this.setStatusNotaFiscal(cicloTemApenasTransacoesNegativas ? "-" : StatusTransacaoConsolidada.SEM_EMISSAO.getLabel());
+                    this.setStatusNotaFiscal(StatusTransacaoConsolidada.SEM_EMISSAO.getLabel());
                 }
             } else{
                 this.setStatusNotaFiscal(consolidado.obterStatusNotaFiscal(dataAtual).getLabel());
