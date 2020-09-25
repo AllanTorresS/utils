@@ -1,7 +1,6 @@
 package ipp.aci.boleia.dados;
 
 import ipp.aci.boleia.dominio.PontoDeVenda;
-import ipp.aci.boleia.dominio.agenciadorfrete.AgenciadorFreteCobranca;
 import ipp.aci.boleia.dominio.agenciadorfrete.MotoristaAutonomo;
 import ipp.aci.boleia.dominio.agenciadorfrete.Transacao;
 import ipp.aci.boleia.dominio.enums.StatusAutorizacao;
