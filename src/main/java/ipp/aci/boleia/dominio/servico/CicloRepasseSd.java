@@ -36,7 +36,6 @@ import java.util.stream.Collectors;
 import static ipp.aci.boleia.util.UtilitarioCalculo.calcularPorcentagem;
 import static ipp.aci.boleia.util.UtilitarioCalculo.somarValoresLista;
 import static ipp.aci.boleia.util.UtilitarioCalculoData.adicionarDiasData;
-import static ipp.aci.boleia.util.UtilitarioCalculoData.obterPrimeiroInstanteDia;
 import static ipp.aci.boleia.util.UtilitarioCalculoData.obterUltimoInstanteDia;
 
 /**
@@ -195,9 +194,8 @@ public class CicloRepasseSd {
         novoCiclo.setValorTotal(valorTotalAbastecimentos);
         novoCiclo.setValorNominalRepasse(valorNominalRepasse);
         novoCiclo.setValorPercentualRepasse(valorPercentualRepasse);
-        repositorio.armazenar(novoCiclo);
 
-        return novoCiclo;
+        return repositorio.armazenar(novoCiclo);
     }
 
     /**
@@ -227,7 +225,7 @@ public class CicloRepasseSd {
      * @param dataEnvioJde a data em que os ciclos de repasse serão enviados ao JDE.
      * @return o ciclo repasse atualizado ou nulo, caso todos os seus abastecimentos tenham o repasse postergado.
      */
-    private CicloRepasse validarAbastecimentosCicloRepasse(CicloRepasse cicloRepasse, Date dataEnvioJde){
+    public CicloRepasse validarAbastecimentosCicloRepasse(CicloRepasse cicloRepasse, Date dataEnvioJde){
         List<AutorizacaoPagamento> autorizacoesPagamentoRepasse = cicloRepasse.getAutorizacaoPagamentos();
         List<AutorizacaoPagamento> autorizacoesPagamentoParaPostergacaoCicloRepasse = autorizacoesPagamentoRepasse.stream()
                 .filter(autorizacaoPagamento -> autorizacaoPagamento.isPendenteEmissaoNF(false) ||
@@ -235,32 +233,34 @@ public class CicloRepasseSd {
                                 !autorizacaoPagamento.getTransacaoConsolidada().getStatusConsolidacao().equals(StatusTransacaoConsolidada.FECHADA.getValue())))
                 .collect(Collectors.toList());
 
-        EntidadeRepasse entidadeRepasse = repositorioEntidadeRepasse.obtemEntidadeDeRepassePadrao();
-        CicloRepasse novoCicloRepasse = repositorio.obterCicloRepassePorDataEEntidade(dataEnvioJde, entidadeRepasse.getId(), cicloRepasse.getPontoDeVenda().getId());
+        if(!autorizacoesPagamentoParaPostergacaoCicloRepasse.isEmpty()){
+            EntidadeRepasse entidadeRepasse = repositorioEntidadeRepasse.obtemEntidadeDeRepassePadrao();
+            CicloRepasse novoCicloRepasse = repositorio.obterCicloRepassePorDataEEntidade(dataEnvioJde, entidadeRepasse.getId(), cicloRepasse.getPontoDeVenda().getId());
 
-        //Atualiza os valores do ciclo repasse informado.
-        BigDecimal valorPostergado = autorizacoesPagamentoParaPostergacaoCicloRepasse.stream().map(AutorizacaoPagamento::getValorTotal).reduce(BigDecimal.ZERO, BigDecimal::add);
-        atualizarValoresCicloRepasseOriginal(cicloRepasse, valorPostergado);
+            //Atualiza os valores do ciclo repasse informado.
+            BigDecimal valorPostergado = autorizacoesPagamentoParaPostergacaoCicloRepasse.stream().map(AutorizacaoPagamento::getValorTotal).reduce(BigDecimal.ZERO, BigDecimal::add);
+            atualizarValoresCicloRepasseOriginal(cicloRepasse, valorPostergado);
 
-        if(novoCicloRepasse == null){
-            novoCicloRepasse = criarCicloRepassePostergado(autorizacoesPagamentoParaPostergacaoCicloRepasse, cicloRepasse.getPontoDeVenda(), dataEnvioJde);
-        } else{
-            BigDecimal novoValorTotalCiclo = novoCicloRepasse.getValorTotal().add(valorPostergado);
-            novoCicloRepasse.setValorTotal(novoValorTotalCiclo);
-            novoCicloRepasse.setValorNominalRepasse(calcularPorcentagem(novoValorTotalCiclo, novoCicloRepasse.getValorPercentualRepasse()));
+            if(novoCicloRepasse == null){
+                novoCicloRepasse = criarCicloRepassePostergado(autorizacoesPagamentoParaPostergacaoCicloRepasse, cicloRepasse.getPontoDeVenda(), dataEnvioJde);
+            } else{
+                BigDecimal novoValorTotalCiclo = novoCicloRepasse.getValorTotal().add(valorPostergado);
+                novoCicloRepasse.setValorTotal(novoValorTotalCiclo);
+                novoCicloRepasse.setValorNominalRepasse(calcularPorcentagem(novoValorTotalCiclo, novoCicloRepasse.getValorPercentualRepasse()));
+            }
+
+            //Atualiza o ciclo repasse dos abastecimentos pendentes de emissão ou com consolidado em ajuste.
+            for(AutorizacaoPagamento autorizacaoPagamento : autorizacoesPagamentoParaPostergacaoCicloRepasse){
+                autorizacaoPagamento.setCicloRepasse(novoCicloRepasse);
+                autorizacaoPagamento.setCicloRepasseOriginal(cicloRepasse);
+                autorizacaoPagamento.setDataPostergacaoRepasse(dataEnvioJde);
+                repositorioAutorizacaoPagamento.armazenar(autorizacaoPagamento);
+            }
+
+            //Atualiza a lista de abastecimentos do ciclo repasse informado.
+            autorizacoesPagamentoRepasse.removeIf(autorizacaoPagamento -> !autorizacaoPagamento.getCicloRepasse().getId().equals(cicloRepasse.getId()));
+            cicloRepasse.setAutorizacaoPagamentos(autorizacoesPagamentoRepasse);
         }
-
-        //Atualiza o ciclo repasse dos abastecimentos pendentes de emissão ou cm consolidado em ajuste.
-        for(AutorizacaoPagamento autorizacaoPagamento : autorizacoesPagamentoParaPostergacaoCicloRepasse){
-            autorizacaoPagamento.setCicloRepasse(novoCicloRepasse);
-            autorizacaoPagamento.setCicloRepasseOriginal(cicloRepasse);
-            autorizacaoPagamento.setDataPostergacaoRepasse(dataEnvioJde);
-            repositorioAutorizacaoPagamento.armazenar(autorizacaoPagamento);
-        }
-
-        //Atualiza a lista de abastecimentos do ciclo repasse informado.
-        autorizacoesPagamentoRepasse.removeIf(autorizacaoPagamento -> !autorizacaoPagamento.getCicloRepasse().getId().equals(cicloRepasse.getId()));
-        cicloRepasse.setAutorizacaoPagamentos(autorizacoesPagamentoRepasse);
 
         //É retornado nulo se todos os abastecimentos do ciclo tiveram o seu repasse postergado.
         return cicloRepasse.getValorTotal().compareTo(BigDecimal.ZERO) == 0 ? null : cicloRepasse;
