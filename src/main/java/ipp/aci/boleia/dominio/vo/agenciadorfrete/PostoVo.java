@@ -100,11 +100,11 @@ public class PostoVo {
         this.combustiveis = combustiveis;
     }
 
-    public BigDecimal getGetMdr() {
+    public BigDecimal getMdr() {
         return mdr;
     }
 
-    public void setGetMdr(BigDecimal getMdr) {
-        this.mdr = getMdr;
+    public void setMdr(BigDecimal mdr) {
+        this.mdr = mdr;
     }
 }
