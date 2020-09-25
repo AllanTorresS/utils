@@ -286,7 +286,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
             parametros.add(new ParametroPesquisaNulo("idAutorizacaoEstorno"));
         }
 
-        ResultadoPaginado<AutorizacaoPagamento> resultado = pesquisar(paginacao,
+        ResultadoPaginado<AutorizacaoPagamento> resultado = pesquisarSemIsolamentoDados(paginacao,
                 parametros.toArray(new ParametroPesquisa[parametros.size()]));
 
         return resultado.getRegistros().isEmpty() ? null : resultado.getRegistros().get(0);
