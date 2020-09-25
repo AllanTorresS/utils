@@ -5,6 +5,7 @@ import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.PrecoBase;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,6 +19,7 @@ public class PostoVo {
     private EnderecoVo endereco;
     private String latitude;
     private String longitude;
+    private BigDecimal mdr;
     private List<CombustivelVo> combustiveis;
 
     public PostoVo() {
@@ -36,6 +38,7 @@ public class PostoVo {
         this.endereco = new EnderecoVo(pontoDeVenda);
         this.latitude = UtilitarioFormatacao.formatarDecimal(pontoDeVenda.getLatitude());
         this.longitude = UtilitarioFormatacao.formatarDecimal(pontoDeVenda.getLongitude());
+        this.mdr = pontoDeVenda.getMdr();
         this.combustiveis = precosBase.stream().map(CombustivelVo::new).collect(Collectors.toList());
     }
 
@@ -95,5 +98,13 @@ public class PostoVo {
 
     public void setCombustiveis(List<CombustivelVo> combustiveis) {
         this.combustiveis = combustiveis;
+    }
+
+    public BigDecimal getMdr() {
+        return mdr;
+    }
+
+    public void setMdr(BigDecimal mdr) {
+        this.mdr = mdr;
     }
 }

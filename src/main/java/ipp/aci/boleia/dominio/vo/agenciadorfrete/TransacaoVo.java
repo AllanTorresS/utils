@@ -17,7 +17,6 @@ public class TransacaoVo {
     @JsonFormat(pattern = ConstantesFormatacao.FORMATO_ISO_8601_COM_MILLIS_E_TIMEZONE, timezone = ConstantesFormatacao.FORMATO_TIMEZONE_GMT_3)
     private Date dataCriacao;
     private PostoBasicoVo posto;
-    private BigDecimal valorTotal;
     private AbastecimentoVo abastecimento;
     private SaqueVo saque;
     private Long consolidado;
@@ -75,14 +74,6 @@ public class TransacaoVo {
 
     public void setPosto(PostoBasicoVo posto) {
         this.posto = posto;
-    }
-
-    public BigDecimal getValorTotal() {
-        return valorTotal;
-    }
-
-    public void setValorTotal(BigDecimal valorTotal) {
-        this.valorTotal = valorTotal;
     }
 
     public AbastecimentoVo getAbastecimento() {
