@@ -1,6 +1,5 @@
 package ipp.aci.boleia.dados;
 
-import ipp.aci.boleia.dominio.agenciadorfrete.AgenciadorFreteCobranca;
 import ipp.aci.boleia.dominio.agenciadorfrete.AgenciadorFreteReembolso;
 import ipp.aci.boleia.dominio.enums.agenciadorfrete.StatusDocumento;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;

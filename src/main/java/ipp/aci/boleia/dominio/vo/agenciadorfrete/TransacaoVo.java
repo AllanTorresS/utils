@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import ipp.aci.boleia.dominio.agenciadorfrete.Transacao;
 import ipp.aci.boleia.util.ConstantesFormatacao;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 /**

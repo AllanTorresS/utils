@@ -2,7 +2,6 @@ package ipp.aci.boleia.dominio.vo.agenciadorfrete;
 
 import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
-import ipp.aci.boleia.util.validador.ValidadorCnpj;
 
 /**
 * Classe com informações referentes do posto de um extrato de motorista autonomo

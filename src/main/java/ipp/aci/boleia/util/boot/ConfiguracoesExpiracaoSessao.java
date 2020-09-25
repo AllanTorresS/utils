@@ -4,7 +4,6 @@ import ipp.aci.boleia.util.UtilitarioJson;
 import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.excecao.MensagemErro;
 import ipp.aci.boleia.util.rotas.ExternoRotas;
-import ipp.aci.boleia.util.rotas.Rotas;
 import ipp.aci.boleia.util.seguranca.ChavePermissao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

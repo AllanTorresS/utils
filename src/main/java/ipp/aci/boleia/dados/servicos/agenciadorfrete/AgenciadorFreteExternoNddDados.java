@@ -120,8 +120,8 @@ public class AgenciadorFreteExternoNddDados implements IAgenciadorFreteExternoDa
 
     /***
      * Trata a resposta da NDD
-     * @param resposta
-     * @throws ExcecaoServicoIndisponivel
+     * @param resposta dos serviços da NDD
+     * @throws ExcecaoServicoIndisponivel quando serviços estão indisponiveis
      */
     private void trataResposta(RespostaTransacaoNddVo resposta) throws ExcecaoServicoIndisponivel {
         if(resposta == null || resposta.getCode() == null) {
@@ -132,7 +132,7 @@ public class AgenciadorFreteExternoNddDados implements IAgenciadorFreteExternoDa
     /***
      * Valida a transação
      * @param transacao a ser validada
-     * @throws ExcecaoValidacao
+     * @throws ExcecaoValidacao quando transação não é valida
      */
     private void validaTransacao(Transacao transacao) throws ExcecaoValidacao {
         if(transacao == null || transacao.getPedido() == null || transacao.getAbastecimento() == null) {

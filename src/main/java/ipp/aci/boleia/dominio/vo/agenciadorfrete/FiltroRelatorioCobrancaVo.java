@@ -2,8 +2,6 @@ package ipp.aci.boleia.dominio.vo.agenciadorfrete;
 
 import ipp.aci.boleia.dominio.pesquisa.comum.BaseFiltroPaginado;
 
-import java.util.Date;
-
 /**
  * Filtro de relatorio de Cobrança de Agenciador de Frete
  */
