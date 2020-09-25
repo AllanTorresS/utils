@@ -105,20 +105,11 @@ public class FiltroAutenticacaoJwt implements Filter {
             }
         }
 
-        if (isMetodoDiferenteDeOptions(request) && isObjetoEstatico(request) && !isStateless(request)) {
+        if (isMetodoDiferenteDeOptions(request) && isObjetoEstatico(request)) {
             adicionarSameSiteResponseHeader(request, response);
         }
 
         chain.doFilter(request, response);
-    }
-
-    /**
-     * Verifica se a url deve ter o comportamento stateless
-     * @return true caso o endpoint deva ser stateless, false para stateful
-     */
-    private boolean isStateless(HttpServletRequest request) {
-        String url = request.getRequestURL().toString();
-        return url.contains(Rotas.AGENCIADOR_FRETE_API + "/");
     }
 
     /**
