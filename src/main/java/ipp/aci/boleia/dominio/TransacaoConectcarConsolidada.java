@@ -27,7 +27,6 @@ import javax.persistence.Version;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Digits;
-import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 
@@ -68,7 +67,7 @@ public class TransacaoConectcarConsolidada implements IPersistente, IPertenceFro
 
 	@Column(name = "CD_TIPO_TRANSACAO")
 	private Integer tipoTransacao;
-	
+
 	@Column(name = "DT_INI_PER")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dataInicioPeriodo;
@@ -125,7 +124,7 @@ public class TransacaoConectcarConsolidada implements IPersistente, IPertenceFro
 	@Column(name = "DT_ATUALIZACAO")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dataAtualizacao;
-	
+
 	@Column(name = "CD_MOD_PGTO")
 	private Integer modalidadePagamento;
 
@@ -159,32 +158,32 @@ public class TransacaoConectcarConsolidada implements IPersistente, IPertenceFro
 	private BigDecimal valorDescontoNotaFiscal;
 
 	@Column(name = "DS_PLACA")
-    private String placa;
+	private String placa;
 
-	@Column(name = "CD_TAG_CONECTCAR")
-    private String tag;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "CD_TAG_CONECTCAR")
+	private TagConectcar tag;
 
 	@Column(name = "DS_PRACA")
-    private String praca;
+	private String praca;
 
 	@Column(name = "VR_ESTORNO")
-    private BigDecimal estorno;	
-	
-	@Column(name = "DT_TRANSACAO")
+	private BigDecimal estorno;
+
+	@Column(name = "DT_TRANSACAO", columnDefinition = "DATE")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dataTransacao;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CD_TRANSACAO_ORIGEM")
 	private TransacaoConectcarConsolidada transacaoOrigem;
-	
+
 	/**
 	 * Código da transação originada da Conectcar
 	 */
 	@Column(name = "CD_TRANSACAO_CONECTCAR")
-    private Long codigoTransacaoConectcar;
-	
-	
+	private Long codigoTransacaoConectcar;
+
 	@Override
 	public Long getId() {
 		return id;
@@ -451,13 +450,6 @@ public class TransacaoConectcarConsolidada implements IPersistente, IPertenceFro
 		this.placa = placa;
 	}
 
-	public String getTag() {
-		return tag;
-	}
-
-	public void setTag(String tag) {
-		this.tag = tag;
-	}
 
 	public String getPraca() {
 		return praca;
@@ -498,9 +490,6 @@ public class TransacaoConectcarConsolidada implements IPersistente, IPertenceFro
 	public void setUnidade(Unidade unidade) {
 		this.unidade = unidade;
 	}
-	
-	
-	
 
 	public Date getDataTransacao() {
 		return dataTransacao;
@@ -525,8 +514,14 @@ public class TransacaoConectcarConsolidada implements IPersistente, IPertenceFro
 	public void setCodigoTransacaoConectcar(Long codigoTransacaoConectcar) {
 		this.codigoTransacaoConectcar = codigoTransacaoConectcar;
 	}
-	
-	
+
+	public TagConectcar getTag() {
+		return tag;
+	}
+
+	public void setTag(TagConectcar tag) {
+		this.tag = tag;
+	}
 
 	/**
 	 * Verifica se a transação consolidada é pre-paga

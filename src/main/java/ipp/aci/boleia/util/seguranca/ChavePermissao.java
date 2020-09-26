@@ -228,7 +228,8 @@ public final class ChavePermissao {
     public static final String API_EXTERNO_ENVIAR_SMS_MOTORISTA                 = SPRING_ROLE_PREFIX + "API_EXTERNO_ENVIAR_SMS_MOTORISTA"                + SPRING_ROLE_SUFFIX;
     public static final String API_EXTERNO_CONSULTAR_VEICULO_PLACA              = SPRING_ROLE_PREFIX + "API_EXTERNO_CONSULTAR_VEICULO_PLACA"             + SPRING_ROLE_SUFFIX;
     public static final String API_EXTERNO_BUSCAR_VEICULO                       = SPRING_ROLE_PREFIX + "API_EXTERNO_BUSCAR_VEICULO"                      + SPRING_ROLE_SUFFIX;
-
+    public static final String API_EXTERNO_TRANSACAO_CONECTCAR                  = SPRING_ROLE_PREFIX + "API_EXTERNO_TRANSACAO_CONECTCAR"                      + SPRING_ROLE_SUFFIX;
+    
     // Permissão da API de Frotas
     public static final String API_EXTERNO_CONSULTAR_FROTA                      = SPRING_ROLE_PREFIX + "API_EXTERNO_CONSULTAR_FROTA"                     + SPRING_ROLE_SUFFIX;
 

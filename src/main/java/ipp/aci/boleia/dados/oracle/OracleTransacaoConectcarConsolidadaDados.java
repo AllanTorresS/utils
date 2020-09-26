@@ -1,11 +1,13 @@
 package ipp.aci.boleia.dados.oracle;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
@@ -15,15 +17,19 @@ import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.TransacaoConectcarConsolidada;
 import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.enums.ModalidadePagamento;
+import ipp.aci.boleia.dominio.enums.StatusAtivacao;
 import ipp.aci.boleia.dominio.enums.StatusNotaFiscal;
 import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
+import ipp.aci.boleia.dominio.enums.TipoTransacaoConectcar;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaTransacaoConsolidadaVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaUtilizacaoTagVo;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 
@@ -119,6 +125,12 @@ public class OracleTransacaoConectcarConsolidadaDados extends OracleRepositorioB
                     "    AND (AP.dataProcessamento BETWEEN TC.dataInicioPeriodo AND TC.dataFimPeriodo) " +
                     "    AND LOWER(NF.numero) LIKE '%%'||:notaFiscal||'%%' " +
                     "    AND (LOWER(NF.numeroSerie) LIKE '%%'||:numeroSerie||'%%' OR :numeroSerie is null))";
+    
+    //TODO ALTERAR A QUERY APOS A DEFINICAO DO REEMBOLSO
+    private static final String QUERY_VALOR_UTILIZADO =
+    		 "SELECT NVL(SUM(tc.valorTotal),0) " +
+             " FROM TransacaoConectcarConsolidada tc " +
+             "WHERE tc.frota.id  = :idFrota ";
 
     @Autowired
     private UtilitarioAmbiente ambiente;
@@ -334,6 +346,73 @@ public class OracleTransacaoConectcarConsolidadaDados extends OracleRepositorioB
                 new ParametroPesquisaIgual("codigoTransacaoConectcar", codigoTransacaoConectcar)
         };
         return pesquisarUnico(parametros);
+	}
+
+	@Override
+	public BigDecimal obterValorUtilizadoCiclo(Long idFrota) {
+		StringBuilder query = new StringBuilder(QUERY_VALOR_UTILIZADO);
+
+		List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaIgual("idFrota", idFrota));
+        
+        return pesquisarUnicoSemIsolamentoDados(query.toString(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+	}
+
+	@Override
+	public ResultadoPaginado<TransacaoConectcarConsolidada> pesquisarUtilizacaoTag(
+			FiltroPesquisaUtilizacaoTagVo filtro) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+
+		
+	    if(filtro.getFrota() != null) {
+	        	parametros.add(new ParametroPesquisaIgual("frota.id", filtro.getFrota().getId()));
+        }
+        
+        if(filtro.getDe() != null) {
+        	parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataTransacao", filtro.getDe()));
+        }
+        
+        if(filtro.getAte() != null) {
+        	parametros.add(new ParametroPesquisaDataMenorOuIgual("dataTransacao", UtilitarioCalculoData.adicionarDiasData(filtro.getAte(), 1)));
+        }
+        
+        if (filtro.getTag() != null) {
+            parametros.add(new ParametroPesquisaIgual("tag.id", filtro.getTag()));
+        }
+        
+        if (filtro.getPlaca() != null && !"".equals(filtro.getPlaca())) {
+            parametros.add(new ParametroPesquisaIgual("placa", filtro.getPlaca()));
+        }
+        
+        if (filtro.getTipo() != null && filtro.getTipo().getName() != null) {            
+            parametros.add(new ParametroPesquisaIgual("tipoTransacao", TipoTransacaoConectcar.valueOf(filtro.getTipo().getName()).getValue()));            
+        }
+        
+        if (filtro.getStatusTag() != null && filtro.getStatusTag().getName() != null) {        	
+        	if(filtro.getStatusTag().getName().equals(StatusAtivacao.ATIVO.name())) {
+        		parametros.add(new ParametroPesquisaNulo("tag.dataAtivacao", true));
+        	}else if(filtro.getStatusTag().getName().equals(StatusAtivacao.INATIVO.name())) {
+        		parametros.add(new ParametroPesquisaNulo("tag.dataBloqueio", true));
+        	}
+        }
+	
+        if (filtro.getPaginacao() != null && CollectionUtils.isNotEmpty(filtro.getPaginacao().getParametrosOrdenacaoColuna())) {
+            ParametroOrdenacaoColuna parametro = filtro.getPaginacao().getParametrosOrdenacaoColuna().get(0);
+            String nomeOrdenacao = parametro.getNome();
+            if (nomeOrdenacao != null) {
+            	if (nomeOrdenacao.contentEquals("tag")) {
+            		filtro.getPaginacao().getParametrosOrdenacaoColuna().remove(0);
+                    filtro.getPaginacao().getParametrosOrdenacaoColuna().add(0, new ParametroOrdenacaoColuna("tag.id", parametro.getSentidoOrdenacao()));
+            	} else if (nomeOrdenacao.contentEquals("statusTag")) {
+            		filtro.getPaginacao().getParametrosOrdenacaoColuna().remove(0);
+                    filtro.getPaginacao().getParametrosOrdenacaoColuna().add(0, new ParametroOrdenacaoColuna("tag.dataBloqueio", parametro.getSentidoOrdenacao()));                    
+                } else if (nomeOrdenacao.contentEquals("tipo")) {
+                	filtro.getPaginacao().getParametrosOrdenacaoColuna().remove(0);
+                    filtro.getPaginacao().getParametrosOrdenacaoColuna().add(0, new ParametroOrdenacaoColuna("tipoTransacao", parametro.getSentidoOrdenacao()));                    
+                }
+            }
+        }      
+        return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
 	}
 
 }

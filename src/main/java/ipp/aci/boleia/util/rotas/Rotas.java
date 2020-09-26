@@ -124,6 +124,7 @@ public final  class Rotas {
     public static final  String DASHBOARD_CONECTCAR_API              = BASE_API + "/dashboardConectcar";
     public static final  String PEDIDO_TAG_API                       = BASE_API + "/pedidoTag";
     public static final  String ATIVACAO_TAG_API                     = BASE_API + "/ativacaoTag";
+    public static final  String UTILIZACAO_TAG_API                   = BASE_API + "/utilizacaoTag";
 
     public static final String CAMPANHA_API                          = BASE_API + "/campanha";
     public static final String BANDEIRA_API                          = BASE_API + "/bandeira";

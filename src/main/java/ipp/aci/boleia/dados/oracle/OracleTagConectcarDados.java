@@ -8,7 +8,9 @@ import org.springframework.stereotype.Repository;
 
 import ipp.aci.boleia.dados.ITagConectcarDados;
 import ipp.aci.boleia.dominio.TagConectcar;
+import ipp.aci.boleia.dominio.enums.DocumentoTipo;
 import ipp.aci.boleia.dominio.enums.StatusAtivacao;
+import ipp.aci.boleia.dominio.enums.TipoPerfilUsuario;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
@@ -24,6 +26,18 @@ import ipp.aci.boleia.dominio.vo.FiltroPesquisaTagConectcarVo;
 @Repository
 public class OracleTagConectcarDados extends OracleRepositorioBoleiaDados<TagConectcar> implements ITagConectcarDados {
 
+	private static final String QUERY_QUANTIDADE_TOTAL_TAGS =
+            "SELECT COUNT(0) " +
+            "FROM TagConectcar t " +            
+            "WHERE t.frota.id  = :idFrota ";
+	
+	private static final String QUERY_QUANTIDADE_TOTAL_TAGS_ATIVAS =
+			"SELECT COUNT(0) " +
+            "FROM TagConectcar t " +            
+            "WHERE t.frota.id  = :idFrota " +
+            "AND t.dataBloqueio IS NULL";
+	
+	
     /**
      * Instancia o repositório
      */
@@ -73,6 +87,26 @@ public class OracleTagConectcarDados extends OracleRepositorioBoleiaDados<TagCon
             }
         }
     }
+
+	@Override
+	public long obterQuantidadeTotalTags(Long codigoFrota) {
+		StringBuilder query = new StringBuilder(QUERY_QUANTIDADE_TOTAL_TAGS);
+
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaIgual("idFrota", codigoFrota));
+        
+        return pesquisarUnicoSemIsolamentoDados(query.toString(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+	}
+
+	@Override
+	public long obterQuantidadeTotalTagsAtivas(Long codigoFrota) {
+		StringBuilder query = new StringBuilder(QUERY_QUANTIDADE_TOTAL_TAGS_ATIVAS);
+
+		List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaIgual("idFrota", codigoFrota));
+        
+        return pesquisarUnicoSemIsolamentoDados(query.toString(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+	}
 
    
 }

@@ -1,5 +1,6 @@
 package ipp.aci.boleia.dados;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -7,6 +8,7 @@ import ipp.aci.boleia.dominio.TransacaoConectcarConsolidada;
 import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaTransacaoConsolidadaVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaUtilizacaoTagVo;
 
 /**
  * Contrato para implementacao de repositorios de consolidações de Transacao Conectcar Consolidada
@@ -73,5 +75,20 @@ public interface ITransacaoConectcarConsolidadaDados extends IRepositorioBoleiaD
      * @return Uma lista de transações consolidadas
      */
     List<TransacaoConectcarConsolidada> obterTransacoesAbertasParaFechamento();
-
+    
+    /**
+     * Obtem somatorio do valor utilizado da frota no ciclo
+     * @param idFrota código identificador da frota
+     * @return valor total utilizado
+     */
+    BigDecimal obterValorUtilizadoCiclo(Long idFrota);
+    
+    /**
+     * Executa a consulta de registros baseado em um filtro de pesquisa
+     *
+     * @param filtro parâmetros utilizados na consulta
+     * @param usuarioLogado usuario logado que solicita a pesquisa
+     * @return lista de registros encontrados
+     */
+    ResultadoPaginado<TransacaoConectcarConsolidada> pesquisarUtilizacaoTag(FiltroPesquisaUtilizacaoTagVo filtro);
 }
