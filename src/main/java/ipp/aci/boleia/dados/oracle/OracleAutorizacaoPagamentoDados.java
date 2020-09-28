@@ -403,21 +403,21 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         // se a pesquisa se refere aos abastecimentos de uma cobranca, entao apenas os pos pagos devem ser listados
         if(filtro.getIdCobranca() != null) {
             parametros.add(new ParametroPesquisaIgual("transacaoFrota.consumiuCreditoPrePago", false));
-            parametros.add(new ParametroPesquisaOr(
-                    new ParametroPesquisaAnd(
-                            new ParametroPesquisaIgual("transacaoConsolidada.cobranca.id", filtro.getIdCobranca()),
-                            new ParametroPesquisaNulo("transacaoConsolidadaPostergada")
-                    ),
-                    new ParametroPesquisaIgual("transacaoConsolidadaPostergada.cobranca.id", filtro.getIdCobranca())
-            ));
         }
         if(filtro.getIdConsolidado() != null){
             parametros.add(new ParametroPesquisaIgual("empresaAgregadaExigeNf", filtro.getEmpresaAgregada() != null));
             parametros.add(new ParametroPesquisaIgual("unidadeExigeNf", filtro.getUnidade() != null));
 
-            ParametroPesquisaIgual abastecimentoNaoPostergado = new ParametroPesquisaIgual("transacaoConsolidada.id", filtro.getIdConsolidado());
             ParametroPesquisaIgual abastecimentoPostergadoParaCiclo = new ParametroPesquisaIgual("transacaoConsolidadaPostergada.id", filtro.getIdConsolidado());
-            parametros.add(new ParametroPesquisaOr(abastecimentoNaoPostergado, abastecimentoPostergadoParaCiclo));
+            if(filtro.isConsiderarPostergados()) {
+                parametros.add(new ParametroPesquisaOr(new ParametroPesquisaIgual("transacaoConsolidada.id", filtro.getIdConsolidado()), abastecimentoPostergadoParaCiclo));
+            } else {
+                ParametroPesquisaAnd abastecimentoNaoPostergado = new ParametroPesquisaAnd(
+                        new ParametroPesquisaIgual("transacaoConsolidada.id", filtro.getIdConsolidado()),
+                        new ParametroPesquisaNulo("dataPostergacao")
+                );
+                parametros.add(new ParametroPesquisaOr(abastecimentoNaoPostergado, abastecimentoPostergadoParaCiclo));
+            }
         }
         if(filtro.isPdv()){
             parametros.add(new ParametroPesquisaIgual("tipoAutorizacaoPagamento", TipoAutorizacaoPagamento.PDV_WEB.getValue()));
@@ -430,15 +430,6 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         }
         if (filtro.getIdReembolso() != null) {
             parametros.add(new ParametroPesquisaIgual("transacaoConsolidada.reembolso.id", filtro.getIdReembolso()));
-        }
-        if (filtro.getIdConsolidado() != null && filtro.getNotaFiscal() != null) {
-            parametros.add(new ParametroPesquisaOr(
-                    new ParametroPesquisaAnd(
-                            new ParametroPesquisaIgual("transacaoConsolidada.id", filtro.getIdConsolidado()),
-                            new ParametroPesquisaNulo("transacaoConsolidadaPostergada")
-                    ),
-                    new ParametroPesquisaIgual("transacaoConsolidadaPostergada.id", filtro.getIdConsolidado())
-            ));
         }
         return parametros;
     }
