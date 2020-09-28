@@ -12,7 +12,7 @@ public enum LockAgendamento {
     STATUS_NOTA_FISCAL                              (ConstantesDuracao.UMA_HORA, ConstantesDuracao.UM_SEGUNDO),
     ATUALIZAR_PV_JDE                                (ConstantesDuracao.UMA_HORA, ConstantesDuracao.UM_SEGUNDO),
     PRECOS_VIGENTES                                 (ConstantesDuracao.UM_MINUTO, ConstantesDuracao.UM_SEGUNDO),
-    REGISTRO_KMV_PENDENTE                           (ConstantesDuracao.UM_MINUTO, ConstantesDuracao.UM_SEGUNDO),
+    REGISTRO_KMV_PENDENTE                           (ConstantesDuracao.QUINZE_MINUTOS, ConstantesDuracao.UM_SEGUNDO),
     AVISO_DE_DEBITO                                 (ConstantesDuracao.UMA_HORA, ConstantesDuracao.UM_SEGUNDO),
     AVISO_DE_CREDITO                                (ConstantesDuracao.UMA_HORA, ConstantesDuracao.UM_SEGUNDO),
     VERIFICACAO_FROTA_ATIVACAO_TEMPORARIA           (ConstantesDuracao.TRINTA_MINUTOS, ConstantesDuracao.UM_SEGUNDO),
