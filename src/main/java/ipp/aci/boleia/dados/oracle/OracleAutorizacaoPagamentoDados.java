@@ -165,7 +165,6 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                     "FROM AutorizacaoPagamento a " +
                     "LEFT JOIN a.notasFiscais nf " +
                     "WHERE a.transacaoConsolidada.id = :idConsolidado AND a.transacaoConsolidadaPostergada IS NOT NULL " +
-                    "AND a.status = " + StatusAutorizacao.AUTORIZADO.getValue() + " " +
                     "AND (a.dataRequisicao >= :dataRequisicaoDe OR :dataRequisicaoDe IS NULL) " +
                     "AND (a.dataRequisicao <= :dataRequisicaoAte OR :dataRequisicaoAte IS NULL) " +
                     "AND (" + String.format(TO_LOWER, String.format(REMOVER_ACENTO, "a.placaVeiculo")) + " LIKE :placaVeiculo OR :placaVeiculo IS NULL) ";
