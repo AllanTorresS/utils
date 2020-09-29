@@ -7,6 +7,9 @@ import ipp.aci.boleia.dominio.vo.FiltroPesquisaReembolsoAgenciadorFreteVo;
 
 import java.util.List;
 
+/**
+ * Interface responsável pelo acesso aos dados da Reembolso do Agenciador de frete na base
+ */
 public interface IAgenciadorFreteReembolsoDados extends IRepositorioBoleiaDados<AgenciadorFreteReembolso> {
     /**
      * Pesquisa registros a partir do filtro informado

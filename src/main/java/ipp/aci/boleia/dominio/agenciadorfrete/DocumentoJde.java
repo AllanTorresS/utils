@@ -12,6 +12,9 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+/**
+ * Representa a tabela de Documento do Jde
+ */
 @Entity
 @Audited
 @Table(name = "AG_DOC_JDE")

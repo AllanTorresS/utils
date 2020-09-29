@@ -21,6 +21,9 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Representa a tabela de Cobrança
+ */
 @Entity
 @Audited
 @Table(name = "AG_FRETE_COBRANCA")

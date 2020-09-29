@@ -20,6 +20,9 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 import java.util.List;
 
+/**
+ * Representa a tabela de Agenciador de frete
+ */
 @Entity
 @Audited
 @Table(name = "AGENCIADOR_FRETE")

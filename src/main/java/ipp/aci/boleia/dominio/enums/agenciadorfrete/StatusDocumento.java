@@ -2,6 +2,9 @@ package ipp.aci.boleia.dominio.enums.agenciadorfrete;
 
 import ipp.aci.boleia.util.i18n.IEnumComLabel;
 
+/**
+ * Lista os campos de status de um documento
+ */
 public enum StatusDocumento implements IEnumComLabel<TipoCobranca> {
 
     NAO_INTEGRADO(0),
