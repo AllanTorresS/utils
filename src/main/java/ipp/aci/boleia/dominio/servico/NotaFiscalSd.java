@@ -4,11 +4,13 @@ import ipp.aci.boleia.dados.IArquivoDados;
 import ipp.aci.boleia.dados.IComponenteDados;
 import ipp.aci.boleia.dados.IEmpresaAgregadaDados;
 import ipp.aci.boleia.dados.IFrotaDados;
+import ipp.aci.boleia.dados.INfeAnexosArmazemDados;
 import ipp.aci.boleia.dados.INotaFiscalDados;
 import ipp.aci.boleia.dados.ITransacaoConsolidadaDados;
 import ipp.aci.boleia.dados.IUnidadeDados;
 import ipp.aci.boleia.dominio.Arquivo;
 import ipp.aci.boleia.dominio.AutorizacaoPagamento;
+import ipp.aci.boleia.dominio.NfeAnexosArmazem;
 import ipp.aci.boleia.dominio.NotaFiscal;
 import ipp.aci.boleia.dominio.TransacaoConsolidada;
 import ipp.aci.boleia.dominio.enums.TipoArquivo;
@@ -69,6 +71,9 @@ public class NotaFiscalSd {
 
     @Autowired
     private IArquivoDados repositorioArquivo;
+
+    @Autowired
+    private INfeAnexosArmazemDados nfeAnexosArmazemDados;
 
     @Autowired
     private UtilitarioAmbiente utilitarioAmbiente;
@@ -236,6 +241,10 @@ public class NotaFiscalSd {
      * @param notaFiscal Nota fiscal que será excluída.
      */
     public void excluirNotaFiscal(NotaFiscal notaFiscal) {
+        NfeAnexosArmazem nfeAnexosArmazem = nfeAnexosArmazemDados.obterPorNotaFiscal(notaFiscal.getId());
+        if (nfeAnexosArmazem != null) {
+            nfeAnexosArmazemDados.excluir(nfeAnexosArmazem.getId());
+        }
         repositorio.excluir(notaFiscal.getId());
         repositorioArquivo.excluir(notaFiscal.getArquivo().getId());
     }
