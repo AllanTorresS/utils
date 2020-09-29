@@ -10,6 +10,7 @@ import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaMotorGeracaoRelatoriosVo;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,10 +63,25 @@ public class OracleMotorGeracaoRelatorioDados extends OracleRepositorioBoleiaDad
     public MotorGeracaoRelatorios obterRelatorioParaProcessamento(Long id) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
 
-        parametros.add(new ParametroPesquisaIgual("id",id));
-//        parametros.add(new ParametroPesquisaIgual("status", StatusMotorGeradorRelatorio.EM_ANDAMENTO_AGUARDANDO.getValue()));
+        parametros.add(new ParametroPesquisaIgual("id", id));
 
         return pesquisar(new InformacaoPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]))
                 .getRegistros().stream().findFirst().orElse(null);
+    }
+
+    @Override
+    public Boolean pesquisaRelatorioEmAndamento(String filtro, Integer tipoRelatorio) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+
+        parametros.add(new ParametroPesquisaIgual("filtro", filtro));
+        parametros.add(new ParametroPesquisaIgual("tipoRelatorio", tipoRelatorio));
+        parametros.add(
+                new ParametroPesquisaOr(
+                    new ParametroPesquisaIgual("status", StatusMotorGeradorRelatorio.EM_ANDAMENTO_AGUARDANDO.getValue()),
+                    new ParametroPesquisaIgual("status", StatusMotorGeradorRelatorio.EM_ANDAMENTO_PROCESSANDO.getValue())
+                )
+        );
+        return pesquisar(new InformacaoPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]))
+                .getRegistros().stream().findFirst().isPresent();
     }
 }

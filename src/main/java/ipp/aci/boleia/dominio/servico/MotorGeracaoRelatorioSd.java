@@ -12,6 +12,8 @@ import ipp.aci.boleia.dominio.enums.TipoSubcategoriaNotificacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.BaseFiltroPaginado;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioJson;
+import ipp.aci.boleia.util.excecao.ExcecaoValidacao;
+import ipp.aci.boleia.util.i18n.Mensagens;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -34,6 +36,9 @@ public class MotorGeracaoRelatorioSd {
 
     @Autowired
     private NotificacaoUsuarioSd notificacaoUsuarioSd;
+
+    @Autowired
+    private Mensagens mensagens;
 
     /**
      * Inclusão de relatório no motor de geração de relatórios
@@ -114,6 +119,33 @@ public class MotorGeracaoRelatorioSd {
             this.notificarUsuarioRelatorioConcluido(motor.getUsuario());
         }
         return motor;
+    }
+
+    /**
+     * Limpa informações relativas ao andamento do processamento do relatório
+     *
+     * @param motor O objeto do motor a ser restaurado
+     */
+    public void preparaMotorParaRefazerRelatorio(MotorGeracaoRelatorios motor) {
+        motor.setUltimaPaginaProcessada(null);
+        motor.setTotalRegistros(null);
+        motor.getAbasRelatorio().forEach(abaRelatorio -> {
+            abaRelatorio.setRegistrosProcessados(null);
+            abaRelatorio.setTotalRegistros(null);
+        });
+    }
+
+    /**
+     * Valida se existe um relatório igual já em andamento
+     *
+     * @param filtro O filtro fornecido
+     * @param tipoRelatorio O tipo de relatório a ser procurado
+     * @throws ExcecaoValidacao Caso haja um relatório em andamento
+     */
+    public void validaSeRelatorioEmAndamento(String filtro, Integer tipoRelatorio) throws ExcecaoValidacao {
+        if (repositorio.pesquisaRelatorioEmAndamento(filtro, tipoRelatorio)) {
+            throw new ExcecaoValidacao(mensagens.obterMensagem("servico.exportacao.relatorio.em.andamento"));
+        }
     }
 
     /**

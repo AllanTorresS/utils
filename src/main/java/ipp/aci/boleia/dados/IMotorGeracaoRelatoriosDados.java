@@ -23,4 +23,13 @@ public interface IMotorGeracaoRelatoriosDados extends IRepositorioBoleiaDados<Mo
      * @return O relatório desejado
      */
     MotorGeracaoRelatorios obterRelatorioParaProcessamento(Long id);
+
+    /**
+     * Pesquisa se há um relatório igual já em andamento
+     *
+     * @param filtro O filtro fornecido
+     * @param tipoRelatorio O tipo do relatório
+     * @return true caso haja um relatório em andamento, false caso contrário
+     */
+    Boolean pesquisaRelatorioEmAndamento(String filtro, Integer tipoRelatorio);
 }

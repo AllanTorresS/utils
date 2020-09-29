@@ -1,19 +1,6 @@
 package ipp.aci.boleia.dominio.enums;
 
 
-import ipp.aci.boleia.dominio.vo.FiltroPesquisaAbastecimentoVo;
-import ipp.aci.boleia.dominio.vo.FiltroPesquisaAlteracaoPrecoVo;
-import ipp.aci.boleia.dominio.vo.FiltroPesquisaCicloRepasseVo;
-import ipp.aci.boleia.dominio.vo.FiltroPesquisaCobrancaVo;
-import ipp.aci.boleia.dominio.vo.FiltroPesquisaFrotaVo;
-import ipp.aci.boleia.dominio.vo.FiltroPesquisaMotoristaVo;
-import ipp.aci.boleia.dominio.vo.FiltroPesquisaNegociacaoVo;
-import ipp.aci.boleia.dominio.vo.FiltroPesquisaPontoDeVendaVo;
-import ipp.aci.boleia.dominio.vo.FiltroPesquisaPostoCredenciadoVo;
-import ipp.aci.boleia.dominio.vo.FiltroPesquisaPrecoMicromercadoVo;
-import ipp.aci.boleia.dominio.vo.FiltroPesquisaPrecoVo;
-import ipp.aci.boleia.dominio.vo.FiltroPesquisaSaldoFrotaVo;
-import ipp.aci.boleia.dominio.vo.FiltroPesquisaTransacaoConsolidadaVo;
 import ipp.aci.boleia.util.TemplatePlanilha;
 import ipp.aci.boleia.util.i18n.IEnumComLabel;
 
@@ -25,34 +12,32 @@ import java.util.Map;
  */
 public enum TipoRelatorioMotorGerador implements IEnumComLabel<TipoRelatorioMotorGerador> {
 
-    RELATORIO_PRECO_EXPORTACAO(0, obterMapaTemplatesPrecoMicromercado(), FiltroPesquisaPrecoMicromercadoVo.class),
-    RELATORIO_PRECO_POSTO(1, obterMapaTemplatesPrecoPosto(), FiltroPesquisaAlteracaoPrecoVo.class),
-    RELATORIO_ABASTECIMENTO(2, obterMapaTemplatesAbastecimento(), FiltroPesquisaAbastecimentoVo.class),
-    RELATORIO_NOTAS_FISCAIS(3, obterMapaTemplatesNotasFiscais(), FiltroPesquisaTransacaoConsolidadaVo.class),
-    RELATORIO_MOTORISTA(4, obterMapaTemplatesMotorista(), FiltroPesquisaMotoristaVo.class),
-    RELATORIO_COBRANCA(5, obterMapaTemplatesCobranca(), FiltroPesquisaCobrancaVo.class),
-    RELATORIO_CICLO_REPASSE(6, obterMapaTemplatesCicloRepasse(), FiltroPesquisaCicloRepasseVo.class),
-    RELATORIO_PONTO_VENDA(7, obterMapaTemplatesPontoVenda(), FiltroPesquisaPontoDeVendaVo.class),
-    RELATORIO_SALDO_FROTA(8, obterMapaTemplatesSaldoFrota(), FiltroPesquisaSaldoFrotaVo.class),
-    RELATORIO_FROTA(9, obterMapaTemplatesFrota(), FiltroPesquisaFrotaVo.class),
-    RELATORIO_POSTO_CREDENCIADO(10, obterMapaTemplatesPostoCredenciado(), FiltroPesquisaPostoCredenciadoVo.class),
-    RELATORIO_ABASTECIMENTOS_ESTORNADOS(11, obterMapaTemplatesAbastecimentosEstornados(), FiltroPesquisaAbastecimentoVo.class),
-    RELATORIO_ABASTECIMENTOS_AJUSTADOS(12, obterMapaTemplatesAbastecimentosAjustados(), FiltroPesquisaAbastecimentoVo.class),
-    RELATORIO_PRECO_NEGOCIADO(13, obterMapaTemplatesPrecoNegociado(), FiltroPesquisaPrecoVo.class),
-    RELATORIO_NEGOCIACAO(14, obterMapaTemplatesNegociacao(), FiltroPesquisaNegociacaoVo.class);
+    RELATORIO_PRECO_EXPORTACAO(0, obterMapaTemplatesPrecoMicromercado()),
+    RELATORIO_PRECO_POSTO(1, obterMapaTemplatesPrecoPosto()),
+    RELATORIO_ABASTECIMENTO(2, obterMapaTemplatesAbastecimento()),
+    RELATORIO_NOTAS_FISCAIS(3, obterMapaTemplatesNotasFiscais()),
+    RELATORIO_MOTORISTA(4, obterMapaTemplatesMotorista()),
+    RELATORIO_COBRANCA(5, obterMapaTemplatesCobranca()),
+    RELATORIO_CICLO_REPASSE(6, obterMapaTemplatesCicloRepasse()),
+    RELATORIO_PONTO_VENDA(7, obterMapaTemplatesPontoVenda()),
+    RELATORIO_SALDO_FROTA(8, obterMapaTemplatesSaldoFrota()),
+    RELATORIO_FROTA(9, obterMapaTemplatesFrota()),
+    RELATORIO_POSTO_CREDENCIADO(10, obterMapaTemplatesPostoCredenciado()),
+    RELATORIO_ABASTECIMENTOS_ESTORNADOS(11, obterMapaTemplatesAbastecimentosEstornados()),
+    RELATORIO_ABASTECIMENTOS_AJUSTADOS(12, obterMapaTemplatesAbastecimentosAjustados()),
+    RELATORIO_PRECO_NEGOCIADO(13, obterMapaTemplatesPrecoNegociado()),
+    RELATORIO_NEGOCIACAO(14, obterMapaTemplatesNegociacao());
 
     private final Integer value;
     private final Map<TipoPerfilUsuario, TemplatePlanilha> templatePerfil;
-    private final Class classeFiltro;
 
     /**
      * Construtor
      *  @param value O value do status
      */
-    TipoRelatorioMotorGerador(Integer value, Map<TipoPerfilUsuario, TemplatePlanilha> templatePerfil, Class filtro) {
+    TipoRelatorioMotorGerador(Integer value, Map<TipoPerfilUsuario, TemplatePlanilha> templatePerfil) {
         this.value = value;
         this.templatePerfil = templatePerfil;
-        this.classeFiltro = filtro;
     }
 
     public Integer getValue() {
@@ -61,10 +46,6 @@ public enum TipoRelatorioMotorGerador implements IEnumComLabel<TipoRelatorioMoto
 
     public Map<TipoPerfilUsuario, TemplatePlanilha> getTemplatePerfil() {
         return templatePerfil;
-    }
-
-    public Class getClasseFiltro() {
-        return classeFiltro;
     }
 
     /**
