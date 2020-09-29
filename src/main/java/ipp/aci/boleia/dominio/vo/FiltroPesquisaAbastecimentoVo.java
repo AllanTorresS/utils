@@ -42,7 +42,8 @@ public class FiltroPesquisaAbastecimentoVo extends BaseFiltroPaginado {
     private Boolean apenasEstornos;
     private TipoPerfilUsuario tipoPerfilUsuario;
     private Boolean apenasAjustados;
-
+    private String identificadorInterno;
+    
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss.SSSZ")
     private Date dataHoraProcessamentoDe;
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss.SSSZ")
@@ -292,4 +293,8 @@ public class FiltroPesquisaAbastecimentoVo extends BaseFiltroPaginado {
     public Boolean isApenasAjustados() { return apenasAjustados; }
 
     public void setApenasAjustados(Boolean apenasAjustados) { this.apenasAjustados = apenasAjustados; }
+
+    public String getIdentificadorInterno() { return identificadorInterno; }
+
+    public void setIdentificadorInterno(String identificadorInterno) {this.identificadorInterno = identificadorInterno;}
 }

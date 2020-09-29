@@ -232,8 +232,8 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
         return resultadoBusca.getTotalItems() > 0 ? resultadoBusca.getRegistros().stream().findFirst().get() : null;
     }
     @Override
-    public List<Veiculo> obterIdentificadoresInternosVeiculos(FiltroPesquisaParcialVeiculoVo filtro) {
+    public List<Veiculo> obterPorIdentificadorInterno(FiltroPesquisaParcialVeiculoVo filtro) {
         return pesquisar((ParametroOrdenacaoColuna) null,
-                new ParametroPesquisaIgual("identificadorInterno", filtro.getIdentificadorInterno()));
+                new ParametroPesquisaIgual("identificadorInterno", filtro.getTermo()));
     }
 }

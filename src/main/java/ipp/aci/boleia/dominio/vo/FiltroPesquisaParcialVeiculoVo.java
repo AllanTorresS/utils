@@ -7,16 +7,11 @@ import ipp.aci.boleia.dominio.pesquisa.comum.BaseFiltroPaginado;
  */
 public class FiltroPesquisaParcialVeiculoVo extends BaseFiltroPaginado {
 
-    private String identificadorInterno;
+    private String termo;
 
-
-
-
-    public String getIdentificadorInterno() {
-        return identificadorInterno;
+    public String getTermo() {
+        return termo;
     }
 
-    public void setIdentificadorInterno(String identificadorInterno) {
-        this.identificadorInterno = identificadorInterno;
-    }
+    public void setTermo(String termo) { this.termo = termo; }
 }

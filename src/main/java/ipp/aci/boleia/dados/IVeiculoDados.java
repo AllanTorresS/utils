@@ -139,9 +139,9 @@ public interface IVeiculoDados extends IRepositorioBoleiaDados<Veiculo> {
     Veiculo obterPorIdentificadorPadrao(String identificador);
 
 	/**
-	 * Obtem todos os veiculos da frota
-	 * @param filtro O identificador da frota
-	 * @return o filtro com o identificador interno
+	 * Obtem os veiculos da frota a partir do filtro informado
+	 * @param filtro o filtro utilizado
+	 * @return lista de veículos que correspondem a busca
 	 */
-	List<Veiculo> obterIdentificadoresInternosVeiculos(FiltroPesquisaParcialVeiculoVo filtro);
+	List<Veiculo> obterPorIdentificadorInterno(FiltroPesquisaParcialVeiculoVo filtro);
 }
