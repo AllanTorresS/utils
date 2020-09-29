@@ -209,7 +209,7 @@ public class PrecoSd {
     }
 
     /**
-     * Zera o valor do acordo especial
+     * Zera o valor do acordo vigente
      */
     public void zerarValorVigente(Preco precoAtual, Boolean automatico){
         Preco novoPreco = new Preco();
