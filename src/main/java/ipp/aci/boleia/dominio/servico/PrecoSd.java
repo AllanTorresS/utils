@@ -209,6 +209,26 @@ public class PrecoSd {
     }
 
     /**
+     * Zera o valor do acordo especial
+     */
+    public void zerarValorVigente(Preco precoAtual, Boolean automatico){
+        Preco novoPreco = new Preco();
+        novoPreco.setPreco(precoAtual.getPreco());
+        novoPreco.setDataAtualizacao(precoAtual.getDataAtualizacao());
+        novoPreco.setDescontoSolicitado(BigDecimal.ZERO);
+        novoPreco.setDescontoVigente(BigDecimal.ZERO);
+        novoPreco.setFrotaPtov(precoAtual.getFrotaPtov());
+        novoPreco.setPrecoBase(precoAtual.getPrecoBase());
+        novoPreco.setJustificativa(precoAtual.getJustificativa());
+        novoPreco.setVolumeEstimado(precoAtual.getVolumeEstimado());
+        novoPreco.setDataSolicitacao(precoAtual.getDataSolicitacao());
+        novoPreco.setStatus(precoAtual.getStatus());
+        precoAtual.setStatus(StatusPreco.HISTORICO.getValue());
+        this.repositorioPreco.armazenar(precoAtual);
+        novoPreco.aceitarDesconto(this.ambiente.buscarDataAmbiente(), automatico);
+        this.repositorioPreco.armazenar(novoPreco);
+    }
+    /**
      * Gera registro de histórico do preço recusado.
      *
      * @param precoAtual preco que sera alterado.
