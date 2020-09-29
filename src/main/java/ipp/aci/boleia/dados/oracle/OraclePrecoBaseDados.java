@@ -263,11 +263,11 @@ public class OraclePrecoBaseDados extends OracleOrdenacaoPrecosDados<PrecoBase> 
     public List<PrecoBase> buscarPrecosPorFrotaLocalizacaoCombustivel(FiltroPesquisaLocalizacaoVo filtro, List<Long> idsTipoCombustivel ){
 
         List<ParametroPesquisa> parametros = new ArrayList<>();
-        parametros.add(new ParametroPesquisaMaior("pontoVenda.latitude", new BigDecimal(filtro.getLatitudeInicial())));
-        parametros.add(new ParametroPesquisaMenor("pontoVenda.latitude", new BigDecimal(filtro.getLatitudeFinal())));
+        parametros.add(new ParametroPesquisaMaior("pontoVenda.latitude", BigDecimal.valueOf(filtro.getLatitudeInicial())));
+        parametros.add(new ParametroPesquisaMenor("pontoVenda.latitude", BigDecimal.valueOf(filtro.getLatitudeFinal())));
 
-        parametros.add(new ParametroPesquisaMaior("pontoVenda.longitude", new BigDecimal(filtro.getLongitudeInicial())));
-        parametros.add(new ParametroPesquisaMenor("pontoVenda.longitude", new BigDecimal(filtro.getLongitudeFinal())));
+        parametros.add(new ParametroPesquisaMaior("pontoVenda.longitude", BigDecimal.valueOf(filtro.getLongitudeInicial())));
+        parametros.add(new ParametroPesquisaMenor("pontoVenda.longitude", BigDecimal.valueOf(filtro.getLongitudeFinal())));
 
         parametros.add(new ParametroPesquisaIgual("pontoVenda.status", StatusAtivacao.ATIVO.getValue()));
 
@@ -284,14 +284,14 @@ public class OraclePrecoBaseDados extends OracleOrdenacaoPrecosDados<PrecoBase> 
         return pesquisar(ordenacao, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
-
+    @Override
     public ResultadoPaginado<PrecoBase> buscarPrecosPorFrotaLocalizacaoCombustivel(FiltroPesquisaLocalizacaoVo filtro, Long idCombustivel, Integer pagina, Integer tamanho){
         List<ParametroPesquisa> parametros = new ArrayList<>();
-        parametros.add(new ParametroPesquisaMaior("pontoVenda.latitude", new BigDecimal(filtro.getLatitudeInicial())));
-        parametros.add(new ParametroPesquisaMenor("pontoVenda.latitude", new BigDecimal(filtro.getLatitudeFinal())));
+        parametros.add(new ParametroPesquisaMaior("pontoVenda.latitude", BigDecimal.valueOf(filtro.getLatitudeInicial())));
+        parametros.add(new ParametroPesquisaMenor("pontoVenda.latitude", BigDecimal.valueOf(filtro.getLatitudeFinal())));
 
-        parametros.add(new ParametroPesquisaMaior("pontoVenda.longitude", new BigDecimal(filtro.getLongitudeInicial())));
-        parametros.add(new ParametroPesquisaMenor("pontoVenda.longitude", new BigDecimal(filtro.getLongitudeFinal())));
+        parametros.add(new ParametroPesquisaMaior("pontoVenda.longitude", BigDecimal.valueOf(filtro.getLongitudeInicial())));
+        parametros.add(new ParametroPesquisaMenor("pontoVenda.longitude", BigDecimal.valueOf(filtro.getLongitudeFinal())));
 
         parametros.add(new ParametroPesquisaIgual("pontoVenda.status", StatusAtivacao.ATIVO.getValue()));
 
@@ -303,7 +303,7 @@ public class OraclePrecoBaseDados extends OracleOrdenacaoPrecosDados<PrecoBase> 
                 StatusAlteracaoPrecoPosto.ACEITO.getValue())));
         parametros.add(new ParametroPesquisaNulo("preco", true));
 
-        List<ParametroOrdenacaoColuna> parametroOrdenacaoColunas = new ArrayList<ParametroOrdenacaoColuna>();
+        List<ParametroOrdenacaoColuna> parametroOrdenacaoColunas = new ArrayList<>();
 
         parametroOrdenacaoColunas.add(new ParametroOrdenacaoColuna("id"));
         InformacaoPaginacao informacaoPaginacao = new InformacaoPaginacao();
