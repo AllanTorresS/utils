@@ -21,6 +21,7 @@ import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -88,6 +89,9 @@ public class PontoRota implements IPersistente, IPertenceFrota {
 
     @Column(name = "VA_ABAST_VALOR")
     private BigDecimal abastecerValor;
+
+    @Column(name = "DT_ATUALIZACAO_ABAST_VALOR")
+    private Date dataAtualizacaoAbastecerValor;
 
     @NotNull
     @Column(name = "ID_API")
@@ -198,5 +202,13 @@ public class PontoRota implements IPersistente, IPertenceFrota {
 
     public void setAbastecerValor(BigDecimal abastecerValor) {
         this.abastecerValor = abastecerValor;
+    }
+
+    public Date getDataAtualizacaoAbastecerValor() {
+        return dataAtualizacaoAbastecerValor;
+    }
+
+    public void setDataAtualizacaoAbastecerValor(Date dataAtualizacaoAbastecerValor) {
+        this.dataAtualizacaoAbastecerValor = dataAtualizacaoAbastecerValor;
     }
 }
