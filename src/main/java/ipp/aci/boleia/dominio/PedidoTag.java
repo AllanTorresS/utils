@@ -39,6 +39,9 @@ public class PedidoTag implements IPersistente {
 	@SequenceGenerator(name = "SEQ_PEDIDO_TAG", sequenceName = "SEQ_PEDIDO_TAG", allocationSize = 1)
 	private Long id;
 
+	@Column(name = "NO_DOC_PEDIDO_CONECTCAR")
+	private Integer numeroPedidoConectcar;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CD_FROTA")
 	private Frota frota;
@@ -47,8 +50,8 @@ public class PedidoTag implements IPersistente {
 	private Integer status;
 
 	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "CD_TRANS_CONSOL")
-	private TransacaoConectcarConsolidada transacao;
+	@JoinColumn(name = "CD_COBRANCA")
+	private CobrancaConectcar cobranca;
 
 	@Digits(integer = 12, fraction = 4)
 	@Column(name = "VR_TOTAL")
@@ -269,12 +272,20 @@ public class PedidoTag implements IPersistente {
 		this.valorFrete = valorFrete;
 	}
 
-	public TransacaoConectcarConsolidada getTransacao() {
-		return transacao;
+	public CobrancaConectcar getCobranca() {
+		return cobranca;
 	}
 
-	public void setTransacao(TransacaoConectcarConsolidada transacao) {
-		this.transacao = transacao;
+	public void setCobranca(CobrancaConectcar cobranca) {
+		this.cobranca = cobranca;
+	}
+
+	public Integer getNumeroPedidoConectcar() {
+		return numeroPedidoConectcar;
+	}
+
+	public void setNumeroPedidoConectcar(Integer numeroPedidoConectcar) {
+		this.numeroPedidoConectcar = numeroPedidoConectcar;
 	}
 
 	@Override

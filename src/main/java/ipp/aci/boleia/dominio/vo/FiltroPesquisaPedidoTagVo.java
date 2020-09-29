@@ -9,6 +9,7 @@ import ipp.aci.boleia.dominio.pesquisa.comum.BaseFiltroPaginado;
  */
 public class FiltroPesquisaPedidoTagVo extends BaseFiltroPaginado {
 
+	private Integer numeroPedidoConectcar;
 	private Long id;
 	private EntidadeVo frota;
 	private Date de;
@@ -53,6 +54,14 @@ public class FiltroPesquisaPedidoTagVo extends BaseFiltroPaginado {
 
 	public void setFrota(EntidadeVo frota) {
 		this.frota = frota;
+	}
+
+	public Integer getNumeroPedidoConectcar() {
+		return numeroPedidoConectcar;
+	}
+
+	public void setNumeroPedidoConectcar(Integer numeroPedidoConectcar) {
+		this.numeroPedidoConectcar = numeroPedidoConectcar;
 	}
 
 }
