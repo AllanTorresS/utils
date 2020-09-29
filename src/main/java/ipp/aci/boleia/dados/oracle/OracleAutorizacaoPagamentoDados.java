@@ -402,6 +402,13 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         // se a pesquisa se refere aos abastecimentos de uma cobranca, entao apenas os pos pagos devem ser listados
         if(filtro.getIdCobranca() != null) {
             parametros.add(new ParametroPesquisaIgual("transacaoFrota.consumiuCreditoPrePago", false));
+            parametros.add(new ParametroPesquisaOr(
+                new ParametroPesquisaAnd(
+                        new ParametroPesquisaIgual("transacaoConsolidada.cobranca.id", filtro.getIdCobranca()),
+                        new ParametroPesquisaNulo("transacaoConsolidadaPostergada")
+                ),
+                new ParametroPesquisaIgual("transacaoConsolidadaPostergada.cobranca.id", filtro.getIdCobranca())
+            ));
         }
         if(filtro.getIdConsolidado() != null){
             parametros.add(new ParametroPesquisaIgual("empresaAgregadaExigeNf", filtro.getEmpresaAgregada() != null));
