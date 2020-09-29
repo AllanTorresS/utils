@@ -19,7 +19,7 @@ import java.util.Random;
 @Component
 public class CodigoAbastecimentoSd {
 
-    private final String PEDIDO_CODIGO_ABASTECIMENTO = "PEDIDO_CODIGO_ABASTECIMENTO";
+    private static final String PEDIDO_CODIGO_ABASTECIMENTO = "PEDIDO_CODIGO_ABASTECIMENTO";
 
     @Autowired
     private IPedidoMotoristaAutonomoDados pedidoMotoristaAutonomoDados;
