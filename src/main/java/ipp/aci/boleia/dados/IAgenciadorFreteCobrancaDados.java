@@ -7,6 +7,9 @@ import ipp.aci.boleia.dominio.vo.agenciadorfrete.FiltroRelatorioCobrancaVo;
 
 import java.util.List;
 
+/**
+ * Interface responsável pelo acesso aos dados da Cobrança do Agenciador de frete na base
+ */
 public interface IAgenciadorFreteCobrancaDados extends IRepositorioBoleiaDados<AgenciadorFreteCobranca> {
 
     /**

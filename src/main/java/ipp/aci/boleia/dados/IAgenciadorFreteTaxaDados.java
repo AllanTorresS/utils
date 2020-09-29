@@ -6,6 +6,9 @@ import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 
 import java.util.Date;
 
+/**
+ * Interface responsável pelo acesso aos dados da Taxa do Agenciador de frete na base
+ */
 public interface IAgenciadorFreteTaxaDados extends IRepositorioBoleiaDados<AgenciadorFreteTaxa> {
 
     /**

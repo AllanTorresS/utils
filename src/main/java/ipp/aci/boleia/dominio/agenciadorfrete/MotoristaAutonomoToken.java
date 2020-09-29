@@ -19,6 +19,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
 
+/**
+ * Representa a tabela de token do Motorista Autônomo
+ */
 @Entity
 @Audited
 @Table(name = "MOTORISTA_AUTONOMO_TOKEN")

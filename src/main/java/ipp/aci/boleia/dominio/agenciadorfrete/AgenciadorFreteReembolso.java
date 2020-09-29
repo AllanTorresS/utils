@@ -21,6 +21,9 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Representa a tabela de Reembolso
+ */
 @Entity
 @Audited
 @Table(name = "AG_FRETE_REEMBOLSO")

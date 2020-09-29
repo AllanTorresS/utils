@@ -37,6 +37,7 @@ public interface IPedidoMotoristaAutonomoDados extends IRepositorioBoleiaDados<P
      * Obter os pedidos pelo cpf e data de expiração do motorista autonomo
      * @param cpf O motorista autonomo
      * @param dataExpiracao A data de expiração do pedido
+     * @return Lista de pedidos
      */
     List<Pedido> obterPorCpfDataExpiracao(String cpf, Date dataExpiracao);
 

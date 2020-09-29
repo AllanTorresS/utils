@@ -18,7 +18,9 @@ import javax.persistence.TemporalType;
 import javax.persistence.Version;
 import java.math.BigDecimal;
 import java.util.Date;
-
+/**
+ * Representa a tabela de Taxa
+ */
 @Entity
 @Audited
 @Table(name = "AGENCIADOR_FRETE_TAXA")
