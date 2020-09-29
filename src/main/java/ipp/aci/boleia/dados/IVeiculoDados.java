@@ -3,6 +3,7 @@ package ipp.aci.boleia.dados;
 
 import ipp.aci.boleia.dominio.Veiculo;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialVeiculoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaVeiculoVo;
 import ipp.aci.boleia.dominio.vo.externo.FiltroPesquisaVeiculoExtVo;
 import ipp.aci.boleia.dominio.vo.frotista.FiltroPesquisaVeiculoFrtVo;
@@ -136,4 +137,11 @@ public interface IVeiculoDados extends IRepositorioBoleiaDados<Veiculo> {
 
 	@Override
     Veiculo obterPorIdentificadorPadrao(String identificador);
+
+	/**
+	 * Obtem todos os veiculos da frota
+	 * @param filtro O identificador da frota
+	 * @return o filtro com o identificador interno
+	 */
+	List<Veiculo> obterIdentificadoresInternosVeiculos(FiltroPesquisaParcialVeiculoVo filtro);
 }
