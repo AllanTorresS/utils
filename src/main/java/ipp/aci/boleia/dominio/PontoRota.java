@@ -83,6 +83,9 @@ public class PontoRota implements IPersistente, IPertenceFrota {
     @Column(name = "QT_GRAU_LONGIT")
     private BigDecimal longitude;
 
+    @Column(name = "ID_PRECO_NEGOCIADO")
+    private Boolean precoNegociado;
+
     @NotNull
     @Column(name = "ID_API")
     private Integer api;
@@ -177,4 +180,12 @@ public class PontoRota implements IPersistente, IPertenceFrota {
     public Integer getApi() { return api; }
 
     public void setApi(Integer api) { this.api = api; }
+
+    public Boolean isPrecoNegociado() {
+        return precoNegociado;
+    }
+
+    public void setPrecoNegociado(Boolean precoNegociado) {
+        this.precoNegociado = precoNegociado;
+    }
 }
