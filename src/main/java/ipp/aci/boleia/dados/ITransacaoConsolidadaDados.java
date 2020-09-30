@@ -89,7 +89,7 @@ public interface ITransacaoConsolidadaDados extends IRepositorioBoleiaDados<Tran
      * @param filtro O filtro de pesquisa
      * @return Uma lista de transacoes consolidadas com reembolso pendente
      */
-    ResultadoPaginado<TransacaoConsolidada> pesquisarReembolsosPendentes(FiltroPesquisaReembolsoVo filtro);
+    ResultadoPaginado<TransacaoConsolidada> pesquisarReembolsosPendentes(FiltroPesquisaReembolsoVo filtro, Usuario usuarioLogado);
 
     /**
      * Obtem o consolidado ao qual esta vinculado um abastecimento
