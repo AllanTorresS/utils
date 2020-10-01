@@ -3,6 +3,7 @@ package ipp.aci.boleia.dados.oracle;
 import ipp.aci.boleia.dados.IPontoDeVendaDados;
 import ipp.aci.boleia.dados.ITransacaoConsolidadaDados;
 import ipp.aci.boleia.dominio.AutorizacaoPagamento;
+import ipp.aci.boleia.dominio.Cobranca;
 import ipp.aci.boleia.dominio.EmpresaAgregada;
 import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.PontoDeVenda;
@@ -1008,5 +1009,10 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             parametrosPesquisa.add(new ParametroPesquisaIn("idsPvs", usuarioLogado.getPontosDeVenda().stream().map(PontoDeVenda::getId).collect(Collectors.toList())));
         }
         return pesquisar(null, CONSULTA_TRANSACOES_CONSOLIDADAS_AGRUPADAS_POR_PV, AgrupamentoTransacaoConsolidadaPvVo.class, parametrosPesquisa.toArray(new ParametroPesquisa[parametrosPesquisa.size()])).getRegistros();
+    }
+
+    @Override
+    public TransacaoConsolidada desanexar(TransacaoConsolidada transacaoConsolidada) {
+        return super.desanexar(transacaoConsolidada);
     }
 }

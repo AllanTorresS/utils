@@ -227,4 +227,11 @@ public interface ITransacaoConsolidadaDados extends IRepositorioBoleiaDados<Tran
      * @return Uma lista com as transações consolidadas agrupadas.
      */
     List<AgrupamentoTransacaoConsolidadaPvVo> pesquisarTransacoesConsolidadasAgrupadasParaPv(Long idPv, Date dataInicioPeriodo, Date dataFimPeriodo);
+
+    /**
+     * Altera o estado da entidade para desanexado
+     * @param transacaoConsolidada transacao consolidada a cobrança a ser desanexada
+     * @return a transacao consolidada desanexada
+     */
+    TransacaoConsolidada desanexar(TransacaoConsolidada transacaoConsolidada);
 }
