@@ -20,7 +20,7 @@ import ipp.aci.boleia.util.Ordenacao;
 public class OracleLeadDados extends OracleRepositorioBoleiaDados<Lead> implements ILeadDados {
 
     /**
-     * Instancia o repositorio
+     * Instancia o repositorio 
      */
     public OracleLeadDados() {
         super(Lead.class);
