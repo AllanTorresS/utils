@@ -234,4 +234,11 @@ public interface ITransacaoConsolidadaDados extends IRepositorioBoleiaDados<Tran
      * @return a transacao consolidada desanexada
      */
     TransacaoConsolidada desanexar(TransacaoConsolidada transacaoConsolidada);
+
+    /**
+     * Obtém a lista de ciclos fechados que nao passaram por postergacao
+     *
+     * @return lista de ciclos fechados que nao passaram por postergacao
+     */
+    List<TransacaoConsolidada> obterCiclosFechadosQueNaoPassaramPorPostergacao();
 }

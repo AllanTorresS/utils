@@ -1015,4 +1015,13 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
     public TransacaoConsolidada desanexar(TransacaoConsolidada transacaoConsolidada) {
         return super.desanexar(transacaoConsolidada);
     }
+
+    @Override
+    public List<TransacaoConsolidada> obterCiclosFechadosQueNaoPassaramPorPostergacao(){
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaIgual("processouPostergacao", 0));
+        parametros.add(new ParametroPesquisaIgual("statusConsolidacao", StatusTransacaoConsolidada.FECHADA.getValue()));
+
+        return pesquisar((InformacaoPaginacao) null, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+    }
 }
