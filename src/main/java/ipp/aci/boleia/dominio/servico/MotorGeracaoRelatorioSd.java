@@ -128,7 +128,6 @@ public class MotorGeracaoRelatorioSd {
      */
     public void preparaMotorParaRefazerRelatorio(MotorGeracaoRelatorios motor) {
         motor.setUltimaPaginaProcessada(null);
-        motor.setTotalRegistros(null);
         motor.getAbasRelatorio().forEach(abaRelatorio -> {
             abaRelatorio.setRegistrosProcessados(null);
             abaRelatorio.setTotalRegistros(null);

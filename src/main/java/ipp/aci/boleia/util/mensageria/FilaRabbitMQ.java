@@ -1,5 +1,6 @@
 package ipp.aci.boleia.util.mensageria;
 
+import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -71,6 +72,12 @@ public class FilaRabbitMQ {
         StringBuilder nomeChaveRota = new StringBuilder(prefixoChaveRota);
         nomeChaveRota.append(chaveRota);
 
-        canal.basicPublish(nomeTopicoRelatorio, nomeChaveRota.toString(), null, mensagem.getBytes());
+        canal.basicPublish(nomeTopicoRelatorio, nomeChaveRota.toString(),
+                new AMQP.BasicProperties.Builder()
+                    .contentType("text/plain")
+                    .deliveryMode(2)
+                    .priority(1)
+                    .build(),
+                mensagem.getBytes());
     }
 }

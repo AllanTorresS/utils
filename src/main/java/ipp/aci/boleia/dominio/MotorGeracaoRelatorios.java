@@ -18,7 +18,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
@@ -87,17 +86,8 @@ public class MotorGeracaoRelatorios implements IPersistente {
     @Column(name = "DS_NOME_TEMPLATE")
     private String nomeTemplate;
 
-    @Column(name="VA_TOTAL_REGISTROS")
-    private Long totalRegistros;
-
-    @Column(name="VA_REGISTROS_PROCESSADOS")
-    private Long registrosProcessados;
-
     @Column(name = "NO_ULTIMA_PAGINA_PROCESSADA")
     private Integer ultimaPaginaProcessada;
-
-    @Column(name = "NO_ULTIMA_LINHA_PROCESSADA")
-    private Integer ultimaLinhaProcessada;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "motorGeracaoRelatorio", fetch = FetchType.EAGER, orphanRemoval = true)
     private List<AbaRelatorio> abasRelatorio;
@@ -168,22 +158,6 @@ public class MotorGeracaoRelatorios implements IPersistente {
         this.nomeTemplate = nomeTemplate;
     }
 
-    public Long getTotalRegistros() {
-        return totalRegistros;
-    }
-
-    public void setTotalRegistros(Long totalRegistros) {
-        this.totalRegistros = totalRegistros;
-    }
-
-    public Long getRegistrosProcessados() {
-        return registrosProcessados;
-    }
-
-    public void setRegistrosProcessados(Long registrosProcessados) {
-        this.registrosProcessados = registrosProcessados;
-    }
-
     public List<AbaRelatorio> getAbasRelatorio() {
         return abasRelatorio;
     }
@@ -198,29 +172,5 @@ public class MotorGeracaoRelatorios implements IPersistente {
 
     public void setUltimaPaginaProcessada(Integer ultimaPaginaProcessada) {
         this.ultimaPaginaProcessada = ultimaPaginaProcessada;
-    }
-
-    public Integer getUltimaLinhaProcessada() {
-        return ultimaLinhaProcessada != null ? ultimaLinhaProcessada : 0;
-    }
-
-    public void setUltimaLinhaProcessada(Integer ultimaLinhaProcessada) {
-        this.ultimaLinhaProcessada = ultimaLinhaProcessada;
-    }
-
-    @Transient
-    public void atualizarRegistrosProcessados(){
-        this.registrosProcessados = this.abasRelatorio.stream()
-                .mapToLong(a -> a.getRegistrosProcessados() != null ? a.getRegistrosProcessados() : 0).sum();
-    }
-
-    @Transient
-    public void atualizarTotalRegistros(){
-        this.totalRegistros = this.abasRelatorio.stream()
-                .mapToLong(a -> a.getTotalRegistros() != null? a.getTotalRegistros() : 0 ).sum();
-    }
-
-    public Boolean processouTodosRegistros(){
-        return this.registrosProcessados.compareTo(this.totalRegistros) >= 0;
     }
 }

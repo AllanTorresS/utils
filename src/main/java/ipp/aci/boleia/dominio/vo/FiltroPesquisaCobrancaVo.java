@@ -14,6 +14,8 @@ public class FiltroPesquisaCobrancaVo extends FiltroBasePeriodoPaginado {
     private String numeroDocumento;
     private EntidadeVo frota;
     private Boolean ignorarFrotaControle;
+    private String deMesAno;
+    private String ateMesAno;
 
     public List<EnumVo> getStatusPagamento() {
         return statusPagamento;
@@ -53,5 +55,21 @@ public class FiltroPesquisaCobrancaVo extends FiltroBasePeriodoPaginado {
 
     public void setIgnorarFrotaControle(Boolean ignorarFrotaControle) {
         this.ignorarFrotaControle = ignorarFrotaControle;
+    }
+
+    public String getDeMesAno() {
+        return deMesAno;
+    }
+
+    public void setDeMesAno(String deMesAno) {
+        this.deMesAno = deMesAno;
+    }
+
+    public String getAteMesAno() {
+        return ateMesAno;
+    }
+
+    public void setAteMesAno(String ateMesAno) {
+        this.ateMesAno = ateMesAno;
     }
 }
