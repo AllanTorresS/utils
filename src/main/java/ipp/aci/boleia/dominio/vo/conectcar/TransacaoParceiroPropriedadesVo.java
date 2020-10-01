@@ -13,7 +13,7 @@ public class TransacaoParceiroPropriedadesVo {
 	private Date dataDePassagem;
 
 	@JsonProperty("PassagemId")
-	private Integer passagemId;
+	private Long passagemId;
 
 	@JsonProperty("DataEstorno")
 	private Date dataEstorno;
@@ -22,7 +22,7 @@ public class TransacaoParceiroPropriedadesVo {
 	private Date dataContestacao;
 
 	@JsonProperty("EstornoId")
-	private Integer estornoId;
+	private Long estornoId;
 
 	@JsonProperty("TransacaoOrigemId")
 	private Long transacaoOrigemId;
@@ -52,11 +52,11 @@ public class TransacaoParceiroPropriedadesVo {
 		this.dataDePassagem = dataDePassagem;
 	}
 
-	public Integer getPassagemId() {
+	public Long getPassagemId() {
 		return passagemId;
 	}
 
-	public void setPassagemId(Integer passagemId) {
+	public void setPassagemId(Long passagemId) {
 		this.passagemId = passagemId;
 	}
 
@@ -68,11 +68,11 @@ public class TransacaoParceiroPropriedadesVo {
 		this.dataEstorno = dataEstorno;
 	}
 
-	public Integer getEstornoId() {
+	public Long getEstornoId() {
 		return estornoId;
 	}
 
-	public void setEstornoId(Integer estornoId) {
+	public void setEstornoId(Long estornoId) {
 		this.estornoId = estornoId;
 	}
 

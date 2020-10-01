@@ -91,4 +91,11 @@ public interface ITransacaoConectcarConsolidadaDados extends IRepositorioBoleiaD
      * @return lista de registros encontrados
      */
     ResultadoPaginado<TransacaoConectcarConsolidada> pesquisarUtilizacaoTag(FiltroPesquisaUtilizacaoTagVo filtro);
+    
+    /**
+     * Obtem a última transação de uma frota para o calculo do ciclo
+     *
+     * @return última transacao conectcar de uma frota
+     */
+    TransacaoConectcarConsolidada obterUltimaTransacoesoPorFrota(Long idFrota );
 }

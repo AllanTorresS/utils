@@ -167,9 +167,6 @@ public class TransacaoConectcarConsolidada implements IPersistente, IPertenceFro
 	@Column(name = "DS_PRACA")
 	private String praca;
 
-	@Column(name = "VR_ESTORNO")
-	private BigDecimal estorno;
-
 	@Column(name = "DT_TRANSACAO", columnDefinition = "DATE")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dataTransacao;
@@ -459,13 +456,6 @@ public class TransacaoConectcarConsolidada implements IPersistente, IPertenceFro
 		this.praca = praca;
 	}
 
-	public BigDecimal getEstorno() {
-		return estorno;
-	}
-
-	public void setEstorno(BigDecimal estorno) {
-		this.estorno = estorno;
-	}
 
 	/**
 	 * Gera uma chave unica para cada TransacaoConsolidada, tendo o objetivo de

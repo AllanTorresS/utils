@@ -47,8 +47,8 @@ public class OraclePedidoTagDados extends OracleRepositorioBoleiaDados<PedidoTag
         	parametros.add(new ParametroPesquisaDataMenorOuIgual("dataPedido", filtro.getAte()));
         }
         
-        if (filtro.getId() != null) {
-            parametros.add(new ParametroPesquisaIgual("id", filtro.getId()));
+        if (filtro.getNumeroPedidoConectcar() != null) {
+            parametros.add(new ParametroPesquisaIgual("numeroPedidoConectcar", filtro.getNumeroPedidoConectcar()));
         }
         
         if (filtro.getStatus() != null && filtro.getStatus().getName() != null) {

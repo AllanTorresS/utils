@@ -24,7 +24,6 @@ import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
-import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
 
 /**
  * Representa a tabela de Cobranca Conectcar
@@ -32,7 +31,7 @@ import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
 @Audited
 @Entity
 @Table(name = "COBRANCA_CONECTCAR")
-public class CobrancaConectcar implements IPersistente, IPertenceFrota {
+public class CobrancaConectcar implements IPersistente {
 
 	private static final long serialVersionUID = -4270486293974995429L;
 
@@ -54,6 +53,7 @@ public class CobrancaConectcar implements IPersistente, IPertenceFrota {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CD_FROTA")
 	private Frota frota;
+	
 
 	@Column(name = "NO_DOC_JDE")
 	private Long numeroDocumento;
@@ -351,7 +351,6 @@ public class CobrancaConectcar implements IPersistente, IPertenceFrota {
 		this.valorMensalidade = valorMensalidade;
 	}
 	
-    @Override
     public List<Frota> getFrotas() {
         return transacoesConsolidadas != null ? transacoesConsolidadas.get(0).getFrotas() : Collections.emptyList();
     }
@@ -363,5 +362,6 @@ public class CobrancaConectcar implements IPersistente, IPertenceFrota {
 	public void setTipo(Integer tipo) {
 		this.tipo = tipo;
 	}
+	
 
 }
