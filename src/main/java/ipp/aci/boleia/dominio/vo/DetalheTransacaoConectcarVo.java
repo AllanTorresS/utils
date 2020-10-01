@@ -43,7 +43,7 @@ public class DetalheTransacaoConectcarVo {
         this.setTag(transacao.getTag().getId().toString());
         this.setPraca(transacao.getPraca());
         this.setValor(UtilitarioFormatacao.formatarDecimal(transacao.getValorTotal().setScale(2, RoundingMode.HALF_UP)));
-        this.setEstorno(UtilitarioFormatacao.formatarDecimal(transacao.getEstorno().setScale(2, RoundingMode.HALF_UP)));
+//        this.setEstorno(UtilitarioFormatacao.formatarDecimal(transacao.getEstorno().setScale(2, RoundingMode.HALF_UP)));
     }
 
 	public String getData() {
