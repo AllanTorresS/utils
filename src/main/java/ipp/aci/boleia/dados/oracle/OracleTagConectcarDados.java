@@ -3,14 +3,15 @@ package ipp.aci.boleia.dados.oracle;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Repository;
 
 import ipp.aci.boleia.dados.ITagConectcarDados;
 import ipp.aci.boleia.dominio.TagConectcar;
-import ipp.aci.boleia.dominio.enums.DocumentoTipo;
 import ipp.aci.boleia.dominio.enums.StatusAtivacao;
-import ipp.aci.boleia.dominio.enums.TipoPerfilUsuario;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
@@ -37,6 +38,13 @@ public class OracleTagConectcarDados extends OracleRepositorioBoleiaDados<TagCon
             "WHERE t.frota.id  = :idFrota " +
             "AND t.dataBloqueio IS NULL";
 	
+	
+	private static final String QUERY_PRIMEIRA_TAG_ATIVA =
+   		 "SELECT t " +
+         " FROM TagConectcar t " +
+         " WHERE t.frota.id  = :idFrota " +
+         " AND t.dataAtivacao IS NOT NULL" + 
+         " ORDER BY t.id ASC";
 	
     /**
      * Instancia o repositório
@@ -106,6 +114,19 @@ public class OracleTagConectcarDados extends OracleRepositorioBoleiaDados<TagCon
         parametros.add(new ParametroPesquisaIgual("idFrota", codigoFrota));
         
         return pesquisarUnicoSemIsolamentoDados(query.toString(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+	}
+
+	@Override
+	public TagConectcar obtemPrimeiraTagAtivaPorFrota(Long idFrota) {
+		Query query = getGerenciadorDeEntidade().createQuery(QUERY_PRIMEIRA_TAG_ATIVA);		 
+		query.setParameter("idFrota", idFrota);	    
+		query.setMaxResults(1);
+		
+		try {
+			return (TagConectcar) query.getResultList().get(0);
+		} catch (NoResultException e) {
+			return null;
+		}	
 	}
 
    

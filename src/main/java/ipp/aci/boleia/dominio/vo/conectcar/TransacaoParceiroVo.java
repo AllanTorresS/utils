@@ -10,16 +10,16 @@ public class TransacaoParceiroVo {
 	private Integer tipoEventoTransacao;
 
 	@JsonProperty("AdesaoId")
-	private Integer adesaoId;
+	private Long adesaoId;
 
 	@JsonProperty("DataAdesao")
 	private Date dataAdesao;
 
 	@JsonProperty("PlanoId")
-	private Integer planoId;
+	private Long planoId;
 
 	@JsonProperty("ClienteId")
-	private Integer clienteId;
+	private Long clienteId;
 
 	@JsonProperty("Documento")
 	private Long documento;
@@ -28,16 +28,16 @@ public class TransacaoParceiroVo {
 	private Boolean pessoaFisica;
 
 	@JsonProperty("SaldoId")
-	private Integer saldoId;
+	private Long saldoId;
 
 	@JsonProperty("ValorSaldo")
 	private Double valorSaldo;
 
 	@JsonProperty("VeiculoId")
-	private Integer veiculoId;
+	private Long veiculoId;
 
 	@JsonProperty("TagId")
-	private Integer tagId;
+	private Long tagId;
 
 	@JsonProperty("DataTransacao")
 	private Date dataTransacao;
@@ -46,7 +46,7 @@ public class TransacaoParceiroVo {
 	private Long transacaoId;
 
 	@JsonProperty("TipoOperacaoId")
-	private Integer tipoOperacaoId;
+	private Long tipoOperacaoId;
 
 	@JsonProperty("Credito")
 	private Boolean credito;
@@ -55,7 +55,7 @@ public class TransacaoParceiroVo {
 	private Double valorTransacao;
 
 	@JsonProperty("StatusTransacao")
-	private Integer statusTransacao;
+	private Long statusTransacao;
 
 	@JsonProperty("DataCancelamento")
 	private Date dataCancelamento;
@@ -88,11 +88,11 @@ public class TransacaoParceiroVo {
 
 	}
 
-	public Integer getAdesaoId() {
+	public Long getAdesaoId() {
 		return adesaoId;
 	}
 
-	public void setAdesaoId(Integer adesaoId) {
+	public void setAdesaoId(Long adesaoId) {
 		this.adesaoId = adesaoId;
 	}
 
@@ -104,19 +104,19 @@ public class TransacaoParceiroVo {
 		this.dataAdesao = dataAdesao;
 	}
 
-	public Integer getPlanoId() {
+	public Long getPlanoId() {
 		return planoId;
 	}
 
-	public void setPlanoId(Integer planoId) {
+	public void setPlanoId(Long planoId) {
 		this.planoId = planoId;
 	}
 
-	public Integer getClienteId() {
+	public Long getClienteId() {
 		return clienteId;
 	}
 
-	public void setClienteId(Integer clienteId) {
+	public void setClienteId(Long clienteId) {
 		this.clienteId = clienteId;
 	}
 
@@ -136,11 +136,11 @@ public class TransacaoParceiroVo {
 		this.pessoaFisica = pessoaFisica;
 	}
 
-	public Integer getSaldoId() {
+	public Long getSaldoId() {
 		return saldoId;
 	}
 
-	public void setSaldoId(Integer saldoId) {
+	public void setSaldoId(Long saldoId) {
 		this.saldoId = saldoId;
 	}
 
@@ -152,19 +152,19 @@ public class TransacaoParceiroVo {
 		this.valorSaldo = valorSaldo;
 	}
 
-	public Integer getVeiculoId() {
+	public Long getVeiculoId() {
 		return veiculoId;
 	}
 
-	public void setVeiculoId(Integer veiculoId) {
+	public void setVeiculoId(Long veiculoId) {
 		this.veiculoId = veiculoId;
 	}
 
-	public Integer getTagId() {
+	public Long getTagId() {
 		return tagId;
 	}
 
-	public void setTagId(Integer tagId) {
+	public void setTagId(Long tagId) {
 		this.tagId = tagId;
 	}
 
@@ -184,11 +184,11 @@ public class TransacaoParceiroVo {
 		this.transacaoId = transacaoId;
 	}
 
-	public Integer getTipoOperacaoId() {
+	public Long getTipoOperacaoId() {
 		return tipoOperacaoId;
 	}
 
-	public void setTipoOperacaoId(Integer tipoOperacaoId) {
+	public void setTipoOperacaoId(Long tipoOperacaoId) {
 		this.tipoOperacaoId = tipoOperacaoId;
 	}
 
@@ -208,11 +208,11 @@ public class TransacaoParceiroVo {
 		this.valorTransacao = valorTransacao;
 	}
 
-	public Integer getStatusTransacao() {
+	public Long getStatusTransacao() {
 		return statusTransacao;
 	}
 
-	public void setStatusTransacao(Integer statusTransacao) {
+	public void setStatusTransacao(Long statusTransacao) {
 		this.statusTransacao = statusTransacao;
 	}
 
