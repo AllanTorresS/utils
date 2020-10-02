@@ -3,7 +3,6 @@ package ipp.aci.boleia.dados.oracle;
 import ipp.aci.boleia.dados.IPontoDeVendaDados;
 import ipp.aci.boleia.dados.ITransacaoConsolidadaDados;
 import ipp.aci.boleia.dominio.AutorizacaoPagamento;
-import ipp.aci.boleia.dominio.Cobranca;
 import ipp.aci.boleia.dominio.EmpresaAgregada;
 import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.PontoDeVenda;
