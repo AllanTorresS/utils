@@ -444,12 +444,13 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
     }
 
     @Override
-    public ResultadoPaginado<TransacaoConsolidada> pesquisarReembolsosPendentes(FiltroPesquisaReembolsoVo filtro, Usuario usuarioLogado) {
+    public ResultadoPaginado<TransacaoConsolidada> pesquisarReembolsosPendentes(FiltroPesquisaReembolsoVo filtro) {
         List<ParametroPesquisa> parametros = criarParametrosPesquisaReembolso(filtro);
         parametros.add(new ParametroPesquisaIgual("hoje", obterDataHoje()));
 
         String pesquisaFrotaControle = "";
-        if(ambiente.getUsuarioLogado().getFrota() == null || !ambiente.getUsuarioLogado().getFrota().getCnpj().equals(cnpjFrotaControle)){
+        Usuario usuarioLogado = ambiente.getUsuarioLogado();
+        if(usuarioLogado.getFrota() == null || usuarioLogado.getFrota().getCnpj().equals(cnpjFrotaControle)){
             pesquisaFrotaControle = "AND TC.frotaPtov.frota.cnpj != " + cnpjFrotaControle + " ";
         }
         String filtroFrotasAssociadas = "";
