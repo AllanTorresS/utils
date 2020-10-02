@@ -1,14 +1,17 @@
 package ipp.aci.boleia.dados.oracle;
 
 import ipp.aci.boleia.dados.IFrotaPontoVendaDados;
+import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.FrotaPontoVenda;
 import ipp.aci.boleia.dominio.enums.StatusAtivacao;
 import ipp.aci.boleia.dominio.enums.StatusBloqueio;
+import ipp.aci.boleia.dominio.enums.StatusFrota;
 import ipp.aci.boleia.dominio.enums.StatusHabilitacaoPontoVenda;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaior;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDiferente;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.vo.AutorizacaoPagamentoOrfaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaPostoCredenciadoVo;
@@ -113,6 +116,17 @@ public class OracleFrotaPontoVendaDados extends OracleRepositorioBoleiaDados<Fro
 	public List<FrotaPontoVenda> buscarPorDataMaisRecente(Date dataReferencia){
 		List<ParametroPesquisa> parametros = new ArrayList<>();
 		parametros.add(new ParametroPesquisaDataMaior("dataAtualizacao", dataReferencia));
+		parametros.add(new ParametroPesquisaDiferente("frota.status", StatusFrota.PRE_CADASTRO.getValue()));
 		return pesquisar(new ParametroOrdenacaoColuna("dataAtualizacao", Ordenacao.CRESCENTE), parametros.toArray(new ParametroPesquisa[parametros.size()]));
 	}
+
+	@Override
+	public List<FrotaPontoVenda> buscarPorFrota(Frota frota) {
+		List<ParametroPesquisa> parametros = new ArrayList<>();
+		parametros.add(new ParametroPesquisaDiferente("frota.id", frota.getId()));
+		return pesquisar(new ParametroOrdenacaoColuna("dataAtualizacao", Ordenacao.CRESCENTE), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+
+	}
+
+
 }

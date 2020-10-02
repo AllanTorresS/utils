@@ -200,4 +200,8 @@
     <orderEntry type="library" name="Maven: com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20171016.1" level="project" />
     <orderEntry type="library" name="Maven: com.rabbitmq:amqp-client:5.8.0" level="project" />
   </component>
+  <component name="sonarModuleSettings">
+    <option name="localAnalysisScripName" value="&lt;PROJECT&gt;" />
+    <option name="serverName" value="&lt;PROJECT&gt;" />
+  </component>
 </module>

@@ -108,6 +108,9 @@ public class ConfiguracoesAwsSqs {
     @Value("${aws.sqs.frota-param-ciclo.aplica-novo-ciclo}")
     private String nomeFilaFrotaParamCiclo;
 
+    @Value("${aws.sqs.transacao.consolidacao}")
+    private String nomeFilaTransacaoConsolidacaoAgFrete;
+
     @Value("${aws.sqs.transacao-consolidada.postergar-abastecimentos}")
     private String nomeFilaPostergacaoAbastecimentos;
 
@@ -157,6 +160,7 @@ public class ConfiguracoesAwsSqs {
                         ,nomeFilaCobrancaRequisicaoIncluirFatura
                         ,nomeFilaCobrancaRespostaIncluirFatura
                         ,nomeFilaFrotaParamCiclo
+                        ,nomeFilaTransacaoConsolidacaoAgFrete
                         ,nomeFilaPostergacaoAbastecimentos
                         ,nomeFilaProcessarCicloPostergacao);
         criaFilaSeNaoExistem(amazonSQSAsync, nomeFilas);

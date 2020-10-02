@@ -11,6 +11,7 @@ import ipp.aci.boleia.dominio.enums.ModalidadePagamento;
 import ipp.aci.boleia.dominio.enums.StatusAutorizacao;
 import ipp.aci.boleia.dominio.enums.StatusConfirmacaoTransacao;
 import ipp.aci.boleia.dominio.enums.StatusEdicao;
+import ipp.aci.boleia.dominio.enums.StatusFrota;
 import ipp.aci.boleia.dominio.enums.StatusNotaFiscalAbastecimento;
 import ipp.aci.boleia.dominio.enums.TipoAtividadeComponente;
 import ipp.aci.boleia.dominio.enums.TipoAutorizacaoPagamento;
@@ -151,7 +152,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
             "(ac.codigoCorporativo = " + TipoAtividadeComponente.AREA_ABASTECIMENTO.getCodigoCorporativo() + " OR ac.codigoCorporativo = "
             + TipoAtividadeComponente.AREA_ABASTECIMENTO_OUTRA.getCodigoCorporativo() + " ) AND " +
             "a.status = "+ StatusAutorizacao.AUTORIZADO.getValue() + " AND c.bandeira.codigoCorporativo =  " + TiposBandeiras.IPIRANGA.getCodigoCorporativo() +
-            " AND a.dataRequisicao BETWEEN :dataInicial AND :dataFinal" +
+            " AND a.dataRequisicao BETWEEN :dataInicial AND :dataFinal" + " AND a.frota.status != " + StatusFrota.PRE_CADASTRO.getValue() +
             " GROUP BY c.codigoCorporativo, a.frota.id, i.combustivel.codigoCombustivelCorporativo, TRUNC(a.dataRequisicao)";
 
     private static final String QUERY_AUTORIZACOES_EM_LISTA_DE_ABASTECIMENTOS_POR_FLAG_JUSTIFICATIVA = "" +
@@ -305,7 +306,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
             parametros.add(new ParametroPesquisaNulo("idAutorizacaoEstorno"));
         }
 
-        ResultadoPaginado<AutorizacaoPagamento> resultado = pesquisar(paginacao,
+        ResultadoPaginado<AutorizacaoPagamento> resultado = pesquisarSemIsolamentoDados(paginacao,
                 parametros.toArray(new ParametroPesquisa[parametros.size()]));
 
         return resultado.getRegistros().isEmpty() ? null : resultado.getRegistros().get(0);

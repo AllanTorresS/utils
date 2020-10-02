@@ -36,6 +36,7 @@ public class FiltroAutorizacaoApiDocs implements Filter {
 
     private static final String PERMISSAO_API_FROTISTA = "DOC_API_FROTA";
     private static final String PERMISSAO_API_EXTERNO = "DOC_API_EXTERNO";
+    private static final String PERMISSAO_API_AGENCIADOR_FRETE = "DOC_API_AGENCIADOR_FRETE";
 
     @Autowired
     private UtilitarioAmbiente ambiente;
@@ -87,6 +88,8 @@ public class FiltroAutorizacaoApiDocs implements Filter {
             return provedorAutenticacao.possuiPermissao(usuario, PERMISSAO_API_FROTISTA);
         } else if (grupo.trim().equalsIgnoreCase(ConfiguracoesSwagger.API_EXTERNO_GROUP_NAME)) {
             return provedorAutenticacao.possuiPermissao(usuario, PERMISSAO_API_EXTERNO);
+        }else if (grupo.trim().equalsIgnoreCase(ConfiguracoesSwagger.API_AGENCIADOR_FRETE_GROUP_NAME)) {
+            return provedorAutenticacao.possuiPermissao(usuario, PERMISSAO_API_AGENCIADOR_FRETE);
         }
         return false;
     }
