@@ -107,7 +107,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                     "      FROM TransacaoConsolidada tc " +
                     "      JOIN tc.frotaPtov fpv " +
                     "      WHERE " +
-                    "           tc.id = a.transacaoConsolidada.id " +
+                    "           ((tc.id = a.transacaoConsolidada.id AND a.transacaoConsolidadaPostergada.id IS NULL) OR tc.id = a.transacaoConsolidadaPostergada.id) " +
                     "           AND tc.cobranca.id = :idCobranca " +
                     "   ) " +
                     " ORDER BY a.dataRequisicao ASC ";

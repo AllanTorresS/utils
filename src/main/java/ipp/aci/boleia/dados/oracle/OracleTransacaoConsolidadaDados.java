@@ -890,7 +890,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         String ordenacao = " ";
         if(filtro.getPaginacao().getParametrosOrdenacaoColuna().isEmpty()) {
             ordenacao = "CASE WHEN r.status = " + StatusPagamentoReembolso.NF_ATRASADA.getValue() + " THEN 0 " +
-                    "WHEN r.status = " + StatusPagamentoReembolso.ATRASADO.getValue() + " THEN 1 " +
+                    "WHEN r.valorReembolso > 0 AND trunc(r.dataVencimentoPgto) < trunc(sysdate()) AND r.status <> " + StatusPagamentoReembolso.PAGO.getValue() + " THEN 1 " + //ATRASADO
                     "ELSE 2 END, tc.dataInicioPeriodo, tc.dataFimPeriodo ";
         } else {
             String campoOrdenacao= "tc.dataInicioPeriodo %s , tc.dataFimPeriodo %s ";
