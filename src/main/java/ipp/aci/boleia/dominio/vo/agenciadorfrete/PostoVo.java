@@ -9,6 +9,9 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ipp.aci.boleia.util.UtilitarioFormatacao.TAMANHO_CNPJ;
+import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarNumeroZerosEsquerda;
+
 /**
  * Vo que representa o posto da api de agenciador de frete
  */
@@ -34,7 +37,7 @@ public class PostoVo {
     public PostoVo(PontoDeVenda pontoDeVenda, List<PrecoBase> precosBase) {
         this.nome = pontoDeVenda.getNome().trim();
         Long cnpjNumerico = obterCnpj(pontoDeVenda);
-        this.cnpj = cnpjNumerico != null ? cnpjNumerico.toString(): null;
+        this.cnpj = cnpjNumerico != null ? formatarNumeroZerosEsquerda(cnpjNumerico, TAMANHO_CNPJ): null;
         this.endereco = new EnderecoVo(pontoDeVenda);
         this.latitude = UtilitarioFormatacao.formatarDecimal(pontoDeVenda.getLatitude());
         this.longitude = UtilitarioFormatacao.formatarDecimal(pontoDeVenda.getLongitude());
