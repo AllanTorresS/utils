@@ -3,7 +3,7 @@ package ipp.aci.boleia.dominio.vo.conectcar;
 import java.math.BigDecimal;
 
 public class RespostaLeadSalesforceVo {
-
+ 
 	private String cnpj;
 	private Boolean aprovado;
 	private Integer tempoIsencaoMensalidade;

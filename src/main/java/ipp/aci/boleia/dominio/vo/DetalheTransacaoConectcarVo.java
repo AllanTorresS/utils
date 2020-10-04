@@ -44,7 +44,11 @@ public class DetalheTransacaoConectcarVo {
         this.setTag(transacao.getTag().getId().toString());
         this.setPraca(transacao.getPraca());
         this.setValor(UtilitarioFormatacao.formatarDecimal(transacao.getValorTotal().setScale(2, RoundingMode.HALF_UP)));
+<<<<<<< HEAD
         this.setEstorno(UtilitarioFormatacao.formatarDecimal(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP)));
+=======
+//        this.setEstorno(UtilitarioFormatacao.formatarDecimal(transacao.getEstorno().setScale(2, RoundingMode.HALF_UP)));
+>>>>>>> branch 'CspProFrotas_DominioUtil' of http://54.233.130.37/boleia/boleia-dominioUtil
     }
 
 	public String getData() {

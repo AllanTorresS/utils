@@ -178,8 +178,8 @@ public class ConfiguracoesAwsSqs {
      * @param nomeFilas Lista dos nomes das filas usadas na aplicação
      */
     private void criaFilaSeNaoExistem(AmazonSQSAsync amazonSQSAsync, List<String> nomeFilas) {
-        ListQueuesResult listQueuesResult = amazonSQSAsync.listQueues(new ListQueuesRequest(prefixoFilas));
-        nomeFilas.forEach(x -> criaFilaSeNaoExistem(amazonSQSAsync, listQueuesResult, x));
+//        ListQueuesResult listQueuesResult = amazonSQSAsync.listQueues(new ListQueuesRequest(prefixoFilas));
+//        nomeFilas.forEach(x -> criaFilaSeNaoExistem(amazonSQSAsync, listQueuesResult, x));
     }
 
     /**
