@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -71,6 +74,12 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
     		 "SELECT NVL(SUM(tc.valorTotal),0) " +
              " FROM TransacaoConectcar tc " +
              "WHERE tc.frota.id  = :idFrota ";
+
+    private static final String QUERY_ULTIMA_TRANSACAO =
+   		 "SELECT tc " +
+            " FROM TransacaoConectcarConsolidada tc " +
+            "WHERE tc.frota.id  = :idFrota " + 
+            " ORDER BY tc.id DESC";
 
     @Autowired
     private UtilitarioAmbiente ambiente;
@@ -289,6 +298,20 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
             }
         }      
         return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+	}
+
+	@Override
+	public TransacaoConectcar obterUltimaTransacaoPorFrota(Long idFrota) {
+		
+		Query query = getGerenciadorDeEntidade().createQuery(QUERY_ULTIMA_TRANSACAO);		 
+		query.setParameter("idFrota", idFrota);	    
+		query.setMaxResults(1);
+		
+		try {
+			return (TransacaoConectcar) query.getResultList().get(0);
+		} catch (NoResultException | IndexOutOfBoundsException e) {
+			return null;
+		}				
 	}
 
 }

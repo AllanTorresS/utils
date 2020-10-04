@@ -90,4 +90,11 @@ public interface ITransacaoConectcarDados extends IRepositorioBoleiaDados<Transa
      */
     ResultadoPaginado<TransacaoConectcar> pesquisarUtilizacaoTag(FiltroPesquisaUtilizacaoTagVo filtro);
 
+    /**
+     * Obtem a última transação de uma frota para o calculo do ciclo
+     *
+     * @return última transacao conectcar de uma frota
+     */
+    TransacaoConectcar obterUltimaTransacaoPorFrota(Long idFrota);
+
 }
