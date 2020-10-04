@@ -130,11 +130,11 @@ public class OracleTransacaoConectcarConsolidadaDados extends OracleRepositorioB
                     "    AND LOWER(NF.numero) LIKE '%%'||:notaFiscal||'%%' " +
                     "    AND (LOWER(NF.numeroSerie) LIKE '%%'||:numeroSerie||'%%' OR :numeroSerie is null))";
     
-    //TODO ALTERAR A QUERY APOS A DEFINICAO DO REEMBOLSO
-    private static final String QUERY_VALOR_UTILIZADO =
+    private static final String QUERY_VALOR_UTILIZADO_CICLO =
     		 "SELECT NVL(SUM(tc.valorTotal),0) " +
              " FROM TransacaoConectcarConsolidada tc " +
-             "WHERE tc.frota.id  = :idFrota ";
+             " WHERE tc.frota.id  = :idFrota  " +    
+    		 " AND tc.dataFimPeriodo  >= :dataAtual ";
    
 
   private static final String QUERY_ULTIMA_TRANSACAO =
@@ -362,10 +362,11 @@ public class OracleTransacaoConectcarConsolidadaDados extends OracleRepositorioB
 
 	@Override
 	public BigDecimal obterValorUtilizadoCiclo(Long idFrota) {
-		StringBuilder query = new StringBuilder(QUERY_VALOR_UTILIZADO);
+		StringBuilder query = new StringBuilder(QUERY_VALOR_UTILIZADO_CICLO);
 
 		List<ParametroPesquisa> parametros = new ArrayList<>();
         parametros.add(new ParametroPesquisaIgual("idFrota", idFrota));
+        parametros.add(new ParametroPesquisaDataMenorOuIgual("dataAtual", UtilitarioCalculoData.obterPrimeiroInstanteDia(ambiente.buscarDataAmbiente())));
         
         return pesquisarUnicoSemIsolamentoDados(query.toString(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
 	}
