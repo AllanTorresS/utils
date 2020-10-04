@@ -1,5 +1,6 @@
 package ipp.aci.boleia.dados.oracle;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +10,8 @@ import org.springframework.stereotype.Repository;
 import ipp.aci.boleia.dados.IReembolsoConectcarDados;
 import ipp.aci.boleia.dominio.ReembolsoConectcar;
 import ipp.aci.boleia.dominio.enums.StatusIntegracaoReembolsoConectcarJde;
+import ipp.aci.boleia.dominio.enums.StatusIntegracaoReembolsoJde;
+import ipp.aci.boleia.dominio.enums.StatusLiberacaoReembolsoJde;
 import ipp.aci.boleia.dominio.enums.StatusPagamentoReembolsoConectcar;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
@@ -16,13 +19,28 @@ import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMenor;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaReembolsoConectcarVo;
+import ipp.aci.boleia.util.Ordenacao;
 
 /**
  * Respositorio de entidades de Reembolso
  */
 @Repository
 public class OracleReembolsoConectcarDados extends OracleRepositorioBoleiaDados<ReembolsoConectcar> implements IReembolsoConectcarDados {
+
+	/**
+	 * Consulta para buscar todos os reembolsos pendente para liberação de pagamento em JDE.
+	 * Os reembolsos são posteriomente filtrados para validar regras de liberação,
+	 * 	então ulitizamos o FETCH para otimizar acesso a base.
+	 */
+	private static final String CONSULTA_REEMBOLSOS_SUSPENSOS_PAGAMENTO =
+			"SELECT r " +
+			"FROM ReembolsoConectcar r " +
+			"JOIN FETCH r.transacoesConsolidadas tcs " +
+			"WHERE r.statusLiberacaoPagamento = " + StatusLiberacaoReembolsoJde.SUSPENSO_PAGAMENTO.getValue() + " AND " +
+				"r.statusIntegracao IN (" + StatusIntegracaoReembolsoJde.REALIZADO.getValue() + ", " + StatusIntegracaoReembolsoJde.AGUARDANDO_LIBERACAO.getValue() + ") AND " +
+				"r.numeroDocumento IS NOT NULL";
 
 	/**
 	 * Instancia o repositorio
@@ -60,8 +78,6 @@ public class OracleReembolsoConectcarDados extends OracleRepositorioBoleiaDados<
         }
     }
 
-	
-
 	/**
 	 * Cria uma lista de parametros para a montagem da consulta de reembolso a ser exibida no grid
 	 *
@@ -69,27 +85,41 @@ public class OracleReembolsoConectcarDados extends OracleRepositorioBoleiaDados<
 	 * @return Uma lista de parametros
 	 */
 	private List<ParametroPesquisa> criarParametrosPesquisa(FiltroPesquisaReembolsoConectcarVo filtro) {
+
 		List<ParametroPesquisa> parametros = new ArrayList<>();
-		 if(filtro.getDe() != null) {
+
+		if(filtro.getDe() != null) {
         	parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataPagamento", filtro.getDe()));
         }
-        
+
         if(filtro.getAte() != null) {
         	parametros.add(new ParametroPesquisaDataMenorOuIgual("dataPagamento", filtro.getAte()));
         }
-	    	        
+
         if (filtro.getStatusIntegracao() != null && filtro.getStatusIntegracao().getName() != null) {
             parametros.add(new ParametroPesquisaIgual("statusIntegracao", StatusIntegracaoReembolsoConectcarJde.valueOf(filtro.getStatusIntegracao().getName()).getValue()));
         }
-        
+
         if (filtro.getStatusPagamento() != null && filtro.getStatusPagamento().getName() != null) {
             parametros.add(new ParametroPesquisaIgual("status", StatusPagamentoReembolsoConectcar.valueOf(filtro.getStatusPagamento().getName()).getValue()));
         }		
-		
+
 		povoarParametroLike("numeroDocumento", filtro.getNumeroDocumento(), parametros);
-		
 
 		return parametros;
+	}
+
+	@Override
+	public List<ReembolsoConectcar> obterReembolsosSuspensosParaPagamento() {
+		return pesquisarSemIsolamentoDados(null, CONSULTA_REEMBOLSOS_SUSPENSOS_PAGAMENTO).getRegistros();
+	}
+
+	@Override
+	public List<ReembolsoConectcar> obterReembolsosErroEnvio(Integer numeroTentativas) {
+		List<ParametroPesquisa> parametros = new ArrayList<>();
+		parametros.add(new ParametroPesquisaIgual("statusIntegracao", StatusIntegracaoReembolsoJde.ERRO_ENVIO.getValue()));
+		parametros.add(new ParametroPesquisaMenor("numeroTentativasEnvio", new BigDecimal(numeroTentativas)));
+		return pesquisar(new ParametroOrdenacaoColuna("dataVencimentoPagto", Ordenacao.CRESCENTE), parametros.toArray(new ParametroPesquisa[parametros.size()]));
 	}
 
 }

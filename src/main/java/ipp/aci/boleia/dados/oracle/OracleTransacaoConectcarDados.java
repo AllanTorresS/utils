@@ -2,24 +2,19 @@ package ipp.aci.boleia.dados.oracle;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-import ipp.aci.boleia.dados.ITransacaoConectcarConsolidadaDados;
-import ipp.aci.boleia.dominio.PontoDeVenda;
-import ipp.aci.boleia.dominio.TransacaoConectcarConsolidada;
+import ipp.aci.boleia.dados.ITransacaoConectcarDados;
+import ipp.aci.boleia.dominio.TransacaoConectcar;
 import ipp.aci.boleia.dominio.Usuario;
-import ipp.aci.boleia.dominio.enums.ModalidadePagamento;
 import ipp.aci.boleia.dominio.enums.StatusAtivacao;
 import ipp.aci.boleia.dominio.enums.StatusNotaFiscal;
-import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
 import ipp.aci.boleia.dominio.enums.TipoTransacaoConectcar;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
@@ -37,99 +32,44 @@ import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
  * Respositorio de entidades AutorizacaoPagamento Consolidada
  */
 @Repository
-public class OracleTransacaoConectcarConsolidadaDados extends OracleRepositorioBoleiaDados<TransacaoConectcarConsolidada>
-        implements ITransacaoConectcarConsolidadaDados {
-
-    private static final String CLAUSULA_NOTA_ATRASADA =
-            " TRUNC(TC.dataPrazoEmissaoNfe) <  TRUNC(SYSDATE) " +
-                    " AND TC.statusNotaFiscal <> " + StatusNotaFiscal.EMITIDA.getValue() +
-                    " AND TC.statusNotaFiscal <> " + StatusNotaFiscal.SEM_EMISSAO.getValue() + " ";
-
-
-    private static final String CLAUSULA_NOTA_PENDENTE =
-            " TRUNC(TC.dataPrazoEmissaoNfe) >= TRUNC(SYSDATE) " +
-                    " AND TC.statusNotaFiscal <> " + StatusNotaFiscal.EMITIDA.getValue() +
-                    " AND TC.statusNotaFiscal <> " + StatusNotaFiscal.SEM_EMISSAO.getValue() + " ";
-
-    private static final String CLAUSULA_NOTA_EMITIDA =
-            " TC.statusNotaFiscal = " + StatusNotaFiscal.EMITIDA.getValue() + " ";
-
-    private static final String CLAUSULA_NOTA_SEM_EMISSAO =
-            " TC.statusNotaFiscal = " + StatusNotaFiscal.SEM_EMISSAO.getValue() + " ";
+public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<TransacaoConectcar>
+        implements ITransacaoConectcarDados {
 
     private static final String CONSULTA_CONSOLIDADO_SEM_COBRANCA =
             " select t " +
-                    " from TransacaoConsolidada t" +
-                    "     join FETCH t.frotaPtov fpv  " +
-                    "     join fpv.frota ft  " +
-                    "     left join t.cobranca c  " +
+                    " from TransacaoConectcar t " +
+                    "     join FETCH t.frota ft " +
                     " where " +
-                    "     c.id is null  " +
-                    "     and t.valorTotal is not null " +
-                    "     and ft.numeroJdeInterno is not null" +
-                    "     and t.modalidadePagamento = " + ModalidadePagamento.POS_PAGO.getValue() +
+                    "     t.cobranca is null " +
                     "     and t.dataFimPeriodo < :hoje " +
-                    "     and t.statusConsolidacao = " + StatusTransacaoConsolidada.FECHADA.getValue() +
                     " order by t.dataFimPeriodo";
 
-    private static final String CONSULTA_CONSOLIDADO_ABERTO =
+    private static final String CONSULTA_CONSOLIDADO_SEM_REEMBOLSO =
             " SELECT t " +
-                    " FROM TransacaoConsolidada t " +
-                    "     JOIN FETCH t.autorizacaoPagamentos a " +
-                    "     JOIN FETCH t.frotaPtov fpv " +
-                    "     JOIN FETCH fpv.frota f " +
+                    " FROM TransacaoConectcar t " +
+                    "     JOIN FETCH t.frota fr  " +
                     " WHERE " +
-                    "     t.dataFimPeriodo < :hoje " +
-                    "     AND t.statusConsolidacao = " + StatusTransacaoConsolidada.ABERTA.getValue();
+                    "     t.reembolso IS NULL " +
+                    "     AND t.dataFimPeriodo < :hoje";
 
     private static final String CONSULTA_PESQUISA_GRID =
             "SELECT TC " +
-                    " FROM TransacaoConsolidada TC " +
-                    "   LEFT JOIN TC.frotaPtov FR " +
-                    "   LEFT JOIN FR.frota F " +
-                    "   LEFT JOIN FR.pontoVenda PV " +
-                    " WHERE " +
-                    "   ( " + CLAUSULA_NOTA_SEM_EMISSAO +
-                    "       OR (TC.valorTotalNotaFiscal is not null AND TC.valorTotalNotaFiscal > 0))" +
-                    "   AND (TC.dataInicioPeriodo <= :dataFimPeriodo OR :dataFimPeriodo is null) " +
+                    " FROM TransacaoConectcar TC " +
+                    "   LEFT JOIN TC.frota F " +
+                    " WHERE (TC.dataInicioPeriodo <= :dataFimPeriodo OR :dataFimPeriodo is null) " +
                     "   AND (TC.dataFimPeriodo >= :dataInicioPeriodo OR :dataInicioPeriodo is null) " +
                     "   AND (F.id = :idFrota OR :idFrota is null) " +
-                    "   AND (PV.id = :idPontoVenda OR :idPontoVenda is null) " +
-                    "   AND (" +
-                    "           (F.semNotaFiscal IS NULL OR F.semNotaFiscal = false) " +
-                    "           OR (TC.empresaAgregada.id IS NOT NULL) " +
-                    "           OR (TC.unidade.id IS NOT NULL)" +
-                    "       ) " +
                     "   AND (TC.empresaAgregada.id = :idEmpresaAgregada OR :idEmpresaAgregada is null) " +
                     "   AND (TC.unidade.id = :idUnidade OR :idUnidade is null) " +
-                    "   AND (:idInvalido IN (:idsPvs) OR PV.id IN (:idsPvs)) " +
-                    "   %s " +
                     "   %s " +
                     "   %s " +
                     " ORDER BY " +
-                    "   (CASE WHEN TC.statusNotaFiscal = 0 THEN (CASE WHEN TRUNC(TC.dataPrazoEmissaoNfe) < SYSDATE THEN 0 ELSE 1 END) ELSE 2 END), TC.dataFimPeriodo";
+                    "   TC.dataFimPeriodo";
 
-    private static final String FILTRO_NOTAFISCAL_PESQUISA_GRID =
-            " AND EXISTS ( " +
-                    " SELECT 1 " +
-                    "    FROM FrotaPontoVenda FR2, " +
-                    "    AutorizacaoPagamento AP, " +
-                    "    NotaFiscal NF " +
-                    "    join NF.autorizacoesPagamento autorizacaoPagamento " +
-                    "WHERE " +
-                    "    FR2.frota.id=AP.frota.id " +
-                    "    AND FR2.pontoVenda.id=AP.pontoVenda.id " +
-                    "    AND autorizacaoPagamento.id = AP.id " +
-                    "    AND FR2.id=FR.id " +
-                    "    AND AP.status = 1 " +
-                    "    AND (AP.dataProcessamento BETWEEN TC.dataInicioPeriodo AND TC.dataFimPeriodo) " +
-                    "    AND LOWER(NF.numero) LIKE '%%'||:notaFiscal||'%%' " +
-                    "    AND (LOWER(NF.numeroSerie) LIKE '%%'||:numeroSerie||'%%' OR :numeroSerie is null))";
-    
     //TODO ALTERAR A QUERY APOS A DEFINICAO DO REEMBOLSO
     private static final String QUERY_VALOR_UTILIZADO =
     		 "SELECT NVL(SUM(tc.valorTotal),0) " +
-             " FROM TransacaoConectcarConsolidada tc " +
+             " FROM TransacaoConectcar tc " +
              "WHERE tc.frota.id  = :idFrota ";
 
     @Autowired
@@ -141,13 +81,13 @@ public class OracleTransacaoConectcarConsolidadaDados extends OracleRepositorioB
     /**
      * Instancia o repositorio
      */
-    public OracleTransacaoConectcarConsolidadaDados() {
-        super(TransacaoConectcarConsolidada.class);
+    public OracleTransacaoConectcarDados() {
+        super(TransacaoConectcar.class);
     }
 
     @Override
-    public List<TransacaoConectcarConsolidada> obterTransacoesPorCobranca(Long idCobranca) {
-        return pesquisar(null, "from TransacaoConectcarConsolidada where cobranca.id = :idCobranca", new ParametroPesquisaIgual("idCobranca", idCobranca)).getRegistros();
+    public List<TransacaoConectcar> obterTransacoesPorCobranca(Long idCobranca) {
+        return pesquisar(null, "from TransacaoConectcar where cobranca.id = :idCobranca", new ParametroPesquisaIgual("idCobranca", idCobranca)).getRegistros();
     }
 
     /**
@@ -158,29 +98,14 @@ public class OracleTransacaoConectcarConsolidadaDados extends OracleRepositorioB
      * @return retorna o resultado paginado da consulta
      */
     @Override
-    public ResultadoPaginado<TransacaoConectcarConsolidada> pesquisar(FiltroPesquisaTransacaoConsolidadaVo filtro, Usuario usuarioLogado) {
+    public ResultadoPaginado<TransacaoConectcar> pesquisar(FiltroPesquisaTransacaoConsolidadaVo filtro, Usuario usuarioLogado) {
         List<ParametroPesquisa> parametros = criarParametrosPesquisaGrid(filtro, usuarioLogado);
-        String filtroStatus = "";
-        if (filtro.getStatusEmissaoNF() != null && !filtro.getStatusEmissaoNF().isEmpty()
-                && (StatusNotaFiscal.values().length != filtro.getStatusEmissaoNF().size())) {
-            boolean atrasada = filtro.getStatusEmissaoNF().stream().anyMatch(x -> StatusNotaFiscal.valueOf(x.getName()).equals(StatusNotaFiscal.ATRASADA));
-            boolean pendente = filtro.getStatusEmissaoNF().stream().anyMatch(x -> StatusNotaFiscal.valueOf(x.getName()).equals(StatusNotaFiscal.PENDENTE));
-            boolean emitida = filtro.getStatusEmissaoNF().stream().anyMatch(x -> StatusNotaFiscal.valueOf(x.getName()).equals(StatusNotaFiscal.EMITIDA));
-            boolean semEmissao = filtro.getStatusEmissaoNF().stream().anyMatch(x -> StatusNotaFiscal.valueOf(x.getName()).equals(StatusNotaFiscal.SEM_EMISSAO));
-            filtroStatus = montarFiltroStatus(atrasada, pendente, emitida, semEmissao);
-        }
-        String filtroNotaFiscal = "";
-        if(filtro.getNotaFiscal() != null && filtro.getNotaFiscal().trim().length() > 0){
-            filtroNotaFiscal = FILTRO_NOTAFISCAL_PESQUISA_GRID;
-        }
-
         String filtroFrotaControle = "";
-
         if (usuarioLogado.getFrota() == null || !usuarioLogado.getFrota().getCnpj().equals(cnpjFrotaControle)){
             filtroFrotaControle = "AND FR.frota.cnpj != " + cnpjFrotaControle + " ";
         }
 
-        String consultaPesquisa = String.format(CONSULTA_PESQUISA_GRID, filtroFrotaControle, filtroStatus, filtroNotaFiscal);
+        String consultaPesquisa = String.format(CONSULTA_PESQUISA_GRID, filtroFrotaControle);
         return pesquisar(filtro.getPaginacao(), consultaPesquisa, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
@@ -198,8 +123,6 @@ public class OracleTransacaoConectcarConsolidadaDados extends OracleRepositorioB
         ParametroPesquisaIgual parametroPV = new ParametroPesquisaIgual("idPontoVenda", null);
         ParametroPesquisaIgual parametroEmpresaAgregada = new ParametroPesquisaIgual("idEmpresaAgregada", null);
         ParametroPesquisaIgual parametroUnidade = new ParametroPesquisaIgual("idUnidade", null);
-        ParametroPesquisaIgual parametroRede = new ParametroPesquisaIgual("idsPvs", Collections.singletonList(-1L));
-        ParametroPesquisaIgual parametroIdInvalido = new ParametroPesquisaIgual("idInvalido", -1L);
         ParametroPesquisaIgual parametroFrota = criarParametroFrota(filtro, usuarioLogado);
 
         if (filtro.getDe() != null) {
@@ -208,12 +131,6 @@ public class OracleTransacaoConectcarConsolidadaDados extends OracleRepositorioB
 
         if (filtro.getAte() != null) {
             parametroAte = new ParametroPesquisaIgual("dataFimPeriodo", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte()));
-        }
-
-        if (filtro.getPontoDeVenda() != null && filtro.getPontoDeVenda().getId() != null) {
-            parametroPV = new ParametroPesquisaIgual("idPontoVenda", filtro.getPontoDeVenda().getId());
-        } else if (usuarioLogado.isRevendedor()) {
-            parametroRede = new ParametroPesquisaIgual("idsPvs", usuarioLogado.getPontosDeVenda().stream().map(PontoDeVenda::getId).collect(Collectors.toList()));
         }
 
         if(filtro.getEmpresaAgregada() != null && filtro.getEmpresaAgregada().getId() != null){
@@ -230,8 +147,6 @@ public class OracleTransacaoConectcarConsolidadaDados extends OracleRepositorioB
         parametros.add(parametroPV);
         parametros.add(parametroEmpresaAgregada);
         parametros.add(parametroUnidade);
-        parametros.add(parametroRede);
-        parametros.add(parametroIdInvalido);
 
         if(filtro.getNotaFiscal() != null && filtro.getNotaFiscal().trim().length() > 0) {
             povoarParametroIgual("notaFiscal", filtro.getNotaFiscal().toLowerCase(), parametros);
@@ -261,47 +176,8 @@ public class OracleTransacaoConectcarConsolidadaDados extends OracleRepositorioB
         return parametroFrota;
     }
 
-    /**
-     * Povoa o filtro de status da consulta de transacoes para a tela de pesquisa
-     *
-     * @param atrasada Se necessario exibir as atrasadas
-     * @param pendente Se necessario exibir as pendentes
-     * @param emitida Se necessario exibir as emitidas
-     * @param semEmissao Se necessario exibir as sem emissão
-     * @return Ums string contendo as clausulas de filtro por status
-     */
-    private String montarFiltroStatus(boolean atrasada, boolean pendente, boolean emitida, boolean semEmissao) {
-        StringBuilder filtro = new StringBuilder();
-        filtro.append(" AND (");
-        List<String> clausulas = new ArrayList<>();
-
-        if(atrasada) {
-            clausulas.add(CLAUSULA_NOTA_ATRASADA);
-        }
-
-        if (pendente) {
-            clausulas.add(CLAUSULA_NOTA_PENDENTE);
-        }
-
-        if(emitida) {
-            clausulas.add(CLAUSULA_NOTA_EMITIDA);
-        }
-
-        if (semEmissao) {
-            clausulas.add(CLAUSULA_NOTA_SEM_EMISSAO);
-        }
-
-        if(clausulas.isEmpty()) {
-            return "";
-        }
-
-        filtro.append(String.join("OR", clausulas));
-        filtro.append(")");
-        return filtro.toString();
-    }
-
     @Override
-    public List<TransacaoConectcarConsolidada> obterConsolidacoesSemNotaFiscalEntreDatas(
+    public List<TransacaoConectcar> obterConsolidacoesSemNotaFiscalEntreDatas(
             Date dataIntervaloMin, Date dataIntervaloMax) {
         ParametroPesquisa[] parametros = new ParametroPesquisa[] {
                 new ParametroPesquisaIgual("statusNotaFiscal",StatusNotaFiscal.PENDENTE.getValue()),
@@ -312,7 +188,7 @@ public class OracleTransacaoConectcarConsolidadaDados extends OracleRepositorioB
     }
 
     @Override
-    public List<TransacaoConectcarConsolidada> obterConsolidacoesComCicloAbastecimentoEncerrado(
+    public List<TransacaoConectcar> obterConsolidacoesComCicloAbastecimentoEncerrado(
             Date dataIntervaloMin, Date dataIntervaloMax) {
         ParametroPesquisa[] parametros = new ParametroPesquisa[] {
                 new ParametroPesquisaDataMaiorOuIgual("dataFimPeriodo", dataIntervaloMin),
@@ -322,13 +198,13 @@ public class OracleTransacaoConectcarConsolidadaDados extends OracleRepositorioB
     }
 
     @Override
-    public List<TransacaoConectcarConsolidada> obterTransacoesSemCobranca(){
+    public List<TransacaoConectcar> obterTransacoesSemCobranca(){
         return pesquisarSemIsolamentoDados(null,CONSULTA_CONSOLIDADO_SEM_COBRANCA, new ParametroPesquisaIgual("hoje", obterDataHoje())).getRegistros();
     }
 
     @Override
-    public List<TransacaoConectcarConsolidada> obterTransacoesAbertasParaFechamento(){
-        return pesquisarSemIsolamentoDados(null,CONSULTA_CONSOLIDADO_ABERTO, new ParametroPesquisaIgual("hoje", obterDataHoje())).getRegistros();
+    public List<TransacaoConectcar> obterTransacoesSemReembolso() {
+        return pesquisarSemIsolamentoDados(null, CONSULTA_CONSOLIDADO_SEM_REEMBOLSO, new ParametroPesquisaIgual("hoje", obterDataHoje())).getRegistros();
     }
 
     /**
@@ -341,7 +217,7 @@ public class OracleTransacaoConectcarConsolidadaDados extends OracleRepositorioB
     }
 
 	@Override
-	public TransacaoConectcarConsolidada obterTransacoesPorIdConectcar(Long codigoTransacaoConectcar) {
+	public TransacaoConectcar obterTransacoesPorIdConectcar(Long codigoTransacaoConectcar) {
 		ParametroPesquisa[] parametros = new ParametroPesquisa[] {
                 new ParametroPesquisaIgual("codigoTransacaoConectcar", codigoTransacaoConectcar)
         };
@@ -359,7 +235,7 @@ public class OracleTransacaoConectcarConsolidadaDados extends OracleRepositorioB
 	}
 
 	@Override
-	public ResultadoPaginado<TransacaoConectcarConsolidada> pesquisarUtilizacaoTag(
+	public ResultadoPaginado<TransacaoConectcar> pesquisarUtilizacaoTag(
 			FiltroPesquisaUtilizacaoTagVo filtro) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
 

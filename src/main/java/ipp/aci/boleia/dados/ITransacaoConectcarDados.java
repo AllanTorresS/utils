@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import ipp.aci.boleia.dominio.TransacaoConectcarConsolidada;
+import ipp.aci.boleia.dominio.TransacaoConectcar;
 import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaTransacaoConsolidadaVo;
@@ -13,7 +13,7 @@ import ipp.aci.boleia.dominio.vo.FiltroPesquisaUtilizacaoTagVo;
 /**
  * Contrato para implementacao de repositorios de consolidações de Transacao Conectcar Consolidada
  */
-public interface ITransacaoConectcarConsolidadaDados extends IRepositorioBoleiaDados<TransacaoConectcarConsolidada> {
+public interface ITransacaoConectcarDados extends IRepositorioBoleiaDados<TransacaoConectcar> {
     
     /**
      * Executa a consulta de registros baseado em um filtro de pesquisa
@@ -22,7 +22,7 @@ public interface ITransacaoConectcarConsolidadaDados extends IRepositorioBoleiaD
      * @param usuarioLogado usuario logado que solicita a pesquisa
      * @return lista de registros encontrados
      */
-    ResultadoPaginado<TransacaoConectcarConsolidada> pesquisar(FiltroPesquisaTransacaoConsolidadaVo filtro, Usuario usuarioLogado);
+    ResultadoPaginado<TransacaoConectcar> pesquisar(FiltroPesquisaTransacaoConsolidadaVo filtro, Usuario usuarioLogado);
 
     /**
      * Obtém a lista de transações consolidadas que não possuem nota fiscal emitida e o prazo para emissão da
@@ -32,7 +32,7 @@ public interface ITransacaoConectcarConsolidadaDados extends IRepositorioBoleiaD
      * @param dataIntervaloMax data final do intervalo
      * @return lista de transações consolidadas
      */
-    List<TransacaoConectcarConsolidada> obterConsolidacoesSemNotaFiscalEntreDatas(Date dataIntervaloMin, Date dataIntervaloMax);
+    List<TransacaoConectcar> obterConsolidacoesSemNotaFiscalEntreDatas(Date dataIntervaloMin, Date dataIntervaloMax);
 
     /**
      * Obtém a lista de transações consolidadas que tiveram seu ciclo de abastecimento encerrado
@@ -42,7 +42,7 @@ public interface ITransacaoConectcarConsolidadaDados extends IRepositorioBoleiaD
      * @param dataIntervaloMax data final do intervalo
      * @return lista de transações consolidadas
      */
-    List<TransacaoConectcarConsolidada> obterConsolidacoesComCicloAbastecimentoEncerrado(Date dataIntervaloMin, Date dataIntervaloMax);
+    List<TransacaoConectcar> obterConsolidacoesComCicloAbastecimentoEncerrado(Date dataIntervaloMin, Date dataIntervaloMax);
 
 	/**
 	 * Obtem uma transacao por um código de transação da conectcar
@@ -50,7 +50,7 @@ public interface ITransacaoConectcarConsolidadaDados extends IRepositorioBoleiaD
 	 * @param codigoTransacaoConectcar Código de transação da conectCar
 	 * @return
 	 */
-	TransacaoConectcarConsolidada obterTransacoesPorIdConectcar(Long codigoTransacaoConectcar);
+	TransacaoConectcar obterTransacoesPorIdConectcar(Long codigoTransacaoConectcar);
 	
 	/**
 	 * Obtem as transações de uma cobrança
@@ -58,24 +58,22 @@ public interface ITransacaoConectcarConsolidadaDados extends IRepositorioBoleiaD
 	 * @param idCobranca
 	 * @return
 	 */
-	List<TransacaoConectcarConsolidada> obterTransacoesPorCobranca(Long idCobranca);
-	
-	
+	List<TransacaoConectcar> obterTransacoesPorCobranca(Long idCobranca);
 
     /**
      * Obtem as transações consolidadas com ciclo fechado que ainda não geraram cobrança
      *
      * @return Uma lista de transações consolidadas
      */
-    List<TransacaoConectcarConsolidada> obterTransacoesSemCobranca();
+    List<TransacaoConectcar> obterTransacoesSemCobranca();
 
     /**
-     * Obtem as transações consolidadas com ciclo aberto com data de fim anteriores a hoje
+     * Obtem as transacoes consolidadas com ciclo fechado que ainda nao possuem reembolso
      *
-     * @return Uma lista de transações consolidadas
+     * @return Uma lista de transacoes consolidadas
      */
-    List<TransacaoConectcarConsolidada> obterTransacoesAbertasParaFechamento();
-    
+    List<TransacaoConectcar> obterTransacoesSemReembolso();
+
     /**
      * Obtem somatorio do valor utilizado da frota no ciclo
      * @param idFrota código identificador da frota
@@ -90,5 +88,6 @@ public interface ITransacaoConectcarConsolidadaDados extends IRepositorioBoleiaD
      * @param usuarioLogado usuario logado que solicita a pesquisa
      * @return lista de registros encontrados
      */
-    ResultadoPaginado<TransacaoConectcarConsolidada> pesquisarUtilizacaoTag(FiltroPesquisaUtilizacaoTagVo filtro);
+    ResultadoPaginado<TransacaoConectcar> pesquisarUtilizacaoTag(FiltroPesquisaUtilizacaoTagVo filtro);
+
 }
