@@ -48,7 +48,7 @@ public class CobrancaConectcar implements IPersistente {
 	private Long id;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "cobranca")
-	private List<TransacaoConectcarConsolidada> transacoesConsolidadas;
+	private List<TransacaoConectcar> transacoesConsolidadas;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CD_FROTA")
@@ -240,11 +240,11 @@ public class CobrancaConectcar implements IPersistente {
 		this.versao = versao;
 	}
 
-	public List<TransacaoConectcarConsolidada> getTransacoesConsolidadas() {
+	public List<TransacaoConectcar> getTransacoesConsolidadas() {
 		return transacoesConsolidadas;
 	}
 
-	public void setTransacoesConsolidadas(List<TransacaoConectcarConsolidada> transacoesConsolidadas) {
+	public void setTransacoesConsolidadas(List<TransacaoConectcar> transacoesConsolidadas) {
 		this.transacoesConsolidadas = transacoesConsolidadas;
 	}
 

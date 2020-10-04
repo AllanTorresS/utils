@@ -1,9 +1,8 @@
 package ipp.aci.boleia.dominio.vo;
 
-
 import java.math.RoundingMode;
 
-import ipp.aci.boleia.dominio.TransacaoConectcarConsolidada;
+import ipp.aci.boleia.dominio.TransacaoConectcar;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
 import ipp.aci.boleia.util.UtilitarioFormatacaoData;
 
@@ -34,7 +33,7 @@ public class DetalheTransacaoConectcarVo {
      * Constroi o VO de detalhe a partir de uma transação ConectCar
      * @param transacao A autorizacao de pagamento
      */
-    public DetalheTransacaoConectcarVo(TransacaoConectcarConsolidada transacao) {
+    public DetalheTransacaoConectcarVo(TransacaoConectcar transacao) {
         this.setData(UtilitarioFormatacaoData.formatarDataCurta(transacao.getDataInicioPeriodo()));
         this.setHora(UtilitarioFormatacaoData.formatarHoraMinutosSegundos(transacao.getDataInicioPeriodo()));
         this.setFrota(transacao.getFrota().getNomeRazaoFrota());
@@ -43,7 +42,6 @@ public class DetalheTransacaoConectcarVo {
         this.setTag(transacao.getTag().getId().toString());
         this.setPraca(transacao.getPraca());
         this.setValor(UtilitarioFormatacao.formatarDecimal(transacao.getValorTotal().setScale(2, RoundingMode.HALF_UP)));
-//        this.setEstorno(UtilitarioFormatacao.formatarDecimal(transacao.getEstorno().setScale(2, RoundingMode.HALF_UP)));
     }
 
 	public String getData() {

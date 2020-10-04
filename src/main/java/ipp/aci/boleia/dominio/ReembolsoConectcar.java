@@ -91,7 +91,7 @@ public class ReembolsoConectcar implements IPersistente {
     private Long versao;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "reembolso")
-    private List<TransacaoConectcarConsolidada> transacoesConsolidadas;
+    private List<TransacaoConectcar> transacoesConsolidadas;
 
     @Override
     public Long getId() {
@@ -199,11 +199,11 @@ public class ReembolsoConectcar implements IPersistente {
         this.versao = versao;
     }
 
-    public List<TransacaoConectcarConsolidada> getTransacoesConsolidadas() {
+    public List<TransacaoConectcar> getTransacoesConsolidadas() {
         return transacoesConsolidadas;
     }
 
-    public void setTransacoesConsolidadas(List<TransacaoConectcarConsolidada> transacoesConsolidadas) {
+    public void setTransacoesConsolidadas(List<TransacaoConectcar> transacoesConsolidadas) {
         this.transacoesConsolidadas = transacoesConsolidadas;
     }
 
@@ -263,17 +263,6 @@ public class ReembolsoConectcar implements IPersistente {
     }
 
     /**
-     * Informa se o reembolso possui alguma transação consolidada com
-     * pendência de emissão de nota fiscal.
-     *
-     * @return True, caso possua pendencia.
-     */
-    @Transient
-    public boolean possuiPendenciaNotaFiscal() {
-        return transacoesConsolidadas.stream().anyMatch(TransacaoConectcarConsolidada::pendenteNotaFiscal);
-    }
-
-    /**
      * Informa se o reembolso está liberado para a realização do seu pagamento.
      *
      * @return true, caso esteja liberado.
@@ -282,4 +271,5 @@ public class ReembolsoConectcar implements IPersistente {
     public boolean estaAprovadoParaPagamento() {
         return StatusLiberacaoReembolsoJde.APROVADO_PAGAMENTO.getValue() == statusLiberacaoPagamento;
     }
+
 }

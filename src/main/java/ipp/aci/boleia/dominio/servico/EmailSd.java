@@ -48,7 +48,7 @@ import ipp.aci.boleia.dominio.ParametroCiclo;
 import ipp.aci.boleia.dominio.PedidoCreditoFrota;
 import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.SistemaExterno;
-import ipp.aci.boleia.dominio.TransacaoConectcarConsolidada;
+import ipp.aci.boleia.dominio.TransacaoConectcar;
 import ipp.aci.boleia.dominio.TransacaoConsolidada;
 import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.enums.StatusAtivacao;
@@ -718,7 +718,7 @@ public class EmailSd {
      * @param transacaoConsolidada Ciclo que fechou
      * @param abastecimentos abastecimentos pendentes de autorização do ciclo
      */
-    public void enviarEmailCicloFechadoSemAprovacaoDeAlteracao(String destinatario, TransacaoConectcarConsolidada transacaoConsolidada, List<AutorizacaoPagamentoEdicao> abastecimentos){
+    public void enviarEmailCicloFechadoSemAprovacaoDeAlteracao(String destinatario, TransacaoConectcar transacaoConsolidada, List<AutorizacaoPagamentoEdicao> abastecimentos){
         Frota frota = repositorioFrota.obterPorId(transacaoConsolidada.getFrota().getId());
         String assunto = mensagens.obterMensagem("email.alteracao.invalidada.assunto");
 
