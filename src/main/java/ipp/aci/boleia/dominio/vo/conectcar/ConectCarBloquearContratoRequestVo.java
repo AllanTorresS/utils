@@ -22,6 +22,12 @@ public class ConectCarBloquearContratoRequestVo {
 
 	}
 
+	public ConectCarBloquearContratoRequestVo(String codigoInternoParceiro, String motivo) {
+		super();
+		this.codigoInternoParceiro = codigoInternoParceiro;
+		this.motivo = motivo;
+	}
+
 	public String getCodigoInternoParceiro() {
 		return codigoInternoParceiro;
 	}

@@ -1,7 +1,5 @@
 package ipp.aci.boleia.dominio.vo.conectcar;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -17,6 +15,10 @@ public class ConectCarDesbloquearContratoRequestVo {
 	 */
 	public ConectCarDesbloquearContratoRequestVo() {
 
+	}
+
+	public ConectCarDesbloquearContratoRequestVo(String codigoInternoParceiro) {	
+		this.codigoInternoParceiro = codigoInternoParceiro;
 	}
 
 	public String getCodigoInternoParceiro() {
