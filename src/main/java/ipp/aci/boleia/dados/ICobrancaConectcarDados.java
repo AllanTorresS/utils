@@ -27,6 +27,13 @@ public interface ICobrancaConectcarDados extends IRepositorioBoleiaDados<Cobranc
     CobrancaConectcar obterUltimaCobranca(Long idFrota);
 
     /**
+     * Obtem a última cobranca gerada para determinada frota
+     * @param idFrota id da frota
+     * @return Cobranca encontrada
+     */
+    CobrancaConectcar obterUltimaCobrancaCiclo(Long idFrota);
+
+    /**
      * Busca a cobrança do ciclo anterior à uma cobrança específica.
      *
      * @param cobranca Cobrança que será utilizada na pesquisa

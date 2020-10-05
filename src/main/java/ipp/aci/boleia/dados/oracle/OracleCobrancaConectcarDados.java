@@ -119,6 +119,22 @@ public class OracleCobrancaConectcarDados extends OracleRepositorioBoleiaDados<C
 		return null;
 	}
 
+	@Override
+	public CobrancaConectcar obterUltimaCobrancaCiclo(Long idFrota) {
+		List<ParametroPesquisa> parametros = new ArrayList<>();
+		parametros.add(new ParametroPesquisaIgual("transacoesConsolidadas.frota.id", idFrota));
+		parametros.add(new ParametroPesquisaIgual("transacoesConsolidadas.tipo", 2));
+		InformacaoPaginacao paginacao = new InformacaoPaginacao();
+		paginacao.setPagina(1);
+		paginacao.setTamanhoPagina(1);
+		paginacao.getParametrosOrdenacaoColuna().add(new ParametroOrdenacaoColuna("id",Ordenacao.DECRESCENTE));
+		List<CobrancaConectcar> cobrancas = pesquisar(paginacao, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+		if(cobrancas != null && !cobrancas.isEmpty()){
+			return cobrancas.get(0);
+		}
+		return null;
+	}
+
     /**
      * Povoa os parametros de consulta pertinentes ao status de pagamento da cobranca
      * @param filtro O filtro de pesquisa
@@ -159,7 +175,7 @@ public class OracleCobrancaConectcarDados extends OracleRepositorioBoleiaDados<C
     @Override
     public CobrancaConectcar obterCobrancaAnterior(CobrancaConectcar cobranca) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
-        parametros.add(new ParametroPesquisaIgual("transacoesConsolidadas.frotaPtov.frota.id", cobranca.getFrota().getId()));
+        parametros.add(new ParametroPesquisaIgual("transacoesConsolidadas.frota.id", cobranca.getFrota().getId()));
         parametros.add(new ParametroPesquisaDataMenor("dataInicioPeriodo", cobranca.getDataInicioPeriodo()));
 
         InformacaoPaginacao paginacao = new InformacaoPaginacao();

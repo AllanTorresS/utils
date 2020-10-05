@@ -53,7 +53,7 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
                     "     JOIN FETCH t.frota fr  " +
                     " WHERE " +
                     "     t.reembolso IS NULL " +
-                    "     AND t.dataFimPeriodo < :hoje";
+                    "     AND t.dataFimPeriodo < :primeiroDiaDoMes";
 
     private static final String CONSULTA_PESQUISA_GRID =
             "SELECT TC " +
@@ -213,7 +213,7 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
 
     @Override
     public List<TransacaoConectcar> obterTransacoesSemReembolso() {
-        return pesquisarSemIsolamentoDados(null, CONSULTA_CONSOLIDADO_SEM_REEMBOLSO, new ParametroPesquisaIgual("hoje", obterDataHoje())).getRegistros();
+        return pesquisarSemIsolamentoDados(null, CONSULTA_CONSOLIDADO_SEM_REEMBOLSO, new ParametroPesquisaIgual("primeiroDiaDoMes", UtilitarioCalculoData.obterPrimeiroDiaMes(new Date()))).getRegistros();
     }
 
     /**
