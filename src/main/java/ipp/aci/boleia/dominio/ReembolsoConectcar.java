@@ -77,9 +77,6 @@ public class ReembolsoConectcar implements IPersistente {
     @Column(name = "ID_STATUS_LIB_JDE")
     private Integer statusLiberacaoPagamento;
 
-    @Column(name = "VR_DESC_CRED")
-    private BigDecimal valorDescontoCredito;
-
     @Column(name = "NO_TENTATIVAS_ENVIO")
     private Integer numeroTentativasEnvio;
 
@@ -218,14 +215,6 @@ public class ReembolsoConectcar implements IPersistente {
 
     public void setStatusLiberacaoPagamento(Integer statusLiberacaoPagamento) {
         this.statusLiberacaoPagamento = statusLiberacaoPagamento;
-    }
-
-    public BigDecimal getValorDescontoCredito() {
-        return valorDescontoCredito;
-    }
-
-    public void setValorDescontoCredito(BigDecimal valorDescontoCredito) {
-        this.valorDescontoCredito = valorDescontoCredito;
     }
 
     public Integer getNumeroTentativasEnvio() {
