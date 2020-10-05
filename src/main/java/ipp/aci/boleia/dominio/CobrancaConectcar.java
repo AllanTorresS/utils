@@ -1,7 +1,6 @@
 package ipp.aci.boleia.dominio;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -350,10 +349,6 @@ public class CobrancaConectcar implements IPersistente {
 	public void setValorMensalidade(BigDecimal valorMensalidade) {
 		this.valorMensalidade = valorMensalidade;
 	}
-	
-    public List<Frota> getFrotas() {
-        return transacoesConsolidadas != null ? transacoesConsolidadas.get(0).getFrotas() : Collections.emptyList();
-    }
 
 	public Integer getTipo() {
 		return tipo;
@@ -362,6 +357,5 @@ public class CobrancaConectcar implements IPersistente {
 	public void setTipo(Integer tipo) {
 		this.tipo = tipo;
 	}
-	
 
 }

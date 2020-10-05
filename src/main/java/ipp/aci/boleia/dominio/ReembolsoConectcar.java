@@ -56,9 +56,6 @@ public class ReembolsoConectcar implements IPersistente {
     @Column(name = "VR_REEMB")
     private BigDecimal valorReembolso;
 
-    @Column(name = "VR_DESC")
-    private BigDecimal valorDesconto;
-
     @Column(name = "VR_TOTAL")
     private BigDecimal valorTotal;
 
@@ -149,14 +146,6 @@ public class ReembolsoConectcar implements IPersistente {
 
     public void setValorReembolso(BigDecimal valorReembolso) {
         this.valorReembolso = valorReembolso;
-    }
-
-    public BigDecimal getValorDesconto() {
-        return valorDesconto;
-    }
-
-    public void setValorDesconto(BigDecimal valorDesconto) {
-        this.valorDesconto = valorDesconto;
     }
 
     public BigDecimal getValorTotal() {
