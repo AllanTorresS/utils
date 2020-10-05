@@ -75,6 +75,6 @@ public class TipoMelhoria implements IPersistente {
 
     @Transient
     public boolean isOutro() {
-        return this.descricao != null && OUTRO.equalsIgnoreCase(this.descricao);
+        return OUTRO.equalsIgnoreCase(this.descricao);
     }
 }

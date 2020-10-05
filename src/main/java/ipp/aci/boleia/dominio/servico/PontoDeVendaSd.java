@@ -265,13 +265,8 @@ public class PontoDeVendaSd {
     	    Long usuarioPontoVendaCnpj = usuario.getPontosDeVenda().get(0).getComponenteAreaAbastecimento().getCodigoPessoa();
     	    Long pontoVendaCnpj = pontoDeVenda.getComponenteAreaAbastecimento().getCodigoPessoa();
 
-                if (String.format("%014d",usuarioPontoVendaCnpj).substring(0, 8)
-                        .equals(String.format("%014d",pontoVendaCnpj).substring(0, 8))){
-                    return true;
-                }
-                else{
-                    return false;
-                }
+            return String.format("%014d", usuarioPontoVendaCnpj).substring(0, 8)
+                    .equals(String.format("%014d", pontoVendaCnpj).substring(0, 8));
 
     	}
     	return true;
@@ -285,12 +280,9 @@ public class PontoDeVendaSd {
      * @return true caso encontre um credenciamento pendente se não false.
      */
     private static boolean verificarCredenciamentoPendente(Usuario usuario, PontoDeVenda pontoDeVenda) {
-        if (usuario != null && !CollectionUtils.isNullOrEmpty(usuario.getPontosDeVenda()) && !usuario.getPontosDeVenda().contains(pontoDeVenda)
+        return usuario != null && !CollectionUtils.isNullOrEmpty(usuario.getPontosDeVenda()) && !usuario.getPontosDeVenda().contains(pontoDeVenda)
                 && (StatusHabilitacaoPontoVenda.PENDENTE_ACEITE.getValue().equals(pontoDeVenda.getStatusHabilitacao())
-                || pontoDeVenda.getTokenCredenciamento() != null )) {
-            return true;
-        }
-        return false;
+                || pontoDeVenda.getTokenCredenciamento() != null);
     }
 
     /**
