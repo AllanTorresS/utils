@@ -370,6 +370,10 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @OneToOne(mappedBy = "frota")
     private CondicoesComerciais condicoesComerciais;
     
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_Frota")
+    private SituacaoConectCar situacaoConectCar;
+    
 	/**
      * Construtor default
      */
