@@ -68,7 +68,7 @@ public class MotorGeracaoRelatorios implements IPersistente {
     private String msgErro;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="CD_USUARIO")
     private Usuario usuario;
 

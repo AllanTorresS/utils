@@ -105,7 +105,7 @@ public class Usuario implements IPersistente, IExclusaoLogica, IPertenceFrota, I
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "CD_TIPO_PERFIL")
     private TipoPerfil tipoPerfil;
 
