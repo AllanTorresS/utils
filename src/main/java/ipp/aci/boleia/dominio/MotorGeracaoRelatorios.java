@@ -173,4 +173,18 @@ public class MotorGeracaoRelatorios implements IPersistente {
     public void setUltimaPaginaProcessada(Integer ultimaPaginaProcessada) {
         this.ultimaPaginaProcessada = ultimaPaginaProcessada;
     }
+
+    public Long getTotalRegistros() {
+        return this.abasRelatorio.stream()
+                    .mapToLong(a -> a.getTotalRegistros() != null ? a.getTotalRegistros() : 0).sum();
+    }
+
+    public Long getRegistrosProcessados() {
+        return this.abasRelatorio.stream()
+                .mapToLong(a -> a.getRegistrosProcessados() != null ? a.getRegistrosProcessados() : 0).sum();
+    }
+
+    public Boolean processouTodosRegistros(){
+        return this.getRegistrosProcessados().compareTo(this.getTotalRegistros()) >= 0;
+    }
 }
