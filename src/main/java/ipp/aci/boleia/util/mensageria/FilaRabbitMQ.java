@@ -2,10 +2,14 @@ package ipp.aci.boleia.util.mensageria;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 @Component
 public class FilaRabbitMQ {
@@ -68,16 +72,27 @@ public class FilaRabbitMQ {
      * @param mensagem A mensagem a ser enviada
      * @throws IOException em caso de erro de envio da mensagem
      */
-    public void enviarMensagem(String chaveRota, String mensagem) throws IOException {
-        StringBuilder nomeChaveRota = new StringBuilder(prefixoChaveRota);
-        nomeChaveRota.append(chaveRota);
+    public void enviarMensagem(String chaveRota, String mensagem) {
+        ConnectionFactory fabricaConexoes = new ConnectionFactory();
+        fabricaConexoes.setHost(nomeHost);
 
-        canal.basicPublish(nomeTopicoRelatorio, nomeChaveRota.toString(),
-                new AMQP.BasicProperties.Builder()
-                    .contentType("text/plain")
-                    .deliveryMode(2)
-                    .priority(1)
-                    .build(),
-                mensagem.getBytes());
+        try {
+            Connection connection = fabricaConexoes.newConnection();
+            Channel canal = connection.createChannel();
+            canal.exchangeDeclare(nomeTopicoRelatorio, getTipoExchange(), true);
+
+            StringBuilder nomeChaveRota = new StringBuilder(prefixoChaveRota);
+            nomeChaveRota.append(chaveRota);
+
+            canal.basicPublish(nomeTopicoRelatorio, nomeChaveRota.toString(),
+                    new AMQP.BasicProperties.Builder()
+                        .contentType("text/plain")
+                        .deliveryMode(2)
+                        .priority(1)
+                        .build(),
+                    mensagem.getBytes());
+        } catch (IOException | TimeoutException e) {
+            throw new ExcecaoBoleiaRuntime(e);
+        }
     }
 }
