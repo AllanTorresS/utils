@@ -29,6 +29,11 @@ public final class ConstantesJde {
     public static final Integer VOUCHER_TEMPO_HORA = 12;
     public static final Integer VOUCHER_TEMPO_MINUTO = 0;
     public static final Integer VOUCHER_TEMPO_SEGUNDO = 0;
+    
+    public static final Long VOUCHER_CONECTCAR_CENARIO = 734L;
+    public static final String VOUCHER_CONECTCAR_OBSERVACAO = "ProFrotas X Connectcar";
+    public static final String VOUCHER_CONECTCAR_OBSERVACAO_DISTRIBUICAO_CONTABIL = "PASSAGENS";
+    public static final Long VOUCHER_CONECTCAR_INDICE_CONTA_CONTABIL = 5L;
 
     public static final Long VOUCHER_CONTAS_PAGAR_CENARIO = 73L;
     public static final String VOUCHER_CONTAS_PAGAR_CIA_DOCUMENTO = COMPANHIA;
