@@ -33,10 +33,11 @@ public class AgenciadorFreteCobrancaSd {
      * @return o deconto
      */
     public BigDecimal obterDescontoAbastecimento(List<Consolidado> consolidados) {
-        return consolidados.stream().flatMap(c -> c.getTransacoes().stream()).map(t -> t.getAbastecimento().getLitragem()
-                .multiply(t.getAbastecimento().getPrecoCombustivel())
-                .multiply(t.getAbastecimento().getMdr())
-                .multiply(t.getAbastecimento().getTaxaFee()))
+        return consolidados.stream().flatMap(c -> c.getTransacoes().stream())
+                .map(t -> t.getAbastecimento().getLitragem()
+                        .multiply(t.getAbastecimento().getPrecoCombustivel())
+                        .multiply(t.getAbastecimento().getMdr()).divide(BigDecimal.valueOf(100L), BigDecimal.ROUND_HALF_UP)
+                        .multiply(t.getAbastecimento().getTaxaFee().divide(BigDecimal.valueOf(100L), BigDecimal.ROUND_HALF_UP)))
                 .reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
     }
 
