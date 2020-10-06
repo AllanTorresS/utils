@@ -123,9 +123,12 @@ public class AgenciadorFreteExternoNddDados implements IAgenciadorFreteExternoDa
      * @param resposta dos serviços da NDD
      * @throws ExcecaoServicoIndisponivel quando serviços estão indisponiveis
      */
-    private void trataResposta(RespostaTransacaoNddVo resposta) throws ExcecaoServicoIndisponivel {
+    private void trataResposta(RespostaTransacaoNddVo resposta) throws ExcecaoServicoIndisponivel, ExcecaoValidacao {
+        Integer sucesso = 200;
         if(resposta == null || resposta.getCode() == null) {
             throw new ExcecaoServicoIndisponivel(mensagens.obterMensagem("agenciador.frete.ndd.servico.inexistente"));
+        } else if (!resposta.getCode().equals(sucesso)){
+            throw new ExcecaoValidacao(mensagens.obterMensagem("O cliente externo não autorizou o abastecimento com os dados solicitados."));
         }
     }
 

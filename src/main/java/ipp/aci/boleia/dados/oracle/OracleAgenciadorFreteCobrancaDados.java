@@ -41,7 +41,7 @@ public class OracleAgenciadorFreteCobrancaDados extends OracleRepositorioBoleiaD
     public ResultadoPaginado<AgenciadorFreteCobranca> pesquisar(FiltroRelatorioCobrancaVo filtro) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
         if (filtro.getAte() != null) {
-            Date data = UtilitarioCalculoData.obterPrimeiroDiaMes(UtilitarioFormatacaoData.lerDataMesAno(filtro.getAte()));
+            Date data = UtilitarioCalculoData.obterUltimoDiaMes(UtilitarioFormatacaoData.lerDataMesAno(filtro.getAte()));
             parametros.add(new ParametroPesquisaDataMenorOuIgual("dataCriacao", data));
         }
         if (filtro.getDe()!= null) {

@@ -25,6 +25,7 @@ public enum TemplatePlanilha {
     TEMPLATE_RELATORIO_REEMBOLSO_AGENCIADOR_FRETE_SOLUCAO("template-relatorio-reembolso-agenciador-frete-solucao.xlsx"),
     TEMPLATE_RELATORIO_REEMBOLSO_AGENCIADOR_FRETE_REVENDA("template-relatorio-reembolso-agenciador-frete-revenda.xlsx"),
     TEMPLATE_RELATORIO_TRANSACAO_AGENCIADOR_FRETE("template-relatorio-transacao-agenciador-frete.xlsx"),
+    TEMPLATE_RELATORIO_TRANSACAO_AGENCIADOR_FRETE_REVENDA("template-relatorio-transacao-agenciador-frete-revenda.xlsx"),
     TEMPLATE_RELATORIO_FROTA_SOLUCAO("template-relatorio-frota_solucao.xlsx"),
     TEMPLATE_RELATORIO_FROTA_REVENDA("template-relatorio-frota_revenda.xlsx"),
     TEMPLATE_RELATORIO_REEMBOLSO_PAGO("template-relatorio-reembolso-pago.xlsx"),

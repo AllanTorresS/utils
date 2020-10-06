@@ -12,7 +12,9 @@ import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.vo.agenciadorfrete.FiltroRelatorioTransacaoVo;
+import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioFormatacaoData;
 import org.springframework.stereotype.Repository;
 
@@ -70,14 +72,18 @@ public class OracleAgenciadorFreteTransacaoDados extends OracleRepositorioBoleia
     @Override
     public ResultadoPaginado<Transacao> pesquisar(FiltroRelatorioTransacaoVo filtro) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
-        if (filtro.getAte() != null) {
-            Date data = UtilitarioFormatacaoData.lerDataIso8601(filtro.getAte());
-            parametros.add(new ParametroPesquisaDataMenorOuIgual("dataCriacao", data));
-        }
         if (filtro.getDe()!= null) {
             Date data = UtilitarioFormatacaoData.lerDataIso8601(filtro.getDe());
-            parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataCriacao", data));
+            parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataCriacao", UtilitarioCalculoData.obterPrimeiroInstanteDia(data)));
         }
+        if (filtro.getAte() != null) {
+            Date data = UtilitarioFormatacaoData.lerDataIso8601(filtro.getAte());
+            parametros.add(new ParametroPesquisaDataMenorOuIgual("dataCriacao", UtilitarioCalculoData.obterUltimoInstanteDia(data)));
+        }
+        if (filtro.getIdsPontoVenda() != null) {
+            parametros.add(new ParametroPesquisaIn("posto.id", filtro.getIdsPontoVenda()));
+        }
+
         return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 

@@ -1,7 +1,6 @@
 package ipp.aci.boleia.dominio.servico.agenciadorfrete;
 
 import ipp.aci.boleia.dados.IChaveValorDados;
-import ipp.aci.boleia.dados.IPedidoMotoristaAutonomoDados;
 import ipp.aci.boleia.dominio.vo.agenciadorfrete.CodigoAbastecimentoVo;
 import ipp.aci.boleia.util.excecao.ExcecaoValidacao;
 import ipp.aci.boleia.util.i18n.Mensagens;
