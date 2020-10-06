@@ -77,7 +77,7 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
 
     private static final String QUERY_ULTIMA_TRANSACAO =
    		 "SELECT tc " +
-            " FROM TransacaoConectcarConsolidada tc " +
+            " FROM TransacaoConectcar tc " +
             "WHERE tc.frota.id  = :idFrota " + 
             " ORDER BY tc.id DESC";
 
