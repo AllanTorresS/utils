@@ -445,7 +445,8 @@ public class CampanhaSd {
         BigDecimal descontoPercentualMaximo = BigDecimal.valueOf(100.00d);
         Boolean isDescontoEmMoeda = TipoDesconto.MOEDA.getValue().equals(campanha.getTipoDesconto());
 
-        return itemAutorizacaoPagamento.getValorTotal().min(isDescontoEmMoeda ? campanha.getValorTotal() : itemAutorizacaoPagamento.getValorTotal().multiply(campanha.getValorTotal().divide(descontoPercentualMaximo,3,RoundingMode.HALF_UP)));
+        return itemAutorizacaoPagamento.getValorTotal().min(isDescontoEmMoeda ?
+                campanha.getValorTotal() : itemAutorizacaoPagamento.getValorTotal().multiply(campanha.getValorTotal()).divide(descontoPercentualMaximo, 3, RoundingMode.HALF_UP));
     }
 
     /**
