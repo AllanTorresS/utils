@@ -3,7 +3,7 @@ package ipp.aci.boleia.dominio.vo.conectcar;
 import java.math.BigDecimal;
 
 public class RespostaLeadSalesforceVo {
- 
+
 	private String cnpj;
 	private Boolean aprovado;
 	private Integer tempoIsencaoMensalidade;
@@ -12,6 +12,7 @@ public class RespostaLeadSalesforceVo {
 	private Integer prazoContrato;
 	private BigDecimal valorAdesao;
 	private BigDecimal valorMensalidade;
+	private BigDecimal creditoTotal;
 	private String linkContrato;
 
 	public String getCnpj() {
@@ -84,6 +85,14 @@ public class RespostaLeadSalesforceVo {
 
 	public void setLinkContrato(String linkContrato) {
 		this.linkContrato = linkContrato;
+	}
+
+	public BigDecimal getCreditoTotal() {
+		return creditoTotal;
+	}
+
+	public void setCreditoTotal(BigDecimal creditoTotal) {
+		this.creditoTotal = creditoTotal;
 	}
 
 }

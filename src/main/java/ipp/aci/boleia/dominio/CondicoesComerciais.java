@@ -5,9 +5,12 @@ import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Digits;
 
@@ -27,6 +30,8 @@ public class CondicoesComerciais implements IPersistente {
 
 	@Id
 	@Column(name = "CD_CONDICOES_COMERCIAIS")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_CONDICOES_COMERCIAIS")
+	@SequenceGenerator(name = "SEQ_CONDICOES_COMERCIAIS", sequenceName = "SEQ_CONDICOES_COMERCIAIS", allocationSize = 1)
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)

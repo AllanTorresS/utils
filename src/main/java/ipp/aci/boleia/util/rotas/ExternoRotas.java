@@ -23,9 +23,8 @@ public final class ExternoRotas {
     public static final String VEICULO_API = BASE_API + "/veiculo";
     public static final String FROTA_API = BASE_API + "/frota";
     
-    public static final String TRANSACAO_CONECTCAR_API = CONECTCAR_API + "/transacao";
-
-
+    public static final String TRANSACAO_CONECTCAR_API = CONECTCAR_API + "/transacao";    
+    public static final String RESPOSTA_LEAD_CONECTCAR_API = CONECTCAR_API + "/lead";
 
     // Produces
     public static final String PRODUCES_APPLICATION = "application";
