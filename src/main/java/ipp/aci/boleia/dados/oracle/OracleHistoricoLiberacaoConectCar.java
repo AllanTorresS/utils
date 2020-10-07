@@ -6,12 +6,9 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import ipp.aci.boleia.dados.IHistoricoLiberacaoConectCar;
-import ipp.aci.boleia.dominio.CondicoesComerciais;
 import ipp.aci.boleia.dominio.HistoricoLiberacaoConectCar;
-import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
-import ipp.aci.boleia.util.Ordenacao;
 
 /**
  * Repositório de entidades Historico Liberacao ConectCar
@@ -32,7 +29,7 @@ public class OracleHistoricoLiberacaoConectCar extends OracleRepositorioBoleiaDa
 	        parametros.add(new ParametroPesquisaIgual( "frota.id", idFrota));
 	        return this.pesquisarUnicoSemIsolamentoDados(parametros.toArray(new ParametroPesquisa[parametros.size()]));
 	}
-
+	
     /**
      * ESTA TABELA NÃO PODERÁ TER AÇÕES DE EXCLUSÃO POR SE TRATAR DE UM HISTÓRICO DE AÇÕES.
      */

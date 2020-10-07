@@ -20,6 +20,14 @@ public interface ICobrancaConectcarDados extends IRepositorioBoleiaDados<Cobranc
     ResultadoPaginado<CobrancaConectcar> pesquisar(FiltroPesquisaCobrancaConectcarVo filtro);
 
     /**
+     * Pesquisa os as cobranças candidatas a realizar consulta no JDE
+     * para consultar o status do aviso de débito
+     *
+     * @return As cobranças candidatas a consulta de aviso de débito.
+     */
+    List<CobrancaConectcar> buscarCobrancasParaConsultarAvisoDebito();
+
+    /**
      * Obtem a última cobranca gerada para determinada frota
      * @param idFrota id da frota
      * @return Cobranca encontrada
@@ -32,6 +40,14 @@ public interface ICobrancaConectcarDados extends IRepositorioBoleiaDados<Cobranc
      * @return Cobranca encontrada
      */
     CobrancaConectcar obterUltimaCobrancaCiclo(Long idFrota);
+
+    /**
+     * Verifica se a frota a possui debitos vencidos
+     *
+     * @param idFrota identificador unico da Frota
+     * @return Verdadeiro se existir cobrancas em vencidas, Falso caso contrario
+     */
+    boolean verificarCobrancasVencidas(Long idFrota);
 
     /**
      * Busca a cobrança do ciclo anterior à uma cobrança específica.

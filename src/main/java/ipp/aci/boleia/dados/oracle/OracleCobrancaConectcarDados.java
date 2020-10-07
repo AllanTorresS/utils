@@ -105,6 +105,15 @@ public class OracleCobrancaConectcarDados extends OracleRepositorioBoleiaDados<C
 	}
 
 	@Override
+	public List<CobrancaConectcar> buscarCobrancasParaConsultarAvisoDebito() {
+		return pesquisar(new ParametroOrdenacaoColuna("dataVencimentoPagto",Ordenacao.DECRESCENTE),
+				new ParametroPesquisaNulo("numeroDocumento", true),
+				new ParametroPesquisaNulo("tipoDocumento", true),
+				new ParametroPesquisaNulo("ciaDocumento", true),
+				new ParametroPesquisaDiferente("status", StatusPagamentoCobranca.PAGO.getValue()));
+	}
+
+	@Override
 	public CobrancaConectcar obterUltimaCobranca(Long idFrota) {
 		List<ParametroPesquisa> parametros = new ArrayList<>();
 		parametros.add(new ParametroPesquisaIgual("transacoesConsolidadas.frota.id", idFrota));
@@ -133,6 +142,21 @@ public class OracleCobrancaConectcarDados extends OracleRepositorioBoleiaDados<C
 			return cobrancas.get(0);
 		}
 		return null;
+	}
+
+	@Override
+	public boolean verificarCobrancasVencidas(Long idFrota){
+		List<ParametroPesquisa> parametros = new ArrayList<>();
+		if (idFrota != null) {
+			parametros.add(new ParametroPesquisaIgual("transacoesConsolidadas.frota.id", idFrota));
+			parametros.add(new ParametroPesquisaMaior("valorTotal", BigDecimal.ZERO));
+			parametros.add(new ParametroPesquisaIgual("status", StatusPagamentoCobranca.VENCIDO.getValue()));
+
+			List<CobrancaConectcar> cobrancas = pesquisar(new ParametroOrdenacaoColuna("dataVencimentoPagto",Ordenacao.DECRESCENTE), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+			return !cobrancas.isEmpty();
+		}
+
+		return false;
 	}
 
     /**
