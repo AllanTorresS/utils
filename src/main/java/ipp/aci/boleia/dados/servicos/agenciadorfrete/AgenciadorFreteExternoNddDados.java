@@ -125,10 +125,11 @@ public class AgenciadorFreteExternoNddDados implements IAgenciadorFreteExternoDa
      */
     private void trataResposta(RespostaTransacaoNddVo resposta) throws ExcecaoServicoIndisponivel, ExcecaoValidacao {
         Integer sucesso = 200;
+        Integer sucessoParcial = 206;
         if(resposta == null || resposta.getCode() == null) {
             throw new ExcecaoServicoIndisponivel(mensagens.obterMensagem("agenciador.frete.ndd.servico.inexistente"));
-        } else if (!resposta.getCode().equals(sucesso)){
-            throw new ExcecaoValidacao(mensagens.obterMensagem("O cliente externo não autorizou o abastecimento com os dados solicitados."));
+        } else if (!(resposta.getCode().equals(sucesso)) && !(resposta.getCode().equals(sucessoParcial))){
+            throw new ExcecaoValidacao(mensagens.obterMensagem("agenciador.frete.ndd.cliente.nao.autorizou"));
         }
     }
 
