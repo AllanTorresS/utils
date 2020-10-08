@@ -264,7 +264,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "AND (fpv.frota.id = :idFrota OR :idFrota is null) " +
                     "AND (tc.statusConsolidacao = :statusConsolidacao or :statusConsolidacao is null) " +
                     "AND (tc.valorTotal <> 0 OR tc.valorTotalNotaFiscal <> 0) " +
-                    "AND (r.status in :statusReembolso)";
+                    "AND (trunc(r.dataVencimentoPgto) < trunc(SYSDATE) AND r.valorReembolso > 0 AND r.status <> " + StatusPagamentoReembolso.PAGO.getValue() + ")";
 
 
     private static final String CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO =
@@ -988,8 +988,6 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         }else{
             parametros.add(new ParametroPesquisaIgual("statusConsolidacao", null));
         }
-
-        parametros.add(new ParametroPesquisaIgual("statusReembolso", StatusPagamentoReembolso.ATRASADO.getValue()));
 
         Long numeroCiclosAtrasados = pesquisarUnicoSemIsolamentoDados(CONSULTA_NUMERO_REEMBOLSOS_POR_STATUS, parametros.toArray(new ParametroPesquisa[parametros.size()]));
         return numeroCiclosAtrasados.intValue();
