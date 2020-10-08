@@ -27,7 +27,6 @@ public class TransacaoNddVo {
 
     public TransacaoNddVo(Pedido pedido) {
         this.orderNumber = pedido.getNumero();
-        this.supplyValue = pedido.getPrecoUnitario().multiply(pedido.getLitragem());
     }
 
     public String getOrderNumber() {
