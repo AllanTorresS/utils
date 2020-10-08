@@ -54,6 +54,9 @@ public class FrotaPontoVendaSd {
     @Autowired
     private IHistoricoPontoVendaDados historicoPontoVendaDados;
 
+    @Autowired
+    private UtilitarioAmbiente utilitarioAmbiente;
+
     /**
      * Cria um novo registro de {@link FrotaPontoVenda}.
      *
@@ -62,7 +65,7 @@ public class FrotaPontoVendaSd {
      * @return O registro de {@link FrotaPontoVenda} criado.
      */
     public FrotaPontoVenda criarFrotaPontoVenda(Frota frota, PontoDeVenda pontoVenda) {
-        return criarFrotaPontoVenda(frota, pontoVenda, null);
+        return criarFrotaPontoVenda(frota, pontoVenda, false, null, StatusVinculoFrotaPontoVenda.INATIVO);
     }
 
     /**
@@ -115,12 +118,7 @@ public class FrotaPontoVendaSd {
      * @return O registro de {@link FrotaPontoVenda} criado.
      */
     public FrotaPontoVenda criarFrotaPontoVenda(AutorizacaoPagamento autorizacaoPagamento, boolean semIsolamento){
-        if (autorizacaoPagamento.getCodigoMotivoSemSenhaOuCodigo() != null){                
-            if (autorizacaoPagamento.getPontoVenda().isVisivelApenasParaFrotasVinculadas()){
-                return criarFrotaPontoVenda(autorizacaoPagamento.getFrota(), autorizacaoPagamento.getPontoVenda(), semIsolamento, null, StatusVinculoFrotaPontoVenda.INATIVO);
-            }            
-        }        
-        return criarFrotaPontoVenda(autorizacaoPagamento.getFrota(), autorizacaoPagamento.getPontoVenda(), semIsolamento, null, StatusVinculoFrotaPontoVenda.ATIVO) ;
+        return criarFrotaPontoVenda(autorizacaoPagamento.getFrota(), autorizacaoPagamento.getPontoVenda(), semIsolamento, null, StatusVinculoFrotaPontoVenda.INATIVO);
     }
     
     /**
@@ -274,5 +272,18 @@ public class FrotaPontoVendaSd {
             pontoDeVenda.setRestricaoVisibilidade(RestricaoVisibilidadePontoVenda.VISIVEL_APENAS_PARA_FROTAS_COM_VINCULO_ATIVO.getValue());
             pontoDeVendaSd.armazenarHistorico(pontoDeVenda);
         }    
+    }
+
+    /**
+     * Aplica a regra de atualização de associação Frota x Posto para uma frota recem habilitada,
+     * podendo disponibilizar essa associação para uma exportação da APCO.
+     * O historico tambem e gerado caso necessario.
+     *
+     * @param frota a frota para qual a regra deve ser aplicada
+     */
+    public void atualizaFrotaPontoVendaAposHabilitarPreCadastro(Frota frota){
+        List<FrotaPontoVenda> associacoes = frotaPontoVendaDados.buscarPorFrota(frota);
+        associacoes.forEach(a -> a.setDataAtualizacao(utilitarioAmbiente.buscarDataAmbiente()));
+        frotaPontoVendaDados.armazenarLista(associacoes);
     }
 }

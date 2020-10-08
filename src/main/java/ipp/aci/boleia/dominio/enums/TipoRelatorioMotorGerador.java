@@ -26,7 +26,10 @@ public enum TipoRelatorioMotorGerador implements IEnumComLabel<TipoRelatorioMoto
     RELATORIO_ABASTECIMENTOS_ESTORNADOS(11, obterMapaTemplatesAbastecimentosEstornados()),
     RELATORIO_ABASTECIMENTOS_AJUSTADOS(12, obterMapaTemplatesAbastecimentosAjustados()),
     RELATORIO_PRECO_NEGOCIADO(13, obterMapaTemplatesPrecoNegociado()),
-    RELATORIO_NEGOCIACAO(14, obterMapaTemplatesNegociacao());
+    RELATORIO_NEGOCIACAO(14, obterMapaTemplatesNegociacao()),
+    RELATORIO_COBRANCA_AGENCIADOR_FRETE(15. obterMapaTemplatesCobrancaAgenciador()),
+    RELATORIO_ABASTECIMENTO_AGENCIADOR_FRETE(16, obterMapaTemplatesAbastecimentoAgenciadorFrete()),
+    RELATORIO_REEMBOLSO_AGENCIADOR_FRETE(17, obterMapaTemplatesReembolsoAgenciadorFrete());
 
     private final Integer value;
     private final Map<TipoPerfilUsuario, TemplatePlanilha> templatePerfil;
@@ -251,13 +254,38 @@ public enum TipoRelatorioMotorGerador implements IEnumComLabel<TipoRelatorioMoto
         return mapa;
     }
 
+    /**
+     * Gera um mapa de templates por perfil para um tipo de relatório (cobrança agenciador)
+     *
+     * @return O mapa criado
+     */
+    private static Map<TipoPerfilUsuario, TemplatePlanilha> obterMapaTemplatesCobrancaAgenciador() {
+        Map<TipoPerfilUsuario, TemplatePlanilha> mapa = new HashMap<>();
+        mapa.put(TipoPerfilUsuario.INTERNO, TemplatePlanilha.TEMPLATE_RELATORIO_COBRANCA_AGENCIADOR_FRETE);
+        return mapa;
+    }
 
+    /**
+     * Gera um mapa de templates por perfil para um tipo de relatório (transação abastecimento agenciador)
+     *
+     * @return O mapa criado
+     */
+    private static Map<TipoPerfilUsuario, TemplatePlanilha> obterMapaTemplatesAbastecimentoAgenciadorFrete() {
+        Map<TipoPerfilUsuario, TemplatePlanilha> mapa = new HashMap<>();
+        mapa.put(TipoPerfilUsuario.INTERNO, TemplatePlanilha.TEMPLATE_RELATORIO_TRANSACAO_AGENCIADOR_FRETE);
+        mapa.put(TipoPerfilUsuario.REVENDA, TemplatePlanilha.TEMPLATE_RELATORIO_TRANSACAO_AGENCIADOR_FRETE_REVENDA);
+        return mapa;
+    }
 
-
-
-
-
-
-
-
+    /**
+     * Gera um mapa de templates por perfil para um tipo de relatório (reembolso agenciador)
+     *
+     * @return O mapa criado
+     */
+    private static Map<TipoPerfilUsuario, TemplatePlanilha> obterMapaTemplatesReembolsoAgenciadorFrete() {
+        Map<TipoPerfilUsuario, TemplatePlanilha> mapa = new HashMap<>();
+        mapa.put(TipoPerfilUsuario.INTERNO, TemplatePlanilha.TEMPLATE_RELATORIO_REEMBOLSO_AGENCIADOR_FRETE_SOLUCAO);
+        mapa.put(TipoPerfilUsuario.REVENDA, TemplatePlanilha.TEMPLATE_RELATORIO_REEMBOLSO_AGENCIADOR_FRETE_REVENDA);
+        return mapa;
+    }
 }

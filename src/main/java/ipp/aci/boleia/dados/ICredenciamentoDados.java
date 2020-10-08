@@ -13,5 +13,5 @@ public interface ICredenciamentoDados extends IRepositorioBoleiaDados<Credenciam
      * @param cnpj Numero do cnpj da empresa.
      * @return {@link Credenciamento}.
      */
-	public Credenciamento obterPorCnpj(Long cnpj);
+	Credenciamento obterPorCnpj(Long cnpj);
 }

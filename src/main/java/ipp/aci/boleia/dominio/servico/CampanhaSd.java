@@ -239,8 +239,7 @@ public class CampanhaSd {
                 condicaoCampanhaComReflexaoAtendida(autorizacaoPagamento, condicaoCampanha) :
                 condicaoCampanhaSemReflexaoAtendida(autorizacaoPagamento, condicaoCampanha);
 
-        return TipoOperacaoCondicaoCampanha.INCLUSAO.getValue().equals(condicaoCampanha.getTipoOperacao()) ?
-                resultadoVerificacao : !resultadoVerificacao;
+        return TipoOperacaoCondicaoCampanha.INCLUSAO.getValue().equals(condicaoCampanha.getTipoOperacao()) == resultadoVerificacao;
     }
 
     /**

@@ -27,7 +27,7 @@ import ipp.aci.boleia.util.UtilitarioXml;
 import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.excecao.ExcecaoArquivoNaoEncontrado;
 import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
-import ipp.aci.boleia.util.excecao.ExcecaoRecursoNaoEncontrado;
+import ipp.aci.boleia.util.excecao.ExcecaoSemConteudo;
 import ipp.aci.boleia.util.excecao.ExcecaoValidacao;
 import ipp.aci.boleia.util.i18n.Mensagens;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
@@ -316,7 +316,7 @@ public class NotaFiscalSd {
             if(notaFiscal != null) {
                 AutorizacaoPagamento autorizacaoPagamento = notaFiscal.getAutorizacoesPagamento().stream()
                         .findFirst()
-                        .orElseThrow(ExcecaoRecursoNaoEncontrado::new);
+                        .orElseThrow(ExcecaoSemConteudo::new);
                 TransacaoConsolidada consolidada = transacaoConsolidadaDados.obterConsolidadoPorAbastecimento(autorizacaoPagamento.getId());
                 NotaFiscalVo nota = new NotaFiscalVo(notaFiscal, consolidada, autorizacaoPagamento);
                 throw new ExcecaoValidacao(Erro.NOTA_FISCAL_UPLOAD_NOTA_REPETIDA, UtilitarioJson.toJSONString(nota));
@@ -425,7 +425,7 @@ public class NotaFiscalSd {
     private Long getPontoVendaResponsavelAbastecimentos(List<AutorizacaoPagamento> autorizacoesDaNota) {
         return autorizacoesDaNota.stream()
                 .findFirst()
-                .orElseThrow(ExcecaoRecursoNaoEncontrado::new)
+                .orElseThrow(ExcecaoSemConteudo::new)
                 .getPontoVenda().getComponenteAreaAbastecimento().getCodigoPessoa();
     }
 
@@ -441,7 +441,7 @@ public class NotaFiscalSd {
     private Long getFrotaResponsavelAbastecimentos(List<AutorizacaoPagamento> autorizacoesDaNota) {
         AutorizacaoPagamento primeiraAutorizacao = autorizacoesDaNota.stream()
                 .findFirst()
-                .orElseThrow(ExcecaoRecursoNaoEncontrado::new);
+                .orElseThrow(ExcecaoSemConteudo::new);
         if(primeiraAutorizacao.getEmpresaAgregadaExigeNf() != null && primeiraAutorizacao.getEmpresaAgregadaExigeNf()) {
             return primeiraAutorizacao.getEmpresaAgregada().getCnpj();
         } else if(primeiraAutorizacao.getUnidadeExigeNf() != null && primeiraAutorizacao.getUnidadeExigeNf()) {
