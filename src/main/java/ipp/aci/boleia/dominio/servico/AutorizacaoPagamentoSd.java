@@ -2,7 +2,6 @@ package ipp.aci.boleia.dominio.servico;
 
 import ipp.aci.boleia.dados.IAutorizacaoPagamentoDados;
 import ipp.aci.boleia.dados.IAutorizacaoPagamentoEdicaoDados;
-import ipp.aci.boleia.dados.ITransacaoConsolidadaDados;
 import ipp.aci.boleia.dominio.AutorizacaoPagamento;
 import ipp.aci.boleia.dominio.AutorizacaoPagamentoEdicao;
 import ipp.aci.boleia.dominio.NotaFiscal;
@@ -49,8 +48,6 @@ public class AutorizacaoPagamentoSd {
     @Autowired
     private IAutorizacaoPagamentoEdicaoDados repositorioAutorizacaoPagamentoEdicao;
 
-    @Autowired
-    private ITransacaoConsolidadaDados repositorioTransacaoConsolidada;
 
     /**
      * Obtém lista de abastecimentos para exportação de acordo com o filtro informado.
