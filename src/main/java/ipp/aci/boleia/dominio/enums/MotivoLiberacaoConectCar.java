@@ -8,18 +8,17 @@ import ipp.aci.boleia.util.i18n.IEnumComLabel;
  */
 public enum MotivoLiberacaoConectCar implements IEnumComLabel<MotivoLiberacaoConectCar> {
 
-    ATIVADO (0, true),
-	DEBITO_VENCIDO(1, false),
-    INADIMPLECIA (2,false),
-    SUSPEITA_FRAUDE (3, false),
-    SUSPEITA_ATIVIDADE (4, false),
-    CREDITO_EXCEDIDO (5, false),
-    OUTROS(6, false);
+    ATIVADO (0),
+	DEBITO_VENCIDO(1),
+    INADIMPLECIA (2),
+    SUSPEITA_FRAUDE (3),
+    SUSPEITA_ATIVIDADE (4),
+    CREDITO_EXCEDIDO (5),
+    OUTROS(6);
 
-	public static final String DECODE_FORMULA = "DECODE(ID_MOTIVO, 0, 'ATIVADO', 1, 'DÉBITO VENCIDO', 2, 'INADIMPLENCIA', 3, 'USPEITA FRAUDE', 4 , 'SUSPEITA ATIVIDADE', 5, 'CREDITO EXCEDIDO', 6, 'OUTROS')";
+	public static final String DECODE_FORMULA = "DECODE(ID_MOTIVO, 0, 'ATIVADO', 1, 'DÉBITO VENCIDO', 2, 'INADIMPLENCIA', 3, 'SUSPEITA FRAUDE', 4 , 'SUSPEITA ATIVIDADE', 5, 'CRÉDITO EXCEDIDO', 6, 'OUTROS')";
 	
     private final Integer value;
-    private final Boolean semAlteracao;
 
     /**
      * Construtor
@@ -27,17 +26,12 @@ public enum MotivoLiberacaoConectCar implements IEnumComLabel<MotivoLiberacaoCon
      * @param value O value do status
      * @param  semAlteracao verifica se existe alteracao
      */
-    MotivoLiberacaoConectCar(Integer value, Boolean semAlteracao) {
+    MotivoLiberacaoConectCar(Integer value) {
         this.value = value;
-        this.semAlteracao = semAlteracao;
     }
 
     public Integer getValue() {
         return value;
-    }
-
-    public Boolean getSemAlteracao() {
-        return semAlteracao;
     }
 
     /**
