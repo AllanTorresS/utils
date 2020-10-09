@@ -11,6 +11,7 @@ import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgualIgnoreCase;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaRotaVo;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
@@ -116,6 +117,8 @@ public class OracleRotaDados extends OracleRepositorioBoleiaDados<Rota> implemen
     private static final String ORDER_BY_TEMPO          = " ORDER BY r.tempo ";
     private static final String ORDER_BY_ORIGEM_DESTINO = " ORDER BY NOME_ORIGEM_DESTINO ";
 
+    private static final String FROTA_UNICA = " AND (:idFrota IS NULL OR f.id = :idFrota) ";
+    private static final String FROTA_LISTA =  " AND f.id in (:idFrota) ";
     private static final String PLANO_VIAGEM_NULL = "AND r.planoViagem IS NULL";
     private static final String PLANO_VIAGEM_EXISTS = "AND r.planoViagem IS NOT NULL AND r.principal = " + PRINCIPAL_VALUE;
 
@@ -136,9 +139,15 @@ public class OracleRotaDados extends OracleRepositorioBoleiaDados<Rota> implemen
         params.add(new ParametroPesquisaIgual("idPontoVenda", filtro.getPontoVenda() != null ? filtro.getPontoVenda().getId() : null));
 
         Usuario usuario = ambiente.getUsuarioLogado();
-        params.add(new ParametroPesquisaIgual("idFrota", usuario.getTipoPerfil().isFrotista() ? usuario.getFrota().getId() : null));
+        boolean frotaLista = false;
+        if(usuario.getTipoPerfil().isFrotista()){
+            params.add(new ParametroPesquisaIgual("idFrota", usuario.getFrota().getId()));
+        } else if(usuario.possuiFrotasAssociadas()){
+            params.add(new ParametroPesquisaIn("idFrota",usuario.listarIdsFrotasAssociadas()));
+            frotaLista = true;
+        }
 
-        ResultadoPaginado<Object[]> resultadoBruto = pesquisar(filtro.getPaginacao(), montarClausulaOrdenacaoDinamica(filtro), Object[].class, params.toArray(new ParametroPesquisa[params.size()]));
+        ResultadoPaginado<Object[]> resultadoBruto = pesquisar(filtro.getPaginacao(), montarClausulaOrdenacaoDinamica(filtro, frotaLista), Object[].class, params.toArray(new ParametroPesquisa[params.size()]));
         return mapearResultadoPesquisa(resultadoBruto);
     }
 
@@ -156,9 +165,10 @@ public class OracleRotaDados extends OracleRepositorioBoleiaDados<Rota> implemen
      * Altera a consulta, adicionando a clausula de ordenacao de acordo com o filtro recebido
      *
      * @param filtro O filtro da consulta
+     * @param frotaLista indica que deve remover a condição de lista de frota ou não
      * @return A consulta com a clausula de ordenacao
      */
-    private String montarClausulaOrdenacaoDinamica(FiltroPesquisaRotaVo filtro) {
+    private String montarClausulaOrdenacaoDinamica(FiltroPesquisaRotaVo filtro, boolean frotaLista) {
 
         String orderBy = "";
         String orderDirection = "";
@@ -187,12 +197,15 @@ public class OracleRotaDados extends OracleRepositorioBoleiaDados<Rota> implemen
             }
             orderDirection = (parametro.isDecrescente() ? " DESC" : " ASC");
         }
-
+        String consulta = CONSULTA_ROTAS;
+        if (frotaLista){
+            consulta = CONSULTA_ROTAS.replace(FROTA_UNICA, FROTA_LISTA);
+        }
         if (filtro.getRotaInteligente()!=null && filtro.getRotaInteligente()){
-            return String.format(CONSULTA_ROTAS.replace(PLANO_VIAGEM_NULL, PLANO_VIAGEM_EXISTS), orderBy, orderDirection);
+            return String.format(consulta.replace(PLANO_VIAGEM_NULL, PLANO_VIAGEM_EXISTS), orderBy, orderDirection);
         }
 
-        return String.format(CONSULTA_ROTAS, orderBy, orderDirection);
+        return String.format(consulta, orderBy, orderDirection);
     }
 
     /**
