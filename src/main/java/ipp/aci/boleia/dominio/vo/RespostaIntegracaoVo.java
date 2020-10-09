@@ -1,9 +1,11 @@
 package ipp.aci.boleia.dominio.vo;
 
+import ipp.aci.boleia.dominio.enums.TipoRelatorioMotorGerador;
+
 /**
  * Resposta da tentativa de autenticação entre serviços do Pró-Frotas
  */
-public class RespostaIntegracaoVo {
+public class RespostaIntegracaoVo implements IRespostaModuloInternoVo {
 
     private Integer statusResposta;
     private String tokenJwt;

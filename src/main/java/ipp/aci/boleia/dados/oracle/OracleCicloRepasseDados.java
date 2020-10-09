@@ -107,8 +107,8 @@ public class OracleCicloRepasseDados extends OracleRepositorioBoleiaDados<CicloR
 
         List<ParametroPesquisa> parametros = new ArrayList<>();
 
-        povoarParametroDataMaiorIgual("dataInicio", UtilitarioCalculoData.obterPrimeiroDiaMes(UtilitarioFormatacaoData.lerDataMesAno(filtro.getDe())), parametros);
-        povoarParametroDataMenorIgual("dataFim", UtilitarioCalculoData.obterUltimoDiaMes(UtilitarioFormatacaoData.lerDataMesAno(filtro.getAte())), parametros);
+        povoarParametroDataMaiorIgual("dataInicio", UtilitarioCalculoData.obterPrimeiroDiaMes(filtro.getDe()), parametros);
+        povoarParametroDataMenorIgual("dataFim", UtilitarioCalculoData.obterUltimoDiaMes(filtro.getAte()), parametros);
 
         povoarParametroIgual("pontoDeVenda.id", filtro.getPontoDeVenda() != null ? String.valueOf(filtro.getPontoDeVenda().getId()) : null, parametros);
 

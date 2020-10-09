@@ -1,5 +1,6 @@
 package ipp.aci.boleia.dominio.servico;
 
+import ipp.aci.boleia.dados.IAbaRelatorioDados;
 import ipp.aci.boleia.dados.IMotorGeracaoRelatoriosDados;
 import ipp.aci.boleia.dominio.MotorGeracaoRelatorios;
 import ipp.aci.boleia.dominio.NotificacaoUsuario;
@@ -11,6 +12,8 @@ import ipp.aci.boleia.dominio.enums.TipoSubcategoriaNotificacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.BaseFiltroPaginado;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioJson;
+import ipp.aci.boleia.util.excecao.ExcecaoValidacao;
+import ipp.aci.boleia.util.i18n.Mensagens;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,10 +22,6 @@ import java.util.Date;
 
 import static ipp.aci.boleia.util.UtilitarioCalculoData.adicionarMinutosData;
 
-/**
- * Classe responsável pelo motor de geração de relatório.
- */
-
 @Component
 public class MotorGeracaoRelatorioSd {
 
@@ -30,10 +29,16 @@ public class MotorGeracaoRelatorioSd {
     private IMotorGeracaoRelatoriosDados repositorio;
 
     @Autowired
+    private IAbaRelatorioDados repositorioAbas;
+
+    @Autowired
     private UtilitarioAmbiente ambiente;
 
     @Autowired
-    private  NotificacaoUsuarioSd notificacaoUsuarioSd;
+    private NotificacaoUsuarioSd notificacaoUsuarioSd;
+
+    @Autowired
+    private Mensagens mensagens;
 
     /**
      * Inclusão de relatório no motor de geração de relatórios
@@ -54,46 +59,33 @@ public class MotorGeracaoRelatorioSd {
         Date dataDescarte = UtilitarioCalculoData.adicionarDiasData(hoje, 2);
         MotorGeracaoRelatorios m = new MotorGeracaoRelatorios();
         m.setDataRequisicao(hoje);
-        m.setTipoRelatorio( tipoRelatorioMotorGerador.getValue() );
+        m.setTipoRelatorio(tipoRelatorioMotorGerador.getValue());
 
-        m.setDataPeriodoFiltradoInicial( dataPeriodoFiltradoInicial );
-        m.setDataPeriodoFiltradoFinal( dataPeriodoFiltradoFinal );
-        m.setStatus( StatusMotorGeradorRelatorio.EM_ANDAMENTO.getValue() );
+        m.setDataPeriodoFiltradoInicial(dataPeriodoFiltradoInicial);
+        m.setDataPeriodoFiltradoFinal(dataPeriodoFiltradoFinal);
+        m.setStatus(StatusMotorGeradorRelatorio.EM_ANDAMENTO_AGUARDANDO.getValue());
 
         m.setUsuario(usuarioLogado);
-        m.setFiltro( UtilitarioJson.toJSON( filtroRelatorio ) );
+        m.setFiltro(UtilitarioJson.toJSON(filtroRelatorio));
         m.setExtensaoArquivo(tipoExtensaoArquivo.getValue());
+        m.setNomeTemplate(tipoRelatorioMotorGerador.obterTemplatePorTipoPerfilUsuario(usuarioLogado.getTipoPerfilUsuario()) != null ? tipoRelatorioMotorGerador.obterTemplatePorTipoPerfilUsuario(usuarioLogado.getTipoPerfilUsuario()).getName() : null);
 
-        m.setArquivo( null );
-        m.setDataDescarte( dataDescarte );
+        m.setArquivo(null);
+        m.setDataDescarte(dataDescarte);
 
-        m = repositorio.armazenar( m );
+        m = repositorio.armazenar(m);
 
         return m;
     }
 
     /**
-     * Informar conclusão da geração do relatório no motor de geração de relatórios.
-     * @param idMotor id do relatório gerado no motor.
-     * @param status Novo status a ser aplicado.
-     * @param msgErro Mensagem de erro relacionada a algum erro ao gerar o relatorio.
-     * @return motor de geração de relatórios.
+     * Armazena um registro de motor de relatórios no banco de dados
+     *
+     * @param motor A entidade a ser persistida
+     * @return A entidade persistida
      */
-    public MotorGeracaoRelatorios salvarStatus( Long idMotor, StatusMotorGeradorRelatorio status, String msgErro) {
-        MotorGeracaoRelatorios motor = repositorio.obterPorId(idMotor);
-        Date dataEmissao = ambiente.buscarDataAmbiente();
-        Date dataDescarte = UtilitarioCalculoData.adicionarDiasData(dataEmissao, 2);
-        motor.setDataRequisicao(dataEmissao);
-        motor.setDataDescarte(dataDescarte);
-        motor.setStatus(status.getValue());
-        if(status.equals(StatusMotorGeradorRelatorio.ERRO)){
-            motor.setMsgErro(msgErro);
-        }
-        motor = repositorio.armazenar(motor);
-        if(status.equals(StatusMotorGeradorRelatorio.CONCLUIDO)) {
-            this.notificarUsuarioRelatorioConcluido(motor.getUsuario());
-        }
-        return motor;
+    public MotorGeracaoRelatorios armazenar(MotorGeracaoRelatorios motor) {
+        return repositorio.armazenar(motor);
     }
 
     /**
@@ -103,6 +95,56 @@ public class MotorGeracaoRelatorioSd {
      */
     public Boolean validaStatusRelatorioAtualEhCancelado(Long idMotorRelatorio){
         return StatusMotorGeradorRelatorio.CANCELADO.getValue().equals(repositorio.obterPorId(idMotorRelatorio).getStatus());
+    }
+
+    /**
+     * Informar conclusão da geração do relatório no motor de geração de relatórios.
+     * @param motor o relatório gerado no motor.
+     * @param status Novo status a ser aplicado.
+     * @param msgErro Mensagem de erro relacionada a algum erro ao gerar o relatorio.
+     * @return motor de geração de relatórios.
+     */
+    public MotorGeracaoRelatorios salvarStatus(MotorGeracaoRelatorios motor, StatusMotorGeradorRelatorio status, String msgErro) {
+        Date dataEmissao = ambiente.buscarDataAmbiente();
+        Date dataDescarte = UtilitarioCalculoData.adicionarDiasData(dataEmissao, 2);
+        motor.setDataRequisicao(dataEmissao);
+        motor.setDataDescarte(dataDescarte);
+        motor.setStatus(status.getValue());
+        if(status.equals(StatusMotorGeradorRelatorio.ERRO)){
+            motor.setMsgErro(msgErro);
+        }
+        motor = repositorio.armazenar(motor);
+        motor.getAbasRelatorio().stream().forEach(repositorioAbas::armazenar);
+        if(status.equals(StatusMotorGeradorRelatorio.CONCLUIDO)) {
+            this.notificarUsuarioRelatorioConcluido(motor.getUsuario());
+        }
+        return motor;
+    }
+
+    /**
+     * Limpa informações relativas ao andamento do processamento do relatório
+     *
+     * @param motor O objeto do motor a ser restaurado
+     */
+    public void preparaMotorParaRefazerRelatorio(MotorGeracaoRelatorios motor) {
+        motor.setUltimaPaginaProcessada(null);
+        motor.getAbasRelatorio().forEach(abaRelatorio -> {
+            abaRelatorio.setRegistrosProcessados(null);
+            abaRelatorio.setTotalRegistros(null);
+        });
+    }
+
+    /**
+     * Valida se existe um relatório igual já em andamento
+     *
+     * @param filtro O filtro fornecido
+     * @param tipoRelatorio O tipo de relatório a ser procurado
+     * @throws ExcecaoValidacao Caso haja um relatório em andamento
+     */
+    public void validaSeRelatorioEmAndamento(String filtro, Integer tipoRelatorio) throws ExcecaoValidacao {
+        if (repositorio.pesquisaRelatorioEmAndamento(filtro, tipoRelatorio)) {
+            throw new ExcecaoValidacao(mensagens.obterMensagem("servico.exportacao.relatorio.em.andamento"));
+        }
     }
 
     /**
@@ -119,4 +161,5 @@ public class MotorGeracaoRelatorioSd {
             notificacaoUsuarioSd.enviarNotificacaoRelatorioConcluido(usuario);
         }
     }
+
 }

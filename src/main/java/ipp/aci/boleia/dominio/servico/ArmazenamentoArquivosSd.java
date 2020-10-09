@@ -3,7 +3,6 @@ package ipp.aci.boleia.dominio.servico;
 import ipp.aci.boleia.dados.IArmazenamentoDados;
 import ipp.aci.boleia.dados.IArquivoDados;
 import ipp.aci.boleia.dados.IDispositivoMotoristaPedidoDados;
-import ipp.aci.boleia.dados.IMotorGeracaoRelatoriosDados;
 import ipp.aci.boleia.dados.INotaFiscalDados;
 import ipp.aci.boleia.dados.IPontoDeVendaDados;
 import ipp.aci.boleia.dados.IRepositorioBoleiaDados;
@@ -45,9 +44,6 @@ public class ArmazenamentoArquivosSd {
     private IPontoDeVendaDados pontoVendaDados;
 
     @Autowired
-    private IMotorGeracaoRelatoriosDados motorGeracaoRelatorios;
-
-    @Autowired
     private IArquivoDados arquivoDados;
 
     private Map<TipoArquivo, IRepositorioBoleiaDados> repositoriosPorTipoArquivo;
@@ -62,10 +58,10 @@ public class ArmazenamentoArquivosSd {
         repositoriosPorTipoArquivo.put(TipoArquivo.FOTO_HODOMETRO_HORIMETRO, dispositivoMotoristaPedidoDados);
         repositoriosPorTipoArquivo.put(TipoArquivo.FOTO_PONTO_VENDA, pontoVendaDados);
         repositoriosPorTipoArquivo.put(TipoArquivo.JUSTIFICATIVA_NOTA, notaFiscalDados);
-        repositoriosPorTipoArquivo.put(TipoArquivo.RELATORIO_48_HORAS_XLSX, motorGeracaoRelatorios);
-        repositoriosPorTipoArquivo.put(TipoArquivo.RELATORIO_48_HORAS_TXT, motorGeracaoRelatorios);
         repositoriosPorTipoArquivo.put(TipoArquivo.DOWNLOAD_PRESIGNED_NOTA_FISCAL_PDF, arquivoDados);
         repositoriosPorTipoArquivo.put(TipoArquivo.DOWNLOAD_PRESIGNED_NOTA_FISCAL_XML, arquivoDados);
+        repositoriosPorTipoArquivo.put(TipoArquivo.RELATORIO_48_HORAS_XLSX, arquivoDados);
+        repositoriosPorTipoArquivo.put(TipoArquivo.RELATORIO_48_HORAS_TXT, arquivoDados);
     }
 
     /**

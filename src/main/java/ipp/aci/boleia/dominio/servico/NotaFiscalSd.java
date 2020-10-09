@@ -596,8 +596,8 @@ public class NotaFiscalSd {
 
         danfe.setDestNome(UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.DEST_RAZAO_SOCIAL));
         danfe.setDestCnpjCpf(UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.DEST_CNPJ) != null && !UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.DEST_CNPJ).trim().isEmpty() ?
-                UtilitarioFormatacao.formatarCpjCnpjApresentacao(UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.DEST_CNPJ)) :
-                UtilitarioFormatacao.formatarCpjCnpjApresentacao(UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.DEST_CPF)));
+                UtilitarioFormatacao.formatarCpfCnpjApresentacao(UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.DEST_CNPJ)) :
+                UtilitarioFormatacao.formatarCpfCnpjApresentacao(UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.DEST_CPF)));
         danfe.setDestLogradouro(UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.ENDER_DEST_LOGRADOURO));
         danfe.setDestNumero(UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.ENDER_DEST_NUMERO));
         danfe.setDestBairro(UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.ENDER_DEST_BAIRRO));
@@ -628,8 +628,8 @@ public class NotaFiscalSd {
         danfe.setPlacaVeiculo(UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.TRANSP_PLACA_VEICULO));
         danfe.setTranspUf(UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.TRANSP_VEICULO_UF));
         danfe.setTranspCnpjCpf(UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.TRANSP_CPF) != null && !UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.TRANSP_CPF).trim().isEmpty() ?
-                UtilitarioFormatacao.formatarCpjCnpjApresentacao(UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.TRANSP_CPF)) :
-                UtilitarioFormatacao.formatarCpjCnpjApresentacao(UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.TRANSP_CNPJ)));
+                UtilitarioFormatacao.formatarCpfCnpjApresentacao(UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.TRANSP_CPF)) :
+                UtilitarioFormatacao.formatarCpfCnpjApresentacao(UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.TRANSP_CNPJ)));
         danfe.setTranspEndereco(UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.TRANSP_ENDERECO));
         danfe.setTranspMunicipio(UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.TRANSP_MUNICIPIO));
         danfe.setVeicTranspUf(UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.TRANSP_VEICULO_UF));

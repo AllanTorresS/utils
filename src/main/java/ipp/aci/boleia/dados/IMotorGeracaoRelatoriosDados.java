@@ -1,8 +1,6 @@
 package ipp.aci.boleia.dados;
 
 import ipp.aci.boleia.dominio.MotorGeracaoRelatorios;
-import ipp.aci.boleia.dominio.enums.TipoRelatorioMotorGerador;
-import ipp.aci.boleia.dominio.pesquisa.comum.BaseFiltroPaginado;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaMotorGeracaoRelatoriosVo;
 
@@ -20,12 +18,18 @@ public interface IMotorGeracaoRelatoriosDados extends IRepositorioBoleiaDados<Mo
     ResultadoPaginado<MotorGeracaoRelatorios> pesquisar(FiltroPesquisaMotorGeracaoRelatoriosVo filtro);
 
     /**
-     * Verifica se já existe uma geração de relatório em andamento com base no filtro
-     * e tipo de relatório informados.
-     * @param <F> O tipo genérico utilizado para o filtro
-     * @param filtro Filtro de consulta utilizado
-     * @param tipoRelatorio Tipo de relatório a ser consultado
-     * @return true caso o relatório esteja sendo produzido.
+     * Obtém o relatório informado para processamento, caso ele já não esteja sendo processado
+     * @param id O identificador do relatório
+     * @return O relatório desejado
      */
-    <F extends BaseFiltroPaginado> Boolean pesquisarGeracaoRelatorioEmAndamento(F filtro, TipoRelatorioMotorGerador tipoRelatorio);
+    MotorGeracaoRelatorios obterRelatorioParaProcessamento(Long id);
+
+    /**
+     * Pesquisa se há um relatório igual já em andamento
+     *
+     * @param filtro O filtro fornecido
+     * @param tipoRelatorio O tipo do relatório
+     * @return true caso haja um relatório em andamento, false caso contrário
+     */
+    Boolean pesquisaRelatorioEmAndamento(String filtro, Integer tipoRelatorio);
 }

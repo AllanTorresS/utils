@@ -77,8 +77,8 @@ public class OracleCobrancaDados extends OracleRepositorioBoleiaDados<Cobranca> 
 
 		List<ParametroPesquisa> parametros = new ArrayList<>();
 
-		povoarParametroDataMaiorIgual("transacoesConsolidadas.dataInicioPeriodo", UtilitarioCalculoData.obterPrimeiroDiaMes(UtilitarioFormatacaoData.lerDataMesAno(filtro.getDe())), parametros);
-		povoarParametroDataMenorIgual("transacoesConsolidadas.dataFimPeriodo", UtilitarioCalculoData.obterUltimoDiaMes(UtilitarioFormatacaoData.lerDataMesAno(filtro.getAte())), parametros);
+		povoarParametroDataMaiorIgual("transacoesConsolidadas.dataInicioPeriodo", UtilitarioCalculoData.obterPrimeiroDiaMes(filtro.getDe()), parametros);
+		povoarParametroDataMenorIgual("transacoesConsolidadas.dataFimPeriodo", UtilitarioCalculoData.obterUltimoDiaMes(filtro.getAte()), parametros);
 		povoarParametrosStatusPagamento(filtro, parametros);
 
 		if (filtro.getStatusIntegracao() != null && filtro.getStatusIntegracao().getName() != null) {

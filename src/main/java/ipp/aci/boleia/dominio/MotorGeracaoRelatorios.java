@@ -4,6 +4,7 @@ package ipp.aci.boleia.dominio;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import org.hibernate.envers.Audited;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -12,12 +13,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Representa a tabela de Motor de Geração de Relatórios
@@ -65,7 +68,7 @@ public class MotorGeracaoRelatorios implements IPersistente {
     private String msgErro;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="CD_USUARIO")
     private Usuario usuario;
 
@@ -79,6 +82,15 @@ public class MotorGeracaoRelatorios implements IPersistente {
     @NotNull
     @Column(name="ID_EXTENSAO_ARQUIVO")
     private Integer extensaoArquivo;
+
+    @Column(name = "DS_NOME_TEMPLATE")
+    private String nomeTemplate;
+
+    @Column(name = "NO_ULTIMA_PAGINA_PROCESSADA")
+    private Integer ultimaPaginaProcessada;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "motorGeracaoRelatorio", fetch = FetchType.EAGER, orphanRemoval = true)
+    private List<AbaRelatorio> abasRelatorio;
 
     @Override
     public Long getId() {
@@ -136,5 +148,43 @@ public class MotorGeracaoRelatorios implements IPersistente {
 
     public void setMsgErro(String msgErro) {
         this.msgErro = msgErro;
+    }
+
+    public String getNomeTemplate() {
+        return nomeTemplate;
+    }
+
+    public void setNomeTemplate(String nomeTemplate) {
+        this.nomeTemplate = nomeTemplate;
+    }
+
+    public List<AbaRelatorio> getAbasRelatorio() {
+        return abasRelatorio;
+    }
+
+    public void setAbasRelatorio(List<AbaRelatorio> abasRelatorio) {
+        this.abasRelatorio = abasRelatorio;
+    }
+
+    public Integer getUltimaPaginaProcessada() {
+        return ultimaPaginaProcessada != null ? ultimaPaginaProcessada : 0;
+    }
+
+    public void setUltimaPaginaProcessada(Integer ultimaPaginaProcessada) {
+        this.ultimaPaginaProcessada = ultimaPaginaProcessada;
+    }
+
+    public Long getTotalRegistros() {
+        return this.abasRelatorio.stream()
+                    .mapToLong(a -> a.getTotalRegistros() != null ? a.getTotalRegistros() : 0).sum();
+    }
+
+    public Long getRegistrosProcessados() {
+        return this.abasRelatorio.stream()
+                .mapToLong(a -> a.getRegistrosProcessados() != null ? a.getRegistrosProcessados() : 0).sum();
+    }
+
+    public Boolean processouTodosRegistros(){
+        return this.getRegistrosProcessados().compareTo(this.getTotalRegistros()) >= 0;
     }
 }

@@ -1,75 +1,74 @@
 package ipp.aci.boleia.dominio.vo;
 
-import ipp.aci.boleia.dominio.pesquisa.comum.BaseFiltroPaginado;
+import ipp.aci.boleia.dominio.pesquisa.comum.FiltroBasePeriodoPaginado;
 
 import java.util.List;
 
 /**
  * Filtro para pesquisa de Ciclos de Repasse
  */
-public class FiltroPesquisaCicloRepasseVo extends BaseFiltroPaginado {
+public class FiltroPesquisaCicloRepasseVo extends FiltroBasePeriodoPaginado {
+    private EntidadeVo pontoDeVenda;
+    private String numeroDocumento;
+    private List<EnumVo> produto;
+    private EnumVo statusPagamento;
+    private EnumVo statusIntegracao;
+    private String deMesAno;
+    private String ateMesAno;
 
-	private String de;
-	private String ate;
-	private EntidadeVo pontoDeVenda;
-	private String numeroDocumento;
-	private List<EnumVo> produto;
-	private EnumVo statusPagamento;
-	private EnumVo statusIntegracao;
+    public String getNumeroDocumento() {
+        return numeroDocumento;
+    }
 
-	public String getDe() {
-		return de;
-	}
+    public void setNumeroDocumento(String numeroDocumento) {
+        this.numeroDocumento = numeroDocumento;
+    }
 
-	public void setDe(String de) {
-		this.de = de;
-	}
+    public EntidadeVo getPontoDeVenda() {
+        return pontoDeVenda;
+    }
 
-	public String getAte() {
-		return ate;
-	}
+    public void setPontoDeVenda(EntidadeVo pontoDeVenda) {
+        this.pontoDeVenda = pontoDeVenda;
+    }
 
-	public void setAte(String ate) {
-		this.ate = ate;
-	}
+    public List<EnumVo> getProduto() {
+        return produto;
+    }
 
-	public String getNumeroDocumento() {
-		return numeroDocumento;
-	}
+    public void setProduto(List<EnumVo> produto) {
+        this.produto = produto;
+    }
 
-	public void setNumeroDocumento(String numeroDocumento) {
-		this.numeroDocumento = numeroDocumento;
-	}
+    public EnumVo getStatusPagamento() {
+        return statusPagamento;
+    }
 
-	public EntidadeVo getPontoDeVenda() {
-		return pontoDeVenda;
-	}
+    public void setStatusPagamento(EnumVo statusPagamento) {
+        this.statusPagamento = statusPagamento;
+    }
 
-	public void setPontoDeVenda(EntidadeVo pontoDeVenda) {
-		this.pontoDeVenda = pontoDeVenda;
-	}
+    public EnumVo getStatusIntegracao() {
+        return statusIntegracao;
+    }
 
-	public List<EnumVo> getProduto() {
-		return produto;
-	}
+    public void setStatusIntegracao(EnumVo statusIntegracao) {
+        this.statusIntegracao = statusIntegracao;
+    }
 
-	public void setProduto(List<EnumVo> produto) {
-		this.produto = produto;
-	}
+    public String getDeMesAno() {
+        return deMesAno;
+    }
 
-	public EnumVo getStatusPagamento() {
-		return statusPagamento;
-	}
+    public void setDeMesAno(String deMesAno) {
+        this.deMesAno = deMesAno;
+    }
 
-	public void setStatusPagamento(EnumVo statusPagamento) {
-		this.statusPagamento = statusPagamento;
-	}
+    public String getAteMesAno() {
+        return ateMesAno;
+    }
 
-	public EnumVo getStatusIntegracao() {
-		return statusIntegracao;
-	}
-
-	public void setStatusIntegracao(EnumVo statusIntegracao) {
-		this.statusIntegracao = statusIntegracao;
-	}
+    public void setAteMesAno(String ateMesAno) {
+        this.ateMesAno = ateMesAno;
+    }
 }
