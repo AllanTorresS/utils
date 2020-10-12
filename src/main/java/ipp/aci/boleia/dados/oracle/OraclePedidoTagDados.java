@@ -80,5 +80,9 @@ public class OraclePedidoTagDados extends OracleRepositorioBoleiaDados<PedidoTag
         }
     }
 
-   
+	@Override
+	public PedidoTag obterPorCobranca(Long idCobranca) {
+		return pesquisarUnico(new ParametroPesquisaIgual("cobranca.id", idCobranca));
+	}
+
 }

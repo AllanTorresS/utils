@@ -15,12 +15,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.Version;
 
-import org.hibernate.annotations.Formula;
 import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
 
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 
@@ -34,12 +31,6 @@ public class CobrancaConectcar implements IPersistente {
 
 	private static final long serialVersionUID = -4270486293974995429L;
 
-	/**
-	 * Utilizado para possibilitar a ordenação paginada pela data de vencimento
-	 * vigente.
-	 */
-	private static final String FORMULA_DATA_VENCIMENTO_VIGENTE = "CASE WHEN DT_VENC_PGTO_AJUSTADA IS NOT NULL THEN DT_VENC_PGTO_AJUSTADA ELSE DT_VENC_PGTO END";
-
 	@Id
 	@Column(name = "CD_COBRANCA")
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_COBRANCA_CONECTCAR")
@@ -52,7 +43,6 @@ public class CobrancaConectcar implements IPersistente {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CD_FROTA")
 	private Frota frota;
-	
 
 	@Column(name = "NO_DOC_JDE")
 	private Long numeroDocumento;
@@ -69,21 +59,11 @@ public class CobrancaConectcar implements IPersistente {
 	@Column(name = "DT_VENC_PGTO")
 	private Date dataVencimentoPagto;
 
-	@Column(name = "DT_VENC_PGTO_AJUSTADA")
-	private Date dataVencimentoPagtoAjustada;
-
-	@NotAudited
-	@Formula(FORMULA_DATA_VENCIMENTO_VIGENTE)
-	private Date dataVencimentoVigente;
-
 	@Column(name = "DT_PGTO")
 	private Date dataPagamento;
 
 	@Column(name = "VR_TOTAL")
 	private BigDecimal valorTotal;
-
-	@Column(name = "VR_TOTAL_AJUSTADO")
-	private BigDecimal valorTotalAjustado;
 
 	@Column(name = "ID_STATUS")
 	private Integer status;
@@ -175,14 +155,6 @@ public class CobrancaConectcar implements IPersistente {
 		this.dataVencimentoPagto = dataVencimentoPagto;
 	}
 
-	public Date getDataVencimentoPagtoAjustada() {
-		return dataVencimentoPagtoAjustada;
-	}
-
-	public void setDataVencimentoPagtoAjustada(Date dataVencimentoPagtoAjustada) {
-		this.dataVencimentoPagtoAjustada = dataVencimentoPagtoAjustada;
-	}
-
 	public Date getDataPagamento() {
 		return dataPagamento;
 	}
@@ -197,14 +169,6 @@ public class CobrancaConectcar implements IPersistente {
 
 	public void setValorTotal(BigDecimal valorTotal) {
 		this.valorTotal = valorTotal;
-	}
-
-	public BigDecimal getValorTotalAjustado() {
-		return valorTotalAjustado;
-	}
-
-	public void setValorTotalAjustado(BigDecimal valorTotalAjustado) {
-		this.valorTotalAjustado = valorTotalAjustado;
 	}
 
 	public Integer getStatus() {
@@ -293,26 +257,6 @@ public class CobrancaConectcar implements IPersistente {
 
 	public void setNumeroTentativasEnvio(Integer numeroTentativasEnvio) {
 		this.numeroTentativasEnvio = numeroTentativasEnvio;
-	}
-
-	/**
-	 * Verifica se houve um ajuste para a cobrança.
-	 * 
-	 * @return o valor total ajustado caso tenha ocorrido ajuste desta cobrança e
-	 *         valor total da cobrança, caso contrário.
-	 */
-	@Transient
-	public BigDecimal getValorVigente() {
-		BigDecimal descontosFrotaLeves = valorDesconto != null ? valorDesconto : BigDecimal.ZERO;
-		return valorTotalAjustado != null ? valorTotalAjustado : valorTotal.subtract(descontosFrotaLeves);
-	}
-
-	public Date getDataVencimentoVigente() {
-		return dataVencimentoVigente;
-	}
-
-	public void setDataVencimentoVigente(Date dataVencimentoVigente) {
-		this.dataVencimentoVigente = dataVencimentoVigente;
 	}
 
 	/**

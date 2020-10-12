@@ -16,5 +16,12 @@ public interface IPedidoTagDados extends IRepositorioBoleiaDados<PedidoTag> {
      * @return ResultadoPaginado de pedido de tags
      */
     ResultadoPaginado<PedidoTag> pesquisar(FiltroPesquisaPedidoTagVo filtro);
-   
+
+    /**
+     * Obtem o registro pelo código da cobrança
+     * @param idCobranca O código da cobrança
+     * @return pedido referente à cobrança
+     */
+    PedidoTag obterPorCobranca(Long idCobranca);
+
 }
