@@ -1,5 +1,9 @@
 package ipp.aci.boleia.util;
 
+import ipp.aci.boleia.util.anotacoes.Decimal;
+
+import java.math.BigDecimal;
+
 /**
  * Constantes utilizadas pela integração com a NDD
  */
@@ -14,7 +18,8 @@ public final class ConstantesNdd {
     public static final String TIPO_AUTENTICACAO_CRIACAO = "client_credentials";
 
     public static final int MINUTOS_EXPIRACAO_TOKEN = 20;
-
+    public static final BigDecimal MDR_MINIMO = new BigDecimal(1.5);
+    public static final BigDecimal MDR_DEFAULT =  new BigDecimal(2);
 
     /**
      * Impede instanciacao
