@@ -10,6 +10,7 @@ import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
 import ipp.aci.boleia.dominio.vo.EntidadeVo;
 import ipp.aci.boleia.dominio.vo.EnumVo;
@@ -17,6 +18,9 @@ import ipp.aci.boleia.dominio.vo.FiltroPesquisaMediaConsumoVo;
 import ipp.aci.boleia.dominio.vo.MediaConsumoVo;
 import ipp.aci.boleia.dominio.vo.VolumeAbastecidoTipoCombustivelVo;
 import ipp.aci.boleia.util.negocio.ParametrosPesquisaBuilder;
+import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
@@ -36,6 +40,9 @@ import static ipp.aci.boleia.util.UtilitarioCalculoData.obterUltimoInstanteDia;
 
 @Repository
 public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<AutorizacaoPagamento> implements IMediaConsumoDados {
+    @Autowired
+    private UtilitarioAmbiente utilitarioAmbiente;
+    
     private static final String REMOVER_ACENTO = "TRANSLATE( %s, " +
             "'âãäåāăąÁÂÃÄÅĀĂĄèééêëēĕėęěĒĔĖĘĚìíîïìĩīĭÌÍÎÏÌĨĪĬóôõöōŏőÒÓÔÕÖŌŎŐùúûüũūŭůÙÚÛÜŨŪŬŮ'," +
             "'aaaaaaaaaaaaaaaeeeeeeeeeeeeeeeiiiiiiiiiiiiiiiiooooooooooooooouuuuuuuuuuuuuuuu')";
@@ -303,6 +310,11 @@ public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<Autori
             outrasClausulas += CLAUSE_UNIDADE_MOTORISTA_MATRIZ;
         }
 
+        if (utilitarioAmbiente.getUsuarioLogado().isInterno() && utilitarioAmbiente.getUsuarioLogado().possuiFrotasAssociadas()) {
+                outrasClausulas += " AND a.frota.id IN (:idsFrota) ";
+                builder.adicionarParametros(new ParametroPesquisaIn("idsFrota", utilitarioAmbiente.getUsuarioLogado().listarIdsFrotasAssociadas()));
+        }
+
         String query = obterQueryPesquisarMediaConsumo(
                 String.format(QUERY_PESQUISAR_MEDIA_CONSUMO_MOTORISTA, outrasClausulas),
                 PARAM_ORDENACAO_PADRAO_MEDIA_CONSUMO_MOTORISTA,
@@ -386,6 +398,11 @@ public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<Autori
                 outrasClausulas += CLAUSE_IN_SUBTIPOS;
                 parametrosBuilder.adicionarParametros(new ParametroPesquisaIgual("subTiposVeiculos", subTiposVeiculos));
             }
+        }
+
+        if (utilitarioAmbiente.getUsuarioLogado().isInterno() && utilitarioAmbiente.getUsuarioLogado().possuiFrotasAssociadas()) {
+                outrasClausulas += " AND a.frota.id IN (:idsFrota) ";
+                parametrosBuilder.adicionarParametros(new ParametroPesquisaIn("idsFrota", utilitarioAmbiente.getUsuarioLogado().listarIdsFrotasAssociadas()));
         }
 
         String query = obterQueryPesquisarMediaConsumo(
@@ -477,6 +494,11 @@ public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<Autori
                 outrasClausulas += CLAUSE_IN_SUBTIPOS;
                 builder.adicionarParametros(new ParametroPesquisaIgual("subTiposVeiculos", subTiposVeiculos));
             }
+        }
+
+        if (utilitarioAmbiente.getUsuarioLogado().isInterno() && utilitarioAmbiente.getUsuarioLogado().possuiFrotasAssociadas()) {
+                outrasClausulas += " AND a.frota.id IN (:idsFrota) ";
+                builder.adicionarParametros(new ParametroPesquisaIn("idsFrota", utilitarioAmbiente.getUsuarioLogado().listarIdsFrotasAssociadas()));
         }
 
         String query = obterQueryPesquisarMediaConsumo(
