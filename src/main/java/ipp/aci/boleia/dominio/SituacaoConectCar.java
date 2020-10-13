@@ -49,7 +49,6 @@ public class SituacaoConectCar implements IPersistente {
     @Column(name="DT_OPERACAO")
     private Date operacao;
 
-    @NotNull
     @Column(name = "ID_MOTIVO")
     private Integer motivo;
 
@@ -57,6 +56,9 @@ public class SituacaoConectCar implements IPersistente {
     @Formula(MotivoLiberacaoConectCar.DECODE_FORMULA)
     private String motivoConvertido;
 
+    @Column(name = "DS_ACAO")
+    private String descricao;
+    
 	/**
      * Construtor default
      */
@@ -120,6 +122,14 @@ public class SituacaoConectCar implements IPersistente {
 
 	public void setMotivoConvertido(String motivoConvertido) {
 		this.motivoConvertido = motivoConvertido;
+	}
+
+	public String getDescricao() {
+		return descricao;
+	}
+
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
 	}
 
 	public Long getIdFrota() {
