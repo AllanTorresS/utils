@@ -373,20 +373,14 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     
     @OneToOne(mappedBy = "frota")
     private SituacaoConectCar situacaoConectCar;
-    
-    /*
+  
     @NotAudited
-    @Formula("(SELECT COUNT(T.id) FROM TAG_CONECTCAR T WHERE T.ID = ID AND T.dataAtivacao IS NOT NULL)")
+    @Formula("(SELECT NVL(COUNT(0), 0) FROM BOLEIA_SCHEMA.TAG_CONECTCAR T WHERE T.CD_FROTA = CD_FROTA)")
+    private Integer totalTags;
+    
+    @NotAudited
+    @Formula("(SELECT NVL(COUNT(0), 0) FROM BOLEIA_SCHEMA.TAG_CONECTCAR T WHERE T.CD_FROTA = CD_FROTA AND T.DT_ATIVACAO IS NOT NULL)")
     private Integer totalTagsAtivas;
-    */
-    
-    @Where( clause = "DT_ATIVACAO != NULL")
-    @OneToMany(mappedBy = "frota")
-    private List<TagConectcar> tagsAtivas;
-    
-    @Where( clause = "DT_BLOQUEIO != NULL")
-    @OneToMany(mappedBy = "frota")
-    private List<TagConectcar> tagsInativas;
     
 	/**
      * Construtor default
@@ -545,9 +539,7 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
         this.connectCTAToken = connectCTAToken;
         this.condicoesComerciais = condicoesComerciais;
         this.situacaoConectCar = situacaoConectCar;
-        
-        this.tagsAtivas = tagsAtivas;
-        this.tagsInativas = tagsInativas;
+             
     }
 
     @Override
@@ -1315,20 +1307,19 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
 		this.situacaoConectCar = situacaoConectCar;
 	}
 
-	public List<TagConectcar> getTagsAtivas() {
-		return tagsAtivas;
+	public Integer getTotalTags() {
+		return totalTags;
 	}
 
-	public void setTagsAtivas(List<TagConectcar> tagsAtivas) {
-		this.tagsAtivas = tagsAtivas;
+	public void setTotalTags(Integer totalTags) {
+		this.totalTags = totalTags;
 	}
 
-	public List<TagConectcar> getTagsInativas() {
-		return tagsInativas;
+	public Integer getTotalTagsAtivas() {
+		return totalTagsAtivas;
 	}
 
-	public void setTagsInativas(List<TagConectcar> tagsInativas) {
-		this.tagsInativas = tagsInativas;
-	}
-    
+	public void setTotalTagsAtivas(Integer totalTagsAtivas) {
+		this.totalTagsAtivas = totalTagsAtivas;
+	}    
 }
