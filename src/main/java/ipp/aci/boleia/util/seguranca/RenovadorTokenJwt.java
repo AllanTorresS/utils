@@ -4,6 +4,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import ipp.aci.boleia.dados.IAgenciadorFreteDados;
 import ipp.aci.boleia.dados.IComandaDigitalDados;
 import ipp.aci.boleia.dados.IDispositivoMotoristaDados;
 import ipp.aci.boleia.dados.IModuloInternoDados;
@@ -11,10 +12,13 @@ import ipp.aci.boleia.dados.IUsuarioDados;
 import ipp.aci.boleia.dominio.ComandaDigital;
 import ipp.aci.boleia.dominio.DispositivoMotorista;
 import ipp.aci.boleia.dominio.ModuloInterno;
+import ipp.aci.boleia.dominio.SistemaExterno;
 import ipp.aci.boleia.dominio.Usuario;
+import ipp.aci.boleia.dominio.agenciadorfrete.AgenciadorFrete;
 import ipp.aci.boleia.dominio.enums.TipoPerfilUsuario;
 import ipp.aci.boleia.dominio.enums.TipoTokenJwt;
 import ipp.aci.boleia.util.excecao.ExcecaoTokenJwtExpirado;
+import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,6 +65,12 @@ public class RenovadorTokenJwt {
     private IModuloInternoDados moduloInternoDados;
 
     private LoadingCache<ChaveCache, Optional<String>> cacheRenovacaoTokens;
+
+    @Autowired
+    private UtilitarioAmbiente utilitarioAmbiente;
+
+    @Autowired
+    private IAgenciadorFreteDados agenciadorFreteDados;
 
     /**
      * Cria um cache para armazenamento temporario de tokens JWT recem gerados.
@@ -141,6 +151,7 @@ public class RenovadorTokenJwt {
                     case USUARIO_PDV:           return renovarTokenPDV(token, fingerprint);
                     case API_FROTISTA:          return renovarTokenApiFrotista(token, strToken);
                     case MODULO_INTERNO:        return renovarTokenModuloInterno(token);
+                    case SISTEMA_EXTERNO:       return renovarTokenAgenciadorFrete(token, strToken);
                 }
             }
         } catch (ExcecaoTokenJwtExpirado e) {
@@ -181,6 +192,24 @@ public class RenovadorTokenJwt {
             novoToken = utilitarioJwt.criarTokenDispositivoMotorista(dispositivoMotorista);
         }
         return novoToken;
+    }
+
+    /**
+     * Renova um token para o agenciador de frete
+     *
+     * @param token Token decodificado utilizado na chamada da API
+     * @param strToken Token utilizado na chamada da API
+     * @return Novo token
+     */
+    private String renovarTokenAgenciadorFrete(DecodedJWT token, String strToken) {
+        SistemaExterno sisSistemaExterno = utilitarioAmbiente.getSistemaExterno();
+        AgenciadorFrete agenciadorFrete = agenciadorFreteDados.obterPorSistemaExterno(sisSistemaExterno);
+        if(agenciadorFrete != null ){
+            Long contadorRenovacoes = utilitarioJwt.getContadorRenovacoes(token);
+            contadorRenovacoes = contadorRenovacoes != null ? ++contadorRenovacoes : 0L;
+            return utilitarioJwt.criarTokenSistemaExterno(sisSistemaExterno, contadorRenovacoes);
+        }
+        return strToken;
     }
 
     /**

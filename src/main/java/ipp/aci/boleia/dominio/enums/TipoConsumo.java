@@ -16,7 +16,7 @@ public enum TipoConsumo implements IEnumComLabel<TipoConsumo> {
      * Construtor
      * @param value O valor
      */
-    private TipoConsumo(Integer value) {
+    TipoConsumo(Integer value) {
         this.value = value;
     }
 

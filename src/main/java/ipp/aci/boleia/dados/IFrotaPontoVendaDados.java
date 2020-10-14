@@ -1,6 +1,7 @@
 package ipp.aci.boleia.dados;
 
 
+import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.FrotaPontoVenda;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.AutorizacaoPagamentoOrfaVo;
@@ -67,4 +68,11 @@ public interface IFrotaPontoVendaDados extends IRepositorioBoleiaDados<FrotaPont
 	 * @return uma lista contendo as entidades recuperadas pelo critério
 	 */
 	List<FrotaPontoVenda> buscarPorDataMaisRecente(Date dataReferencia);
+
+	/**
+	 * Obtem todas frotaPontoVenda em relação a uma determinada Frota
+	 * @param frota a frota envolvida na associação
+	 * @return uma lista contendo as associaçãoes Frota x Posto dessa frota
+	 */
+	List<FrotaPontoVenda> buscarPorFrota(Frota frota);
 }
