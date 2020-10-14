@@ -56,11 +56,6 @@ public class LogicaParametroPrecoMaximo implements ILogicaParametroSistema<Autor
                     resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
                     produtosViolados.append(mensagens.obterMensagem("parametro.sistema.erro.abastecimento.preco.maximo.produto", item.getNome(), UtilitarioFormatacao.formatarDecimal(precoMaximoPermitido), UtilitarioFormatacao.formatarDecimal(item.getValorUnitario())));
                 }
-//
-//                if ((precoMaximoPermitido != null && item.getValorUnitario().compareTo(precoMaximoPermitido) > 0)) {
-//                    resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
-//                    produtosViolados.append(mensagens.obterMensagem("parametro.sistema.erro.abastecimento.preco.maximo.produto", item.getNome(), UtilitarioFormatacao.formatarDecimal(precoMaximoPermitido), UtilitarioFormatacao.formatarDecimal(item.getValorUnitario())));
-//                }
             }
             if (resultado.getStatusResultado().equals(StatusExecucaoParametroSistema.ERRO)) {
                 resultado.setMensagemErro(mensagens.obterMensagem("parametro.sistema.erro.abastecimento.preco.maximo", veiculo.getPlaca(), produtosViolados.toString()));
@@ -68,6 +63,12 @@ public class LogicaParametroPrecoMaximo implements ILogicaParametroSistema<Autor
         }
         return resultado;
     }
+
+    /**
+     * Obtem a quantidade de litros do abastecimento
+     * @param quantidadePermitidaProdutos
+     * @return retorna um mapa de quantidade de produtos que foram obtidos
+     */
     private Map<Long,Long> obterMapaQuantidadePorProduto(List<FrotaParametroSistemaPrecoMaximoProduto> quantidadePermitidaProdutos) {
         Map<Long,Long> resultado = new HashMap<>();
         quantidadePermitidaProdutos.forEach(quantidadeMaxima ->
@@ -76,6 +77,11 @@ public class LogicaParametroPrecoMaximo implements ILogicaParametroSistema<Autor
         return resultado;
     }
 
+    /**
+     * Obtem a quantidade de litros do abastecimento
+     * @param quantidadePermitidaCombustivel
+     * @return retorna um mapa de litros abastecidos
+     */
     private Map<Long,BigDecimal> obterMapaQuantidadePorAbastecimento(List<FrotaParametroSistemaPrecoMaximoAbastecimento> quantidadePermitidaCombustivel) {
         Map<Long,BigDecimal> resultado = new HashMap<>();
         quantidadePermitidaCombustivel.forEach(quantidadeMaxima ->
