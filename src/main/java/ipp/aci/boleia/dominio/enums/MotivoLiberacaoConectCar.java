@@ -8,7 +8,6 @@ import ipp.aci.boleia.util.i18n.IEnumComLabel;
  */
 public enum MotivoLiberacaoConectCar implements IEnumComLabel<MotivoLiberacaoConectCar> {
 
-    ATIVADO (0),
 	DEBITO_VENCIDO(1),
     INADIMPLECIA (2),
     SUSPEITA_FRAUDE (3),
@@ -16,7 +15,7 @@ public enum MotivoLiberacaoConectCar implements IEnumComLabel<MotivoLiberacaoCon
     CREDITO_EXCEDIDO (5),
     OUTROS(6);
 
-	public static final String DECODE_FORMULA = "DECODE(ID_MOTIVO, 0, 'ATIVADO', 1, 'DÉBITO VENCIDO', 2, 'INADIMPLENCIA', 3, 'SUSPEITA FRAUDE', 4 , 'SUSPEITA ATIVIDADE', 5, 'CRÉDITO EXCEDIDO', 6, 'OUTROS')";
+	public static final String DECODE_FORMULA = "DECODE(ID_MOTIVO, 1, 'Débito Vencido', 2, 'Inadimplência', 3, 'Suspeita de Fraude', 4 , 'Suspeita de Ativade', 5, 'Crédito Excedido', 6, 'Outros')";
 	
     private final Integer value;
 

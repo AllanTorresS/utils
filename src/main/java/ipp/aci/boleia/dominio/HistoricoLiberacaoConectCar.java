@@ -55,7 +55,6 @@ public class HistoricoLiberacaoConectCar implements IPersistente {
     @Column(name="DT_OPERACAO")
     private Date operacao;
 
-    @NotNull
     @Column(name = "ID_MOTIVO")
     private Integer motivo;
 
