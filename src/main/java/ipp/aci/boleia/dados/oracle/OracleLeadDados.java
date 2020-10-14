@@ -9,6 +9,7 @@ import ipp.aci.boleia.dados.ILeadDados;
 import ipp.aci.boleia.dominio.Lead;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.util.Ordenacao;
 
 
@@ -31,26 +32,17 @@ public class OracleLeadDados extends OracleRepositorioBoleiaDados<Lead> implemen
 		List<ParametroPesquisa> parametros = new ArrayList<>();
 		povoarParametroIgual("frota.id", idFrota, parametros);
 		povoarParametroNulo("statusAprovacao", Boolean.TRUE, false, parametros);
-		
+
 		return pesquisarUnico(parametros.toArray(new ParametroPesquisa[parametros.size()]));
 	}
 	
 	@Override
 	public Lead pesquisarUltimoLeadParaFrota(Long idFrota) {
-		List<ParametroPesquisa> parametros = new ArrayList<>();
-		povoarParametroIgual("frota.id", idFrota, parametros);
-		
-		List<ParametroOrdenacaoColuna> parametrosOrdenacao = new ArrayList<>();
-		parametrosOrdenacao.add(new ParametroOrdenacaoColuna("dataInclusao", Ordenacao.DECRESCENTE));
-		
-		List<Lead> listaLead = pesquisar(parametrosOrdenacao, parametros.toArray(new ParametroPesquisa[parametros.size()]));
-		
-		if(listaLead != null && listaLead.size() > 0) {
-			return listaLead.get(0);
+		List<Lead> leads = pesquisar(new ParametroOrdenacaoColuna("dataInclusao", Ordenacao.DECRESCENTE), new ParametroPesquisaIgual("frota.id", idFrota));
+		if(leads != null && !leads.isEmpty()) {
+			return leads.iterator().next();
 		}
-		
 		return null;
 	}
-    
-    
+
 }
