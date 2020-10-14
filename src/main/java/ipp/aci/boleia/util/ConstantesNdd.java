@@ -1,7 +1,5 @@
 package ipp.aci.boleia.util;
 
-import ipp.aci.boleia.util.anotacoes.Decimal;
-
 import java.math.BigDecimal;
 
 /**
