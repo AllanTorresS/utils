@@ -2,6 +2,7 @@ package ipp.aci.boleia.dominio.interfaces;
 
 import ipp.aci.boleia.dominio.Componente;
 import ipp.aci.boleia.dominio.ItemAutorizacaoPagamento;
+import ipp.aci.boleia.dominio.Negociacao;
 import ipp.aci.boleia.dominio.NotaFiscal;
 import ipp.aci.boleia.dominio.Perfil;
 import ipp.aci.boleia.dominio.PontoDeVenda;
@@ -64,6 +65,7 @@ public interface IPertenceRevendedor {
         mapa.put(Componente.class, CAMPO_COMPONENTE);
         mapa.put(Reembolso.class, CAMPO_TRANSACOES_CONSOLIDADAS);
         mapa.put(NotaFiscal.class, CAMPO_AUTORIZACOES_PAGAMENTO);
+        mapa.put(Negociacao.class, CAMPO_FROTA_PONTOVENDA);
         return mapa;
     }
 }

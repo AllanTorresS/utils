@@ -25,6 +25,8 @@ import javax.validation.constraints.Size;
 @Table(name = "CONTROLE_ACESSO")
 public class ControleAcesso implements IPersistente {
 
+    private static final long serialVersionUID = -4653882039035199338L;
+
     @Id
     @Column(name = "CD_CONTROLE_ACESSO")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_CONTROLE_ACESSO_PORTAL")

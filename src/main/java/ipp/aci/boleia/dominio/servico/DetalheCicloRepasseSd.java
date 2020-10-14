@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 @Component
 public class DetalheCicloRepasseSd {
 
-
     /**
      * Gera os agrupamentos de produto por Ponto de Venda
      * dentro de um mesmo ciclo.

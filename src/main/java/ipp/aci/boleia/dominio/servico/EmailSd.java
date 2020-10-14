@@ -120,6 +120,9 @@ public class EmailSd {
 
     @Autowired
     private IFrotaPontoVendaDados repositorioFrotaPtov;
+    
+    @Autowired
+    private IHistoricoPontoVendaDados historicoPontoVendaDados;
 
     @Autowired
     private IFrotaDados repositorioFrota;
@@ -742,6 +745,44 @@ public class EmailSd {
         corpo.append(mensagens.obterMensagem("email.alteracao.invalidada.corpo5"));
 
         emailDados.enviarEmail(assunto, corpo.toString(), Arrays.asList(destinatario));
+    }
+    
+    public void enviarEmailNotificacaoAbastecimentoPontoVendaNaoVisivel(AutorizacaoPagamento autorizacaoPagamento){
+        FrotaPontoVenda frotaPtov = null;
+        if (autorizacaoPagamento.getTransacaoConsolidada() != null && autorizacaoPagamento.getTransacaoConsolidada().getFrotaPtov() != null){
+           frotaPtov = autorizacaoPagamento.getTransacaoConsolidada().getFrotaPtov();
+        } else {
+            frotaPtov = repositorioFrotaPtov.obterFrotaPontoVenda(autorizacaoPagamento.getFrota().getId(), autorizacaoPagamento.getPontoVenda().getId());
+        }        
+        String destinatario = null;
+        if (frotaPtov != null && frotaPtov.getUltimoHistorico()!= null && frotaPtov.getUltimoHistorico().getUsuario() != null){
+            destinatario = frotaPtov.getUltimoHistorico().getUsuario().getEmail();
+        } else {
+            HistoricoPontoVenda historicoPontoVenda = historicoPontoVendaDados.obterHistoricoPontoVendaPorData(autorizacaoPagamento.getPontoVenda().getId(), autorizacaoPagamento.getDataRequisicao());
+            if (historicoPontoVenda != null && historicoPontoVenda.getUsuario() != null){
+                destinatario = historicoPontoVenda.getUsuario().getEmail();
+            }
+        }        
+        if (destinatario != null){
+            String assunto = mensagens.obterMensagem("email.abastecimento.contingencia.naovisivel.assunto");
+
+            StringBuilder corpo = new StringBuilder(mensagens.obterMensagem("email.abastecimento.contingencia.naovisivel.corpo1"));
+     
+            corpo.append(mensagens.obterMensagem("email.abastecimento.contingencia.naovisivel.corpo2",
+                    UtilitarioFormatacaoData.formatarDataHora(autorizacaoPagamento.getDataRequisicao()),
+                    UtilitarioFormatacao.formatarCnpjApresentacao(autorizacaoPagamento.getCnpjAreaAbastecimento())+"<br/>"+autorizacaoPagamento.getPontoVenda().getNome(),
+                    UtilitarioFormatacao.formatarCnpjApresentacao(autorizacaoPagamento.getCnpjFrota())+"<br/>"+autorizacaoPagamento.getRazaoSocialFrota(),
+                    autorizacaoPagamento.getPlacaVeiculo(),
+                    autorizacaoPagamento.getNomeItemAbastecimento()+"<br/>"+autorizacaoPagamento.getValorUnitarioAbastecimento(),
+                    UtilitarioFormatacao.formatarLitros(autorizacaoPagamento.getTotalLitrosAbastecimento()),
+                    UtilitarioFormatacao.formatarDecimalMoedaReal(autorizacaoPagamento.getValorTotalAbastecimento()),
+                    autorizacaoPagamento.getPedido()!= null ? autorizacaoPagamento.getPedido().getNumero() : ""
+                    ));            
+
+            corpo.append(mensagens.obterMensagem("email.abastecimento.contingencia.naovisivel.corpo3"));
+
+            emailDados.enviarEmail(assunto, corpo.toString(), Arrays.asList(destinatario));
+        }
     }
 
 }

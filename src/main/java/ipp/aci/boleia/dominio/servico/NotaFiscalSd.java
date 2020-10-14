@@ -4,11 +4,13 @@ import ipp.aci.boleia.dados.IArquivoDados;
 import ipp.aci.boleia.dados.IComponenteDados;
 import ipp.aci.boleia.dados.IEmpresaAgregadaDados;
 import ipp.aci.boleia.dados.IFrotaDados;
+import ipp.aci.boleia.dados.INfeAnexosArmazemDados;
 import ipp.aci.boleia.dados.INotaFiscalDados;
 import ipp.aci.boleia.dados.ITransacaoConsolidadaDados;
 import ipp.aci.boleia.dados.IUnidadeDados;
 import ipp.aci.boleia.dominio.Arquivo;
 import ipp.aci.boleia.dominio.AutorizacaoPagamento;
+import ipp.aci.boleia.dominio.NfeAnexosArmazem;
 import ipp.aci.boleia.dominio.NotaFiscal;
 import ipp.aci.boleia.dominio.TransacaoConsolidada;
 import ipp.aci.boleia.dominio.enums.TipoArquivo;
@@ -27,7 +29,7 @@ import ipp.aci.boleia.util.UtilitarioXml;
 import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.excecao.ExcecaoArquivoNaoEncontrado;
 import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
-import ipp.aci.boleia.util.excecao.ExcecaoRecursoNaoEncontrado;
+import ipp.aci.boleia.util.excecao.ExcecaoSemConteudo;
 import ipp.aci.boleia.util.excecao.ExcecaoValidacao;
 import ipp.aci.boleia.util.i18n.Mensagens;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
@@ -69,6 +71,9 @@ public class NotaFiscalSd {
 
     @Autowired
     private IArquivoDados repositorioArquivo;
+
+    @Autowired
+    private INfeAnexosArmazemDados nfeAnexosArmazemDados;
 
     @Autowired
     private UtilitarioAmbiente utilitarioAmbiente;
@@ -236,6 +241,10 @@ public class NotaFiscalSd {
      * @param notaFiscal Nota fiscal que será excluída.
      */
     public void excluirNotaFiscal(NotaFiscal notaFiscal) {
+        NfeAnexosArmazem nfeAnexosArmazem = nfeAnexosArmazemDados.obterPorNotaFiscal(notaFiscal.getId());
+        if (nfeAnexosArmazem != null) {
+            nfeAnexosArmazemDados.excluir(nfeAnexosArmazem.getId());
+        }
         repositorio.excluir(notaFiscal.getId());
         repositorioArquivo.excluir(notaFiscal.getArquivo().getId());
     }
@@ -316,8 +325,8 @@ public class NotaFiscalSd {
             if(notaFiscal != null) {
                 AutorizacaoPagamento autorizacaoPagamento = notaFiscal.getAutorizacoesPagamento().stream()
                         .findFirst()
-                        .orElseThrow(ExcecaoRecursoNaoEncontrado::new);
-                TransacaoConsolidada consolidada = transacaoConsolidadaDados.obterConsolidadoPorAbastecimento(autorizacaoPagamento.getId());
+                        .orElseThrow(ExcecaoSemConteudo::new);
+                TransacaoConsolidada consolidada = transacaoConsolidadaDados.obterConsolidadoParaAbastecimento(autorizacaoPagamento.getId());
                 NotaFiscalVo nota = new NotaFiscalVo(notaFiscal, consolidada, autorizacaoPagamento);
                 throw new ExcecaoValidacao(Erro.NOTA_FISCAL_UPLOAD_NOTA_REPETIDA, UtilitarioJson.toJSONString(nota));
             }
@@ -425,7 +434,7 @@ public class NotaFiscalSd {
     private Long getPontoVendaResponsavelAbastecimentos(List<AutorizacaoPagamento> autorizacoesDaNota) {
         return autorizacoesDaNota.stream()
                 .findFirst()
-                .orElseThrow(ExcecaoRecursoNaoEncontrado::new)
+                .orElseThrow(ExcecaoSemConteudo::new)
                 .getPontoVenda().getComponenteAreaAbastecimento().getCodigoPessoa();
     }
 
@@ -441,7 +450,7 @@ public class NotaFiscalSd {
     private Long getFrotaResponsavelAbastecimentos(List<AutorizacaoPagamento> autorizacoesDaNota) {
         AutorizacaoPagamento primeiraAutorizacao = autorizacoesDaNota.stream()
                 .findFirst()
-                .orElseThrow(ExcecaoRecursoNaoEncontrado::new);
+                .orElseThrow(ExcecaoSemConteudo::new);
         if(primeiraAutorizacao.getEmpresaAgregadaExigeNf() != null && primeiraAutorizacao.getEmpresaAgregadaExigeNf()) {
             return primeiraAutorizacao.getEmpresaAgregada().getCnpj();
         } else if(primeiraAutorizacao.getUnidadeExigeNf() != null && primeiraAutorizacao.getUnidadeExigeNf()) {

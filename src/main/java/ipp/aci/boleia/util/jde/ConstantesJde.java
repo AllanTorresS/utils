@@ -46,6 +46,7 @@ public final class ConstantesJde {
 
     public static final String FATURA_CIA_DOCUMENTO = "74090";
     public static final String FATURA_TIPO_DOCUMENTO = "D3";
+    public static final String FATURA_TIPO_DOCUMENTO_SAQUE = "F4";
     public static final String FATURA_REPASSE_TIPO_DOCUMENTO = "DB";
     public static final String FATURA_CONECTCAR_PEDIDO_TAG_TIPO_DOCUMENTO = "F5";
     public static final String FATURA_CENARIO = "140";
@@ -98,6 +99,6 @@ public final class ConstantesJde {
      * Impede instanciacao e heranca
      */
     private ConstantesJde() {
-        // Impede instanciacao e heranca
+        // Impede instanciacao
     }
 }

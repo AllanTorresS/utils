@@ -5,6 +5,7 @@ import ipp.aci.boleia.dominio.Reembolso;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaReembolsoVo;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -57,4 +58,14 @@ public interface IReembolsoDados extends IRepositorioBoleiaDados<Reembolso> {
      * @return lista com os reembolsos
      */
     List<Reembolso> obterReembolsosErroEnvio(Integer numeroTentativas);
+
+    /**
+     * Busca uma lista de reembolsos dada um pv e um período de data.
+     *
+     * @param pv Identificador do pv utilizado na busca
+     * @param de Data inicial do período utilizado na busca
+     * @param ate Data final do período utilizado na busca
+     * @return lista de reembolsos encontrada.
+     */
+    List<Reembolso> pesquisarPorPvEData(Long pv, Date de, Date ate);
 }

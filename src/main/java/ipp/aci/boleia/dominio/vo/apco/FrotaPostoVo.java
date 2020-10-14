@@ -14,7 +14,6 @@ public class FrotaPostoVo {
 
 	private Date dataInativacao;
 
-
 	/**
 	 * Construtor Default
 	 */
@@ -35,6 +34,11 @@ public class FrotaPostoVo {
 		this.dataInativacao = dataInativacao;
 	}
 
+	/**
+	 * Construtor do vo.
+	 *
+	 * @param frotaPontoVenda Entidade utilizada na criação do vo.
+	 */
 	public FrotaPostoVo(FrotaPontoVenda frotaPontoVenda){
 		this(frotaPontoVenda.getPontoVenda().getComponenteAreaAbastecimento().getCodigoCorporativo(),frotaPontoVenda.getFrota().getId(),null);
 	}

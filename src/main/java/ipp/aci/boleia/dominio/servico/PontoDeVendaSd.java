@@ -5,11 +5,13 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.common.base.Strings;
 import ipp.aci.boleia.dados.IBancoDados;
 import ipp.aci.boleia.dados.IContaBancariaDados;
+import ipp.aci.boleia.dados.IHistoricoPontoVendaDados;
 import ipp.aci.boleia.dados.ILeadCredenciamentoDados;
 import ipp.aci.boleia.dados.IPontoDeVendaDados;
 import ipp.aci.boleia.dados.IQuestionarioDados;
 import ipp.aci.boleia.dados.ITaxaPerfilDados;
 import ipp.aci.boleia.dominio.ContaBancaria;
+import ipp.aci.boleia.dominio.HistoricoPontoVenda;
 import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.Questionario;
 import ipp.aci.boleia.dominio.QuestionarioPerguntaOpcao;
@@ -23,6 +25,7 @@ import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaPontoDeVendaVo;
 import ipp.aci.boleia.util.excecao.ExcecaoTokenJwtExpirado;
+import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import ipp.aci.boleia.util.seguranca.UtilitarioJwt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -57,6 +60,12 @@ public class PontoDeVendaSd {
 
     @Autowired
     private IPontoDeVendaDados repositorioPontoVenda;
+    
+    @Autowired
+    private IHistoricoPontoVendaDados repositorioHistoricoPontoVenda;
+    
+    @Autowired
+    private UtilitarioAmbiente ambiente;
 
     /**
      * Preenche o questionário do ponto de venda com as opções default caso não tenha respostas preenchidas
@@ -256,13 +265,8 @@ public class PontoDeVendaSd {
     	    Long usuarioPontoVendaCnpj = usuario.getPontosDeVenda().get(0).getComponenteAreaAbastecimento().getCodigoPessoa();
     	    Long pontoVendaCnpj = pontoDeVenda.getComponenteAreaAbastecimento().getCodigoPessoa();
 
-                if (String.format("%014d",usuarioPontoVendaCnpj).substring(0, 8)
-                        .equals(String.format("%014d",pontoVendaCnpj).substring(0, 8))){
-                    return true;
-                }
-                else{
-                    return false;
-                }
+            return String.format("%014d", usuarioPontoVendaCnpj).substring(0, 8)
+                    .equals(String.format("%014d", pontoVendaCnpj).substring(0, 8));
 
     	}
     	return true;
@@ -276,12 +280,9 @@ public class PontoDeVendaSd {
      * @return true caso encontre um credenciamento pendente se não false.
      */
     private static boolean verificarCredenciamentoPendente(Usuario usuario, PontoDeVenda pontoDeVenda) {
-        if (usuario != null && !CollectionUtils.isNullOrEmpty(usuario.getPontosDeVenda()) && !usuario.getPontosDeVenda().contains(pontoDeVenda)
+        return usuario != null && !CollectionUtils.isNullOrEmpty(usuario.getPontosDeVenda()) && !usuario.getPontosDeVenda().contains(pontoDeVenda)
                 && (StatusHabilitacaoPontoVenda.PENDENTE_ACEITE.getValue().equals(pontoDeVenda.getStatusHabilitacao())
-                || pontoDeVenda.getTokenCredenciamento() != null )) {
-            return true;
-        }
-        return false;
+                || pontoDeVenda.getTokenCredenciamento() != null);
     }
 
     /**
@@ -322,5 +323,19 @@ public class PontoDeVendaSd {
     		return false;
     	}
     	return false;
+    }
+
+    /**
+     * Preenche e armazena o historico do ponto de venda.
+     * 
+     * @param entidade o ponto de venda
+     */
+    public void armazenarHistorico(PontoDeVenda entidade) {
+        HistoricoPontoVenda historicoPontoVenda = new HistoricoPontoVenda();
+        historicoPontoVenda.setPontoDeVenda(entidade);
+        historicoPontoVenda.setUsuario(ambiente.getUsuarioLogado());
+        historicoPontoVenda.setDataHistorico(ambiente.buscarDataAmbiente());
+        historicoPontoVenda.setRestricaoVisibilidade(entidade.getRestricaoVisibilidade());
+        repositorioHistoricoPontoVenda.armazenar(historicoPontoVenda);
     }
 }

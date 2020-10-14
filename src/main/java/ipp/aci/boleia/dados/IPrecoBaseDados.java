@@ -25,6 +25,32 @@ public interface IPrecoBaseDados extends IRepositorioBoleiaDados<PrecoBase> {
     ResultadoPaginado<PrecoBase> pesquisaPaginada(FiltroPesquisaAlteracaoPrecoVo filtro, Usuario usuario, Integer... statusPossiveis);
 
     /**
+     * Busca os preços vigentes para o Ponto de venda e combustível informados
+     * @param idPtov id da Ptov
+     * @param idTipoCombustivel a lista com id TipoCombustivel
+     * @return Precos vigentes
+     */
+    List<PrecoBase> buscarPrecosVigentesPorCombustiveis(Long idPtov, List<Long> idTipoCombustivel);
+
+    /**
+     * Busca preço dos combustíveis por ponto de venda na regiao informada para uma dada frota
+     * @param filtro Os dados de localizacao
+     * @param idsTipoCombustivel Lista dos identificadores de TipoCombustivel
+     * @return Uma lista de precos
+     */
+    List<PrecoBase> buscarPrecosPorFrotaLocalizacaoCombustivel(FiltroPesquisaLocalizacaoVo filtro,  List<Long> idsTipoCombustivel);
+
+    /**
+     * Busca preço dos combustíveis por ponto de venda na regiao informada para uma dada frota
+     * @param filtro Os dados de localizacao
+     * @param idCombustivel o identificador do TipoCombustivel
+     * @param pagina a pagina
+     * @param tamanho o tamanho da pagina
+     * @return Uma lista de precos
+     */
+    ResultadoPaginado<PrecoBase> buscarPrecosPorFrotaLocalizacaoCombustivel(FiltroPesquisaLocalizacaoVo filtro, Long idCombustivel, Integer pagina, Integer tamanho);
+
+    /**
      * Busca todos os precos atuais
      * @return Os precos atuais
      */
