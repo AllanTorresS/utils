@@ -3,6 +3,7 @@ package ipp.aci.boleia.dominio.vo.agenciadorfrete;
 import ipp.aci.boleia.dominio.Componente;
 import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.PrecoBase;
+import ipp.aci.boleia.util.ConstantesNdd;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
 
 import java.math.BigDecimal;
@@ -41,8 +42,24 @@ public class PostoVo {
         this.endereco = new EnderecoVo(pontoDeVenda);
         this.latitude = UtilitarioFormatacao.formatarDecimal(pontoDeVenda.getLatitude());
         this.longitude = UtilitarioFormatacao.formatarDecimal(pontoDeVenda.getLongitude());
-        this.mdr = pontoDeVenda.getMdr();
+
+        obterMdr(pontoDeVenda);
+
         this.combustiveis = precosBase.stream().map(CombustivelVo::new).collect(Collectors.toList());
+    }
+
+    /***
+     * Obtem o MDR do Ponto de venda
+     * @param pontoDeVenda
+     */
+    private void obterMdr(PontoDeVenda pontoDeVenda) {
+        this.mdr = ConstantesNdd.MDR_DEFAULT;
+        if(pontoDeVenda.getMdr() != null) {
+            this.mdr = pontoDeVenda.getMdr();
+        }
+        if(pontoDeVenda.getMdr() != null && pontoDeVenda.getMdr().compareTo(ConstantesNdd.MDR_MINIMO) < 0){
+            this.mdr = ConstantesNdd.MDR_MINIMO;
+        }
     }
 
     /**
