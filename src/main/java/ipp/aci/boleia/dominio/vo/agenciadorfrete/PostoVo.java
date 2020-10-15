@@ -3,6 +3,7 @@ package ipp.aci.boleia.dominio.vo.agenciadorfrete;
 import ipp.aci.boleia.dominio.Componente;
 import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.PrecoBase;
+import ipp.aci.boleia.dominio.enums.PerfilPontoDeVenda;
 import ipp.aci.boleia.util.ConstantesNdd;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
 
@@ -50,16 +51,18 @@ public class PostoVo {
 
     /***
      * Obtem o MDR do Ponto de venda
-     * @param pontoDeVenda
+     * @param pontoDeVenda o ponto de venda
      */
     private void obterMdr(PontoDeVenda pontoDeVenda) {
-        this.mdr = ConstantesNdd.MDR_DEFAULT;
-        if(pontoDeVenda.getMdr() != null) {
-            this.mdr = pontoDeVenda.getMdr();
+        BigDecimal mdrRodovia = BigDecimal.valueOf(1.4);
+        BigDecimal mdrRodoRede = BigDecimal.valueOf(1.1);
+        BigDecimal mdrDefault = BigDecimal.valueOf(2.0);
+        if(pontoDeVenda.getRodoRede() || pontoDeVenda.getPerfilVenda().equals(PerfilPontoDeVenda.RODO_REDE.getValue())) {
+            this.mdr =  mdrRodoRede;
+        } else if(pontoDeVenda.getPerfilVenda().equals(PerfilPontoDeVenda.RODOVIA.getValue())) {
+            this.mdr =  mdrRodovia;
         }
-        if(pontoDeVenda.getMdr() != null && pontoDeVenda.getMdr().compareTo(ConstantesNdd.MDR_MINIMO) < 0){
-            this.mdr = ConstantesNdd.MDR_MINIMO;
-        }
+        this.mdr = mdrDefault;
     }
 
     /**
