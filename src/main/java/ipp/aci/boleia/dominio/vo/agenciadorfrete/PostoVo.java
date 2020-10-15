@@ -57,9 +57,9 @@ public class PostoVo {
         BigDecimal mdrRodovia = BigDecimal.valueOf(1.4);
         BigDecimal mdrRodoRede = BigDecimal.valueOf(1.1);
         BigDecimal mdrDefault = BigDecimal.valueOf(2.0);
-        if(pontoDeVenda.getRodoRede() || pontoDeVenda.getPerfilVenda().equals(PerfilPontoDeVenda.RODO_REDE.getValue())) {
+        if(pontoDeVenda.getRodoRede() || PerfilPontoDeVenda.RODO_REDE.getValue().equals(pontoDeVenda.getPerfilVenda())) {
             this.mdr =  mdrRodoRede;
-        } else if(pontoDeVenda.getPerfilVenda().equals(PerfilPontoDeVenda.RODOVIA.getValue())) {
+        } else if(PerfilPontoDeVenda.RODOVIA.getValue().equals(pontoDeVenda.getPerfilVenda())) {
             this.mdr =  mdrRodovia;
         }
         this.mdr = mdrDefault;
