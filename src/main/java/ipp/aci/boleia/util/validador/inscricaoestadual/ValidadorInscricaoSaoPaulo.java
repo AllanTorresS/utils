@@ -15,11 +15,10 @@ public class ValidadorInscricaoSaoPaulo extends ValidadorInscricaoEstadualGeneri
             for (int i = 0; i < ie.length() - 4; i++) {
                 if (i == 1 || i == 7) {
                     soma += Integer.parseInt(String.valueOf(ie.charAt(i))) * ++peso;
-                    peso++;
                 } else {
                     soma += Integer.parseInt(String.valueOf(ie.charAt(i))) * peso;
-                    peso++;
                 }
+                peso++;
             }
 
             d1 = soma % 11;
@@ -61,11 +60,10 @@ public class ValidadorInscricaoSaoPaulo extends ValidadorInscricaoEstadualGeneri
             for (int i = 0; i < strIE.length() - 1; i++) {
                 if (i == 1 || i == 7) {
                     soma += Integer.parseInt(String.valueOf(strIE.charAt(i))) * ++peso;
-                    peso++;
                 } else {
                     soma += Integer.parseInt(String.valueOf(strIE.charAt(i))) * peso;
-                    peso++;
                 }
+                peso++;
             }
 
             d1 = soma % 11;
