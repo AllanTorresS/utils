@@ -4,7 +4,6 @@ import ipp.aci.boleia.dominio.Componente;
 import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.PrecoBase;
 import ipp.aci.boleia.dominio.enums.PerfilPontoDeVenda;
-import ipp.aci.boleia.util.ConstantesNdd;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
 
 import java.math.BigDecimal;

@@ -1,7 +1,5 @@
 package ipp.aci.boleia.util;
 
-import java.math.BigDecimal;
-
 /**
  * Constantes utilizadas pela integração com a NDD
  */
