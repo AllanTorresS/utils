@@ -44,7 +44,7 @@ public class PostoVo {
         this.latitude = UtilitarioFormatacao.formatarDecimal(pontoDeVenda.getLatitude());
         this.longitude = UtilitarioFormatacao.formatarDecimal(pontoDeVenda.getLongitude());
 
-        obterMdr(pontoDeVenda);
+        this.mdr = obterMdr(pontoDeVenda);
 
         this.combustiveis = precosBase.stream().map(CombustivelVo::new).collect(Collectors.toList());
     }
@@ -52,17 +52,18 @@ public class PostoVo {
     /***
      * Obtem o MDR do Ponto de venda
      * @param pontoDeVenda o ponto de venda
+     * @return O mdr do posto
      */
-    private void obterMdr(PontoDeVenda pontoDeVenda) {
+    private BigDecimal obterMdr(PontoDeVenda pontoDeVenda) {
         BigDecimal mdrRodovia = BigDecimal.valueOf(1.4);
         BigDecimal mdrRodoRede = BigDecimal.valueOf(1.1);
         BigDecimal mdrDefault = BigDecimal.valueOf(2.0);
         if(pontoDeVenda.getRodoRede() || PerfilPontoDeVenda.RODO_REDE.getValue().equals(pontoDeVenda.getPerfilVenda())) {
-            this.mdr =  mdrRodoRede;
+            return mdrRodoRede;
         } else if(PerfilPontoDeVenda.RODOVIA.getValue().equals(pontoDeVenda.getPerfilVenda())) {
-            this.mdr =  mdrRodovia;
+            return mdrRodovia;
         }
-        this.mdr = mdrDefault;
+        return mdrDefault;
     }
 
     /**
