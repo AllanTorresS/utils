@@ -62,6 +62,7 @@ public class ArmazenamentoArquivosSd {
         repositoriosPorTipoArquivo.put(TipoArquivo.DOWNLOAD_PRESIGNED_NOTA_FISCAL_XML, arquivoDados);
         repositoriosPorTipoArquivo.put(TipoArquivo.RELATORIO_48_HORAS_XLSX, arquivoDados);
         repositoriosPorTipoArquivo.put(TipoArquivo.RELATORIO_48_HORAS_TXT, arquivoDados);
+        repositoriosPorTipoArquivo.put(TipoArquivo.RELATORIO_48_HORAS_PDF, arquivoDados);
     }
 
     /**
