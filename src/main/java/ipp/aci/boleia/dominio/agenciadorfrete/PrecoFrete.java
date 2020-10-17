@@ -1,7 +1,6 @@
 package ipp.aci.boleia.dominio.agenciadorfrete;
 
 import ipp.aci.boleia.dominio.PontoDeVenda;
-import ipp.aci.boleia.dominio.PrecoBase;
 import ipp.aci.boleia.dominio.TipoCombustivel;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import org.hibernate.envers.Audited;
@@ -16,17 +15,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Version;
-import javax.validation.constraints.DecimalMax;
-import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * Representa a tabela de abastecimento de um Motorista autonomo
+ * Representa a tabela de Preco Frete
  */
 @Entity
 @Audited
@@ -43,7 +38,6 @@ public class PrecoFrete implements IPersistente {
     @Column(name = "VA_PRECO_FRETE")
     private BigDecimal precoFrete;
 
-    @NotNull
     @Column(name = "VA_PRECO_BASE")
     private BigDecimal precoBase;
 
