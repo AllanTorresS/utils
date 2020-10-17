@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 
 
 /**
- * Respositorio de entidades Agenciador de Frete
+ * Respositorio de entidades Preco Frete
  */
 @Repository
 public class OraclePrecoFreteDados extends OracleRepositorioBoleiaDados<PrecoFrete> implements IPrecoFreteDados {
