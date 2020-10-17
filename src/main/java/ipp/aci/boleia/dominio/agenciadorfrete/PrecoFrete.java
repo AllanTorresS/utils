@@ -43,7 +43,6 @@ public class PrecoFrete implements IPersistente {
     @Column(name = "VA_PRECO_FRETE")
     private BigDecimal precoFrete;
 
-    @NotNull
     @Column(name = "VA_PRECO_BASE")
     private BigDecimal precoBase;
 
