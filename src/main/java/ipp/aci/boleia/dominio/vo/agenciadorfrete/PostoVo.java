@@ -33,36 +33,17 @@ public class PostoVo {
     /**
      * Constrói a representação com os dados fornecidos
      * @param pontoDeVenda O Ponto de Venda que se deseja representar
-     * @param precosBase Lista de preços base
+     * @param combustiveis Lista de combustivel
      */
-    public PostoVo(PontoDeVenda pontoDeVenda, List<PrecoBase> precosBase) {
+    public PostoVo(PontoDeVenda pontoDeVenda, BigDecimal mdr, List<CombustivelVo> combustiveis) {
         this.nome = pontoDeVenda.getNome().trim();
         Long cnpjNumerico = obterCnpj(pontoDeVenda);
         this.cnpj = cnpjNumerico != null ? formatarNumeroZerosEsquerda(cnpjNumerico, TAMANHO_CNPJ): null;
         this.endereco = new EnderecoVo(pontoDeVenda);
         this.latitude = UtilitarioFormatacao.formatarDecimal(pontoDeVenda.getLatitude());
         this.longitude = UtilitarioFormatacao.formatarDecimal(pontoDeVenda.getLongitude());
-
-        this.mdr = obterMdr(pontoDeVenda);
-
-        this.combustiveis = precosBase.stream().map(CombustivelVo::new).collect(Collectors.toList());
-    }
-
-    /***
-     * Obtem o MDR do Ponto de venda
-     * @param pontoDeVenda o ponto de venda
-     * @return O mdr do posto
-     */
-    private BigDecimal obterMdr(PontoDeVenda pontoDeVenda) {
-        BigDecimal mdrRodovia = BigDecimal.valueOf(1.4);
-        BigDecimal mdrRodoRede = BigDecimal.valueOf(1.1);
-        BigDecimal mdrDefault = BigDecimal.valueOf(2.0);
-        if(pontoDeVenda.getRodoRede() || PerfilPontoDeVenda.RODO_REDE.getValue().equals(pontoDeVenda.getPerfilVenda())) {
-            return mdrRodoRede;
-        } else if(PerfilPontoDeVenda.RODOVIA.getValue().equals(pontoDeVenda.getPerfilVenda())) {
-            return mdrRodovia;
-        }
-        return mdrDefault;
+        this.mdr = mdr;
+        this.combustiveis = combustiveis;
     }
 
     /**
