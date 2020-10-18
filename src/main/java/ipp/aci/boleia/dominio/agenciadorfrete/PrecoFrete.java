@@ -56,6 +56,9 @@ public class PrecoFrete implements IPersistente {
     @Column(name = "DT_EXCLUSAO")
     private Date dataExclusao;
 
+    @Column(name="ID_STATUS")
+    private Integer status;
+
     @Column(name = "NO_VERSAO")
     @Version
     private Long versao;
@@ -117,6 +120,10 @@ public class PrecoFrete implements IPersistente {
     public void setDataExclusao(Date dataExclusao) {
         this.dataExclusao = dataExclusao;
     }
+
+    public Integer getStatus() { return status; }
+
+    public void setStatus(Integer status) { this.status = status; }
 
     public Long getVersao() {
         return versao;
