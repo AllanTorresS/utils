@@ -62,7 +62,7 @@ public class OraclePrecoFreteDados extends OracleRepositorioBoleiaDados<PrecoFre
         }
 
         if (filtro.getStatus() != null) {
-            new ParametroPesquisaIgual("status", filtro.getStatus());
+            new ParametroPesquisaIgual("status", StatusPrecoFrete.valueOf(filtro.getStatus().getName()).getValue());
         }
 
         return pesquisar(
