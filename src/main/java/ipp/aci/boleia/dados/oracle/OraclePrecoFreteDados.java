@@ -13,8 +13,6 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaPrecoFreteVo;
 import ipp.aci.boleia.util.Ordenacao;
-import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -26,9 +24,6 @@ import java.util.List;
  */
 @Repository
 public class OraclePrecoFreteDados extends OracleRepositorioBoleiaDados<PrecoFrete> implements IPrecoFreteDados {
-
-    @Autowired
-    private UtilitarioAmbiente utilitarioAmbiente;
 
     /**
      * Instancia o repositorio
@@ -63,7 +58,7 @@ public class OraclePrecoFreteDados extends OracleRepositorioBoleiaDados<PrecoFre
         }
 
         if (filtro.getDataVigencia() != null) {
-            parametros.add(new ParametroPesquisaDataMenorOuIgual("dataVigencia", utilitarioAmbiente.buscarDataAmbiente()));
+            parametros.add(new ParametroPesquisaDataMenorOuIgual("dataVigencia", filtro.getDataVigencia()));
         }
 
         if (filtro.getStatus() != null) {
