@@ -4,6 +4,7 @@ import ipp.aci.boleia.dados.IPrecoFreteDados;
 import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.TipoCombustivel;
 import ipp.aci.boleia.dominio.agenciadorfrete.PrecoFrete;
+import ipp.aci.boleia.dominio.enums.StatusPrecoFrete;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
@@ -40,34 +41,31 @@ public class OraclePrecoFreteDados extends OracleRepositorioBoleiaDados<PrecoFre
     public PrecoFrete obterPrecoFreteVigente(PontoDeVenda pontoDeVenda, TipoCombustivel combustivel) {
         return pesquisarSemIsolamentoDados(new ParametroOrdenacaoColuna("id", Ordenacao.DECRESCENTE),
                 new ParametroPesquisaNulo("dataExclusao"),
+                new ParametroPesquisaIgual("status", StatusPrecoFrete.VIGENTE.getValue()),
                 new ParametroPesquisaIgual("posto.id", pontoDeVenda.getId()),
                 new ParametroPesquisaIgual("combustivel.id", combustivel.getId())
         ).stream().findFirst().orElse(null);
     }
 
-    /**
-     * Realiza uma pesquisa com paginação de uma servicos a partir dos parametros informados
-     *
-     */
+    @Override
     public ResultadoPaginado<PrecoFrete> pesquisar(FiltroPesquisaPrecoFreteVo filtro) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
 
         filtro.getPaginacao().getParametrosOrdenacaoColuna().add( new ParametroOrdenacaoColuna("dataVigencia", Ordenacao.DECRESCENTE));
         filtro.getPaginacao().getParametrosOrdenacaoColuna().add(new ParametroOrdenacaoColuna("posto.id"));
 
-        //Tipo Combustível
         if (filtro.getTipoCombustivel() != null) {
             parametros.add(new ParametroPesquisaIgual("combustivel.id", filtro.getTipoCombustivel().getId()));
         }
-        //Ponto de Venda
+
         if (filtro.getPontoVenda() != null) {
             parametros.add(new ParametroPesquisaIgual("posto.id", filtro.getPontoVenda().getId()));
         }
-        //Data Vigência
+
         if (filtro.getDataVigencia() != null) {
             parametros.add(new ParametroPesquisaDataMenorOuIgual("dataVigencia", utilitarioAmbiente.buscarDataAmbiente()));
         }
-        //Status
+
         if (filtro.getStatus() != null) {
             new ParametroPesquisaIgual("status", filtro.getStatus());
         }
