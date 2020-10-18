@@ -25,13 +25,13 @@ import java.util.Date;
  */
 @Entity
 @Audited
-@Table(name = "AG_FRETE_PRECO")
+@Table(name = "PRECO_FRETE")
 public class PrecoFrete implements IPersistente {
 
     @Id
     @Column(name = "CD_PRECO_FRETE")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_AG_FRETE_PRECO")
-    @SequenceGenerator(name = "SEQ_AG_FRETE_PRECO", sequenceName = "SEQ_AG_FRETE_PRECO", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_PRECO_FRETE")
+    @SequenceGenerator(name = "SEQ_PRECO_FRETE", sequenceName = "SEQ_PRECO_FRETE", allocationSize = 1)
     private Long id;
 
     @NotNull
