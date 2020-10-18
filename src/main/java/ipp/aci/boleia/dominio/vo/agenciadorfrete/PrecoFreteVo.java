@@ -7,9 +7,9 @@ import java.math.BigDecimal;
 /**
  * Classe de exibição que representa um Preço Frete
  */
-public class PrecoFreteInclusaoVo {
+public class PrecoFreteVo {
 
-    private PostoBasicoVo pontoVenda;
+    private EntidadeVo pontoVenda;
 
     private BigDecimal preco;
 
@@ -23,11 +23,11 @@ public class PrecoFreteInclusaoVo {
         return tipoCombustivel;
     }
 
-    public PostoBasicoVo getPontoVenda() {
+    public EntidadeVo getPontoVenda() {
         return pontoVenda;
     }
 
-    public void setPontoVenda(PostoBasicoVo pontoVenda) {
+    public void setPontoVenda(EntidadeVo pontoVenda) {
         this.pontoVenda = pontoVenda;
     }
 
