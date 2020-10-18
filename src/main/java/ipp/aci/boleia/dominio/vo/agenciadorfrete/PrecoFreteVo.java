@@ -1,6 +1,5 @@
 package ipp.aci.boleia.dominio.vo.agenciadorfrete;
 
-import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.vo.EntidadeVo;
 
 import java.math.BigDecimal;
