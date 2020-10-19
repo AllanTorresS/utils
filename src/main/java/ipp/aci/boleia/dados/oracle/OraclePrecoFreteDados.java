@@ -49,11 +49,11 @@ public class OraclePrecoFreteDados extends OracleRepositorioBoleiaDados<PrecoFre
         filtro.getPaginacao().getParametrosOrdenacaoColuna().add( new ParametroOrdenacaoColuna("dataVigencia", Ordenacao.DECRESCENTE));
         filtro.getPaginacao().getParametrosOrdenacaoColuna().add(new ParametroOrdenacaoColuna("posto.id"));
 
-        if (filtro.getTipoCombustivel() != null) {
+        if (filtro.getTipoCombustivel() != null && filtro.getTipoCombustivel().getId() != null) {
             parametros.add(new ParametroPesquisaIgual("combustivel.id", filtro.getTipoCombustivel().getId()));
         }
 
-        if (filtro.getPontoVenda() != null) {
+        if (filtro.getPontoVenda() != null && filtro.getPontoVenda().getId() != null) {
             parametros.add(new ParametroPesquisaIgual("posto.id", filtro.getPontoVenda().getId()));
         }
 
@@ -61,8 +61,8 @@ public class OraclePrecoFreteDados extends OracleRepositorioBoleiaDados<PrecoFre
             parametros.add(new ParametroPesquisaDataMenorOuIgual("dataVigencia", filtro.getDataVigencia()));
         }
 
-        if (filtro.getStatus() != null) {
-            new ParametroPesquisaIgual("status", StatusPrecoFrete.valueOf(filtro.getStatus().getName()).getValue());
+        if (filtro.getStatus() != null && filtro.getStatus().getName() != null) {
+            parametros.add(new ParametroPesquisaIgual("status", StatusPrecoFrete.valueOf(filtro.getStatus().getName()).getValue()));
         }
 
         return pesquisar(
