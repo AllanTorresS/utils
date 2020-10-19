@@ -68,6 +68,10 @@ public class Lead implements IPersistente {
 	@Column(name = "ID_APROVADO")
     private Integer statusAprovacao;
 
+	@Temporal(TemporalType.TIMESTAMP)
+    @Column(name="DT_ALTER")
+    private Date dataAlteracao;
+
     @Override
     public Long getId() {
         return id;
@@ -140,6 +144,14 @@ public class Lead implements IPersistente {
 
 	public void setStatusAprovacao(Integer statusAprovacao) {
 		this.statusAprovacao = statusAprovacao;
+	}
+
+	public Date getDataAlteracao() {
+		return dataAlteracao;
+	}
+
+	public void setDataAlteracao(Date dataAlteracao) {
+		this.dataAlteracao = dataAlteracao;
 	}
     
 }
