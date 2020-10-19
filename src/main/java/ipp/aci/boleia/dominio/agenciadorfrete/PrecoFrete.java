@@ -3,6 +3,7 @@ package ipp.aci.boleia.dominio.agenciadorfrete;
 import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.TipoCombustivel;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
+import ipp.aci.boleia.dominio.interfaces.IPertenceRevendedor;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.Column;
@@ -15,10 +16,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Representa a tabela de Preco Frete
@@ -26,7 +30,7 @@ import java.util.Date;
 @Entity
 @Audited
 @Table(name = "PRECO_FRETE")
-public class PrecoFrete implements IPersistente {
+public class PrecoFrete implements IPersistente, IPertenceRevendedor {
 
     @Id
     @Column(name = "CD_PRECO_FRETE")
@@ -131,5 +135,11 @@ public class PrecoFrete implements IPersistente {
 
     public void setVersao(Long versao) {
         this.versao = versao;
+    }
+
+    @Transient
+    @Override
+    public List<PontoDeVenda> getPontosDeVenda() {
+        return posto != null ? Collections.singletonList(posto) : Collections.emptyList();
     }
 }
