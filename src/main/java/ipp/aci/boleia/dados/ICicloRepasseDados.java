@@ -34,10 +34,10 @@ public interface ICicloRepasseDados extends IRepositorioBoleiaDados<CicloRepasse
      CicloRepasse obterUltimoCicloRepasseAnteriorAData(Date data, Long idEntidadeRepasse, Long idPtov);
 
     /**
-     * Obtem os ciclos de repasse fechados pendentes de envio ao JDE
-     * @return a lista de ciclos de repasse
+     * Obtém os ciclos de repasse pendentes de envio ao JDE.
+     * @return a lista de ciclos de repasse.
      */
-    List<CicloRepasse> obterCiclosRepasseFechadosNaoEnviados();
+    List<CicloRepasse> obterCiclosRepasseNaoEnviados();
 
     /**
      * Pesquisar as cobranças candidatas a realizar consulta no JDE

@@ -52,6 +52,11 @@ public enum TipoSubcategoriaNotificacao {
     private final Long value;
     private final TipoCategoriaNotificacao categoria;
 
+    /**
+     * Construtor do enum
+     * @param value Valor do enum
+     * @param categoria Tipo de categoria da notificação
+     */
     TipoSubcategoriaNotificacao(Long value, TipoCategoriaNotificacao categoria) {
         this.value = value;
         this.categoria = categoria;

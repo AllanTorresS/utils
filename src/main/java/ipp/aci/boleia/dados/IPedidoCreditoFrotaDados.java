@@ -67,4 +67,12 @@ public interface IPedidoCreditoFrotaDados extends IRepositorioBoleiaDados<Pedido
      * @return Uma lista de parametros para pesquisa
      */
     List<PedidoCreditoFrota> pesquisarParaExportacao(FiltroPesquisaPedidoCreditoVo filtro);
+
+
+    /**
+     * Obtem todos pedidos de credito pagos pendentes de atualização no JDE, dado a dataAtual
+     * @param dataAtual para comparacao com validade
+     * @return Pedidos abertos
+     */
+    List<PedidoCreditoFrota> obterPagosNaoVencidosPendentesJDE(Date dataAtual);
 }

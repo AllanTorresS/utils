@@ -27,6 +27,15 @@ public enum TipoToken {
     private final Boolean alfanumerico;
     private final Boolean unico;
 
+    /**
+     * Construtor do enum
+     * @param tamanho Tamanho do token
+     * @param minutosExpiracao Tempo de expiração do token em minutos
+     * @param classeEntidade Classe de uma entidade que possui um token
+     * @param campoClasse Campo da classe contendo o token
+     * @param alfanumerico True caso o token seja um token alfanumérico
+     * @param unico True caso o token deste tipo seja único
+     */
     TipoToken(Integer tamanho, Integer minutosExpiracao, Class<? extends IPersistente> classeEntidade, String campoClasse, Boolean alfanumerico, Boolean unico) {
         this.tamanho = tamanho;
         this.minutosExpiracao = minutosExpiracao;

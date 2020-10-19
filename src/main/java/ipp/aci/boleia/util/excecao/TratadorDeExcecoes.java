@@ -53,8 +53,10 @@ public class TratadorDeExcecoes extends ResponseEntityExceptionHandler {
             status = HttpStatus.FORBIDDEN;
         } else if(ex.getCause() instanceof JDBCConnectionException) {
             mensagemErro = new MensagemErro(Erro.SOLUCAO_INDISPONIVEL.getCodigo(), mensagens.obterMensagensExcecao(ex, Erro.SOLUCAO_INDISPONIVEL, null));
-        } else if (ex instanceof ExcecaoRecursoNaoEncontrado) {
+        } else if (ex instanceof ExcecaoSemConteudo) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else if (ex instanceof ExcecaoRecursoNaoEncontrado) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } else {
             Erro chaveErro = Erro.ERRO_GENERICO;
             Object[] args = null;
@@ -65,6 +67,14 @@ public class TratadorDeExcecoes extends ResponseEntityExceptionHandler {
                 if(Erro.LIMITE_REQUISICOES_POR_SEGUNDO_EXCEDIDO.equals(e.getErro())) {
                     status = HttpStatus.TOO_MANY_REQUESTS;
                 }
+            }
+            if(ex instanceof ExcecaoValidacaoApi){
+                status = HttpStatus.BAD_REQUEST;
+                return new ResponseEntity<>(mensagens.obterMensagensExcecao(ex, chaveErro, args), status);
+            }
+            if(ex instanceof ExcecaoServicoIndisponivel) {
+                status = HttpStatus.BAD_GATEWAY;
+                return new ResponseEntity<>(mensagens.obterMensagensExcecao(ex, chaveErro, args), status);
             }
             List<String> detalhe = mensagens.obterMensagensExcecao(ex, chaveErro, args);
             mensagemErro = new MensagemErro(chaveErro.getCodigo(), detalhe);

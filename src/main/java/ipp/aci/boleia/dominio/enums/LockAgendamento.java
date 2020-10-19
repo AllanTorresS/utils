@@ -9,10 +9,11 @@ public enum LockAgendamento {
 
     CADASTRO_MOTORISTA_ALLOW_ME                     (ConstantesDuracao.UM_MINUTO, ConstantesDuracao.UM_SEGUNDO),
     CONSOLIDACAO_CICLO                              (ConstantesDuracao.DUAS_HORAS, ConstantesDuracao.DUAS_HORAS),
+    CONSOLIDACAO_CICLO_AG_FRETE                     (ConstantesDuracao.DUAS_HORAS, ConstantesDuracao.DUAS_HORAS),
     STATUS_NOTA_FISCAL                              (ConstantesDuracao.UMA_HORA, ConstantesDuracao.UM_SEGUNDO),
     ATUALIZAR_PV_JDE                                (ConstantesDuracao.UMA_HORA, ConstantesDuracao.UM_SEGUNDO),
     PRECOS_VIGENTES                                 (ConstantesDuracao.UM_MINUTO, ConstantesDuracao.UM_SEGUNDO),
-    REGISTRO_KMV_PENDENTE                           (ConstantesDuracao.UM_MINUTO, ConstantesDuracao.UM_SEGUNDO),
+    REGISTRO_KMV_PENDENTE                           (ConstantesDuracao.QUINZE_MINUTOS, ConstantesDuracao.UM_SEGUNDO),
     AVISO_DE_DEBITO                                 (ConstantesDuracao.UMA_HORA, ConstantesDuracao.UM_SEGUNDO),
     AVISO_DE_CREDITO                                (ConstantesDuracao.UMA_HORA, ConstantesDuracao.UM_SEGUNDO),
     VERIFICACAO_FROTA_ATIVACAO_TEMPORARIA           (ConstantesDuracao.TRINTA_MINUTOS, ConstantesDuracao.UM_SEGUNDO),
@@ -40,7 +41,8 @@ public enum LockAgendamento {
     IMPORTACAO_EMAILS_NOTAS                         (ConstantesDuracao.UMA_HORA, ConstantesDuracao.UM_SEGUNDO),
     IMPORTACAO_CONCILIACAO_AUTOMATICA_NOTAS_FISCAIS (ConstantesDuracao.DUAS_HORAS, ConstantesDuracao.DUAS_HORAS),
     EMAIL_MENSAL_KMV_DONO_FROTA                     (ConstantesDuracao.CINCO_MINUTO,ConstantesDuracao.UM_SEGUNDO),
-    INTEGRACAO_APCO                                 (ConstantesDuracao.UMA_HORA, ConstantesDuracao.UM_SEGUNDO);
+    INTEGRACAO_APCO                                 (ConstantesDuracao.UMA_HORA, ConstantesDuracao.UM_SEGUNDO),
+    VERIFICACAO_STATUS_AG_FRETE                     (ConstantesDuracao.DUAS_HORAS, ConstantesDuracao.DUAS_HORAS);
 
 	private final long duracao;
     private final long duracaoMinima;

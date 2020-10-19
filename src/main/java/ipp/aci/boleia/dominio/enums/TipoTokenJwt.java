@@ -29,11 +29,12 @@ public enum TipoTokenJwt {
     private final String[] permissoes;
 
     /**
-     * Constroi as informacoes basicas do tipo de token
+     * Constrói as informações básicas do tipo de token
      *
-     * @param tipoPerfil O tipo de perfil do usuario associado ao token
-     * @param duracaoHoras A duracao do token em horas
-     * @param chavePermissao A lista de permissoes a serem concedidas
+     * @param tipoPerfil O tipo de perfil do usuário associado ao token
+     * @param duracaoHoras A duração do token em horas
+     * @param fingerprintObrigatorio True caso possua fingerprint obrigatório
+     * @param chavePermissao A lista de permissões a serem concedidas
      */
     TipoTokenJwt(TipoPerfilUsuario tipoPerfil, int duracaoHoras, boolean fingerprintObrigatorio, String... chavePermissao) {
         this.duracaoHoras = duracaoHoras;

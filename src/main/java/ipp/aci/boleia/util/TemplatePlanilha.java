@@ -21,6 +21,11 @@ public enum TemplatePlanilha {
     TEMPLATE_RELATORIO_COBRANCA("template-relatorio-cobranca.xlsx"),
     TEMPLATE_RELATORIO_COBRANCA_COM_DESCONTO("template-relatorio-cobranca-com-descontos.xlsx"),
     TEMPLATE_RELATORIO_COBRANCA_INTERNO("template-relatorio-cobranca-interno.xlsx"),
+    TEMPLATE_RELATORIO_COBRANCA_AGENCIADOR_FRETE("template-relatorio-cobranca-agenciador-frete.xlsx"),
+    TEMPLATE_RELATORIO_REEMBOLSO_AGENCIADOR_FRETE_SOLUCAO("template-relatorio-reembolso-agenciador-frete-solucao.xlsx"),
+    TEMPLATE_RELATORIO_REEMBOLSO_AGENCIADOR_FRETE_REVENDA("template-relatorio-reembolso-agenciador-frete-revenda.xlsx"),
+    TEMPLATE_RELATORIO_TRANSACAO_AGENCIADOR_FRETE("template-relatorio-transacao-agenciador-frete.xlsx"),
+    TEMPLATE_RELATORIO_TRANSACAO_AGENCIADOR_FRETE_REVENDA("template-relatorio-transacao-agenciador-frete-revenda.xlsx"),
     TEMPLATE_RELATORIO_FROTA_SOLUCAO("template-relatorio-frota_solucao.xlsx"),
     TEMPLATE_RELATORIO_FROTA_REVENDA("template-relatorio-frota_revenda.xlsx"),
     TEMPLATE_RELATORIO_REEMBOLSO_PAGO("template-relatorio-reembolso-pago.xlsx"),
@@ -53,6 +58,8 @@ public enum TemplatePlanilha {
     TEMPLATE_RELATORIO_POSTO_CREDENCIADO_SOLUCAO("template-relatorio-posto-credenciado-solucao.xlsx"),
     TEMPLATE_RELATORIO_ABASTECIMENTOS_ESTORNADOS("template-relatorio-abastecimentos-estornados.xlsx"),
     TEMPLATE_RELATORIO_ABASTECIMENTOS_AJUSTADOS("template-relatorio-abastecimentos-ajustados.xlsx"),
+    TEMPLATE_RELATORIO_FINANCEIRO_REVENDA("template-relatorio-financeiro-revenda.xlsx"),
+    TEMPLATE_RELATORIO_ABASTECIMENTOS_NO_PERIODO("template-relatorio-abastecimento-no-periodo.xlsx"),
     TEMPLATE_ATIVACAO_TAG("template-ativacao-tag.xlsx"),
 	TEMPLATE_RELATORIO_ATIVACAO_TAG("template-relatorio-ativacao-tag.xlsx"),
 	TEMPLATE_PESQUISAR_GERAL_FROTA("template-pesquisar-geral-frota.xlsx");
@@ -65,6 +72,10 @@ public enum TemplatePlanilha {
     TemplatePlanilha(String name) {
         this.name = name;
         this.path = BASE_TEMPLATE + name;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public String getPath() {

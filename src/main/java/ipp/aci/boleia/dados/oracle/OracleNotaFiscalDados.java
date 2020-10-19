@@ -21,7 +21,7 @@ public class OracleNotaFiscalDados extends OracleRepositorioBoleiaDados<NotaFisc
 		" SELECT distinct(n) FROM NotaFiscal n " +
 		" JOIN n.autorizacoesPagamento a " +
 		" where a.id in (:idsAutorizacoes) " +
-		" and n.isJustificativa = 0";
+		" and (:isJustificativa IS NULL OR n.isJustificativa = :isJustificativa)";
 
 	/**
 	 * Instancia o repositorio
@@ -33,7 +33,9 @@ public class OracleNotaFiscalDados extends OracleRepositorioBoleiaDados<NotaFisc
 	@Override
 	public List<NotaFiscal> obterNotaDeVariosAbastecimentos(List<Long> idsAutorizacoes) {
 		if(CollectionUtils.isNotEmpty(idsAutorizacoes)) {
-			return pesquisar(null, QUERY_NOTAS_VARIOS_ABASTECIMENTOS, new ParametroPesquisaIgual("idsAutorizacoes", idsAutorizacoes)).getRegistros();
+			return pesquisar(null, QUERY_NOTAS_VARIOS_ABASTECIMENTOS,
+					new ParametroPesquisaIgual("idsAutorizacoes", idsAutorizacoes),
+					new ParametroPesquisaIgual("isJustificativa", false)).getRegistros();
 		}
 		return new ArrayList<>();
 	}
@@ -41,5 +43,15 @@ public class OracleNotaFiscalDados extends OracleRepositorioBoleiaDados<NotaFisc
 	@Override
 	public List<NotaFiscal> obterNotaPorNumero(String numero) {
 		return pesquisar((ParametroOrdenacaoColuna) null, new ParametroPesquisaIgual("numero", numero));
+	}
+
+	@Override
+	public List<NotaFiscal> obterNotasEJustificativasPorAbastecimentos(List<Long> idsAutorizacoes) {
+		if(CollectionUtils.isNotEmpty(idsAutorizacoes)) {
+			return pesquisar(null, QUERY_NOTAS_VARIOS_ABASTECIMENTOS,
+					new ParametroPesquisaIgual("idsAutorizacoes", idsAutorizacoes),
+					new ParametroPesquisaIgual("isJustificativa", null)).getRegistros();
+		}
+		return new ArrayList<>();
 	}
 }

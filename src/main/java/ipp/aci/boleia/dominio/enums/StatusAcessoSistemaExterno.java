@@ -24,6 +24,10 @@ public enum StatusAcessoSistemaExterno {
 
     private final int codigo;
 
+    /**
+     * Construtor do enum
+     * @param codigo Código do status de acesso de um sistema externo
+     */
     StatusAcessoSistemaExterno(int codigo) {
         this.codigo = codigo;
     }

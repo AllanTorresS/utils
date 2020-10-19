@@ -11,6 +11,7 @@ public class FiltroPesquisaParcialVo {
      * Construtor padrão
      */
     public FiltroPesquisaParcialVo() {
+        //Construtor default
     }
 
     public String getTermo() {

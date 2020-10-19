@@ -108,7 +108,7 @@ public class SubTipoVeiculo implements IPersistente {
 	 */
 	@Transient
 	public boolean utilizaHorimetro() {
-		return descricao != null && CLIMATIZADOR.equalsIgnoreCase(descricao);
+		return CLIMATIZADOR.equalsIgnoreCase(descricao);
 	}
 
 	/**

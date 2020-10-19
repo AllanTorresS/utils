@@ -63,7 +63,7 @@ public class OracleNegociacaoDados extends OracleRepositorioBoleiaDados<Negociac
 
     @Override
     public Negociacao obterPorFrotaPontoVenda(FrotaPontoVenda frotaPontoVenda) {
-        return pesquisarUnico(new ParametroPesquisaIgual("frotaPtov", frotaPontoVenda));
+        return pesquisarUnico(new ParametroPesquisaIgual("frotaPtov.id", frotaPontoVenda.getId()));
     }
 
 

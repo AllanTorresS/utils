@@ -9,7 +9,7 @@ public class ExcecaoPagamentoDuplicado extends ExcecaoValidacao {
 
     /**
      * Construtor da classe.
-     * @param mensagem A manesagem a ser exibida
+     * @param mensagem A mensagem a ser exibida
      */
     public ExcecaoPagamentoDuplicado(String mensagem) {
         super(Erro.ERRO_VALIDACAO_SIMILARIDADE, mensagem);

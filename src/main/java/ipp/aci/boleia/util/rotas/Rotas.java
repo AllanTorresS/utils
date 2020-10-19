@@ -77,11 +77,15 @@ public final  class Rotas {
     public static final  String VIP_API                              = BASE_API + "/vip";
     public static final  String AUTORIZACAO_API                      = BASE_API + "/autorizacao";
     public static final  String PRODUTO_API                          = BASE_API + "/produto";
+    public static final  String AGENCIADOR_FRETE_API                 = BASE_API + "/agenciadorfrete";
+    public static final  String MOTORISTA_AUTONOMO_API               = BASE_API + "/motoristaautonomo";
+    public static final  String AGENCIADOR_FRETE_TAXA_API            = BASE_API + "/agenciadorfrete/taxa";
     public static final  String NOTA_FISCAL_API                      = BASE_API + "/notaFiscal";
     public static final  String TRANS_CONSOL_API                     = BASE_API + "/transacaoConsolidada";
     public static final  String TRANS_CONSOL_FROTA_API               = BASE_API + "/transacaoConsolidadaFrota";
     public static final  String TRANS_CONSOL_REVENDA_API             = BASE_API + "/transacaoConsolidadaRevenda";
     public static final  String TRANS_CONSOL_SOLUCAO_API             = BASE_API + "/transacaoConsolidadaSolucao";
+    public static final  String FINANCEIRO_REVENDA                   = BASE_API + "/financeiroRevenda";
     public static final  String PRECO_API                            = BASE_API + "/preco";
     public static final  String PRECO_BASE_API                       = BASE_API + "/precoBase";
     public static final  String PRECO_MICROMERCADO_API               = BASE_API + "/precoMicromercado";
@@ -99,6 +103,8 @@ public final  class Rotas {
     public static final  String QUESTIONARIO_API                     = BASE_API + "/questionario";
     public static final  String CEP_API                              = BASE_API + "/cep";
     public static final  String ROTA_API                             = BASE_API + "/rota";
+    public static final  String ROTEIRIZADOR_API                     = ROTA_API + "/ri";
+    public static final  String PLANO_VIAGEM_API                     = BASE_API + "/planoViagem";
     public static final  String SERVICO_API                          = BASE_API + "/servico";
     public static final  String ACEITAR_PV_API                       = BASE_API + "/aceitarPv";
     public static final  String TIPO_PESSOA_API                      = BASE_API + "/tipoPessoa";
@@ -133,6 +139,7 @@ public final  class Rotas {
     public static final String MUNICIPIO_API                         = BASE_API + "/municipio";
     public static final String PARAMETRO_CAMPANHA_API                = BASE_API + "/parametroCampanha";
     public static final String COORDENADORIA_API                     = BASE_API + "/coordenadoria";
+    public static final String DETALHAMENTO_NF_API                   = BASE_API + "/detalhamentoNotaFiscal";
 
     /**
      * Construtor privado, impede instanciacao e heranca

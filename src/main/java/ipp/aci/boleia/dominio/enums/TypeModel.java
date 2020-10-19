@@ -11,6 +11,10 @@ public enum TypeModel {
 
     private final String nomeModel;
 
+    /**
+     * Contrutor do enum
+     * @param nomeModel Nome do model
+     */
     TypeModel(String nomeModel) {
         this.nomeModel = nomeModel;
     }

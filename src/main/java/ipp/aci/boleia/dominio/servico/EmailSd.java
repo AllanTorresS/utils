@@ -31,6 +31,7 @@ import org.springframework.stereotype.Component;
 import ipp.aci.boleia.dados.IConfiguracaoSistemaDados;
 import ipp.aci.boleia.dados.IFrotaDados;
 import ipp.aci.boleia.dados.IFrotaPontoVendaDados;
+import ipp.aci.boleia.dados.IHistoricoPontoVendaDados;
 import ipp.aci.boleia.dados.ITokenDados;
 import ipp.aci.boleia.dados.IUsuarioDados;
 import ipp.aci.boleia.dados.servicos.aws.AwsEmailEnvioDados;
@@ -42,6 +43,7 @@ import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.FrotaPontoVenda;
 import ipp.aci.boleia.dominio.GapPontoDeVenda;
 import ipp.aci.boleia.dominio.GapServico;
+import ipp.aci.boleia.dominio.HistoricoPontoVenda;
 import ipp.aci.boleia.dominio.ItemAutorizacaoPagamento;
 import ipp.aci.boleia.dominio.Motorista;
 import ipp.aci.boleia.dominio.ParametroCiclo;
@@ -120,6 +122,9 @@ public class EmailSd {
 
     @Autowired
     private IFrotaPontoVendaDados repositorioFrotaPtov;
+    
+    @Autowired
+    private IHistoricoPontoVendaDados historicoPontoVendaDados;
 
     @Autowired
     private IFrotaDados repositorioFrota;
@@ -742,6 +747,44 @@ public class EmailSd {
         corpo.append(mensagens.obterMensagem("email.alteracao.invalidada.corpo5"));
 
         emailDados.enviarEmail(assunto, corpo.toString(), Arrays.asList(destinatario));
+    }
+    
+    public void enviarEmailNotificacaoAbastecimentoPontoVendaNaoVisivel(AutorizacaoPagamento autorizacaoPagamento){
+        FrotaPontoVenda frotaPtov = null;
+        if (autorizacaoPagamento.getTransacaoConsolidada() != null && autorizacaoPagamento.getTransacaoConsolidada().getFrotaPtov() != null){
+           frotaPtov = autorizacaoPagamento.getTransacaoConsolidada().getFrotaPtov();
+        } else {
+            frotaPtov = repositorioFrotaPtov.obterFrotaPontoVenda(autorizacaoPagamento.getFrota().getId(), autorizacaoPagamento.getPontoVenda().getId());
+        }        
+        String destinatario = null;
+        if (frotaPtov != null && frotaPtov.getUltimoHistorico()!= null && frotaPtov.getUltimoHistorico().getUsuario() != null){
+            destinatario = frotaPtov.getUltimoHistorico().getUsuario().getEmail();
+        } else {
+            HistoricoPontoVenda historicoPontoVenda = historicoPontoVendaDados.obterHistoricoPontoVendaPorData(autorizacaoPagamento.getPontoVenda().getId(), autorizacaoPagamento.getDataRequisicao());
+            if (historicoPontoVenda != null && historicoPontoVenda.getUsuario() != null){
+                destinatario = historicoPontoVenda.getUsuario().getEmail();
+            }
+        }        
+        if (destinatario != null){
+            String assunto = mensagens.obterMensagem("email.abastecimento.contingencia.naovisivel.assunto");
+
+            StringBuilder corpo = new StringBuilder(mensagens.obterMensagem("email.abastecimento.contingencia.naovisivel.corpo1"));
+     
+            corpo.append(mensagens.obterMensagem("email.abastecimento.contingencia.naovisivel.corpo2",
+                    UtilitarioFormatacaoData.formatarDataHora(autorizacaoPagamento.getDataRequisicao()),
+                    UtilitarioFormatacao.formatarCnpjApresentacao(autorizacaoPagamento.getCnpjAreaAbastecimento())+"<br/>"+autorizacaoPagamento.getPontoVenda().getNome(),
+                    UtilitarioFormatacao.formatarCnpjApresentacao(autorizacaoPagamento.getCnpjFrota())+"<br/>"+autorizacaoPagamento.getRazaoSocialFrota(),
+                    autorizacaoPagamento.getPlacaVeiculo(),
+                    autorizacaoPagamento.getNomeItemAbastecimento()+"<br/>"+autorizacaoPagamento.getValorUnitarioAbastecimento(),
+                    UtilitarioFormatacao.formatarLitros(autorizacaoPagamento.getTotalLitrosAbastecimento()),
+                    UtilitarioFormatacao.formatarDecimalMoedaReal(autorizacaoPagamento.getValorTotalAbastecimento()),
+                    autorizacaoPagamento.getPedido()!= null ? autorizacaoPagamento.getPedido().getNumero() : ""
+                    ));            
+
+            corpo.append(mensagens.obterMensagem("email.abastecimento.contingencia.naovisivel.corpo3"));
+
+            emailDados.enviarEmail(assunto, corpo.toString(), Arrays.asList(destinatario));
+        }
     }
 
 }
