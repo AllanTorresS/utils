@@ -55,10 +55,15 @@ public class LogicaParametroPrecoMaximo implements ILogicaParametroSistema<Autor
 
                 if ((quantidadeMaximaPermitidaProduto != null && item.getQuantidade().compareTo(quantidadeMaximaPermitidaProduto) > 0 || quantidadeMaximaPermitidaAbastecimento != null && item.getQuantidade().compareTo((quantidadeMaximaPermitidaAbastecimento)) > 0)) {
                     resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
-                    if(!item.isAbastecimento() && !item.getProduto().isLitragem()) {
-                        produtosViolados.append(mensagens.obterMensagem("parametro.sistema.erro.abastecimento.quantidade.maxima.produto", item.getNome(), UtilitarioFormatacao.formatarInteiro(quantidadeMaximaPermitidaProduto), UtilitarioFormatacao.formatarDecimal(item.getQuantidade())));
+                    BigDecimal quantidadeMaximaPermitida = quantidadeMaximaPermitidaProduto;
+                    if(item.isAbastecimento()) {
+                        quantidadeMaximaPermitida = quantidadeMaximaPermitidaAbastecimento;
+                    }
+
+                    if(item.isAbastecimento() || item.getProduto().isLitragem()) {
+                        produtosViolados.append(mensagens.obterMensagem("parametro.sistema.erro.abastecimento.quantidade.maxima.produto", item.getNome(), UtilitarioFormatacao.formatarDecimal(quantidadeMaximaPermitida), UtilitarioFormatacao.formatarDecimal(item.getQuantidade())));
                     } else {
-                        produtosViolados.append(mensagens.obterMensagem("parametro.sistema.erro.abastecimento.quantidade.maxima.produto", item.getNome(), UtilitarioFormatacao.formatarDecimal(quantidadeMaximaPermitidaAbastecimento), UtilitarioFormatacao.formatarDecimal(item.getQuantidade())));
+                        produtosViolados.append(mensagens.obterMensagem("parametro.sistema.erro.abastecimento.quantidade.maxima.produto", item.getNome(), UtilitarioFormatacao.formatarInteiro(quantidadeMaximaPermitida), UtilitarioFormatacao.formatarDecimal(item.getQuantidade())));
                     }
                 } else if (precoMaximoPermitido != null && item.getValorUnitario().compareTo(precoMaximoPermitido) > 0) {
                     resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
