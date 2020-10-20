@@ -2,13 +2,10 @@ package ipp.aci.boleia.dominio.vo.agenciadorfrete;
 
 import ipp.aci.boleia.dominio.Componente;
 import ipp.aci.boleia.dominio.PontoDeVenda;
-import ipp.aci.boleia.dominio.PrecoBase;
-import ipp.aci.boleia.dominio.enums.PerfilPontoDeVenda;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static ipp.aci.boleia.util.UtilitarioFormatacao.TAMANHO_CNPJ;
 import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarNumeroZerosEsquerda;
