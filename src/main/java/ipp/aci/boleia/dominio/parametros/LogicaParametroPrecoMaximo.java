@@ -52,13 +52,17 @@ public class LogicaParametroPrecoMaximo implements ILogicaParametroSistema<Autor
                     precoMaximoPermitido = precoMaximoProdutos.get(item.getProduto().getId());
                     quantidadeMaximaPermitidaProduto = quantidadeMaximaProdutosPorUnidade.get(item.getProduto().getId());
                 }
-                if ((quantidadeMaximaPermitidaProduto != null && item.getQuantidade().compareTo((BigDecimal.valueOf(quantidadeMaximaPermitidaProduto))) > 0 || quantidadeMaximaPermitidaAbastecimento != null && item.getQuantidade().compareTo((quantidadeMaximaPermitidaAbastecimento)) > 0) ||(precoMaximoPermitido != null && item.getValorUnitario().compareTo(precoMaximoPermitido) > 0)) {
+
+                if ((quantidadeMaximaPermitidaProduto != null && item.getQuantidade().compareTo((BigDecimal.valueOf(quantidadeMaximaPermitidaProduto))) > 0 || quantidadeMaximaPermitidaAbastecimento != null && item.getQuantidade().compareTo((quantidadeMaximaPermitidaAbastecimento)) > 0)) {
+                    resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
+                    produtosViolados.append(mensagens.obterMensagem("parametro.sistema.erro.abastecimento.quantidade.maxima.produto", item.getNome(), UtilitarioFormatacao.formatarDecimal(precoMaximoPermitido), UtilitarioFormatacao.formatarDecimal(item.getValorUnitario())));
+                } else if (precoMaximoPermitido != null && item.getValorUnitario().compareTo(precoMaximoPermitido) > 0) {
                     resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
                     produtosViolados.append(mensagens.obterMensagem("parametro.sistema.erro.abastecimento.preco.maximo.produto", item.getNome(), UtilitarioFormatacao.formatarDecimal(precoMaximoPermitido), UtilitarioFormatacao.formatarDecimal(item.getValorUnitario())));
                 }
             }
             if (resultado.getStatusResultado().equals(StatusExecucaoParametroSistema.ERRO)) {
-                resultado.setMensagemErro(mensagens.obterMensagem("parametro.sistema.erro.abastecimento.preco.maximo", veiculo.getPlaca(), produtosViolados.toString()));
+                resultado.setMensagemErro(mensagens.obterMensagem("parametro.sistema.erro.quantidadePreco.preco.maximo", veiculo.getPlaca(), produtosViolados.toString()));
             }
         }
         return resultado;
