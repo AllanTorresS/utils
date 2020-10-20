@@ -79,7 +79,7 @@ public class LogicaParametroPrecoMaximo implements ILogicaParametroSistema<Autor
 
     /**
      * Obtem a quantidade de litros do abastecimento
-     * @param quantidadePermitidaProdutos
+     * @param quantidadePermitidaProdutos A quantidade máxima de produtos permitida
      * @return retorna um mapa de quantidade de produtos que foram obtidos
      */
     private Map<Long,BigDecimal> obterMapaQuantidadePorProduto(List<FrotaParametroSistemaPrecoMaximoProduto> quantidadePermitidaProdutos) {
@@ -92,7 +92,7 @@ public class LogicaParametroPrecoMaximo implements ILogicaParametroSistema<Autor
 
     /**
      * Obtem a quantidade de litros do abastecimento
-     * @param quantidadePermitidaCombustivel
+     * @param quantidadePermitidaCombustivel a quantidade máxima de combustível permitida
      * @return retorna um mapa de litros abastecidos
      */
     private Map<Long,BigDecimal> obterMapaQuantidadePorAbastecimento(List<FrotaParametroSistemaPrecoMaximoAbastecimento> quantidadePermitidaCombustivel) {
