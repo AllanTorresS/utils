@@ -37,13 +37,13 @@ public class LogicaParametroPrecoMaximo implements ILogicaParametroSistema<Autor
         if(veiculo.isProprio()) {
             Map<Long, BigDecimal> precoMaximoProdutos = obterMapaProdutos(frotaParam.getPrecoMaximoProdutos());
             Map<Long, BigDecimal> precoMaximoCombustiveis = obterMapaCombustiveis(frotaParam.getPrecoMaximoAbastecimentos());
-            Map<Long, Long> quantidadeMaximaProdutosPorUnidade= obterMapaQuantidadePorProduto(frotaParam.getQuantidadeMaximaPorProduto());
+            Map<Long, BigDecimal> quantidadeMaximaProdutosPorUnidade= obterMapaQuantidadePorProduto(frotaParam.getQuantidadeMaximaPorProduto());
             Map<Long, BigDecimal> quantidadeMaximaLitrosCombustivel = obterMapaQuantidadePorAbastecimento(frotaParam.getQuantidadeMaximaPorCombustivel());
             StringBuilder produtosViolados = new StringBuilder();
             for (ItemAutorizacaoPagamento item : autorizacao.getItems()) {
                 BigDecimal precoMaximoPermitido;
                 BigDecimal quantidadeMaximaPermitidaAbastecimento = null;
-                Long quantidadeMaximaPermitidaProduto = null;
+                BigDecimal quantidadeMaximaPermitidaProduto = null;
 
                 if (item.isAbastecimento()) {
                     precoMaximoPermitido = precoMaximoCombustiveis.get(item.getCombustivel().getId());
@@ -53,16 +53,16 @@ public class LogicaParametroPrecoMaximo implements ILogicaParametroSistema<Autor
                     quantidadeMaximaPermitidaProduto = quantidadeMaximaProdutosPorUnidade.get(item.getProduto().getId());
                 }
 
-                if ((quantidadeMaximaPermitidaProduto != null && item.getQuantidade().compareTo((BigDecimal.valueOf(quantidadeMaximaPermitidaProduto))) > 0 || quantidadeMaximaPermitidaAbastecimento != null && item.getQuantidade().compareTo((quantidadeMaximaPermitidaAbastecimento)) > 0)) {
+                if ((quantidadeMaximaPermitidaProduto != null && item.getQuantidade().compareTo(quantidadeMaximaPermitidaProduto) > 0 || quantidadeMaximaPermitidaAbastecimento != null && item.getQuantidade().compareTo((quantidadeMaximaPermitidaAbastecimento)) > 0)) {
                     resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
-                    produtosViolados.append(mensagens.obterMensagem("parametro.sistema.erro.abastecimento.quantidade.maxima.produto", item.getNome(), UtilitarioFormatacao.formatarDecimal(precoMaximoPermitido), UtilitarioFormatacao.formatarDecimal(item.getValorUnitario())));
+                    produtosViolados.append(mensagens.obterMensagem("parametro.sistema.erro.abastecimento.quantidade.maxima.produto", item.getNome(), UtilitarioFormatacao.formatarDecimal(quantidadeMaximaPermitidaAbastecimento), UtilitarioFormatacao.formatarDecimal(item.getQuantidade())));
                 } else if (precoMaximoPermitido != null && item.getValorUnitario().compareTo(precoMaximoPermitido) > 0) {
                     resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
                     produtosViolados.append(mensagens.obterMensagem("parametro.sistema.erro.abastecimento.preco.maximo.produto", item.getNome(), UtilitarioFormatacao.formatarDecimal(precoMaximoPermitido), UtilitarioFormatacao.formatarDecimal(item.getValorUnitario())));
                 }
             }
             if (resultado.getStatusResultado().equals(StatusExecucaoParametroSistema.ERRO)) {
-                resultado.setMensagemErro(mensagens.obterMensagem("parametro.sistema.erro.quantidadePreco.preco.maximo", veiculo.getPlaca(), produtosViolados.toString()));
+                resultado.setMensagemErro(mensagens.obterMensagem("parametro.sistema.erro.abastecimento.quantidadePreco.maximo", veiculo.getPlaca(), produtosViolados.toString()));
             }
         }
         return resultado;
@@ -73,8 +73,8 @@ public class LogicaParametroPrecoMaximo implements ILogicaParametroSistema<Autor
      * @param quantidadePermitidaProdutos
      * @return retorna um mapa de quantidade de produtos que foram obtidos
      */
-    private Map<Long,Long> obterMapaQuantidadePorProduto(List<FrotaParametroSistemaPrecoMaximoProduto> quantidadePermitidaProdutos) {
-        Map<Long,Long> resultado = new HashMap<>();
+    private Map<Long,BigDecimal> obterMapaQuantidadePorProduto(List<FrotaParametroSistemaPrecoMaximoProduto> quantidadePermitidaProdutos) {
+        Map<Long,BigDecimal> resultado = new HashMap<>();
         quantidadePermitidaProdutos.forEach(quantidadeMaxima ->
                 resultado.put(quantidadeMaxima.getProduto().getId(), quantidadeMaxima.getQuantidadePermitida())
         );
