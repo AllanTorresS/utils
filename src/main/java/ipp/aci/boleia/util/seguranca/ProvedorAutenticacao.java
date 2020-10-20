@@ -1,7 +1,6 @@
 package ipp.aci.boleia.util.seguranca;
 
 import ipp.aci.boleia.dados.IAutenticacaoUsuarioDados;
-import ipp.aci.boleia.dados.IConfiguracaoSistemaDados;
 import ipp.aci.boleia.dados.IUsuarioMotoristaDados;
 import ipp.aci.boleia.dominio.CodigoValidacaoTokenJwt;
 import ipp.aci.boleia.dominio.Permissao;
@@ -16,7 +15,6 @@ import ipp.aci.boleia.util.excecao.ExcecaoAutenticacaoRemota;
 import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
 import ipp.aci.boleia.util.i18n.Mensagens;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,13 +36,11 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static ipp.aci.boleia.dominio.enums.ChaveConfiguracaoSistema.TELEFONE_CENTRAL_ATENDIMENTO_NUMERO;
 import static ipp.aci.boleia.util.UtilitarioFormatacao.TAMANHO_CPF;
 import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarNumeroZerosEsquerda;
 
@@ -81,9 +77,6 @@ public class ProvedorAutenticacao implements AuthenticationProvider {
 
     @Autowired
     private Mensagens mensagens;
-
-    @Autowired
-    private IConfiguracaoSistemaDados configuracaoSistema;
 
     @Override
     public Authentication authenticate(Authentication auth) throws AuthenticationException {
@@ -242,7 +235,7 @@ public class ProvedorAutenticacao implements AuthenticationProvider {
      */
     private Authentication autenticarUsuarioExterno(Usuario usuario, Object senha) {
 
-        boolean credenciaisValidas = credenciaisValidas(usuario, senha);
+        boolean credenciaisValidas = servicoUsuario.credenciaisValidas(usuario, (String) senha);
 
         boolean isLoginPDV = obterParametroRequest("pdv") != null;
         boolean isLoginMotorista = obterParametroRequest("motorista") != null;
@@ -329,33 +322,6 @@ public class ProvedorAutenticacao implements AuthenticationProvider {
         if (servicoUsuario.registrarErroAutenticacao(idUsuario)) {
             throw new DisabledException(null, new ExcecaoBoleiaRuntime(Erro.AUTENTICACAO_USUARIO_BLOQUEADO));
         }
-    }
-
-    /**
-     * Retorna true caso as credenciais informadas estejam compativeis com aquelas armazenadas em banco de dados
-     *
-     * @param usuario o usuario localizado no banco de dados
-     * @param credenciais A senha informada pelo usuario
-     * @return True caso as credenciais estejam de acordo com o esperado
-     */
-    private boolean credenciaisValidas(Usuario usuario, Object credenciais) {
-        if (StringUtils.isBlank(usuario.getSenhaHash()) || StringUtils.isBlank(usuario.getSenhaSalt())) {
-            String numeroTelefone = configuracaoSistema.buscarConfiguracoes(TELEFONE_CENTRAL_ATENDIMENTO_NUMERO).getParametro();
-            throw new BadCredentialsException(null, new ExcecaoBoleiaRuntime(Erro.AUTENTICACAO_CREDENCIAIS_INDEFINIDAS, numeroTelefone));
-        }
-        byte[] senha = converterCredenciaisParaByteArray(credenciais);
-        byte[] salt = UtilitarioCriptografia.fromBase64(usuario.getSenhaSalt());
-        byte[] hashEsperado = UtilitarioCriptografia.fromBase64(usuario.getSenhaHash());
-        return UtilitarioCriptografia.verificarHashBCrypt(senha, salt, hashEsperado);
-    }
-
-    /**
-     * Le a senha do usuario como um vetor de bytes
-     * @param credenciais A senha do usuario
-     * @return A senha em byte array
-     */
-    private byte[] converterCredenciaisParaByteArray(Object credenciais)  {
-        return ((String) credenciais).getBytes(StandardCharsets.UTF_8);
     }
 
     /**
