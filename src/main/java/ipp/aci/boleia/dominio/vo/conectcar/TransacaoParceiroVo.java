@@ -4,6 +4,10 @@ import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * Vo de transacao de parceiro conectcar
+ *
+ */
 public class TransacaoParceiroVo {
 
 	@JsonProperty("TipoEventoTransacao")

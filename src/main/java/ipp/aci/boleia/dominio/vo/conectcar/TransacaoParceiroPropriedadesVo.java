@@ -4,6 +4,10 @@ import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * Vo de integração de transação conectcar
+ *
+ */
 public class TransacaoParceiroPropriedadesVo {
 	
 	@JsonProperty("CodigoInternoParceiro")

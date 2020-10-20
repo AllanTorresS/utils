@@ -4,6 +4,10 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * Vo de integração de itens de uma criação de pedidos com a conectcar 
+ *
+ */
 public class ConectcarCriarPedidoEntregaVo {
 
 	@JsonProperty("CodigoInternoParceiro")

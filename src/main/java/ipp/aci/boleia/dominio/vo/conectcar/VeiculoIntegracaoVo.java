@@ -2,6 +2,10 @@ package ipp.aci.boleia.dominio.vo.conectcar;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * Vo de integração de veículos conectcar
+ *
+ */
 public class VeiculoIntegracaoVo {
 
 	@JsonProperty("Placa")

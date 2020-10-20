@@ -2,6 +2,10 @@ package ipp.aci.boleia.dominio.vo.conectcar;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * Vo de integração de adesivos da conectcar
+ *
+ */
 public class TagDadosIntegracaoVo {
 
 	@JsonProperty("CodigoInternoParceiro")

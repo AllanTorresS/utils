@@ -3,7 +3,7 @@ package ipp.aci.boleia.dominio.vo.conectcar;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Vo para obtenção da resposta das requisições da ConectCar
+ * Vo de integração do endereço de pedidos com a conectcar 
  */
 public class ConectCarDadosEnderecoEntregaVo {
 

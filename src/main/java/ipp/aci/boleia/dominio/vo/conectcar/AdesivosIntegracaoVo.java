@@ -2,6 +2,11 @@ package ipp.aci.boleia.dominio.vo.conectcar;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+
+/**
+ * Vo de integração dos adesivos com a conectcar 
+ *
+ */
 public class AdesivosIntegracaoVo {
 
 	@JsonProperty("Bloquear")

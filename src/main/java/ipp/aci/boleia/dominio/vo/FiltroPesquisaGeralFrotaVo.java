@@ -1,5 +1,9 @@
 package ipp.aci.boleia.dominio.vo;
 
+/**
+ * Filtro de pesquisa de frotas conectcar 
+ *
+ */
 public class FiltroPesquisaGeralFrotaVo {
 
 	private String razaoSocial;

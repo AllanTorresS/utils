@@ -2,6 +2,10 @@ package ipp.aci.boleia.dominio.vo.conectcar;
 
 import java.math.BigDecimal;
 
+/**
+ * Vo de retorno do serviço do sales force
+ *
+ */
 public class RespostaLeadSalesforceVo {
 
 	private String cnpj;
