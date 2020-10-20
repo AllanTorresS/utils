@@ -10,6 +10,7 @@ import ipp.aci.boleia.dominio.Reembolso;
 import ipp.aci.boleia.dominio.TransacaoConsolidada;
 import ipp.aci.boleia.dominio.TransacaoConsolidadaDetalhe;
 import ipp.aci.boleia.dominio.Usuario;
+import ipp.aci.boleia.dominio.agenciadorfrete.PrecoFrete;
 
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +33,7 @@ public interface IPertenceRevendedor {
     String CAMPO_TRANSACAO_CONSOLIDADA = "transacaoConsolidada." + CAMPO_FROTA_PONTOVENDA;
     String CAMPO_TRANSACOES_CONSOLIDADAS = "transacoesConsolidadas." + CAMPO_FROTA_PONTOVENDA;
     String CAMPO_REDE = "rede." + CAMPO_PONTOSVENDA;
+    String CAMPO_PRECO_FRETE = "posto." + CAMPO_ID;
 
     /**
      * Obtem os pontos de venda relacionados a entidade
@@ -64,6 +66,7 @@ public interface IPertenceRevendedor {
         mapa.put(Componente.class, CAMPO_COMPONENTE);
         mapa.put(Reembolso.class, CAMPO_TRANSACOES_CONSOLIDADAS);
         mapa.put(NotaFiscal.class, CAMPO_AUTORIZACOES_PAGAMENTO);
+        mapa.put(PrecoFrete.class, CAMPO_PRECO_FRETE);
         return mapa;
     }
 }

@@ -30,6 +30,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -109,7 +110,22 @@ public class FiltroAutenticacaoJwt implements Filter {
             adicionarSameSiteResponseHeader(request, response);
         }
 
+        if (request.getRequestURL().toString().contains("/logout")) {
+            limparCookies(request, response);
+        }
+
         chain.doFilter(request, response);
+    }
+
+    private void limparCookies(HttpServletRequest req, HttpServletResponse resp) {
+        Cookie[] cookies = req.getCookies();
+        if (cookies != null)
+            for (Cookie cookie : cookies) {
+                cookie.setValue("");
+                cookie.setPath("/");
+                cookie.setMaxAge(0);
+                resp.addCookie(cookie);
+            }
     }
 
     /**
