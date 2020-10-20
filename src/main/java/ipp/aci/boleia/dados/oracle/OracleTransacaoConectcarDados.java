@@ -69,7 +69,6 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
                     " ORDER BY " +
                     "   TC.dataFimPeriodo";
 
-    //TODO ALTERAR A QUERY APOS A DEFINICAO DO REEMBOLSO
     private static final String QUERY_VALOR_UTILIZADO =
     		 "SELECT NVL(SUM(tc.valorTotal),0) " +
              " FROM TransacaoConectcar tc " +
