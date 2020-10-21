@@ -4,6 +4,9 @@ import ipp.aci.boleia.dominio.pesquisa.comum.BaseFiltroPaginado;
 
 import java.util.Date;
 
+/**
+ * Filtro para pesquisa de Preços Frete.
+ */
 public class FiltroPesquisaPrecoFreteVo extends BaseFiltroPaginado {
 
     private EntidadeVo tipoCombustivel;
