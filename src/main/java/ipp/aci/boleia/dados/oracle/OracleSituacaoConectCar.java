@@ -45,7 +45,6 @@ public class OracleSituacaoConectCar extends OracleRepositorioBoleiaDados<Situac
      */
     @Override
     public void excluir(Long... ids) {
-    	//super.excluir(ids);
     }
 
 }

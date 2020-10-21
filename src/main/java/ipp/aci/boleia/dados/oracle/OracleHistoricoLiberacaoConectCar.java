@@ -35,7 +35,5 @@ public class OracleHistoricoLiberacaoConectCar extends OracleRepositorioBoleiaDa
      */
     @Override
     public void excluir(Long... ids) {
-    	//super.excluir(ids);
     }
-
 }
