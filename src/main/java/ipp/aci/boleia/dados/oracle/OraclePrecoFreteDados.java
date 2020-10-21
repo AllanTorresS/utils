@@ -35,6 +35,8 @@ public class OraclePrecoFreteDados extends OracleRepositorioBoleiaDados<PrecoFre
 
     @Override
     public PrecoFrete obterPrecoFreteVigente(PontoDeVenda pontoDeVenda, TipoCombustivel combustivel) {
+        if ((pontoDeVenda == null) || (combustivel == null)) return null;
+
         return pesquisarSemIsolamentoDados(new ParametroOrdenacaoColuna("id", Ordenacao.DECRESCENTE),
                 new ParametroPesquisaNulo("dataExclusao"),
                 new ParametroPesquisaIgual("status", StatusPrecoFrete.VIGENTE.getValue()),
