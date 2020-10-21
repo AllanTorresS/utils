@@ -158,10 +158,8 @@ public class FiltroAutenticacaoJwt implements Filter {
                 return true;
             }
             renovadorTokenJwt.enviarNovoTokenCasoNecessario(encodedJwtToken, fingerprint, response);
-        } else {
-            if (!validarTokenJwt(response, encodedJwtToken, fingerprint)) {
-                return true;
-            }
+        } else if (!validarTokenJwt(response, encodedJwtToken, fingerprint)) {
+            return true;
         }
         return false;
     }

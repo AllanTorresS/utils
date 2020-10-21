@@ -29,9 +29,7 @@ public class LogicaParametroLocalizacaoAbastecimento implements ILogicaParametro
     public ResultadoExecucaoParametroSistemaVo<AutorizacaoPagamento> executar(ContextoExecucaoParametroSistemaVo<AutorizacaoPagamento> contexto, FrotaParametroSistema frotaParam) {
         AutorizacaoPagamento autorizacao = contexto.getDados();
         ResultadoExecucaoParametroSistemaVo<AutorizacaoPagamento> resultado = new ResultadoExecucaoParametroSistemaVo<>(autorizacao);
-        /**
-         * Pedidos realizados offline, não serão considerados para a validação de localização.
-         */
+        //Pedidos realizados offline, não serão considerados para a validação de localização.
         if(autorizacao.getPedido() != null) {
             executarValidacaoLocalizacao(autorizacao, resultado);
         }

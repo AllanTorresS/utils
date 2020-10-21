@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
 
 /**
@@ -76,12 +77,19 @@ public class LoggableDispatcherServlet extends DispatcherServlet {
                     .append(body)
                     .append(">");
         }
+        String header = getHeadersInfo(requestToCache);
+        if(LOGGER.isDebugEnabled() && header != null){
+            stringBuilder.append(" Headers<")
+                    .append(header)
+                    .append(">");
+        }
         stringBuilder
                 .append(" [")
                 .append(responseToCache.getStatus())
                 .append("] : ")
                 .append(getResponsePayload(responseToCache));
         LOGGER.info(stringBuilder.toString());
+
     }
     
     /**
@@ -125,12 +133,32 @@ public class LoggableDispatcherServlet extends DispatcherServlet {
     }
 
     /**
-     * Obtem os parametros de uma requisicao em formato de query string
+     * Obtém os parametros de uma requisição em formato de query string
      * @param request o http request
      * @return os parametros em formato de query string
      */
     private String getParameters(HttpServletRequest request){
         return request.getQueryString();
+    }
+
+    /**
+     * Obtém todos os headers de uma requisição
+     * @param request o http request
+     * @return os readers concatenados e separados em uma string
+     */
+    private String getHeadersInfo(HttpServletRequest request) {
+        Enumeration<String> headerNames = request.getHeaderNames();
+        if(!headerNames.hasMoreElements()) {
+            return null;
+        }
+
+        StringBuilder header = new StringBuilder();
+        while (headerNames.hasMoreElements()) {
+            String key = headerNames.nextElement();
+            String value = request.getHeader(key);
+            header.append(key).append(": ").append(value).append("; ");
+        }
+        return header.toString();
     }
 
     /**

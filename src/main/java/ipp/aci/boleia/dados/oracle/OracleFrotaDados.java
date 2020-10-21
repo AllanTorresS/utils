@@ -363,7 +363,7 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
 
         String consulta = CONSULTA_CLIENTE_PROFROTAS;
         if(dataUltimoEnvio != null){
-            consulta += "WHERE f.dataAtualizacao >= :dataUltimoEnvio GROUP BY f.id, f.cnpj, f.razaoSocial, f.status";
+            consulta += "WHERE f.dataAtualizacao IS NOT NULL  AND f.dataAtualizacao >= :dataUltimoEnvio GROUP BY f.id, f.cnpj, f.razaoSocial, f.status";
             return pesquisar(null, consulta, ClienteProFrotaVo.class, new ParametroPesquisaIgual("dataUltimoEnvio", dataUltimoEnvio) ).getRegistros();
         }
         else {
