@@ -209,23 +209,22 @@ public class PrecoSd {
     }
 
     /**
-     * Zera o valor do acordo vigente
+     * Remove o desconto ou o acréscimo do acordo vigente
+     * e cria uma nova linha de negociação sem valor, na qual
+     * em seguida cria um histórico da negociação antiga.
+     *
+     * @param precoAtual preco que sera alterado
+     * @param automatico flag indicando se o aceite foi automatico
      */
-    public void zerarValorVigente(Preco precoAtual, Boolean automatico){
+    public void definirPrecoNegociadoApartirDePrecoBase(Preco precoAtual, Boolean automatico){
         Preco novoPreco = new Preco();
-        novoPreco.setPreco(precoAtual.getPreco());
-        novoPreco.setDataAtualizacao(precoAtual.getDataAtualizacao());
-        novoPreco.setDescontoSolicitado(BigDecimal.ZERO);
-        novoPreco.setDescontoVigente(BigDecimal.ZERO);
         novoPreco.setFrotaPtov(precoAtual.getFrotaPtov());
+        novoPreco.setStatus(StatusPreco.VIGENTE.getValue());
+        novoPreco.setPreco(precoAtual.getPrecoBase().getPreco());
         novoPreco.setPrecoBase(precoAtual.getPrecoBase());
-        novoPreco.setJustificativa(precoAtual.getJustificativa());
-        novoPreco.setVolumeEstimado(precoAtual.getVolumeEstimado());
-        novoPreco.setDataSolicitacao(precoAtual.getDataSolicitacao());
-        novoPreco.setStatus(precoAtual.getStatus());
+        novoPreco.setDataAtualizacao(precoAtual.getDataAtualizacao());
         precoAtual.setStatus(StatusPreco.HISTORICO.getValue());
         this.repositorioPreco.armazenar(precoAtual);
-        novoPreco.aceitarDesconto(this.ambiente.buscarDataAmbiente(), automatico);
         this.repositorioPreco.armazenar(novoPreco);
     }
     /**
