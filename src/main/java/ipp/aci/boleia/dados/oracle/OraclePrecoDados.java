@@ -49,11 +49,13 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
 
     @Override
     public Preco obterAtualPorFrotaPvCombustivel(Long idFrota, Long idPontoVenda, Long idTipoCombustivel) {
-        return pesquisarUnico(
+        List<Preco> precosAcordo = pesquisar(
+                new ParametroOrdenacaoColuna("dataAtualizacao", Ordenacao.DECRESCENTE),
                 new ParametroPesquisaIgual("precoBase.precoMicromercado.tipoCombustivel.id", idTipoCombustivel),
                 new ParametroPesquisaIgual("frotaPtov.pontoVenda.id", idPontoVenda),
                 new ParametroPesquisaIgual("frotaPtov.frota.id", idFrota),
                 new ParametroPesquisaDiferente("status", StatusPreco.HISTORICO.getValue()));
+        return precosAcordo.stream().findFirst().orElse(null);
     }
 
     @Override
@@ -130,6 +132,9 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
             }
             if (filtro.getMunicipioPontoDeVenda() != null) {
                 parametros.add(new ParametroPesquisaLike("frotaPtov.pontoVenda.municipio", filtro.getMunicipioPontoDeVenda()));
+            }
+            if (filtro.getNomeRede() != null) {
+                parametros.add(new ParametroPesquisaLike("frotaPtov.pontoVenda.rede.nomeRede", filtro.getNomeRede()));
             }
             if (filtro.getDataAtualizacao() != null) {
                 parametros.add(new ParametroPesquisaOr(new ParametroPesquisaAnd(new ParametroPesquisaDataMaiorOuIgual("dataAtualizacao", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDataAtualizacao())), new ParametroPesquisaDataMenorOuIgual("dataAtualizacao", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getDataAtualizacao()))),

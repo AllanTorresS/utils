@@ -139,6 +139,13 @@ public class OracleUsuarioDados extends OracleRepositorioBoleiaDados<Usuario> im
     }
 
     @Override
+    public List<Usuario> pesquisarPorNome(FiltroPesquisaUsuarioVo filtro) {
+        return this.pesquisar(new ParametroOrdenacaoColuna("nome"),
+                new ParametroPesquisaLike("nome", filtro.getNome()),
+                new ParametroPesquisaIgual("tipoPerfil.id", filtro.getTipoPerfil().getId()));
+    }
+
+    @Override
     public Usuario obterPorCpf(Long cpf, Boolean usuarioMotorista) {
         ParametroPesquisa parametroPesquisaUsuarioMotorista = usuarioMotorista ?
                 new ParametroPesquisaIgual("tipoPerfil.id",TipoPerfilUsuario.MOTORISTA.getValue())

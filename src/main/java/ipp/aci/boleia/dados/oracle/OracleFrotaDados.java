@@ -88,6 +88,7 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
         povoarParametroIgual("id", filtro.getFrota() != null ? filtro.getFrota().getId() : null, parametros);
         povoarParametroLike("municipio", filtro.getCidade(), parametros);
         povoarParametroLike("unidadeFederativa", filtro.getUf() != null ? filtro.getUf().getName() : null, parametros);
+        povoarParametroIgual("usuarioAssessorResponsavel.id", filtro.getAssessor() != null ? filtro.getAssessor().getId() : null, parametros);
 
         if (filtro.getCnpj() != null) {
             parametros.add(new ParametroPesquisaIgual("cnpj", UtilitarioFormatacao.obterLongMascara(filtro.getCnpj())));
@@ -362,7 +363,7 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
 
         String consulta = CONSULTA_CLIENTE_PROFROTAS;
         if(dataUltimoEnvio != null){
-            consulta += "WHERE f.dataAtualizacao >= :dataUltimoEnvio GROUP BY f.id, f.cnpj, f.razaoSocial, f.status";
+            consulta += "WHERE f.dataAtualizacao IS NOT NULL  AND f.dataAtualizacao >= :dataUltimoEnvio GROUP BY f.id, f.cnpj, f.razaoSocial, f.status";
             return pesquisar(null, consulta, ClienteProFrotaVo.class, new ParametroPesquisaIgual("dataUltimoEnvio", dataUltimoEnvio) ).getRegistros();
         }
         else {

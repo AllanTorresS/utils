@@ -153,6 +153,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "   %s " +
                     "   %s " +
                     "   %s " +
+                    "   %s " +
                     " ORDER BY " +
                     "   (CASE WHEN TC.statusNotaFiscal = 0 THEN (CASE WHEN TRUNC(TC.dataPrazoEmissaoNfe) < SYSDATE THEN 0 ELSE 1 END) ELSE 2 END), TC.dataFimPeriodo";
 
@@ -214,6 +215,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "   %s " +
                     "   %s " +
                     "   %s " +
+                    "   %s " +
                     " ORDER BY " +
                     "   %s ";
 
@@ -262,8 +264,13 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         if (usuarioLogado.getFrota() == null || !usuarioLogado.getFrota().getCnpj().equals(cnpjFrotaControle)){
             filtroFrotaControle = "AND FR.frota.cnpj != " + cnpjFrotaControle + " ";
         }
+        String filtroFrotasAssociadas = "";
+        if (usuarioLogado.isInterno() && usuarioLogado.possuiFrotasAssociadas()) {
+            filtroFrotasAssociadas += " AND F.id IN (:idsFrota) ";
+            parametros.add(new ParametroPesquisaIn("idsFrota", usuarioLogado.listarIdsFrotasAssociadas()));
+        }
 
-        String consultaPesquisa = String.format(CONSULTA_PESQUISA_GRID, filtroFrotaControle, filtroStatus, filtroNotaFiscal);
+        String consultaPesquisa = String.format(CONSULTA_PESQUISA_GRID, filtroFrotaControle, filtroFrotasAssociadas, filtroStatus, filtroNotaFiscal);
         return pesquisar(filtro.getPaginacao(), consultaPesquisa, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
@@ -442,9 +449,16 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         parametros.add(new ParametroPesquisaIgual("hoje", obterDataHoje()));
 
         String pesquisaFrotaControle = "";
-        if(ambiente.getUsuarioLogado().getFrota() == null || !ambiente.getUsuarioLogado().getFrota().getCnpj().equals(cnpjFrotaControle)){
+        Usuario usuarioLogado = ambiente.getUsuarioLogado();
+        if(usuarioLogado.getFrota() == null || usuarioLogado.getFrota().getCnpj().equals(cnpjFrotaControle)){
             pesquisaFrotaControle = "AND TC.frotaPtov.frota.cnpj != " + cnpjFrotaControle + " ";
         }
+        String filtroFrotasAssociadas = "";
+        if (usuarioLogado.isInterno() && usuarioLogado.possuiFrotasAssociadas()) {
+            filtroFrotasAssociadas += " AND TC.frotaPtov.frota.id IN (:idsFrota) ";
+            parametros.add(new ParametroPesquisaIn("idsFrota", usuarioLogado.listarIdsFrotasAssociadas()));
+        }
+
         String pesquisaStatusReembolso = "";
 
         if ((filtro.getStatusPagamento() != null) && (!filtro.getStatusPagamento().isEmpty())) {
@@ -473,7 +487,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         String filtroStatusIntegracao = filtro.getStatusIntegracao() != null ? montarFiltroStatusIntegracao(filtro) : "";
         String ordenacao = criarParametroOrdenacao(filtro.getPaginacao().getParametrosOrdenacaoColuna());
 
-        String consultaPesquisa = String.format(CONSULTA_REEMBOLSO_PENDENTE_GRID, pesquisaFrotaControle, filtroStatusIntegracao, pesquisaStatusReembolso, ordenacao);
+        String consultaPesquisa = String.format(CONSULTA_REEMBOLSO_PENDENTE_GRID, pesquisaFrotaControle, filtroFrotasAssociadas, filtroStatusIntegracao, pesquisaStatusReembolso, ordenacao);
 
         return pesquisar(filtro.getPaginacao(), consultaPesquisa, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }

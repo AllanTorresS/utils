@@ -3,6 +3,7 @@ package ipp.aci.boleia.util.boot;
 import ipp.aci.boleia.util.UtilitarioJson;
 import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.excecao.MensagemErro;
+import ipp.aci.boleia.util.rotas.ExternoRotas;
 import ipp.aci.boleia.util.seguranca.ChavePermissao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,7 +67,7 @@ public class ConfiguracoesExpiracaoSessao extends WebMvcConfigurerAdapter {
         public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
             try {
                 HttpSession sessao = request.getSession(false);
-                if (sessao != null) {
+                if (sessao != null && !isStateless(request)) {
                     if (tempoSessaoExpirou(sessao) && !ignorarHandler(handler)) {
                         enviarErroAutenticacao(response);
                         return false;
@@ -78,6 +79,16 @@ public class ConfiguracoesExpiracaoSessao extends WebMvcConfigurerAdapter {
                 LOGGER.warn("Problema na interceptacao para expiracao de sessoes", e);
             }
             return true;
+        }
+
+        /**
+         * Verifica se a url deve ter o comportamento stateless
+         * @param request A requisição
+         * @return true caso o endpoint deva ser stateless, false para stateful
+         */
+        private boolean isStateless(HttpServletRequest request) {
+            String url = request.getRequestURL().toString();
+            return url.contains(ExternoRotas.AGENCIADOR_FRETE_API + "/");
         }
 
         /**

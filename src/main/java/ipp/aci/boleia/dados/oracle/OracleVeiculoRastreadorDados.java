@@ -16,7 +16,7 @@ import java.util.List;
 @Repository
 public class OracleVeiculoRastreadorDados extends OracleRepositorioBoleiaDados<VeiculoRastreador> implements IVeiculoRastreadorDados {
 
-    private static final String CAMPO_ID = "id";
+    private static final String CAMPO_ID = "idVeiculoSistema";
     private static final String CAMPO_PLACA = "placa";
 
     /**
