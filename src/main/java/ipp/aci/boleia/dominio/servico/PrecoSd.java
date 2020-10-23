@@ -222,7 +222,7 @@ public class PrecoSd {
         novoPreco.setStatus(StatusPreco.VIGENTE.getValue());
         novoPreco.setPreco(precoAtual.getPrecoBase().getPreco());
         novoPreco.setPrecoBase(precoAtual.getPrecoBase());
-        novoPreco.setDataAtualizacao(precoAtual.getDataAtualizacao());
+        novoPreco.setDataAtualizacao(ambiente.buscarDataAmbiente());
         precoAtual.setStatus(StatusPreco.HISTORICO.getValue());
         this.repositorioPreco.armazenar(precoAtual);
         this.repositorioPreco.armazenar(novoPreco);
