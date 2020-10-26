@@ -30,8 +30,8 @@ public enum TipoRelatorioMotorGerador implements IEnumComLabel<TipoRelatorioMoto
     RELATORIO_COBRANCA_AGENCIADOR_FRETE(15, obterMapaTemplatesCobrancaAgenciador()),
     RELATORIO_ABASTECIMENTO_AGENCIADOR_FRETE(16, obterMapaTemplatesAbastecimentoAgenciadorFrete()),
     RELATORIO_REEMBOLSO_AGENCIADOR_FRETE(17, obterMapaTemplatesReembolsoAgenciadorFrete()),
-	RELATORIO_FINANCEIRO(18),
-    RELATORIO_ABASTECIMENTOS_NO_PERIODO(19);
+	RELATORIO_FINANCEIRO(18, obterMapaTemplatesFinanceiro()),
+    RELATORIO_ABASTECIMENTOS_NO_PERIODO(19, obterMapaTemplatesAbastecimentosPeriodo());
     
     private final Integer value;
     private final Map<TipoPerfilUsuario, TemplatePlanilha> templatePerfil;
@@ -289,5 +289,13 @@ public enum TipoRelatorioMotorGerador implements IEnumComLabel<TipoRelatorioMoto
         mapa.put(TipoPerfilUsuario.INTERNO, TemplatePlanilha.TEMPLATE_RELATORIO_REEMBOLSO_AGENCIADOR_FRETE_SOLUCAO);
         mapa.put(TipoPerfilUsuario.REVENDA, TemplatePlanilha.TEMPLATE_RELATORIO_REEMBOLSO_AGENCIADOR_FRETE_REVENDA);
         return mapa;
+    }
+
+    private static Map<TipoPerfilUsuario, TemplatePlanilha> obterMapaTemplatesFinanceiro() {
+        return null;
+    }
+
+    private static Map<TipoPerfilUsuario, TemplatePlanilha> obterMapaTemplatesAbastecimentosPeriodo() {
+        return null;
     }
 }

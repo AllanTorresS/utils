@@ -80,8 +80,6 @@ public enum TemplatePlanilha {
         return path;
     }
 
-    public String getName() { return name; }
-
     /**
      * Configura response para download do template
      *
