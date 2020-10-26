@@ -52,6 +52,9 @@ public class FrotaParametroSistemaPrecoMaximoProduto implements IPersistente, IP
     @Column(name = "VA_PRECO_PRATICADO")
     private BigDecimal precoPraticado;
 
+    @Column(name = "VA_QUANTIDADE_PERMITIDA")
+    private BigDecimal quantidadePermitida;
+
     @Column(name = "NO_VERSAO")
     @Version
     private Long versao;
@@ -110,5 +113,14 @@ public class FrotaParametroSistemaPrecoMaximoProduto implements IPersistente, IP
     @Override
     public List<Frota> getFrotas() {
         return frotaParametroSistema != null ? frotaParametroSistema.getFrotas() : null;
+    }
+
+
+    public BigDecimal getQuantidadePermitida() {
+        return quantidadePermitida;
+    }
+
+    public void setQuantidadePermitida(BigDecimal quantidadePermitida) {
+        this.quantidadePermitida = quantidadePermitida;
     }
 }

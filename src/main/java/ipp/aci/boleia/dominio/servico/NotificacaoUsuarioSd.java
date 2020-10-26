@@ -240,34 +240,12 @@ public class NotificacaoUsuarioSd {
     }
 
     /**
-     * Envia uma notificação ao gestor da revenda informando que ha prazos de emissão de notas fiscais
-     * expirando em 24 ou 72 horas
-     *
-     * @param idsRedes identificadores das redes cujos gestores devem ser notificados
-     */
-    public void enviarNotificacaoCiclosAVencer(Set<Long> idsRedes) {
-        List<Usuario> usuarios = repositorioUsuarios.obterGestorPorRedes(new ArrayList<>(idsRedes));
-        enviarNotificacao(TipoSubcategoriaNotificacao.NOTA_FISCAL_CICLO_A_VENCER, usuarios);
-    }
-
-    /**
      * Envia uma notificação aos administradores informando que ha prazos de emissão de notas fiscais
      * expirando em 24 horas
      */
     public void enviarNotificacaoCiclosAVencerSolucao() {
         List<Usuario> usuarios = repositorioUsuarios.obterPorTipoPerfilPermissao(TipoPerfilUsuario.INTERNO.getValue(), ChavePermissao.getChave(ChavePermissao.NOTA_FISCAL_CONSULTAR_E_VISUALIZAR));
         enviarNotificacao(TipoSubcategoriaNotificacao.NOTA_FISCAL_NAO_EMITIDA_SOLUCAO, usuarios);
-    }
-
-    /**
-     * Envia uma notificação ao gestor da revenda informando que ha prazos de emissão de notas fiscais
-     * expirados há 24 ou 72 horas
-     *
-     * @param idsRedes identificadores das redes cujos gestores devem ser notificados
-     */
-    public void enviarNotificacaoCiclosAtrasados(Set<Long> idsRedes) {
-        List<Usuario> usuarios = repositorioUsuarios.obterGestorPorRedes(new ArrayList<>(idsRedes));
-        enviarNotificacao(TipoSubcategoriaNotificacao.NOTA_FISCAL_CICLO_ATRASADO, usuarios);
     }
 
     /**
@@ -311,7 +289,7 @@ public class NotificacaoUsuarioSd {
         Long idFrota = autorizacaoPagamento.getFrota().getId();
         List<Usuario> usuarioFrota = repositorioUsuarios.obterGestorPorFrota(idFrota);
         String numeroNfe = notaFiscal.getNumero();
-        TransacaoConsolidada transacaoConsolidada = transacaoConsolidadaDados.obterConsolidadoPorAbastecimento(autorizacaoPagamento.getId());
+        TransacaoConsolidada transacaoConsolidada = transacaoConsolidadaDados.obterConsolidadoParaAbastecimento(autorizacaoPagamento.getId());
         Date dataInicioPeriodo = transacaoConsolidada.getDataInicioPeriodo();
         Date dataFimPeriodo = transacaoConsolidada.getDataFimPeriodo();
         String mes = UtilitarioFormatacaoData.formatarDataMes(dataInicioPeriodo);
@@ -355,7 +333,7 @@ public class NotificacaoUsuarioSd {
      * @param usuario usuario que deve receber a notificação
      */
     public void enviarNotificacaoRelatorioConcluido(Usuario usuario){
-        List <Usuario> usuarios = new ArrayList<Usuario>();
+        List <Usuario> usuarios = new ArrayList<>();
         usuarios.add(usuario);
         enviarNotificacao(TipoSubcategoriaNotificacao.RELATORIO_CONCLUIDO,usuarios);
     }
@@ -367,7 +345,7 @@ public class NotificacaoUsuarioSd {
      * @return ultima notificação do usuario daquela sub categoria
      */
     public NotificacaoUsuario obterUltimaNotificacaoUsuarioPorSubCategoria(Usuario usuario, TipoSubcategoriaNotificacao tipoSubcategoriaNotificacao){
-       return repositorio.obterUltimaNotificacaoUsuarioPorSubCategoria(usuario, tipoSubcategoriaNotificacao);
+        return repositorio.obterUltimaNotificacaoUsuarioPorSubCategoria(usuario, tipoSubcategoriaNotificacao);
     }
 
     /**
@@ -629,9 +607,9 @@ public class NotificacaoUsuarioSd {
      */
     public void enviarNotificacaoVeiculoSemConsumoEstimado(Veiculo veiculo) {
         List<Usuario> usuarios = repositorioUsuarios.obterPorFrotaPermissoes(
-            veiculo.getFrota().getId(),
-            ChavePermissao.getChave(ChavePermissao.PARAMETRO_SISTEMA_CONSULTAR_E_VISUALIZAR),
-            ChavePermissao.getChave(ChavePermissao.VEICULO_ALTERAR));
+                veiculo.getFrota().getId(),
+                ChavePermissao.getChave(ChavePermissao.PARAMETRO_SISTEMA_CONSULTAR_E_VISUALIZAR),
+                ChavePermissao.getChave(ChavePermissao.VEICULO_ALTERAR));
         enviarNotificacao(TipoSubcategoriaNotificacao.VEICULO_SEM_CONSUMO_ESTIMADO, usuarios, veiculo.getId().toString(), veiculo.getPlaca());
     }
 
@@ -770,7 +748,7 @@ public class NotificacaoUsuarioSd {
         Boolean alteradoParaRascunho = StatusCampanha.RASCUNHO.equals(StatusCampanha.obterPorValor(campanha.getStatus()));
         if(!alteradoParaRascunho){
             enviarNotificacao(TipoSubcategoriaNotificacao.CAMPANHA_DISPONIVEL_APROVACAO, destinatariosComPermissaoDeAprovacao, campanha.getNome(), campanha.getId().toString());
-        } else{
+        } else {
             Set<Usuario> usuariosCriadoresEAprovadores = new HashSet<>();
             usuariosCriadoresEAprovadores.addAll(destinatariosComPermissaoDeAprovacao);
             usuariosCriadoresEAprovadores.add(campanha.getUsuarioCriador());

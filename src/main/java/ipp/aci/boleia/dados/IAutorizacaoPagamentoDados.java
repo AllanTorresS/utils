@@ -3,6 +3,7 @@ package ipp.aci.boleia.dados;
 
 import ipp.aci.boleia.dominio.AutorizacaoPagamento;
 import ipp.aci.boleia.dominio.EmpresaAgregada;
+import ipp.aci.boleia.dominio.TransacaoConsolidada;
 import ipp.aci.boleia.dominio.Unidade;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaAbastecimentoVo;
@@ -335,7 +336,29 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
      * @param  dataFinal data final do período de exportação
      * @return a lista de abastecimentos agrupados do período.
      */
-     List<VolumeVendasClienteProFrotaVo> obterVendasProfrotasAPCO(Date dataInicial, Date dataFinal);
+    List<VolumeVendasClienteProFrotaVo> obterVendasProfrotasAPCO(Date dataInicial, Date dataFinal);
+
+    /**
+     * Retorna uma lista com os abastecimentos de um ciclo que tem justificativa associada
+     *
+     * @param idsAutorizacoes Lista que contem os identificadores dos abastecimentos de um determinado ciclo.
+     * @return Lista de abastecimentos de um ciclo que tem justificativa associada
+     */
+    List<AutorizacaoPagamento> obterAbastecimentosComJustificativaAssociadaPorAbastecimentos(List<Long> idsAutorizacoes);
+
+    /**
+     * Retorna a lista de abastecimentos de um consolidado que possui exigência de emissão de nota fiscal, sejam eles postergados ou não.
+     * @param transacaoConsolidada o consolidado que se deseja obter os abastecimentos.
+     * @return a lista de abastecimentos do consolidado.
+     */
+    List<AutorizacaoPagamento> obterAbastecimentosCicloParaNotaFiscal(TransacaoConsolidada transacaoConsolidada);
+
+    /** Obtém o número abastecimentos pertencentes ao ciclo que foram postergados
+     *
+     * @param filtro O filtro com as informações que devem ser consideradas na busca.
+     * @return Número de abastecimentos postergados.
+     */
+    Integer obterNumeroAbastecimentosPostergados(FiltroPesquisaAbastecimentoVo filtro);
 
     /**
      * Obtém o total de abastecimentos realizados por um motorista, dado seu CPF
@@ -352,4 +375,18 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
      * @return Data do último abastecimento realizado pelo motorista
      */
     Date obterDataUltimoAbastecimentoAutorizadoMotorista(Long cpfMotorista);
+
+    /**
+     * Retorna a transacao positiva ajustada oriunda do estorno da transacao original
+     * @param transacaoEstornada transacao original, que foi estornada
+     * @return transacao positiva ajustada
+     */
+    AutorizacaoPagamento obterTransacaoAjustadaOriundaDeEstorno(AutorizacaoPagamento transacaoEstornada);
+
+    /**
+     * Retorna a transacao negativa oriunda do estorno da transacao original
+     * @param transacaoEstornada transacao original, que foi estornada
+     * @return transacao negativa
+     */
+    AutorizacaoPagamento obterTransacaoNegativaOriundaDeEstorno(AutorizacaoPagamento transacaoEstornada);
 }

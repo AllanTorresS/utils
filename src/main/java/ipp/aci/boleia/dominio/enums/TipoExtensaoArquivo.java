@@ -8,7 +8,8 @@ import ipp.aci.boleia.util.i18n.IEnumComLabel;
 public enum TipoExtensaoArquivo implements IEnumComLabel<TipoExtensaoArquivo> {
 
     XLSX(0),
-    TXT(1);
+    TXT(1),
+    PDF(2);
 
     private final Integer value;
 

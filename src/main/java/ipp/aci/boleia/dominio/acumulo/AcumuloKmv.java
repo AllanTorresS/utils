@@ -28,6 +28,8 @@ import java.util.Date;
 @Table(name = "ACUMULO_KMV")
 public class AcumuloKmv implements IPersistente  {
 
+	private static final long serialVersionUID = -3133116557021017037L;
+
 	@Id
 	@Column(name = "CD_ACUMULO")
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_ACUMULO_KMV")

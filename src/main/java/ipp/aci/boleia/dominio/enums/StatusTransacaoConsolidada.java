@@ -1,13 +1,17 @@
 package ipp.aci.boleia.dominio.enums;
 
+import ipp.aci.boleia.util.i18n.IEnumComLabel;
 
 /**
  * Indica o status de uma consolidacao de transacoes (ciclo de fatura de abastecimentos)
  */
-public enum StatusTransacaoConsolidada {
+public enum StatusTransacaoConsolidada implements IEnumComLabel<StatusTransacaoConsolidada> {
 
-    ABERTA(0),
-    FECHADA(1);
+    EM_ABERTO(0),
+    FECHADA(1),
+    EM_AJUSTE(2),
+    PARCIALMENTE_EMITIDA(3),
+    SEM_EMISSAO(4);
 
     private final Integer value;
 

@@ -57,7 +57,9 @@ public enum TemplatePlanilha {
     TEMPLATE_RELATORIO_POSTO_CREDENCIADO_FROTA("template-relatorio-posto-credenciado-frota.xlsx"),
     TEMPLATE_RELATORIO_POSTO_CREDENCIADO_SOLUCAO("template-relatorio-posto-credenciado-solucao.xlsx"),
     TEMPLATE_RELATORIO_ABASTECIMENTOS_ESTORNADOS("template-relatorio-abastecimentos-estornados.xlsx"),
-    TEMPLATE_RELATORIO_ABASTECIMENTOS_AJUSTADOS("template-relatorio-abastecimentos-ajustados.xlsx");
+    TEMPLATE_RELATORIO_ABASTECIMENTOS_AJUSTADOS("template-relatorio-abastecimentos-ajustados.xlsx"),
+    TEMPLATE_RELATORIO_FINANCEIRO_REVENDA("template-relatorio-financeiro-revenda.xlsx"),
+    TEMPLATE_RELATORIO_ABASTECIMENTOS_NO_PERIODO("template-relatorio-abastecimento-no-periodo.xlsx");
 
     private static final String BASE_TEMPLATE = "/template-planilhas/";
 
@@ -67,6 +69,10 @@ public enum TemplatePlanilha {
     TemplatePlanilha(String name) {
         this.name = name;
         this.path = BASE_TEMPLATE + name;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public String getPath() {
