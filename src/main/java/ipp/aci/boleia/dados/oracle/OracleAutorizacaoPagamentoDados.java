@@ -871,8 +871,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
      */
     private void povoarParametrosAjustados(FiltroPesquisaAbastecimentoVo filtro, List<ParametroPesquisa> parametros) {
         if(null != filtro.isApenasAjustados() && filtro.isApenasAjustados()) {
-            parametros.add(new ParametroPesquisaNulo("idAutorizacaoEstorno", true));
-            parametros.add(new ParametroPesquisaMaior("valorTotal", BigDecimal.ZERO));
+            parametros.add(new ParametroPesquisaIgual("statusEdicao", StatusEdicao.EDITADO.getValue()));
         }
     }
 
