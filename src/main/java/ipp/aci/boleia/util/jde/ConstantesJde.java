@@ -16,6 +16,7 @@ public final class ConstantesJde {
     public static final String UNIDADE_NEGOCIO = "74";
     public static final String CODIGO_CATEGORIA_EMPRESA = "74";
     public static final String CLIENTE_REPASSE = "7059338";
+    public static final Long CODIGO_JDE_FORNECEDOR_CONECTCAR = 6032945L;
 
     public static final Long VOUCHER_CENARIO_APROVADO_PAGAMENTO = 187L;
     public static final Long VOUCHER_CENARIO_SUSPENSO_PAGAMENTO = 141L;
@@ -48,7 +49,7 @@ public final class ConstantesJde {
     public static final String FATURA_TIPO_DOCUMENTO = "D3";
     public static final String FATURA_TIPO_DOCUMENTO_SAQUE = "F4";
     public static final String FATURA_REPASSE_TIPO_DOCUMENTO = "DB";
-    public static final String FATURA_CONECTCAR_PEDIDO_TAG_TIPO_DOCUMENTO = "F5";
+    public static final String FATURA_TIPO_DOCUMENTO_CONECTCAR = "F5";
     public static final String FATURA_CENARIO = "140";
     public static final String FATURA_SISTEMA_GERADOR = BOLEIA;
     public static final String FATURA_REPASSE_OBSERVACAO = "REPASSE CONCEDIDO";
