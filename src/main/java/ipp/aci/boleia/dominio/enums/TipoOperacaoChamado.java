@@ -11,6 +11,10 @@ public enum TipoOperacaoChamado {
 
     Integer value;
 
+    /**
+     * Construtor do enum
+     * @param value valor do enum
+     */
     TipoOperacaoChamado(Integer value) {
         this.value = value;
     }

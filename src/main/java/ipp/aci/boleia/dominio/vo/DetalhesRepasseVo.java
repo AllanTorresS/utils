@@ -1,8 +1,8 @@
 package ipp.aci.boleia.dominio.vo;
 
 import ipp.aci.boleia.dominio.CicloRepasse;
+import ipp.aci.boleia.dominio.enums.StatusCicloRepasse;
 import ipp.aci.boleia.dominio.enums.StatusIntegracaoJde;
-import ipp.aci.boleia.dominio.enums.StatusPagamentoCobranca;
 import ipp.aci.boleia.util.MesAno;
 import ipp.aci.boleia.util.UtilitarioFormatacaoData;
 
@@ -62,7 +62,7 @@ public class DetalhesRepasseVo {
 		this.numeroDocumento = repasse.getNumeroDocumento();
 
 		if(repasse.getStatus() != null){
-			this.statusPagamento = StatusPagamentoCobranca.obterPorValor(repasse.getStatus()).getLabel();
+			this.statusPagamento = StatusCicloRepasse.obterPorValor(repasse.getStatus()).getLabel();
 		}
 
 		if(repasse.getStatusIntegracaoJDE() != null){

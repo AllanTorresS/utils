@@ -26,7 +26,7 @@ public class FiltroPesquisaVeiculoExtVo extends FiltroPesquisaVeiculoFrtVo {
     private Long cnpjFrota;
 
     public FiltroPesquisaVeiculoExtVo() {
-
+        //Construtor default
     }
 
     public Date getDataUltimaAtualizacao() {

@@ -29,8 +29,10 @@ public enum TipoRelatorioMotorGerador implements IEnumComLabel<TipoRelatorioMoto
     RELATORIO_NEGOCIACAO(14, obterMapaTemplatesNegociacao()),
     RELATORIO_COBRANCA_AGENCIADOR_FRETE(15, obterMapaTemplatesCobrancaAgenciador()),
     RELATORIO_ABASTECIMENTO_AGENCIADOR_FRETE(16, obterMapaTemplatesAbastecimentoAgenciadorFrete()),
-    RELATORIO_REEMBOLSO_AGENCIADOR_FRETE(17, obterMapaTemplatesReembolsoAgenciadorFrete());
-
+    RELATORIO_REEMBOLSO_AGENCIADOR_FRETE(17, obterMapaTemplatesReembolsoAgenciadorFrete()),
+	RELATORIO_FINANCEIRO(18),
+    RELATORIO_ABASTECIMENTOS_NO_PERIODO(19);
+    
     private final Integer value;
     private final Map<TipoPerfilUsuario, TemplatePlanilha> templatePerfil;
 

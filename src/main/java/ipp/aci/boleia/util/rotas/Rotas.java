@@ -81,6 +81,7 @@ public final  class Rotas {
     public static final  String TRANS_CONSOL_FROTA_API               = BASE_API + "/transacaoConsolidadaFrota";
     public static final  String TRANS_CONSOL_REVENDA_API             = BASE_API + "/transacaoConsolidadaRevenda";
     public static final  String TRANS_CONSOL_SOLUCAO_API             = BASE_API + "/transacaoConsolidadaSolucao";
+    public static final  String FINANCEIRO_REVENDA                   = BASE_API + "/financeiroRevenda";
     public static final  String PRECO_API                            = BASE_API + "/preco";
     public static final  String PRECO_BASE_API                       = BASE_API + "/precoBase";
     public static final  String PRECO_MICROMERCADO_API               = BASE_API + "/precoMicromercado";
@@ -127,6 +128,8 @@ public final  class Rotas {
     public static final String MUNICIPIO_API                         = BASE_API + "/municipio";
     public static final String PARAMETRO_CAMPANHA_API                = BASE_API + "/parametroCampanha";
     public static final String COORDENADORIA_API                     = BASE_API + "/coordenadoria";
+    public static final String DETALHAMENTO_NF_API                   = BASE_API + "/detalhamentoNotaFiscal";
+    public static final String PRECO_FRETE_API                       = BASE_API + "/precofrete";
 
     /**
      * Construtor privado, impede instanciacao e heranca

@@ -19,6 +19,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
@@ -83,6 +84,10 @@ public class Rota implements IPersistente, IExclusaoLogica, IPertenceFrota {
 
     @Column(name = "ID_PRINCIPAL")
     private Boolean principal;
+
+    @OneToOne
+    @JoinColumn(name = "CD_TIPO_COMBUSTIVEL")
+    private TipoCombustivel tipoCombustivel;
 
     @Transient
     private Long quantidadePostos;
@@ -178,4 +183,11 @@ public class Rota implements IPersistente, IExclusaoLogica, IPertenceFrota {
         this.quantidadePostos = quantidadePostos;
     }
 
+    public TipoCombustivel getTipoCombustivel() {
+        return tipoCombustivel;
+    }
+
+    public void setTipoCombustivel(TipoCombustivel tipoCombustivel) {
+        this.tipoCombustivel = tipoCombustivel;
+    }
 }

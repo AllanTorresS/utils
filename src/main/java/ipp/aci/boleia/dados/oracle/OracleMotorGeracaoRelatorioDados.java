@@ -3,6 +3,7 @@ package ipp.aci.boleia.dados.oracle;
 import ipp.aci.boleia.dados.IMotorGeracaoRelatoriosDados;
 import ipp.aci.boleia.dominio.MotorGeracaoRelatorios;
 import ipp.aci.boleia.dominio.enums.StatusMotorGeradorRelatorio;
+import ipp.aci.boleia.dominio.enums.TipoExtensaoArquivo;
 import ipp.aci.boleia.dominio.enums.TipoRelatorioMotorGerador;
 import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
@@ -83,5 +84,16 @@ public class OracleMotorGeracaoRelatorioDados extends OracleRepositorioBoleiaDad
         );
         return pesquisar(new InformacaoPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]))
                 .getRegistros().stream().findFirst().isPresent();
+    }
+
+    @Override
+    public <F extends BaseFiltroPaginado> Boolean pesquisarGeracaoRelatorioEmAndamento(F filtro, TipoRelatorioMotorGerador tipoRelatorio, TipoExtensaoArquivo tipoExtensaoArquivo) {
+        List<MotorGeracaoRelatorios> resposta = pesquisar((ParametroOrdenacaoColuna) null,
+                new ParametroPesquisaIgual("status", StatusMotorGeradorRelatorio.EM_ANDAMENTO.getValue()),
+                new ParametroPesquisaIgual("usuario", ambiente.getUsuarioLogado()),
+                new ParametroPesquisaIgual("tipoRelatorio", tipoRelatorio.getValue()),
+                new ParametroPesquisaIgual("extensaoArquivo", tipoExtensaoArquivo.getValue()),
+                new ParametroPesquisaIgual("filtro", UtilitarioJson.toJSON(filtro)));
+        return !resposta.isEmpty();
     }
 }

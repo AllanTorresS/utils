@@ -11,6 +11,11 @@ public enum TipoRelatorio {
     private final String extensao;
     private final String mimeType;
 
+    /**
+     * Construtor do enum
+     * @param extensao Extensão de arquivo do relatório
+     * @param mimeType Mime type do relatório
+     */
     TipoRelatorio(String extensao, String mimeType) {
         this.extensao = extensao;
         this.mimeType = mimeType;

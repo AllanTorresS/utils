@@ -286,6 +286,12 @@ public class SaldoVeiculo implements IPersistente, IPertenceFrota {
         return true;
     }
 
+    /**
+     * Retorna o saldo disponível de um veículo de acordo com sua cota
+     * @param emLitros True se a cota do veículo for em litros
+     * @param mensal True se a cota do veículo for mensal
+     * @return Valor do saldo disponível
+     */
     private BigDecimal saldoDisponivel(Boolean emLitros, Boolean mensal){
         return  (mensal == null || !mensal)
                 ? (emLitros ? getCotaLitrosAbastecimento() : getCotaValorAbastecimento())
