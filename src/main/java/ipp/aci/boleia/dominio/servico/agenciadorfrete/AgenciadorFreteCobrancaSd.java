@@ -22,7 +22,7 @@ public class AgenciadorFreteCobrancaSd {
      * @return o desconto do saque
      */
     public BigDecimal obterDescontoSaque(List<Consolidado> consolidados) {
-        return consolidados.stream().flatMap(c -> c.getTransacoes().stream())
+        return consolidados.stream().flatMap(c -> c.getTransacoes().stream().filter(t -> t.getSaque() != null))
                 .map(t -> t.getSaque().getTaxaAgenciadorFrete())
                 .reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
     }
@@ -47,7 +47,7 @@ public class AgenciadorFreteCobrancaSd {
      * @return o valor total do saque
      */
     public BigDecimal obterValorTotalSaque(Consolidado consolidado) {
-        return consolidado.getTransacoes().stream()
+        return consolidado.getTransacoes().stream().filter(transacao -> transacao.getSaque() != null)
                 .map(t -> t.getSaque().getValorSolicitado())
                 .reduce(BigDecimal::add)
                 .orElse(BigDecimal.ZERO);
@@ -59,7 +59,7 @@ public class AgenciadorFreteCobrancaSd {
      * @return o valor total do saque
      */
     public BigDecimal obterValorTotalSaque(List<Consolidado> consolidados) {
-        return  consolidados.stream().flatMap(c -> c.getTransacoes().stream())
+        return  consolidados.stream().flatMap(c -> c.getTransacoes().stream().filter(transacao -> transacao.getSaque() != null))
                 .map(t -> t.getSaque().getValorSolicitado())
                 .reduce(BigDecimal::add)
                 .orElse(BigDecimal.ZERO);

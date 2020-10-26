@@ -28,7 +28,8 @@ public class ValidacaoSaqueTemValorPermitidoSd {
         if(transacao.getSaque() != null) {
             BigDecimal valorAbastecimento = (transacao.getAbastecimento().getPrecoCombustivel().multiply(transacao.getAbastecimento().getLitragem()));
             BigDecimal divisorMetade = new BigDecimal(2);
-            BigDecimal valorMaximoSaque = valorAbastecimento.divide(divisorMetade , RoundingMode.HALF_UP);
+            BigDecimal valorMaximoSaque = valorAbastecimento.divide(divisorMetade , RoundingMode.HALF_UP)
+                    .setScale(2, RoundingMode.HALF_UP);
 
             if(transacao.getSaque().getValorSolicitado().compareTo(valorMaximoSaque) > 0){
                 throw new ExcecaoValidacao(mensagens.obterMensagem("agentefrete.api.validacao.saque.valorPemitido",

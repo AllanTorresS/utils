@@ -123,6 +123,15 @@ public class FrotaParametroSistema implements IPersistente, IPertenceFrota {
     @Valid
     private List<FrotaParametroSistemaProdutoAbastecimento> combustiveisPermitidos;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "frotaParametroSistema")
+    @Valid
+    private List<FrotaParametroSistemaPrecoMaximoProduto> quantidadeMaximaPorProduto;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "frotaParametroSistema")
+    @Valid
+    private List<FrotaParametroSistemaPrecoMaximoAbastecimento> quantidadeMaximaPorCombustivel;
+
+
     @OneToOne(mappedBy = "frotaParametroSistema")
     private FrotaParametroSistemaConsumo consumo;
 
@@ -407,6 +416,22 @@ public class FrotaParametroSistema implements IPersistente, IPertenceFrota {
 
     public void setQuilometrosIntervaloAbastecimentoTodosVeiculos(Long quilometrosIntervaloAbastecimentoTodosVeiculos) {
         this.quilometrosIntervaloAbastecimentoTodosVeiculos = quilometrosIntervaloAbastecimentoTodosVeiculos;
+    }
+
+    public List<FrotaParametroSistemaPrecoMaximoProduto> getQuantidadeMaximaPorProduto() {
+        return quantidadeMaximaPorProduto;
+    }
+
+    public void setQuantidadeMaximaPorProduto(List<FrotaParametroSistemaPrecoMaximoProduto> quantidadeMaximaPorProduto) {
+        this.quantidadeMaximaPorProduto = quantidadeMaximaPorProduto;
+    }
+
+    public List<FrotaParametroSistemaPrecoMaximoAbastecimento> getQuantidadeMaximaPorCombustivel() {
+        return quantidadeMaximaPorCombustivel;
+    }
+
+    public void setQuantidadeMaximaPorCombustivel(List<FrotaParametroSistemaPrecoMaximoAbastecimento> quantidadeMaximaPorCombustivel) {
+        this.quantidadeMaximaPorCombustivel = quantidadeMaximaPorCombustivel;
     }
 
     @Transient

@@ -208,6 +208,11 @@ public final class ChavePermissao {
     public static final String FINANCEIRO_EXPORTAR_XLS                      = SPRING_ROLE_PREFIX + "FINANCEIRO_EXPORTAR_XLS" + SPRING_ROLE_SUFFIX;
     public static final String FINANCEIRO_EXPORTAR_PDF                      = SPRING_ROLE_PREFIX + "FINANCEIRO_EXPORTAR_PDF" + SPRING_ROLE_SUFFIX;
 
+    public static final String PRECO_FRETE_CONSULTAR = SPRING_ROLE_PREFIX + "PRECO_FRETE_CONSULTAR" + SPRING_ROLE_SUFFIX;
+    public static final String PRECO_FRETE_INCLUIR   = SPRING_ROLE_PREFIX + "PRECO_FRETE_INCLUIR"   + SPRING_ROLE_SUFFIX;
+    public static final String PRECO_FRETE_ALTERAR   = SPRING_ROLE_PREFIX + "PRECO_FRETE_ALTERAR"   + SPRING_ROLE_SUFFIX;
+    public static final String PRECO_FRETE_EXCLUIR   = SPRING_ROLE_PREFIX + "PRECO_FRETE_EXCLUIR"   + SPRING_ROLE_SUFFIX;
+
     // Permissão da API de Frotistas.
     public static final String API_FROTISTA                                         = SPRING_ROLE_PREFIX + "API_FROTISTA" + SPRING_ROLE_SUFFIX;
     public static final String API_FROTISTA_PREFIX                                  = API_FROTISTA + " or " + SPRING_ROLE_PREFIX;
