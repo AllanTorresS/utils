@@ -291,11 +291,25 @@ public enum TipoRelatorioMotorGerador implements IEnumComLabel<TipoRelatorioMoto
         return mapa;
     }
 
+    /**
+     * Gera um mapa de templates por perfil para um tipo de relatório (financeiro)
+     *
+     * @return O mapa criado
+     */
     private static Map<TipoPerfilUsuario, TemplatePlanilha> obterMapaTemplatesFinanceiro() {
-        return null;
+        Map<TipoPerfilUsuario, TemplatePlanilha> mapa = new HashMap<>();
+        mapa.put(TipoPerfilUsuario.REVENDA, TemplatePlanilha.TEMPLATE_RELATORIO_FINANCEIRO_REVENDA);
+        return mapa;
     }
 
+    /**
+     * Gera um mapa de templates por perfil para um tipo de relatório (abastecimentos no período)
+     *
+     * @return O mapa criado
+     */
     private static Map<TipoPerfilUsuario, TemplatePlanilha> obterMapaTemplatesAbastecimentosPeriodo() {
-        return null;
+        Map<TipoPerfilUsuario, TemplatePlanilha> mapa = new HashMap<>();
+        mapa.put(TipoPerfilUsuario.REVENDA, TemplatePlanilha.TEMPLATE_RELATORIO_ABASTECIMENTOS_NO_PERIODO);
+        return mapa;
     }
 }
