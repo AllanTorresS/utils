@@ -50,6 +50,9 @@ public class SolicitacaoLeadExtVo {
 	
 	@JsonProperty("CNPJTexto__c")
 	private String cnpj;
+	
+	@JsonProperty("RecordType")
+	private SolicitacaoLeadExtRegistroVo recordType;
     
     /**
      * Construtor padrão da classe.
@@ -150,4 +153,14 @@ public class SolicitacaoLeadExtVo {
 	public void setCnpj(String cnpj) {
 		this.cnpj = cnpj;
 	}
+
+	public SolicitacaoLeadExtRegistroVo getRecordType() {
+		return recordType;
+	}
+
+	public void setRecordType(SolicitacaoLeadExtRegistroVo recordType) {
+		this.recordType = recordType;
+	}
+	
+	
 }
