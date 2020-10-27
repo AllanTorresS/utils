@@ -67,6 +67,11 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
 
     private static final Integer LIMITE_SUPERIOR_CONCILIACAO = -48;
 
+    private static final String REMOVER_ACENTO = "TRANSLATE( %s, " +
+            "'âãäåāăąÁÂÃÄÅĀĂĄèééêëēĕėęěĒĔĖĘĚìíîïìĩīĭÌÍÎÏÌĨĪĬóôõöōŏőÒÓÔÕÖŌŎŐùúûüũūŭůÙÚÛÜŨŪŬŮ'," +
+            "'aaaaaaaaaaaaaaaeeeeeeeeeeeeeeeiiiiiiiiiiiiiiiiooooooooooooooouuuuuuuuuuuuuuuu')";
+
+    private static final String TO_LOWER = "LOWER(%s)";
 
     private static final String QUERY_ATUALIZACAO_COTA_VEICULO =
             " SELECT new ipp.aci.boleia.dominio.vo.QuantidadeAbastecidaVeiculoVo(" +
@@ -103,7 +108,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                     "      FROM TransacaoConsolidada tc " +
                     "      JOIN tc.frotaPtov fpv " +
                     "      WHERE " +
-                    "           tc.id = a.transacaoConsolidada.id " +
+                    "           ((tc.id = a.transacaoConsolidada.id AND a.transacaoConsolidadaPostergada.id IS NULL) OR tc.id = a.transacaoConsolidadaPostergada.id) " +
                     "           AND tc.cobranca.id = :idCobranca " +
                     "   ) " +
                     " ORDER BY a.dataRequisicao ASC ";
@@ -150,6 +155,20 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
             " AND a.dataRequisicao BETWEEN :dataInicial AND :dataFinal" + " AND a.frota.status != " + StatusFrota.PRE_CADASTRO.getValue() +
             " GROUP BY c.codigoCorporativo, a.frota.id, i.combustivel.codigoCombustivelCorporativo, TRUNC(a.dataRequisicao)";
 
+    private static final String QUERY_AUTORIZACOES_EM_LISTA_DE_ABASTECIMENTOS_POR_FLAG_JUSTIFICATIVA = "" +
+            " SELECT a FROM AutorizacaoPagamento a " +
+            " JOIN a.notasFiscais nf " +
+            " where a.id in (:idsAutorizacoes) " +
+            " and nf.isJustificativa = :isJustificativa ";
+
+    private static final String CONSULTA_QUANTIDADE_ABASTECIMENTOS_POSTERGADOS =
+            "SELECT COUNT(DISTINCT a) " +
+                    "FROM AutorizacaoPagamento a " +
+                    "LEFT JOIN a.notasFiscais nf " +
+                    "WHERE a.transacaoConsolidada.id = :idConsolidado AND a.transacaoConsolidadaPostergada IS NOT NULL " +
+                    "AND (a.dataRequisicao >= :dataRequisicaoDe OR :dataRequisicaoDe IS NULL) " +
+                    "AND (a.dataRequisicao <= :dataRequisicaoAte OR :dataRequisicaoAte IS NULL) " +
+                    "AND (" + String.format(TO_LOWER, String.format(REMOVER_ACENTO, "a.placaVeiculo")) + " LIKE :placaVeiculo OR :placaVeiculo IS NULL) ";
 
     /**
      * Instancia o repositorio
@@ -330,12 +349,28 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
 
         povoarParametroIgual("frota", filtro.getFrota() != null ? filtro.getFrota().getId() : null, parametros);
         povoarParametroIgual("pontoVenda", filtro.getPontoDeVenda() != null ? filtro.getPontoDeVenda().getId() : null, parametros);
-        povoarParametroDataMaiorIgual("dataProcessamento", filtro.getDe(), parametros);
-        povoarParametroDataMenorIgual("dataProcessamento", filtro.getAte(), parametros);
+        if(filtro.getDe() != null) {
+            ParametroPesquisaDataMaiorOuIgual dataProcessamentoDe = new ParametroPesquisaDataMaiorOuIgual("dataProcessamento", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe()));
+            ParametroPesquisaDataMaiorOuIgual dataPostergacaoDe = new ParametroPesquisaDataMaiorOuIgual("dataPostergacao", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe()));
+            parametros.add(new ParametroPesquisaOr(dataProcessamentoDe, dataPostergacaoDe));
+        }
+        if(filtro.getAte() != null) {
+            ParametroPesquisaDataMenorOuIgual dataProcessamentoAte = new ParametroPesquisaDataMenorOuIgual("dataProcessamento", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte()));
+            ParametroPesquisaDataMenorOuIgual dataPostergacaoAte = new ParametroPesquisaDataMenorOuIgual("dataPostergacao", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte()));
+            parametros.add(new ParametroPesquisaOr(dataProcessamentoAte, dataPostergacaoAte));
+        }
         povoarParametroDataMaiorIgual("dataRequisicao", filtro.getRequisicaoDe(), parametros);
         povoarParametroDataMenorIgual("dataRequisicao", filtro.getRequisicaoAte(), parametros);
-        povoarParametroDataMaiorIgual("dataProcessamento", filtro.getProcessamentoDe(), parametros);
-        povoarParametroDataMenorIgual("dataProcessamento", filtro.getProcessamentoAte(), parametros);
+        if(filtro.getProcessamentoDe() != null) {
+            ParametroPesquisaDataMaiorOuIgual dataProcessamentoDe = new ParametroPesquisaDataMaiorOuIgual("dataProcessamento", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getProcessamentoDe()));
+            ParametroPesquisaDataMaiorOuIgual dataPostergacaoDe = new ParametroPesquisaDataMaiorOuIgual("dataPostergacao", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getProcessamentoDe()));
+            parametros.add(new ParametroPesquisaOr(dataProcessamentoDe, dataPostergacaoDe));
+        }
+        if(filtro.getProcessamentoAte() != null) {
+            ParametroPesquisaDataMenorOuIgual dataProcessamentoAte = new ParametroPesquisaDataMenorOuIgual("dataProcessamento", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getProcessamentoAte()));
+            ParametroPesquisaDataMenorOuIgual dataPostergacaoAte = new ParametroPesquisaDataMenorOuIgual("dataPostergacao", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getProcessamentoAte()));
+            parametros.add(new ParametroPesquisaOr(dataProcessamentoAte, dataPostergacaoAte));
+        }
         povoarParametroDataMaiorIgual("dataRequisicao", filtro.getDataAbastecimento(), parametros);
         povoarParametroDataMenorIgual("dataRequisicao", filtro.getDataAbastecimento(), parametros);
         povoarParametroLike("placaVeiculo", filtro.getPlaca(), parametros);
@@ -347,8 +382,16 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         povoarParametroModalidadePagementoPre(filtro, parametros);
         povoarParametrosStatus(filtro, parametros);
         povoarParametrosEstorno(filtro, parametros);
-        povoarParametroDataHoraMaiorIgual("dataProcessamento", filtro.getDataHoraProcessamentoDe(), parametros);
-        povoarParametroDataHoraMenorIgual("dataProcessamento", filtro.getDataHoraProcessamentoAte(), parametros);
+        if(filtro.getDataHoraProcessamentoDe() != null) {
+            ParametroPesquisaDataMaiorOuIgual dataProcessamentoDe = new ParametroPesquisaDataMaiorOuIgual("dataProcessamento", filtro.getDataHoraProcessamentoDe());
+            ParametroPesquisaDataMaiorOuIgual dataPostergacaoDe = new ParametroPesquisaDataMaiorOuIgual("dataProcessamento", filtro.getDataHoraProcessamentoDe());
+            parametros.add(new ParametroPesquisaOr(dataProcessamentoDe, dataPostergacaoDe));
+        }
+        if(filtro.getDataHoraProcessamentoAte() != null) {
+            ParametroPesquisaDataMenorOuIgual dataProcessamentoAte = new ParametroPesquisaDataMenorOuIgual("dataProcessamento", filtro.getDataHoraProcessamentoAte());
+            ParametroPesquisaDataMenorOuIgual dataPostergacaoAte = new ParametroPesquisaDataMenorOuIgual("dataPostergacao", filtro.getDataHoraProcessamentoAte());
+            parametros.add(new ParametroPesquisaOr(dataProcessamentoAte, dataPostergacaoAte));
+        }
         povoarParametrosAjustados(filtro, parametros);
         povoarParametroIgual("veiculo.identificadorInterno", filtro.getIdentificadorInterno(), parametros);
 
@@ -361,11 +404,28 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         // se a pesquisa se refere aos abastecimentos de uma cobranca, entao apenas os pos pagos devem ser listados
         if(filtro.getIdCobranca() != null) {
             parametros.add(new ParametroPesquisaIgual("transacaoFrota.consumiuCreditoPrePago", false));
+            parametros.add(new ParametroPesquisaOr(
+                new ParametroPesquisaAnd(
+                        new ParametroPesquisaIgual("transacaoConsolidada.cobranca.id", filtro.getIdCobranca()),
+                        new ParametroPesquisaNulo("transacaoConsolidadaPostergada")
+                ),
+                new ParametroPesquisaIgual("transacaoConsolidadaPostergada.cobranca.id", filtro.getIdCobranca())
+            ));
         }
         if(filtro.getIdConsolidado() != null){
             parametros.add(new ParametroPesquisaIgual("empresaAgregadaExigeNf", filtro.getEmpresaAgregada() != null));
             parametros.add(new ParametroPesquisaIgual("unidadeExigeNf", filtro.getUnidade() != null));
-            parametros.add(new ParametroPesquisaIgual("transacaoConsolidada.id", filtro.getIdConsolidado()));
+
+            ParametroPesquisaIgual abastecimentoPostergadoParaCiclo = new ParametroPesquisaIgual("transacaoConsolidadaPostergada.id", filtro.getIdConsolidado());
+            if(filtro.isConsiderarPostergados()) {
+                parametros.add(new ParametroPesquisaOr(new ParametroPesquisaIgual("transacaoConsolidada.id", filtro.getIdConsolidado()), abastecimentoPostergadoParaCiclo));
+            } else {
+                ParametroPesquisaAnd abastecimentoNaoPostergado = new ParametroPesquisaAnd(
+                        new ParametroPesquisaIgual("transacaoConsolidada.id", filtro.getIdConsolidado()),
+                        new ParametroPesquisaNulo("dataPostergacao")
+                );
+                parametros.add(new ParametroPesquisaOr(abastecimentoNaoPostergado, abastecimentoPostergadoParaCiclo));
+            }
         }
         if(filtro.isPdv()){
             parametros.add(new ParametroPesquisaIgual("tipoAutorizacaoPagamento", TipoAutorizacaoPagamento.PDV_WEB.getValue()));
@@ -602,13 +662,13 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                 )
         );
         parametros.add(new ParametroPesquisaIgual("statusNotaFiscal", StatusNotaFiscalAbastecimento.PENDENTE.getValue()));
+        parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataProcessamento", UtilitarioCalculoData.obterPrimeiroInstanteDia(dataEmissao)));
         parametros.add(new ParametroPesquisaDataMenorOuIgual("dataProcessamento", UtilitarioCalculoData.obterUltimoInstanteDia(dataEmissao)));
         parametros.add(new ParametroPesquisaMenorOuIgual("valorTotal", valorTotalNota.add(toleranciaDeValorNota)));
         parametros.add(new ParametroPesquisaMaiorOuIgual("valorTotal", valorTotalNota.subtract(toleranciaDeValorNota)));
 
         return pesquisar((InformacaoPaginacao) null, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
-
 
     /**
      * Cria a lista de parametros para a pesquisa da tela de listagem de autorizacoes de pagamento
@@ -872,14 +932,67 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
      */
     private void povoarParametrosAjustados(FiltroPesquisaAbastecimentoVo filtro, List<ParametroPesquisa> parametros) {
         if(null != filtro.isApenasAjustados() && filtro.isApenasAjustados()) {
-            parametros.add(new ParametroPesquisaNulo("idAutorizacaoEstorno", true));
-            parametros.add(new ParametroPesquisaMaior("valorTotal", BigDecimal.ZERO));
+            parametros.add(new ParametroPesquisaIgual("statusEdicao", StatusEdicao.EDITADO.getValue()));
         }
     }
 
     @Override
     public List<VolumeVendasClienteProFrotaVo> obterVendasProfrotasAPCO(Date dataInicial, Date dataFinal) {
         return pesquisar(null, CONSULTA_VENDA_PROFROTAS, VolumeVendasClienteProFrotaVo.class, new ParametroPesquisaIgual("dataInicial", dataInicial), new ParametroPesquisaIgual("dataFinal", dataFinal)).getRegistros();
+    }
+
+    @Override
+    public List<AutorizacaoPagamento> obterAbastecimentosComJustificativaAssociadaPorAbastecimentos(List<Long> idsAutorizacoes) {
+
+        if(CollectionUtils.isNotEmpty(idsAutorizacoes)) {
+            return pesquisar(null, QUERY_AUTORIZACOES_EM_LISTA_DE_ABASTECIMENTOS_POR_FLAG_JUSTIFICATIVA,
+                    new ParametroPesquisaIgual("idsAutorizacoes", idsAutorizacoes),
+                    new ParametroPesquisaIgual("isJustificativa", true)).getRegistros();
+        } else {
+            return new ArrayList<>();
+        }
+
+    }
+
+    @Override
+    public List<AutorizacaoPagamento> obterAbastecimentosCicloParaNotaFiscal(TransacaoConsolidada transacaoConsolidada) {
+        List<ParametroPesquisa> params = new ArrayList<>();
+        params.add(new ParametroPesquisaIgual("status", StatusAutorizacao.AUTORIZADO.getValue()));
+        params.add(new ParametroPesquisaMaior("valorTotal", BigDecimal.ZERO));
+
+        params.add(new ParametroPesquisaOr(
+                new ParametroPesquisaIgual("transacaoConsolidadaPostergada.id", transacaoConsolidada.getId()),
+                new ParametroPesquisaAnd(
+                        new ParametroPesquisaIgual("transacaoConsolidada.id", transacaoConsolidada.getId()),
+                        new ParametroPesquisaNulo("dataPostergacao"))
+        ));
+
+        //Validando exigência de NF para ciclos de empresas agregadas e unidades.
+        if(transacaoConsolidada.getEmpresaAgregada() != null && transacaoConsolidada.getEmpresaAgregada().getId() != null) {
+            params.add(new ParametroPesquisaIgual("empresaAgregada.id", transacaoConsolidada.getEmpresaAgregada().getId()));
+            params.add(new ParametroPesquisaIgual("empresaAgregadaExigeNf", true));
+        }
+        if(transacaoConsolidada.getUnidade() != null && transacaoConsolidada.getUnidade().getId() != null) {
+            params.add(new ParametroPesquisaIgual("unidade.id", transacaoConsolidada.getUnidade().getId()));
+            params.add(new ParametroPesquisaIgual("unidadeExigeNf", true));
+        }
+
+        return pesquisar((ParametroOrdenacaoColuna) null, params.toArray(new ParametroPesquisa[params.size()]));
+    }
+
+    @Override
+    public Integer obterNumeroAbastecimentosPostergados(FiltroPesquisaAbastecimentoVo filtro) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+
+        parametros.add(new ParametroPesquisaIgual("idConsolidado", filtro.getIdConsolidado()));
+
+        parametros.add(new ParametroPesquisaIgual("dataRequisicaoDe", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDataAbastecimento())));
+        parametros.add(new ParametroPesquisaIgual("dataRequisicaoAte", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getDataAbastecimento())));
+
+        parametros.add(new ParametroPesquisaIgual("placaVeiculo", filtro.getPlaca()));
+
+        Long quantidadePostergados = pesquisarUnicoSemIsolamentoDados(CONSULTA_QUANTIDADE_ABASTECIMENTOS_POSTERGADOS, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        return quantidadePostergados.intValue();
     }
 
     @Override
@@ -910,5 +1023,29 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                 .getRegistros().stream().findFirst().orElse(null);
 
         return autorizacaoPagamento == null ? null : autorizacaoPagamento.getDataRequisicao();
+    }
+
+    @Override
+    public AutorizacaoPagamento obterTransacaoAjustadaOriundaDeEstorno(AutorizacaoPagamento transacaoEstornada) {
+
+        List<ParametroPesquisa> params = new ArrayList<>();
+
+        params.add(new ParametroPesquisaIgual("idAutorizacaoEstorno", transacaoEstornada.getId()));
+        params.add(new ParametroPesquisaMaior("valorTotal", BigDecimal.ZERO));
+
+        return pesquisarUnicoSemIsolamentoDados(params.toArray(new ParametroPesquisa[params.size()]));
+
+    }
+
+    @Override
+    public AutorizacaoPagamento obterTransacaoNegativaOriundaDeEstorno(AutorizacaoPagamento transacaoEstornada) {
+
+        List<ParametroPesquisa> params = new ArrayList<>();
+
+        params.add(new ParametroPesquisaIgual("idAutorizacaoEstorno", transacaoEstornada.getId()));
+        params.add(new ParametroPesquisaMenor("valorTotal", BigDecimal.ZERO));
+
+        return pesquisarUnicoSemIsolamentoDados(params.toArray(new ParametroPesquisa[params.size()]));
+
     }
 }

@@ -83,7 +83,7 @@ public class OracleReembolsoDados extends OracleRepositorioBoleiaDados<Reembolso
 	public List<Reembolso> pesquisarParaExportacao(FiltroPesquisaReembolsoVo filtro) {
 		List<ParametroPesquisa> parametros = criarParametrosPesquisa(filtro);
 		return pesquisar(
-				new ParametroOrdenacaoColuna("dataVencimentoPagto",Ordenacao.DECRESCENTE),
+				new ParametroOrdenacaoColuna("dataVencimentoPgto", Ordenacao.DECRESCENTE),
 				parametros.toArray(new ParametroPesquisa[parametros.size()]));
 	}
 
@@ -149,11 +149,11 @@ public class OracleReembolsoDados extends OracleRepositorioBoleiaDados<Reembolso
 		if (status.equals(StatusPagamentoReembolso.ATRASADO)) {
 			parametrosOr.add(new ParametroPesquisaIgual("status",StatusPagamentoReembolso.ATRASADO.getValue()));
 			parametrosOr.add(new ParametroPesquisaAnd(
-					new ParametroPesquisaDataMenor("dataVencimentoPagto", ambiente.buscarDataAmbiente()),
+					new ParametroPesquisaDataMenor("dataVencimentoPgto", ambiente.buscarDataAmbiente()),
 					new ParametroPesquisaIgual("status", StatusPagamentoReembolso.EM_ABERTO.getValue())));
 		} else if(status.equals(StatusPagamentoReembolso.EM_ABERTO)) {
 			parametrosOr.add(new ParametroPesquisaAnd(
-					new ParametroPesquisaDataMaiorOuIgual("dataVencimentoPagto", ambiente.buscarDataAmbiente()),
+					new ParametroPesquisaDataMaiorOuIgual("dataVencimentoPgto", ambiente.buscarDataAmbiente()),
 					new ParametroPesquisaIgual("status", StatusPagamentoReembolso.EM_ABERTO.getValue())));
 		} else {
 			parametrosOr.add(new ParametroPesquisaIgual("status",status.getValue()));
@@ -178,7 +178,7 @@ public class OracleReembolsoDados extends OracleRepositorioBoleiaDados<Reembolso
 
 	@Override
 	public List<Reembolso> buscarReembolsosParaConsultarAvisoCredito() {
-		return pesquisar(new ParametroOrdenacaoColuna("dataVencimentoPagto",Ordenacao.DECRESCENTE),
+		return pesquisar(new ParametroOrdenacaoColuna("dataVencimentoPgto",Ordenacao.DECRESCENTE),
 				new ParametroPesquisaNulo("numeroDocumento", true),
 				new ParametroPesquisaDiferente("status", StatusPagamentoReembolso.PAGO.getValue()),
 				new ParametroPesquisaEmpty("transacoesConsolidadas", true));
@@ -209,6 +209,15 @@ public class OracleReembolsoDados extends OracleRepositorioBoleiaDados<Reembolso
 		List<ParametroPesquisa> parametros = new ArrayList<>();
 		parametros.add(new ParametroPesquisaIgual("statusIntegracao", StatusIntegracaoReembolsoJde.ERRO_ENVIO.getValue()));
 		parametros.add(new ParametroPesquisaMenor("numeroTentativasEnvio", new BigDecimal(numeroTentativas)));
-		return pesquisar(new ParametroOrdenacaoColuna("dataVencimentoPagto", Ordenacao.CRESCENTE), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+		return pesquisar(new ParametroOrdenacaoColuna("dataVencimentoPgto", Ordenacao.CRESCENTE), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+	}
+
+	@Override
+	public List<Reembolso> pesquisarPorPvEData(Long pv, Date de, Date ate) {
+		List<ParametroPesquisa> parametros = new ArrayList<>();
+		parametros.add(new ParametroPesquisaIgual("transacoesConsolidadas.frotaPtov.pontoVenda.id", pv));
+		parametros.add(new ParametroPesquisaDataMaiorOuIgual("transacoesConsolidadas.dataInicioPeriodo", UtilitarioCalculoData.obterPrimeiroInstanteDia(de)));
+		parametros.add(new ParametroPesquisaDataMenorOuIgual("transacoesConsolidadas.dataFimPeriodo", UtilitarioCalculoData.obterUltimoInstanteDia(ate)));
+		return pesquisar((ParametroOrdenacaoColuna) null, parametros.toArray(new ParametroPesquisa[parametros.size()]));
 	}
 }

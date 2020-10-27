@@ -1,8 +1,10 @@
 package ipp.aci.boleia.dados;
 
 import ipp.aci.boleia.dominio.Frota;
+import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaFinanceiroVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFrotaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialFrotaVo;
 import ipp.aci.boleia.dominio.vo.apco.ClienteProFrotaVo;
@@ -58,7 +60,7 @@ public interface IFrotaDados extends IRepositorioBoleiaDados<Frota> {
     boolean pesquisarPorPostoInterno(Long idFrota);
 
     /**
-     * Obtem a quantidade de frotas integradas (excluídas logicamente ou não)
+     * Obtém a quantidade de frotas integradas (excluídas logicamente ou não)
      *
      * @param cnpj o Cnpj da frota a ser consultada
      * @return a quantidade de frotas persistidas
@@ -66,13 +68,13 @@ public interface IFrotaDados extends IRepositorioBoleiaDados<Frota> {
     Long obterQuantidadeIntegradaPorCnpj(Long cnpj);
 
     /**
-     * Obtem as frotas inativas em periodo de ativacao temporaria
+     * Obtém as frotas inativas em periodo de ativacao temporaria
      * @return Frotas inativas
      */
     List<Frota> obterFrotasInativasEmAtivacaoTemporaria();
 
     /**
-     * Obtem as frotas ativas que passaram do priodo de ativacao temporario
+     * Obtém as frotas ativas que passaram do priodo de ativacao temporario
      * @return Frotas ativas
      */
     List<Frota> obterFrotasAtivasAposAtivacaoTemporaria();
@@ -85,14 +87,14 @@ public interface IFrotaDados extends IRepositorioBoleiaDados<Frota> {
     List<Frota> obterFrotaPorPlacaVeiculo(String placa);
 
     /**
-     * Obtem uma lista com os ids de frotas que estão desativadas
+     * Obtém uma lista com os ids de frotas que estão desativadas
      *
      * @return As frotas desativadas
      */
     List<Long> buscarFrotasInativadas();
 
     /**
-     * Obtem uma lista de frotas que contem posto interno cadastrado
+     * Obtém uma lista de frotas que contem posto interno cadastrado
      * @param filtro O filtro de pesquisa
      * @return Uma lista de frota com posto interno
      */
@@ -144,7 +146,7 @@ public interface IFrotaDados extends IRepositorioBoleiaDados<Frota> {
     List<Frota> buscarFrotaComKmvAcumuladosParaDonoDaFrota(Date dataInicio, Date dataFim);
 
     /**
-     * Obtem a frota associada à cobrança informada
+     * Obtém a frota associada à cobrança informada
      * @param idCobranca o id da cobrança
      * @return a frota associada à cobrança informada
      */
@@ -165,4 +167,12 @@ public interface IFrotaDados extends IRepositorioBoleiaDados<Frota> {
      * @return A frota desanexada
      */
     Frota desanexar(Frota frota);
+
+    /**
+     * Obtém a lista das frotas associadas a ciclos contidos em um periodo
+     * @param filtro O filtro de pesquisa (datas de inicio e fim do periodo)
+     * @param usuarioLogado Usuario logado
+     * @return lista das frotas que atendem aos criterios de busca
+     */
+    List<Frota> pesquisarFrotasAssociadasACiclosContidosNoPeriodo(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado);
 }

@@ -32,6 +32,8 @@ import java.util.stream.Collectors;
 @Table(name = "COORDENADORIA")
 public class Coordenadoria implements IPersistente {
 
+    private static final long serialVersionUID = 3527677385895776333L;
+
     @Id
     @Column(name = "CD_COORDENADORIA")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_COORDENADORIA")

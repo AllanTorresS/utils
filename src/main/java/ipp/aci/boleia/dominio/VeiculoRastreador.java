@@ -49,6 +49,24 @@ public class VeiculoRastreador implements IPersistente {
     @Column(name = "NO_VERSAO")
     private Long versao;
 
+    /**
+     * Construtor default
+     */
+    public VeiculoRastreador(){
+        //Construtor default
+    }
+
+    /**
+     * Converte os dados do veículo retornados pelo serviço da OnixSat
+     * para a entidade persistida
+     * @param vo O VO com os dados do veículo
+     */
+    public VeiculoRastreador(DadosVeiculoOnixSatVo vo){
+        this.setIdVeiculoSistema(vo.getVeiID());
+        this.setPlaca(vo.getPlaca());
+        this.setTipoRastreador(TipoRastreador.ONIXSAT.getValue());
+    }
+
     public Long getId() {
         return id;
     }
@@ -87,20 +105,5 @@ public class VeiculoRastreador implements IPersistente {
 
     public void setVersao(Long versao) {
         this.versao = versao;
-    }
-
-    public VeiculoRastreador(){
-
-    }
-
-    /**
-     * Converte os dados do veículo retornados pelo serviço da OnixSat
-     * para a entidade persistida
-     * @param vo O VO com os dados do veículo
-     */
-    public VeiculoRastreador(DadosVeiculoOnixSatVo vo){
-        this.setIdVeiculoSistema(vo.getVeiID());
-        this.setPlaca(vo.getPlaca());
-        this.setTipoRastreador(TipoRastreador.ONIXSAT.getValue());
     }
 }

@@ -38,6 +38,12 @@ public enum TipoTransacao {
     private final boolean debito;
     private final OperacaoDeCredito tipoOperacao;
 
+    /**
+     * Contrutor do enum
+     * @param value valor do enum
+     * @param debito True caso seja débito
+     * @param tipoOperacao Tipo de operação de crédito da transação
+     */
     TipoTransacao(Integer value, boolean debito, OperacaoDeCredito tipoOperacao) {
         this.value = value;
         this.debito = debito;

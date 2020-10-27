@@ -22,6 +22,7 @@ public class OracleItemAutorizacaoPagamentoEdicaoDados extends OracleRepositorio
         super(ItemAutorizacaoPagamentoEdicao.class);
     }
 
+    @Override
     public List<ItemAutorizacaoPagamentoEdicao> obterItensEdicaoPorAutorizacaoEdicao(AutorizacaoPagamentoEdicao autorizacaoPagamentoEdicao) {
         if (autorizacaoPagamentoEdicao == null){
             return null;

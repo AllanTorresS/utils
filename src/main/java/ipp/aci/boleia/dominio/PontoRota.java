@@ -21,6 +21,7 @@ import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -82,6 +83,18 @@ public class PontoRota implements IPersistente, IPertenceFrota {
     @Digits(integer = 4, fraction = 12)
     @Column(name = "QT_GRAU_LONGIT")
     private BigDecimal longitude;
+
+    @Column(name = "VA_ABAST_LITROS")
+    private BigDecimal abastecerLitros;
+
+    @Column(name = "VA_ABAST_VALOR")
+    private BigDecimal abastecerValor;
+
+    @Column(name = "DT_ATUALIZACAO_ABAST_VALOR")
+    private Date dataAtualizacaoAbastecerValor;
+
+    @Column(name = "ID_PRECO_NEGOCIADO")
+    private Boolean precoNegociado;
 
     @NotNull
     @Column(name = "ID_API")
@@ -177,4 +190,36 @@ public class PontoRota implements IPersistente, IPertenceFrota {
     public Integer getApi() { return api; }
 
     public void setApi(Integer api) { this.api = api; }
+
+    public BigDecimal getAbastecerLitros() {
+        return abastecerLitros;
+    }
+
+    public void setAbastecerLitros(BigDecimal abastecerLitros) {
+        this.abastecerLitros = abastecerLitros;
+    }
+
+    public BigDecimal getAbastecerValor() {
+        return abastecerValor;
+    }
+
+    public void setAbastecerValor(BigDecimal abastecerValor) {
+        this.abastecerValor = abastecerValor;
+    }
+
+    public Date getDataAtualizacaoAbastecerValor() {
+        return dataAtualizacaoAbastecerValor;
+    }
+
+    public void setDataAtualizacaoAbastecerValor(Date dataAtualizacaoAbastecerValor) {
+        this.dataAtualizacaoAbastecerValor = dataAtualizacaoAbastecerValor;
+    }
+
+    public Boolean isPrecoNegociado() {
+        return precoNegociado;
+    }
+
+    public void setPrecoNegociado(Boolean precoNegociado) {
+        this.precoNegociado = precoNegociado;
+    }
 }

@@ -128,6 +128,7 @@ public enum CamposRelatorioAbastecimento {
      * @param visaoPosto indica se apresenta na visão da revenda
      * @param categoria a categoria do campo
      * @param larguraColunaTxt largura da coluna de texto
+     * @param oculto True caso o campo esteja oculto
      */
     CamposRelatorioAbastecimento(int codigo, String label, boolean visaoPosto, boolean visaoFrota, int categoria, int larguraColunaTxt, boolean oculto) {
         this.codigo = codigo;
