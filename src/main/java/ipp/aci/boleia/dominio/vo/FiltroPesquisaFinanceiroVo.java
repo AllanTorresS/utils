@@ -1,13 +1,13 @@
 package ipp.aci.boleia.dominio.vo;
 
-import ipp.aci.boleia.dominio.pesquisa.comum.BaseFiltroPaginado;
+import ipp.aci.boleia.dominio.pesquisa.comum.FiltroBasePeriodoPaginado;
 
 import java.util.Date;
 
 /**
  * Filtro para pesquisa de transação consolidada
  */
-public class FiltroPesquisaFinanceiroVo extends BaseFiltroPaginado {
+public class FiltroPesquisaFinanceiroVo extends FiltroBasePeriodoPaginado {
 
     private Date de;
     private Date ate;
