@@ -9,9 +9,10 @@ import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaAbastecimentoVo;
 import ipp.aci.boleia.dominio.vo.QuantidadeAbastecidaVeiculoVo;
 import ipp.aci.boleia.dominio.vo.TransacaoPendenteVo;
-import ipp.aci.boleia.dominio.vo.apco.VolumeVendasClienteProFrotaVo;
+import ipp.aci.boleia.dominio.vo.apco.InformacoesVolumeVo;
 import ipp.aci.boleia.dominio.vo.frotista.FiltroPesquisaAbastecimentoFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.ResultadoPaginadoFrtVo;
+import ipp.aci.boleia.dominio.vo.apco.VolumeVendasClienteProFrotaVo;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -329,14 +330,15 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
     List<AutorizacaoPagamento> obterAbastecimentoPorNota(Long cnpjDest, Long cnpjEmit, Date dataEmissao, BigDecimal valorTotalNota);
 
     /**
-     * Busca os objetos que representam as vendas consolidadas de combustiveis dentro de
-     * um período de integração entre Profrotas e APCO e realiza o DE-PARA entre os combustiveis.
+     * Busca os objetos que representam as informações necessárias para obter
+     * vendas consolidadas de combustiveis dentro de um período de integração entre Profrotas e APCO,
+     * realizando o DE-PARA entre os combustiveis.
      *
      * @param dataInicial data inicial do período de exportação.
      * @param  dataFinal data final do período de exportação
-     * @return a lista de abastecimentos agrupados do período.
+     * @return a lista de informações de volumes agrupados do período.
      */
-    List<VolumeVendasClienteProFrotaVo> obterVendasProfrotasAPCO(Date dataInicial, Date dataFinal);
+     List<InformacoesVolumeVo> obterInformacoesVendasProfrotasAPCO(Date dataInicial, Date dataFinal);
 
     /**
      * Retorna uma lista com os abastecimentos de um ciclo que tem justificativa associada
