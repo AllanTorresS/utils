@@ -43,9 +43,6 @@ public class TagConectcar implements IPersistente {
 	
 	@Column(name = "DT_BLOQUEIO")
 	private Date dataBloqueio;
-	
-	@Transient
-	private Integer status;
 	         
 	/**
 	 * Construtor padrão da entidade.
