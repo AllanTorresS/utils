@@ -13,6 +13,7 @@ import java.util.List;
 public class FiltroPesquisaAbastecimentoVo extends FiltroBasePeriodoPaginado {
 
     private Long idConsolidado;
+    private boolean considerarPostergados;
     private Long idCobranca;
     private Long idReembolso;
     private Date requisicaoDe;
@@ -168,6 +169,14 @@ public class FiltroPesquisaAbastecimentoVo extends FiltroBasePeriodoPaginado {
 
     public void setIdConsolidado(Long idConsolidado) {
         this.idConsolidado = idConsolidado;
+    }
+
+    public boolean isConsiderarPostergados() {
+        return considerarPostergados;
+    }
+
+    public void setConsiderarPostergados(boolean considerarPostergados) {
+        this.considerarPostergados = considerarPostergados;
     }
 
     public Long getIdCobranca() {

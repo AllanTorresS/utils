@@ -15,7 +15,6 @@ public final class ConstantesNdd {
 
     public static final int MINUTOS_EXPIRACAO_TOKEN = 20;
 
-
     /**
      * Impede instanciacao
      */

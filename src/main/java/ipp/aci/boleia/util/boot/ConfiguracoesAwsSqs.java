@@ -111,6 +111,12 @@ public class ConfiguracoesAwsSqs {
     @Value("${aws.sqs.transacao.consolidacao}")
     private String nomeFilaTransacaoConsolidacaoAgFrete;
 
+    @Value("${aws.sqs.transacao-consolidada.postergar-abastecimentos}")
+    private String nomeFilaPostergacaoAbastecimentos;
+
+    @Value("${aws.sqs.transacao-consolidada.processar-ciclo-postergacao}")
+    private String nomeFilaProcessarCicloPostergacao;
+
     /**
      * Carrega as mensagens do sistema
      */
@@ -154,7 +160,9 @@ public class ConfiguracoesAwsSqs {
                         ,nomeFilaCobrancaRequisicaoIncluirFatura
                         ,nomeFilaCobrancaRespostaIncluirFatura
                         ,nomeFilaFrotaParamCiclo
-                        ,nomeFilaTransacaoConsolidacaoAgFrete);
+                        ,nomeFilaTransacaoConsolidacaoAgFrete
+                        ,nomeFilaPostergacaoAbastecimentos
+                        ,nomeFilaProcessarCicloPostergacao);
         criaFilaSeNaoExistem(amazonSQSAsync, nomeFilas);
         return new QueueMessagingTemplate(amazonSQSAsync);
     }

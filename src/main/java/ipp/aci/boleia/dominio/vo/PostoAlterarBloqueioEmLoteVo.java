@@ -11,11 +11,19 @@ public class PostoAlterarBloqueioEmLoteVo {
     private boolean bloqueio;
     private List<Long> frotaPtovIds;
 
-
+    /**
+     * Construtor default
+     */
     public PostoAlterarBloqueioEmLoteVo() {
         //Construtor default
     }
 
+    /**
+     * Construtor da classe.
+     *
+     * @param frotaPtovIds Identificadores de registros frotaPtov
+     * @param bloqueio Flag de bloqueio
+     */
     public PostoAlterarBloqueioEmLoteVo(List<Long> frotaPtovIds, boolean bloqueio) {
         this.frotaPtovIds = frotaPtovIds;
         this.bloqueio = bloqueio;

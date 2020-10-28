@@ -52,6 +52,9 @@ public class FrotaParametroSistemaPrecoMaximoAbastecimento implements IPersisten
     @Column(name = "VA_PRECO_PRATICADO")
     private BigDecimal precoPraticado;
 
+    @Column(name = "VA_QUANTIDADE_PERMITIDA")
+    private BigDecimal quantidadePermitida;
+
     @Column(name = "NO_VERSAO")
     @Version
     private Long versao;
@@ -111,4 +114,12 @@ public class FrotaParametroSistemaPrecoMaximoAbastecimento implements IPersisten
         return frotaParametroSistema != null ? frotaParametroSistema.getFrotas() : null;
     }
 
+
+    public BigDecimal getQuantidadePermitida() {
+        return quantidadePermitida;
+    }
+
+    public void setQuantidadePermitida(BigDecimal quantidadePermitida) {
+        this.quantidadePermitida = quantidadePermitida;
+    }
 }

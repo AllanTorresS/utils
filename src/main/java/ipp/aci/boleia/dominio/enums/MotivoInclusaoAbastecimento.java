@@ -21,6 +21,7 @@ public enum MotivoInclusaoAbastecimento implements IEnumComLabel<MotivoInclusaoA
      * Construtor
      *
      * @param label O label do status
+     * @param value O valor da enumeração
      */
     MotivoInclusaoAbastecimento(String label, Integer value) {
         this.label = label;

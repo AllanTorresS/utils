@@ -178,6 +178,7 @@ public class AwsArmazenamentoDados implements InitializingBean, IArmazenamentoDa
             }
         }
     }
+
     @Override
     public void armazenarArquivo(TipoArquivo tipo, Long id, byte[] conteudo) {
         armazenarArquivo(tipo, id.toString(), conteudo);
