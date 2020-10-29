@@ -22,6 +22,15 @@ public interface IPrecoFreteDados extends IRepositorioBoleiaDados<PrecoFrete> {
     PrecoFrete obterPrecoFreteVigente(PontoDeVenda pontoDeVenda, TipoCombustivel combustivel);
 
     /**
+     * Obtem o Preco Frete vigente de acordo com o ponto de venda e o tipo de combustível
+     *
+     * @param idPontoDeVenda Id do Ponto de Venda com o preço  frete cadastrado
+     * @param idCombustivel Id do Tipo de combustível para o preço frete
+     * @return o preço frete vigente encontrado para o combustível do ponto de venda
+     */
+    PrecoFrete obterPrecoFreteVigente(Long idPontoDeVenda, Long idCombustivel);
+
+    /**
      * Pesquisa Preços Frete a partir do filtro informado
      *
      * @param filtro O filtro da busca
