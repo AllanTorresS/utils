@@ -14,11 +14,10 @@ import java.util.List;
 public interface IPedidoCreditoFrotaDados extends IRepositorioBoleiaDados<PedidoCreditoFrota> {
 
     /**
-     * Obtem todos pedidos de credito abertos dado a dataAtual
-     * @param dataAtual para comparacao com validade
+     * Obtem todos pedidos de credito abertos
      * @return Pedidos abertos
      */
-    List<PedidoCreditoFrota> obterTodosAbertos(Date dataAtual);
+    List<PedidoCreditoFrota> obterTodosAbertos();
 
     /**
      * Obtem o pedido de credito aberto mais recente dada a dataAtual
