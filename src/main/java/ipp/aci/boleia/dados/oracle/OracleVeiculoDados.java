@@ -234,6 +234,6 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
     @Override
     public List<Veiculo> obterPorIdentificadorInterno(FiltroPesquisaParcialVeiculoVo filtro) {
         return pesquisar((ParametroOrdenacaoColuna) null,
-                new ParametroPesquisaIgual("identificadorInterno", filtro.getTermo()));
+                new ParametroPesquisaLike("identificadorInterno", filtro.getTermo()));
     }
 }
