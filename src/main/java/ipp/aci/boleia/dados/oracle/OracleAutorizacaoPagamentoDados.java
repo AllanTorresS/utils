@@ -393,6 +393,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
             parametros.add(new ParametroPesquisaOr(dataProcessamentoAte, dataPostergacaoAte));
         }
         povoarParametrosAjustados(filtro, parametros);
+        povoarParametroIgual("veiculo.identificadorInterno", filtro.getIdentificadorInterno(), parametros);
 
         if(filtro.isContingencia()){
             parametros.add(new ParametroPesquisaIn("tipoAutorizacaoPagamento", Arrays.asList(TipoAutorizacaoPagamento.PCC.getValue(), TipoAutorizacaoPagamento.MAN.getValue())));
