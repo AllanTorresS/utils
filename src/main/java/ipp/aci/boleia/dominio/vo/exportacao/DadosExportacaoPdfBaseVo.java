@@ -2,6 +2,9 @@ package ipp.aci.boleia.dominio.vo.exportacao;
 
 import java.util.List;
 
+/**
+ * Classe base de mapeamento de campos do relatório de PDF.
+ */
 public abstract class DadosExportacaoPdfBaseVo<T> {
     private List<T> registros;
     private Integer totalRegistros;
@@ -12,10 +15,13 @@ public abstract class DadosExportacaoPdfBaseVo<T> {
 
     public void setRegistros(List<T> registros) {
         this.registros = registros;
-        this.totalRegistros = registros.size();
     }
 
     public Integer getTotalRegistros() {
         return totalRegistros;
+    }
+
+    public void setTotalRegistros(Integer totalRegistros) {
+        this.totalRegistros = totalRegistros;
     }
 }
