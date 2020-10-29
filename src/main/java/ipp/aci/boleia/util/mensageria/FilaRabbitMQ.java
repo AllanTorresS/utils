@@ -19,6 +19,12 @@ public class FilaRabbitMQ {
     @Value("${rabbitmq.hostname}")
     private String nomeHost;
 
+    @Value("${rabbitmq.username}")
+    private String usuario;
+
+    @Value("${rabbitmq.password}")
+    private String senha;
+
     @Value("${topico.motor-geracao-relatorios}")
     private String nomeTopicoRelatorio;
 
@@ -36,6 +42,10 @@ public class FilaRabbitMQ {
     protected String getNomeHost() {
         return nomeHost;
     }
+
+    protected String getUsuario() { return usuario; }
+
+    protected String getSenha() { return senha; }
 
     protected String getNomeTopicoRelatorio() {
         return nomeTopicoRelatorio;

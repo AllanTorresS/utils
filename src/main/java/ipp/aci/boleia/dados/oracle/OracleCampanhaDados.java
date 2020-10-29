@@ -29,15 +29,15 @@ import java.util.List;
 @Repository
 public class OracleCampanhaDados extends OracleRepositorioBoleiaDados<Campanha> implements ICampanhaDados {
 
+    @Autowired
+    protected UtilitarioAmbiente ambiente;
+
     /**
-     * Instancia o repositorio
+     * Instancia o repositório
      */
     public OracleCampanhaDados() {
         super(Campanha.class);
     }
-
-    @Autowired
-    protected UtilitarioAmbiente ambiente;
 
     @Override
     public ResultadoPaginado<Campanha> pesquisar(FiltroPesquisaCampanhaVo filtro) {

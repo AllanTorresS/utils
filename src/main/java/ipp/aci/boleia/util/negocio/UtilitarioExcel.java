@@ -71,7 +71,7 @@ public class UtilitarioExcel {
         }
 
         if(StringUtils.isBlank(valor)) {
-            if(obrigatorio) {
+            if(obrigatorio != null && obrigatorio) {
                 marcarCelulaErro(celula, ERRO_VALOROBRIGATORIO);
             } else {
                 return null;
@@ -494,12 +494,23 @@ public class UtilitarioExcel {
      *
      * @param linha linha
      * @param numeroCelula numero da celula
+     * @return valor da celula
+     */
+    public String lerCelulaString(Row linha, int numeroCelula) {
+        return lerCelulaString(linha, numeroCelula, null);
+    }
+
+    /**
+     * Obtem valor string de celula
+     *
+     * @param linha linha
+     * @param numeroCelula numero da celula
      * @param obrigatorio obrigatorio
      * @return valor da celula
      */
     public String lerCelulaString(Row linha, int numeroCelula, Boolean obrigatorio) {
         Cell celula = obterCelula(linha,numeroCelula, null);
-        return lerCelulaString(celula,obrigatorio);
+        return lerCelulaString(celula, obrigatorio);
     }
 
     /**

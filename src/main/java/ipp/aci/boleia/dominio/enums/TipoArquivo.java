@@ -25,6 +25,13 @@ public enum TipoArquivo {
     private final boolean nomeArquivoAutoContido;
     private final Integer tempoMinutosUrl;
 
+    /**
+     * Construtor do enum
+     * @param prefixo Prefixo do arquivo
+     * @param sufixo Sufixo do arquivo
+     * @param mimeType mimeType do arquivo
+     * @param nomeArquivoAutoContido True caso o arquivo tenha seu nome autocontido
+     */
     TipoArquivo(String prefixo, String sufixo, String mimeType, boolean nomeArquivoAutoContido, Integer tempoMinutosUrl) {
         this.prefixo = prefixo;
         this.sufixo = sufixo;

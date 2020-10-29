@@ -195,7 +195,7 @@ public class FrotaSd {
             motivo.setDataInativacao(dataAmbiente);
             motivo.setDescricaoInativacao(justificativa);
             motivo.setTipoMotivo(classificacao.getValue());
-            if (ambiente.getUsuarioLogado() != null || classificacao.getValue().equals(ClassificacaoStatusFrota.DEBITO_VENCIDO.getValue())) {
+            if(ambiente.getUsuarioLogado() != null || classificacao.getValue().equals(ClassificacaoStatusFrota.DEBITO_VENCIDO.getValue())) {
                 frota.setInicioAtivacaoTemporaria(null);
                 frota.setFimAtivacaoTemporaria(null);
             }
@@ -382,7 +382,7 @@ public class FrotaSd {
         novoParametroCiclo.setPrazoCiclo(Long.parseLong(prazoCiclo));
         novoParametroCiclo.setPrazoPagamento(Long.parseLong(prazoPagamento));
 
-        novoParametroCiclo.setPrazoReembolsoDias(Long.parseLong(prazoPagamento) + 1);
+        novoParametroCiclo.setPrazoReembolso(Long.parseLong(prazoPagamento) + 1);
         repositorioParametroCiclo.armazenar(novoParametroCiclo);
         return novoParametroCiclo;
     }

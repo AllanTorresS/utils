@@ -22,6 +22,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -37,6 +38,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
@@ -65,12 +67,6 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "transacaoConsolidada", cascade = CascadeType.ALL)
     private List<TransacaoConsolidadaDetalhe> produtos;
 
-    @DecimalMin("-999999999999.9999")
-    @DecimalMax("999999999999.9999")
-    @Digits(integer = 12, fraction = 4)
-    @Column(name = "VR_TOTAL")
-    private BigDecimal valorTotal;
-
     @NotNull
     @Column(name = "DT_INI_PER")
     @Temporal(TemporalType.TIMESTAMP)
@@ -81,19 +77,6 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataFimPeriodo;
 
-    @NotNull
-    @Column(name = "DT_PRAZO_EMIS_NFE")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date dataPrazoEmissaoNfe;
-
-    @NotNull
-    @Column(name = "QT_PRAZO_PGTO_DIAS")
-    private Long prazoPagtoDias;
-
-    @NotNull
-    @Column(name = "QT_PRAZO_REEMB_DIAS")
-    private Long prazoReembolsoDias;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_COBRANCA")
     private Cobranca cobranca;
@@ -102,26 +85,9 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     @JoinColumn(name = "CD_REEMBOLSO")
     private Reembolso reembolso;
 
-    @Column(name = "VR_REEMB")
-    private BigDecimal valorReembolso;
-
-    @Column(name = "VR_DESC")
-    private BigDecimal valorDesconto;
-
-    @Column(name = "MDR")
-    private BigDecimal mdr;
-
     @Version
     @Column(name = "NO_VERSAO")
     private Long versao;
-
-    @Digits(integer = 12, fraction = 4)
-    @Column(name = "VR_TOTAL_NF")
-    private BigDecimal valorTotalNotaFiscal;
-
-    @Digits(integer = 12, fraction = 4)
-    @Column(name = "VR_EMITIDO_NF")
-    private BigDecimal valorEmitidoNotaFiscal;
 
     @Column(name = "QT_ABASTECIMENTOS")
     private Long quantidadeAbastecimentos;
@@ -153,20 +119,58 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     @JoinColumn(name = "CD_UNIDADE")
     private Unidade unidade;
 
+    @OneToMany(mappedBy = "transacaoConsolidada", fetch = FetchType.LAZY)
+    private List<AutorizacaoPagamento> autorizacaoPagamentos;
+
+    @OneToMany(mappedBy = "transacaoConsolidadaPostergada", fetch = FetchType.LAZY)
+    private List<AutorizacaoPagamento> autorizacoesPagamentoPostergadas;
+
+    @DecimalMin("-999999999999.9999")
+    @DecimalMax("999999999999.9999")
+    @Digits(integer = 12, fraction = 4)
+    @Column(name = "VR_TOTAL")
+    private BigDecimal valorTotal;
+
+    @Column(name = "VR_REEMB")
+    private BigDecimal valorReembolso;
+
+    @Column(name = "VR_DESC")
+    private BigDecimal valorDesconto;
+
+    @Column(name = "VR_FATURAMENTO")
+    private BigDecimal valorFaturamento;
+
+    @Column(name = "MDR")
+    private BigDecimal mdr;
+
+    @Digits(integer = 12, fraction = 4)
+    @Column(name = "VR_TOTAL_NF")
+    private BigDecimal valorTotalNotaFiscal;
+
+    @Digits(integer = 12, fraction = 4)
+    @Column(name = "VR_EMITIDO_NF")
+    private BigDecimal valorEmitidoNotaFiscal;
+
     @DecimalMin("-999999999999.9999")
     @DecimalMax("999999999999.9999")
     @Digits(integer = 12, fraction = 4)
     @Column(name = "VR_DESCONTO_ABASTECIMENTOS")
     private BigDecimal valorDescontoAbastecimentos;
 
-    @OneToMany(mappedBy = "transacaoConsolidada", fetch = FetchType.LAZY)
-    private List<AutorizacaoPagamento> autorizacaoPagamentos;
-
     @DecimalMin("-999999999999.9999")
     @DecimalMax("999999999999.9999")
     @Digits(integer = 12, fraction = 4)
     @Column(name = "VR_DESCONTO_NOTA_FISCAL")
     private BigDecimal valorDescontoNotaFiscal;
+
+    @NotNull
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_TRANS_CONSOL_PRAZOS")
+    private TransacaoConsolidadaPrazos prazos;
+
+    @NotNull
+    @Column(name = "ID_PROCESSOU_POSTERGACAO")
+    private boolean processouPostergacao;
 
     @Override
     public Long getId() {
@@ -210,44 +214,12 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
         this.dataFimPeriodo = dataFimPeriodo;
     }
 
-    public Date getDataPrazoEmissaoNfe() {
-        return dataPrazoEmissaoNfe;
-    }
-
-    public void setDataPrazoEmissaoNfe(Date dataPrazoEmissaoNfe) {
-        this.dataPrazoEmissaoNfe = dataPrazoEmissaoNfe;
-    }
-
     public Long getVersao() {
         return versao;
     }
 
     public void setVersao(Long versao) {
         this.versao = versao;
-    }
-
-    public BigDecimal getValorTotal() {
-        return valorTotal;
-    }
-
-    public void setValorTotal(BigDecimal valorTotal) {
-        this.valorTotal = valorTotal;
-    }
-
-    public Long getPrazoPagtoDias() {
-        return prazoPagtoDias;
-    }
-
-    public void setPrazoPagtoDias(Long prazoPagtoDias) {
-        this.prazoPagtoDias = prazoPagtoDias;
-    }
-
-    public Long getPrazoReembolsoDias() {
-        return prazoReembolsoDias;
-    }
-
-    public void setPrazoReembolsoDias(Long prazoReembolsoDias) {
-        this.prazoReembolsoDias = prazoReembolsoDias;
     }
 
     public Cobranca getCobranca() {
@@ -266,46 +238,6 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
         this.reembolso = reembolso;
     }
 
-    public BigDecimal getValorReembolso() {
-        return valorReembolso;
-    }
-
-    public void setValorReembolso(BigDecimal valorReembolso) {
-        this.valorReembolso = valorReembolso;
-    }
-
-    public BigDecimal getValorDesconto() {
-        return valorDesconto;
-    }
-
-    public void setValorDesconto(BigDecimal valorDesconto) {
-        this.valorDesconto = valorDesconto;
-    }
-
-    public BigDecimal getMdr() {
-        return mdr;
-    }
-
-    public void setMdr(BigDecimal mdr) {
-        this.mdr = mdr;
-    }
-
-    public BigDecimal getValorTotalNotaFiscal() {
-        return valorTotalNotaFiscal;
-    }
-
-    public void setValorTotalNotaFiscal(BigDecimal valorTotalNotaFiscal) {
-        this.valorTotalNotaFiscal = valorTotalNotaFiscal;
-    }
-
-    public BigDecimal getValorEmitidoNotaFiscal() {
-        return valorEmitidoNotaFiscal;
-    }
-
-    public void setValorEmitidoNotaFiscal(BigDecimal valorEmitidoNotaFiscal) {
-        this.valorEmitidoNotaFiscal = valorEmitidoNotaFiscal;
-    }
-
     public Long getQuantidadeAbastecimentos() {
         return quantidadeAbastecimentos;
     }
@@ -318,12 +250,26 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
         return autorizacaoPagamentos;
     }
 
+    @Transient
     public Stream<AutorizacaoPagamento> getAutorizacaoPagamentosStream() {
-        return autorizacaoPagamentos.stream();
+        return autorizacaoPagamentos != null ? autorizacaoPagamentos.stream() : Stream.empty();
     }
 
     public void setAutorizacaoPagamentos(List<AutorizacaoPagamento> autorizacaoPagamentos) {
         this.autorizacaoPagamentos = autorizacaoPagamentos;
+    }
+
+    public List<AutorizacaoPagamento> getAutorizacoesPagamentoPostergadas() {
+        return autorizacoesPagamentoPostergadas;
+    }
+
+    @Transient
+    public Stream<AutorizacaoPagamento> getAutorizacoesPagamentoPostergadasStream() {
+        return autorizacoesPagamentoPostergadas != null ? autorizacoesPagamentoPostergadas.stream() : Stream.empty();
+    }
+
+    public void setAutorizacoesPagamentoPostergadas(List<AutorizacaoPagamento> autorizacoesPagamentoPostergadas) {
+        this.autorizacoesPagamentoPostergadas = autorizacoesPagamentoPostergadas;
     }
 
     public Integer getStatusNotaFiscal() {
@@ -376,7 +322,7 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
      */
     public StatusNotaFiscal obterStatusNotaFiscal(Date dataCorrente) {
         if (statusNotaFiscal == null || statusNotaFiscal.equals(StatusNotaFiscal.PENDENTE.getValue())) {
-            if (dataCorrente.after(getDataPrazoEmissaoNfe())) {
+            if (dataCorrente.after(prazos.getDataLimiteEmissaoNfe())) {
                 return StatusNotaFiscal.ATRASADA;
             } else {
                 return StatusNotaFiscal.PENDENTE;
@@ -426,8 +372,64 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
         this.chave = chave;
     }
 
+    public BigDecimal getValorTotal() {
+        return valorTotal;
+    }
+
+    public void setValorTotal(BigDecimal valorTotal) {
+        this.valorTotal = valorTotal;
+    }
+
+    public BigDecimal getValorReembolso() {
+        return valorReembolso;
+    }
+
+    public void setValorReembolso(BigDecimal valorReembolso) {
+        this.valorReembolso = valorReembolso;
+    }
+
+    public BigDecimal getValorDesconto() {
+        return valorDesconto;
+    }
+
+    public void setValorDesconto(BigDecimal valorDesconto) {
+        this.valorDesconto = valorDesconto;
+    }
+
+    public BigDecimal getValorFaturamento() {
+        return valorFaturamento;
+    }
+
+    public void setValorFaturamento(BigDecimal valorFaturamento) {
+        this.valorFaturamento = valorFaturamento;
+    }
+
+    public BigDecimal getMdr() {
+        return mdr;
+    }
+
+    public void setMdr(BigDecimal mdr) {
+        this.mdr = mdr;
+    }
+
+    public BigDecimal getValorTotalNotaFiscal() {
+        return valorTotalNotaFiscal;
+    }
+
+    public void setValorTotalNotaFiscal(BigDecimal valorTotalNotaFiscal) {
+        this.valorTotalNotaFiscal = valorTotalNotaFiscal;
+    }
+
+    public BigDecimal getValorEmitidoNotaFiscal() {
+        return valorEmitidoNotaFiscal;
+    }
+
+    public void setValorEmitidoNotaFiscal(BigDecimal valorEmitidoNotaFiscal) {
+        this.valorEmitidoNotaFiscal = valorEmitidoNotaFiscal;
+    }
+
     public BigDecimal getValorDescontoAbastecimentos() {
-        return valorDescontoAbastecimentos != null ? valorDescontoAbastecimentos : BigDecimal.ZERO;
+        return valorDescontoAbastecimentos;
     }
 
     public void setValorDescontoAbastecimentos(BigDecimal valorDescontoAbastecimentos) {
@@ -442,6 +444,21 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
         this.valorDescontoNotaFiscal = valorDescontoNotaFiscal;
     }
 
+    public TransacaoConsolidadaPrazos getPrazos() {
+        return prazos;
+    }
+
+    public void setPrazos(TransacaoConsolidadaPrazos prazos) {
+        this.prazos = prazos;
+    }
+
+    public boolean isProcessouPostergacao() {
+        return processouPostergacao;
+    }
+
+    public void setProcessouPostergacao(boolean processouPostergacao) {
+        this.processouPostergacao = processouPostergacao;
+    }
 
     /**
      * Gera uma chave unica para cada TransacaoConsolidada, tendo o objetivo de garantir que cada ciclo seja unico no banco de dados.
@@ -505,7 +522,7 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
      */
     @Transient
     public boolean isPrazoEmissaoNotaVencido(Date dataHoraCorrente) {
-        return dataPrazoEmissaoNfe.after(dataHoraCorrente);
+        return prazos.getDataLimiteEmissaoNfe().after(dataHoraCorrente);
     }
 
     /**
@@ -515,7 +532,7 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
      */
     @Transient
     public Date getPrevisaoVencimentoReembolso() {
-        return UtilitarioCalculoData.adicionarDiasData(dataPrazoEmissaoNfe, 2);
+        return UtilitarioCalculoData.adicionarDiasData(prazos.getDataLimiteEmissaoNfe(), 2);
     }
 
     /**
@@ -537,5 +554,15 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     public boolean pendenteNotaFiscal() {
         return exigeEmissaoNF() && !isNFEmitida() &&
                 !this.getStatusNotaFiscal().equals(StatusNotaFiscal.SEM_EMISSAO.getValue());
+    }
+
+    /**
+     * Retorna uma lista com todas as autorizações de pagamento associadas a transação consolidada.
+     *
+     * @return lista de autorizações de pagamento.
+     */
+    @Transient
+    public List<AutorizacaoPagamento> getAutorizacoesPagamentoAssociadas() {
+        return Stream.concat(getAutorizacaoPagamentosStream(), getAutorizacoesPagamentoPostergadasStream()).collect(Collectors.toList());
     }
 }

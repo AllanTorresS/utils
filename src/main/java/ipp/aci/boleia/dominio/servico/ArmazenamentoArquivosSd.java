@@ -92,12 +92,12 @@ public class ArmazenamentoArquivosSd {
      * Obtem o link para o download de um arquivo no bucket do boleia amazon
      *
      * @param tipoArquivo tipo arquivo
-     * @param idArquivo id
      * @param idEntidadeRelacionada identificador da entidade que contem o arquivo
+     * @param nomeArquivo nome do arquivo a ser baixado.
      * @return String com a url pré-assinada do arquivo, com tempo de expiração de acordo com o tipo de arquivo
      */
-    public UrlS3PreAssinadaVo obterUrlArquivo(TipoArquivo tipoArquivo, Long idArquivo, Long idEntidadeRelacionada) {
-        return obterUrlArquivo(tipoArquivo, idArquivo, idEntidadeRelacionada, idEntidadeRelacionada.toString());
+    public UrlS3PreAssinadaVo obterUrlArquivo(TipoArquivo tipoArquivo, Long idEntidadeRelacionada, String nomeArquivo) {
+        return obterUrlArquivo(tipoArquivo, null, idEntidadeRelacionada, nomeArquivo);
     }
 
     /**
@@ -109,11 +109,10 @@ public class ArmazenamentoArquivosSd {
      * @param nome nome do arquivo para a url
      * @return String com a url pré-assinada do arquivo, com tempo de expiração de acordo com o tipo de arquivo
      */
-    public UrlS3PreAssinadaVo obterUrlArquivo(TipoArquivo tipoArquivo, Long idArquivo, Long idEntidadeRelacionada,
-                                              String nome) {
+    public UrlS3PreAssinadaVo obterUrlArquivo(TipoArquivo tipoArquivo, Long idArquivo, Long idEntidadeRelacionada, String nome){
         try {
             exigirPermissaoAcesso(tipoArquivo, idEntidadeRelacionada);
-            String id = tipoArquivo.isNomeArquivoAutoContido() ? idArquivo.toString() : nome;
+            String id = (tipoArquivo.isNomeArquivoAutoContido() && idArquivo != null) ? idArquivo.toString() : nome;
             return new UrlS3PreAssinadaVo(armazenamentoArquivos.obterUrlArquivo(tipoArquivo, id));
         } catch (ExcecaoArquivoNaoEncontrado e) {
             LOGGER.debug("Arquivo nao encontrado na AWS S3", e);
@@ -140,12 +139,11 @@ public class ArmazenamentoArquivosSd {
      * Armazena um arquivo no bucket do boleia amazon
      *
      * @param tipoArquivo tipo arquivo
-     * @param idArquivo identificador da entidade que representa o arquivo
      * @param idEntidadeRelacionada identificador da entidade que contem o arquivo
      * @param nome nome do arquivo a ser armazenado
      * @param conteudo  conteudo arquivo
      */
-    public void armazenarArquivo(TipoArquivo tipoArquivo, Long idArquivo, Long idEntidadeRelacionada, String nome, byte[] conteudo) {
+    public void armazenarArquivo(TipoArquivo tipoArquivo, Long idEntidadeRelacionada, String nome, byte[] conteudo) {
         exigirPermissaoAcesso(tipoArquivo, idEntidadeRelacionada);
         armazenamentoArquivos.armazenarArquivo(tipoArquivo, nome, conteudo);
     }
