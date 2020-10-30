@@ -87,6 +87,10 @@ public class Preco implements IPersistente, IPertenceRevendedor, IPertenceFrota 
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataAtualizacao;
 
+    @Column(name = "DT_VIGENCIA")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataVigencia;
+
     @NotAudited
     @Formula(StatusPreco.DECODE_FORMULA)
     private String statusConvertidoAcordo;
@@ -140,8 +144,9 @@ public class Preco implements IPersistente, IPertenceRevendedor, IPertenceFrota 
     /**
      * Marca o preco como historico saindo de vigencia
      */
-    public void sairDeVigencia() {
+    public void sairDeVigencia(Date dataAtualizacao) {
         this.setStatus(StatusPreco.HISTORICO.getValue());
+        this.setDataAtualizacao(dataAtualizacao);
     }
 
     public PrecoBase getPrecoBase() {
@@ -170,6 +175,7 @@ public class Preco implements IPersistente, IPertenceRevendedor, IPertenceFrota 
         this.setDescontoVigente(this.getDescontoSolicitado());
         this.setDescontoSolicitado(null);
         this.setDataAtualizacao(dataAtualizacao);
+        this.setDataVigencia(dataAtualizacao);
         if(automatico) {
             this.setStatus(StatusPreco.VIGENTE.getValue());
         } else {
@@ -181,9 +187,10 @@ public class Preco implements IPersistente, IPertenceRevendedor, IPertenceFrota 
      * Reprova o desconto solicitado com dada justificativa
      * @param justificativa do revendedor
      */
-    public void rejeitarDesconto(String justificativa) {
+    public void rejeitarDesconto(String justificativa, Date dataAtualizacao) {
         this.setStatus(StatusPreco.REJEITADO.getValue());
         this.setJustificativa(justificativa);
+        this.setDataAtualizacao(dataAtualizacao);
     }
 
     /**
@@ -191,9 +198,8 @@ public class Preco implements IPersistente, IPertenceRevendedor, IPertenceFrota 
      * @param dataAtualizacao a data de atualizacao do desconto
      */
     public void excluirDesconto(Date dataAtualizacao) {
-        this.setDescontoSolicitado(null);
         this.setDataAtualizacao(dataAtualizacao);
-        this.setStatus(StatusPreco.VIGENTE.getValue());
+        this.setStatus(StatusPreco.CANCELADO.getValue());
     }
 
     public String getJustificativa() {
@@ -226,6 +232,14 @@ public class Preco implements IPersistente, IPertenceRevendedor, IPertenceFrota 
 
     public void setDataSolicitacao(Date dataSolicitacao) {
         this.dataSolicitacao = dataSolicitacao;
+    }
+
+    public Date getDataVigencia() {
+        return dataVigencia;
+    }
+
+    public void setDataVigencia(Date dataVigencia) {
+        this.dataVigencia = dataVigencia;
     }
 
     @Transient

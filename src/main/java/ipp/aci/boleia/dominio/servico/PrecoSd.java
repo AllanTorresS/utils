@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -103,7 +104,7 @@ public class PrecoSd {
             if(!somenteNovos){
                 BigDecimal descontoVigente = preco.getDescontoVigente();
 
-                preco.sairDeVigencia();
+                preco.sairDeVigencia(precoBase.getDataAtualizacao());
                 repositorioPreco.armazenarSemIsolamentoDeDados(preco);
 
                 preco = new Preco();
@@ -113,6 +114,7 @@ public class PrecoSd {
                 preco.setPreco(descontoVigente != null ? precoBase.getPreco().add(descontoVigente) : precoBase.getPreco());
                 preco.setPrecoBase(precoBase);
                 preco.setDataAtualizacao(precoBase.getDataAtualizacao());
+                preco.setDataVigencia(precoBase.getDataAtualizacao());
 
                 repositorioPreco.armazenarSemIsolamentoDeDados(preco);
             }
@@ -146,6 +148,7 @@ public class PrecoSd {
             preco.setPrecoBase(precoBase);
             preco.setPreco(precoBase.getPreco());
             preco.setDataAtualizacao(precoBase.getDataAtualizacao());
+            preco.setDataVigencia(precoBase.getDataAtualizacao());
             repositorioPreco.armazenarSemIsolamentoDeDados(preco);
             idFrotas.add(frotaPtov.getFrota().getId());
         }
@@ -187,24 +190,17 @@ public class PrecoSd {
      * Aplica novo preco vigente ou já em aceite, conforme o novo acordo recém aceitado
      * e gera registro de histórico do preço vigente anterior ao aceite.
      *
-     * @param precoAtual preco que sera alterado.
+     * @param novoPreco novo preço a entrar em vigência.
      * @param automatico flag indicando se o aceite foi automatico
      */
-    public void aceitarNovoAcordo(Preco precoAtual, Boolean automatico) {
-        Preco novoPreco = new Preco();
-        novoPreco.setPreco(precoAtual.getPreco());
-        novoPreco.setDataAtualizacao(precoAtual.getDataAtualizacao());
-        novoPreco.setDescontoSolicitado(precoAtual.getDescontoSolicitado());
-        novoPreco.setDescontoVigente(precoAtual.getDescontoVigente());
-        novoPreco.setFrotaPtov(precoAtual.getFrotaPtov());
-        novoPreco.setPrecoBase(precoAtual.getPrecoBase());
-        novoPreco.setJustificativa(precoAtual.getJustificativa());
-        novoPreco.setVolumeEstimado(precoAtual.getVolumeEstimado());
-        novoPreco.setDataSolicitacao(precoAtual.getDataSolicitacao());
-        novoPreco.setStatus(precoAtual.getStatus());
-        precoAtual.setStatus(StatusPreco.HISTORICO.getValue());
-        repositorioPreco.armazenar(precoAtual);
-        novoPreco.aceitarDesconto(ambiente.buscarDataAmbiente(), automatico);
+    public void aceitarNovoAcordo(Preco novoPreco, Boolean automatico) {
+        Preco precoAtual = repositorioPreco.obterAtualPorFrotaPvCombustivel(novoPreco.getFrota().getId(), novoPreco.getPontoVenda().getId(), novoPreco.getPrecoBase().getPrecoMicromercado().getTipoCombustivel().getId());
+        Date dataAtualizacao = ambiente.buscarDataAmbiente();
+        if(precoAtual != null) {
+            precoAtual.sairDeVigencia(dataAtualizacao);
+            repositorioPreco.armazenar(precoAtual);
+        }
+        novoPreco.aceitarDesconto(dataAtualizacao, automatico);
         repositorioPreco.armazenar(novoPreco);
     }
 
@@ -217,13 +213,15 @@ public class PrecoSd {
      * @param automatico flag indicando se o aceite foi automatico
      */
     public void definirPrecoNegociadoApartirDePrecoBase(Preco precoAtual, Boolean automatico){
+        Date dataAtualizacao = ambiente.buscarDataAmbiente();
         Preco novoPreco = new Preco();
         novoPreco.setFrotaPtov(precoAtual.getFrotaPtov());
         novoPreco.setStatus(StatusPreco.VIGENTE.getValue());
         novoPreco.setPreco(precoAtual.getPrecoBase().getPreco());
         novoPreco.setPrecoBase(precoAtual.getPrecoBase());
-        novoPreco.setDataAtualizacao(ambiente.buscarDataAmbiente());
-        precoAtual.setStatus(StatusPreco.HISTORICO.getValue());
+        novoPreco.setDataAtualizacao(dataAtualizacao);
+        novoPreco.setDataVigencia(dataAtualizacao);
+        precoAtual.sairDeVigencia(dataAtualizacao);
         this.repositorioPreco.armazenar(precoAtual);
         this.repositorioPreco.armazenar(novoPreco);
     }
