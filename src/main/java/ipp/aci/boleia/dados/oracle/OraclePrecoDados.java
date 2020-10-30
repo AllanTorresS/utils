@@ -91,6 +91,17 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
     }
 
     @Override
+    public Preco obterNovoOuPendentePorFrotaPvCombustivel(Long idFrota, Long idPontoVenda, Long idTipoCombustivel) {
+        List<Preco> precosAcordo = pesquisar(
+                new ParametroOrdenacaoColuna("dataAtualizacao", Ordenacao.DECRESCENTE),
+                new ParametroPesquisaIgual("precoBase.precoMicromercado.tipoCombustivel.id", idTipoCombustivel),
+                new ParametroPesquisaIgual("frotaPtov.pontoVenda.id", idPontoVenda),
+                new ParametroPesquisaIgual("frotaPtov.frota.id", idFrota),
+                new ParametroPesquisaIn("status", Arrays.asList(StatusPreco.NOVO.getValue(), StatusPreco.PENDENTE.getValue())));
+        return precosAcordo.stream().findFirst().orElse(null);
+    }
+
+    @Override
     public List<Preco> buscarPrecosAtuais(Long idPontoVenda, Long idTipoCombustivel) {
          return pesquisarSemIsolamentoDados(
             new ParametroOrdenacaoColuna("dataAtualizacao", Ordenacao.DECRESCENTE),

@@ -53,4 +53,13 @@ public interface IPrecoDados extends IRepositorioBoleiaDados<Preco> {
      * @return Precos novos ou pendentes que estao apos a data
      */
     List<Preco> buscarAcordosNovosOuPendentesParaVigenciaAutomatica(Date dataCorte);
+
+    /**
+     * Busca o preco pendente ou novo para um determinado PontoVenda,Frota e tipo combustivel
+     * @param idFrota o id da Frota
+     * @param idPontoVenda O id da PontoVenda
+     * @param idTipoCombustivel O id do tipo de combustivel
+     * @return O preco pendente ou novo, caso exista
+     */
+    public Preco obterNovoOuPendentePorFrotaPvCombustivel(Long idFrota, Long idPontoVenda, Long idTipoCombustivel);
 }
