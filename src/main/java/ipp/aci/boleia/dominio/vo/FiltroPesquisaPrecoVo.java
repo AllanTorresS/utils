@@ -17,7 +17,6 @@ public class FiltroPesquisaPrecoVo extends BaseFiltroPaginado {
     private EnumVo status;
     private EnumVo ufPontoDeVenda;
     private String municipioPontoDeVenda;
-    private String nomeRede;
     private Date dataAtualizacao;
 
     public Long getId() {
@@ -74,14 +73,6 @@ public class FiltroPesquisaPrecoVo extends BaseFiltroPaginado {
 
     public void setMunicipioPontoDeVenda(String municipioPontoDeVenda) {
         this.municipioPontoDeVenda = municipioPontoDeVenda;
-    }
-
-    public String getNomeRede() {
-        return nomeRede;
-    }
-
-    public void setNomeRede(String nomeRede) {
-        this.nomeRede = nomeRede;
     }
 
     public Date getDataAtualizacao() {
