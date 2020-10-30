@@ -133,9 +133,6 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
             if (filtro.getMunicipioPontoDeVenda() != null) {
                 parametros.add(new ParametroPesquisaLike("frotaPtov.pontoVenda.municipio", filtro.getMunicipioPontoDeVenda()));
             }
-            if (filtro.getNomeRede() != null) {
-                parametros.add(new ParametroPesquisaLike("frotaPtov.pontoVenda.rede.nomeRede", filtro.getNomeRede()));
-            }
             if (filtro.getDataAtualizacao() != null) {
                 parametros.add(new ParametroPesquisaOr(new ParametroPesquisaAnd(new ParametroPesquisaDataMaiorOuIgual("dataAtualizacao", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDataAtualizacao())), new ParametroPesquisaDataMenorOuIgual("dataAtualizacao", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getDataAtualizacao()))),
                         new ParametroPesquisaAnd(new ParametroPesquisaDataMaiorOuIgual("dataSolicitacao", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDataAtualizacao())), new ParametroPesquisaDataMenorOuIgual("dataSolicitacao", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getDataAtualizacao())), new ParametroPesquisaNulo("dataAtualizacao"))));
