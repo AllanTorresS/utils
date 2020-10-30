@@ -25,7 +25,7 @@ public enum StatusPrecoNegociacao implements IEnumComLabel<StatusPrecoNegociacao
      * @return Status da frota
      */
     public static StatusPrecoNegociacao obterPorStatusPreco(StatusPreco status) {
-        if(StatusPreco.ACEITO.equals(status) || StatusPreco.VIGENTE.equals(status) || StatusPreco.REJEITADO.equals(status)) {
+        if(StatusPreco.ACEITO.equals(status) || StatusPreco.VIGENTE.equals(status)) {
             return VIGENTE;
         }
         if(StatusPreco.PENDENTE.equals(status) || StatusPreco.NOVO.equals(status)) {
@@ -43,7 +43,7 @@ public enum StatusPrecoNegociacao implements IEnumComLabel<StatusPrecoNegociacao
      */
     public List<StatusPreco> converterParaStatusPreco() {
         if(VIGENTE.equals(this)) {
-            return Arrays.asList(StatusPreco.ACEITO,StatusPreco.VIGENTE,StatusPreco.REJEITADO);
+            return Arrays.asList(StatusPreco.ACEITO,StatusPreco.VIGENTE);
         }
         if(NEGOCIACAO.equals(this)) {
             return Arrays.asList(StatusPreco.PENDENTE,StatusPreco.NOVO);
