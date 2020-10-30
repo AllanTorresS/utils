@@ -31,6 +31,12 @@ public class FilaRabbitMQ {
     @Value("${rabbitmq.tipo-exchange}")
     private String tipoExchange;
 
+    @Value("${rabbitmq.username}")
+    private String username;
+
+    @Value("${rabbitmq.password}")
+    private String password;
+
     private Channel canal;
 
     protected String getNomeHost() {
@@ -65,16 +71,25 @@ public class FilaRabbitMQ {
         return tipoExchange;
     }
 
+    protected String getUsername() {
+        return username;
+    }
+
+    protected String getPassword() {
+        return password;
+    }
+
     /**
      * Envia mensagem para fila
      *
      * @param chaveRota A chave da fila
      * @param mensagem A mensagem a ser enviada
-     * @throws IOException em caso de erro de envio da mensagem
      */
     public void enviarMensagem(String chaveRota, String mensagem) {
         ConnectionFactory fabricaConexoes = new ConnectionFactory();
         fabricaConexoes.setHost(nomeHost);
+        fabricaConexoes.setUsername(username);
+        fabricaConexoes.setPassword(password);
 
         try {
             Connection connection = fabricaConexoes.newConnection();
