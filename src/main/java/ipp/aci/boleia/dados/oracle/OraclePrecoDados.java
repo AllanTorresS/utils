@@ -20,6 +20,9 @@ import ipp.aci.boleia.dominio.vo.FiltroPesquisaPrecoVo;
 import ipp.aci.boleia.util.Ordenacao;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioLambda;
+import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -33,6 +36,28 @@ import java.util.List;
  */
 @Repository
 public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implements IPrecoDados {
+
+    private static final String CONSULTA_NEGOCIACOES =
+    " SELECT p " +
+            " FROM Preco p " +
+            "     JOIN p.precoBase pb " +
+            "     JOIN pb.precoMicromerdado pm " +
+            "     JOIN pm.tipoCombustivel tc " +
+            "     JOIN p.frotaPtov fptov " +
+            "     JOIN fptov.frota f " +
+            "     JOIN fptov.pontoVenda pv " +
+            " WHERE " +
+            "     tc.id = :idCombustivel " +
+            "     AND pv.id = :idPontoVenda " +
+            "     AND (f.id IS NULL OR f.id = :idFrota ) " +
+            "     AND (p.dataVigencia <= :dataAbastecimento OR p.dataAtualizacao <= :dataAbastecimento) " +
+            "     AND p.statusConsolidacao in :status " +
+            "     ORBER BY  " +
+            "     (CASE WHEN p.dataVigente is null then 0 else 1) desc,  " +
+            "     p.dataVigencia desc , p.dataAtualizacao desc ";
+
+    @Autowired
+    private UtilitarioAmbiente ambiente;
 
     /**
      * Instancia o repositório
@@ -49,12 +74,18 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
 
     @Override
     public Preco obterAtualPorFrotaPvCombustivel(Long idFrota, Long idPontoVenda, Long idTipoCombustivel) {
-        List<Preco> precosAcordo = pesquisar(
-                new ParametroOrdenacaoColuna("dataAtualizacao", Ordenacao.DECRESCENTE),
-                new ParametroPesquisaIgual("precoBase.precoMicromercado.tipoCombustivel.id", idTipoCombustivel),
-                new ParametroPesquisaIgual("frotaPtov.pontoVenda.id", idPontoVenda),
-                new ParametroPesquisaIgual("frotaPtov.frota.id", idFrota),
-                new ParametroPesquisaDiferente("status", StatusPreco.HISTORICO.getValue()));
+        InformacaoPaginacao paginacao = new InformacaoPaginacao();
+        paginacao.setPagina(1);
+        paginacao.setTamanhoPagina(1);
+
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaIgual("idCombustivel", idTipoCombustivel));
+        parametros.add(new ParametroPesquisaIgual("idPontoVenda", idPontoVenda));
+        parametros.add(new ParametroPesquisaIgual("idFrota", idFrota));
+        parametros.add(new ParametroPesquisaDataMenorOuIgual("dataAtual", ambiente.buscarDataAmbiente()));
+        parametros.add(new ParametroPesquisaIn("status", Arrays.asList(StatusPreco.VIGENTE.getValue(), StatusPreco.ACEITO.getValue())));
+
+        List<Preco> precosAcordo = pesquisar(paginacao, CONSULTA_NEGOCIACOES, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
         return precosAcordo.stream().findFirst().orElse(null);
     }
 
@@ -63,24 +94,21 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
         InformacaoPaginacao paginacao = new InformacaoPaginacao();
         paginacao.setPagina(1);
         paginacao.setTamanhoPagina(1);
-        paginacao.setParametrosOrdenacaoColuna(
-                Arrays.asList(new ParametroOrdenacaoColuna("dataAtualizacao", Ordenacao.DECRESCENTE),
-                        new ParametroOrdenacaoColuna("status", Ordenacao.CRESCENTE))
-        );
 
         List<Integer> statusValidos = new ArrayList<>();
         statusValidos.add(StatusPreco.VIGENTE.getValue());
         statusValidos.add(StatusPreco.ACEITO.getValue());
         statusValidos.add(StatusPreco.HISTORICO.getValue());
-        statusValidos.add(StatusPreco.PENDENTE.getValue());
 
-        ResultadoPaginado<Preco>  result =  pesquisar(paginacao,
-                new ParametroPesquisaIgual("precoBase.precoMicromercado.tipoCombustivel.id", idTipoCombustivel),
-                new ParametroPesquisaIgual("frotaPtov.pontoVenda.id", idPontoVenda),
-                new ParametroPesquisaIgual("frotaPtov.frota.id", idFrota),
-                new ParametroPesquisaDataMenorOuIgual("dataAtualizacao", dataAbastecimento),
-                new ParametroPesquisaIn("status",statusValidos));
-        return result.getRegistros().isEmpty() ? null : UtilitarioLambda.obterPrimeiroObjetoDaLista(result.getRegistros());
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaIgual("idCombustivel", idTipoCombustivel));
+        parametros.add(new ParametroPesquisaIgual("idPontoVenda", idPontoVenda));
+        parametros.add(new ParametroPesquisaIgual("idFrota", idFrota));
+        parametros.add(new ParametroPesquisaDataMenorOuIgual("dataAbastecimento", dataAbastecimento));
+        parametros.add(new ParametroPesquisaIn("status", statusValidos));
+
+        List<Preco> precosAcordo = pesquisar(paginacao, CONSULTA_NEGOCIACOES, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+        return precosAcordo.stream().findFirst().orElse(null);
     }
 
     @Override
@@ -103,11 +131,14 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
 
     @Override
     public List<Preco> buscarPrecosAtuais(Long idPontoVenda, Long idTipoCombustivel) {
-         return pesquisarSemIsolamentoDados(
-            new ParametroOrdenacaoColuna("dataAtualizacao", Ordenacao.DECRESCENTE),
-            new ParametroPesquisaIgual("precoBase.precoMicromercado.tipoCombustivel.id", idTipoCombustivel),
-            new ParametroPesquisaIgual("frotaPtov.pontoVenda.id", idPontoVenda),
-                 new ParametroPesquisaDiferente("status", StatusPreco.HISTORICO.getValue()));
+         List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaIgual("idCombustivel", idTipoCombustivel));
+        parametros.add(new ParametroPesquisaIgual("idPontoVenda", idPontoVenda));
+        parametros.add(new ParametroPesquisaIgual("idFrota", null));
+        parametros.add(new ParametroPesquisaDataMenorOuIgual("dataAtual", ambiente.buscarDataAmbiente()));
+        parametros.add(new ParametroPesquisaIn("status", Arrays.asList(StatusPreco.VIGENTE.getValue(), StatusPreco.ACEITO.getValue())));
+
+        return pesquisar(null, CONSULTA_NEGOCIACOES, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
 
     /**
