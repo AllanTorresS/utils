@@ -1,5 +1,6 @@
 package ipp.aci.boleia.dominio.servico;
 
+import ipp.aci.boleia.dados.IAutorizacaoPagamentoDados;
 import ipp.aci.boleia.dados.ICicloRepasseDados;
 import ipp.aci.boleia.dados.IEntidadeRepasseDados;
 import ipp.aci.boleia.dominio.AutorizacaoPagamento;
@@ -7,7 +8,9 @@ import ipp.aci.boleia.dominio.CicloRepasse;
 import ipp.aci.boleia.dominio.ConfiguracaoRepasse;
 import ipp.aci.boleia.dominio.EntidadeRepasse;
 import ipp.aci.boleia.dominio.ParametroCiclo;
-import ipp.aci.boleia.dominio.enums.StatusPagamentoCobranca;
+import ipp.aci.boleia.dominio.PontoDeVenda;
+import ipp.aci.boleia.dominio.enums.StatusCicloRepasse;
+import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaCicloRepasseVo;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
@@ -15,6 +18,7 @@ import ipp.aci.boleia.util.concorrencia.MapeadorLock;
 import ipp.aci.boleia.util.concorrencia.Sincronizador;
 import ipp.aci.boleia.util.excecao.ExcecaoRecursoBloqueado;
 import ipp.aci.boleia.util.i18n.Mensagens;
+import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,11 +31,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
+import java.util.stream.Collectors;
 
 import static ipp.aci.boleia.util.UtilitarioCalculo.calcularPorcentagem;
 import static ipp.aci.boleia.util.UtilitarioCalculo.somarValoresLista;
 import static ipp.aci.boleia.util.UtilitarioCalculoData.adicionarDiasData;
-import static ipp.aci.boleia.util.UtilitarioCalculoData.obterPrimeiroInstanteDia;
 import static ipp.aci.boleia.util.UtilitarioCalculoData.obterUltimoInstanteDia;
 
 /**
@@ -60,7 +64,13 @@ public class CicloRepasseSd {
     private IEntidadeRepasseDados repositorioEntidadeRepasse;
 
     @Autowired
+    private IAutorizacaoPagamentoDados repositorioAutorizacaoPagamento;
+
+    @Autowired
     private Mensagens mensagens;
+
+    @Autowired
+    private UtilitarioAmbiente ambiente;
 
     /**
      * Configura o monitor de autorização de pagamento
@@ -124,23 +134,15 @@ public class CicloRepasseSd {
         ConfiguracaoRepasse configuracaoRepasse = entidadeRepasse.getConfiguracaoRepasse();
 
         CicloRepasse ultimoCicloAnteriorAoAbastecimento = repositorio.obterUltimoCicloRepasseAnteriorAData(autorizacaoPagamento.getDataProcessamento(), entidadeRepasse.getId(), autorizacaoPagamento.getPontoVenda().getId());
-
-        Date dataInicio;
-        if(ultimoCicloAnteriorAoAbastecimento != null && ultimoCicloAnteriorAoAbastecimento.getDataFim() != null){
-            dataInicio = obterPrimeiroInstanteDia(adicionarDiasData(ultimoCicloAnteriorAoAbastecimento.getDataFim(),1));
-        }
-        else{
-            dataInicio = calcularDataInicioCiclo(autorizacaoPagamento.getDataProcessamento(), configuracaoRepasse.getParametroCiclo());
-        }
-
+        Date dataInicio = calcularDataInicioCiclo(autorizacaoPagamento.getDataProcessamento(), configuracaoRepasse.getParametroCiclo());
         Date dataFim = calcularDataFimCiclo(dataInicio, configuracaoRepasse.getParametroCiclo());
 
         novoCiclo.setConfiguracaoRepasse(configuracaoRepasse);
         novoCiclo.setDataInicio(dataInicio);
         novoCiclo.setDataFim(dataFim);
-        novoCiclo.setStatus(StatusPagamentoCobranca.EM_ABERTO.getValue());
+        novoCiclo.setStatus(StatusCicloRepasse.EM_ABERTO.getValue());
 
-        novoCiclo.setDataVencimento(adicionarDiasData(dataFim,configuracaoRepasse.getParametroCiclo().getPrazoPagamento().intValue()));
+        novoCiclo.setDataVencimento(adicionarDiasData(dataFim, configuracaoRepasse.getParametroCiclo().getPrazoPagamento().intValue()));
 
         BigDecimal valorCredito = (ultimoCicloAnteriorAoAbastecimento != null && ultimoCicloAnteriorAoAbastecimento.getValorNominalRepasse().compareTo(BigDecimal.ZERO) < 0)? ultimoCicloAnteriorAoAbastecimento.getValorNominalRepasse().negate():null;
         novoCiclo.setValorCredito(valorCredito);
@@ -160,6 +162,129 @@ public class CicloRepasseSd {
     }
 
     /**
+     * Cria um novo {@link CicloRepasse} para conter os abastecimentos inválidos para envio ao Jde no ciclo repasse selecionado para envio.
+     *
+     * @param autorizacoesPagamento abastecimentos pendentes de emissão ou pertencentes a um ciclo em ajuste na data de envio.
+     * @param pontoDeVenda o ponto de venda do ciclo de repasse
+     * @param dataEnvioJde a data em que os ciclos de repasse serão enviados ao JDE.
+     * @return retorna o ciclo de repasse criado.
+     */
+    public CicloRepasse criarCicloRepassePostergado(List<AutorizacaoPagamento> autorizacoesPagamento, PontoDeVenda pontoDeVenda, Date dataEnvioJde){
+        CicloRepasse novoCiclo = new CicloRepasse();
+        EntidadeRepasse entidadeRepasse = repositorioEntidadeRepasse.obtemEntidadeDeRepassePadrao();
+        ConfiguracaoRepasse configuracaoRepasse = entidadeRepasse.getConfiguracaoRepasse();
+
+        CicloRepasse ultimoCicloAnteriorAoAbastecimento = repositorio.obterUltimoCicloRepasseAnteriorAData(dataEnvioJde, entidadeRepasse.getId(), pontoDeVenda.getId());
+        Date dataInicio = calcularDataInicioCiclo(dataEnvioJde, configuracaoRepasse.getParametroCiclo());
+        Date dataFim = calcularDataFimCiclo(dataInicio, configuracaoRepasse.getParametroCiclo());
+
+        novoCiclo.setConfiguracaoRepasse(configuracaoRepasse);
+        novoCiclo.setDataInicio(dataInicio);
+        novoCiclo.setDataFim(dataFim);
+        novoCiclo.setStatus(StatusCicloRepasse.EM_ABERTO.getValue());
+
+        novoCiclo.setDataVencimento(adicionarDiasData(dataFim, configuracaoRepasse.getParametroCiclo().getPrazoPagamento().intValue()));
+        BigDecimal valorCredito = (ultimoCicloAnteriorAoAbastecimento != null && ultimoCicloAnteriorAoAbastecimento.getValorNominalRepasse().compareTo(BigDecimal.ZERO) < 0)? ultimoCicloAnteriorAoAbastecimento.getValorNominalRepasse().negate():null;
+        novoCiclo.setValorCredito(valorCredito);
+        BigDecimal valorPercentualRepasse = configuracaoRepasse.getValorPercentualRepasse();
+        novoCiclo.setPontoDeVenda(pontoDeVenda);
+
+        BigDecimal valorTotalAbastecimentos = autorizacoesPagamento.stream().map(AutorizacaoPagamento::getValorTotal).reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal valorNominalRepasse = calcularPorcentagem(valorTotalAbastecimentos, valorPercentualRepasse);
+        novoCiclo.setValorTotal(valorTotalAbastecimentos);
+        novoCiclo.setValorNominalRepasse(valorNominalRepasse);
+        novoCiclo.setValorPercentualRepasse(valorPercentualRepasse);
+
+        return repositorio.armazenar(novoCiclo);
+    }
+
+    /**
+     * É feita a validação dos ciclos de repasse que serão enviados ao Jde.
+     *
+     * @param repasses a lista de repasses que será validada antes do envio ao Jde.
+     * @return a lista de ciclos de repasses validada, apta a seguir no processo de envio ao Jde.
+     */
+    public List<CicloRepasse> verificarPostergacaoCicloRepasse(List<CicloRepasse> repasses){
+        List<CicloRepasse> repassesValidados = new ArrayList<>();
+
+        for(CicloRepasse cicloRepasse : repasses){
+            CicloRepasse repasseValidado = validarAbastecimentosCicloRepasse(cicloRepasse, ambiente.buscarDataAmbiente());
+            if(repasseValidado != null){
+                repassesValidados.add(repasseValidado);
+            }
+        }
+        return repassesValidados;
+    }
+
+    /**
+     * É feita a validação dos abastecimentos presentes em um ciclo de repasse.
+     * Os abastecimentos pendentes de emissão, ou que não estejam em uma transação consolidada fechada,
+     * terão os seus ciclos de repasse alterados e serão enviados para ciclos de repasse futuros.
+     *
+     * @param cicloRepasse o ciclo repasse que será validado.
+     * @param dataEnvioJde a data em que os ciclos de repasse serão enviados ao JDE.
+     * @return o ciclo repasse atualizado ou nulo, caso todos os seus abastecimentos tenham o repasse postergado.
+     */
+    public CicloRepasse validarAbastecimentosCicloRepasse(CicloRepasse cicloRepasse, Date dataEnvioJde){
+        List<AutorizacaoPagamento> autorizacoesPagamentoRepasse = cicloRepasse.getAutorizacaoPagamentos();
+        List<AutorizacaoPagamento> autorizacoesPagamentoParaPostergacaoCicloRepasse = autorizacoesPagamentoRepasse.stream()
+                .filter(autorizacaoPagamento -> autorizacaoPagamento.isPendenteEmissaoNF(false) ||
+                        (!autorizacaoPagamento.isPendenteEmissaoNF(false) &&
+                                !autorizacaoPagamento.getTransacaoConsolidada().getStatusConsolidacao().equals(StatusTransacaoConsolidada.FECHADA.getValue())))
+                .collect(Collectors.toList());
+
+        if(!autorizacoesPagamentoParaPostergacaoCicloRepasse.isEmpty()){
+            EntidadeRepasse entidadeRepasse = repositorioEntidadeRepasse.obtemEntidadeDeRepassePadrao();
+            CicloRepasse novoCicloRepasse = repositorio.obterCicloRepassePorDataEEntidade(dataEnvioJde, entidadeRepasse.getId(), cicloRepasse.getPontoDeVenda().getId());
+
+            //Atualiza os valores do ciclo repasse informado.
+            BigDecimal valorPostergado = autorizacoesPagamentoParaPostergacaoCicloRepasse.stream().map(AutorizacaoPagamento::getValorTotal).reduce(BigDecimal.ZERO, BigDecimal::add);
+            atualizarValoresCicloRepasseOriginal(cicloRepasse, valorPostergado);
+
+            if(novoCicloRepasse == null){
+                novoCicloRepasse = criarCicloRepassePostergado(autorizacoesPagamentoParaPostergacaoCicloRepasse, cicloRepasse.getPontoDeVenda(), dataEnvioJde);
+            } else{
+                BigDecimal novoValorTotalCiclo = novoCicloRepasse.getValorTotal().add(valorPostergado);
+                novoCicloRepasse.setValorTotal(novoValorTotalCiclo);
+                novoCicloRepasse.setValorNominalRepasse(calcularPorcentagem(novoValorTotalCiclo, novoCicloRepasse.getValorPercentualRepasse()));
+            }
+
+            //Atualiza o ciclo repasse dos abastecimentos pendentes de emissão ou com consolidado em ajuste.
+            for(AutorizacaoPagamento autorizacaoPagamento : autorizacoesPagamentoParaPostergacaoCicloRepasse){
+                autorizacaoPagamento.setCicloRepasse(novoCicloRepasse);
+                autorizacaoPagamento.setCicloRepasseOriginal(cicloRepasse);
+                autorizacaoPagamento.setDataPostergacaoRepasse(dataEnvioJde);
+                repositorioAutorizacaoPagamento.armazenar(autorizacaoPagamento);
+            }
+
+            //Atualiza a lista de abastecimentos do ciclo repasse informado.
+            autorizacoesPagamentoRepasse.removeIf(autorizacaoPagamento -> !autorizacaoPagamento.getCicloRepasse().getId().equals(cicloRepasse.getId()));
+            cicloRepasse.setAutorizacaoPagamentos(autorizacoesPagamentoRepasse);
+        }
+
+        //É retornado nulo se todos os abastecimentos do ciclo tiveram o seu repasse postergado.
+        return cicloRepasse.getValorTotal().compareTo(BigDecimal.ZERO) == 0 ? null : cicloRepasse;
+    }
+
+    /**
+     * Atualiza os valores do ciclo de repasse informado após desvinculação dos abastecimentos pendentes de emissão ou
+     * presentes em uma transação consolidada que não esteja fechada.
+     *
+     * @param cicloRepasse o ciclo de repasse original.
+     * @param valorPostergado o valor que será postergado para o próximo ciclo de repasse.
+     * @return retorna o ciclo de repasse original com os seus valores atualizados.
+     */
+    private CicloRepasse atualizarValoresCicloRepasseOriginal(CicloRepasse cicloRepasse, BigDecimal valorPostergado) {
+        BigDecimal valorTotalRepasse = cicloRepasse.getValorTotal().subtract(valorPostergado);
+        cicloRepasse.setValorTotal(valorTotalRepasse);
+
+        BigDecimal valorNominalRepasse = calcularPorcentagem(valorTotalRepasse, cicloRepasse.getValorPercentualRepasse());
+        cicloRepasse.setValorNominalRepasse(valorNominalRepasse);
+        repositorio.armazenar(cicloRepasse);
+        return cicloRepasse;
+    }
+
+    /**
      * Calcula a data de inicio de um novo ciclo de repasse a ser aberto, baseado na data vigente
      *
      * @param dataVigente A data vigente
@@ -175,7 +300,7 @@ public class CicloRepasseSd {
         datasInicioNoMes.add(diaInicioCiclo);
 
         while(diaInicioCiclo.before(ultimoDiaMes)){
-            diaInicioCiclo = adicionarDiasData(diaInicioCiclo,quantidadeDiasCiclo);
+            diaInicioCiclo = adicionarDiasData(diaInicioCiclo, quantidadeDiasCiclo);
             datasInicioNoMes.add(diaInicioCiclo);
         }
 

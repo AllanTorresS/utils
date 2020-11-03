@@ -74,7 +74,9 @@ public class DanfeVo {
     private String dataHoraImpressao;
     private List<ItemDanfeVo> dadosDanfe = new ArrayList<>();
 
-    public DanfeVo(){}
+    public DanfeVo(){
+        //Construtor default
+    }
 
     public String getEmitNome() {
         return emitNome;

@@ -1,6 +1,7 @@
 package ipp.aci.boleia.dominio.servico;
 
 import ipp.aci.boleia.dados.IAutenticacaoUsuarioDados;
+import ipp.aci.boleia.dados.IConfiguracaoSistemaDados;
 import ipp.aci.boleia.dados.IMotoristaDados;
 import ipp.aci.boleia.dados.ITokenDados;
 import ipp.aci.boleia.dados.IUsuarioDados;
@@ -18,6 +19,7 @@ import ipp.aci.boleia.util.UtilitarioFormatacao;
 import ipp.aci.boleia.util.UtilitarioLambda;
 import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.excecao.ExcecaoAutenticacaoRemota;
+import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
 import ipp.aci.boleia.util.excecao.ExcecaoValidacao;
 import ipp.aci.boleia.util.i18n.Mensagens;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
@@ -25,12 +27,16 @@ import ipp.aci.boleia.util.seguranca.UtilitarioCriptografia;
 import ipp.aci.boleia.util.validador.ValidadorCpf;
 import ipp.aci.boleia.util.validador.ValidadorEmail;
 import ipp.aci.boleia.util.validador.ValidadorEntidade;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 
+import static ipp.aci.boleia.dominio.enums.ChaveConfiguracaoSistema.TELEFONE_CENTRAL_ATENDIMENTO_NUMERO;
 import static ipp.aci.boleia.dominio.enums.FuncionalidadePorVersaoAplicativoMotorista.FLUXO_USUARIO_MOTORISTA;
 import static ipp.aci.boleia.util.UtilitarioComparacao.compararVersoes;
 
@@ -76,6 +82,9 @@ public class UsuarioSd {
 
     @Autowired
     private IAutenticacaoUsuarioDados autenticacaoDados;
+
+    @Autowired
+    private IConfiguracaoSistemaDados configuracaoSistema;
 
     @Autowired
     private ValidadorEntidade validadorEntidade;
@@ -463,5 +472,32 @@ public class UsuarioSd {
      */
     public long obterQuantidadeTotalAtivosDeTipoPerfil(TipoPerfilUsuario tipoPerfilUsuario){
         return repositorio.obterQuantidadeTotalAtivosDeTipoPerfil(tipoPerfilUsuario);
+    }
+
+    /**
+     * Retorna true caso as credenciais informadas estejam compativeis com aquelas armazenadas em banco de dados
+     *
+     * @param usuario o usuario localizado no banco de dados
+     * @param credenciais A senha informada pelo usuario
+     * @return True caso as credenciais estejam de acordo com o esperado
+     */
+    public boolean confirmarSenhaUsuarioExterno(Usuario usuario, String credenciais) {
+        if (StringUtils.isBlank(usuario.getSenhaHash()) || StringUtils.isBlank(usuario.getSenhaSalt())) {
+            String numeroTelefone = configuracaoSistema.buscarConfiguracoes(TELEFONE_CENTRAL_ATENDIMENTO_NUMERO).getParametro();
+            throw new BadCredentialsException(null, new ExcecaoBoleiaRuntime(Erro.AUTENTICACAO_CREDENCIAIS_INDEFINIDAS, numeroTelefone));
+        }
+        byte[] senha = converterCredenciaisParaByteArray(credenciais);
+        byte[] salt = UtilitarioCriptografia.fromBase64(usuario.getSenhaSalt());
+        byte[] hashEsperado = UtilitarioCriptografia.fromBase64(usuario.getSenhaHash());
+        return UtilitarioCriptografia.verificarHashBCrypt(senha, salt, hashEsperado);
+    }
+
+    /**
+     * Le a senha do usuario como um vetor de bytes
+     * @param credenciais A senha do usuario
+     * @return A senha em byte array
+     */
+    private byte[] converterCredenciaisParaByteArray(String credenciais)  {
+        return credenciais.getBytes(StandardCharsets.UTF_8);
     }
 }

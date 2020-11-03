@@ -11,6 +11,10 @@ public enum StatusConfirmacaoTransacao implements IEnumComLabel<StatusConfirmaca
 
     private final Integer value;
 
+    /**
+     * Construtor do enum
+     * @param value valor do enumerado
+     */
     StatusConfirmacaoTransacao(Integer value){
         this.value = value;
     }

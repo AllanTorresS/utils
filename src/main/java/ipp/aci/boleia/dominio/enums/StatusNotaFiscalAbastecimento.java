@@ -9,8 +9,7 @@ import ipp.aci.boleia.util.i18n.IEnumComLabel;
 public enum StatusNotaFiscalAbastecimento implements IEnumComLabel<StatusNotaFiscalAbastecimento> {
 
     PENDENTE(0),
-    EMITIDA(1),
-    JUSTIFICADA(2);
+    EMITIDA(1);
 
     private final Integer value;
 

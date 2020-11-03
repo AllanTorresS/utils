@@ -12,5 +12,6 @@ public interface IServicosDeUsuario {
     boolean registrarErroAutenticacao(Long idUsuario);
     Usuario obterPorIdComPermissoes(long id);
     Usuario povoarPermissoesUsuario(Usuario usuario);
+    boolean credenciaisValidas(Usuario usuario, String senha);
 
 }

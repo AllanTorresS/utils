@@ -13,7 +13,14 @@ public class AnexoCredenciamentoIntegradorVo {
 	 * Construtor default da classe.
 	 */
 	public AnexoCredenciamentoIntegradorVo() {}
-	
+
+	/**
+	 * Construtor do vo.
+	 *
+	 * @param nome Nome do anexo.
+	 * @param conteudo Conteudo do anexo.
+	 * @param idLead Identificador do anexo.
+	 */
 	public AnexoCredenciamentoIntegradorVo(String nome, String conteudo, String idLead) {
 		this.name = nome;
 		this.body = conteudo;

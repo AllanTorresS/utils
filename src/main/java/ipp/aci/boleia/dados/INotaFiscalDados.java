@@ -23,4 +23,12 @@ public interface INotaFiscalDados extends IRepositorioBoleiaDados<NotaFiscal> {
      * @return Uma lista de notas que possuam aquele numero
      */
     List<NotaFiscal> obterNotaPorNumero(String numero);
+
+    /**
+     * Retorna uma lista de notas fiscais justificadas ou não a partir de uma lista de abastecimentos.
+     *
+     * @param idsAutorizacoes Os abastecimentos
+     * @return A lista de notas fiscais
+     */
+    List<NotaFiscal> obterNotasEJustificativasPorAbastecimentos(List<Long> idsAutorizacoes);
 }

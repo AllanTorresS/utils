@@ -39,7 +39,12 @@ public enum TipoAutorizacaoPagamento implements IEnumComLabel<TipoAutorizacaoPag
     private final TipoTransacao estorno;
     private final TipoTransacao autorizacao;
 
-
+    /**
+     * Construtor do Enum
+     * @param value Valor do enum
+     * @param estorno Tipo de estorno da transação
+     * @param autorizacao Tipo de autorização da transação
+     */
     TipoAutorizacaoPagamento(Integer value, TipoTransacao estorno, TipoTransacao autorizacao) {
         this.value = value;
         this.estorno = estorno;

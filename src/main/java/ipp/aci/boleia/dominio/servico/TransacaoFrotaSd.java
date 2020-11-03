@@ -90,7 +90,7 @@ public class TransacaoFrotaSd {
      * @return A transacao registrada
      */
     public TransacaoFrota pagarProdutoOuServicoPermitindoSaldoNegativo(AutorizacaoPagamento autorizacaoPagamento, TipoAutorizacaoPagamento tipoPagamento) {
-        if (autorizacaoPagamento.getFrota().isPrePago()
+        if (autorizacaoPagamento.getFrota().isPrePaga()
                 && autorizacaoPagamento.getFrota().getSaldo().getSaldoCorrente().compareTo(autorizacaoPagamento.getValorTotal()) < 0) {
             throw new ExcecaoBoleiaRuntime(Erro.ERRO_FROTA_PRE_NEGATIVADA);
         }
@@ -281,7 +281,7 @@ public class TransacaoFrotaSd {
      */
     private void registrarTransacao(Frota frota, BigDecimal valorTotal, TipoTransacao tipo) throws ExcecaoCreditoInsuficiente {
         if (tipo.isDebito() && frota.getSaldo().getSaldoCorrente().compareTo(valorTotal) < 0) {
-            if (frota.isPrePago()) {
+            if (frota.isPrePaga()) {
                 throw new ExcecaoBoleiaRuntime(Erro.ERRO_FROTA_PRE_NEGATIVADA);
             } else {
                 throw new ExcecaoCreditoInsuficiente();
@@ -347,7 +347,7 @@ public class TransacaoFrotaSd {
         transacao.setConsumiuCreditoPrePago(transacaoOriginal != null ? transacaoOriginal.getConsumiuCreditoPrePago() : false);
 
         transacao = repositorioTrancacao.armazenar(transacao);
-        if (frota.isPrePago()) {
+        if (frota.isPrePaga()) {
             boolean usoDeCredito = tipo.isDebito() && OperacaoDeCredito.USO_DE_CREDITO_PRE_PAGO.equals(tipo.getTipoOperacao());
             if (usoDeCredito) {
                 return registrarExtratosParaPedidosPrePagos(transacao, valorTotal);

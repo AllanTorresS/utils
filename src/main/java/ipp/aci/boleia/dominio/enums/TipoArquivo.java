@@ -11,6 +11,7 @@ public enum TipoArquivo {
     JUSTIFICATIVA_NOTA("justificativa_nota_fiscal/",".pdf", "application/pdf", false, 120),
     RELATORIO_48_HORAS_XLSX("relatorio_48_horas/", ".xlsx", "application/vnd.ms-excel", false, 120),
     RELATORIO_48_HORAS_TXT("relatorio_48_horas/",".txt","text/plain", false, 60),
+    RELATORIO_48_HORAS_PDF("relatorio_48_horas/",".pdf","application/pdf", false, 120),
     NOTA_FISCAL_ARMAZEM("nfe_anexo_armazem/", ".xml", "text/xml", false, 120),
     DOWNLOAD_PRESIGNED_NOTA_FISCAL_PDF("download_presigned/nota_fiscal/pdf/", ".pdf", "application/pdf", false, 120),
     DOWNLOAD_PRESIGNED_NOTA_FISCAL_XML("download_presigned/nota_fiscal/xml/", ".xml", "text/xml", false, 120);
@@ -23,6 +24,13 @@ public enum TipoArquivo {
     private final boolean nomeArquivoAutoContido;
     private final Integer tempoMinutosUrl;
 
+    /**
+     * Construtor do enum
+     * @param prefixo Prefixo do arquivo
+     * @param sufixo Sufixo do arquivo
+     * @param mimeType mimeType do arquivo
+     * @param nomeArquivoAutoContido True caso o arquivo tenha seu nome autocontido
+     */
     TipoArquivo(String prefixo, String sufixo, String mimeType, boolean nomeArquivoAutoContido, Integer tempoMinutosUrl) {
         this.prefixo = prefixo;
         this.sufixo = sufixo;

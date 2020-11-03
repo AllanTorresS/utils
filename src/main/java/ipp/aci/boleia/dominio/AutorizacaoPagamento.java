@@ -2,9 +2,11 @@ package ipp.aci.boleia.dominio;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ipp.aci.boleia.dominio.enums.ClassificacaoAgregado;
+import ipp.aci.boleia.dominio.enums.ModalidadePagamento;
 import ipp.aci.boleia.dominio.enums.StatusAutorizacao;
 import ipp.aci.boleia.dominio.enums.StatusEdicao;
 import ipp.aci.boleia.dominio.enums.StatusNotaFiscalAbastecimento;
+import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
 import ipp.aci.boleia.dominio.enums.TipoErroAutorizacaoPagamento;
 import ipp.aci.boleia.dominio.enums.TipoPreenchimentoLitragem;
 import ipp.aci.boleia.dominio.enums.TipoRealizacaoPedido;
@@ -429,6 +431,14 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     @JoinColumn(name = "CD_TRANS_CONSOL")
     private TransacaoConsolidada transacaoConsolidada;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_TRANS_CONSOL_POSTERGADA")
+    private TransacaoConsolidada transacaoConsolidadaPostergada;
+
+    @Column(name = "DT_POSTERGACAO")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataPostergacao;
+
     @Column(name = "CD_ABASTECIMENTO_CTA")
     private Long codigoAbastecimentoCTA;
 
@@ -443,6 +453,14 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     @JoinColumn(name = "CD_CICLO_REPASSE")
     private CicloRepasse cicloRepasse;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_CICLO_REPASSE_ORIGINAL")
+    private CicloRepasse cicloRepasseOriginal;
+
+    @Column(name = "DT_POSTERGACAO_REPASSE")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataPostergacaoRepasse;
+
     @Column(name = "ID_PROCESSADO_CAMPANHA")
     private Boolean foiProcessadoPeloGeradorDeCampanhas;
 
@@ -453,6 +471,12 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     @Formula(PRECOCOMBUSTIVEL_FORMULA)
     private BigDecimal precoCombustivelTotal;
 
+    @Transient
+    private TipoErroAutorizacaoPagamento tipoErroAutorizacaoPagamento;
+
+    /**
+     * Construtor da classe.
+     */
     public AutorizacaoPagamento () {
         this.statusEdicao = StatusEdicao.NAO_EDITADO.getValue();
     }
@@ -464,9 +488,6 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     public void setCodigoRFIDFrentista(String codigoRFIDFrentista) {
         this.codigoRFIDFrentista = codigoRFIDFrentista;
     }
-
-    @Transient
-    private TipoErroAutorizacaoPagamento tipoErroAutorizacaoPagamento;
 
     @Override
     public Long getId() {
@@ -1151,6 +1172,22 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
         this.transacaoConsolidada = transacaoConsolidada;
     }
 
+    public TransacaoConsolidada getTransacaoConsolidadaPostergada() {
+        return transacaoConsolidadaPostergada;
+    }
+
+    public void setTransacaoConsolidadaPostergada(TransacaoConsolidada transacaoConsolidadaPostergada) {
+        this.transacaoConsolidadaPostergada = transacaoConsolidadaPostergada;
+    }
+
+    public Date getDataPostergacao() {
+        return dataPostergacao;
+    }
+
+    public void setDataPostergacao(Date dataPostergacao) {
+        this.dataPostergacao = dataPostergacao;
+    }
+
     @Transient
     @Override
     public List<PontoDeVenda> getPontosDeVenda() {
@@ -1403,7 +1440,7 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     @Transient
     public boolean estaAutorizadaOuCancelada() {
         if(getStatus() != null) {
-            return getStatus().equals(StatusAutorizacao.AUTORIZADO.getValue()) || getStatus().equals(StatusAutorizacao.CANCELADO.getValue());
+            return estaAutorizado() || estaCancelado();
         }
         return false;
     }
@@ -1417,6 +1454,19 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     public boolean estaAutorizado() {
         if (getStatus() != null) {
             return getStatus().equals(StatusAutorizacao.AUTORIZADO.getValue());
+        }
+        return false;
+    }
+
+    /**
+     * Verifica se a autorização de pagamento está cancelada.
+     *
+     * @return True, caso esteja cancelada.
+     */
+    @Transient
+    public boolean estaCancelado() {
+        if (getStatus() != null) {
+            return getStatus().equals(StatusAutorizacao.CANCELADO.getValue());
         }
         return false;
     }
@@ -1443,13 +1493,29 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     }
 
     /**
-     * Verifica se a nota fiscal esta justificada
+     * Informa se a autorização de pagamento possui pendência de emissão de nota fiscal
+     * levando em consideração a exigência de emissão e status de autorização.
+     * @param considerarCancelado indica se a pendência de NF deve ser avaliada também para abastecimentos
+     * cancelados
      *
-     * @return True, caso a nota fiscal esteja com status igual a JUSTIFICADA
+     * @return true, caso possua pendencia.
      */
     @Transient
-    public boolean notaFiscalEstaJustificada() {
-        return statusNotaFiscalEsta(StatusNotaFiscalAbastecimento.JUSTIFICADA);
+    public boolean isPendenteEmissaoNF(boolean considerarCancelado) {
+        boolean statusAutorizacao = considerarCancelado ? estaAutorizadaOuCancelada() : estaAutorizado();
+        return statusAutorizacao &&
+                valorTotal.compareTo(BigDecimal.ZERO) > 0 &&
+                exigeEmissaoNF() &&
+                (statusNotaFiscalEsta(StatusNotaFiscalAbastecimento.PENDENTE));
+    }
+
+    /**
+     * verifica se uma transacao foi emitida em um ciclo com status consolidacao FECHADO (ou seja, se seu valor foi considerado em algum reembolso gerado)
+     * @return true, caso a transacao nao tenha pendencia de emissao e seu ciclo mais atual (de origem ou postergacao) esteja FECHADO
+     */
+    public boolean emitidaEmCicloFechado(){
+        return this.getTransacaoConsolidadaVigente().getStatusConsolidacao().equals(StatusTransacaoConsolidada.FECHADA.getValue())
+                            && !isPendenteEmissaoNF(true);
     }
 
     /**
@@ -1491,6 +1557,15 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
         return this.getItems().stream().filter(ItemAutorizacaoPagamento::isAbastecimento).findFirst().get();
     }
 
+    /**
+     * Obtém uma lista de produtos e serviços de uma autorização pagamento
+     *
+     * @return A lista de itens da autorização que representa os produtos e serviços
+     */
+    public List<ItemAutorizacaoPagamento> obterItensServico(){
+        return this.getItems().stream().filter(i -> !i.isAbastecimento()).collect(Collectors.toList());
+    }
+
     public Long getCodigoAbastecimentoCTA() {
         return codigoAbastecimentoCTA;
     }
@@ -1513,6 +1588,22 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
 
     public void setCicloRepasse(CicloRepasse cicloRepasse) {
         this.cicloRepasse = cicloRepasse;
+    }
+
+    public CicloRepasse getCicloRepasseOriginal() {
+        return cicloRepasseOriginal;
+    }
+
+    public void setCicloRepasseOriginal(CicloRepasse cicloRepasseOriginal) {
+        this.cicloRepasseOriginal = cicloRepasseOriginal;
+    }
+
+    public Date getDataPostergacaoRepasse() {
+        return dataPostergacaoRepasse;
+    }
+
+    public void setDataPostergacaoRepasse(Date dataPostergacaoRepasse) {
+        this.dataPostergacaoRepasse = dataPostergacaoRepasse;
     }
 
     public Boolean getFoiProcessadoPeloGeradorDeCampanhas() {
@@ -1568,5 +1659,80 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
             }
         }
         return null;
+    }
+
+    /**
+     * Informa a autorização de pagamento possui exigencia de NF para a Unidade.
+     *
+     * @return true, caso possua
+     */
+    @Transient
+    public boolean unidadePossuiExigenciaNF() {
+        return unidadeExigeNf != null && unidadeExigeNf;
+    }
+
+    /**
+     * Informa a autorização de pagamento possui exigencia de NF para a Empresa Agregada.
+     *
+     * @return true, caso possua
+     */
+    @Transient
+    public boolean empresaAgregadaPossuiExigenciaNF() {
+        return empresaAgregadaExigeNf != null && empresaAgregadaExigeNf;
+    }
+
+    /**
+     * Informa se a autorização de pagamento exige emissão de nota.
+     *
+     * @return true, caso exija emissão de nf
+     */
+    @Transient
+    public boolean exigeEmissaoNF() {
+        return frota.exigeNotaFiscal() || unidadePossuiExigenciaNF() || empresaAgregadaPossuiExigenciaNF();
+    }
+
+    /**
+     * Retorna qual a transação consolidada vigente do abastecimento.
+     *
+     * @return caso tenha sido postergado, retorna a transação consolidada da postergação,
+     * caso contrário retorna a transação consolidada original.
+     */
+    @Transient
+    public TransacaoConsolidada getTransacaoConsolidadaVigente() {
+        if(transacaoConsolidadaPostergada != null) {
+            return transacaoConsolidadaPostergada;
+        }
+        return transacaoConsolidada;
+    }
+
+    /**
+     * Informa qual a modalidade de pagamento utilizada no abastecimento.
+     *
+     * @return a modalidade de pagamento
+     */
+    @Transient
+    public ModalidadePagamento getModalidadePagamento() {
+        Boolean prePago = getTransacaoFrota().getConsumiuCreditoPrePago();
+        return prePago != null && prePago ? ModalidadePagamento.PRE_PAGO : ModalidadePagamento.POS_PAGO;
+    }
+
+    /**
+     * Retorna um boolean primitivo informando se a empresa agregada do abastecimento exige emissão de NF.
+     *
+     * @return True, caso possua empresa agregada vinculada e exija emissão.
+     */
+    @Transient
+    public boolean empresaAgregadaExigeNf() {
+        return getEmpresaAgregadaExigeNf() != null && getEmpresaAgregadaExigeNf();
+    }
+
+    /**
+     * Retorna um boolean primitivo informando se a unidade do abastecimento exige emissão de NF.
+     *
+     * @return True, caso possua unidade vinculada e exija emissão.
+     */
+    @Transient
+    public boolean unidadeExigeNf() {
+        return getUnidadeExigeNf() != null && getUnidadeExigeNf();
     }
 }

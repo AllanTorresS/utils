@@ -44,7 +44,7 @@ public class ParametroCiclo implements IPersistente {
 
     @NotNull
     @Column(name = "QT_PRAZO_REEMB")
-    private Long prazoReembolsoDias;
+    private Long prazoReembolso;
 
     @Version
     @Column(name = "NO_VERSAO")
@@ -79,12 +79,12 @@ public class ParametroCiclo implements IPersistente {
         this.prazoPagamento = prazoPagamento;
     }
 
-    public Long getPrazoReembolsoDias() {
-        return prazoReembolsoDias;
+    public Long getPrazoReembolso() {
+        return prazoReembolso;
     }
 
-    public void setPrazoReembolsoDias(Long prazoReembolsoDias) {
-        this.prazoReembolsoDias = prazoReembolsoDias;
+    public void setPrazoReembolso(Long prazoReembolso) {
+        this.prazoReembolso = prazoReembolso;
     }
 
     public Long getVersao() {
