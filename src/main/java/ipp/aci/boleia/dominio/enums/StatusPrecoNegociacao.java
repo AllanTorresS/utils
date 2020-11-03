@@ -15,9 +15,12 @@ public enum StatusPrecoNegociacao implements IEnumComLabel<StatusPrecoNegociacao
 
     VIGENTE,
     NEGOCIACAO,
-    HISTORICO;
+    HISTORICO,
+    AGENDADO,
+    AGENDADO_PENDENTE,
+    CANCELADO;
 
-    public static final String DECODE_FORMULA = "DECODE(ID_STATUS, 1, 'VIG', 2, 'EM_NEG', 3, 'EM_NEG', 4, 'VIG', 5, 'VIG', 6, 'HIST')";
+    public static final String DECODE_FORMULA = "DECODE(ID_STATUS, 1, 'VIG', 2, 'EM_NEG', 3, 'EM_NEG', 4, 'VIG', 5, 'VIG', 6, 'HIST', 7, 'CANC')";
 
     /**
      * Obtem o status de preco para frota de acordo com o status da entidade
@@ -33,6 +36,9 @@ public enum StatusPrecoNegociacao implements IEnumComLabel<StatusPrecoNegociacao
         }
         if(StatusPreco.HISTORICO.equals(status)){
             return HISTORICO;
+        }
+        if(StatusPreco.CANCELADO.equals(status)){
+            return CANCELADO;
         }
         return null;
     }
@@ -50,6 +56,9 @@ public enum StatusPrecoNegociacao implements IEnumComLabel<StatusPrecoNegociacao
         }
         if(HISTORICO.equals(this)) {
             return Arrays.asList(StatusPreco.HISTORICO);
+        }
+        if(CANCELADO.equals(this)) {
+            return Arrays.asList(StatusPreco.CANCELADO);
         }
         return Collections.emptyList();
     }
