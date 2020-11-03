@@ -2,12 +2,14 @@ package ipp.aci.boleia.dominio.servico;
 
 import ipp.aci.boleia.dados.IAutorizacaoPagamentoDados;
 import ipp.aci.boleia.dados.IMotoristaDados;
+import ipp.aci.boleia.dados.IUsuarioDados;
 import ipp.aci.boleia.dados.IVeiculoDados;
 import ipp.aci.boleia.dominio.AutorizacaoPagamento;
 import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.Motorista;
 import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.TransacaoConsolidada;
+import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.Veiculo;
 import ipp.aci.boleia.dominio.enums.ModalidadePagamento;
 import ipp.aci.boleia.dominio.enums.StatusAtivacao;
@@ -20,10 +22,11 @@ import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.excecao.ExcecaoAutenticacaoRemota;
 import ipp.aci.boleia.util.excecao.ExcecaoValidacao;
 import ipp.aci.boleia.util.i18n.Mensagens;
-
+import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -44,6 +47,12 @@ public class ValidadorAbastecimentoSd {
 
     @Autowired
     protected IMotoristaDados repositorioMotorista;
+
+    @Autowired
+    protected IUsuarioDados repositorioUsuario;
+
+    @Autowired
+    protected UtilitarioAmbiente utilitarioAmbiente;
 
     @Autowired
     private UsuarioSd usuarioSd;
@@ -90,10 +99,18 @@ public class ValidadorAbastecimentoSd {
      */
     public void validarSenhaUsuario(String senhaUsuario) throws ExcecaoValidacao {
         try {
-            if (!usuarioSd.confirmaSenhaUsuarioInterno(senhaUsuario)) {
+            Usuario usuarioLogado = repositorioUsuario.obterPorId(utilitarioAmbiente.getUsuarioLogado().getId());
+            boolean senhaValida;
+            if (usuarioLogado.isInterno()) {
+                senhaValida = usuarioSd.confirmaSenhaUsuarioInterno(senhaUsuario);
+            } else {
+                senhaValida = usuarioSd.confirmarSenhaUsuarioExterno(usuarioLogado, senhaUsuario);
+            }
+
+            if (!senhaValida) {
                 throw new ExcecaoValidacao(mensagens.obterMensagem(Erro.AUTENTICACAO_CREDENCIAIS_INVALIDAS.getChaveMensagem()));
             }
-        } catch (ExcecaoAutenticacaoRemota e) {
+        } catch (ExcecaoAutenticacaoRemota | BadCredentialsException e) {
             LOGGER.error(e.getMessage(), e);
             throw new ExcecaoValidacao(mensagens.obterMensagem(Erro.AUTENTICACAO_CREDENCIAIS_INVALIDAS.getChaveMensagem()));
         }
@@ -148,7 +165,7 @@ public class ValidadorAbastecimentoSd {
             throw new ExcecaoValidacao(Erro.ERRO_EDICAO_FROTA_INATIVA,
                     mensagens.obterMensagem(Erro.ERRO_EDICAO_FROTA_INATIVA.getChaveMensagem(), frotaApresentacao));
         }
-        if (frota.isPrePago()) {
+        if (frota.isPrePaga()) {
             throw new ExcecaoValidacao(Erro.ERRO_EDICAO_FROTA_PREPAGA,
                     mensagens.obterMensagem(Erro.ERRO_EDICAO_FROTA_PREPAGA.getChaveMensagem()));
         }

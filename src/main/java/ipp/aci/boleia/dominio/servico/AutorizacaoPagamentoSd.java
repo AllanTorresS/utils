@@ -9,6 +9,7 @@ import ipp.aci.boleia.dominio.TransacaoConsolidada;
 import ipp.aci.boleia.dominio.enums.StatusAutorizacao;
 import ipp.aci.boleia.dominio.enums.StatusEdicao;
 import ipp.aci.boleia.dominio.enums.StatusNotaFiscalAbastecimento;
+import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
 import ipp.aci.boleia.dominio.enums.TipoPerfilUsuario;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
@@ -47,15 +48,27 @@ public class AutorizacaoPagamentoSd {
     @Autowired
     private IAutorizacaoPagamentoEdicaoDados repositorioAutorizacaoPagamentoEdicao;
 
+
     /**
-     * Obtem lista de abastecimentos para exportação de acordo com o filtro informado.
+     * Obtém lista de abastecimentos para exportação de acordo com o filtro informado.
      *
-     * @param filtro O filtro da ultima busca
+     * @param filtro O filtro da última busca
      * @return Uma Resultado Paginado de AutorizacaoPagamento
      */
     public ResultadoPaginado<AutorizacaoPagamento> pesquisarAbastecimentosParaExportacao(FiltroPesquisaAbastecimentoVo filtro) {
+        return pesquisarAbastecimentosParaExportacao(filtro, Collections.singletonList(new ParametroOrdenacaoColuna("dataProcessamento", Ordenacao.DECRESCENTE)));
+    }
+
+    /**
+     * Obtém lista de abastecimentos para exportação de acordo com o filtro informado.
+     *
+     * @param filtro O filtro da última busca
+     * @param ordenacao Parametros de ordenação da consulta
+     * @return Uma Resultado Paginado de AutorizacaoPagamento
+     */
+    public ResultadoPaginado<AutorizacaoPagamento> pesquisarAbastecimentosParaExportacao(FiltroPesquisaAbastecimentoVo filtro, List<ParametroOrdenacaoColuna> ordenacao) {
         filtro.getPaginacao().setTamanhoPagina(null);
-        filtro.getPaginacao().setParametrosOrdenacaoColuna(Collections.singletonList(new ParametroOrdenacaoColuna("dataProcessamento", Ordenacao.DECRESCENTE)));
+        filtro.getPaginacao().setParametrosOrdenacaoColuna(ordenacao);
         return repositorioAutorizacaoPagamento.pesquisaPaginada(filtro, true);
     }
 
@@ -98,13 +111,13 @@ public class AutorizacaoPagamentoSd {
      * Retorna lista de Autorizacao Pagamento Edicao que tem a necessidade de alterar o status
      * de edição de cada registro de Autorizacao Pagamento se o mesmo teve alguma alteracao
      *
-     * @param transacaoConsolidada Consolidado com os registros de Autorizacao Pagamento
+     * @param autorizacaoPagamentos Lista de abastecimentos presentes em um ciclo
      * @return Lista de AutorizacaoPagamentoEdicao que precisam ser alteradas
      */
-    public List<AutorizacaoPagamentoEdicao> obtemAutorizacoesPendentesDeUmConsolidado(TransacaoConsolidada transacaoConsolidada) {
+    public List<AutorizacaoPagamentoEdicao> obtemAutorizacoesPendentesDeUmConsolidado(List<AutorizacaoPagamento> autorizacaoPagamentos) {
         List<AutorizacaoPagamentoEdicao> autorizacoesPendentes = new ArrayList<>();
 
-        for (AutorizacaoPagamento autorizacaoPagamento: transacaoConsolidada.getAutorizacaoPagamentos()) {
+        for (AutorizacaoPagamento autorizacaoPagamento: autorizacaoPagamentos) {
             List<AutorizacaoPagamentoEdicao> edicoesPendentesAbastecimento = repositorioAutorizacaoPagamentoEdicao.pesquisar(
                             new FiltroPesquisaAutorizacaoPagamentoEdicaoVo(autorizacaoPagamento.getId(), StatusEdicao.PENDENTE, new ParametroOrdenacaoColuna[] {
                                     new ParametroOrdenacaoColuna("dataEdicao", Ordenacao.DECRESCENTE),
@@ -167,5 +180,164 @@ public class AutorizacaoPagamentoSd {
         autorizacao.setStatusNotaFiscal(StatusNotaFiscalAbastecimento.EMITIDA.getValue());
         autorizacao = repositorioAutorizacaoPagamento.armazenar(autorizacao);
         notificacaoUsuarioSd.enviarNotificacaoNotaFiscalEmitida(autorizacao, notaFiscal);
+    }
+
+    /**
+     * Verifica se a transacao positiva ajustada oriunda de um estorno esta no mesmo ciclo da transacao estornada
+     *
+     * @param autorizacaoOriginal abastecimento estornado
+     * @return true, se estiver no mesmo ciclo
+     */
+    public boolean transacaoAjustadaEstaNoMesmoCicloDaTransacaoEstornadaOriginal(AutorizacaoPagamento autorizacaoOriginal) {
+
+        AutorizacaoPagamento transacaoAjustada = repositorioAutorizacaoPagamento.obterTransacaoAjustadaOriundaDeEstorno(autorizacaoOriginal);
+
+        //verifica se o ciclo em que a transacao positiva ajustada foi criada coincide com o cilo mais atual (original ou de postergacao) da transacao estornada
+        return transacaoAjustada != null &&  transacaoAjustada.getTransacaoConsolidada() != null &&
+            transacaoAjustada.getTransacaoConsolidada().getId().equals(autorizacaoOriginal.getTransacaoConsolidadaVigente().getId());
+
+    }
+
+    /**
+     * Verifica se a transacao negativa oriunda de um estorno esta no mesmo ciclo da transacao estornada
+     *
+     * @param autorizacaoOriginal abastecimento estornado
+     * @return true, se estiver no mesmo ciclo
+     */
+    public boolean transacaoNegativaEstaNoMesmoCicloDaTransacaoEstornadaOriginal(AutorizacaoPagamento autorizacaoOriginal) {
+
+        AutorizacaoPagamento transacaoNegativa = repositorioAutorizacaoPagamento.obterTransacaoNegativaOriundaDeEstorno(autorizacaoOriginal);
+
+        //verifica se o ciclo em que a transacao negativa foi criada coincide com o cilo mais atual (original ou de postergacao) da transacao estornada
+        return transacaoNegativa != null && transacaoNegativa.getTransacaoConsolidada() != null &&
+            transacaoNegativa.getTransacaoConsolidada().getId().equals(autorizacaoOriginal.getTransacaoConsolidadaVigente().getId());
+    }
+
+    /**
+     * Verifica se uma transacao ja estava cancelada ou estornada quando seu ciclo mais atual (original ou de postergacao) foi fechado
+     *
+     * @param autorizacaoOriginal abastecimento original
+     * @return true, se a transacao original ja estava cancelada/estornada quando o ciclo foi fechado
+     */
+    private boolean transacaoEstavaCanceladaOuEstornadaQuandoCiCloFoiFechado(AutorizacaoPagamento autorizacaoOriginal, AutorizacaoPagamento transacaoNegativa) {
+
+        if(autorizacaoOriginal.estaCancelado()){
+            //Nota: se a transacao negativa estiver no ciclo mais atual da transacao original (cancelada/estornada), isso significa que a transacao original ja estava com status CANCELADO quando o ciclo foi fechado
+            return transacaoNegativa != null
+                    && transacaoNegativa.getTransacaoConsolidada().getId().equals(autorizacaoOriginal.getTransacaoConsolidadaVigente().getId());
+        }else{
+            return false;
+        }
+
+    }
+
+    /**
+     * Verifica se o valor de uma transacao cancelada/estornada deve ser descontado em ciclos posteriores
+     *
+     * @param autorizacaoOriginal abastecimento original
+     * @return true, se o valor da transacao tiver sido contemplado em algum reembolso gerado
+     */
+    public boolean valorDaTransacaoFoiContempladoEmReembolsoGerado(AutorizacaoPagamento autorizacaoOriginal) {
+
+        if(autorizacaoOriginal.estaCancelado()) {
+
+            AutorizacaoPagamento transacaoNegativa = repositorioAutorizacaoPagamento.obterTransacaoNegativaOriundaDeEstorno(autorizacaoOriginal);
+
+            if(transacaoNegativa != null){
+                //Nota: se a transacao nao tem pendencia de emissao e se ela estava autorizada no momento do fechamento de seu ciclo mais atual (original ou de postergacao), entao seu valor foi contemplado no reembolso gerado para esse ciclo
+                return autorizacaoOriginal.emitidaEmCicloFechado()
+                        && !transacaoEstavaCanceladaOuEstornadaQuandoCiCloFoiFechado(autorizacaoOriginal,transacaoNegativa);
+            }else{
+                return false;
+            }
+
+        }else{
+           return false;
+        }
+
+    }
+
+    /**
+     * Verifica se o valor de uma transacao que esta sendo cancelada foi considerado para calculo de reembolso gerado
+     *
+     * @param autorizacaoQueEstaSendoCancelada abastecimento que esta sendo cancelado
+     * @param cicloQueEstaSendoProcessado transacao consolidada que esta sendo processada
+     * @return true, se o valor da transacao tiver sido contemplado em algum reembolso gerado
+     */
+    public boolean valorDaTransacaoQueEstaSendoCanceladaFoiContempladoEmReembolsoGerado(AutorizacaoPagamento autorizacaoQueEstaSendoCancelada,
+                                                                                        TransacaoConsolidada cicloQueEstaSendoProcessado) {
+        //Nota: se a transacao nao tem pendencia de emissao e se ela estava autorizada no momento do fechamento de seu ciclo mais atual (original ou de postergacao), entao seu valor foi contemplado no reembolso gerado para esse ciclo
+        return cicloQueEstaSendoProcessado.getStatusConsolidacao().equals(StatusTransacaoConsolidada.FECHADA.getValue())
+                && !autorizacaoQueEstaSendoCancelada.isPendenteEmissaoNF(true);
+    }
+
+    /**
+     * Indica se uma transacao cancelada é relevante para exibição no detalhamento de notas fiscais e para contabilização na quantidade de transacoes do ciclo
+     * @param transacao transacao cancelada que deve ser avaliada quanto aos criterios de exibicao e contabilização
+     * @return true, se a transacao deve ser exibida
+     */
+    public boolean abastecimentoCanceladoDeveSerExibidoEContabilizado(AutorizacaoPagamento transacao){
+
+        //se o abastecimento for cancelado, o positivo cancelado so deve ser exibido na tela de NF na visao da revenda se seu valor tiver sido considerado para reembolso gerado ou se ele tiver sido postergado
+        return valorDaTransacaoFoiContempladoEmReembolsoGerado(transacao)
+                || transacao.getTransacaoConsolidadaPostergada() != null;
+    }
+
+    /**
+     * Indica se uma transacao cancelada é relevante para contabilização na quantidade de transacoes do ciclo na atualizacao da quantidade realizada logo apos o cancelamento
+     * @param transacaoQueEstaSendoCancelada transacao que esta sendo cancelada
+     * @param cicloQueEstaSendoProcessado transacao consolidada que esta sendo processada
+     * @return true, se a transacao deve ser contabilizada
+     */
+    public boolean abastecimentoCanceladoDeveSerContabilizadoNoCicloImediatamenteAposCancelamento(AutorizacaoPagamento transacaoQueEstaSendoCancelada,
+                                                                                                    TransacaoConsolidada cicloQueEstaSendoProcessado){
+
+        //se o abastecimento for cancelado, o positivo cancelado so deve ser exibido na tela de NF na visao da revenda se seu valor tiver sido considerado para reembolso gerado ou se ele tiver sido postergado
+        return valorDaTransacaoQueEstaSendoCanceladaFoiContempladoEmReembolsoGerado(transacaoQueEstaSendoCancelada, cicloQueEstaSendoProcessado)
+                || transacaoQueEstaSendoCancelada.getTransacaoConsolidadaPostergada() != null;
+    }
+
+    /**
+     * Indica se uma transacao estornada é relevante para exibição no detalhamento de notas fiscais e para contabilização na quantidade de transacoes do ciclo
+     * @param transacao transacao estornada que deve ser avaliada quanto aos criterios de exibicao e contabilização
+     * @param idConsolidadoQueEstaSendoVisualizadoOuProcessado identificador do ciclo que está sendo viauslizado ou processado
+     * @return true, se a transacao deve ser exibida
+     */
+    public boolean abastecimentoEstornadoDeveSerExibidoEContabilizado(AutorizacaoPagamento transacao, Long idConsolidadoQueEstaSendoVisualizadoOuProcessado){
+
+        //abastecimentos estornados sempre devem ser exibidos no ciclo de origem
+        if(transacao.getTransacaoConsolidada() != null && transacao.getTransacaoConsolidada().getId().equals(idConsolidadoQueEstaSendoVisualizadoOuProcessado)){
+            return true;
+        }else{
+            //se o abastecimento for estornado, o positivo cancelado so vai ser exibido na tela de NF do ciclo de postergacao na visao da revenda se
+            //ele nao tiver pendencia de emissao e se a transacao positiva ajustada nao estiver no ciclo mais atual (de origem ou postergacao) do abastecimento estornado que a originou e se a transacao negativa estiver no ciclo mais atual (de origem ou postergacao) do abastecimento estornado que a originou
+            //(cenario de estorno de abastecimento postergado com emissao em ciclo em ajuste)
+            return !transacao.isPendenteEmissaoNF(true)
+                    && !transacaoAjustadaEstaNoMesmoCicloDaTransacaoEstornadaOriginal(transacao)
+                    && transacaoNegativaEstaNoMesmoCicloDaTransacaoEstornadaOriginal(transacao);
+
+        }
+
+    }
+
+    /**
+     * Indica se uma transacao estornada é relevante para contabilização na atualizacao da quantidade de transacoes do ciclo realizada imediatamente apos o estorno
+     * @param transacaoQueEstaSendoEstornada transacao que esta sendo estornada
+     * @param cicloQueEstaSendoProcessado ciclo que está sendo processado
+     * @return true, se a transacao deve ser contabilizada
+     */
+    public boolean abastecimentoEstornadoDeveSerContabilizadoNoCicloImediatamenteAposEstorno(AutorizacaoPagamento transacaoQueEstaSendoEstornada, TransacaoConsolidada cicloQueEstaSendoProcessado){
+
+        //abastecimentos estornados sempre devem ser exibidos no ciclo de origem
+        if(transacaoQueEstaSendoEstornada.getTransacaoConsolidada() != null && transacaoQueEstaSendoEstornada.getTransacaoConsolidada().getId().equals(cicloQueEstaSendoProcessado.getId())){
+            return true;
+        }else{
+            //se o abastecimento for estornado, o positivo cancelado so vai ser exibido na tela de NF do ciclo de postergacao na visao da revenda se
+            //ele nao tiver pendencia de emissao e se o estorno estiver sendo realizado com o ciclo em ajustes
+            return !transacaoQueEstaSendoEstornada.isPendenteEmissaoNF(true)
+                    && cicloQueEstaSendoProcessado.esta(StatusTransacaoConsolidada.EM_AJUSTE);
+
+        }
+
     }
 }

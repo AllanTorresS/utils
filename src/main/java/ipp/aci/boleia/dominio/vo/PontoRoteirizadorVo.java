@@ -24,6 +24,9 @@ public class PontoRoteirizadorVo extends PontoRotaVo {
     @JsonProperty("nm_ptov")
     private String nomePtov;
 
+    @JsonProperty("preco_negociado")
+    private Boolean precoNegociado;
+
     private BigDecimal latitude;
 
     private BigDecimal longitude;
@@ -96,5 +99,13 @@ public class PontoRoteirizadorVo extends PontoRotaVo {
     @Override
     public void setLongitude(BigDecimal longitude) {
         this.longitude = longitude;
+    }
+
+    public Boolean isPrecoNegociado() {
+        return precoNegociado;
+    }
+
+    public void setPrecoNegociado(Boolean precoNegociado) {
+        this.precoNegociado = precoNegociado;
     }
 }

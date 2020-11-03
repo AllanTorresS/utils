@@ -21,7 +21,7 @@ public class ValidacaoCodigoVipPermitidoSd {
      * @throws ExcecaoValidacao Caso a validação falhe
      */
     public void validar(Transacao transacao) throws ExcecaoValidacao {
-        if(!transacao.getPosto().isBandeiraBranca() && (transacao.getCodigoVip() == null || !transacao.getCodigoVip().matches("\\d\\d+") || transacao.getPosto() == null)){
+        if(transacao.getPosto().isBandeiraIpiranga() && (transacao.getCodigoVip() == null || !transacao.getCodigoVip().matches("\\d\\d+") || transacao.getPosto() == null)){
             throw new ExcecaoValidacao(mensagens.obterMensagem("agentefrete.api.validacao.posto.vip.invalido"));
         }
     }

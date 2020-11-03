@@ -26,6 +26,11 @@ public abstract class GrupoParametrosPesquisa extends ParametroPesquisa {
         this.parametros = parametros;
     }
 
+    /**
+     * Adiciona um parametro a lista de parametros.
+     *
+     * @param parametro parametro a ser incluso na lista.
+     */
     public void addParametro(ParametroPesquisa parametro) {
         if(parametro != null) {
             if(this.parametros == null) {

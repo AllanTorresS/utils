@@ -23,6 +23,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
+import javax.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -64,6 +65,7 @@ public class FrotaPontoVenda implements IPersistente, IPertenceFrota, IPertenceR
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "frotaPtov")
     private List<TransacaoConsolidada> transacoesConsolidadas;
 
+    @NotNull
     @Column(name = "ID_BLOQUEADO")
     private Integer statusBloqueio;
     

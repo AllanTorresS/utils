@@ -13,7 +13,8 @@ public enum StatusPagamentoReembolso implements IEnumComLabel<StatusPagamentoRee
     ATRASADO(2),
     AGUARDANDO_NF(3),
     NF_ATRASADA(4),
-    DEBITO_EM_ABERTO(5);
+    A_DESCONTAR(5),
+    PREVISTO(6);
 
     private final Integer value;
 
