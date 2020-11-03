@@ -6,11 +6,7 @@
 
     <groupId>ipp.aci.boleia</groupId>
     <artifactId>boleia-dominioUtil</artifactId>
-<<<<<<< HEAD
     <version>4.5.10</version>
-=======
-    <version>4.4.5</version>
->>>>>>> refs/tags/D4.4.5
 
     <properties>
         <main.basedir>${project.basedir}</main.basedir>
