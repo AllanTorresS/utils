@@ -41,7 +41,7 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
     " SELECT p " +
             " FROM Preco p " +
             "     JOIN p.precoBase pb " +
-            "     JOIN pb.precoMicromerdado pm " +
+            "     JOIN pb.precoMicromercado pm " +
             "     JOIN pm.tipoCombustivel tc " +
             "     JOIN p.frotaPtov fptov " +
             "     JOIN fptov.frota f " +
@@ -49,12 +49,13 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
             " WHERE " +
             "     tc.id = :idCombustivel " +
             "     AND pv.id = :idPontoVenda " +
+
             "     AND (f.id IS NULL OR f.id = :idFrota ) " +
             "     AND (p.dataVigencia <= :dataAbastecimento OR p.dataAtualizacao <= :dataAbastecimento) " +
-            "     AND p.statusConsolidacao in :status " +
-            "     ORBER BY  " +
-            "     (CASE WHEN p.dataVigente is null then 0 else 1) desc,  " +
-            "     p.dataVigencia desc , p.dataAtualizacao desc ";
+            "     AND p.status IN :status " +
+            "     ORDER BY  " +
+            "     (CASE WHEN p.dataVigencia IS NULL THEN 0 ELSE 1 END) DESC,  " +
+            "     p.dataVigencia DESC , p.dataAtualizacao DESC ";
 
     @Autowired
     private UtilitarioAmbiente ambiente;
@@ -91,10 +92,7 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
 
     @Override
     public Preco obterPorDataFrotaPvCombustivel(Long idFrota, Long idPontoVenda, Long idTipoCombustivel, Date dataAbastecimento) {
-        InformacaoPaginacao paginacao = new InformacaoPaginacao();
-        paginacao.setPagina(1);
-        paginacao.setTamanhoPagina(1);
-
+        
         List<Integer> statusValidos = new ArrayList<>();
         statusValidos.add(StatusPreco.VIGENTE.getValue());
         statusValidos.add(StatusPreco.ACEITO.getValue());
@@ -107,7 +105,7 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
         parametros.add(new ParametroPesquisaDataMenorOuIgual("dataAbastecimento", dataAbastecimento));
         parametros.add(new ParametroPesquisaIn("status", statusValidos));
 
-        List<Preco> precosAcordo = pesquisar(paginacao, CONSULTA_NEGOCIACOES, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+        List<Preco> precosAcordo = pesquisar(null, CONSULTA_NEGOCIACOES, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
         return precosAcordo.stream().findFirst().orElse(null);
     }
 
@@ -179,8 +177,10 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
                 parametros.add(new ParametroPesquisaLike("frotaPtov.pontoVenda.rede.nomeRede", filtro.getNomeRede()));
             }
             if (filtro.getDataAtualizacao() != null) {
-                parametros.add(new ParametroPesquisaOr(new ParametroPesquisaAnd(new ParametroPesquisaDataMaiorOuIgual("dataAtualizacao", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDataAtualizacao())), new ParametroPesquisaDataMenorOuIgual("dataAtualizacao", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getDataAtualizacao()))),
-                        new ParametroPesquisaAnd(new ParametroPesquisaDataMaiorOuIgual("dataSolicitacao", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDataAtualizacao())), new ParametroPesquisaDataMenorOuIgual("dataSolicitacao", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getDataAtualizacao())), new ParametroPesquisaNulo("dataAtualizacao"))));
+                parametros.add(new ParametroPesquisaOr(
+                    new ParametroPesquisaAnd(new ParametroPesquisaDataMaiorOuIgual("dataAtualizacao", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDataAtualizacao())), new ParametroPesquisaDataMenorOuIgual("dataAtualizacao", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getDataAtualizacao())), new ParametroPesquisaNulo("dataVigencia")),
+                    new ParametroPesquisaAnd(new ParametroPesquisaDataMaiorOuIgual("dataVigencia", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDataAtualizacao())), new ParametroPesquisaDataMenorOuIgual("dataVigencia", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getDataAtualizacao()))))
+                );
             }
         }
         montarParametroOrdenacaoPreco(filtro.getPaginacao(), parametros);
