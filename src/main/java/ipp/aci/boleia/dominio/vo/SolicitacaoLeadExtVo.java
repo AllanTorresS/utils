@@ -33,7 +33,7 @@ public class SolicitacaoLeadExtVo {
 	@JsonProperty("QtdeVeiculosPesados__c")
     private String qdtVeiculosPesados;
 	
-	@JsonProperty("QtdVeicTagEquip__c")
+	@JsonProperty("QtdeVeiculosTAGEquip__c")
     private String qdtVeiculoTagEquip;
 	
 	@JsonProperty("GastoMensalPedagio__c")
