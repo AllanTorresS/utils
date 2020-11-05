@@ -565,4 +565,28 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     public List<AutorizacaoPagamento> getAutorizacoesPagamentoAssociadas() {
         return Stream.concat(getAutorizacaoPagamentosStream(), getAutorizacoesPagamentoPostergadasStream()).collect(Collectors.toList());
     }
+
+    /**
+     *  Verifica se todos os abastecimentos do consolidados são negativos ou não
+     * @return true, caso todos sejam negativos, ou false, caso contrário
+     */
+    @Transient
+    public boolean todasTransacoesSaoNegativas(){
+        if (getQuantidadeAbastecimentos() == 0){
+            return getAutorizacoesPagamentoAssociadas().stream()
+                .filter(AutorizacaoPagamento::estaAutorizadaOuCancelada)
+                .noneMatch(autorizacaoPagamento -> autorizacaoPagamento.getValorTotal().compareTo(BigDecimal.ZERO) >= 0);
+        }
+        return false;
+    }
+
+    /**
+     *  Verifica se todos os abastecimentos do consolidados são cancelados ou não
+     * @return true, caso todos sejam cancelados, ou false, caso contrário
+     */
+    @Transient
+    public boolean todasTransacoesSaoCanceladas(){
+        return getAutorizacoesPagamentoAssociadas().stream()
+                .allMatch(AutorizacaoPagamento::estaCancelado);
+    }
 }
