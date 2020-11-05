@@ -225,7 +225,7 @@ public class AwsArmazenamentoDados implements InitializingBean, IArmazenamentoDa
         ResponseHeaderOverrides headerOverrides = new ResponseHeaderOverrides();
 
         if (StringUtils.isNotEmpty(nomeParaDownload)) {
-            headerOverrides.withContentDisposition("attachment; filename =\"" + nomeParaDownload + "\"");
+            headerOverrides.withContentDisposition("attachment; filename =\"" + nomeParaDownload + tipo.getSufixo() +  "\"");
         }
 
         GeneratePresignedUrlRequest generatePresignedUrlRequest =
