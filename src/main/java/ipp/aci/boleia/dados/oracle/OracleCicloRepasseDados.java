@@ -20,7 +20,6 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaCicloRepasseVo;
 import ipp.aci.boleia.util.Ordenacao;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
-import ipp.aci.boleia.util.UtilitarioFormatacaoData;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
