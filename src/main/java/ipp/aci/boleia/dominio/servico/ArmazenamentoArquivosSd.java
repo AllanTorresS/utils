@@ -135,6 +135,21 @@ public class ArmazenamentoArquivosSd {
     }
 
     /**
+     * Obtem o stream do arquivo presente no bucket do Boleia na AWS (S3)
+     *
+     * @param tipoArquivo tipo arquivo
+     * @param idEntidadeRelacionada identificador da entidade que contem o arquivo
+     * @param nomeArquivo nome do arquivo
+     * @return O stream do arquivo
+     * @throws ExcecaoArquivoNaoEncontrado quando o arquivo nao existe no S3
+     */
+    public InputStream obterArquivo(TipoArquivo tipoArquivo, Long idEntidadeRelacionada, String nomeArquivo)
+            throws ExcecaoArquivoNaoEncontrado {
+        exigirPermissaoAcesso(tipoArquivo, idEntidadeRelacionada);
+        return armazenamentoArquivos.obterArquivo(tipoArquivo, nomeArquivo);
+    }
+
+    /**
      * Armazena um arquivo no bucket do boleia amazon
      *
      * @param tipoArquivo tipo arquivo
