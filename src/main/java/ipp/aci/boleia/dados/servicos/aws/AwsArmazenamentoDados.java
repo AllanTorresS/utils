@@ -22,7 +22,6 @@ import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.excecao.ExcecaoArquivoNaoEncontrado;
 import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -235,16 +234,8 @@ public class AwsArmazenamentoDados implements InitializingBean, IArmazenamentoDa
         if (id < 0L) {
             throw new ExcecaoArquivoNaoEncontrado();
         }
-        return this.obterArquivo(tipo, id.toString());
-    }
-
-    @Override
-    public InputStream obterArquivo(TipoArquivo tipo, String nomeArquivo) throws ExcecaoArquivoNaoEncontrado {
-        if (StringUtils.isEmpty(nomeArquivo)) {
-            throw new ExcecaoArquivoNaoEncontrado();
-        }
         InputStream inputStream;
-        String caminhoArquivo = tipo.montarCaminhoAcesso(nomeArquivo);
+        String caminhoArquivo = tipo.montarCaminhoAcesso(id.toString());
         try (S3Object s3Object = clienteS3.getObject(bucketName, caminhoArquivo)) {
             ByteArrayOutputStream temp = new ByteArrayOutputStream();
             UtilitarioStreams.copiarStream(s3Object.getObjectContent(), temp);

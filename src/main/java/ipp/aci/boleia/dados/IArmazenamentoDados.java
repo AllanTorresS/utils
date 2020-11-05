@@ -47,16 +47,6 @@ public interface IArmazenamentoDados {
     InputStream obterArquivo(TipoArquivo tipo, Long id) throws ExcecaoArquivoNaoEncontrado;
 
     /**
-     * Obtem o conteudo de um arquivo no bucket do boleia amazon
-     *
-     * @param tipo  tipo arquivo
-     * @param nome  nome do arquivo
-     * @return stream do arquivo
-     * @throws ExcecaoArquivoNaoEncontrado Quando o arquivo não existe no storage
-     */
-    InputStream obterArquivo(TipoArquivo tipo, String nome) throws ExcecaoArquivoNaoEncontrado;
-
-    /**
      * Obtém um arquivo em um caminho do bucket e o move para outro caminho dentro do mesmo bucket
      *
      * @param origem Tipo de arquivo de origem
