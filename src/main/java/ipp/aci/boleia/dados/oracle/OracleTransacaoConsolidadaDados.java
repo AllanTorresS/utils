@@ -271,7 +271,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             "SELECT tc " +
                     "FROM TransacaoConsolidada tc " +
                     "LEFT JOIN tc.frotaPtov fpv " +
-                    "LEFT JOIN tc.reembolso r " +
+                    "JOIN tc.reembolso r " +
                     "WHERE tc.dataInicioPeriodo >= :dataInicioPeriodo AND tc.dataFimPeriodo <= :dataFimPeriodo " +
                     "AND (fpv.pontoVenda.id IN :idsPvs) " +
                     "AND (fpv.frota.id = :idFrota OR :idFrota is null) " +
