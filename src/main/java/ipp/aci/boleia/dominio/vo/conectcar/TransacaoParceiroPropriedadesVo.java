@@ -9,12 +9,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  */
 public class TransacaoParceiroPropriedadesVo {
-	
+
 	@JsonProperty("CodigoInternoParceiro")
 	private String codigoInternoParceiro;
 
 	@JsonProperty("DataDePassagem")
 	private Date dataDePassagem;
+
+	@JsonProperty("NumeroSerieTag")
+	private String numeroSerieTag;
 
 	@JsonProperty("PassagemId")
 	private Long passagemId;
@@ -31,8 +34,8 @@ public class TransacaoParceiroPropriedadesVo {
 	@JsonProperty("TransacaoOrigemId")
 	private Long transacaoOrigemId;
 
-	@JsonProperty("IdentificadorPraca")
-	private String identificadorPraca;
+	@JsonProperty("IdentificacaoPraca")
+	private String identificacaoPraca;
 
 	@JsonProperty("Protocolo")
 	private String protocolo;
@@ -88,12 +91,12 @@ public class TransacaoParceiroPropriedadesVo {
 		this.transacaoOrigemId = transacaoOrigemId;
 	}
 
-	public String getIdentificadorPraca() {
-		return identificadorPraca;
+	public String getIdentificacaoPraca() {
+		return identificacaoPraca;
 	}
 
-	public void setIdentificadorPraca(String identificadorPraca) {
-		this.identificadorPraca = identificadorPraca;
+	public void setIdentificacaoPraca(String identificacaoPraca) {
+		this.identificacaoPraca = identificacaoPraca;
 	}
 
 	public String getProtocolo() {
@@ -110,6 +113,14 @@ public class TransacaoParceiroPropriedadesVo {
 
 	public void setDataContestacao(Date dataContestacao) {
 		this.dataContestacao = dataContestacao;
+	}
+
+	public String getNumeroSerieTag() {
+		return numeroSerieTag;
+	}
+
+	public void setNumeroSerieTag(String numeroSerieTag) {
+		this.numeroSerieTag = numeroSerieTag;
 	}
 
 }
