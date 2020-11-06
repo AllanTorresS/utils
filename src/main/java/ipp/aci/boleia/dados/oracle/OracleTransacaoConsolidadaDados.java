@@ -337,7 +337,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "WHERE FP.pontoVenda.id IN :idsPvs AND " +
                     "      TRUNC(TC.dataInicioPeriodo) >= TRUNC(:dataInicio) AND " +
                     "      TRUNC(TC.dataFimPeriodo) <= TRUNC(:dataFim) AND " +
-                    "      (TC.empresaAgregada IS NOT NULL OR TC.unidade IS NOT NULL OR F.semNotaFiscal IS NULL OR F.semNotaFiscal = false) " +
+                    "      (TC.empresaAgregada IS NOT NULL OR TC.unidade IS NOT NULL OR F.semNotaFiscal IS NULL OR F.semNotaFiscal = false) AND " +
+                    "       (TC.reembolso is NULL OR (TC.reembolso IS NOT NULL AND (RM.status = " + StatusPagamentoReembolso.PREVISTO.getValue() + " OR TRUNC(RM.dataVencimentoPgto) >= TRUNC(:dataAtual)))) " +
                     "GROUP BY TC.dataInicioPeriodo, TC.dataFimPeriodo, TC.statusConsolidacao " +
                     "ORDER BY CASE WHEN TC.statusConsolidacao = " + StatusTransacaoConsolidada.EM_AJUSTE.getValue() + " THEN 1 " +
                     "              WHEN TC.statusConsolidacao = " + StatusTransacaoConsolidada.EM_ABERTO.getValue() + " THEN 2 " +
@@ -1000,6 +1001,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         List<ParametroPesquisa> parametrosPesquisa = new ArrayList<>();
         parametrosPesquisa.add(new ParametroPesquisaIgual("dataInicio", dataInicioPeriodo));
         parametrosPesquisa.add(new ParametroPesquisaIgual("dataFim", dataFimPeriodo));
+        parametrosPesquisa.add(new ParametroPesquisaIgual("dataAtual", ambiente.buscarDataAmbiente()));
         if(idPv != null) {
             parametrosPesquisa.add(new ParametroPesquisaIn("idsPvs", Collections.singletonList(idPv)));
         } else if(usuarioLogado.isRevendedor()) {
