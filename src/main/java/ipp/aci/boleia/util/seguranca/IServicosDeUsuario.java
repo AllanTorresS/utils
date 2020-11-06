@@ -13,5 +13,5 @@ public interface IServicosDeUsuario {
     Usuario obterPorIdComPermissoes(long id);
     Usuario povoarPermissoesUsuario(Usuario usuario);
     boolean credenciaisValidas(Usuario usuario, String senha);
-
+    Usuario obterPorIdSemIsolamentoComPermissoes(long id);
 }
