@@ -123,12 +123,16 @@ public class FiltroAutenticacaoJwt implements Filter {
         chain.doFilter(request, response);
     }
 
+    /**
+     * Registra um usuário que requisitou emissão de relatório na sessão
+     * @param id O id do usuário
+     */
     private void registrarUsuarioRelatorioSessao(String id) {
         ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
         HttpSession session = attr.getRequest().getSession();
         try {
             Long idUsuario = Long.parseLong(id);
-            Usuario usuario = servicosDeUsuario.obterPorIdComPermissoes(idUsuario);
+            Usuario usuario = servicosDeUsuario.obterPorIdSemIsolamentoComPermissoes(idUsuario);
             if (usuario != null) {
                 session.setAttribute(ambiente.getChaveHeaderUsuarioRelatorio(), usuario);
             }

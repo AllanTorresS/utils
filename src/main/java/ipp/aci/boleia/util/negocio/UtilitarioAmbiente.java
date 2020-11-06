@@ -99,15 +99,17 @@ public class UtilitarioAmbiente {
      */
     public Usuario getUsuarioLogado() {
         Usuario usuario = ProvedorAutenticacao.getUsuarioLogado();
-        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-        HttpSession session = attr.getRequest().getSession();
-        if (session.getAttribute(CHAVE_HEADER_USUARIO_RELATORIO) != null) {
-            Object usuarioRelatorio = session.getAttribute(CHAVE_HEADER_USUARIO_RELATORIO);
-           if (usuarioRelatorio != null && usuarioRelatorio instanceof Usuario){
-               return (Usuario) usuarioRelatorio;
-           }
-           return usuario;
-       }
+        if (RequestContextHolder.getRequestAttributes() != null) {
+            ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+            HttpSession session = attr.getRequest().getSession();
+            if (session.getAttribute(CHAVE_HEADER_USUARIO_RELATORIO) != null) {
+                Object usuarioRelatorio = session.getAttribute(CHAVE_HEADER_USUARIO_RELATORIO);
+                if (usuarioRelatorio != null && usuarioRelatorio instanceof Usuario) {
+                    return (Usuario) usuarioRelatorio;
+                }
+                return usuario;
+            }
+        }
        return usuario;
     }
 
