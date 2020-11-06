@@ -8,8 +8,8 @@ import ipp.aci.boleia.util.i18n.IEnumComLabel;
  */
 public enum StatusAtivado implements IEnumComLabel<StatusAtivado> {
 
-    ATIVADO(1),
-    DESATIVADO(0);
+    ATIVO(1),
+    INATIVO(0);
 
     public static final String DECODE_FORMULA = "DECODE(ID_STATUS, 1, 'AT', 0, 'DE')";
 
