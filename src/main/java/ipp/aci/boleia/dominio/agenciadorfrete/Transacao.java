@@ -88,11 +88,11 @@ public class Transacao implements IPersistente {
     private Long versao;
 
     public boolean temSaque() {
-        return  saque != null;
+        return saque != null;
     }
 
     public boolean temAbastecimento() {
-        return  abastecimento != null;
+        return abastecimento != null;
     }
 
     @Override

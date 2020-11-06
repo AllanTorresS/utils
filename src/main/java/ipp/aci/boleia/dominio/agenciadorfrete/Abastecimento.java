@@ -72,7 +72,7 @@ public class Abastecimento implements IPersistente {
      * @return valor relativo do Fee em relação ao valor do MDR
      */
     public BigDecimal obterValorTotalFee() {
-        return obterValorMdr().multiply(getTaxaFee().divide(BigDecimal.valueOf(100L), 2, BigDecimal.ROUND_HALF_UP));
+        return obterValorMdr().multiply(getTaxaFee()).divide(BigDecimal.valueOf(100L), 2, BigDecimal.ROUND_HALF_UP);
     }
 
 
@@ -91,7 +91,7 @@ public class Abastecimento implements IPersistente {
      * @return valor relativo do MDR em relação ao valor do abastecimento
      */
     public BigDecimal obterValorMdr() {
-        return obterValorTotal().multiply(getMdr()).divide(BigDecimal.valueOf(100L), 2, BigDecimal.ROUND_HALF_UP);
+        return obterValorTotal().multiply(getMdr()).divide(BigDecimal.valueOf(100L), BigDecimal.ROUND_HALF_UP);
     }
 
     @Override
