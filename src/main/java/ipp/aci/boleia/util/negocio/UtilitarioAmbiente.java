@@ -22,7 +22,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.json.JsonParserFactory;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -41,6 +44,8 @@ public class UtilitarioAmbiente {
     private static final String RESPOSTA_SUCESSO_RECAPTCHA = "success";
 
     private static final String AMBIENTE_PRODUCAO = "prd";
+
+    private static final String CHAVE_HEADER_USUARIO_RELATORIO = "USUARIO_RELATORIO";
 
     @Value("${identificador.ambiente}")
     private String identificadorAmbiente;
@@ -93,7 +98,17 @@ public class UtilitarioAmbiente {
      * @return O usuario logado no sistema
      */
     public Usuario getUsuarioLogado() {
-       return ProvedorAutenticacao.getUsuarioLogado();
+        Usuario usuario = ProvedorAutenticacao.getUsuarioLogado();
+        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+        HttpSession session = attr.getRequest().getSession();
+        if (session.getAttribute(CHAVE_HEADER_USUARIO_RELATORIO) != null) {
+            Object usuarioRelatorio = session.getAttribute(CHAVE_HEADER_USUARIO_RELATORIO);
+           if (usuarioRelatorio != null && usuarioRelatorio instanceof Usuario){
+               return (Usuario) usuarioRelatorio;
+           }
+           return usuario;
+       }
+       return usuario;
     }
 
     /**
@@ -244,5 +259,9 @@ public class UtilitarioAmbiente {
         } catch (UnknownHostException e) {
             return "";
         }
+    }
+
+    public static String getChaveHeaderUsuarioRelatorio() {
+        return CHAVE_HEADER_USUARIO_RELATORIO;
     }
 }
