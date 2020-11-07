@@ -63,6 +63,7 @@ public class ArmazenamentoArquivosSd {
         repositoriosPorTipoArquivo.put(TipoArquivo.RELATORIO_48_HORAS_XLSX, arquivoDados);
         repositoriosPorTipoArquivo.put(TipoArquivo.RELATORIO_48_HORAS_TXT, arquivoDados);
         repositoriosPorTipoArquivo.put(TipoArquivo.RELATORIO_48_HORAS_PDF, arquivoDados);
+        repositoriosPorTipoArquivo.put(TipoArquivo.RELATORIO_48_HORAS_PDF_TEMP_DATASOURCE, arquivoDados);
     }
 
     /**
