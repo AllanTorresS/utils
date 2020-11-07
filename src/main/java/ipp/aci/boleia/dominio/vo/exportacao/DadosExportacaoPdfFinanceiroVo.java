@@ -3,7 +3,7 @@ package ipp.aci.boleia.dominio.vo.exportacao;
 /**
  * Vo com as informações utilizadas na exportação de PDF da tela do Financeiro.
  */
-public class DadosExportacaoPdfFinanceiroVo extends DadosExportacaoPdfBaseVo<RegistroExportacaoPdfCicloFinanceiroVo> {
+public class DadosExportacaoPdfFinanceiroVo extends DadosExportacaoPdfBaseVo {
     private String filtroPeriodo;
     private String filtroFrota;
     private String filtroPosto;

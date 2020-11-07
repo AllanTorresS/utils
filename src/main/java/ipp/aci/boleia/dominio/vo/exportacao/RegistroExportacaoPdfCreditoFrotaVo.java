@@ -3,7 +3,7 @@ package ipp.aci.boleia.dominio.vo.exportacao;
 /**
  * Representa um registro exibido na linha do relatório de PDF.
  */
-public class RegistroExportacaoPdfCreditoFrotaVo {
+public class RegistroExportacaoPdfCreditoFrotaVo extends RegistroExportacaoPdfBaseVo {
     public String frotaNome;
     public String frotaCnpj;
     public String modalidadeDePagamento;

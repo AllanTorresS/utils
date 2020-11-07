@@ -3,7 +3,7 @@ package ipp.aci.boleia.dominio.vo.exportacao;
 /**
  * Classe de mapeamento de campos do relatório de PDF.
  */
-public class DadosExportacaoPdfCreditoFrotaVo extends DadosExportacaoPdfBaseVo<RegistroExportacaoPdfCreditoFrotaVo> {
+public class DadosExportacaoPdfCreditoFrotaVo extends DadosExportacaoPdfBaseVo {
     private String filtroFrota;
     private String filtroModalidadePagamento;
     private String filtroStatusFrota;

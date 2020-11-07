@@ -3,7 +3,7 @@ package ipp.aci.boleia.dominio.vo.exportacao;
 /**
  * Representa um ciclo exibido na exportação em PDF do financeiro.
  */
-public class RegistroExportacaoPdfCicloFinanceiroVo {
+public class RegistroExportacaoPdfCicloFinanceiroVo extends RegistroExportacaoPdfBaseVo {
 
     public String periodo;
     public String cicloFrota;
