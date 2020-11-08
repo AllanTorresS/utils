@@ -89,6 +89,9 @@ public class MotorGeracaoRelatorios implements IPersistente {
     @Column(name = "NO_ULTIMA_PAGINA_PROCESSADA")
     private Integer ultimaPaginaProcessada;
 
+    @Column(name = "NO_TOTAL_PAGINAS")
+    private Integer totalDePaginas;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "motorGeracaoRelatorio", fetch = FetchType.EAGER, orphanRemoval = true)
     private List<AbaRelatorio> abasRelatorio;
 
@@ -168,6 +171,14 @@ public class MotorGeracaoRelatorios implements IPersistente {
 
     public Integer getUltimaPaginaProcessada() {
         return ultimaPaginaProcessada != null ? ultimaPaginaProcessada : 0;
+    }
+
+    public Integer getTotalDePaginas() {
+        return totalDePaginas != null ? totalDePaginas : 0;
+    }
+
+    public void setTotalDePaginas(Integer totalDePaginas) {
+        this.totalDePaginas = totalDePaginas;
     }
 
     public void setUltimaPaginaProcessada(Integer ultimaPaginaProcessada) {

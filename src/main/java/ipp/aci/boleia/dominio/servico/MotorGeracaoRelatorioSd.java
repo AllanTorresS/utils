@@ -127,7 +127,9 @@ public class MotorGeracaoRelatorioSd {
      * @param motor O objeto do motor a ser restaurado
      */
     public void preparaMotorParaRefazerRelatorio(MotorGeracaoRelatorios motor) {
+        motor.setMsgErro(null);
         motor.setUltimaPaginaProcessada(null);
+        motor.setTotalDePaginas(null);
         motor.getAbasRelatorio().forEach(abaRelatorio -> {
             abaRelatorio.setRegistrosProcessados(null);
             abaRelatorio.setTotalRegistros(null);
