@@ -63,7 +63,7 @@ public class MotorGeracaoRelatorioSd {
 
         m.setDataPeriodoFiltradoInicial(dataPeriodoFiltradoInicial);
         m.setDataPeriodoFiltradoFinal(dataPeriodoFiltradoFinal);
-        m.setStatus(StatusMotorGeradorRelatorio.EM_ANDAMENTO_AGUARDANDO.getValue());
+        m.setStatus(StatusMotorGeradorRelatorio.EM_ANDAMENTO.getValue());
 
         m.setUsuario(usuarioLogado);
         m.setFiltro(UtilitarioJson.toJSON(filtroRelatorio));

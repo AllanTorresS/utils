@@ -8,13 +8,12 @@ import ipp.aci.boleia.util.i18n.IEnumComLabel;
  */
 public enum StatusMotorGeradorRelatorio implements IEnumComLabel<StatusMotorGeradorRelatorio> {
 
-    EM_ANDAMENTO_AGUARDANDO(0),
+    EM_ANDAMENTO(0),
     CONCLUIDO(1),
     CANCELADO(2),
     EXCLUIDO(3),
     ERRO(4),
-    REGISTROS_NAO_ENCONTRADOS(5),
-    EM_ANDAMENTO_PROCESSANDO(6);
+    REGISTROS_NAO_ENCONTRADOS(5);
 
     private final Integer value;
 
