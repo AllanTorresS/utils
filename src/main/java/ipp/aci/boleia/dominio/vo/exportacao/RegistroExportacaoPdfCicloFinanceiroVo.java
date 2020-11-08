@@ -5,26 +5,26 @@ package ipp.aci.boleia.dominio.vo.exportacao;
  */
 public class RegistroExportacaoPdfCicloFinanceiroVo extends RegistroExportacaoPdfBaseVo {
 
-    public String periodo;
-    public String cicloFrota;
-    public String frotaNome;
-    public String frotaCnpj;
-    public String postoNome;
-    public String postoCnpj;
-    public String faturamento;
-    public String reembolso;
-    public String taxa;
-    public String numTransacoes;
-    public String prazoReembolso;
-    public String statusReembolso;
-    public String prazoNotaFiscal;
-    public String statusNotaFiscal;
-    public String totalEmitido;
-    public String totalNf;
-    public Integer percentualEmitido;
-    public Boolean atrasada;
-    public Boolean exigeNf;
-    public String observacao;
+    private String periodo;
+    private String cicloFrota;
+    private String frotaNome;
+    private String frotaCnpj;
+    private String postoNome;
+    private String postoCnpj;
+    private String faturamento;
+    private String reembolso;
+    private String taxa;
+    private String numTransacoes;
+    private String prazoReembolso;
+    private String statusReembolso;
+    private String prazoNotaFiscal;
+    private String statusNotaFiscal;
+    private String totalEmitido;
+    private String totalNf;
+    private Integer percentualEmitido;
+    private Boolean atrasada;
+    private Boolean exigeNf;
+    private String observacao;
 
     public RegistroExportacaoPdfCicloFinanceiroVo(){
         // Serialização
