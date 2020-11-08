@@ -114,7 +114,9 @@ public class MotorGeracaoRelatorioSd {
             motor.setMsgErro(msgErro);
         }
         motor = repositorio.armazenar(motor);
-        motor.getAbasRelatorio().stream().forEach(repositorioAbas::armazenar);
+        if (motor.getAbasRelatorio() != null) {
+            motor.getAbasRelatorio().forEach(repositorioAbas::armazenar);
+        }
         if(status.equals(StatusMotorGeradorRelatorio.CONCLUIDO)) {
             this.notificarUsuarioRelatorioConcluido(motor.getUsuario());
         }
