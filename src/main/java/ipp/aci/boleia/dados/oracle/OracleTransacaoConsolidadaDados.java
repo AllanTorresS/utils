@@ -27,6 +27,7 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
 import ipp.aci.boleia.dominio.vo.AgrupamentoTransacaoConsolidadaPvVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheCicloVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFinanceiroVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaReembolsoGraficoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaReembolsoVo;
@@ -52,6 +53,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ipp.aci.boleia.util.UtilitarioCalculoData.adicionarMesesData;
 import static ipp.aci.boleia.util.UtilitarioCalculoData.obterPrimeiroDiaMes;
 
 /**
@@ -61,7 +63,7 @@ import static ipp.aci.boleia.util.UtilitarioCalculoData.obterPrimeiroDiaMes;
 public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDados<TransacaoConsolidada>
         implements ITransacaoConsolidadaDados {
 
-    private static final String CLAUSULA_STATUS_NF = "((TC.dataInicioPeriodo = TRUNC(:dataInicioFiltro) AND TC.statusNf = :statusFiltro) OR (TC.dataInicioPeriodo < :dataInicioFiltro))";
+    private static final String CLAUSULA_STATUS_NF = "((TRUNC(TC.dataInicioPeriodo) = TRUNC(:dataInicioCicloAtual) AND (TC.statusNotaFiscal = :statusNf)) OR (TRUNC(TC.dataInicioPeriodo) < TRUNC(:dataInicioCicloAtual))) AND ";
 
     private static final String CLAUSULA_NOTA_ATRASADA =
             " TRUNC(TC.prazos.dataLimiteEmissaoNfe) <  TRUNC(SYSDATE) " +
@@ -996,6 +998,34 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
 
         Long numeroCiclosAtrasados = pesquisarUnicoSemIsolamentoDados(CONSULTA_NUMERO_REEMBOLSOS_POR_STATUS, parametros.toArray(new ParametroPesquisa[parametros.size()]));
         return numeroCiclosAtrasados.intValue();
+    }
+
+    @Override
+    public List<AgrupamentoTransacaoConsolidadaPvVo> pesquisarDetalheCicloParaPv(FiltroPesquisaDetalheCicloVo filtro){
+        String consulta = CONSULTA_TRANSACOES_CONSOLIDADAS_AGRUPADAS_POR_PV;
+
+        Usuario usuarioLogado = ambiente.getUsuarioLogado();
+
+        Date agora = ambiente.buscarDataAmbiente();
+        Date dataInicioPeriodo = UtilitarioCalculoData.obterPrimeiroDiaMes(adicionarMesesData(agora, -1));
+        Date dataFimPeriodo = UtilitarioCalculoData.obterUltimoDiaMes(agora);
+
+        List<ParametroPesquisa> parametrosPesquisa = new ArrayList<>();
+        parametrosPesquisa.add(new ParametroPesquisaIgual("dataInicio", dataInicioPeriodo));
+        parametrosPesquisa.add(new ParametroPesquisaIgual("dataFim", dataFimPeriodo));
+        parametrosPesquisa.add(new ParametroPesquisaIgual("dataAtual", agora));
+        if(filtro.getStatusNf() != null && filtro.getStatusNf().getName() != null){
+            parametrosPesquisa.add(new ParametroPesquisaIgual("statusNf", StatusNotaFiscal.valueOf(filtro.getStatusNf().getName()).getValue()));
+            parametrosPesquisa.add(new ParametroPesquisaIgual("dataInicioCicloAtual", filtro.getInicio()));
+        }else{
+            consulta = consulta.replace(CLAUSULA_STATUS_NF, "");
+        }
+        if(filtro.getIdPv() != null) {
+            parametrosPesquisa.add(new ParametroPesquisaIn("idsPvs", Collections.singletonList(filtro.getIdPv())));
+        } else if(usuarioLogado.isRevendedor()) {
+            parametrosPesquisa.add(new ParametroPesquisaIn("idsPvs", usuarioLogado.getPontosDeVenda().stream().map(PontoDeVenda::getId).collect(Collectors.toList())));
+        }
+        return pesquisar(null, consulta, AgrupamentoTransacaoConsolidadaPvVo.class, parametrosPesquisa.toArray(new ParametroPesquisa[parametrosPesquisa.size()])).getRegistros();
     }
 
     @Override
