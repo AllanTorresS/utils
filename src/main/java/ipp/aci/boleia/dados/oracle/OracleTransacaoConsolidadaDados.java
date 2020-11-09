@@ -61,6 +61,8 @@ import static ipp.aci.boleia.util.UtilitarioCalculoData.obterPrimeiroDiaMes;
 public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDados<TransacaoConsolidada>
         implements ITransacaoConsolidadaDados {
 
+    private static final String CLAUSULA_STATUS_NF = "((TC.dataInicioPeriodo = TRUNC(:dataInicioFiltro) AND TC.statusNf = :statusFiltro) OR (TC.dataInicioPeriodo < :dataInicioFiltro))";
+
     private static final String CLAUSULA_NOTA_ATRASADA =
             " TRUNC(TC.prazos.dataLimiteEmissaoNfe) <  TRUNC(SYSDATE) " +
                     " AND TC.statusNotaFiscal <> " + StatusNotaFiscal.EMITIDA.getValue() +
@@ -338,6 +340,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "WHERE FP.pontoVenda.id IN :idsPvs AND " +
                     "      TRUNC(TC.dataInicioPeriodo) >= TRUNC(:dataInicio) AND " +
                     "      TRUNC(TC.dataFimPeriodo) <= TRUNC(:dataFim) AND " +
+                    CLAUSULA_STATUS_NF +
                     "      (TC.empresaAgregada IS NOT NULL OR TC.unidade IS NOT NULL OR F.semNotaFiscal IS NULL OR F.semNotaFiscal = false) AND " +
                     "       (TC.reembolso is NULL OR (TC.reembolso IS NOT NULL AND (RM.status = " + StatusPagamentoReembolso.PREVISTO.getValue() + " OR TRUNC(RM.dataVencimentoPgto) >= TRUNC(:dataAtual)))) " +
                     "GROUP BY TC.dataInicioPeriodo, TC.dataFimPeriodo, TC.statusConsolidacao " +
@@ -1008,7 +1011,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         } else if(usuarioLogado.isRevendedor()) {
             parametrosPesquisa.add(new ParametroPesquisaIn("idsPvs", usuarioLogado.getPontosDeVenda().stream().map(PontoDeVenda::getId).collect(Collectors.toList())));
         }
-        return pesquisar(null, CONSULTA_TRANSACOES_CONSOLIDADAS_AGRUPADAS_POR_PV, AgrupamentoTransacaoConsolidadaPvVo.class, parametrosPesquisa.toArray(new ParametroPesquisa[parametrosPesquisa.size()])).getRegistros();
+        return pesquisar(null, CONSULTA_TRANSACOES_CONSOLIDADAS_AGRUPADAS_POR_PV.replace(CLAUSULA_STATUS_NF, ""), AgrupamentoTransacaoConsolidadaPvVo.class, parametrosPesquisa.toArray(new ParametroPesquisa[parametrosPesquisa.size()])).getRegistros();
     }
 
     @Override
