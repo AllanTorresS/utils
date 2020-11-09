@@ -915,7 +915,11 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         } else {
             parametros.add(new ParametroPesquisaIn("idsPvs", usuarioLogado.getPontosDeVenda().stream().map(PontoDeVenda::getId).collect(Collectors.toList())));
         }
-        parametros.add(new ParametroPesquisaIgual("idFrota", filtro.getFrota().getId()));
+        if(filtro.getFrota() != null && filtro.getFrota().getId() != null) {
+            parametros.add(new ParametroPesquisaIgual("idFrota", filtro.getFrota().getId()));
+        } else {
+            parametros.add(new ParametroPesquisaIgual("idFrota", null));
+        }
 
         if(filtro.getStatusCiclo() != null && filtro.getStatusCiclo().getName() != null){
             parametros.add(new ParametroPesquisaIgual("statusConsolidacao", StatusTransacaoConsolidada.valueOf(filtro.getStatusCiclo().getName()).getValue()));
@@ -979,6 +983,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         }
         if(filtro.getFrota() != null && filtro.getFrota().getId() != null){
             parametros.add(new ParametroPesquisaIgual("idFrota", filtro.getFrota().getId()));
+        } else {
+            parametros.add(new ParametroPesquisaIgual("idFrota", null));
         }
 
         if(filtro.getStatusCiclo() != null && filtro.getStatusCiclo().getName() != null){
