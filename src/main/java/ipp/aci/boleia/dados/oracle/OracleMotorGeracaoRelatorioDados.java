@@ -75,12 +75,8 @@ public class OracleMotorGeracaoRelatorioDados extends OracleRepositorioBoleiaDad
 
         parametros.add(new ParametroPesquisaIgual("filtro", filtro));
         parametros.add(new ParametroPesquisaIgual("tipoRelatorio", tipoRelatorio));
-        parametros.add(
-                new ParametroPesquisaOr(
-                    new ParametroPesquisaIgual("status", StatusMotorGeradorRelatorio.EM_ANDAMENTO_AGUARDANDO.getValue()),
-                    new ParametroPesquisaIgual("status", StatusMotorGeradorRelatorio.EM_ANDAMENTO_PROCESSANDO.getValue())
-                )
-        );
+        parametros.add(new ParametroPesquisaIgual("status", StatusMotorGeradorRelatorio.EM_ANDAMENTO.getValue()));
+
         return pesquisar(new InformacaoPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]))
                 .getRegistros().stream().findFirst().isPresent();
     }

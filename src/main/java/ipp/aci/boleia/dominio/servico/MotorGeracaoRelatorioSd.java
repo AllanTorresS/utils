@@ -63,7 +63,7 @@ public class MotorGeracaoRelatorioSd {
 
         m.setDataPeriodoFiltradoInicial(dataPeriodoFiltradoInicial);
         m.setDataPeriodoFiltradoFinal(dataPeriodoFiltradoFinal);
-        m.setStatus(StatusMotorGeradorRelatorio.EM_ANDAMENTO_AGUARDANDO.getValue());
+        m.setStatus(StatusMotorGeradorRelatorio.EM_ANDAMENTO.getValue());
 
         m.setUsuario(usuarioLogado);
         m.setFiltro(UtilitarioJson.toJSON(filtroRelatorio));
@@ -129,7 +129,9 @@ public class MotorGeracaoRelatorioSd {
      * @param motor O objeto do motor a ser restaurado
      */
     public void preparaMotorParaRefazerRelatorio(MotorGeracaoRelatorios motor) {
+        motor.setMsgErro(null);
         motor.setUltimaPaginaProcessada(null);
+        motor.setTotalDePaginas(null);
         motor.getAbasRelatorio().forEach(abaRelatorio -> {
             abaRelatorio.setRegistrosProcessados(null);
             abaRelatorio.setTotalRegistros(null);
