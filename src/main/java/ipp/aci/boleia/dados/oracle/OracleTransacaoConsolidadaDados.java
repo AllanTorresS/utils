@@ -868,13 +868,13 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataInicioPeriodo", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe())));
         parametros.add(new ParametroPesquisaDataMenorOuIgual("dataFimPeriodo", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte())));
 
-        if(filtro.getPontoDeVenda() != null) {
+        if(filtro.getPontoDeVenda() != null && filtro.getPontoDeVenda().getId() != null) {
             parametros.add(new ParametroPesquisaIn("idsPvs", Collections.singletonList(filtro.getPontoDeVenda().getId())));
         } else {
             parametros.add(new ParametroPesquisaIn("idsPvs", usuarioLogado.getPontosDeVenda().stream().map(PontoDeVenda::getId).collect(Collectors.toList())));
         }
 
-        if(filtro.getFrota() != null){
+        if(filtro.getFrota() != null && filtro.getFrota().getId() != null){
             parametros.add(new ParametroPesquisaIgual("idFrota", filtro.getFrota().getId()));
         }  else {
             parametros.add(new ParametroPesquisaIgual("idFrota", null));
@@ -910,14 +910,12 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataInicioPeriodo", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe())));
         parametros.add(new ParametroPesquisaDataMenorOuIgual("dataFimPeriodo", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte())));
 
-        if(filtro.getPontoDeVenda() != null) {
+        if(filtro.getPontoDeVenda() != null && filtro.getPontoDeVenda().getId() != null) {
             parametros.add(new ParametroPesquisaIn("idsPvs", Collections.singletonList(filtro.getPontoDeVenda().getId())));
         } else {
             parametros.add(new ParametroPesquisaIn("idsPvs", usuarioLogado.getPontosDeVenda().stream().map(PontoDeVenda::getId).collect(Collectors.toList())));
         }
-        if(filtro.getFrota() != null){
-            parametros.add(new ParametroPesquisaIgual("idFrota", filtro.getFrota().getId()));
-        }
+        parametros.add(new ParametroPesquisaIgual("idFrota", filtro.getFrota().getId()));
 
         if(filtro.getStatusCiclo() != null && filtro.getStatusCiclo().getName() != null){
             parametros.add(new ParametroPesquisaIgual("statusConsolidacao", StatusTransacaoConsolidada.valueOf(filtro.getStatusCiclo().getName()).getValue()));
@@ -979,7 +977,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         } else if(usuarioLogado.isRevendedor()) {
             parametros.add(new ParametroPesquisaIn("idsPvs", usuarioLogado.getPontosDeVenda().stream().map(PontoDeVenda::getId).collect(Collectors.toList())));
         }
-        if(filtro.getFrota() != null){
+        if(filtro.getFrota() != null && filtro.getFrota().getId() != null){
             parametros.add(new ParametroPesquisaIgual("idFrota", filtro.getFrota().getId()));
         }
 
