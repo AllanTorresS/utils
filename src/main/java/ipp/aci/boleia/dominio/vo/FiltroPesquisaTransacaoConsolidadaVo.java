@@ -1,9 +1,7 @@
 package ipp.aci.boleia.dominio.vo;
 
-import ipp.aci.boleia.dominio.pesquisa.comum.BaseFiltroPaginado;
 import ipp.aci.boleia.dominio.pesquisa.comum.FiltroBasePeriodoPaginado;
 
-import java.util.Date;
 import java.util.List;
 
 /**
