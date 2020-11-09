@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -32,10 +31,13 @@ import java.util.Set;
 public class PrecoSd {
 
     @Autowired
-    private IPrecoDados repositorioPreco;
+    private PrecoNegociadoSd precoNegociadoSd;
 
     @Autowired
     private IPrecoBaseDados repositorioPrecoBase;
+
+    @Autowired
+    private IPrecoDados repositorioPreco;
 
     @Autowired
     private IFrotaPontoVendaDados frotaPtovDados;
@@ -104,7 +106,7 @@ public class PrecoSd {
             if(!somenteNovos){
                 BigDecimal descontoVigente = preco.getDescontoVigente();
 
-                preco.sairDeVigencia(precoBase.getDataAtualizacao());
+                preco = precoNegociadoSd.sairDeVigencia(preco, precoBase.getDataAtualizacao());
                 repositorioPreco.armazenarSemIsolamentoDeDados(preco);
 
                 preco = new Preco();
@@ -185,46 +187,6 @@ public class PrecoSd {
         return propagarAtualizacaoPrecoBase(preco);
     }
 
-
-    /**
-     * Aplica novo preco vigente ou já em aceite, conforme o novo acordo recém aceitado
-     * e gera registro de histórico do preço vigente anterior ao aceite.
-     *
-     * @param novoPreco novo preço a entrar em vigência.
-     * @param automatico flag indicando se o aceite foi automatico
-     */
-    public void aceitarNovoAcordo(Preco novoPreco, Boolean automatico) {
-        Preco precoAtual = repositorioPreco.obterAtualPorFrotaPvCombustivel(novoPreco.getFrota().getId(), novoPreco.getPontoVenda().getId(), novoPreco.getPrecoBase().getPrecoMicromercado().getTipoCombustivel().getId());
-        Date dataAtualizacao = ambiente.buscarDataAmbiente();
-        if(precoAtual != null) {
-            precoAtual.sairDeVigencia(dataAtualizacao);
-            repositorioPreco.armazenar(precoAtual);
-        }
-        novoPreco.aceitarDesconto(dataAtualizacao, automatico);
-        repositorioPreco.armazenar(novoPreco);
-    }
-
-    /**
-     * Remove o desconto ou o acréscimo do acordo vigente
-     * e cria uma nova linha de negociação sem valor, na qual
-     * em seguida cria um histórico da negociação antiga.
-     *
-     * @param precoAtual preco que sera alterado
-     * @param automatico flag indicando se o aceite foi automatico
-     */
-    public void definirPrecoNegociadoApartirDePrecoBase(Preco precoAtual, Boolean automatico){
-        Date dataAtualizacao = ambiente.buscarDataAmbiente();
-        Preco novoPreco = new Preco();
-        novoPreco.setFrotaPtov(precoAtual.getFrotaPtov());
-        novoPreco.setStatus(StatusPreco.VIGENTE.getValue());
-        novoPreco.setPreco(precoAtual.getPrecoBase().getPreco());
-        novoPreco.setPrecoBase(precoAtual.getPrecoBase());
-        novoPreco.setDataAtualizacao(dataAtualizacao);
-        novoPreco.setDataVigencia(dataAtualizacao);
-        precoAtual.sairDeVigencia(dataAtualizacao);
-        this.repositorioPreco.armazenar(precoAtual);
-        this.repositorioPreco.armazenar(novoPreco);
-    }
     /**
      * Gera registro de histórico do preço recusado.
      *

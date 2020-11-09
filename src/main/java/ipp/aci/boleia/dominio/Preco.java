@@ -141,14 +141,6 @@ public class Preco implements IPersistente, IPertenceRevendedor, IPertenceFrota 
         this.statusConvertidoNegociado = statusConvertidoNegociado;
     }
 
-    /**
-     * Marca o preco como historico saindo de vigencia
-     */
-    public void sairDeVigencia(Date dataAtualizacao) {
-        this.setStatus(StatusPreco.HISTORICO.getValue());
-        this.setDataAtualizacao(dataAtualizacao);
-    }
-
     public PrecoBase getPrecoBase() {
         return precoBase;
     }
@@ -163,43 +155,6 @@ public class Preco implements IPersistente, IPertenceRevendedor, IPertenceFrota 
 
     public void setPreco(BigDecimal preco) {
         this.preco = preco;
-    }
-
-    /**
-     * Aprova o desconto solicitado pelo frotista
-     * @param dataAtualizacao a data de atualizacao
-     * @param automatico desconto automatico ou manual
-     */
-    public void aceitarDesconto(Date dataAtualizacao, Boolean automatico) {
-        this.setPreco(this.getPrecoBase().getPreco().add(this.getDescontoSolicitado()));
-        this.setDescontoVigente(this.getDescontoSolicitado());
-        this.setDescontoSolicitado(null);
-        this.setDataAtualizacao(dataAtualizacao);
-        this.setDataVigencia(dataAtualizacao);
-        if(automatico) {
-            this.setStatus(StatusPreco.VIGENTE.getValue());
-        } else {
-            this.setStatus(StatusPreco.ACEITO.getValue());
-        }
-    }
-
-    /**
-     * Reprova o desconto solicitado com dada justificativa
-     * @param justificativa do revendedor
-     */
-    public void rejeitarDesconto(String justificativa, Date dataAtualizacao) {
-        this.setStatus(StatusPreco.REJEITADO.getValue());
-        this.setJustificativa(justificativa);
-        this.setDataAtualizacao(dataAtualizacao);
-    }
-
-    /**
-     * Remove um desconto previamente acordado entre frota e PV
-     * @param dataAtualizacao a data de atualizacao do desconto
-     */
-    public void excluirDesconto(Date dataAtualizacao) {
-        this.setDataAtualizacao(dataAtualizacao);
-        this.setStatus(StatusPreco.CANCELADO.getValue());
     }
 
     public String getJustificativa() {

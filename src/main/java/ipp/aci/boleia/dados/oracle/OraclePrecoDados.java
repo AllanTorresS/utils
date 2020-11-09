@@ -1,7 +1,10 @@
 package ipp.aci.boleia.dados.oracle;
 
 import ipp.aci.boleia.dados.IPrecoDados;
+import ipp.aci.boleia.dominio.Frota;
+import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.Preco;
+import ipp.aci.boleia.dominio.TipoCombustivel;
 import ipp.aci.boleia.dominio.enums.StatusPreco;
 import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
@@ -29,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Respositorio de entidades
@@ -110,21 +114,22 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
     }
 
     @Override
-    public List<Preco> buscarAcordosNovosOuPendentesParaVigenciaAutomatica(Date dataCorte) {
-        return pesquisar((ParametroOrdenacaoColuna)null,
-                new ParametroPesquisaIn("status", Arrays.asList(StatusPreco.NOVO.getValue(), StatusPreco.PENDENTE.getValue())),
+    public List<Preco> obterParaVigenciaAutomatica(Date dataCorte) {
+        return pesquisar((ParametroOrdenacaoColuna) null,
+                new ParametroPesquisaIn("status", Arrays.asList(StatusPreco.NOVO.getValue(), StatusPreco.PENDENTE.getValue(), StatusPreco.AGENDADO_PENDENTE)),
                 new ParametroPesquisaDataMenorOuIgual("dataSolicitacao", dataCorte));
     }
 
     @Override
-    public Preco obterNovoOuPendentePorFrotaPvCombustivel(Long idFrota, Long idPontoVenda, Long idTipoCombustivel) {
-        List<Preco> precosAcordo = pesquisar(
+    public List<Preco> obterPrecos(Frota frota, PontoDeVenda posto, TipoCombustivel tipoCombustivel, List<StatusPreco> status) {
+        List<Integer> statusValues = status.stream().map(StatusPreco::getValue).collect(Collectors.toList());
+        return pesquisar(
                 new ParametroOrdenacaoColuna("dataAtualizacao", Ordenacao.DECRESCENTE),
-                new ParametroPesquisaIgual("precoBase.precoMicromercado.tipoCombustivel.id", idTipoCombustivel),
-                new ParametroPesquisaIgual("frotaPtov.pontoVenda.id", idPontoVenda),
-                new ParametroPesquisaIgual("frotaPtov.frota.id", idFrota),
-                new ParametroPesquisaIn("status", Arrays.asList(StatusPreco.NOVO.getValue(), StatusPreco.PENDENTE.getValue())));
-        return precosAcordo.stream().findFirst().orElse(null);
+                new ParametroPesquisaIgual("precoBase.precoMicromercado.tipoCombustivel.id", tipoCombustivel.getId()),
+                new ParametroPesquisaIgual("frotaPtov.pontoVenda.id", posto.getId()),
+                new ParametroPesquisaIgual("frotaPtov.frota.id", frota.getId()),
+                new ParametroPesquisaIn("status", statusValues)
+        );
     }
 
     @Override
