@@ -350,7 +350,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "WHERE FP.pontoVenda.id IN :idsPvs AND " +
                     "      TRUNC(TC.dataInicioPeriodo) >= TRUNC(:dataInicio) AND " +
                     "      TRUNC(TC.dataFimPeriodo) <= TRUNC(:dataFim) AND " +
-                    "      (TC.reembolso is NULL OR (TC.reembolso IS NOT NULL AND (RM.status = " + StatusPagamentoReembolso.PREVISTO.getValue() + " OR TRUNC(RM.dataVencimentoPgto) >= TRUNC(:dataAtual)))) " +
+                    "      ((TC.reembolso is NULL AND TRUNC(RM.dataVencimentoPgto) >= TRUNC(:dataAtual)) OR (TC.reembolso IS NOT NULL AND RM.status = " + StatusPagamentoReembolso.PREVISTO.getValue() + ")) " +
                     "GROUP BY TC.dataInicioPeriodo, TC.dataFimPeriodo, TC.statusConsolidacao " +
                     "ORDER BY CASE WHEN TC.statusConsolidacao = " + StatusTransacaoConsolidada.EM_AJUSTE.getValue() + " THEN 1 " +
                     "              WHEN TC.statusConsolidacao = " + StatusTransacaoConsolidada.EM_ABERTO.getValue() + " THEN 2 " +
