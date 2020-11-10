@@ -16,7 +16,7 @@ public final class AgenciadorFreteConstantesJde {
     public static final String FATURA_OBSERVACAO_ABASTECIMENTO ="ABASTECIMENTO PROFROTAS X NDD";
     public static final String FATURA_OBSERVACAO_SAQUE = "SAQUE PROFROTAS X NDD";
 
-    public static final Long VOUCHER_CENARIO_ABASTECIMENTO = 141L;
+    public static final Long VOUCHER_CENARIO_ABASTECIMENTO = 187L;
     public static final Long VOUCHER_CENARIO_SAQUE = 734L;
     public static final String VOUCHER_CIA = "00074";
     public static final String VOUCHER_OBSERVACAO_ABASTECIMENTO = "ProFrotas X NDD – Abastecimento";
