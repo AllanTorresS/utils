@@ -4,14 +4,15 @@ package ipp.aci.boleia.dominio.enums;
 import ipp.aci.boleia.util.i18n.IEnumComLabel;
 
 /**
- * Indica o status de um contrato da Frota
+ * Indica o status de uma nota fiscal do consolidado do Financeiro novo
  */
-public enum StatusNotaFiscal implements IEnumComLabel<StatusNotaFiscal> {
+public enum StatusNotaFiscalFinanceiro implements IEnumComLabel<StatusNotaFiscalFinanceiro> {
 
     PENDENTE(0),
     EMITIDA(1),
     ATRASADA(2),
-    SEM_EMISSAO(3);
+    SEM_EMISSAO(3),
+    PARCIALMENTE_EMITIDA(4);
 
     private final Integer value;
 
@@ -19,7 +20,7 @@ public enum StatusNotaFiscal implements IEnumComLabel<StatusNotaFiscal> {
      * Construtor
      * @param value O valor da enumeracao
      */
-    StatusNotaFiscal(Integer value) {
+    StatusNotaFiscalFinanceiro(Integer value) {
         this.value = value;
     }
 
@@ -37,8 +38,8 @@ public enum StatusNotaFiscal implements IEnumComLabel<StatusNotaFiscal> {
      * @param value value
      * @return Enum para o valor
      */
-    public static StatusNotaFiscal obterPorValor(Integer value) {
-        for (StatusNotaFiscal status : StatusNotaFiscal.values()) {
+    public static StatusNotaFiscalFinanceiro obterPorValor(Integer value) {
+        for (StatusNotaFiscalFinanceiro status : StatusNotaFiscalFinanceiro.values()) {
             if (status.value.equals(value)) {
                 return status;
             }
