@@ -241,4 +241,15 @@ public interface ITransacaoConsolidadaDados extends IRepositorioBoleiaDados<Tran
      * @return lista de ciclos fechados que nao passaram por postergacao
      */
     List<TransacaoConsolidada> obterCiclosFechadosQueNaoPassaramPorPostergacao();
+
+      /**
+     * Pesquisa uma lista de transações consolidadas pertencentes a um agrupamento de ciclos.
+     *
+     * @param pv O identificador do pv.
+     * @param de Data inicial do período.
+     * @param ate Data final do período.
+     * @param statusCiclo o status cos ciclos agrupados
+     * @return A lista de transações encontradas.
+     */
+    List<TransacaoConsolidada> pesquisarTransacoesDeAgrupamento(Long pv, Date de, Date ate, Integer statusCiclo);
 }
