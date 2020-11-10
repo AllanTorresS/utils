@@ -22,6 +22,9 @@ import java.util.Date;
 
 import static ipp.aci.boleia.util.UtilitarioCalculoData.adicionarMinutosData;
 
+/**
+ * Regras de negócio relacionadas ao motor de relatórios
+ */
 @Component
 public class MotorGeracaoRelatorioSd {
 
