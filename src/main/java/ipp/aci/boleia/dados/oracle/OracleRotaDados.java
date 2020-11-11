@@ -11,6 +11,7 @@ import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgualIgnoreCase;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaRotaVo;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
@@ -104,7 +105,7 @@ public class OracleRotaDados extends OracleRepositorioBoleiaDados<Rota> implemen
                     "    ) " +
                     "    AND (:quantidadePvs IS NULL OR " + COUNT_PVS + " > 0) " +
                     "    AND (:nome IS NULL OR LOWER(" + removerAcentosCampo("r.nome") + ") like :nome) " +
-                    "    AND (:idFrota IS NULL OR f.id = :idFrota) " +
+                    "    AND (:possuiListaFrota = false AND (:idFrota IS NULL OR f.id = :idFrota)) OR (:possuiListaFrota = true AND f.id in (:idFrotasAssociadas)) " +
                     "    AND (r.excluido = 0) " +
                     "    AND r.planoViagem IS NULL " +
                     "    %s %s ";
@@ -136,7 +137,15 @@ public class OracleRotaDados extends OracleRepositorioBoleiaDados<Rota> implemen
         params.add(new ParametroPesquisaIgual("idPontoVenda", filtro.getPontoVenda() != null ? filtro.getPontoVenda().getId() : null));
 
         Usuario usuario = ambiente.getUsuarioLogado();
-        params.add(new ParametroPesquisaIgual("idFrota", usuario.getTipoPerfil().isFrotista() ? usuario.getFrota().getId() : null));
+        if(usuario.getTipoPerfil().isFrotista()){
+            params.add(new ParametroPesquisaIgual("idFrota", usuario.getFrota().getId()));
+            params.add(new ParametroPesquisaIgual("idFrotasAssociadas", null));
+            params.add(new ParametroPesquisaIgual("possuiListaFrota", false));
+        } else if(usuario.possuiFrotasAssociadas()){
+            params.add(new ParametroPesquisaIn("idFrotasAssociadas",usuario.listarIdsFrotasAssociadas()));
+            params.add(new ParametroPesquisaIgual("idFrota", null));
+            params.add(new ParametroPesquisaIgual("possuiListaFrota", true));
+        }
 
         ResultadoPaginado<Object[]> resultadoBruto = pesquisar(filtro.getPaginacao(), montarClausulaOrdenacaoDinamica(filtro), Object[].class, params.toArray(new ParametroPesquisa[params.size()]));
         return mapearResultadoPesquisa(resultadoBruto);
