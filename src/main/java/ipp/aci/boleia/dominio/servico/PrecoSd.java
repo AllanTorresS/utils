@@ -209,6 +209,25 @@ public class PrecoSd {
     }
 
     /**
+     * Remove o desconto ou o acréscimo do acordo vigente
+     * e cria uma nova linha de negociação sem valor, na qual
+     * em seguida cria um histórico da negociação antiga.
+     *
+     * @param precoAtual preco que sera alterado
+     * @param automatico flag indicando se o aceite foi automatico
+     */
+    public void definirPrecoNegociadoApartirDePrecoBase(Preco precoAtual, Boolean automatico){
+        Preco novoPreco = new Preco();
+        novoPreco.setFrotaPtov(precoAtual.getFrotaPtov());
+        novoPreco.setStatus(StatusPreco.VIGENTE.getValue());
+        novoPreco.setPreco(precoAtual.getPrecoBase().getPreco());
+        novoPreco.setPrecoBase(precoAtual.getPrecoBase());
+        novoPreco.setDataAtualizacao(ambiente.buscarDataAmbiente());
+        precoAtual.setStatus(StatusPreco.HISTORICO.getValue());
+        this.repositorioPreco.armazenar(precoAtual);
+        this.repositorioPreco.armazenar(novoPreco);
+    }
+    /**
      * Gera registro de histórico do preço recusado.
      *
      * @param precoAtual preco que sera alterado.

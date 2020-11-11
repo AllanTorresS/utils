@@ -393,6 +393,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
             parametros.add(new ParametroPesquisaOr(dataProcessamentoAte, dataPostergacaoAte));
         }
         povoarParametrosAjustados(filtro, parametros);
+        povoarParametroIgual("veiculo.identificadorInterno", filtro.getIdentificadorInterno(), parametros);
 
         if(filtro.isContingencia()){
             parametros.add(new ParametroPesquisaIn("tipoAutorizacaoPagamento", Arrays.asList(TipoAutorizacaoPagamento.PCC.getValue(), TipoAutorizacaoPagamento.MAN.getValue())));
@@ -437,6 +438,9 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         }
         if (filtro.getIdReembolso() != null) {
             parametros.add(new ParametroPesquisaIgual("transacaoConsolidada.reembolso.id", filtro.getIdReembolso()));
+        }
+        if (CollectionUtils.isNotEmpty(filtro.getIdsFrotas())) {
+            parametros.add(new ParametroPesquisaIn("frota", filtro.getIdsFrotas()));
         }
         return parametros;
     }
@@ -927,8 +931,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
      */
     private void povoarParametrosAjustados(FiltroPesquisaAbastecimentoVo filtro, List<ParametroPesquisa> parametros) {
         if(null != filtro.isApenasAjustados() && filtro.isApenasAjustados()) {
-            parametros.add(new ParametroPesquisaNulo("idAutorizacaoEstorno", true));
-            parametros.add(new ParametroPesquisaMaior("valorTotal", BigDecimal.ZERO));
+            parametros.add(new ParametroPesquisaIgual("statusEdicao", StatusEdicao.EDITADO.getValue()));
         }
     }
 
