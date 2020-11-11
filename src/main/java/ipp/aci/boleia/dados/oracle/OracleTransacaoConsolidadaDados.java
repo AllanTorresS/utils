@@ -12,6 +12,7 @@ import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.enums.ModalidadePagamento;
 import ipp.aci.boleia.dominio.enums.StatusIntegracaoReembolsoJde;
 import ipp.aci.boleia.dominio.enums.StatusNotaFiscal;
+import ipp.aci.boleia.dominio.enums.StatusNotaFiscalFinanceiro;
 import ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso;
 import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
 import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
@@ -65,6 +66,10 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
 
     private static final String CLAUSULA_STATUS_NF = "((TRUNC(TC.dataInicioPeriodo) = TRUNC(:dataInicioCicloAtual) AND (TC.statusNotaFiscal = :statusNf)) OR (TRUNC(TC.dataInicioPeriodo) < TRUNC(:dataInicioCicloAtual))) AND ";
     private static final String CLAUSULA_FROTA = "( F.id = :frotaId ) AND ";
+    private static final String CLAUSULA_PENDENTE_NF = "( TC.statusConsolidacao = 1 && ( ( ( F.semNotaFiscal is null or F.semNotaFiscal = 0 ) or TC.unidade is not null or TC.empresaAgregada is not null ) AND TC.statusNotaFiscal not in (1,3) ) ) AND ";
+    private static final String CLAUSULA_PARCIALMENTE_EMITIDA = CLAUSULA_PENDENTE_NF.concat("( TC.valorEmitidoNotaFiscal > 0 ) AND ") ;
+    private static final String CLAUSULA_SEM_EMISSAO = CLAUSULA_PENDENTE_NF.concat("( TC.valorEmitidoNotaFiscal <= 0 ) AND ") ;
+
 
     private static final String CLAUSULA_NOTA_ATRASADA =
             " TRUNC(TC.prazos.dataLimiteEmissaoNfe) <  TRUNC(SYSDATE) " +
@@ -345,6 +350,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "      TRUNC(TC.dataFimPeriodo) <= TRUNC(:dataFim) AND " +
                     CLAUSULA_STATUS_NF +
                     CLAUSULA_FROTA +
+                    CLAUSULA_PARCIALMENTE_EMITIDA +
+                    CLAUSULA_SEM_EMISSAO +
                     "      (TC.empresaAgregada IS NOT NULL OR TC.unidade IS NOT NULL OR F.semNotaFiscal IS NULL OR F.semNotaFiscal = false) AND " +
                     "       (TC.reembolso is NULL OR (TC.reembolso IS NOT NULL AND (RM.status = " + StatusPagamentoReembolso.PREVISTO.getValue() + " OR TRUNC(RM.dataVencimentoPgto) >= TRUNC(:dataAtual)))) " +
                     "GROUP BY TC.dataInicioPeriodo, TC.dataFimPeriodo, TC.statusConsolidacao " +
@@ -1017,9 +1024,17 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         parametrosPesquisa.add(new ParametroPesquisaIgual("dataFim", dataFimPeriodo));
         parametrosPesquisa.add(new ParametroPesquisaIgual("dataAtual", agora));
 
+
         if(filtro.getStatusNf() != null && filtro.getStatusNf().getName() != null){
-            parametrosPesquisa.add(new ParametroPesquisaIgual("statusNf", StatusNotaFiscal.valueOf(filtro.getStatusNf().getName()).getValue()));
-            parametrosPesquisa.add(new ParametroPesquisaIgual("dataInicioCicloAtual", filtro.getInicio()));
+            if(StatusNotaFiscalFinanceiro.valueOf(filtro.getStatusNf().getName()).getValue().equals(StatusNotaFiscalFinanceiro.PARCIALMENTE_EMITIDA.getValue())){
+
+            }
+            else if(StatusNotaFiscalFinanceiro.valueOf(filtro.getStatusNf().getName()).getValue().equals(StatusNotaFiscalFinanceiro.SEM_EMISSAO.getValue())){
+
+            }else {
+                parametrosPesquisa.add(new ParametroPesquisaIgual("statusNf", StatusNotaFiscal.valueOf(filtro.getStatusNf().getName()).getValue()));
+                parametrosPesquisa.add(new ParametroPesquisaIgual("dataInicioCicloAtual", filtro.getInicio()));
+            }
         }else{
             consulta = consulta.replace(CLAUSULA_STATUS_NF, "");
         }
