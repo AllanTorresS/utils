@@ -1109,8 +1109,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
      *  Atualiza a consulta do box de detalhamento de ciclo com o status de nf selecionado no filtro de pesquisa.
      * @param parametrosPesquisa A lista de parametros
      * @param filtro O filtro de pesquisa
-     * @param consulta A consulta atualizada com a cláusula de status de nota fiscal
-     * @return
+     * @param consulta A consulta sem a cláusula atualizada de status de nota fiscal
+     * @return A consulta atualizada com a cláusula de status de nota fiscal
      */
     private String obterConsultaComFiltroNf(List<ParametroPesquisa> parametrosPesquisa, FiltroPesquisaDetalheCicloVo filtro, String consulta) {
         if(filtro.getStatusNf() == null || filtro.getStatusNf().getName() == null) {
