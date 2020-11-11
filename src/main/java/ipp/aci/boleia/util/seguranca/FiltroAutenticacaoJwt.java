@@ -77,11 +77,18 @@ public class FiltroAutenticacaoJwt implements Filter {
     @Autowired
     private RenovadorTokenJwt renovadorTokenJwt;
 
+    @Autowired
+    private IFiltroInterceptacaoForwardJwt filtroInterceptacaoForwardJwt;
+
     @Override
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
 
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) resp;
+
+        if (filtroInterceptacaoForwardJwt.encaminharRequisicao(request, response)) {
+            return;
+        }
 
         if (isUrlProtegida(request) && isMetodoDiferenteDeOptions(request)) {
 
