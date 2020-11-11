@@ -9,9 +9,7 @@ public enum StatusTransacaoConsolidada implements IEnumComLabel<StatusTransacaoC
 
     EM_ABERTO(0),
     FECHADA(1),
-    EM_AJUSTE(2),
-    PARCIALMENTE_EMITIDA(3),
-    SEM_EMISSAO(4);
+    EM_AJUSTE(2);
 
     private final Integer value;
 

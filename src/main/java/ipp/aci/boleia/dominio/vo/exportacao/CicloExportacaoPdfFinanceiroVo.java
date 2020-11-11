@@ -2,6 +2,7 @@ package ipp.aci.boleia.dominio.vo.exportacao;
 
 import ipp.aci.boleia.dominio.TransacaoConsolidada;
 import ipp.aci.boleia.dominio.enums.StatusNotaFiscal;
+import ipp.aci.boleia.dominio.enums.StatusNotaFiscalFinanceiro;
 import ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso;
 import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
@@ -111,9 +112,9 @@ public class CicloExportacaoPdfFinanceiroVo {
         if(percentualEmitido != null){
             if(consolidado.getStatusConsolidacao().equals(StatusTransacaoConsolidada.FECHADA.getValue()) && consolidado.pendenteNotaFiscal()){
                 if(percentualEmitido > 0){
-                    this.setStatusNotaFiscal(StatusTransacaoConsolidada.PARCIALMENTE_EMITIDA.getLabel());
+                    this.setStatusNotaFiscal(StatusNotaFiscalFinanceiro.PARCIALMENTE_EMITIDA.getLabel());
                 } else{
-                    this.setStatusNotaFiscal(StatusTransacaoConsolidada.SEM_EMISSAO.getLabel());
+                    this.setStatusNotaFiscal(StatusNotaFiscalFinanceiro.SEM_EMISSAO.getLabel());
                 }
             } else{
                 this.setStatusNotaFiscal(consolidado.obterStatusNotaFiscal(dataAtual).getLabel());

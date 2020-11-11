@@ -23,6 +23,7 @@ public class AgrupamentoTransacaoConsolidadaPvVo {
     private BigDecimal valorDesconto;
     private BigDecimal valorTotalNf;
     private BigDecimal valorEmitidoNf;
+    private Long quantidadeAbastecimentos;
 
     /**
      * Construtor default.
@@ -43,7 +44,7 @@ public class AgrupamentoTransacaoConsolidadaPvVo {
      * @param valorTotalNf Valor total da nota fiscal.
      * @param valorEmitidoNf Valoro total emitido da nota fiscal.
      */
-    public AgrupamentoTransacaoConsolidadaPvVo(Date dataInicioPeriodo, Date dataFimPeriodo, Date prazoEmissaoNotaFiscal, Integer statusConsolidacao, BigDecimal valorFaturamento, BigDecimal valorReembolso, BigDecimal valorDesconto, BigDecimal valorTotalNf, BigDecimal valorEmitidoNf) {
+    public AgrupamentoTransacaoConsolidadaPvVo(Date dataInicioPeriodo, Date dataFimPeriodo, Date prazoEmissaoNotaFiscal, Integer statusConsolidacao, BigDecimal valorFaturamento, BigDecimal valorReembolso, BigDecimal valorDesconto, BigDecimal valorTotalNf, BigDecimal valorEmitidoNf, Long quantidadeAbastecimentos) {
         this.dataInicioPeriodo = dataInicioPeriodo;
         this.dataFimPeriodo = dataFimPeriodo;
         this.prazoEmissaoNotaFiscal = prazoEmissaoNotaFiscal;
@@ -54,6 +55,7 @@ public class AgrupamentoTransacaoConsolidadaPvVo {
         this.valorDesconto = valorDesconto;
         this.valorTotalNf = valorTotalNf;
         this.valorEmitidoNf = valorEmitidoNf;
+        this.quantidadeAbastecimentos = quantidadeAbastecimentos;
     }
 
     public Date getDataInicioPeriodo() {
@@ -134,6 +136,14 @@ public class AgrupamentoTransacaoConsolidadaPvVo {
 
     public void setValorEmitidoNf(BigDecimal valorEmitidoNf) {
         this.valorEmitidoNf = valorEmitidoNf;
+    }
+
+    public Long getQuantidadeAbastecimentos() {
+        return quantidadeAbastecimentos;
+    }
+
+    public void setQuantidadeAbastecimentos(Long quantidadeAbastecimentos) {
+        this.quantidadeAbastecimentos = quantidadeAbastecimentos;
     }
 
     /**
