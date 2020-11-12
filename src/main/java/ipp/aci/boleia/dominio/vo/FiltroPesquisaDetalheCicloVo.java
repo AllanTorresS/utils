@@ -11,6 +11,7 @@ public class FiltroPesquisaDetalheCicloVo extends BaseFiltroPaginado {
     private Date inicio;
     private Date fim;
     private Long idPv;
+    private Long idConsolidado;
     private EntidadeVo frota;
     private EnumVo statusCiclo;
     private EnumVo statusNf;
@@ -37,6 +38,14 @@ public class FiltroPesquisaDetalheCicloVo extends BaseFiltroPaginado {
 
     public void setIdPv(Long idPv) {
         this.idPv = idPv;
+    }
+
+    public Long getIdConsolidado() {
+        return idConsolidado;
+    }
+
+    public void setIdConsolidado(Long idConsolidado) {
+        this.idConsolidado = idConsolidado;
     }
 
     public EntidadeVo getFrota() {
