@@ -350,6 +350,25 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                 "ORDER BY dataPagamento ASC ";
 
     /**
+     * Busca uma lista de transações consolidadas de um ponto de venda pertencentes a um agrupamento.
+     */
+    private static final String CONSULTA_TRANSACOES_CONSOLIDADAS_DE_AGRUPAMENTO =
+    "SELECT TC " +
+            "FROM TransacaoConsolidada TC " +
+            "JOIN TC.frotaPtov FP " +
+            "JOIN FP.frota F " +
+            "JOIN TC.prazos TCP " +
+            "LEFT JOIN TC.reembolso RM	" +
+            "WHERE FP.pontoVenda.id IN :idsPvs AND " +
+            "      TRUNC(TC.dataInicioPeriodo) = TRUNC(:dataInicioPeriodo) AND " +
+            "      TRUNC(TC.dataFimPeriodo) = TRUNC(:dataFimPeriodo) AND " +
+            "      TC.statusConsolidacao = :statusCiclo AND " +
+            CLAUSULA_STATUS_NF +
+            CLAUSULA_FROTA +
+            "      (TC.empresaAgregada IS NOT NULL OR TC.unidade IS NOT NULL OR F.semNotaFiscal IS NULL OR F.semNotaFiscal = false) AND " +
+            "      (TC.reembolso is NULL OR (RM.dataPagamento IS NULL AND TRUNC(RM.dataVencimentoPgto) >= TRUNC(SYSDATE))) ";
+
+    /**
      * Busca uma lista de transações consolidadas de um ponto de venda agrupadas por data e status.
      */
     private static final String CONSULTA_TRANSACOES_CONSOLIDADAS_AGRUPADAS_POR_PV =
@@ -905,7 +924,38 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         parametros.add(new ParametroPesquisaIgual("frotaPtov.pontoVenda.id", pv));
         parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataInicioPeriodo", UtilitarioCalculoData.obterPrimeiroInstanteDia(de)));
         parametros.add(new ParametroPesquisaDataMenorOuIgual("dataFimPeriodo", UtilitarioCalculoData.obterUltimoInstanteDia(ate)));
+        
         return pesquisar((ParametroOrdenacaoColuna) null, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+    @Override
+    public List<TransacaoConsolidada> pesquisarTransacoesDeAgrupamento(FiltroPesquisaDetalheCicloVo filtro) {
+        String consulta = CONSULTA_TRANSACOES_CONSOLIDADAS_DE_AGRUPAMENTO;
+
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+
+        popularParametrosDataEPvBoxFinanceiro(parametros, filtro.getIdPv(), filtro.getInicio(), filtro.getFim());
+
+        consulta = obterConsultaComFiltroNf(parametros, filtro, consulta);
+
+        String filtroNf = " ";
+        if(filtro.getStatusNf() != null && filtro.getStatusNf().getName() != null){
+            filtroNf = " TC.statusNotaFiscal = " + StatusNotaFiscal.valueOf(filtro.getStatusNf().getName()).getValue() + " AND ";
+        }
+
+        if(filtro.getFrota()!= null && filtro.getFrota().getId() != null){
+            parametros.add(new ParametroPesquisaIgual("frotaId", filtro.getFrota().getId()));
+        }else {
+            consulta = consulta.replace(CLAUSULA_FROTA, "");
+        }
+
+        String consultaPesquisa = String.format(consulta, filtroNf);
+
+        parametros.add(new ParametroPesquisaIgual("dataInicioPeriodo", filtro.getInicio()));
+        parametros.add(new ParametroPesquisaIgual("dataFimPeriodo", filtro.getFim()));
+        parametros.add(new ParametroPesquisaIgual("statusConsolidacao", filtro.getStatusCiclo().getValue()));
+
+        return pesquisar(null, consultaPesquisa, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
 
     @Override
