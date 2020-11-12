@@ -25,6 +25,7 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenor;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaiorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
 import ipp.aci.boleia.dominio.vo.AgrupamentoTransacaoConsolidadaPvVo;
@@ -348,6 +349,25 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                         "WHEN rm.status IS NULL THEN 'PREVISTO' " +
                     "END " +
                 "ORDER BY dataPagamento ASC ";
+
+    /**
+     * Busca uma lista de transações consolidadas de um ponto de venda pertencentes a um agrupamento.
+     */
+    private static final String CONSULTA_TRANSACOES_CONSOLIDADAS_DE_AGRUPAMENTO =
+    "SELECT TC " +
+            "FROM TransacaoConsolidada TC " +
+            "JOIN TC.frotaPtov FP " +
+            "JOIN FP.frota F " +
+            "JOIN TC.prazos TCP " +
+            "LEFT JOIN TC.reembolso RM	" +
+            "WHERE FP.pontoVenda.id IN :idsPvs AND " +
+            "      TRUNC(TC.dataInicioPeriodo) = TRUNC(:dataInicio) AND " +
+            "      TRUNC(TC.dataFimPeriodo) = TRUNC(:dataFim) AND " +
+            "      TC.statusConsolidacao = :statusCiclo AND " +
+            CLAUSULA_STATUS_NF +
+            CLAUSULA_FROTA +
+            "      (TC.empresaAgregada IS NOT NULL OR TC.unidade IS NOT NULL OR F.semNotaFiscal IS NULL OR F.semNotaFiscal = false) AND " +
+            "      (TC.reembolso is NULL OR (RM.dataPagamento IS NULL AND TRUNC(RM.dataVencimentoPgto) >= TRUNC(SYSDATE))) ";
 
     /**
      * Busca uma lista de transações consolidadas de um ponto de venda agrupadas por data e status.
@@ -905,7 +925,29 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         parametros.add(new ParametroPesquisaIgual("frotaPtov.pontoVenda.id", pv));
         parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataInicioPeriodo", UtilitarioCalculoData.obterPrimeiroInstanteDia(de)));
         parametros.add(new ParametroPesquisaDataMenorOuIgual("dataFimPeriodo", UtilitarioCalculoData.obterUltimoInstanteDia(ate)));
+        
         return pesquisar((ParametroOrdenacaoColuna) null, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+    @Override
+    public List<TransacaoConsolidada> pesquisarTransacoesDeAgrupamento(FiltroPesquisaDetalheCicloVo filtro) {
+        String consulta = CONSULTA_TRANSACOES_CONSOLIDADAS_DE_AGRUPAMENTO;
+
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+
+        popularParametrosDataEPvBoxFinanceiro(parametros, filtro.getIdPv(), filtro.getInicio(), filtro.getFim());
+
+        consulta = obterConsultaComFiltroNf(parametros, filtro, consulta);
+
+        if(filtro.getFrota()!= null && filtro.getFrota().getId() != null){
+            parametros.add(new ParametroPesquisaIgual("frotaId", filtro.getFrota().getId()));
+        }else {
+            consulta = consulta.replace(CLAUSULA_FROTA, "");
+        }
+
+        parametros.add(new ParametroPesquisaIgual("statusCiclo", filtro.getStatusCiclo().getValue()));
+
+        return pesquisar(null, consulta, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
 
     @Override
