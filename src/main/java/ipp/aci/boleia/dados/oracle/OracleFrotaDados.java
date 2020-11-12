@@ -23,13 +23,13 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
-import ipp.aci.boleia.dominio.vo.FiltroPesquisaFinanceiroVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheCicloVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFrotaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialFrotaVo;
+import ipp.aci.boleia.dominio.vo.apco.ClienteProFrotaVo;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
-import ipp.aci.boleia.dominio.vo.apco.ClienteProFrotaVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -394,14 +394,14 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
     }
 
     @Override
-    public List<Frota> pesquisarFrotasAssociadasACiclosContidosNoPeriodo(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado) {
+    public List<Frota> pesquisarFrotasAssociadasACiclosContidosNoPeriodo(FiltroPesquisaDetalheCicloVo filtro, Usuario usuarioLogado) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
 
-        parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataInicial", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe())));
-        parametros.add(new ParametroPesquisaDataMenorOuIgual("dataFinal", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte())));
+        parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataInicial", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getInicio())));
+        parametros.add(new ParametroPesquisaDataMenorOuIgual("dataFinal", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getFim())));
 
-        if(filtro.getPontoDeVenda() != null) {
-            parametros.add(new ParametroPesquisaIn("idsPvs", Collections.singletonList(filtro.getPontoDeVenda().getId())));
+        if(filtro.getIdPv() != null) {
+            parametros.add(new ParametroPesquisaIn("idsPvs", Collections.singletonList(filtro.getIdPv())));
         } else if(usuarioLogado.isRevendedor()) {
             parametros.add(new ParametroPesquisaIn("idsPvs", usuarioLogado.getPontosDeVenda().stream().map(PontoDeVenda::getId).collect(Collectors.toList())));
         }
