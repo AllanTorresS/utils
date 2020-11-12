@@ -146,7 +146,8 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
             "WHERE i.combustivel IS NOT NULL AND i.combustivel.codigoCombustivelCorporativo IS NOT NULL AND " +
             "a.status = "+ StatusAutorizacao.AUTORIZADO.getValue() +
             " AND a.dataRequisicao BETWEEN :dataInicial AND :dataFinal" + " AND a.frota.status != " + StatusFrota.PRE_CADASTRO.getValue() +
-            " GROUP BY a.pontoVenda, a.frota.id, i.combustivel.codigoCombustivelCorporativo, TRUNC(a.dataRequisicao)";
+            " GROUP BY a.pontoVenda, a.frota.id, i.combustivel.codigoCombustivelCorporativo, TRUNC(a.dataRequisicao)" +
+            "ORDER BY TRUNC(a.dataRequisicao) ASC";
 
     private static final String QUERY_AUTORIZACOES_EM_LISTA_DE_ABASTECIMENTOS_POR_FLAG_JUSTIFICATIVA = "" +
             " SELECT a FROM AutorizacaoPagamento a " +

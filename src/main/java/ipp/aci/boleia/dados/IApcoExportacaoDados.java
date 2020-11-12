@@ -29,8 +29,11 @@ public interface IApcoExportacaoDados {
 
 	/**
 	 * Realiza a integração exportando as vendas(abastecimentos) de um determinado período de integração.
+	 * Além disso, são passados informações do lote para um melhor controle dos dados enviado para o ensemble
 	 * @param abastecimentos os consolidados do período de integração
+	 * @param  indiceInicioLote o indice inicial do lote
+	 * @param  indiceFimLote o indice final do lote
 	 * @throws ExcecaoIntegracaoAPCO caso haja excecao na integracao com apco
 	 */
-	void exportarVendas(List<VolumeVendasClienteProFrotaVo> abastecimentos) throws ExcecaoIntegracaoAPCO;
+	void exportarVendas(List<VolumeVendasClienteProFrotaVo> abastecimentos, Integer indiceInicioLote, Integer indiceFimLote) throws ExcecaoIntegracaoAPCO;
 }
