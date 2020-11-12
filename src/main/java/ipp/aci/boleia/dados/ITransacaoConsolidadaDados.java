@@ -253,7 +253,6 @@ public interface ITransacaoConsolidadaDados extends IRepositorioBoleiaDados<Tran
       /**
      * Pesquisa uma lista de transações consolidadas pertencentes a um agrupamento de ciclos.
      *
-     * @param pv O identificador do pv.
      * @param filtro o filtro com as informações que devem ser consideradas na busca.
      * @return A lista de transações encontradas.
      */

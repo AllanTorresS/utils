@@ -25,6 +25,7 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenor;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaiorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
 import ipp.aci.boleia.dominio.vo.AgrupamentoTransacaoConsolidadaPvVo;
@@ -360,8 +361,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             "JOIN TC.prazos TCP " +
             "LEFT JOIN TC.reembolso RM	" +
             "WHERE FP.pontoVenda.id IN :idsPvs AND " +
-            "      TRUNC(TC.dataInicioPeriodo) = TRUNC(:dataInicioPeriodo) AND " +
-            "      TRUNC(TC.dataFimPeriodo) = TRUNC(:dataFimPeriodo) AND " +
+            "      TRUNC(TC.dataInicioPeriodo) = TRUNC(:dataInicio) AND " +
+            "      TRUNC(TC.dataFimPeriodo) = TRUNC(:dataFim) AND " +
             "      TC.statusConsolidacao = :statusCiclo AND " +
             CLAUSULA_STATUS_NF +
             CLAUSULA_FROTA +
@@ -938,24 +939,15 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
 
         consulta = obterConsultaComFiltroNf(parametros, filtro, consulta);
 
-        String filtroNf = " ";
-        if(filtro.getStatusNf() != null && filtro.getStatusNf().getName() != null){
-            filtroNf = " TC.statusNotaFiscal = " + StatusNotaFiscal.valueOf(filtro.getStatusNf().getName()).getValue() + " AND ";
-        }
-
         if(filtro.getFrota()!= null && filtro.getFrota().getId() != null){
             parametros.add(new ParametroPesquisaIgual("frotaId", filtro.getFrota().getId()));
         }else {
             consulta = consulta.replace(CLAUSULA_FROTA, "");
         }
 
-        String consultaPesquisa = String.format(consulta, filtroNf);
+        parametros.add(new ParametroPesquisaIgual("statusCiclo", filtro.getStatusCiclo().getValue()));
 
-        parametros.add(new ParametroPesquisaIgual("dataInicioPeriodo", filtro.getInicio()));
-        parametros.add(new ParametroPesquisaIgual("dataFimPeriodo", filtro.getFim()));
-        parametros.add(new ParametroPesquisaIgual("statusConsolidacao", filtro.getStatusCiclo().getValue()));
-
-        return pesquisar(null, consultaPesquisa, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+        return pesquisar(null, consulta, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
 
     @Override
