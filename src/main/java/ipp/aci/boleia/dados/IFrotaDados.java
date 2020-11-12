@@ -4,7 +4,7 @@ import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
-import ipp.aci.boleia.dominio.vo.FiltroPesquisaFinanceiroVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheCicloVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFrotaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialFrotaVo;
 import ipp.aci.boleia.dominio.vo.apco.ClienteProFrotaVo;
@@ -174,5 +174,5 @@ public interface IFrotaDados extends IRepositorioBoleiaDados<Frota> {
      * @param usuarioLogado Usuario logado
      * @return lista das frotas que atendem aos criterios de busca
      */
-    List<Frota> pesquisarFrotasAssociadasACiclosContidosNoPeriodo(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado);
+    List<Frota> pesquisarFrotasAssociadasACiclosContidosNoPeriodo(FiltroPesquisaDetalheCicloVo filtro, Usuario usuarioLogado);
 }
