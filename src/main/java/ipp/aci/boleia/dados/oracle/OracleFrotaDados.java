@@ -24,6 +24,7 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheCicloVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaFinanceiroVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFrotaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialFrotaVo;
 import ipp.aci.boleia.dominio.vo.apco.ClienteProFrotaVo;
@@ -88,6 +89,17 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
                     "JOIN fp.frota f " +
                     "WHERE " +
                     "(tc.dataInicioPeriodo >= :dataInicial and tc.dataFimPeriodo <= :dataFinal) " +
+                    "AND (fp.pontoVenda.id IN :idsPvs) " +
+                    "ORDER BY f.nomeRazaoFrota";
+
+    private static final String CONSULTA_FROTAS_ASSOCIADAS_A_CICLOS_COM_PERIODO_EXATO =
+            "SELECT DISTINCT f " +
+                    "FROM " +
+                    "TransacaoConsolidada tc " +
+                    "JOIN tc.frotaPtov fp " +
+                    "JOIN fp.frota f " +
+                    "WHERE " +
+                    "(trunc(tc.dataInicioPeriodo) = trunc(:dataInicial) and trunc(tc.dataFimPeriodo) = trunc(:dataFinal)) " +
                     "AND (fp.pontoVenda.id IN :idsPvs) " +
                     "ORDER BY f.nomeRazaoFrota";
 
@@ -394,11 +406,27 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
     }
 
     @Override
-    public List<Frota> pesquisarFrotasAssociadasACiclosContidosNoPeriodo(FiltroPesquisaDetalheCicloVo filtro, Usuario usuarioLogado) {
+    public List<Frota> pesquisarFrotasAssociadasACiclosContidosNoPeriodo(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
 
-        parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataInicial", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getInicio())));
-        parametros.add(new ParametroPesquisaDataMenorOuIgual("dataFinal", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getFim())));
+        parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataInicial", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe())));
+        parametros.add(new ParametroPesquisaDataMenorOuIgual("dataFinal", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte())));
+
+        if(filtro.getPontoDeVenda() != null) {
+            parametros.add(new ParametroPesquisaIn("idsPvs", Collections.singletonList(filtro.getPontoDeVenda().getId())));
+        } else if(usuarioLogado.isRevendedor()) {
+            parametros.add(new ParametroPesquisaIn("idsPvs", usuarioLogado.getPontosDeVenda().stream().map(PontoDeVenda::getId).collect(Collectors.toList())));
+        }
+
+        return pesquisar(null, CONSULTA_FROTAS_ASSOCIADAS_A_CICLOS_CONTIDOS_NO_PERIODO, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+    }
+
+    @Override
+    public List<Frota> pesquisarFrotasAssociadasACiclosComPeriodoExato(FiltroPesquisaDetalheCicloVo filtro, Usuario usuarioLogado) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+
+        parametros.add(new ParametroPesquisaIgual("dataInicial", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getInicio())));
+        parametros.add(new ParametroPesquisaIgual("dataFinal", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getFim())));
 
         if(filtro.getIdPv() != null) {
             parametros.add(new ParametroPesquisaIn("idsPvs", Collections.singletonList(filtro.getIdPv())));
@@ -406,6 +434,6 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
             parametros.add(new ParametroPesquisaIn("idsPvs", usuarioLogado.getPontosDeVenda().stream().map(PontoDeVenda::getId).collect(Collectors.toList())));
         }
 
-        return pesquisar(null, CONSULTA_FROTAS_ASSOCIADAS_A_CICLOS_CONTIDOS_NO_PERIODO, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+        return pesquisar(null, CONSULTA_FROTAS_ASSOCIADAS_A_CICLOS_COM_PERIODO_EXATO, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
 }
