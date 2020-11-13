@@ -3,7 +3,6 @@ package ipp.aci.boleia.dominio.historico;
 
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.envers.Audited;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,7 +20,6 @@ import java.util.Date;
 /**
  * Representa o histórico de erros das operações intermediárias em lote da integração entre APCO e profrotas.
  */
-@Audited
 @Entity
 @Table(name = "HISTORICO_ERROS_APCO")
 public class HistoricoErrosOperacaoAPCO implements IPersistente {
