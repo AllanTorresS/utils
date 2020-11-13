@@ -5,6 +5,7 @@ import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheCicloVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaFinanceiroVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFrotaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialFrotaVo;
 import ipp.aci.boleia.dominio.vo.apco.ClienteProFrotaVo;
@@ -174,5 +175,13 @@ public interface IFrotaDados extends IRepositorioBoleiaDados<Frota> {
      * @param usuarioLogado Usuario logado
      * @return lista das frotas que atendem aos criterios de busca
      */
-    List<Frota> pesquisarFrotasAssociadasACiclosContidosNoPeriodo(FiltroPesquisaDetalheCicloVo filtro, Usuario usuarioLogado);
+    List<Frota> pesquisarFrotasAssociadasACiclosContidosNoPeriodo(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado);
+
+    /**
+     * Obtém a lista das frotas associadas a ciclos que possuem uma data exatada de período
+     * @param filtro O filtro de pesquisa (datas de inicio e fim do periodo)
+     * @param usuarioLogado Usuario logado
+     * @return lista das frotas que atendem aos criterios de busca
+     */
+    List<Frota> pesquisarFrotasAssociadasACiclosComPeriodoExato(FiltroPesquisaDetalheCicloVo filtro, Usuario usuarioLogado);
 }
