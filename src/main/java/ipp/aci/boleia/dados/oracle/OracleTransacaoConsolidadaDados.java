@@ -360,13 +360,14 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             "JOIN FP.frota F " +
             "JOIN TC.prazos TCP " +
             "LEFT JOIN TC.reembolso RM	" +
+            "LEFT JOIN TC.empresaAgregada EA " +
+            "LEFT JOIN TC.unidade U	" +
             "WHERE FP.pontoVenda.id IN :idsPvs AND " +
             "      TRUNC(TC.dataInicioPeriodo) = TRUNC(:dataInicio) AND " +
             "      TRUNC(TC.dataFimPeriodo) = TRUNC(:dataFim) AND " +
             "      TC.statusConsolidacao = :statusCiclo AND " +
             CLAUSULA_STATUS_NF +
             CLAUSULA_FROTA +
-            "      (TC.empresaAgregada IS NOT NULL OR TC.unidade IS NOT NULL OR F.semNotaFiscal IS NULL OR F.semNotaFiscal = false) AND " +
             "      (TC.reembolso is NULL OR (RM.dataPagamento IS NULL AND TRUNC(RM.dataVencimentoPgto) >= TRUNC(SYSDATE))) ";
 
     /**
