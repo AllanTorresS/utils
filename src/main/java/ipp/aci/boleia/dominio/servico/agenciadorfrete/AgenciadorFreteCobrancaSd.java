@@ -2,6 +2,7 @@ package ipp.aci.boleia.dominio.servico.agenciadorfrete;
 
 import ipp.aci.boleia.dominio.agenciadorfrete.AgenciadorFreteCobranca;
 import ipp.aci.boleia.dominio.agenciadorfrete.Consolidado;
+import ipp.aci.boleia.dominio.agenciadorfrete.Transacao;
 import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
 import org.springframework.stereotype.Component;
@@ -22,7 +23,7 @@ public class AgenciadorFreteCobrancaSd {
      * @return o desconto do saque
      */
     public BigDecimal obterDescontoSaque(List<Consolidado> consolidados) {
-        return consolidados.stream().flatMap(c -> c.getTransacoes().stream().filter(t -> t.getSaque() != null))
+        return consolidados.stream().flatMap(c -> c.getTransacoes().stream().filter(Transacao::temSaque))
                 .map(t -> t.getSaque().getTaxaAgenciadorFrete())
                 .reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
     }
@@ -34,10 +35,7 @@ public class AgenciadorFreteCobrancaSd {
      */
     public BigDecimal obterDescontoAbastecimento(List<Consolidado> consolidados) {
         return consolidados.stream().flatMap(c -> c.getTransacoes().stream())
-                .map(t -> t.getAbastecimento().getLitragem()
-                        .multiply(t.getAbastecimento().getPrecoCombustivel())
-                        .multiply(t.getAbastecimento().getMdr()).divide(BigDecimal.valueOf(100L), BigDecimal.ROUND_HALF_UP)
-                        .multiply(t.getAbastecimento().getTaxaFee().divide(BigDecimal.valueOf(100L), BigDecimal.ROUND_HALF_UP)))
+                .map(t -> t.getAbastecimento().obterValorTotalFee())
                 .reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
     }
 
@@ -47,7 +45,7 @@ public class AgenciadorFreteCobrancaSd {
      * @return o valor total do saque
      */
     public BigDecimal obterValorTotalSaque(Consolidado consolidado) {
-        return consolidado.getTransacoes().stream().filter(transacao -> transacao.getSaque() != null)
+        return consolidado.getTransacoes().stream().filter(Transacao::temSaque)
                 .map(t -> t.getSaque().getValorSolicitado())
                 .reduce(BigDecimal::add)
                 .orElse(BigDecimal.ZERO);
@@ -59,7 +57,7 @@ public class AgenciadorFreteCobrancaSd {
      * @return o valor total do saque
      */
     public BigDecimal obterValorTotalSaque(List<Consolidado> consolidados) {
-        return  consolidados.stream().flatMap(c -> c.getTransacoes().stream().filter(transacao -> transacao.getSaque() != null))
+        return  consolidados.stream().flatMap(c -> c.getTransacoes().stream().filter(Transacao::temSaque))
                 .map(t -> t.getSaque().getValorSolicitado())
                 .reduce(BigDecimal::add)
                 .orElse(BigDecimal.ZERO);
@@ -71,8 +69,7 @@ public class AgenciadorFreteCobrancaSd {
      * @return o valor total do abastecimento
      */
     public BigDecimal obterValorTotalAbastecimento(Consolidado consolidado) {
-        return consolidado.getTransacoes().stream().map(t -> t.getAbastecimento().getLitragem()
-                .multiply(t.getAbastecimento().getPrecoCombustivel()))
+        return consolidado.getTransacoes().stream().map(t -> t.getAbastecimento().obterValorTotal())
                 .reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
     }
 
