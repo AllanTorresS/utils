@@ -11,6 +11,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * Classe que implementa condição de utilização da classe FiltroInterceptacaoForwardJwt
+ */
 class CondicaoDiferenteDevLocal implements Condition {
 
     @Override
@@ -20,6 +23,9 @@ class CondicaoDiferenteDevLocal implements Condition {
     }
 }
 
+/**
+ * Classe responsável por encaminhar requisições para outros módulos da aplicação
+ */
 @Component
 @Conditional(CondicaoDiferenteDevLocal.class)
 public class FiltroInterceptacaoForwardJwt implements IFiltroInterceptacaoForwardJwt {
