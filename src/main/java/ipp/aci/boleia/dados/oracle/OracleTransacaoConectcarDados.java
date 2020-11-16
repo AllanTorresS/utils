@@ -212,7 +212,7 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
 
     @Override
     public List<TransacaoConectcar> obterTransacoesSemReembolso() {
-        return pesquisarSemIsolamentoDados(null, CONSULTA_CONSOLIDADO_SEM_REEMBOLSO, new ParametroPesquisaIgual("primeiroDiaDoMes", UtilitarioCalculoData.obterPrimeiroDiaMes(new Date()))).getRegistros();
+        return pesquisarSemIsolamentoDados(null, CONSULTA_CONSOLIDADO_SEM_REEMBOLSO, new ParametroPesquisaIgual("primeiroDiaDoMes", new Date())).getRegistros();
     }
 
     /**

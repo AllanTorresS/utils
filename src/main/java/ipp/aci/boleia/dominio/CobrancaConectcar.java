@@ -1,6 +1,7 @@
 package ipp.aci.boleia.dominio;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -20,6 +21,7 @@ import javax.persistence.Version;
 import org.hibernate.envers.Audited;
 
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
+import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
 
 /**
  * Representa a tabela de Cobranca Conectcar
@@ -27,7 +29,7 @@ import ipp.aci.boleia.dominio.interfaces.IPersistente;
 @Audited
 @Entity
 @Table(name = "COBRANCA_CONECTCAR")
-public class CobrancaConectcar implements IPersistente {
+public class CobrancaConectcar implements IPersistente, IPertenceFrota {
 
 	private static final long serialVersionUID = -4270486293974995429L;
 
@@ -300,6 +302,11 @@ public class CobrancaConectcar implements IPersistente {
 
 	public void setTipo(Integer tipo) {
 		this.tipo = tipo;
+	}
+
+	@Override
+	public List<Frota> getFrotas() {
+		return Arrays.asList(new Frota[] { frota });
 	}
 
 }
