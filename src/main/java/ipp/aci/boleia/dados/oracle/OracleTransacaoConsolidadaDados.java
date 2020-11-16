@@ -393,12 +393,13 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             filtroFrotaControle = "AND FR.frota.cnpj != " + cnpjFrotaControle + " ";
         }
         String filtroFrotasAssociadas = "";
+        StringBuffer strBufferFiltroFrotasAssociadas = new StringBuffer(filtroFrotasAssociadas);
         if (usuarioLogado.isInterno() && usuarioLogado.possuiFrotasAssociadas()) {
-            filtroFrotasAssociadas += " AND F.id IN (:idsFrota) ";
+            strBufferFiltroFrotasAssociadas.append(" AND F.id IN (:idsFrota) ");
             parametros.add(new ParametroPesquisaIn("idsFrota", usuarioLogado.listarIdsFrotasAssociadas()));
         }
 
-        String consultaPesquisa = String.format(CONSULTA_PESQUISA_GRID, filtroFrotaControle, filtroFrotasAssociadas, filtroStatus, filtroNotaFiscal);
+        String consultaPesquisa = String.format(CONSULTA_PESQUISA_GRID, filtroFrotaControle, strBufferFiltroFrotasAssociadas.toString(), filtroStatus, filtroNotaFiscal);
         return pesquisar(filtro.getPaginacao(), consultaPesquisa, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
@@ -593,8 +594,9 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             pesquisaFrotaControle = "AND TC.frotaPtov.frota.cnpj != " + cnpjFrotaControle + " ";
         }
         String filtroFrotasAssociadas = "";
+        StringBuffer strBufferFiltroFrotasAssociadas = new StringBuffer(filtroFrotasAssociadas);
         if (usuarioLogado.isInterno() && usuarioLogado.possuiFrotasAssociadas()) {
-            filtroFrotasAssociadas += " AND TC.frotaPtov.frota.id IN (:idsFrota) ";
+            strBufferFiltroFrotasAssociadas.append(" AND TC.frotaPtov.frota.id IN (:idsFrota) ");
             parametros.add(new ParametroPesquisaIn("idsFrota", usuarioLogado.listarIdsFrotasAssociadas()));
         }
 
@@ -626,7 +628,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         String filtroStatusIntegracao = filtro.getStatusIntegracao() != null ? montarFiltroStatusIntegracao(filtro) : "";
         String ordenacao = criarParametroOrdenacao(filtro.getPaginacao().getParametrosOrdenacaoColuna());
 
-        String consultaPesquisa = String.format(CONSULTA_REEMBOLSO_PENDENTE_GRID, pesquisaFrotaControle, filtroFrotasAssociadas, filtroStatusIntegracao, pesquisaStatusReembolso, ordenacao);
+        String consultaPesquisa = String.format(CONSULTA_REEMBOLSO_PENDENTE_GRID, pesquisaFrotaControle, strBufferFiltroFrotasAssociadas.toString(), filtroStatusIntegracao, pesquisaStatusReembolso, ordenacao);
 
         return pesquisar(filtro.getPaginacao(), consultaPesquisa, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }

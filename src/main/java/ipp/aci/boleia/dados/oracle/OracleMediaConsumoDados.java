@@ -20,6 +20,7 @@ import ipp.aci.boleia.dominio.vo.VolumeAbastecidoTipoCombustivelVo;
 import ipp.aci.boleia.util.negocio.ParametrosPesquisaBuilder;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -304,19 +305,19 @@ public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<Autori
                         new ParametroPesquisaIgual("tipoConsumo", tipoConsumoInteger)
                 );
 
-        String outrasClausulas = "";
+        StringBuffer strBufferOutrasClausulas = new StringBuffer(StringUtils.EMPTY);
 
         if(filtro.isUnidadeMotoristaMatriz()) {
-            outrasClausulas += CLAUSE_UNIDADE_MOTORISTA_MATRIZ;
+            strBufferOutrasClausulas.append(CLAUSE_UNIDADE_MOTORISTA_MATRIZ);
         }
 
         if (utilitarioAmbiente.getUsuarioLogado().isInterno() && utilitarioAmbiente.getUsuarioLogado().possuiFrotasAssociadas()) {
-                outrasClausulas += " AND a.frota.id IN (:idsFrota) ";
-                builder.adicionarParametros(new ParametroPesquisaIn("idsFrota", utilitarioAmbiente.getUsuarioLogado().listarIdsFrotasAssociadas()));
+            strBufferOutrasClausulas.append(" AND a.frota.id IN (:idsFrota) ");
+            builder.adicionarParametros(new ParametroPesquisaIn("idsFrota", utilitarioAmbiente.getUsuarioLogado().listarIdsFrotasAssociadas()));
         }
 
         String query = obterQueryPesquisarMediaConsumo(
-                String.format(QUERY_PESQUISAR_MEDIA_CONSUMO_MOTORISTA, outrasClausulas),
+                String.format(QUERY_PESQUISAR_MEDIA_CONSUMO_MOTORISTA, strBufferOutrasClausulas.toString()),
                 PARAM_ORDENACAO_PADRAO_MEDIA_CONSUMO_MOTORISTA,
                 filtro.getPaginacao()
         );
@@ -392,21 +393,22 @@ public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<Autori
                 );
 
         String outrasClausulas = filtro.isUnidadeVeiculoMatriz()? CLAUSE_UNIDADE_VEICULO_MATRIZ : "";
+        StringBuffer strBuffer = new StringBuffer(outrasClausulas);
         if(filtro.getTipoVeiculo() != null && filtro.getTipoVeiculo().getId() != null) {
             Collection<String> subTiposVeiculos = obterSubtiposVeiculosPorTipo.apply(filtro.getTipoVeiculo().getId());
             if(!subTiposVeiculos.isEmpty()) {
-                outrasClausulas += CLAUSE_IN_SUBTIPOS;
+                strBuffer.append(CLAUSE_IN_SUBTIPOS);
                 parametrosBuilder.adicionarParametros(new ParametroPesquisaIgual("subTiposVeiculos", subTiposVeiculos));
             }
         }
 
         if (utilitarioAmbiente.getUsuarioLogado().isInterno() && utilitarioAmbiente.getUsuarioLogado().possuiFrotasAssociadas()) {
-                outrasClausulas += " AND a.frota.id IN (:idsFrota) ";
-                parametrosBuilder.adicionarParametros(new ParametroPesquisaIn("idsFrota", utilitarioAmbiente.getUsuarioLogado().listarIdsFrotasAssociadas()));
+            strBuffer.append(" AND a.frota.id IN (:idsFrota) ");
+            parametrosBuilder.adicionarParametros(new ParametroPesquisaIn("idsFrota", utilitarioAmbiente.getUsuarioLogado().listarIdsFrotasAssociadas()));
         }
 
         String query = obterQueryPesquisarMediaConsumo(
-                String.format(QUERY_PESQUISAR_MEDIA_CONSUMO_VEICULO, outrasClausulas),
+                String.format(QUERY_PESQUISAR_MEDIA_CONSUMO_VEICULO, strBuffer.toString()),
                 PARAM_ORDENACAO_PADRAO_MEDIA_CONSUMO_VEICULO,
                 filtro.getPaginacao()
         );
@@ -488,21 +490,22 @@ public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<Autori
                 );
 
         String outrasClausulas = filtro.isUnidadeMotoristaMatriz() ? CLAUSE_UNIDADE_MOTORISTA_MATRIZ : "";
+        StringBuffer strBuffer = new StringBuffer(outrasClausulas);
         if(filtro.getTipoVeiculo() != null && filtro.getTipoVeiculo().getId() != null) {
             Collection<String> subTiposVeiculos = obterSubtiposVeiculosPorTipo.apply(filtro.getTipoVeiculo().getId());
             if(!subTiposVeiculos.isEmpty()) {
-                outrasClausulas += CLAUSE_IN_SUBTIPOS;
+                strBuffer.append(CLAUSE_IN_SUBTIPOS);
                 builder.adicionarParametros(new ParametroPesquisaIgual("subTiposVeiculos", subTiposVeiculos));
             }
         }
 
         if (utilitarioAmbiente.getUsuarioLogado().isInterno() && utilitarioAmbiente.getUsuarioLogado().possuiFrotasAssociadas()) {
-                outrasClausulas += " AND a.frota.id IN (:idsFrota) ";
-                builder.adicionarParametros(new ParametroPesquisaIn("idsFrota", utilitarioAmbiente.getUsuarioLogado().listarIdsFrotasAssociadas()));
+            strBuffer.append(" AND a.frota.id IN (:idsFrota) ");
+            builder.adicionarParametros(new ParametroPesquisaIn("idsFrota", utilitarioAmbiente.getUsuarioLogado().listarIdsFrotasAssociadas()));
         }
 
         String query = obterQueryPesquisarMediaConsumo(
-                String.format(QUERY_PESQUISAR_MEDIA_CONSUMO_MOTORISTA_VEICULO, outrasClausulas),
+                String.format(QUERY_PESQUISAR_MEDIA_CONSUMO_MOTORISTA_VEICULO, strBuffer.toString()),
                 PARAM_ORDENACAO_PADRAO_MEDIA_CONSUMO_MOTORISTA_UPPER_CASE,
                 filtro.getPaginacao()
         );
