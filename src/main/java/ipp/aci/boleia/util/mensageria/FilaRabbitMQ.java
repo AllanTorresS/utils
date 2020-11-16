@@ -11,6 +11,9 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
+/**
+ * Componente responsável pela configuração da conexão com servidor RabbitMQ utilizado para exportação de relatórios
+ */
 @Component
 public class FilaRabbitMQ {
     /**
