@@ -46,6 +46,9 @@ public class FilaRabbitMQ {
     @Value("${rabbitmq.password}")
     private String password;
 
+    @Value("${rabbitmq.vhost}")
+    private String vhost;
+
     private Channel canal;
 
     protected String getNomeHost() {
@@ -92,6 +95,10 @@ public class FilaRabbitMQ {
         return password;
     }
 
+    protected String getVhost() {
+        return vhost;
+    }
+
     /**
      * Envia mensagem para fila
      *
@@ -103,6 +110,7 @@ public class FilaRabbitMQ {
         fabricaConexoes.setHost(nomeHost);
         fabricaConexoes.setUsername(username);
         fabricaConexoes.setPassword(password);
+        fabricaConexoes.setVirtualHost(vhost);
 
         try {
             Connection connection = fabricaConexoes.newConnection();
