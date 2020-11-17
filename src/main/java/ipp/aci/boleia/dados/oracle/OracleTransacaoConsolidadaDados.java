@@ -408,8 +408,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "WHERE FP.pontoVenda.id IN :idsPvs AND " +
                     "      TRUNC(TC.dataInicioPeriodo) >= TRUNC(:dataInicio) AND " +
                     "      TRUNC(TC.dataFimPeriodo) <= TRUNC(:dataFim) AND " +
-                    CLAUSULA_FROTA +
-                    CLAUSULA_STATUS_NF +
+                    "      (:frotaId IS NULL OR F.id = :frotaId) AND " +
+                    "      (:statusNf IS NULL OR (TRUNC(TC.dataInicioPeriodo) = TRUNC(:dataInicioCicloAtual) AND (TC.statusNotaFiscal = :statusNf)) OR (TRUNC(TC.dataInicioPeriodo) < TRUNC(:dataInicioCicloAtual))) AND " +
                     "      (TC.reembolso is NULL OR (RM.dataPagamento IS NULL AND TRUNC(RM.dataVencimentoPgto) >= TRUNC(SYSDATE))) " +
                     "GROUP BY TC.dataInicioPeriodo, TC.dataFimPeriodo, TC.statusConsolidacao ";
 
@@ -1085,8 +1085,6 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
 
     @Override
     public List<AgrupamentoTransacaoConsolidadaPvVo> pesquisarDetalheCicloParaPv(FiltroPesquisaDetalheCicloVo filtro){
-        String consulta = CONSULTA_DETALHAMENTO_CICLO_PV;
-
         Date agora = ambiente.buscarDataAmbiente();
         Date dataInicioPeriodo = UtilitarioCalculoData.obterPrimeiroDiaMes(adicionarMesesData(agora, -1));
         Date dataFimPeriodo = UtilitarioCalculoData.obterUltimoDiaMes(agora);
@@ -1094,15 +1092,15 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         List<ParametroPesquisa> parametrosPesquisa = new ArrayList<>();
         popularParametrosDataEPvBoxFinanceiro(parametrosPesquisa, filtro.getIdPv(), dataInicioPeriodo, dataFimPeriodo);
 
-        consulta = obterConsultaComFiltroNf(parametrosPesquisa, filtro, consulta);
-
-        if(filtro.getFrota()!= null && filtro.getFrota().getId() != null){
-            parametrosPesquisa.add(new ParametroPesquisaIgual("frotaId", filtro.getFrota().getId()));
-        }else {
-            consulta = consulta.replace(CLAUSULA_FROTA, "");
+        parametrosPesquisa.add(new ParametroPesquisaIgual("frotaId", filtro.getFrota() != null ? filtro.getFrota().getId() : null));
+        parametrosPesquisa.add(new ParametroPesquisaIgual("dataInicioCicloAtual", filtro.getInicio()));
+        if(filtro.getStatusNf() != null && filtro.getStatusNf().getName() != null) {
+            parametrosPesquisa.add(new ParametroPesquisaIgual("statusNf", StatusNotaFiscal.valueOf(filtro.getStatusNf().getName()).getValue()));
+        } else {
+            parametrosPesquisa.add(new ParametroPesquisaIgual("statusNf", null));
         }
 
-        return pesquisar(null, consulta, AgrupamentoTransacaoConsolidadaPvVo.class, parametrosPesquisa.toArray(new ParametroPesquisa[parametrosPesquisa.size()])).getRegistros();
+        return pesquisar(null, CONSULTA_DETALHAMENTO_CICLO_PV, AgrupamentoTransacaoConsolidadaPvVo.class, parametrosPesquisa.toArray(new ParametroPesquisa[parametrosPesquisa.size()])).getRegistros();
     }
 
     @Override
