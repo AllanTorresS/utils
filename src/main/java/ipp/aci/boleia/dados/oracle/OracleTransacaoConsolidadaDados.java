@@ -12,7 +12,6 @@ import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.enums.ModalidadePagamento;
 import ipp.aci.boleia.dominio.enums.StatusIntegracaoReembolsoJde;
 import ipp.aci.boleia.dominio.enums.StatusNotaFiscal;
-import ipp.aci.boleia.dominio.enums.StatusNotaFiscalFinanceiro;
 import ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso;
 import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
 import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
@@ -25,7 +24,6 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenor;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
-import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaiorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
 import ipp.aci.boleia.dominio.vo.AgrupamentoTransacaoConsolidadaPvVo;
@@ -1158,11 +1156,11 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             return consulta.replace(CLAUSULA_STATUS_NF, "");
         }
 
-        StatusNotaFiscalFinanceiro statusNf = StatusNotaFiscalFinanceiro.valueOf(filtro.getStatusNf().getName());
+        StatusNotaFiscal statusNf = StatusNotaFiscal.valueOf(filtro.getStatusNf().getName());
 
-        if (statusNf.getValue().equals(StatusNotaFiscalFinanceiro.PARCIALMENTE_EMITIDA.getValue())){
+        if (statusNf.getValue().equals(StatusNotaFiscal.PARCIALMENTE_EMITIDA.getValue())){
             consulta = consulta.replace(CLAUSULA_STATUS_NF, CLAUSULA_PARCIALMENTE_EMITIDA);
-        }else if(statusNf.getValue().equals(StatusNotaFiscalFinanceiro.SEM_EMISSAO.getValue())){
+        }else if(statusNf.getValue().equals(StatusNotaFiscal.SEM_EMISSAO.getValue())){
             consulta = consulta.replace(CLAUSULA_STATUS_NF, CLAUSULA_SEM_EMISSAO);
         } else{
             parametrosPesquisa.add(new ParametroPesquisaIgual("statusNf", StatusNotaFiscal.valueOf(filtro.getStatusNf().getName()).getValue()));
