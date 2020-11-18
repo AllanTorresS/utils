@@ -79,7 +79,6 @@ public class FiltroPesquisaPrecoVo extends BaseFiltroPaginado {
     public String getNomeRede() {
         return nomeRede;
     }
-
     public void setNomeRede(String nomeRede) {
         this.nomeRede = nomeRede;
     }
