@@ -92,7 +92,7 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
                     "AND (fp.pontoVenda.id IN :idsPvs) " +
                     "ORDER BY f.nomeRazaoFrota";
 
-    private static final String CONSULTA_FROTAS_ASSOCIADAS_A_CICLOS_COM_PERIODO_EXATO =
+    private static final String CONSULTA_FROTAS_PARA_DETALHE_CICLO =
             "SELECT DISTINCT f " +
                     "FROM " +
                     "TransacaoConsolidada tc " +
@@ -103,7 +103,7 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
                     "   (trunc(tc.dataInicioPeriodo) = trunc(:dataInicial) and trunc(tc.dataFimPeriodo) = trunc(:dataFinal)) AND " +
                     "   (tc.statusConsolidacao = :statusCiclo) AND " +
                     "   (fp.pontoVenda.id IN :idsPvs) AND " +
-                    "   (tc.reembolso is NULL OR (rm.dataPagamento IS NULL AND TRUNC(rm.dataVencimentoPgto) >= TRUNC(SYSDATE))) " +
+                    "   (tc.reembolso is NULL OR (rm.dataPagamento IS NULL AND TRUNC(rm.dataVencimentoPgto) >= TRUNC(SYSDATE) AND rm.valorReembolso >= 0)) " +
                     "ORDER BY f.nomeRazaoFrota";
 
     /**
@@ -438,6 +438,6 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
             parametros.add(new ParametroPesquisaIn("idsPvs", usuarioLogado.getPontosDeVenda().stream().map(PontoDeVenda::getId).collect(Collectors.toList())));
         }
 
-        return pesquisar(null, CONSULTA_FROTAS_ASSOCIADAS_A_CICLOS_COM_PERIODO_EXATO, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+        return pesquisar(null, CONSULTA_FROTAS_PARA_DETALHE_CICLO, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
 }
