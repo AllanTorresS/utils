@@ -1050,6 +1050,6 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     public List<AutorizacaoPagamento> obterAutorizacoesDoCiclo(FiltroPesquisaAbastecimentoVo filtro) {
         List<ParametroPesquisa> parametros = montarParametroPesquisa(filtro);
 
-        return pesquisar((InformacaoPaginacao) null, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+        return pesquisar((ParametroOrdenacaoColuna)null, (ParametroPesquisa[])parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 }
