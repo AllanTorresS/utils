@@ -13,7 +13,7 @@ public interface IHistoricoPontoVendaDados extends IRepositorioBoleiaDados<Histo
     /**
      * Obtém o histórico do ponto de venda para uma data específica.
      *
-     * @param cdPontoDeVenda Identificador do {@link PontoDeVenda} atrelado ao histórico.
+     * @param cdPontoDeVenda Identificador do {@link ipp.aci.boleia.dominio.PontoDeVenda} atrelado ao histórico.
      * @param data Data a ser verificada.
      * @return O histórico encontrado.
      */

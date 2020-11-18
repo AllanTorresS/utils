@@ -63,6 +63,10 @@ public class AgenciadorFreteTaxa implements IPersistente {
         return id;
     }
 
+    public boolean definidaEmPercentual() {
+        return taxaSaqueAgenciadorPercentual != null || taxaSaquePercentual != null;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }

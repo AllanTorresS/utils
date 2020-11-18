@@ -87,6 +87,14 @@ public class Transacao implements IPersistente {
     @Version
     private Long versao;
 
+    public boolean temSaque() {
+        return saque != null;
+    }
+
+    public boolean temAbastecimento() {
+        return abastecimento != null;
+    }
+
     @Override
     public Long getId() {
         return id;
