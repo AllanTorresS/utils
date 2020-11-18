@@ -16,7 +16,6 @@ import java.util.Date;
 /**
  * Encapsula as regras de negocio que envolvem a manipulacao de Precos Negociados
  */
-
 @Component
 public class PrecoNegociadoSd {
 
@@ -35,6 +34,7 @@ public class PrecoNegociadoSd {
      * em seguida cria um histórico da negociação antiga.
      *
      * @param precoAtual preco que sera alterado
+     * @return Preco novo a partir do base
      */
     public Preco definirPrecoNegociadoApartirDePrecoBase(Preco precoAtual){
         Date dataAtualizacao = ambiente.buscarDataAmbiente();
@@ -59,6 +59,7 @@ public class PrecoNegociadoSd {
      *
      * @param novoPreco novo preço a entrar em vigência.
      * @param automatico flag indicando se o aceite foi automatico
+     * @return Preco novo
      */
     public Preco aceitarNovoAcordo(Preco novoPreco, boolean automatico) {
         Preco precoAtual = repositorioPreco.obterAtualPorFrotaPvCombustivel(novoPreco.getFrota().getId(), novoPreco.getPontoVenda().getId(), novoPreco.getPrecoBase().getPrecoMicromercado().getTipoCombustivel().getId());
@@ -72,7 +73,9 @@ public class PrecoNegociadoSd {
 
     /**
      * Remove um desconto previamente acordado entre frota e PV
+     * @param preco O preco
      * @param dataAtualizacao a data de atualizacao do desconto
+     * @return Preco cancelado
      */
     public Preco excluirDesconto(Preco preco, Date dataAtualizacao) {
         preco.setDataAtualizacao(dataAtualizacao);
@@ -82,6 +85,9 @@ public class PrecoNegociadoSd {
 
     /**
      * Marca o preco como historico saindo de vigencia
+     * @param preco O preco
+     * @param dataAtualizacao A data de atualização
+     * @return Preco historico
      */
     public Preco sairDeVigencia(Preco preco, Date dataAtualizacao) {
         preco.setStatus(StatusPreco.HISTORICO.getValue());
@@ -118,7 +124,7 @@ public class PrecoNegociadoSd {
         preco.setDescontoSolicitado(null);
         preco.setDataAtualizacao(dataAtualizacao);
         preco.setDataVigencia(dataAtualizacao);
-        preco.setStatus(automatico ? StatusPreco.VIGENTE.getValue():StatusPreco.ACEITO.getValue());
+        preco.setStatus(automatico ? StatusPreco.VIGENTE.getValue() : StatusPreco.ACEITO.getValue());
         return repositorioPreco.armazenar(preco);
     }
 
