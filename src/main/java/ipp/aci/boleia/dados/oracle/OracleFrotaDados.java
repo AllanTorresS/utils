@@ -101,6 +101,7 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
                     "LEFT JOIN tc.reembolso rm	" +
                     "WHERE " +
                     "   (trunc(tc.dataInicioPeriodo) = trunc(:dataInicial) and trunc(tc.dataFimPeriodo) = trunc(:dataFinal)) AND " +
+                    "   (tc.statusConsolidacao = :statusCiclo) AND " +
                     "   (fp.pontoVenda.id IN :idsPvs) AND " +
                     "   (tc.reembolso is NULL OR (rm.dataPagamento IS NULL AND TRUNC(rm.dataVencimentoPgto) >= TRUNC(SYSDATE))) " +
                     "ORDER BY f.nomeRazaoFrota";
@@ -429,6 +430,7 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
 
         parametros.add(new ParametroPesquisaIgual("dataInicial", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getInicio())));
         parametros.add(new ParametroPesquisaIgual("dataFinal", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getFim())));
+        parametros.add(new ParametroPesquisaIgual("statusCiclo", filtro.getStatusCiclo().getValue()));
 
         if(filtro.getIdPv() != null) {
             parametros.add(new ParametroPesquisaIn("idsPvs", Collections.singletonList(filtro.getIdPv())));
