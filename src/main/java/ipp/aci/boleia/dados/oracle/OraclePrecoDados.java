@@ -53,8 +53,7 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
             " WHERE " +
             "     tc.id = :idCombustivel " +
             "     AND pv.id = :idPontoVenda " +
-
-            "     AND (f.id IS NULL OR f.id = :idFrota ) " +
+            "     AND f.id = :idFrota " +
             "     AND (p.dataVigencia <= :dataAbastecimento OR p.dataAtualizacao <= :dataAbastecimento) " +
             "     AND p.status IN :status " +
             "     ORDER BY  " +
