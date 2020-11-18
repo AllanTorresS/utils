@@ -66,34 +66,6 @@ public class Abastecimento implements IPersistente {
     @Version
     private Long versao;
 
-    /**
-     * Calcula valor do Fee relativo ao valor do MDR aplicado
-     *
-     * @return valor relativo do Fee em relação ao valor do MDR
-     */
-    public BigDecimal obterValorTotalFee() {
-        return obterValorMdr().multiply(getTaxaFee()).divide(BigDecimal.valueOf(100L), 2, BigDecimal.ROUND_HALF_UP);
-    }
-
-
-    /**
-     * Calcula valor do abastecimento conforme quantidade e preço unitario
-     *
-     * @return valor do abastecimento
-     */
-    public BigDecimal obterValorTotal() {
-        return getLitragem().multiply(getPrecoCombustivel());
-    }
-
-    /**
-     * Calcula valor do MDR aplicando seu valor no valor do Abastecimento
-     *
-     * @return valor relativo do MDR em relação ao valor do abastecimento
-     */
-    public BigDecimal obterValorMdr() {
-        return obterValorTotal().multiply(getMdr()).divide(BigDecimal.valueOf(100L), BigDecimal.ROUND_HALF_UP);
-    }
-
     @Override
     public Long getId() {
         return id;
