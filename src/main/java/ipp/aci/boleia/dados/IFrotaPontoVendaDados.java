@@ -75,4 +75,12 @@ public interface IFrotaPontoVendaDados extends IRepositorioBoleiaDados<FrotaPont
 	 * @return uma lista contendo as associaçãoes Frota x Posto dessa frota
 	 */
 	List<FrotaPontoVenda> buscarPorFrota(Frota frota);
+
+	/**
+	 * Obtém um registro de FrotaPontoVenda a partir dos CNPJs da frota e da revenda.
+	 * @param cnpjFrota o CNPJ da frota
+	 * @param cnpjPv o CNPJ do posto
+	 * @return o objeto FrotaPontoVenda correspondente
+	 */
+	FrotaPontoVenda buscarPorCnpjFrotaCnpjPv(Long cnpjFrota, Long cnpjPv);
 }
