@@ -1045,4 +1045,11 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         return pesquisarUnicoSemIsolamentoDados(params.toArray(new ParametroPesquisa[params.size()]));
 
     }
+
+    @Override
+    public List<AutorizacaoPagamento> obterAutorizacoesDoCiclo(FiltroPesquisaAbastecimentoVo filtro) {
+        List<ParametroPesquisa> parametros = montarParametroPesquisa(filtro);
+
+        return pesquisar((InformacaoPaginacao) null, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+    }
 }
