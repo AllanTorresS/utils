@@ -370,7 +370,11 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             "      (TC.reembolso is NULL OR (RM.dataPagamento IS NULL AND TRUNC(RM.dataVencimentoPgto) >= TRUNC(SYSDATE))) ";
 
     /**
-     * Busca uma lista de transações consolidadas de um ponto de venda pertencentes a um agrupamento.
+     * Busca uma lista de transações consolidadas de um ponto de venda pertencentes a um agrupamento com a seguinte ordenação:
+     *
+     * 1. Ordem crescente da porcentagem de nota fiscal
+     * 2. Isentos de nota fiscal
+     * 3. Demais casos sem emissão de nota fiscal
      */
     private static final String CONSULTA_TRANSACOES_CONSOLIDADAS_DE_AGRUPAMENTO_GRID =
     "SELECT TC " +
@@ -387,11 +391,10 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             CLAUSULA_FROTA +
             "      (TC.reembolso is NULL OR (RM.dataPagamento IS NULL AND TRUNC(RM.dataVencimentoPgto) >= TRUNC(SYSDATE))) " +
             "ORDER BY " +
-                "CASE WHEN " + CLAUSULA_PENDENTE_NF + "  THEN 1 " +
+                "CASE WHEN (" + CLAUSULA_PENDENTE_NF + " AND TC.valorTotalNotaFiscal > 0 ) THEN (TC.valorEmitidoNotaFiscal / TC.valorTotalNotaFiscal) " +
                      "WHEN (F.semNotaFiscal = 1 AND TC.unidade IS NULL AND TC.empresaAgregada IS NULL) THEN 2 " +
                      "ELSE 3 " +
-                "END, " +
-                "TC.valorEmitidoNotaFiscal / TC.valorTotalNotaFiscal) ASC";
+                "END ";
 
     /**
      * Busca uma lista de transações consolidadas de um ponto de venda agrupadas por data e status.
