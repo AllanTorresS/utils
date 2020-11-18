@@ -178,10 +178,11 @@ public interface IFrotaDados extends IRepositorioBoleiaDados<Frota> {
     List<Frota> pesquisarFrotasAssociadasACiclosContidosNoPeriodo(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado);
 
     /**
-     * Obtém a lista das frotas associadas a ciclos que possuem uma data exatada de período
+     * Obtém a lista das frotas a serem exibidas no filtro de pesquisa do detalhe de ciclo.
+     *
      * @param filtro O filtro de pesquisa (datas de inicio e fim do periodo)
      * @param usuarioLogado Usuario logado
      * @return lista das frotas que atendem aos criterios de busca
      */
-    List<Frota> pesquisarFrotasAssociadasACiclosComPeriodoExato(FiltroPesquisaDetalheCicloVo filtro, Usuario usuarioLogado);
+    List<Frota> pesquisarFrotasParaDetalheCiclo(FiltroPesquisaDetalheCicloVo filtro, Usuario usuarioLogado);
 }

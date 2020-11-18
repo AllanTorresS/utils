@@ -11,7 +11,8 @@ public enum StatusNotaFiscal implements IEnumComLabel<StatusNotaFiscal> {
     PENDENTE(0),
     EMITIDA(1),
     ATRASADA(2),
-    SEM_EMISSAO(3);
+    SEM_EMISSAO(3),
+    PARCIALMENTE_EMITIDA(4);
 
     private final Integer value;
 
