@@ -366,7 +366,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             "      TC.statusConsolidacao = :statusCiclo AND " +
             CLAUSULA_STATUS_NF +
             CLAUSULA_FROTA +
-            "      (TC.reembolso is NULL OR (RM.dataPagamento IS NULL AND TRUNC(RM.dataVencimentoPgto) >= TRUNC(SYSDATE))) ";
+            "      (TC.reembolso is NULL OR (RM.dataPagamento IS NULL AND TRUNC(RM.dataVencimentoPgto) >= TRUNC(SYSDATE) AND RM.valorReembolso >= 0)) ";
 
     /**
      * Busca uma lista de transações consolidadas de um ponto de venda agrupadas por data e status.
@@ -383,7 +383,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "WHERE FP.pontoVenda.id IN :idsPvs AND " +
                     "      TRUNC(TC.dataInicioPeriodo) >= TRUNC(:dataInicio) AND " +
                     "      TRUNC(TC.dataFimPeriodo) <= TRUNC(:dataFim) AND " +
-                    "      (TC.reembolso is NULL OR (RM.dataPagamento IS NULL AND TRUNC(RM.dataVencimentoPgto) >= TRUNC(SYSDATE))) " +
+                    "      (TC.reembolso is NULL OR (RM.dataPagamento IS NULL AND TRUNC(RM.dataVencimentoPgto) >= TRUNC(SYSDATE) AND RM.valorReembolso >= 0)) " +
                     "GROUP BY TC.dataInicioPeriodo, TC.dataFimPeriodo, TC.statusConsolidacao " +
                     "ORDER BY CASE WHEN TC.statusConsolidacao = " + StatusTransacaoConsolidada.EM_AJUSTE.getValue() + " THEN 1 " +
                     "              WHEN TC.statusConsolidacao = " + StatusTransacaoConsolidada.EM_ABERTO.getValue() + " THEN 2 " +
@@ -408,7 +408,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "      TRUNC(TC.dataFimPeriodo) <= TRUNC(:dataFim) AND " +
                     "      (:frotaId IS NULL OR F.id = :frotaId) AND " +
                     "      (:statusNf IS NULL OR (TRUNC(TC.dataInicioPeriodo) = TRUNC(:dataInicioCicloAtual) AND (TC.statusNotaFiscal = :statusNf)) OR (TRUNC(TC.dataInicioPeriodo) < TRUNC(:dataInicioCicloAtual))) AND " +
-                    "      (TC.reembolso is NULL OR (RM.dataPagamento IS NULL AND TRUNC(RM.dataVencimentoPgto) >= TRUNC(SYSDATE))) " +
+                    "      (TC.reembolso is NULL OR (RM.dataPagamento IS NULL AND TRUNC(RM.dataVencimentoPgto) >= TRUNC(SYSDATE) AND RM.valorReembolso >= 0)) " +
                     "GROUP BY TC.dataInicioPeriodo, TC.dataFimPeriodo, TC.statusConsolidacao ";
 
     @Autowired
