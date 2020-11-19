@@ -4,6 +4,7 @@ import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheCicloVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFinanceiroVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFrotaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialFrotaVo;
@@ -175,4 +176,13 @@ public interface IFrotaDados extends IRepositorioBoleiaDados<Frota> {
      * @return lista das frotas que atendem aos criterios de busca
      */
     List<Frota> pesquisarFrotasAssociadasACiclosContidosNoPeriodo(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado);
+
+    /**
+     * Obtém a lista das frotas a serem exibidas no filtro de pesquisa do detalhe de ciclo.
+     *
+     * @param filtro O filtro de pesquisa (datas de inicio e fim do periodo)
+     * @param usuarioLogado Usuario logado
+     * @return lista das frotas que atendem aos criterios de busca
+     */
+    List<Frota> pesquisarFrotasParaDetalheCiclo(FiltroPesquisaDetalheCicloVo filtro, Usuario usuarioLogado);
 }
