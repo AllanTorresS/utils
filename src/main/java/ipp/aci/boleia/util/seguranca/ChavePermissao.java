@@ -180,7 +180,14 @@ public final class ChavePermissao {
     public static final String DOCUMENTO_CONSULTAR_E_VISUALIZAR             = SPRING_ROLE_PREFIX + "DOCUMENTO_CONSULTAR_E_VISUALIZAR" + SPRING_ROLE_SUFFIX;
     public static final String DOCUMENTO_INCLUIR                            = SPRING_ROLE_PREFIX + "DOCUMENTO_INCLUIR" + SPRING_ROLE_SUFFIX;
     public static final String DOCUMENTO_EXCLUIR                            = SPRING_ROLE_PREFIX + "DOCUMENTO_EXCLUIR" + SPRING_ROLE_SUFFIX;
-
+    
+    public static final String LEAD_DASHBOARD_CONECTCAR 					= SPRING_ROLE_PREFIX + "LEAD_DASHBOARD_CONECTCAR" + SPRING_ROLE_SUFFIX;
+    public static final String PEDIDO_TAG 									= SPRING_ROLE_PREFIX + "PEDIDO_TAG" + SPRING_ROLE_SUFFIX;
+    public static final String ATIVACAO_TAG 								= SPRING_ROLE_PREFIX + "ATIVACAO_TAG" + SPRING_ROLE_SUFFIX;
+    public static final String UTILIZACAO_TAG  								= SPRING_ROLE_PREFIX + "UTILIZACAO_TAG" + SPRING_ROLE_SUFFIX;	
+    public static final String CONSULTA_REEMBOLSO_CONECTCAR 				= SPRING_ROLE_PREFIX + "CONSULTA_REEMBOLSO_CONECTCAR" + SPRING_ROLE_SUFFIX;
+    public static final String CONSULTA_FROTA_CONECTCAR 					= SPRING_ROLE_PREFIX + "CONSULTA_FROTA_CONECTCAR" + SPRING_ROLE_SUFFIX;
+    public static final String CONSULTA_COBRANCA_CONECTCAR                  = SPRING_ROLE_PREFIX + "CONSULTA_COBRANCA_CONECTCAR" + SPRING_ROLE_SUFFIX;
     public static final String CANCELAR_ABASTECIMENTO_PI                    = SPRING_ROLE_PREFIX + "CANCELAR_ABASTECIMENTO_PI" + SPRING_ROLE_SUFFIX;
 
     public static final String CAMPANHA_CONSULTAR_VISUALIZAR                = SPRING_ROLE_PREFIX + "CAMPANHA_CONSULTAR_VISUALIZAR" + SPRING_ROLE_SUFFIX;
@@ -256,7 +263,9 @@ public final class ChavePermissao {
     public static final String API_EXTERNO_ENVIAR_SMS_MOTORISTA                 = SPRING_ROLE_PREFIX + "API_EXTERNO_ENVIAR_SMS_MOTORISTA"                + SPRING_ROLE_SUFFIX;
     public static final String API_EXTERNO_CONSULTAR_VEICULO_PLACA              = SPRING_ROLE_PREFIX + "API_EXTERNO_CONSULTAR_VEICULO_PLACA"             + SPRING_ROLE_SUFFIX;
     public static final String API_EXTERNO_BUSCAR_VEICULO                       = SPRING_ROLE_PREFIX + "API_EXTERNO_BUSCAR_VEICULO"                      + SPRING_ROLE_SUFFIX;
-
+    public static final String API_EXTERNO_TRANSACAO_CONECTCAR                  = SPRING_ROLE_PREFIX + "API_EXTERNO_TRANSACAO_CONECTCAR"                 + SPRING_ROLE_SUFFIX;
+    public static final String API_EXTERNO_RESPOSTA_LEAD_CONECTCAR              = SPRING_ROLE_PREFIX + "API_EXTERNO_RESPOSTA_LEAD_CONECTCAR"             + SPRING_ROLE_SUFFIX;
+    
     // Permissão da API de Frotas
     public static final String API_EXTERNO_CONSULTAR_FROTA                      = SPRING_ROLE_PREFIX + "API_EXTERNO_CONSULTAR_FROTA"                     + SPRING_ROLE_SUFFIX;
 
