@@ -248,7 +248,7 @@ public class AgenciadorFreteExternoNddDados implements IAgenciadorFreteExternoDa
         String token = response.getAccessToken() ;
         String refreshToken = response.getRefreshToken();
         try {
-            Date dataExpiracao = new Date(Integer.parseInt(response.getExpiresIn()));
+            Date dataExpiracao = new Date(Long.parseLong(response.getExpiresIn()));
             TokenNddVo tokenNdd = new TokenNddVo(token, refreshToken, dataExpiracao);
             chaveValorDados.inserir(NOME_CHAVE_NDD ,CHAVE_TOKEN_AUTENTICACAO, tokenNdd);
             return tokenNdd;
