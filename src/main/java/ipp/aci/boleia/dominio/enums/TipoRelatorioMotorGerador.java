@@ -32,8 +32,8 @@ public enum TipoRelatorioMotorGerador implements IEnumComLabel<TipoRelatorioMoto
     RELATORIO_REEMBOLSO_AGENCIADOR_FRETE(17, obterMapaTemplatesReembolsoAgenciadorFrete()),
 	RELATORIO_FINANCEIRO(18, obterMapaTemplatesFinanceiro()),
     RELATORIO_ABASTECIMENTOS_NO_PERIODO(19, obterMapaTemplatesAbastecimentosPeriodo()),
-    RELATORIO_ATIVACAO_TAG(20),
-    RELATORIO_GERAL_FROTA(21);
+    RELATORIO_ATIVACAO_TAG(20, obterMapaTemplatesAtivacaoTag()),
+    RELATORIO_GERAL_FROTA(21, obterMapaTemplatesFrotaGeral());
     
     private final Integer value;
     private final Map<TipoPerfilUsuario, TemplatePlanilha> templatePerfil;
@@ -314,4 +314,28 @@ public enum TipoRelatorioMotorGerador implements IEnumComLabel<TipoRelatorioMoto
         mapa.put(TipoPerfilUsuario.REVENDA, TemplatePlanilha.TEMPLATE_RELATORIO_ABASTECIMENTOS_NO_PERIODO);
         return mapa;
     }
+
+    /**
+     * Gera um mapa de templates por perfil para um tipo de relatório (ativação de tag)
+     *
+     * @return O mapa criado
+     */
+    private static Map<TipoPerfilUsuario, TemplatePlanilha> obterMapaTemplatesAtivacaoTag() {
+        Map<TipoPerfilUsuario, TemplatePlanilha> mapa = new HashMap<>();
+        mapa.put(TipoPerfilUsuario.INTERNO, TemplatePlanilha.TEMPLATE_RELATORIO_ATIVACAO_TAG);
+        mapa.put(TipoPerfilUsuario.FROTA, TemplatePlanilha.TEMPLATE_RELATORIO_ATIVACAO_TAG);
+        return mapa;
+    }
+
+    /**
+     * Gera um mapa de templates por perfil para um tipo de relatório (geral frota)
+     *
+     * @return O mapa criado
+     */
+    private static Map<TipoPerfilUsuario, TemplatePlanilha> obterMapaTemplatesFrotaGeral() {
+        Map<TipoPerfilUsuario, TemplatePlanilha> mapa = new HashMap<>();
+        mapa.put(TipoPerfilUsuario.INTERNO, TemplatePlanilha.TEMPLATE_PESQUISAR_GERAL_FROTA);
+        return mapa;
+    }
+
 }
