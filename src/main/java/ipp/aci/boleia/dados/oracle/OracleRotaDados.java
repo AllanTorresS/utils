@@ -137,7 +137,7 @@ public class OracleRotaDados extends OracleRepositorioBoleiaDados<Rota> implemen
         params.add(new ParametroPesquisaLike("nome", StringUtils.isNotBlank(filtro.getNome()) ? filtro.getNome() : null));
         params.add(new ParametroPesquisaIgual("idPontoVenda", filtro.getPontoVenda() != null ? filtro.getPontoVenda().getId() : null));
         Usuario usuario = ambiente.getUsuarioLogado();
-        if(usuario.getTipoPerfil().isInterno()){
+        if(usuario.getTipoPerfil().isInterno() && !usuario.possuiFrotasAssociadas()){
             params.add(new ParametroPesquisaDiferente("idFrota", null));
             params.add(new ParametroPesquisaIn("idFrotasAssociadas",null));
             params.add(new ParametroPesquisaIgual("possuiListaFrota", false));
@@ -146,7 +146,7 @@ public class OracleRotaDados extends OracleRepositorioBoleiaDados<Rota> implemen
             params.add(new ParametroPesquisaIgual("idFrota", usuario.getFrota().getId()));
             params.add(new ParametroPesquisaIgual("idFrotasAssociadas", null));
             params.add(new ParametroPesquisaIgual("possuiListaFrota", false));
-        } else if(usuario.possuiFrotasAssociadas()){
+        } else if(usuario.getTipoPerfil().isInterno() && usuario.possuiFrotasAssociadas()){
             params.add(new ParametroPesquisaIn("idFrotasAssociadas",usuario.listarIdsFrotasAssociadas()));
             params.add(new ParametroPesquisaIgual("idFrota", null));
             params.add(new ParametroPesquisaIgual("possuiListaFrota", true));
