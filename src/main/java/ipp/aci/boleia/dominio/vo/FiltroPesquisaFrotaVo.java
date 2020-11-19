@@ -7,77 +7,95 @@ import ipp.aci.boleia.dominio.pesquisa.comum.BaseFiltroPaginado;
  */
 public class FiltroPesquisaFrotaVo extends BaseFiltroPaginado {
 
-    private EntidadeVo frota;
-    private String cnpj;
-    private String razaoSocial;
-    private String cidade;
-    private EnumVo uf;
-    private EnumVo status;
-    private EnumVo statusContrato;
-    private EnumVo statusApiToken;
+	private EntidadeVo frota;
+	private String cnpj;
+	private String razaoSocial;
+	private String cidade;
+	private EnumVo uf;
+	private EnumVo status;
+	private EnumVo statusConectcar;
+	private EnumVo statusContrato;
+	private EnumVo statusApiToken;
+	private Boolean possuiCondicaoComercialConectcar;
 
+	public String getCnpj() {
+		return cnpj;
+	}
 
-    public String getCnpj() {
-        return cnpj;
-    }
+	public void setCnpj(String cnpj) {
+		this.cnpj = cnpj;
+	}
 
-    public void setCnpj(String cnpj) {
-        this.cnpj = cnpj;
-    }
+	public String getRazaoSocial() {
+		return razaoSocial;
+	}
 
-    public String getRazaoSocial() {
-        return razaoSocial;
-    }
+	public void setRazaoSocial(String razaoSocial) {
+		this.razaoSocial = razaoSocial;
+	}
 
-    public void setRazaoSocial(String razaoSocial) {
-        this.razaoSocial = razaoSocial;
-    }
+	public String getCidade() {
+		return cidade;
+	}
 
-    public String getCidade() {
-        return cidade;
-    }
+	public void setCidade(String cidade) {
+		this.cidade = cidade;
+	}
 
-    public void setCidade(String cidade) {
-        this.cidade = cidade;
-    }
+	public EnumVo getUf() {
+		return uf;
+	}
 
-    public EnumVo getUf() {
-        return uf;
-    }
+	public void setUf(EnumVo uf) {
+		this.uf = uf;
+	}
 
-    public void setUf(EnumVo uf) {
-        this.uf = uf;
-    }
+	public EnumVo getStatus() {
+		return status;
+	}
 
-    public EnumVo getStatus() {
-        return status;
-    }
+	public void setStatus(EnumVo status) {
+		this.status = status;
+	}
 
-    public void setStatus(EnumVo status) {
-        this.status = status;
-    }
+	public EnumVo getStatusContrato() {
+		return statusContrato;
+	}
 
-    public EnumVo getStatusContrato() {
-        return statusContrato;
-    }
+	public void setStatusContrato(EnumVo statusContrato) {
+		this.statusContrato = statusContrato;
+	}
 
-    public void setStatusContrato(EnumVo statusContrato) {
-        this.statusContrato = statusContrato;
-    }
+	public EnumVo getStatusApiToken() {
+		return statusApiToken;
+	}
 
-    public EnumVo getStatusApiToken() {
-        return statusApiToken;
-    }
+	public void setStatusApiToken(EnumVo statusApiToken) {
+		this.statusApiToken = statusApiToken;
+	}
 
-    public void setStatusApiToken(EnumVo statusApiToken) {
-        this.statusApiToken = statusApiToken;
-    }
+	public EntidadeVo getFrota() {
+		return frota;
+	}
 
-    public EntidadeVo getFrota() {
-        return frota;
-    }
+	public void setFrota(EntidadeVo frota) {
+		this.frota = frota;
+	}
 
-    public void setFrota(EntidadeVo frota) {
-        this.frota = frota;
-    }
+	public Boolean getPossuiCondicaoComercialConectcar() {
+		return possuiCondicaoComercialConectcar;
+	}
+
+	public void setPossuiCondicaoComercialConectcar(Boolean possuiCondicaoComercialConectcar) {
+		this.possuiCondicaoComercialConectcar = possuiCondicaoComercialConectcar;
+	}
+
+	public EnumVo getStatusConectcar() {
+		return statusConectcar;
+	}
+
+	public void setStatusConectcar(EnumVo statusConectcar) {
+		this.statusConectcar = statusConectcar;
+	}
+
 }
