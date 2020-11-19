@@ -986,7 +986,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         parametros.add(new ParametroPesquisaIgual("dataRequisicaoDe", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDataAbastecimento())));
         parametros.add(new ParametroPesquisaIgual("dataRequisicaoAte", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getDataAbastecimento())));
 
-        parametros.add(new ParametroPesquisaIgual("placaVeiculo", filtro.getPlaca()));
+        parametros.add(new ParametroPesquisaIgual("placaVeiculo", filtro.getPlaca().toLowerCase()));
 
         Long quantidadePostergados = pesquisarUnicoSemIsolamentoDados(CONSULTA_QUANTIDADE_ABASTECIMENTOS_POSTERGADOS, parametros.toArray(new ParametroPesquisa[parametros.size()]));
         return quantidadePostergados.intValue();
@@ -1044,5 +1044,12 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
 
         return pesquisarUnicoSemIsolamentoDados(params.toArray(new ParametroPesquisa[params.size()]));
 
+    }
+
+    @Override
+    public List<AutorizacaoPagamento> obterAutorizacoesDoCiclo(FiltroPesquisaAbastecimentoVo filtro) {
+        List<ParametroPesquisa> parametros = montarParametroPesquisa(filtro);
+
+        return pesquisar((ParametroOrdenacaoColuna)null, (ParametroPesquisa[])parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 }
