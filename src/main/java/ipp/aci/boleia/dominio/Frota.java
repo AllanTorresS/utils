@@ -11,6 +11,7 @@ import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.Where;
 import org.hibernate.envers.AuditJoinTable;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
@@ -370,7 +371,20 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataAlteracaoCiclo;
 
-
+    @OneToOne(mappedBy = "frota")
+    private CondicoesComerciais condicoesComerciais;
+    
+    @OneToOne(mappedBy = "frota")
+    private SituacaoConectCar situacaoConectCar;
+  
+    @NotAudited
+    @Formula("(SELECT NVL(COUNT(0), 0) FROM BOLEIA_SCHEMA.TAG_CONECTCAR T WHERE T.CD_FROTA = CD_FROTA)")
+    private Integer totalTags;
+    
+    @NotAudited
+    @Formula("(SELECT NVL(COUNT(0), 0) FROM BOLEIA_SCHEMA.TAG_CONECTCAR T WHERE T.CD_FROTA = CD_FROTA AND T.DT_ATIVACAO IS NOT NULL)")
+    private Integer totalTagsAtivas;
+    
 	/**
      * Construtor default
      */
@@ -456,8 +470,9 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
      * @param dataCriacao Data de criação da frota
      * @param dataAtualizacao Data de atualização da frota
      * @param connectCTAToken Token do connect
+     * @param condicoesComerciais
      */
-    public Frota(Long id, Long cnpj, Integer status, String nomeRazaoFrota, String statusConvertido, String razaoSocial, String nomeFantasia, Long inscricaoEstadual, Long inscricaoMunicipal, Integer cep, String logradouro, Integer numero, String complemento, String bairro, String municipio, String unidadeFederativa, String assessorResponsavel, Usuario usuarioAssessorResponsavel, Integer dddTelefone, Long telefone, String email, String nomeResponsavelFrota, Long cpfResponsavelFrota, String cargoResponsavelFrota, Integer dddTelefoneResponsavelFrota, Long telefoneResponsavelFrota, String emailResponsavelFrota, Integer faixaQtdVeicPesados, Integer faixaQtdVeicLeves, Long volumeEstimadoDiesel, Long volumeEstimadoCicloOtto, Integer modoPagamento, Integer porte, Integer segmentoAtuacao, Integer statusContrato, String statusContratoConvertido, Date inicioContrato, Integer prazoContrato, Date dataHabilitacao, Date dataSaldoZerado, Boolean permiteAcordoEspecial, Boolean excluido, String codigoIBGE, String codCatBeneficioFiscal, Integer numeroJdeInterno, List<GrupoOperacional> gruposOperacionais, List<Veiculo> veiculos, List<Motorista> motoristas, List<Unidade> unidades, List<FrotaPontoVenda> negociacoes, ParametroCiclo parametroCiclo, SaldoFrota saldo, List<ApiToken> apiTokens, Long versao, Boolean postoInterno, Long numeroSequencialJde, Date inicioAtivacaoTemporaria, Date fimAtivacaoTemporaria, List<FrotaParametroSistema> parametrosSistema, Boolean semNotaFiscal, Date dataAceiteTermos, Boolean primeiraCompra, List<EmpresaAgregada> empresasAgregadas, List<Permissao> permissoes, Date dataCriacao, Date dataAtualizacao, String connectCTAToken) {
+    public Frota(Long id, Long cnpj, Integer status, String nomeRazaoFrota, String statusConvertido, String razaoSocial, String nomeFantasia, Long inscricaoEstadual, Long inscricaoMunicipal, Integer cep, String logradouro, Integer numero, String complemento, String bairro, String municipio, String unidadeFederativa, String assessorResponsavel, Usuario usuarioAssessorResponsavel, Integer dddTelefone, Long telefone, String email, String nomeResponsavelFrota, Long cpfResponsavelFrota, String cargoResponsavelFrota, Integer dddTelefoneResponsavelFrota, Long telefoneResponsavelFrota, String emailResponsavelFrota, Integer faixaQtdVeicPesados, Integer faixaQtdVeicLeves, Long volumeEstimadoDiesel, Long volumeEstimadoCicloOtto, Integer modoPagamento, Integer porte, Integer segmentoAtuacao, Integer statusContrato, String statusContratoConvertido, Date inicioContrato, Integer prazoContrato, Date dataHabilitacao, Date dataSaldoZerado, Boolean permiteAcordoEspecial, Boolean excluido, String codigoIBGE, String codCatBeneficioFiscal, Integer numeroJdeInterno, List<GrupoOperacional> gruposOperacionais, List<Veiculo> veiculos, List<Motorista> motoristas, List<Unidade> unidades, List<FrotaPontoVenda> negociacoes, ParametroCiclo parametroCiclo, SaldoFrota saldo, List<ApiToken> apiTokens, Long versao, Boolean postoInterno, Long numeroSequencialJde, Date inicioAtivacaoTemporaria, Date fimAtivacaoTemporaria, List<FrotaParametroSistema> parametrosSistema, Boolean semNotaFiscal, Date dataAceiteTermos, Boolean primeiraCompra, List<EmpresaAgregada> empresasAgregadas, List<Permissao> permissoes, Date dataCriacao, Date dataAtualizacao, String connectCTAToken, CondicoesComerciais condicoesComerciais, SituacaoConectCar situacaoConectCar, List<TagConectcar> tagsAtivas, List<TagConectcar> tagsInativas) {
         this.id = id;
         this.cnpj = cnpj;
         this.status = status;
@@ -525,6 +540,9 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
         this.dataCriacao = dataCriacao;
         this.dataAtualizacao = dataAtualizacao;
         this.connectCTAToken = connectCTAToken;
+        this.condicoesComerciais = condicoesComerciais;
+        this.situacaoConectCar = situacaoConectCar;
+             
     }
 
     @Override
@@ -1248,6 +1266,14 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
         return joiner.toString();
     }
 
+    public void setCondicoesComerciais(CondicoesComerciais condicoesComerciais) {
+		this.condicoesComerciais = condicoesComerciais;
+	}
+    
+    public CondicoesComerciais getCondicoesComerciais() {
+		return condicoesComerciais;
+	}
+    
     /**
      * Informa se a Matriz da frota exige nota fiscal.
      *
@@ -1279,4 +1305,28 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
             this.setDataAlteracaoCiclo(null);
         }
     }
+
+	public SituacaoConectCar getSituacaoConectCar() {
+		return situacaoConectCar;
+	}
+
+	public void setSituacaoConectCar(SituacaoConectCar situacaoConectCar) {
+		this.situacaoConectCar = situacaoConectCar;
+	}
+
+	public Integer getTotalTags() {
+		return totalTags;
+	}
+
+	public void setTotalTags(Integer totalTags) {
+		this.totalTags = totalTags;
+	}
+
+	public Integer getTotalTagsAtivas() {
+		return totalTagsAtivas;
+	}
+
+	public void setTotalTagsAtivas(Integer totalTagsAtivas) {
+		this.totalTagsAtivas = totalTagsAtivas;
+	}    
 }

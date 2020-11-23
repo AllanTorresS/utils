@@ -241,6 +241,22 @@ public final class UtilitarioCalculoData {
 	}
 
 	/**
+	 * Obtem o primeiro dia do próximo mês
+	 *
+	 * @return o primeiro dia do próximo mês
+	 */
+	public static Date obterPrimeiroDiaProximoMes() {
+		Calendar c = Calendar.getInstance();
+		c.set(Calendar.DAY_OF_MONTH, c.getActualMinimum(Calendar.DAY_OF_MONTH));
+		c.set(Calendar.HOUR_OF_DAY,c.getActualMinimum(Calendar.HOUR_OF_DAY));
+		c.set(Calendar.MINUTE,c.getActualMinimum(Calendar.MINUTE));
+		c.set(Calendar.SECOND,c.getActualMinimum(Calendar.SECOND));
+		c.set(Calendar.MILLISECOND,c.getActualMinimum(Calendar.MILLISECOND));
+		c.add(Calendar.MONTH, 1);
+		return c.getTime();
+	}
+
+	/**
 	 * Obtem o ultimo dia do mes da data parametrizada
 	 *
 	 * @param data data a obter o ultimo dia
