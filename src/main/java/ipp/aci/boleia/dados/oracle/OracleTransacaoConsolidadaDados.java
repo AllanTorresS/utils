@@ -369,6 +369,33 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             "      (TC.reembolso is NULL OR (RM.dataPagamento IS NULL AND TRUNC(RM.dataVencimentoPgto) >= TRUNC(SYSDATE) AND RM.valorReembolso >= 0)) ";
 
     /**
+     * Busca uma lista de transações consolidadas de um ponto de venda pertencentes a um agrupamento com a seguinte ordenação:
+     *
+     * 1. Ordem crescente da porcentagem de nota fiscal
+     * 2. Isentos de nota fiscal
+     * 3. Demais casos sem emissão de nota fiscal
+     */
+    private static final String CONSULTA_TRANSACOES_CONSOLIDADAS_DE_AGRUPAMENTO_GRID =
+    "SELECT TC " +
+            "FROM TransacaoConsolidada TC " +
+            "JOIN TC.frotaPtov FP " +
+            "JOIN FP.frota F " +
+            "JOIN TC.prazos TCP " +
+            "LEFT JOIN TC.reembolso RM	" +
+            "WHERE FP.pontoVenda.id IN :idsPvs AND " +
+            "      TRUNC(TC.dataInicioPeriodo) = TRUNC(:dataInicio) AND " +
+            "      TRUNC(TC.dataFimPeriodo) = TRUNC(:dataFim) AND " +
+            "      TC.statusConsolidacao = :statusCiclo AND " +
+            CLAUSULA_STATUS_NF +
+            CLAUSULA_FROTA +
+            "      (TC.reembolso is NULL OR (RM.dataPagamento IS NULL AND TRUNC(RM.dataVencimentoPgto) >= TRUNC(SYSDATE))) " +
+            "ORDER BY " +
+                "CASE WHEN (" + CLAUSULA_PENDENTE_NF + " AND TC.valorTotalNotaFiscal > 0 ) THEN (TC.valorEmitidoNotaFiscal / TC.valorTotalNotaFiscal) " +
+                     "WHEN (F.semNotaFiscal = 1 AND TC.unidade IS NULL AND TC.empresaAgregada IS NULL) THEN 2 " +
+                     "ELSE 3 " +
+                "END ";
+
+    /**
      * Busca uma lista de transações consolidadas de um ponto de venda agrupadas por data e status.
      */
     private static final String CONSULTA_TRANSACOES_CONSOLIDADAS_AGRUPADAS_POR_PV =
@@ -947,6 +974,27 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         parametros.add(new ParametroPesquisaIgual("statusCiclo", filtro.getStatusCiclo().getValue()));
 
         return pesquisar(null, consulta, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+    }
+
+    @Override
+    public ResultadoPaginado<TransacaoConsolidada> pesquisarTransacoesDetalhamentoDeCiclo(FiltroPesquisaDetalheCicloVo filtro) {
+        String consulta = CONSULTA_TRANSACOES_CONSOLIDADAS_DE_AGRUPAMENTO_GRID;
+
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+
+        popularParametrosDataEPvBoxFinanceiro(parametros, filtro.getIdPv(), filtro.getInicio(), filtro.getFim());
+
+        consulta = obterConsultaComFiltroNf(parametros, filtro, consulta);
+
+        if(filtro.getFrota()!= null && filtro.getFrota().getId() != null){
+            parametros.add(new ParametroPesquisaIgual("frotaId", filtro.getFrota().getId()));
+        }else {
+            consulta = consulta.replace(CLAUSULA_FROTA, "");
+        }
+
+        parametros.add(new ParametroPesquisaIgual("statusCiclo", filtro.getStatusCiclo().getValue()));
+
+        return pesquisar(filtro.getPaginacao(), consulta, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
     @Override
