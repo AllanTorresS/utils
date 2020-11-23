@@ -19,7 +19,7 @@ import static ipp.aci.boleia.util.UtilitarioLambda.verificarTodosNaoNulos;
 public class CicloExportacaoPdfFinanceiroVo {
 
     private String periodo;
-    private String cicloFrota;
+    private String dataPagamento;
     private String frotaNome;
     private String frotaCnpj;
     private String postoNome;
@@ -80,13 +80,13 @@ public class CicloExportacaoPdfFinanceiroVo {
         if(consolidado.getReembolso() != null){
             taxa = UtilitarioFormatacao.formatarDecimalMoedaReal(consolidado.getReembolso().getValorDesconto(), 2).replace(" ","");
             reembolso = UtilitarioFormatacao.formatarDecimalMoedaReal(consolidado.getReembolso().getValorReembolso(), 2).replace(" ","");
+            this.setDataPagamento(consolidado.getReembolso().getDataPagamento() != null ? UtilitarioFormatacaoData.formatarDataCurta(consolidado.getReembolso().getDataPagamento()) : "-");
         }else{
             taxa = UtilitarioFormatacao.formatarDecimalMoedaReal(consolidado.getValorDesconto(), 2).replace(" ","");
             reembolso = UtilitarioFormatacao.formatarDecimalMoedaReal(consolidado.getValorReembolso(), 2).replace(" ","");
         }
 
         this.setPeriodo(UtilitarioFormatacaoData.formatarPeriodoDiasMes(consolidado.getDataInicioPeriodo(), consolidado.getDataFimPeriodo(), true));
-        this.setCicloFrota((UtilitarioCalculoData.diferencaEmDias(consolidado.getDataInicioPeriodo(), consolidado.getDataFimPeriodo()) + 1) + "+" + consolidado.getPrazos().getPrazoPgto());
         this.setFrotaNome(consolidado.getFrota().getRazaoSocial());
         this.setFrotaCnpj(UtilitarioFormatacao.formatarCnpjApresentacao(consolidado.getFrota().getCnpj()));
         if(consolidado.getEmpresaAgregada() != null){
@@ -152,12 +152,12 @@ public class CicloExportacaoPdfFinanceiroVo {
         this.periodo = periodo;
     }
 
-    public String getCicloFrota() {
-        return cicloFrota;
+    public String getDataPagamento() {
+        return dataPagamento;
     }
 
-    public void setCicloFrota(String cicloFrota) {
-        this.cicloFrota = cicloFrota;
+    public void setDataPagamento(String dataPagamento) {
+        this.dataPagamento = dataPagamento;
     }
 
     public String getFrotaNome() {
