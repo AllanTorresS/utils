@@ -1,7 +1,7 @@
 package ipp.aci.boleia.dominio;
 
-
 import ipp.aci.boleia.dominio.enums.ModalidadePagamento;
+import ipp.aci.boleia.dominio.enums.MotivoEstorno;
 import ipp.aci.boleia.dominio.enums.StatusNotaFiscal;
 import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
@@ -586,7 +586,10 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
      */
     @Transient
     public boolean todasTransacoesSaoCanceladas(){
+        boolean existeCancelado = getAutorizacoesPagamentoAssociadas().stream().anyMatch(AutorizacaoPagamento::estaCancelado);
         return getAutorizacoesPagamentoAssociadas().stream()
-                .allMatch(AutorizacaoPagamento::estaCancelado);
+                .allMatch(autorizacaoPagamento -> (autorizacaoPagamento.estaCancelado() && 
+                    MotivoEstorno.obterPorValor(autorizacaoPagamento.getMotivoEstorno()).getSemAlteracao()) ||
+                    (autorizacaoPagamento.getValorTotal().compareTo(BigDecimal.ZERO) < 0 && existeCancelado));
     }
 }
