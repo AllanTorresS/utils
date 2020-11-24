@@ -391,8 +391,9 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             "      (TC.reembolso is NULL OR (RM.dataPagamento IS NULL AND TRUNC(RM.dataVencimentoPgto) >= TRUNC(SYSDATE))) " +
             "ORDER BY " +
                 "CASE WHEN (" + CLAUSULA_PENDENTE_NF + " AND TC.valorTotalNotaFiscal > 0 ) THEN (TC.valorEmitidoNotaFiscal / TC.valorTotalNotaFiscal) " +
-                     "WHEN (F.semNotaFiscal = 1 AND TC.unidade IS NULL AND TC.empresaAgregada IS NULL) THEN 2 " +
-                     "ELSE 3 " +
+                    "WHEN TC.statusNotaFiscal = 1 THEN 2 " +
+                    "WHEN (F.semNotaFiscal = 1 AND TC.unidade IS NULL AND TC.empresaAgregada IS NULL) THEN 3 " +
+                    "ELSE 4 " +
                 "END ";
 
     /**
