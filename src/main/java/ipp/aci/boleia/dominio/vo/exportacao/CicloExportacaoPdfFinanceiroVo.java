@@ -18,7 +18,6 @@ import static ipp.aci.boleia.util.UtilitarioLambda.verificarTodosNaoNulos;
  */
 public class CicloExportacaoPdfFinanceiroVo {
 
-    private String periodo;
     private String dataPagamento;
     private String frotaNome;
     private String frotaCnpj;
@@ -86,7 +85,6 @@ public class CicloExportacaoPdfFinanceiroVo {
             reembolso = UtilitarioFormatacao.formatarDecimalMoedaReal(consolidado.getValorReembolso(), 2).replace(" ","");
         }
 
-        this.setPeriodo(UtilitarioFormatacaoData.formatarPeriodoDiasMes(consolidado.getDataInicioPeriodo(), consolidado.getDataFimPeriodo(), true));
         this.setFrotaNome(consolidado.getFrota().getRazaoSocial());
         this.setFrotaCnpj(UtilitarioFormatacao.formatarCnpjApresentacao(consolidado.getFrota().getCnpj()));
         if(consolidado.getEmpresaAgregada() != null){
@@ -144,13 +142,6 @@ public class CicloExportacaoPdfFinanceiroVo {
                 consolidado.getReembolso().getStatus().equals(StatusPagamentoReembolso.ATRASADO.getValue())));
     }
 
-    public String getPeriodo() {
-        return periodo;
-    }
-
-    public void setPeriodo(String periodo) {
-        this.periodo = periodo;
-    }
 
     public String getDataPagamento() {
         return dataPagamento;

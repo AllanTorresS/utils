@@ -1026,11 +1026,11 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         if(filtro.getPaginacao().getParametrosOrdenacaoColuna().isEmpty()) {
             ordenacao = "CASE WHEN r.status = " + StatusPagamentoReembolso.NF_ATRASADA.getValue() + " THEN 0 " +
                     "WHEN r.valorReembolso > 0 AND trunc(r.dataVencimentoPgto) < trunc(sysdate()) AND r.status <> " + StatusPagamentoReembolso.PAGO.getValue() + " THEN 1 " + //ATRASADO
-                    "ELSE 2 END, tc.dataInicioPeriodo, tc.dataFimPeriodo ";
+                    "ELSE 2 END, r.dataPagamento, r.dataVencimentoPgto ";
         } else {
-            String campoOrdenacao= "tc.dataInicioPeriodo %s , tc.dataFimPeriodo %s ";
+            String campoOrdenacao= "r.dataPagamento %s, r.dataVencimentoPgto ";
             String direcaoOrdenacao = filtro.getPaginacao().getParametrosOrdenacaoColuna().get(0).isDecrescente() ? " DESC" : " ";
-            ordenacao = String.format(campoOrdenacao, direcaoOrdenacao, direcaoOrdenacao);
+            ordenacao = String.format(campoOrdenacao, direcaoOrdenacao);
         }
 
         //Monta a consulta completa da grid do financeiro
