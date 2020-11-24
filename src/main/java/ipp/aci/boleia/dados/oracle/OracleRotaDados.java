@@ -107,7 +107,7 @@ public class OracleRotaDados extends OracleRepositorioBoleiaDados<Rota> implemen
                     "    AND (:quantidadePvs IS NULL OR " + COUNT_PVS + " > 0) " +
                     "    AND (:nome IS NULL OR LOWER(" + removerAcentosCampo("r.nome") + ") like :nome) " +
                     "    AND (r.excluido = 0) " +
-                    "    AND (:possuiListaFrota = false AND (:idFrota IS NULL OR f.id = :idFrota)) OR (:possuiListaFrota = true AND f.id in (:idFrotasAssociadas)) " +
+                    "    AND ((:possuiListaFrota = false AND (:idFrota IS NULL OR f.id = :idFrota)) OR (:possuiListaFrota = true AND f.id in (:idFrotasAssociadas))) " +
                     "    AND r.planoViagem IS NULL " +
                     "    %s %s ";
 
