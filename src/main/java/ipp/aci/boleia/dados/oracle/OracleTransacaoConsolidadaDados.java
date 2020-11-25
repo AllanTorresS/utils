@@ -69,6 +69,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
     private static final String CLAUSULA_PENDENTE_NF = "( ( ( F.semNotaFiscal is null or F.semNotaFiscal = 0 ) or TC.unidade is not null or TC.empresaAgregada is not null ) AND TC.statusNotaFiscal not in (1,3) ) ";
     private static final String CLAUSULA_PARCIALMENTE_EMITIDA = "( TC.statusConsolidacao = 1 AND " + CLAUSULA_PENDENTE_NF + " ) AND ( TC.valorEmitidoNotaFiscal > 0 ) AND ";
     private static final String CLAUSULA_SEM_EMISSAO = "( TC.statusConsolidacao = 1 AND " + CLAUSULA_PENDENTE_NF + " ) AND ( TC.valorEmitidoNotaFiscal <= 0 ) AND ";
+    private static final String CLAUSULA_EXIGE_NOTA = "( ( F.semNotaFiscal is null or F.semNotaFiscal = 0 ) or TC.unidade is not null or TC.empresaAgregada is not null ) ";
 
 
     private static final String CLAUSULA_CONSTRUTOR_AGRUPAMENTO_CONSOLIDADO_PV =
@@ -390,10 +391,9 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             CLAUSULA_FROTA +
             "      (TC.reembolso is NULL OR (RM.dataPagamento IS NULL AND TRUNC(RM.dataVencimentoPgto) >= TRUNC(SYSDATE))) " +
             "ORDER BY " +
-                "CASE WHEN (" + CLAUSULA_PENDENTE_NF + " AND TC.valorTotalNotaFiscal > 0 ) THEN (TC.valorEmitidoNotaFiscal / TC.valorTotalNotaFiscal) " +
-                    "WHEN TC.statusNotaFiscal = 1 THEN 2 " +
-                    "WHEN (F.semNotaFiscal = 1 AND TC.unidade IS NULL AND TC.empresaAgregada IS NULL) THEN 3 " +
-                    "ELSE 4 " +
+                "CASE WHEN (" + CLAUSULA_EXIGE_NOTA + " AND TC.statusNotaFiscal <> 3 AND TC.valorTotalNotaFiscal > 0) THEN (TC.valorEmitidoNotaFiscal / TC.valorTotalNotaFiscal) " +
+                    "WHEN (F.semNotaFiscal = 1 AND TC.unidade IS NULL AND TC.empresaAgregada IS NULL) THEN 2 " +
+                    "ELSE 3 " +
                 "END ";
 
     /**
