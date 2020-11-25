@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -115,13 +117,18 @@ public class FilaRabbitMQ {
         try {
             Connection connection = fabricaConexoes.newConnection();
             Channel canal = connection.createChannel();
-            canal.exchangeDeclare(nomeTopicoRelatorio, getTipoExchange(), true);
+            Map<String, Object> args = new HashMap<String, Object>();
+            args.put("x-delayed-type", "direct");
+            canal.exchangeDeclare(nomeTopicoRelatorio, getTipoExchange(), true, false, args);
 
             StringBuilder nomeChaveRota = new StringBuilder(prefixoChaveRota);
             nomeChaveRota.append(chaveRota);
 
+            Map<String, Object> headers = new HashMap<String, Object>();
+            headers.put("x-delay", 2000);
             canal.basicPublish(nomeTopicoRelatorio, nomeChaveRota.toString(),
                     new AMQP.BasicProperties.Builder()
+                        .headers(headers)
                         .contentType("text/plain")
                         .deliveryMode(2)
                         .priority(1)
