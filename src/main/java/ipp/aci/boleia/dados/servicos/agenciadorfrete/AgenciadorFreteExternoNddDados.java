@@ -1,5 +1,8 @@
 package ipp.aci.boleia.dados.servicos.agenciadorfrete;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import ipp.aci.boleia.dados.IAgenciadorFreteExternoDados;
 import ipp.aci.boleia.dados.IChaveValorDados;
 import ipp.aci.boleia.dados.IClienteHttpDados;
@@ -247,13 +250,28 @@ public class AgenciadorFreteExternoNddDados implements IAgenciadorFreteExternoDa
         }
         String token = response.getAccessToken() ;
         String refreshToken = response.getRefreshToken();
+
+        Date dataExpiracao = obterValorExpiracaoTokenNDD(token);
+        TokenNddVo tokenNdd = new TokenNddVo(token, refreshToken, dataExpiracao);
+        chaveValorDados.inserir(NOME_CHAVE_NDD ,CHAVE_TOKEN_AUTENTICACAO, tokenNdd);
+        return tokenNdd;
+    }
+
+    /**
+     * Obtem a data de expiração a partir do token
+     * Se a data de expiração do token for inválida, será retornado como vencimento imediato
+     *
+     * @param tokenAutenticacao token da autenticação da NDD
+     * @return data de expiração encontrada no token ou vencimento imediato
+     */
+    private Date obterValorExpiracaoTokenNDD(String tokenAutenticacao) {
         try {
-            Date dataExpiracao = new Date(Long.parseLong(response.getExpiresIn()));
-            TokenNddVo tokenNdd = new TokenNddVo(token, refreshToken, dataExpiracao);
-            chaveValorDados.inserir(NOME_CHAVE_NDD ,CHAVE_TOKEN_AUTENTICACAO, tokenNdd);
-            return tokenNdd;
-        } catch (NumberFormatException e) {
-            throw new ExcecaoServicoIndisponivel(mensagens.obterMensagem("agenciador.frete.ndd.servico.inexistente"));
+            DecodedJWT tokenJwt = JWT.decode(tokenAutenticacao);
+            Date expiracaoToken = tokenJwt.getExpiresAt();
+
+            return expiracaoToken;
+        } catch (JWTVerificationException | NumberFormatException e) {
+            return new Date();
         }
     }
 
