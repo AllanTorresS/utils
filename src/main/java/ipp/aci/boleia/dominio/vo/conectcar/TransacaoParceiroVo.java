@@ -44,7 +44,7 @@ public class TransacaoParceiroVo {
 	private Long tagId;
 
 	@JsonProperty("DataTransacao")
-	private Date dataTransacao;
+	private String dataTransacao;
 
 	@JsonProperty("TransacaoId")
 	private Long transacaoId;
@@ -172,11 +172,11 @@ public class TransacaoParceiroVo {
 		this.tagId = tagId;
 	}
 
-	public Date getDataTransacao() {
+	public String getDataTransacao() {
 		return dataTransacao;
 	}
 
-	public void setDataTransacao(Date dataTransacao) {
+	public void setDataTransacao(String dataTransacao) {
 		this.dataTransacao = dataTransacao;
 	}
 
