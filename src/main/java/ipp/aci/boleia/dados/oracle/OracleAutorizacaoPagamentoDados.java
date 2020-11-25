@@ -349,28 +349,24 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
 
         povoarParametroIgual("frota", filtro.getFrota() != null ? filtro.getFrota().getId() : null, parametros);
         povoarParametroIgual("pontoVenda", filtro.getPontoDeVenda() != null ? filtro.getPontoDeVenda().getId() : null, parametros);
-        if(filtro.getDe() != null) {
-            ParametroPesquisaDataMaiorOuIgual dataProcessamentoDe = new ParametroPesquisaDataMaiorOuIgual("dataProcessamento", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe()));
-            ParametroPesquisaDataMaiorOuIgual dataPostergacaoDe = new ParametroPesquisaDataMaiorOuIgual("dataPostergacao", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe()));
-            parametros.add(new ParametroPesquisaOr(dataProcessamentoDe, dataPostergacaoDe));
+        montarParametroComPostergacao(
+                montarParametroPeriodoData("dataProcessamento", filtro.getDe(), filtro.getAte()),
+                montarParametroPeriodoData("dataPostergacao", filtro.getDe(), filtro.getAte()),
+                filtro.isConsiderarPostergados(),
+                parametros
+        );
+
+        ParametroPesquisa parametroDataRequisicao = montarParametroPeriodoData("dataRequisicao", filtro.getRequisicaoDe(), filtro.getRequisicaoAte());
+        if (parametroDataRequisicao != null) {
+            parametros.add(parametroDataRequisicao);
         }
-        if(filtro.getAte() != null) {
-            ParametroPesquisaDataMenorOuIgual dataProcessamentoAte = new ParametroPesquisaDataMenorOuIgual("dataProcessamento", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte()));
-            ParametroPesquisaDataMenorOuIgual dataPostergacaoAte = new ParametroPesquisaDataMenorOuIgual("dataPostergacao", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte()));
-            parametros.add(new ParametroPesquisaOr(dataProcessamentoAte, dataPostergacaoAte));
-        }
-        povoarParametroDataMaiorIgual("dataRequisicao", filtro.getRequisicaoDe(), parametros);
-        povoarParametroDataMenorIgual("dataRequisicao", filtro.getRequisicaoAte(), parametros);
-        if(filtro.getProcessamentoDe() != null) {
-            ParametroPesquisaDataMaiorOuIgual dataProcessamentoDe = new ParametroPesquisaDataMaiorOuIgual("dataProcessamento", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getProcessamentoDe()));
-            ParametroPesquisaDataMaiorOuIgual dataPostergacaoDe = new ParametroPesquisaDataMaiorOuIgual("dataPostergacao", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getProcessamentoDe()));
-            parametros.add(new ParametroPesquisaOr(dataProcessamentoDe, dataPostergacaoDe));
-        }
-        if(filtro.getProcessamentoAte() != null) {
-            ParametroPesquisaDataMenorOuIgual dataProcessamentoAte = new ParametroPesquisaDataMenorOuIgual("dataProcessamento", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getProcessamentoAte()));
-            ParametroPesquisaDataMenorOuIgual dataPostergacaoAte = new ParametroPesquisaDataMenorOuIgual("dataPostergacao", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getProcessamentoAte()));
-            parametros.add(new ParametroPesquisaOr(dataProcessamentoAte, dataPostergacaoAte));
-        }
+
+        montarParametroComPostergacao(
+                montarParametroPeriodoData("dataProcessamento", filtro.getProcessamentoDe(), filtro.getProcessamentoAte()),
+                montarParametroPeriodoData("dataPostergacao", filtro.getProcessamentoDe(), filtro.getProcessamentoAte()),
+                filtro.isConsiderarPostergados(),
+                parametros);
+
         povoarParametroDataMaiorIgual("dataRequisicao", filtro.getDataAbastecimento(), parametros);
         povoarParametroDataMenorIgual("dataRequisicao", filtro.getDataAbastecimento(), parametros);
         povoarParametroLike("placaVeiculo", filtro.getPlaca(), parametros);
@@ -382,16 +378,12 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         povoarParametroModalidadePagementoPre(filtro, parametros);
         povoarParametrosStatus(filtro, parametros);
         povoarParametrosEstorno(filtro, parametros);
-        if(filtro.getDataHoraProcessamentoDe() != null) {
-            ParametroPesquisaDataMaiorOuIgual dataProcessamentoDe = new ParametroPesquisaDataMaiorOuIgual("dataProcessamento", filtro.getDataHoraProcessamentoDe());
-            ParametroPesquisaDataMaiorOuIgual dataPostergacaoDe = new ParametroPesquisaDataMaiorOuIgual("dataProcessamento", filtro.getDataHoraProcessamentoDe());
-            parametros.add(new ParametroPesquisaOr(dataProcessamentoDe, dataPostergacaoDe));
-        }
-        if(filtro.getDataHoraProcessamentoAte() != null) {
-            ParametroPesquisaDataMenorOuIgual dataProcessamentoAte = new ParametroPesquisaDataMenorOuIgual("dataProcessamento", filtro.getDataHoraProcessamentoAte());
-            ParametroPesquisaDataMenorOuIgual dataPostergacaoAte = new ParametroPesquisaDataMenorOuIgual("dataPostergacao", filtro.getDataHoraProcessamentoAte());
-            parametros.add(new ParametroPesquisaOr(dataProcessamentoAte, dataPostergacaoAte));
-        }
+
+        montarParametroComPostergacao(
+                montarParametroPeriodoData("dataProcessamento", filtro.getDataHoraProcessamentoDe(), filtro.getDataHoraProcessamentoAte()),
+                montarParametroPeriodoData("dataPostergacao", filtro.getDataHoraProcessamentoDe(), filtro.getDataHoraProcessamentoAte()),
+                filtro.isConsiderarPostergados(), parametros);
+
         povoarParametrosAjustados(filtro, parametros);
         povoarParametroIgual("veiculo.identificadorInterno", filtro.getIdentificadorInterno(), parametros);
 
@@ -443,6 +435,54 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
             parametros.add(new ParametroPesquisaIn("frota", filtro.getIdsFrotas()));
         }
         return parametros;
+    }
+
+    /**
+     * Monta parâmetro de pesquisa para buscar datas dentro de um intervalo fechado de datas
+     * @param campoData nome do campo de data da entidade
+     * @param de a data inicial, ou nulo
+     * @param ate a data final, ou nulo
+     * @return o parametro de pesquisa para o intervalo, ou nulo caso de e ate sejam nulos
+     */
+    private ParametroPesquisa montarParametroPeriodoData(String campoData, Date de, Date ate) {
+        ParametroPesquisaDataMaiorOuIgual parametroDe = null;
+        ParametroPesquisaDataMenorOuIgual parametroAte = null;
+        if (de != null) {
+            parametroDe = new ParametroPesquisaDataMaiorOuIgual(campoData, UtilitarioCalculoData.obterPrimeiroInstanteDia(de));
+        }
+        if (ate != null) {
+            parametroAte = new ParametroPesquisaDataMenorOuIgual(campoData, UtilitarioCalculoData.obterUltimoInstanteDia(ate));
+        }
+
+        if (parametroDe != null && parametroAte != null) {
+            return new ParametroPesquisaAnd(parametroDe, parametroAte);
+        } else if (parametroDe != null) {
+            return parametroDe;
+        } else if (parametroAte != null) {
+            return parametroAte;
+        }
+        return null;
+    }
+
+    /**
+     * Combina um parâmetro de data com um parâmetro de data de postergação
+     * @param parametroData o parâmetro de data
+     * @param parametroPostergacao o parâmetro de pesquisa por data de postergação
+     * @param considerarPostergacao indica se a consulta espera ver postergados no período
+     */
+    private void montarParametroComPostergacao(ParametroPesquisa parametroData, ParametroPesquisa parametroPostergacao, boolean considerarPostergacao, List<ParametroPesquisa> parametros) {
+        ParametroPesquisa parametroDataComPostergacao = null;
+        if (parametroData != null) {
+            if (parametroPostergacao != null && considerarPostergacao) {
+                 parametroDataComPostergacao = new ParametroPesquisaOr(parametroData, parametroPostergacao);
+            } else {
+                 parametroDataComPostergacao = parametroData;
+            }
+        }
+
+        if (parametroDataComPostergacao != null) {
+            parametros.add(parametroDataComPostergacao);
+        }
     }
 
     @Override

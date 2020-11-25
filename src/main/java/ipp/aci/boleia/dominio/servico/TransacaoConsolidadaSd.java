@@ -46,6 +46,8 @@ import ipp.aci.boleia.util.excecao.ExcecaoValidacao;
 import ipp.aci.boleia.util.i18n.Mensagens;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.apache.commons.collections4.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -84,6 +86,7 @@ import static ipp.aci.boleia.util.UtilitarioLambda.agrupar;
 @Component
 public class TransacaoConsolidadaSd {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(TransacaoConsolidadaSd.class);
     public static final BigDecimal MDR_PADRAO_SOLUCAO = new BigDecimal("2");
 
     @Autowired
@@ -164,10 +167,10 @@ public class TransacaoConsolidadaSd {
      */
     public int obterQuantidadeNotasFiscais(TransacaoConsolidada transacaoConsolidada) {
         return transacaoConsolidada.getAutorizacoesPagamentoAssociadas()
-                        .stream()
-                        .filter(autorizacaoPagamento -> !autorizacaoPagamentoFoiPostergadaParaOutroCiclo(autorizacaoPagamento, transacaoConsolidada))
-                        .mapToInt(AutorizacaoPagamento::getQuantidadeNotasFiscais)
-                        .reduce(0, Integer::sum);
+                .stream()
+                .filter(autorizacaoPagamento -> !autorizacaoPagamentoFoiPostergadaParaOutroCiclo(autorizacaoPagamento, transacaoConsolidada))
+                .mapToInt(AutorizacaoPagamento::getQuantidadeNotasFiscais)
+                .reduce(0, Integer::sum);
     }
 
     /**
@@ -837,7 +840,7 @@ public class TransacaoConsolidadaSd {
         return mdr;
     }
 
-     /**
+    /**
      * Atualiza o faturamento de um ciclo que possui um abastecimento cancelado após postergação
      * @param abastecimentoCancelado Abastecimento cancelado após ter sido postergado
      */
@@ -901,8 +904,12 @@ public class TransacaoConsolidadaSd {
             transacaoConsolidada.setAutorizacaoPagamentos(autorizacaoPagamentoSd.reverterStatusEdicao(autorizacaoPagamentosOriginais));
             transacaoConsolidada.setAutorizacoesPagamentoPostergadas(autorizacaoPagamentoSd.reverterStatusEdicao(autorizacoesPagamentoPostergadas));
 
-            notificacaoUsuarioSd.enviarNotificacaoEdicaoAbastecimentoExpirado(autorizacoesPendentes.stream().map(AutorizacaoPagamentoEdicao::getUsuario).collect(Collectors.toList()));
-            enviarEmailsEdicoesRevertidas(transacaoConsolidada, autorizacoesPendentes);
+            try {
+                notificacaoUsuarioSd.enviarNotificacaoEdicaoAbastecimentoExpirado(autorizacoesPendentes.stream().map(AutorizacaoPagamentoEdicao::getUsuario).collect(Collectors.toList()));
+                enviarEmailsEdicoesRevertidas(transacaoConsolidada, autorizacoesPendentes);
+            } catch (Exception e) {
+                LOGGER.error(mensagens.obterMensagem("erro.consolidado.edicao.desfeita", transacaoConsolidada.getId()), e);
+            }
         }
     }
 
@@ -1075,18 +1082,18 @@ public class TransacaoConsolidadaSd {
     private int obterQuantidadeDeTransacoesAutorizadasDoCiclo(TransacaoConsolidada transacaoConsolidada){
 
         int quantidadeDetransacoesOriginaisDoCiclo = transacaoConsolidada.getAutorizacaoPagamentosStream()
-                                                                .filter(AutorizacaoPagamento::estaAutorizado)
-                                                                .filter(autorizacaoPagamento -> autorizacaoPagamento.getValorTotal().compareTo(BigDecimal.ZERO) > 0)
-                                                                .collect(Collectors.toList()).size();
+                .filter(AutorizacaoPagamento::estaAutorizado)
+                .filter(autorizacaoPagamento -> autorizacaoPagamento.getValorTotal().compareTo(BigDecimal.ZERO) > 0)
+                .collect(Collectors.toList()).size();
 
         // Quanto aos abastecimentos postergados, considera somente aqueles que nao foram postergados novamente (para outro ciclo)
         // Nota: Esse tratamento se faz relevante somente no ultimo processamento do ciclo, que e realizado imediatamente apos o seu fechamento
         // Continuacao Nota: Um abastecimento somente deve ser contabilizado em seu ciclo original e em seu ciclo de postergacao mais recente (nunca em ciclos "intermediarios")
         int quantidadeDetransacoesPostergadasDoCiclo = transacaoConsolidada.getAutorizacoesPagamentoPostergadasStream()
-                                                        .filter(AutorizacaoPagamento::estaAutorizado)
-                                                        .filter(autorizacaoPagamento -> autorizacaoPagamento.getValorTotal().compareTo(BigDecimal.ZERO) > 0)
-                                                        .filter(autorizacaoPagamento -> !autorizacaoPagamentoFoiPostergadaParaOutroCiclo(autorizacaoPagamento, transacaoConsolidada))
-                                                        .collect(Collectors.toList()).size();
+                .filter(AutorizacaoPagamento::estaAutorizado)
+                .filter(autorizacaoPagamento -> autorizacaoPagamento.getValorTotal().compareTo(BigDecimal.ZERO) > 0)
+                .filter(autorizacaoPagamento -> !autorizacaoPagamentoFoiPostergadaParaOutroCiclo(autorizacaoPagamento, transacaoConsolidada))
+                .collect(Collectors.toList()).size();
 
         return quantidadeDetransacoesOriginaisDoCiclo + quantidadeDetransacoesPostergadasDoCiclo;
     }
@@ -1175,7 +1182,7 @@ public class TransacaoConsolidadaSd {
         TransacaoConsolidada transacaoConsolidada = repositorio.obterPorId(idTransacaoConsolidada);
 
         return transacaoConsolidada.getAutorizacoesPagamentoAssociadas().stream()
-                    .filter(AutorizacaoPagamento::estaAutorizadaOuCancelada)
-                    .noneMatch(autorizacaoPagamento -> autorizacaoPagamento.getValorTotal().compareTo(BigDecimal.ZERO) >= 0);
+                .filter(AutorizacaoPagamento::estaAutorizadaOuCancelada)
+                .noneMatch(autorizacaoPagamento -> autorizacaoPagamento.getValorTotal().compareTo(BigDecimal.ZERO) >= 0);
     }
 }
