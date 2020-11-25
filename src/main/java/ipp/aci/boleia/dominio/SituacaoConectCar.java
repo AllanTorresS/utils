@@ -23,7 +23,6 @@ import ipp.aci.boleia.dominio.interfaces.IPersistente;
  * Representa a tabela de Condicoes Comerciais
  */
 @Entity
-@Audited
 @Table(name = "V_SITUACAO_FROTA_CONECTCAR")
 public class SituacaoConectCar implements IPersistente {
 
