@@ -78,8 +78,7 @@ public class AgenciadorFreteCobrancaSd {
      * @return a data fim
      */
     public Date obterDataFim(AgenciadorFreteCobranca cobranca) {
-        return cobranca.getConsolidados().stream()
-                .map(Consolidado::getDataFimPeriodo)
-                .findFirst().orElseThrow(() -> new ExcecaoBoleiaRuntime(Erro.ERRO_INTEGRACAO));
+        return cobranca.getConsolidados().stream().findFirst().map(Consolidado::getDataFimPeriodo)
+                .orElseThrow(() -> new ExcecaoBoleiaRuntime(Erro.ERRO_INTEGRACAO));
     }
 }
