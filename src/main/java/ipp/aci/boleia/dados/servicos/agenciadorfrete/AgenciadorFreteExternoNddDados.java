@@ -270,7 +270,7 @@ public class AgenciadorFreteExternoNddDados implements IAgenciadorFreteExternoDa
             Date expiracaoToken = tokenJwt.getExpiresAt();
 
             return expiracaoToken;
-        } catch (JWTVerificationException | NumberFormatException e) {
+        } catch (NullPointerException | JWTVerificationException | NumberFormatException e) {
             return new Date();
         }
     }
