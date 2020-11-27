@@ -131,8 +131,15 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
     @Override
     public List<Preco> obterParaVigenciaAutomatica(Date dataCorte) {
         return pesquisar((ParametroOrdenacaoColuna) null,
-                new ParametroPesquisaIn("status", Arrays.asList(StatusPreco.NOVO.getValue(), StatusPreco.PENDENTE.getValue(), StatusPreco.AGENDADO_PENDENTE)),
-                new ParametroPesquisaDataMenorOuIgual("dataSolicitacao", dataCorte));
+                new ParametroPesquisaIn("status", Arrays.asList(StatusPreco.NOVO.getValue(), StatusPreco.PENDENTE.getValue())),
+                new ParametroPesquisaOr(
+                    new ParametroPesquisaAnd(
+                        new ParametroPesquisaDataMenorOuIgual("dataSolicitacao", dataCorte),
+                        new ParametroPesquisaNulo("dataVigencia")
+                    ),
+                    new ParametroPesquisaDataMenorOuIgual("dataVigencia", ambiente.buscarDataAmbiente())
+                )
+        );
     }
 
     @Override
