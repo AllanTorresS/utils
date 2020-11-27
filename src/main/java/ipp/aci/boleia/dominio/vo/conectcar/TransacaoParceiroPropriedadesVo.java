@@ -40,6 +40,12 @@ public class TransacaoParceiroPropriedadesVo {
 	@JsonProperty("Protocolo")
 	private String protocolo;
 
+	@JsonProperty("CategoriaCobrada")
+	private String categoriaCobrada;
+
+	@JsonProperty("NumeroEixo")
+	private String numeroEixo;
+
 	public TransacaoParceiroPropriedadesVo() {
 	}
 
@@ -121,6 +127,22 @@ public class TransacaoParceiroPropriedadesVo {
 
 	public void setNumeroSerieTag(String numeroSerieTag) {
 		this.numeroSerieTag = numeroSerieTag;
+	}
+
+	public String getCategoriaCobrada() {
+		return categoriaCobrada;
+	}
+
+	public void setCategoriaCobrada(String categoriaCobrada) {
+		this.categoriaCobrada = categoriaCobrada;
+	}
+
+	public String getNumeroEixo() {
+		return numeroEixo;
+	}
+
+	public void setNumeroEixo(String numeroEixo) {
+		this.numeroEixo = numeroEixo;
 	}
 
 }
