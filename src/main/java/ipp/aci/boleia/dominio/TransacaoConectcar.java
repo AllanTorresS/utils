@@ -121,6 +121,13 @@ public class TransacaoConectcar implements IPersistente, IPertenceFrota {
 	@JoinColumn(name = "CD_TRANSACAO_ORIGEM")
 	private TransacaoConectcar transacaoOrigem;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "CD_CATEG_CONECTCAR")
+	private CategoriaConectcar categoria;
+	
+	@Column(name = "QT_EIXOS")
+	private Integer quantidadeEixos;
+
 	/**
 	 * Código da transação originada da Conectcar
 	 */
@@ -325,6 +332,22 @@ public class TransacaoConectcar implements IPersistente, IPertenceFrota {
 
 	public void setTag(TagConectcar tag) {
 		this.tag = tag;
+	}
+
+	public CategoriaConectcar getCategoria() {
+		return categoria;
+	}
+
+	public void setCategoria(CategoriaConectcar categoria) {
+		this.categoria = categoria;
+	}
+
+	public Integer getQuantidadeEixos() {
+		return quantidadeEixos;
+	}
+
+	public void setQuantidadeEixos(Integer quantidadeEixos) {
+		this.quantidadeEixos = quantidadeEixos;
 	}
 
 }
