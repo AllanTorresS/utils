@@ -105,22 +105,13 @@ public class CicloExportacaoPdfFinanceiroVo {
         this.setNumTransacoes(consolidado.getQuantidadeAbastecimentos().intValue());
         this.setPrazoReembolso(UtilitarioFormatacaoData.formatarDataCurta(
                 UtilitarioCalculoData.adicionarDiasData(consolidado.getDataFimPeriodo(), consolidado.getPrazos().getPrazoReembolso().intValue())));
-        this.setPrazoNotaFiscal(UtilitarioFormatacaoData.formatarDataCurta(consolidado.getPrazos().getDataLimiteEmissaoNfe()));
-        if(percentualEmitido != null){
-            if(consolidado.getStatusConsolidacao().equals(StatusTransacaoConsolidada.FECHADA.getValue()) && consolidado.pendenteNotaFiscal()){
-                if(percentualEmitido > 0){
-                    this.setStatusNotaFiscal(StatusNotaFiscal.PARCIALMENTE_EMITIDA.getLabel());
-                } else{
-                    this.setStatusNotaFiscal(StatusNotaFiscal.SEM_EMISSAO.getLabel());
-                }
-            } else{
-                this.setStatusNotaFiscal(consolidado.obterStatusNotaFiscal(dataAtual).getLabel());
-            }
-            if(percentualEmitido == 100){
-                this.setStatusNotaFiscal(StatusNotaFiscal.EMITIDA.getLabel());
-            }
+        // Status e Prazo de NF só não devem ser exibidos quando todos os abastecimentos são negativos ou é isento NF
+        if(!consolidado.todasTransacoesSaoNegativas() && consolidado.exigeEmissaoNF()){
+            this.setPrazoNotaFiscal(UtilitarioFormatacaoData.formatarDataCurta(consolidado.getPrazos().getDataLimiteEmissaoNfe()));
+            this.setStatusNotaFiscal(StatusNotaFiscal.obterPorValor(consolidado.getStatusNotaFiscal()).getLabel());
         } else{
             this.setStatusNotaFiscal("-");
+            this.setPrazoNotaFiscal("-");
         }
         this.setPercentualEmitido(percentualEmitido);
         if(consolidado.getReembolso() != null) {
