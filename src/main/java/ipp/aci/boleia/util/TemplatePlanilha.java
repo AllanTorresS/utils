@@ -19,6 +19,7 @@ public enum TemplatePlanilha {
     TEMPLATE_RELATORIO_ABASTECIMENTO_REVENDA("template-relatorio-abastecimento-revenda.xlsx"),
     TEMPLATE_RELATORIO_ABASTECIMENTO_SOLUCAO("template-relatorio-abastecimento-solucao.xlsx"),
     TEMPLATE_RELATORIO_COBRANCA("template-relatorio-cobranca.xlsx"),
+    TEMPLATE_RELATORIO_COBRANCA_CONECTCAR("template-relatorio-cobranca-conectcar.xlsx"),
     TEMPLATE_RELATORIO_COBRANCA_COM_DESCONTO("template-relatorio-cobranca-com-descontos.xlsx"),
     TEMPLATE_RELATORIO_COBRANCA_INTERNO("template-relatorio-cobranca-interno.xlsx"),
     TEMPLATE_RELATORIO_COBRANCA_AGENCIADOR_FRETE("template-relatorio-cobranca-agenciador-frete.xlsx"),
