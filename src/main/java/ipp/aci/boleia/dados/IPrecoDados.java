@@ -67,4 +67,14 @@ public interface IPrecoDados extends IRepositorioBoleiaDados<Preco> {
      * @return O preco pendente ou novo, caso exista
      */
     List<Preco> obterPrecos(Frota frota, PontoDeVenda posto, TipoCombustivel tipoCombustivel, List<StatusPreco> status);
+
+    /**
+     * Busca o preco agendado a partir de uma data de vigência para um determinado PontoVenda,Frota e tipo combustível
+     * @param frota a Frota a ser filtrada
+     * @param posto O Ponto de Venda a ser filtrado
+     * @param tipoCombustivel O id do tipo de combustivel
+     * @param dataVigencia A data de vigência
+     * @return O preco agendado
+     */
+    Preco obterAgendamentoPorFrotaPvCombustivelDataVigencia(Frota frota, PontoDeVenda posto, TipoCombustivel tipoCombustivel, Date dataVigencia);
 }

@@ -156,7 +156,7 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
 
     @Override
     public List<Preco> buscarPrecosAtuais(Long idPontoVenda, Long idTipoCombustivel) {
-         List<ParametroPesquisa> parametros = new ArrayList<>();
+        List<ParametroPesquisa> parametros = new ArrayList<>();
 
         List<Integer> statusValidos = new ArrayList<>();
         statusValidos.add(StatusPreco.VIGENTE.getValue());
@@ -232,6 +232,19 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
 
         return parametros;
     }
+
+    @Override
+    public Preco obterAgendamentoPorFrotaPvCombustivelDataVigencia(Frota frota, PontoDeVenda posto, TipoCombustivel tipoCombustivel, Date dataVigencia){
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaIgual("frotaPtov.pontoVenda.id", posto.getId()));
+        parametros.add(new ParametroPesquisaIgual("frotaPtov.frota.id", frota.getId()));
+        parametros.add(new ParametroPesquisaIgual("precoBase.precoMicromercado.tipoCombustivel.id", tipoCombustivel.getId()));
+        parametros.add(new ParametroPesquisaDataMenorOuIgual("dataVigencia", dataVigencia));
+        parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataVigencia", dataVigencia));
+
+        return pesquisar((ParametroOrdenacaoColuna) null, parametros.toArray(new ParametroPesquisa[parametros.size()])).stream().findFirst().orElse(null);
+    }
+
 
     @Override
     protected String getPrefixoCampoFrotaPontoVenda() {
