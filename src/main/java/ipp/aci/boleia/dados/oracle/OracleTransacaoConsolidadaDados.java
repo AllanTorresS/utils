@@ -64,13 +64,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         implements ITransacaoConsolidadaDados {
 
     private static final String CLAUSULA_FROTA = "( F.id = :frotaId ) AND ";
-    private static final String CLAUSULA_STATUS_NF = "((TRUNC(TC.dataInicioPeriodo) = TRUNC(:dataInicioCicloAtual) AND (TC.statusNotaFiscal = :statusNf)) OR (TRUNC(TC.dataInicioPeriodo) < TRUNC(:dataInicioCicloAtual))) AND ";
-
-    private static final String CLAUSULA_PENDENTE_NF = "( ( ( F.semNotaFiscal is null or F.semNotaFiscal = 0 ) or TC.unidade is not null or TC.empresaAgregada is not null ) AND TC.statusNotaFiscal not in (1,3) ) ";
-    private static final String CLAUSULA_PARCIALMENTE_EMITIDA = "( TC.statusConsolidacao = 1 AND " + CLAUSULA_PENDENTE_NF + " ) AND ( TC.valorEmitidoNotaFiscal > 0 ) AND ";
-    private static final String CLAUSULA_SEM_EMISSAO = "( TC.statusConsolidacao = 1 AND " + CLAUSULA_PENDENTE_NF + " ) AND ( TC.valorEmitidoNotaFiscal <= 0 ) AND ";
     private static final String CLAUSULA_EXIGE_NOTA = "( ( F.semNotaFiscal is null or F.semNotaFiscal = 0 ) or TC.unidade is not null or TC.empresaAgregada is not null ) ";
-
 
     private static final String CLAUSULA_CONSTRUTOR_AGRUPAMENTO_CONSOLIDADO_PV =
             "       new ipp.aci.boleia.dominio.vo.AgrupamentoTransacaoConsolidadaPvVo(" +
@@ -365,8 +359,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             "      TRUNC(TC.dataInicioPeriodo) = TRUNC(:dataInicio) AND " +
             "      TRUNC(TC.dataFimPeriodo) = TRUNC(:dataFim) AND " +
             "      TC.statusConsolidacao = :statusCiclo AND " +
-            CLAUSULA_STATUS_NF +
             CLAUSULA_FROTA +
+            "(:statusNf IS NULL OR (TRUNC(TC.dataInicioPeriodo) = TRUNC(:dataInicioCicloAtual) AND (TC.statusNotaFiscal = :statusNf)) OR (TRUNC(TC.dataInicioPeriodo) < TRUNC(:dataInicioCicloAtual))) AND " +
             "      (TC.reembolso is NULL OR (RM.dataPagamento IS NULL AND TRUNC(RM.dataVencimentoPgto) >= TRUNC(SYSDATE) AND RM.valorReembolso >= 0)) ";
 
     /**
@@ -387,8 +381,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             "      TRUNC(TC.dataInicioPeriodo) = TRUNC(:dataInicio) AND " +
             "      TRUNC(TC.dataFimPeriodo) = TRUNC(:dataFim) AND " +
             "      TC.statusConsolidacao = :statusCiclo AND " +
-            CLAUSULA_STATUS_NF +
             CLAUSULA_FROTA +
+            "(:statusNf IS NULL OR (TRUNC(TC.dataInicioPeriodo) = TRUNC(:dataInicioCicloAtual) AND (TC.statusNotaFiscal = :statusNf)) OR (TRUNC(TC.dataInicioPeriodo) < TRUNC(:dataInicioCicloAtual))) AND " +
             "      (TC.reembolso is NULL OR (RM.dataPagamento IS NULL AND TRUNC(RM.dataVencimentoPgto) >= TRUNC(SYSDATE))) " +
             "ORDER BY " +
                 "CASE WHEN (" + CLAUSULA_EXIGE_NOTA + " AND TC.valorTotalNotaFiscal > 0) THEN (TC.valorEmitidoNotaFiscal / TC.valorTotalNotaFiscal) " +
@@ -963,8 +957,13 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         List<ParametroPesquisa> parametros = new ArrayList<>();
 
         popularParametrosDataEPvBoxFinanceiro(parametros, filtro.getIdPv(), filtro.getInicio(), filtro.getFim());
+        parametros.add(new ParametroPesquisaIgual("dataInicioCicloAtual", filtro.getInicio()));
 
-        consulta = obterConsultaComFiltroNf(parametros, filtro, consulta);
+        if(filtro.getStatusNf() != null && filtro.getStatusNf().getName() != null) {
+            parametros.add(new ParametroPesquisaIgual("statusNf", StatusNotaFiscal.valueOf(filtro.getStatusNf().getName()).getValue()));
+        } else {
+            parametros.add(new ParametroPesquisaIgual("statusNf", null));
+        }
 
         if(filtro.getFrota()!= null && filtro.getFrota().getId() != null){
             parametros.add(new ParametroPesquisaIgual("frotaId", filtro.getFrota().getId()));
@@ -984,8 +983,13 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         List<ParametroPesquisa> parametros = new ArrayList<>();
 
         popularParametrosDataEPvBoxFinanceiro(parametros, filtro.getIdPv(), filtro.getInicio(), filtro.getFim());
+        parametros.add(new ParametroPesquisaIgual("dataInicioCicloAtual", filtro.getInicio()));
 
-        consulta = obterConsultaComFiltroNf(parametros, filtro, consulta);
+        if(filtro.getStatusNf() != null && filtro.getStatusNf().getName() != null) {
+            parametros.add(new ParametroPesquisaIgual("statusNf", StatusNotaFiscal.valueOf(filtro.getStatusNf().getName()).getValue()));
+        } else {
+            parametros.add(new ParametroPesquisaIgual("statusNf", null));
+        }
 
         if(filtro.getFrota()!= null && filtro.getFrota().getId() != null){
             parametros.add(new ParametroPesquisaIgual("frotaId", filtro.getFrota().getId()));
@@ -1192,31 +1196,4 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         }
 
     }
-
-    /**
-     *  Atualiza a consulta do box de detalhamento de ciclo com o status de nf selecionado no filtro de pesquisa.
-     * @param parametrosPesquisa A lista de parametros
-     * @param filtro O filtro de pesquisa
-     * @param consulta A consulta sem a cláusula atualizada de status de nota fiscal
-     * @return A consulta atualizada com a cláusula de status de nota fiscal
-     */
-    private String obterConsultaComFiltroNf(List<ParametroPesquisa> parametrosPesquisa, FiltroPesquisaDetalheCicloVo filtro, String consulta) {
-        if(filtro.getStatusNf() == null || filtro.getStatusNf().getName() == null) {
-            return consulta.replace(CLAUSULA_STATUS_NF, "");
-        }
-
-        StatusNotaFiscal statusNf = StatusNotaFiscal.valueOf(filtro.getStatusNf().getName());
-
-        if (statusNf.getValue().equals(StatusNotaFiscal.PARCIALMENTE_EMITIDA.getValue())){
-            consulta = consulta.replace(CLAUSULA_STATUS_NF, CLAUSULA_PARCIALMENTE_EMITIDA);
-        }else if(statusNf.getValue().equals(StatusNotaFiscal.SEM_EMISSAO.getValue())){
-            consulta = consulta.replace(CLAUSULA_STATUS_NF, CLAUSULA_SEM_EMISSAO);
-        } else{
-            parametrosPesquisa.add(new ParametroPesquisaIgual("statusNf", StatusNotaFiscal.valueOf(filtro.getStatusNf().getName()).getValue()));
-            parametrosPesquisa.add(new ParametroPesquisaIgual("dataInicioCicloAtual", filtro.getInicio()));
-        }
-
-        return consulta;
-    }
-
 }
