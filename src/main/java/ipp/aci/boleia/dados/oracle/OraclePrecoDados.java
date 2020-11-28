@@ -234,11 +234,11 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
     }
 
     @Override
-    public Preco obterAgendamentoPorFrotaPvCombustivelDataVigencia(Frota frota, PontoDeVenda posto, TipoCombustivel tipoCombustivel, Date dataVigencia){
+    public Preco obterAgendamentoPorFrotaPvCombustivelDataVigencia(Long idFrota, Long idPosto, Long idTipoCombustivel, Date dataVigencia){
         List<ParametroPesquisa> parametros = new ArrayList<>();
-        parametros.add(new ParametroPesquisaIgual("frotaPtov.pontoVenda.id", posto.getId()));
-        parametros.add(new ParametroPesquisaIgual("frotaPtov.frota.id", frota.getId()));
-        parametros.add(new ParametroPesquisaIgual("precoBase.precoMicromercado.tipoCombustivel.id", tipoCombustivel.getId()));
+        parametros.add(new ParametroPesquisaIgual("frotaPtov.pontoVenda.id", idPosto));
+        parametros.add(new ParametroPesquisaIgual("frotaPtov.frota.id", idFrota));
+        parametros.add(new ParametroPesquisaIgual("precoBase.precoMicromercado.tipoCombustivel.id", idTipoCombustivel));
         parametros.add(new ParametroPesquisaDataMenorOuIgual("dataVigencia", dataVigencia));
         parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataVigencia", dataVigencia));
 
