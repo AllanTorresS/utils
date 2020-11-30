@@ -8,6 +8,7 @@ import ipp.aci.boleia.dominio.enums.StatusAcumuloKmv;
 import ipp.aci.boleia.dominio.enums.StatusApiToken;
 import ipp.aci.boleia.dominio.enums.StatusContrato;
 import ipp.aci.boleia.dominio.enums.StatusFrota;
+import ipp.aci.boleia.dominio.enums.StatusFrotaConectcar;
 import ipp.aci.boleia.dominio.enums.TipoAcumuloKmv;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
@@ -31,6 +32,7 @@ import ipp.aci.boleia.dominio.vo.apco.ClienteProFrotaVo;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -139,6 +141,34 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
         if (filtro.getStatus() != null && filtro.getStatus().getName() != null) {
             parametros.add(new ParametroPesquisaIgual("status", StatusFrota.valueOf(filtro.getStatus().getName()).getValue()));
         }
+
+        if (filtro.getStatusConectcar() != null && filtro.getStatusConectcar().getName() != null) {
+
+        	if (StatusFrotaConectcar.ATIVO.equals(StatusFrotaConectcar.valueOf(filtro.getStatusConectcar().getName()))) {
+        		parametros.add(new ParametroPesquisaOr(
+                        new ParametroPesquisaNulo("situacaoConectCar"),
+                        new ParametroPesquisaIgual("situacaoConectCar.status", StatusFrota.ATIVO.getValue())
+                ));
+        	} else {
+        		parametros.add(new ParametroPesquisaIgual("situacaoConectCar.status", StatusFrota.INATIVO.getValue()));
+        	}
+        }
+
+        if (filtro.getPossuiCondicaoComercialConectcar() != null && filtro.getPossuiCondicaoComercialConectcar()) {
+            parametros.add(new ParametroPesquisaNulo("condicoesComerciais", true));
+        }
+
+        if (filtro.getPaginacao() != null && CollectionUtils.isNotEmpty(filtro.getPaginacao().getParametrosOrdenacaoColuna())) {
+            ParametroOrdenacaoColuna parametro = filtro.getPaginacao().getParametrosOrdenacaoColuna().get(0);
+            String nomeOrdenacao = parametro.getNome();
+            if (nomeOrdenacao != null) {
+            	if (nomeOrdenacao.contentEquals("statusConectcar")) {
+            		filtro.getPaginacao().getParametrosOrdenacaoColuna().remove(0);
+                    filtro.getPaginacao().getParametrosOrdenacaoColuna().add(0, new ParametroOrdenacaoColuna("situacaoConectCar.status", parametro.getSentidoOrdenacao()));
+                }
+            }
+        }
+
         povoarParametroApiToken(filtro, parametros);
         return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
