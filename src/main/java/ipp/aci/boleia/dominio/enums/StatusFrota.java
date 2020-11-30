@@ -16,7 +16,7 @@ public enum StatusFrota implements IEnumComLabel<StatusFrota> {
     INATIVO(0),
     ATIVO(1);
 
-    public static final String DECODE_FORMULA = "DECODE(ID_STATUS, -1, 'PRE', 0, 'IN', 1, 'AT')";
+    public static final String DECODE_FORMULA = "DECODE(ID_STATUS, -1, 'PRE-CADASTRO', 0, 'INATIVO', 1, 'ATIVO')";
 
     private final Integer value;
 

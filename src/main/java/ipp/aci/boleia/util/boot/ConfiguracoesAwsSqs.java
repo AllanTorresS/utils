@@ -1,17 +1,9 @@
 package ipp.aci.boleia.util.boot;
 
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.AWSCredentialsProvider;
-import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
-import com.amazonaws.services.sqs.AmazonSQSAsync;
-import com.amazonaws.services.sqs.AmazonSQSAsyncClient;
-import com.amazonaws.services.sqs.buffered.AmazonSQSBufferedAsyncClient;
-import com.amazonaws.services.sqs.model.CreateQueueRequest;
-import com.amazonaws.services.sqs.model.ListQueuesRequest;
-import com.amazonaws.services.sqs.model.ListQueuesResult;
-import com.amazonaws.services.sqs.model.QueueAttributeName;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import ipp.aci.boleia.util.i18n.Mensagens;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +17,19 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.handler.annotation.support.PayloadArgumentResolver;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
+import com.amazonaws.services.sqs.AmazonSQSAsync;
+import com.amazonaws.services.sqs.AmazonSQSAsyncClient;
+import com.amazonaws.services.sqs.buffered.AmazonSQSBufferedAsyncClient;
+import com.amazonaws.services.sqs.model.CreateQueueRequest;
+import com.amazonaws.services.sqs.model.ListQueuesRequest;
+import com.amazonaws.services.sqs.model.ListQueuesResult;
+import com.amazonaws.services.sqs.model.QueueAttributeName;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import ipp.aci.boleia.util.i18n.Mensagens;
 
 /**
  * Configuração dos recursos de envio e recebimento de registros da nuvem

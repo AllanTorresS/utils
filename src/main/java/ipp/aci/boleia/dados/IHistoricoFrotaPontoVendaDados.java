@@ -13,7 +13,7 @@ public interface IHistoricoFrotaPontoVendaDados extends IRepositorioBoleiaDados<
     /**
      * Obtem o historico da relacao de frota com ponto de venda para uma data especifica.
      *
-     * @param cdFrotaPontoDeVenda Identificador do {@link FrotaPontoVenda} atrelado ao historico.
+     * @param cdFrotaPontoDeVenda Identificador do {@link ipp.aci.boleia.dominio.FrotaPontoVenda} atrelado ao historico.
      * @param data Data a ser verificada.
      * @return O historico encontrado.
      */

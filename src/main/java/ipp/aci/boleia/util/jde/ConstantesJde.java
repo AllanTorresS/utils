@@ -16,6 +16,7 @@ public final class ConstantesJde {
     public static final String UNIDADE_NEGOCIO = "74";
     public static final String CODIGO_CATEGORIA_EMPRESA = "74";
     public static final String CLIENTE_REPASSE = "7059338";
+    public static final Long CODIGO_JDE_FORNECEDOR_CONECTCAR = 3940130L;
 
     public static final Long VOUCHER_CENARIO_APROVADO_PAGAMENTO = 187L;
     public static final Long VOUCHER_CENARIO_SUSPENSO_PAGAMENTO = 141L;
@@ -29,6 +30,11 @@ public final class ConstantesJde {
     public static final Integer VOUCHER_TEMPO_HORA = 12;
     public static final Integer VOUCHER_TEMPO_MINUTO = 0;
     public static final Integer VOUCHER_TEMPO_SEGUNDO = 0;
+    
+    public static final Long VOUCHER_CONECTCAR_CENARIO = 734L;
+    public static final String VOUCHER_CONECTCAR_OBSERVACAO = "ProFrotas X Connectcar";
+    public static final String VOUCHER_CONECTCAR_OBSERVACAO_DISTRIBUICAO_CONTABIL = "PASSAGENS";
+    public static final Long VOUCHER_CONECTCAR_INDICE_CONTA_CONTABIL = 5L;
 
     public static final Long VOUCHER_CONTAS_PAGAR_CENARIO = 73L;
     public static final String VOUCHER_CONTAS_PAGAR_CIA_DOCUMENTO = COMPANHIA;
@@ -43,6 +49,7 @@ public final class ConstantesJde {
     public static final String FATURA_TIPO_DOCUMENTO = "D3";
     public static final String FATURA_TIPO_DOCUMENTO_SAQUE = "F4";
     public static final String FATURA_REPASSE_TIPO_DOCUMENTO = "DB";
+    public static final String FATURA_TIPO_DOCUMENTO_CONECTCAR = "F5";
     public static final String FATURA_CENARIO = "140";
     public static final String FATURA_SISTEMA_GERADOR = BOLEIA;
     public static final String FATURA_REPASSE_OBSERVACAO = "REPASSE CONCEDIDO";
