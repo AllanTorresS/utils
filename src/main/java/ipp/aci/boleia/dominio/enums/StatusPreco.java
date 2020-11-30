@@ -13,9 +13,12 @@ public enum StatusPreco implements IEnumComLabel<StatusPreco> {
     PENDENTE(3),
     REJEITADO(4),
     ACEITO(5),
-    HISTORICO(6);
+    HISTORICO(6),
+    CANCELADO(7),
+    AGENDADO(8),
+    AGENDADO_PENDENTE(9);
 
-    public static final String DECODE_FORMULA = "DECODE(ID_STATUS, 1, 'VIG', 2, 'NOV', 3, 'AC_PEND', 4, 'REJ', 5, 'AC', 6, 'HIST')";
+    public static final String DECODE_FORMULA = "DECODE(ID_STATUS, 1, 'VIG', 2, 'NOV', 3, 'AC_PEND', 4, 'REJ', 5, 'AC', 6, 'HIST', 7, 'CANC')";
 
     private final Integer value;
 
