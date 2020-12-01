@@ -49,6 +49,7 @@ public class OracleUsuarioDados extends OracleRepositorioBoleiaDados<Usuario> im
                     " FROM Usuario u " +
                     " LEFT JOIN u.pontosDeVenda ptov " +
                     " LEFT JOIN u.perfis p " +
+                    " LEFT JOIN u.coordenadoriasCoordenador coord " +
                     " WHERE u.excluido = 0 ";
 
     private static final String QUERY_TOTAL_USUARIOS_DONOS_FROTA =
@@ -135,6 +136,13 @@ public class OracleUsuarioDados extends OracleRepositorioBoleiaDados<Usuario> im
                 query.append(" ORDER BY ").append(orderBy.toString());
             }
         }
+    }
+
+    @Override
+    public List<Usuario> pesquisarPorNome(FiltroPesquisaUsuarioVo filtro) {
+        return this.pesquisar(new ParametroOrdenacaoColuna("nome"),
+                new ParametroPesquisaLike("nome", filtro.getNome()),
+                new ParametroPesquisaIgual("tipoPerfil.id", filtro.getTipoPerfil().getId()));
     }
 
     @Override
@@ -296,7 +304,7 @@ public class OracleUsuarioDados extends OracleRepositorioBoleiaDados<Usuario> im
             }
         }
         if (filtro.getCoordenadoria() != null && filtro.getCoordenadoria().getId() != null) {
-            parametros.put(" AND u.coordenadoria.id = :coordenadoria ",
+            parametros.put(" AND (u.coordenadoria.id = :coordenadoria OR coord.id = :coordenadoria) ",
                     new ParametroPesquisaIgual("coordenadoria", filtro.getCoordenadoria().getId()));
         }
 

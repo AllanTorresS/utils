@@ -238,23 +238,22 @@ public class AutorizacaoPagamentoSd {
      * @return true, se o valor da transacao tiver sido contemplado em algum reembolso gerado
      */
     public boolean valorDaTransacaoFoiContempladoEmReembolsoGerado(AutorizacaoPagamento autorizacaoOriginal) {
-
         if(autorizacaoOriginal.estaCancelado()) {
-
             AutorizacaoPagamento transacaoNegativa = repositorioAutorizacaoPagamento.obterTransacaoNegativaOriundaDeEstorno(autorizacaoOriginal);
-
             if(transacaoNegativa != null){
+                if(autorizacaoOriginal.getTransacaoConsolidadaVigente().esta(StatusTransacaoConsolidada.FECHADA) &&
+                        autorizacaoOriginal.getTransacaoConsolidadaVigente().getReembolso() != null &&
+                        autorizacaoOriginal.getTransacaoConsolidadaVigente().isProcessouPostergacao() &&
+                        autorizacaoOriginal.isPendenteEmissaoNF(true)) {
+                    return true;
+                }
                 //Nota: se a transacao nao tem pendencia de emissao e se ela estava autorizada no momento do fechamento de seu ciclo mais atual (original ou de postergacao), entao seu valor foi contemplado no reembolso gerado para esse ciclo
                 return autorizacaoOriginal.emitidaEmCicloFechado()
                         && !transacaoEstavaCanceladaOuEstornadaQuandoCiCloFoiFechado(autorizacaoOriginal,transacaoNegativa);
-            }else{
-                return false;
             }
-
-        }else{
-           return false;
         }
 
+        return false;
     }
 
     /**

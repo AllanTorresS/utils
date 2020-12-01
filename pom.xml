@@ -6,10 +6,13 @@
 
     <groupId>ipp.aci.boleia</groupId>
     <artifactId>boleia-dominioUtil</artifactId>
-    <version>4.5.21-evolucao-SNAPSHOT</version>
+    <version>4.6.2-evolucao-SNAPSHOT</version>
 
     <properties>
         <main.basedir>${project.basedir}</main.basedir>
+        <!-- dev-local, dev, tes, hml, hml-2, prd -->
+        <settings.identificador.ambiente>dev-local</settings.identificador.ambiente>
+        <settings.internal.loadbalancer.enabled>${settings.identificador.ambiente}</settings.internal.loadbalancer.enabled>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.timestamp>${maven.build.timestamp}</project.build.timestamp>
         <project.build.node.path>${main.basedir}</project.build.node.path>
@@ -36,6 +39,8 @@
         <versions.libs.jasperreports>6.5.1</versions.libs.jasperreports>
         <versions.libs.jasperreports-fonts>6.0.0</versions.libs.jasperreports-fonts>
         <versions.libs.com.rabbitmq>5.8.0</versions.libs.com.rabbitmq>
+
+
     </properties>
 
 

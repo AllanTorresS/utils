@@ -1,6 +1,9 @@
 package ipp.aci.boleia.dominio;
 
-import java.util.Date;
+import ipp.aci.boleia.dominio.enums.MotivoLiberacaoConectCar;
+import ipp.aci.boleia.dominio.enums.StatusFrota;
+import ipp.aci.boleia.dominio.interfaces.IPersistente;
+import org.hibernate.annotations.Formula;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,14 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
-import org.hibernate.annotations.Formula;
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
-
-import ipp.aci.boleia.dominio.enums.MotivoLiberacaoConectCar;
-import ipp.aci.boleia.dominio.enums.StatusFrota;
-import ipp.aci.boleia.dominio.interfaces.IPersistente;
+import java.util.Date;
 
 /**
  * Representa a tabela de Condicoes Comerciais
@@ -40,7 +36,6 @@ public class SituacaoConectCar implements IPersistente {
     @Column(name = "ID_STATUS")
     private Integer status;
 
-    @NotAudited
     @Formula(StatusFrota.DECODE_FORMULA)
     private String statusConvertido;
 
@@ -51,7 +46,6 @@ public class SituacaoConectCar implements IPersistente {
     @Column(name = "ID_MOTIVO")
     private Integer motivo;
 
-    @NotAudited
     @Formula(MotivoLiberacaoConectCar.DECODE_FORMULA)
     private String motivoConvertido;
 

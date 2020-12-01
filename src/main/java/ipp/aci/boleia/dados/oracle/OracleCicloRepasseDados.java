@@ -20,7 +20,6 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaCicloRepasseVo;
 import ipp.aci.boleia.util.Ordenacao;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
-import ipp.aci.boleia.util.UtilitarioFormatacaoData;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,8 +106,8 @@ public class OracleCicloRepasseDados extends OracleRepositorioBoleiaDados<CicloR
 
         List<ParametroPesquisa> parametros = new ArrayList<>();
 
-        povoarParametroDataMaiorIgual("dataInicio", UtilitarioCalculoData.obterPrimeiroDiaMes(UtilitarioFormatacaoData.lerDataMesAno(filtro.getDe())), parametros);
-        povoarParametroDataMenorIgual("dataFim", UtilitarioCalculoData.obterUltimoDiaMes(UtilitarioFormatacaoData.lerDataMesAno(filtro.getAte())), parametros);
+        povoarParametroDataMaiorIgual("dataInicio", UtilitarioCalculoData.obterPrimeiroDiaMes(filtro.getDe()), parametros);
+        povoarParametroDataMenorIgual("dataFim", UtilitarioCalculoData.obterUltimoDiaMes(filtro.getAte()), parametros);
 
         povoarParametroIgual("pontoDeVenda.id", filtro.getPontoDeVenda() != null ? String.valueOf(filtro.getPontoDeVenda().getId()) : null, parametros);
 

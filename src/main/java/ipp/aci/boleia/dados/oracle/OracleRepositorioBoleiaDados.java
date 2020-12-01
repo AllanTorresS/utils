@@ -827,6 +827,7 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
 
         Usuario usuarioLogado = ambiente.getUsuarioLogado();
         if (comIsolamentoDados && usuarioLogado != null) {
+            adicionarParametroIsolamentoUsuarioAssessorOuCoordenador(parametros, usuarioLogado);
             adicionarParametroIsolamentoFrotista(parametros);
             adicionarParametroIsolamentoRevendedor(parametros, usuarioLogado);
             adicionarParametroIsolamentoMotorista(parametros, usuarioLogado);
@@ -849,6 +850,21 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
         if (IPertenceMotorista.class.isAssignableFrom(getClassePersistente()) && usuarioLogado.getMotorista() != null) {
             String nomeCampo = IPertenceMotorista.obterCaminhoMotorista(getClassePersistente());
             parametros.add(new ParametroPesquisaIgual(nomeCampo, usuarioLogado.getMotorista().getId()));
+        }
+    }
+
+    /**
+     * Cria e adiciona o parametro de pesquisa para isolamento de dados dos assessores e coordenadores
+     *
+     * @param parametros    Os parametros atuais
+     * @param usuarioLogado O usuario logado
+     */
+    private void adicionarParametroIsolamentoUsuarioAssessorOuCoordenador(List<ParametroPesquisa> parametros, Usuario usuarioLogado){
+        if (IPertenceFrota.class.isAssignableFrom(getClassePersistente()) && usuarioLogado.isInterno()) {
+            String nomeCampo = IPertenceFrota.obterCaminhoFrota(getClassePersistente());
+            if (usuarioLogado.possuiFrotasAssociadas()) {
+                parametros.add(new ParametroPesquisaIn(nomeCampo, usuarioLogado.listarIdsFrotasAssociadas()));
+            }
         }
     }
 

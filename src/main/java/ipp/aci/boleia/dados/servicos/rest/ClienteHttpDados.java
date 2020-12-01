@@ -66,6 +66,16 @@ public class ClienteHttpDados implements IClienteHttpDados {
     }
 
     @Override
+    public <T> T doGetJson(String url, Object body, Header[] headers, ConsumidorHttp<T> consumidorHttp){
+        HttpGetWithEntity request = prepararRequest(new HttpGetWithEntity(url), null, null, APPLICATION_JSON_CHARSET_UTF_8, headers);
+        if(body != null) {
+            StringEntity params = new StringEntity(UtilitarioJson.toJSON(body), StandardCharsets.UTF_8);
+            request.setEntity(params);
+        }
+        return executar(request, consumidorHttp);
+    }
+
+    @Override
     public <T> T doGet(String url, String username, String password, Header[] headers, ConsumidorHttp<T> consumidorHttp) {
         HttpGet request = prepararRequest(new HttpGet(url), username, password, null, headers);
         return executar(request, consumidorHttp);
