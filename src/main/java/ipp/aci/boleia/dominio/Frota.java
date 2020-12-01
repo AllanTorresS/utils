@@ -11,7 +11,6 @@ import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Formula;
-import org.hibernate.annotations.Where;
 import org.hibernate.envers.AuditJoinTable;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
