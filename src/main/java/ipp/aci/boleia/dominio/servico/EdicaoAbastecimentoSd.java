@@ -219,14 +219,17 @@ public class EdicaoAbastecimentoSd {
      * @param edicaoAbastecimentoVo o Vo que possui os campos a serem ordenados.
      */
     public void ordenarCamposEdicao(EdicaoAbastecimentoVo edicaoAbastecimentoVo){
-       List<EdicaoCampoAbastecimentoVo> campos = edicaoAbastecimentoVo.getCamposEditados();
+        List<EdicaoCampoAbastecimentoVo> campos = edicaoAbastecimentoVo.getCamposEditados();
         int indexValorTotal = IntStream.range(0, campos.size())
                 .filter(i -> campos.get(i).getCategoria() == null && campos.get(i).getCampo().equals(CampoEdicaoAbastecimento.VALOR_TOTAL.getLabel()))
                 .findFirst()
                 .orElse(-1);
-        EdicaoCampoAbastecimentoVo campoValorTotal = campos.remove(indexValorTotal);
-        campos.add(campoValorTotal);
-        edicaoAbastecimentoVo.setCamposEditados(campos);
+
+        if (indexValorTotal >= 0) {
+            EdicaoCampoAbastecimentoVo campoValorTotal = campos.remove(indexValorTotal);
+            campos.add(campoValorTotal);
+            edicaoAbastecimentoVo.setCamposEditados(campos);
+        }
     }
 
     /**

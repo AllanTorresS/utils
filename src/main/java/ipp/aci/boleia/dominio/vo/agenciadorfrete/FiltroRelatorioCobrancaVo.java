@@ -1,32 +1,32 @@
 package ipp.aci.boleia.dominio.vo.agenciadorfrete;
 
-import ipp.aci.boleia.dominio.pesquisa.comum.BaseFiltroPaginado;
+import ipp.aci.boleia.dominio.pesquisa.comum.FiltroBasePeriodoPaginado;
 
 /**
  * Filtro de relatorio de Cobrança de Agenciador de Frete
  */
-public class FiltroRelatorioCobrancaVo extends BaseFiltroPaginado {
+public class FiltroRelatorioCobrancaVo extends FiltroBasePeriodoPaginado {
 
-    private String de;
-    private String ate;
+    private String deMesAno;
+    private String ateMesAno;
 
     public FiltroRelatorioCobrancaVo () {
         //Construtor default
     }
 
-    public String getDe() {
-        return de;
+    public String getDeMesAno() {
+        return deMesAno;
     }
 
-    public void setDe(String de) {
-        this.de = de;
+    public void setDeMesAno(String deMesAno) {
+        this.deMesAno = deMesAno;
     }
 
-    public String getAte() {
-        return ate;
+    public String getAteMesAno() {
+        return ateMesAno;
     }
 
-    public void setAte(String ate) {
-        this.ate = ate;
+    public void setAteMesAno(String ateMesAno) {
+        this.ateMesAno = ateMesAno;
     }
 }

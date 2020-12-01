@@ -12,6 +12,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.lifecycle.LifecycleFilter;
 import com.amazonaws.services.s3.model.lifecycle.LifecyclePrefixPredicate;
+import com.amazonaws.services.s3.model.ResponseHeaderOverrides;
 import com.amazonaws.util.IOUtils;
 import ipp.aci.boleia.dados.IArmazenamentoDados;
 import ipp.aci.boleia.dominio.enums.TipoArquivo;
@@ -22,6 +23,7 @@ import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.excecao.ExcecaoArquivoNaoEncontrado;
 import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -205,25 +207,32 @@ public class AwsArmazenamentoDados implements InitializingBean, IArmazenamentoDa
     }
 
     @Override
-    public String obterUrlArquivo(TipoArquivo tipo, Long id) throws ExcecaoArquivoNaoEncontrado {
+    public String obterUrlArquivo(TipoArquivo tipo, Long id, String nomeParaDownload) throws ExcecaoArquivoNaoEncontrado {
         if (id < 0L) {
             throw new ExcecaoArquivoNaoEncontrado();
         }
-        return obterUrlArquivo(tipo, id.toString());
+        return obterUrlArquivo(tipo, id.toString(), nomeParaDownload);
     }
 
     @Override
-    public String obterUrlArquivo(TipoArquivo tipo, String nome) {
+    public String obterUrlArquivo(TipoArquivo tipo, String nome, String nomeParaDownload) {
 
         //Expiração da url de download em x minutos, de acordo com o tipo de arquivo
         Date expiration = UtilitarioCalculoData.adicionarMinutosData(utilitarioAmbiente.buscarDataAmbiente(),
                 tipo.getTempoMinutosUrl());
         String caminhoArquivo = tipo.montarCaminhoAcesso(nome);
 
+        ResponseHeaderOverrides headerOverrides = new ResponseHeaderOverrides();
+
+        if (StringUtils.isNotEmpty(nomeParaDownload)) {
+            headerOverrides.withContentDisposition("attachment; filename =\"" + nomeParaDownload + tipo.getSufixo() +  "\"");
+        }
+
         GeneratePresignedUrlRequest generatePresignedUrlRequest =
                 new GeneratePresignedUrlRequest(bucketName, caminhoArquivo)
                         .withMethod(HttpMethod.GET)
-                        .withExpiration(expiration);
+                        .withExpiration(expiration)
+                        .withResponseHeaders(headerOverrides);
         URL url = clienteS3.generatePresignedUrl(generatePresignedUrlRequest);
 
         return url.toString();

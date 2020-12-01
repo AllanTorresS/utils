@@ -1,6 +1,6 @@
 package ipp.aci.boleia.dominio.vo;
 
-import ipp.aci.boleia.dominio.pesquisa.comum.BaseFiltroPaginado;
+import ipp.aci.boleia.dominio.pesquisa.comum.FiltroBasePeriodoPaginado;
 
 import java.util.List;
 
@@ -8,31 +8,14 @@ import java.util.List;
 /**
  * Filtro para pesquisa de cobrancas
  */
-public class FiltroPesquisaCobrancaVo extends BaseFiltroPaginado {
-
-    private String de;
-    private String ate;
+public class FiltroPesquisaCobrancaVo extends FiltroBasePeriodoPaginado {
     private List<EnumVo> statusPagamento;
     private EnumVo statusIntegracao;
     private String numeroDocumento;
     private EntidadeVo frota;
     private Boolean ignorarFrotaControle;
-
-    public String getDe() {
-        return de;
-    }
-
-    public void setDe(String de) {
-        this.de = de;
-    }
-
-    public String getAte() {
-        return ate;
-    }
-
-    public void setAte(String ate) {
-        this.ate = ate;
-    }
+    private String deMesAno;
+    private String ateMesAno;
 
     public List<EnumVo> getStatusPagamento() {
         return statusPagamento;
@@ -72,5 +55,21 @@ public class FiltroPesquisaCobrancaVo extends BaseFiltroPaginado {
 
     public void setIgnorarFrotaControle(Boolean ignorarFrotaControle) {
         this.ignorarFrotaControle = ignorarFrotaControle;
+    }
+
+    public String getDeMesAno() {
+        return deMesAno;
+    }
+
+    public void setDeMesAno(String deMesAno) {
+        this.deMesAno = deMesAno;
+    }
+
+    public String getAteMesAno() {
+        return ateMesAno;
+    }
+
+    public void setAteMesAno(String ateMesAno) {
+        this.ateMesAno = ateMesAno;
     }
 }

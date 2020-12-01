@@ -61,20 +61,22 @@ public interface IArmazenamentoDados {
      *
      * @param tipo  tipo arquivo
      * @param id    id
+     * @param nomeParaDownload nome opcional para sobrescrever o arquivo ao realizar downlaod
      * @return String com a url pré-assinada do arquivo, com tempo de expiração de acordo com o tipo de arquivo
      * @throws ExcecaoArquivoNaoEncontrado Quando o arquivo não existe no storage
      */
-    String obterUrlArquivo(TipoArquivo tipo, Long id) throws ExcecaoArquivoNaoEncontrado;
+    String obterUrlArquivo(TipoArquivo tipo, Long id, String nomeParaDownload) throws ExcecaoArquivoNaoEncontrado;
 
     /**
      * Obtem o link para o download de um arquivo no bucket do boleia amazon
      *
      * @param tipo  tipo arquivo
      * @param nome  nome do arquivo
+     * @param nomeParaDownload nome opcional para sobrescrever o arquivo ao realizar downlaod
      * @return String com a url pré-assinada do arquivo, com tempo de expiração de acordo com o tipo de arquivo
      * @throws ExcecaoArquivoNaoEncontrado Quando o arquivo não existe no storage
      */
-    String obterUrlArquivo(TipoArquivo tipo, String nome) throws ExcecaoArquivoNaoEncontrado;
+    String obterUrlArquivo(TipoArquivo tipo, String nome, String nomeParaDownload) throws ExcecaoArquivoNaoEncontrado;
 
     /**
      * Copia um arquivo de um diretório para outro de um bucket S3

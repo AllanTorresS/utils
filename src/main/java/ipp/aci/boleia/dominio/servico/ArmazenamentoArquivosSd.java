@@ -3,7 +3,6 @@ package ipp.aci.boleia.dominio.servico;
 import ipp.aci.boleia.dados.IArmazenamentoDados;
 import ipp.aci.boleia.dados.IArquivoDados;
 import ipp.aci.boleia.dados.IDispositivoMotoristaPedidoDados;
-import ipp.aci.boleia.dados.IMotorGeracaoRelatoriosDados;
 import ipp.aci.boleia.dados.INotaFiscalDados;
 import ipp.aci.boleia.dados.IPontoDeVendaDados;
 import ipp.aci.boleia.dados.IRepositorioBoleiaDados;
@@ -45,9 +44,6 @@ public class ArmazenamentoArquivosSd {
     private IPontoDeVendaDados pontoVendaDados;
 
     @Autowired
-    private IMotorGeracaoRelatoriosDados motorGeracaoRelatorios;
-
-    @Autowired
     private IArquivoDados arquivoDados;
 
     private Map<TipoArquivo, IRepositorioBoleiaDados> repositoriosPorTipoArquivo;
@@ -62,11 +58,12 @@ public class ArmazenamentoArquivosSd {
         repositoriosPorTipoArquivo.put(TipoArquivo.FOTO_HODOMETRO_HORIMETRO, dispositivoMotoristaPedidoDados);
         repositoriosPorTipoArquivo.put(TipoArquivo.FOTO_PONTO_VENDA, pontoVendaDados);
         repositoriosPorTipoArquivo.put(TipoArquivo.JUSTIFICATIVA_NOTA, notaFiscalDados);
-        repositoriosPorTipoArquivo.put(TipoArquivo.RELATORIO_48_HORAS_XLSX, motorGeracaoRelatorios);
-        repositoriosPorTipoArquivo.put(TipoArquivo.RELATORIO_48_HORAS_TXT, motorGeracaoRelatorios);
         repositoriosPorTipoArquivo.put(TipoArquivo.DOWNLOAD_PRESIGNED_NOTA_FISCAL_PDF, arquivoDados);
         repositoriosPorTipoArquivo.put(TipoArquivo.DOWNLOAD_PRESIGNED_NOTA_FISCAL_XML, arquivoDados);
-        repositoriosPorTipoArquivo.put(TipoArquivo.RELATORIO_48_HORAS_PDF, motorGeracaoRelatorios);
+        repositoriosPorTipoArquivo.put(TipoArquivo.RELATORIO_48_HORAS_XLSX, arquivoDados);
+        repositoriosPorTipoArquivo.put(TipoArquivo.RELATORIO_48_HORAS_TXT, arquivoDados);
+        repositoriosPorTipoArquivo.put(TipoArquivo.RELATORIO_48_HORAS_PDF, arquivoDados);
+        repositoriosPorTipoArquivo.put(TipoArquivo.RELATORIO_48_HORAS_PDF_TEMP_DATASOURCE, arquivoDados);
     }
 
     /**
@@ -97,10 +94,11 @@ public class ArmazenamentoArquivosSd {
      * @param tipoArquivo tipo arquivo
      * @param idEntidadeRelacionada identificador da entidade que contem o arquivo
      * @param nomeArquivo nome do arquivo a ser baixado.
+     * @param nomeParaDownload nome opcional para sobrescrever o arquivo ao realizar downlaod
      * @return String com a url pré-assinada do arquivo, com tempo de expiração de acordo com o tipo de arquivo
      */
-    public UrlS3PreAssinadaVo obterUrlArquivo(TipoArquivo tipoArquivo, Long idEntidadeRelacionada, String nomeArquivo) {
-        return obterUrlArquivo(tipoArquivo, null, idEntidadeRelacionada, nomeArquivo);
+    public UrlS3PreAssinadaVo obterUrlArquivo(TipoArquivo tipoArquivo, Long idEntidadeRelacionada, String nomeArquivo, String nomeParaDownload) {
+        return obterUrlArquivo(tipoArquivo, null, idEntidadeRelacionada, nomeArquivo, nomeParaDownload);
     }
 
     /**
@@ -110,13 +108,14 @@ public class ArmazenamentoArquivosSd {
      * @param idArquivo id
      * @param idEntidadeRelacionada identificador da entidade que contem o arquivo
      * @param nome nome do arquivo para a url
+     * @param nomeParaDownload nome opcional para sobrescrever o arquivo ao realizar downlaod
      * @return String com a url pré-assinada do arquivo, com tempo de expiração de acordo com o tipo de arquivo
      */
-    public UrlS3PreAssinadaVo obterUrlArquivo(TipoArquivo tipoArquivo, Long idArquivo, Long idEntidadeRelacionada, String nome){
+    public UrlS3PreAssinadaVo obterUrlArquivo(TipoArquivo tipoArquivo, Long idArquivo, Long idEntidadeRelacionada, String nome, String nomeParaDownload){
         try {
             exigirPermissaoAcesso(tipoArquivo, idEntidadeRelacionada);
             String id = (tipoArquivo.isNomeArquivoAutoContido() && idArquivo != null) ? idArquivo.toString() : nome;
-            return new UrlS3PreAssinadaVo(armazenamentoArquivos.obterUrlArquivo(tipoArquivo, id));
+            return new UrlS3PreAssinadaVo(armazenamentoArquivos.obterUrlArquivo(tipoArquivo, id, nomeParaDownload));
         } catch (ExcecaoArquivoNaoEncontrado e) {
             LOGGER.debug("Arquivo nao encontrado na AWS S3", e);
             return null;
