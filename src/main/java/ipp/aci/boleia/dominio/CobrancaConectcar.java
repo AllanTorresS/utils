@@ -107,6 +107,9 @@ public class CobrancaConectcar implements IPersistente, IPertenceFrota {
 	@Column(name = "ID_TIPO_COBR")
 	private Integer tipo;
 
+	@Column(name = "NO_NF_MENS")
+	private Long numeroNotaFiscalMensalidade;
+
 	@Override
 	public Long getId() {
 		return id;
@@ -307,6 +310,14 @@ public class CobrancaConectcar implements IPersistente, IPertenceFrota {
 	@Override
 	public List<Frota> getFrotas() {
 		return Arrays.asList(new Frota[] { frota });
+	}
+
+	public Long getNumeroNotaFiscalMensalidade() {
+		return numeroNotaFiscalMensalidade;
+	}
+
+	public void setNumeroNotaFiscalMensalidade(Long numeroNotaFiscalMensalidade) {
+		this.numeroNotaFiscalMensalidade = numeroNotaFiscalMensalidade;
 	}
 
 }

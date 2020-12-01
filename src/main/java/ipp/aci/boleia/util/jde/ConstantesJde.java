@@ -96,6 +96,10 @@ public final class ConstantesJde {
     public static final BigDecimal ACRECIMO_PRORROGAR_VENCIMENTO = new BigDecimal(0);
     public static final String ALTERACAO_PRORROGAR_VENCIMENTO = "03";
 
+    public static final String PEDIDO_VENDA_CENARIO = "736";
+    public static final String PEDIDO_VENDA_ITEM_CODIGO_PRODUTO = "791039";
+    public static final String PEDIDO_VENDA_PRIMEIRO_ITEM_LISTA_KEY = "1";
+    
     /**
      * Impede instanciacao e heranca
      */
