@@ -30,7 +30,8 @@ public enum TipoRelatorioMotorGerador implements IEnumComLabel<TipoRelatorioMoto
     RELATORIO_ABASTECIMENTOS_NO_PERIODO(19),    
     RELATORIO_ATIVACAO_TAG(20),
     RELATORIO_GERAL_FROTA(21),
-	RELATORIO_COBRANCA_CONECTCAR(22);
+	RELATORIO_COBRANCA_CONECTCAR(22),
+	RELATORIO_UTILIZACAO_TAG(23);
 
     private final Integer value;
 
