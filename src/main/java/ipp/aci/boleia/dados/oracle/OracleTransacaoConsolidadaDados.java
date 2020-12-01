@@ -65,6 +65,22 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
 
     private static final String CLAUSULA_FROTA = "( F.id = :frotaId ) AND ";
     private static final String CLAUSULA_EXIGE_NOTA = "( ( F.semNotaFiscal is null or F.semNotaFiscal = 0 ) or TC.unidade is not null or TC.empresaAgregada is not null ) ";
+    
+    private static final String CLAUSULA_DATA_REEMB_GERADO = 
+        " tc.reembolso IS NOT NULL AND " +
+        " ((r.dataPagamento is null AND (r.dataVencimentoPgto >= :dataInicioPeriodo AND r.dataVencimentoPgto <= :dataFimPeriodo)) " +
+        " OR (r.dataPagamento >= :dataInicioPeriodo AND r.dataPagamento <= :dataFimPeriodo)) ";
+
+    private static final String CLAUSULA_DATA_REEMB_NAO_GERADO = 
+        " tc.reembolso IS NULL AND " +
+        " (fpv.frota.modoPagamento = " + ModalidadePagamento.POS_PAGO.getValue() +
+        " AND (tc.dataFimPeriodo + p.prazoReembolso >= :dataInicioPeriodo AND tc.dataFimPeriodo + p.prazoReembolso <= :dataFimPeriodo)) " +
+        " OR ((fpv.frota.modoPagamento = " + ModalidadePagamento.PRE_PAGO.getValue() +
+        " AND (tc.dataFimPeriodo + 2 >= :dataInicioPeriodo AND tc.dataFimPeriodo + 2 <= :dataFimPeriodo))) ";
+
+    private static final String CLAUSULA_CALCULO_PRAZO_REEMB_PRE_PAGO = 
+        " fpv.frota.modoPagamento = " + ModalidadePagamento.PRE_PAGO.getValue() +
+        " THEN TRUNC(tc.dataFimPeriodo + 2 ";
 
     private static final String CLAUSULA_CONSTRUTOR_AGRUPAMENTO_CONSOLIDADO_PV =
             "       new ipp.aci.boleia.dominio.vo.AgrupamentoTransacaoConsolidadaPvVo(" +
@@ -290,7 +306,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "FROM TransacaoConsolidada tc " +
                     "LEFT JOIN tc.frotaPtov fpv " +
                     "JOIN tc.reembolso r " +
-                    "WHERE tc.dataInicioPeriodo >= :dataInicioPeriodo AND tc.dataFimPeriodo <= :dataFimPeriodo " +
+                    "WHERE ((r.dataPagamento is null AND (r.dataVencimentoPgto >= :dataInicioPeriodo AND r.dataVencimentoPgto <= :dataFimPeriodo)) " +
+                    "OR (r.dataPagamento >= :dataInicioPeriodo AND r.dataPagamento <= :dataFimPeriodo)) " +
                     "AND (fpv.pontoVenda.id IN :idsPvs) " +
                     "AND (fpv.frota.id = :idFrota OR :idFrota is null) " +
                     "AND (tc.statusConsolidacao = :statusConsolidacao or :statusConsolidacao is null) " +
@@ -303,7 +320,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                 "(CASE " +
                     "WHEN rm.status=1 THEN trunc(rm.dataPagamento) " +
                     "WHEN rm.dataVencimentoPgto IS NOT NULL THEN trunc(rm.dataVencimentoPgto) " +
-                    "ELSE trunc(prz.dataLimiteEmissaoNfe+ 2) " +
+                    "WHEN " + CLAUSULA_CALCULO_PRAZO_REEMB_PRE_PAGO +
+                    "ELSE trunc(tc.dataFimPeriodo + p.prazoReembolso) " +
                 "END) AS dataPagamento, " +
                 "SUM(CASE WHEN rm.valorReembolso IS NULL THEN tc.valorReembolso "+
                     "ELSE rm.valorReembolso END), " +
@@ -319,10 +337,11 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "LEFT JOIN tc.prazos prz " +
                     "LEFT JOIN tc.reembolso rm	" +
                     "LEFT JOIN tc.frotaPtov f_ptov	" +
+                    "LEFT JOIN tc.prazos p	" +
                 "WHERE " +
                     "(rm.status is null or rm.status NOT IN (4,5)) " +
-                    "AND tc.dataInicioPeriodo >= :dataInicioPeriodo " +
-                    "AND trunc(tc.dataFimPeriodo) 	<= :dataFimPeriodo " +
+                    "( " + CLAUSULA_DATA_REEMB_GERADO + ") " +
+                    "OR ( " + CLAUSULA_DATA_REEMB_NAO_GERADO + ") " +
                     "AND (f_ptov.pontoVenda.id IN :idsPvs) " +
                     "AND (f_ptov.frota.id = :idFrota OR :idFrota is null) " +
                     "AND (tc.valorReembolso <> 0 or rm.valorReembolso <> 0) " +
