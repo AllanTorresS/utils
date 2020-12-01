@@ -38,6 +38,11 @@ public class OracleAbastecimentoViewDados extends OracleRepositorioBoleiaDados<A
         return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
+    /**
+     * Monta os parametros da pesquisa do filtro dos ultimos abasteicmentos
+     * @param filtro O filtro dos ultimos abastecimentos
+     * @return Lista de parametros de pesquisa
+     */
     private List<ParametroPesquisa> montarParametroPesquisa(FiltroPesquisaUltimosAbastecimentosVo filtro) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
         parametros.add(new ParametroPesquisaIgual("dataProcessamento", filtro.getDe()));
