@@ -886,6 +886,11 @@ public class TransacaoConsolidadaSd {
         } else {
             transacaoConsolidada.setStatusConsolidacao(StatusTransacaoConsolidada.EM_ABERTO.getValue());
         }
+
+        if (transacaoConsolidada.esta(FECHADA) && !transacaoConsolidada.exigeEmissaoNF()) {
+            transacaoConsolidada.setProcessouPostergacao(true);
+        }
+
         repositorio.armazenar(transacaoConsolidada);
     }
 
