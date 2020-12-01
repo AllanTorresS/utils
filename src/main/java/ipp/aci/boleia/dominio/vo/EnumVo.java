@@ -9,6 +9,7 @@ public class EnumVo {
 
     private String name;
     private String label;
+    private Integer value;
 
     /**
      * Construtr default, necessario para a serializacao JSON
@@ -62,6 +63,24 @@ public class EnumVo {
      */
     public void setLabel(String label) {
         this.label = label;
+    }
+
+      /**
+     * Retorna o valor do enumerado (enum.value)
+     *
+     * @return O valor do enumerado
+     */
+    public Integer getValue() {
+        return value;
+    }
+
+    /**
+     * Atribui o valor do enumerado (enum.valor)
+     *
+     * @param valor O valor
+     */
+    public void setValue(Integer value) {
+        this.value = value;
     }
 
     /**

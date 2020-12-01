@@ -11,6 +11,7 @@ import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.enums.ModalidadePagamento;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.AgrupamentoTransacaoConsolidadaPvVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheCicloVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFinanceiroVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaReembolsoGraficoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaReembolsoVo;
@@ -229,6 +230,13 @@ public interface ITransacaoConsolidadaDados extends IRepositorioBoleiaDados<Tran
     List<AgrupamentoTransacaoConsolidadaPvVo> pesquisarTransacoesConsolidadasAgrupadasParaPv(Long idPv, Date dataInicioPeriodo, Date dataFimPeriodo);
 
     /**
+     * Busca uma lista com transações consolidadas agrupadas para ponto de venda.
+     * @param filtro o filtro com as informações que devem ser consideradas na busca.
+     * @return Uma lista com as transações consolidadas agrupadas.
+     */
+    List<AgrupamentoTransacaoConsolidadaPvVo> pesquisarDetalheCicloParaPv(FiltroPesquisaDetalheCicloVo filtro);
+
+    /**
      * Altera o estado da entidade para desanexado
      * @param transacaoConsolidada transacao consolidada a cobrança a ser desanexada
      * @return a transacao consolidada desanexada
@@ -241,4 +249,20 @@ public interface ITransacaoConsolidadaDados extends IRepositorioBoleiaDados<Tran
      * @return lista de ciclos fechados que nao passaram por postergacao
      */
     List<TransacaoConsolidada> obterCiclosFechadosQueNaoPassaramPorPostergacao();
+
+      /**
+     * Pesquisa uma lista de transações consolidadas pertencentes a um agrupamento de ciclos.
+     *
+     * @param filtro o filtro com as informações que devem ser consideradas na busca.
+     * @return A lista de transações encontradas.
+     */
+    List<TransacaoConsolidada> pesquisarTransacoesDeAgrupamento(FiltroPesquisaDetalheCicloVo filtro);
+
+    /**
+     * Pesquisa uma lista de transações consolidadas pertencentes a um agrupamento de ciclos ordenada
+     *
+     * @param filtro o filtro com as informações que devem ser consideradas na busca.
+     * @return Lista de transações encontrada.
+     */
+    ResultadoPaginado<TransacaoConsolidada> pesquisarTransacoesDetalhamentoDeCiclo(FiltroPesquisaDetalheCicloVo filtro);
 }

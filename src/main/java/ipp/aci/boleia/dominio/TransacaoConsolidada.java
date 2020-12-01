@@ -1,7 +1,7 @@
 package ipp.aci.boleia.dominio;
 
-
 import ipp.aci.boleia.dominio.enums.ModalidadePagamento;
+import ipp.aci.boleia.dominio.enums.MotivoEstorno;
 import ipp.aci.boleia.dominio.enums.StatusNotaFiscal;
 import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
@@ -564,5 +564,32 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     @Transient
     public List<AutorizacaoPagamento> getAutorizacoesPagamentoAssociadas() {
         return Stream.concat(getAutorizacaoPagamentosStream(), getAutorizacoesPagamentoPostergadasStream()).collect(Collectors.toList());
+    }
+
+    /**
+     *  Verifica se todos os abastecimentos do consolidados são negativos ou não
+     * @return true, caso todos sejam negativos, ou false, caso contrário
+     */
+    @Transient
+    public boolean todasTransacoesSaoNegativas(){
+        if (getQuantidadeAbastecimentos() == 0){
+            return getAutorizacoesPagamentoAssociadas().stream()
+                .filter(AutorizacaoPagamento::estaAutorizadaOuCancelada)
+                .noneMatch(autorizacaoPagamento -> autorizacaoPagamento.getValorTotal().compareTo(BigDecimal.ZERO) >= 0);
+        }
+        return false;
+    }
+
+    /**
+     *  Verifica se todos os abastecimentos do consolidados são cancelados ou não
+     * @return true, caso todos sejam cancelados, ou false, caso contrário
+     */
+    @Transient
+    public boolean todasTransacoesSaoCanceladas(){
+        boolean existeCancelado = getAutorizacoesPagamentoAssociadas().stream().anyMatch(AutorizacaoPagamento::estaCancelado);
+        return getAutorizacoesPagamentoAssociadas().stream()
+                .allMatch(autorizacaoPagamento -> (autorizacaoPagamento.estaCancelado() && 
+                    MotivoEstorno.obterPorValor(autorizacaoPagamento.getMotivoEstorno()).getSemAlteracao()) ||
+                    (autorizacaoPagamento.getValorTotal().compareTo(BigDecimal.ZERO) < 0 && existeCancelado));
     }
 }

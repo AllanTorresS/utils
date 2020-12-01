@@ -5,8 +5,7 @@ package ipp.aci.boleia.dominio.vo.exportacao;
  */
 public class RegistroExportacaoPdfCicloFinanceiroVo extends RegistroExportacaoPdfBaseVo {
 
-    private String periodo;
-    private String cicloFrota;
+    private String dataPagamento;
     private String frotaNome;
     private String frotaCnpj;
     private String postoNome;
@@ -30,20 +29,12 @@ public class RegistroExportacaoPdfCicloFinanceiroVo extends RegistroExportacaoPd
         // Serialização
     }
 
-    public String getPeriodo() {
-        return periodo;
+    public String getDataPagamento() {
+        return dataPagamento;
     }
 
-    public void setPeriodo(String periodo) {
-        this.periodo = periodo;
-    }
-
-    public String getCicloFrota() {
-        return cicloFrota;
-    }
-
-    public void setCicloFrota(String cicloFrota) {
-        this.cicloFrota = cicloFrota;
+    public void setDataPagamento(String dataPagamento) {
+        this.dataPagamento = dataPagamento;
     }
 
     public String getFrotaNome() {
