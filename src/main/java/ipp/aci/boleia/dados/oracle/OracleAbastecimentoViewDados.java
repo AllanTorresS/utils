@@ -5,8 +5,11 @@ import ipp.aci.boleia.dominio.AbastecimentoView;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgual;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaiorOuIgual;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaUltimosAbastecimentosVo;
 import ipp.aci.boleia.util.Ordenacao;
 import org.springframework.stereotype.Repository;
@@ -45,8 +48,8 @@ public class OracleAbastecimentoViewDados extends OracleRepositorioBoleiaDados<A
      */
     private List<ParametroPesquisa> montarParametroPesquisa(FiltroPesquisaUltimosAbastecimentosVo filtro) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
-        parametros.add(new ParametroPesquisaIgual("dataProcessamento", filtro.getDe()));
-        parametros.add(new ParametroPesquisaIgual("dataProcessamento", filtro.getAte()));
+        parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataProcessamento", filtro.getDe()));
+        parametros.add(new ParametroPesquisaDataMenorOuIgual("dataProcessamento", filtro.getAte()));
         if(filtro.getPlaca() != null && !filtro.getPlaca().isEmpty()) {
             parametros.add(new ParametroPesquisaLike("placaVeiculo", filtro.getPlaca()));
         }
@@ -56,7 +59,9 @@ public class OracleAbastecimentoViewDados extends OracleRepositorioBoleiaDados<A
         if(filtro.getTipo() != null) {
             parametros.add(new ParametroPesquisaIgual("tipoEmpresa", filtro.getTipo()));
         }
-        parametros.add(new ParametroPesquisaIgual("posto.id", filtro.getPontoDeVenda()));
+        if(filtro.getPontoDeVenda() != null){
+            parametros.add(new ParametroPesquisaIgual("posto.id", filtro.getPontoDeVenda()));
+        }
         return parametros;
     }
 
