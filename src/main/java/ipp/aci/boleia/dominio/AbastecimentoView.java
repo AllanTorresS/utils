@@ -40,7 +40,7 @@ public class AbastecimentoView implements IPersistente {
     private String nomeEmpresa;
 
     @Column(name = "CD_CNPJ_EMPRESA")
-    private String cnpjEmpresa;
+    private Long cnpjEmpresa;
 
     @Column(name = "NM_MOTORISTA")
     private String nomeMotorista;
@@ -174,11 +174,11 @@ public class AbastecimentoView implements IPersistente {
         this.nomeEmpresa = nomeEmpresa;
     }
 
-    public String getCnpjEmpresa() {
+    public Long getCnpjEmpresa() {
         return cnpjEmpresa;
     }
 
-    public void setCnpjEmpresa(String cnpjEmpresa) {
+    public void setCnpjEmpresa(Long cnpjEmpresa) {
         this.cnpjEmpresa = cnpjEmpresa;
     }
 
