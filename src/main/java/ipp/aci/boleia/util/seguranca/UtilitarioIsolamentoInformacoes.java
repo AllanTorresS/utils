@@ -10,6 +10,7 @@ import ipp.aci.boleia.dominio.interfaces.IPertenceMotorista;
 import ipp.aci.boleia.dominio.interfaces.IPertenceRevendedor;
 import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +41,7 @@ public final class UtilitarioIsolamentoInformacoes {
         verificarPermissaoAcessoFrota(persistente, usuario);
         verificarPermissaoAcessoRevenda(persistente, usuario);
         verificarPermissaoAcessoMotorista(persistente, usuario);
+        verificarPermissaoAcessoAssessorOuCoordenador(persistente, usuario);
     }
 
     /**
@@ -183,5 +185,43 @@ public final class UtilitarioIsolamentoInformacoes {
                 lancarErro(persistente, usuario);
             }
         }
+    }
+
+    /**
+     * Verifica se o isolamento de dados de assessor/coordenador esta sendo respeitado
+     * @param persistente A entidade persistente alvo
+     * @param usuario O usuario solicitante
+     */
+    private static void verificarPermissaoAcessoAssessorOuCoordenador(IPersistente persistente, Usuario usuario) {
+        if (persistente instanceof IPertenceFrota && usuario != null && usuario.isInterno()) {
+            if (usuario.possuiFrotasAssociadas() && !verificarFrotaAssociada((IPertenceFrota) persistente, usuario)) {
+                lancarErro(persistente, usuario);
+            }
+        }
+    }
+
+    /**
+     * Retorna true caso a entidade e o usuario pertencam a mesma frota
+     *
+     * @param persistente a entidade
+     * @param usuario     o usuario
+     * @return true caso pertencam a mesma frota
+     */
+    private static boolean verificarFrotaAssociada(IPertenceFrota persistente, Usuario usuario) {
+        final List<Frota> frotasEntidade = persistente.getFrotas();
+        final List<Long> idsFrotasAssociadas = usuario.listarIdsFrotasAssociadas();
+
+        if (CollectionUtils.isEmpty(frotasEntidade) || CollectionUtils.isEmpty(idsFrotasAssociadas)) {
+            return false;
+        }
+
+        for (Frota frotaEntidade : frotasEntidade) {
+            for (Long idFrotas : idsFrotasAssociadas) {
+                if (frotaEntidade != null && idFrotas.equals(frotaEntidade.getId())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

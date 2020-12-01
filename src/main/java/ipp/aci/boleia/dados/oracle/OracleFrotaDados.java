@@ -136,6 +136,7 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
         povoarParametroIgual("id", filtro.getFrota() != null ? filtro.getFrota().getId() : null, parametros);
         povoarParametroLike("municipio", filtro.getCidade(), parametros);
         povoarParametroLike("unidadeFederativa", filtro.getUf() != null ? filtro.getUf().getName() : null, parametros);
+        povoarParametroIgual("usuarioAssessorResponsavel.id", filtro.getAssessor() != null ? filtro.getAssessor().getId() : null, parametros);
 
         if (filtro.getCnpj() != null) {
             parametros.add(new ParametroPesquisaIgual("cnpj", UtilitarioFormatacao.obterLongMascara(filtro.getCnpj())));

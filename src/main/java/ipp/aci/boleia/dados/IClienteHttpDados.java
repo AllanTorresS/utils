@@ -32,6 +32,18 @@ public interface IClienteHttpDados {
     <T> T doGet(String url,  Header[] headers, ConsumidorHttp<T> consumidorHttp);
 
     /**
+     * Realiza uma requisição do tipo GET
+     *
+     * @param url Caminho do serviço
+     * @param body O Objeto referente ao corpo da requisição
+     * @param headers Cabeçalhos adicionais
+     * @param consumidorHttp A logica de consumo da resposta recebida
+     * @param <T> O tipo do objeto de resposta
+     * @return resposta da requisição
+     */
+    <T> T doGetJson(String url, Object body, Header[] headers, ConsumidorHttp<T> consumidorHttp);
+
+    /**
      * Realiza uma requisição do tipo GET usando credenciais
      *
      * @param url Caminho do serviço
