@@ -50,7 +50,12 @@ public class OracleAbastecimentoViewDados extends OracleRepositorioBoleiaDados<A
         if(filtro.getPlaca() != null && !filtro.getPlaca().isEmpty()) {
             parametros.add(new ParametroPesquisaLike("placaVeiculo", filtro.getPlaca()));
         }
-        parametros.add(new ParametroPesquisaIgual("empresa.id", filtro.getEmpresa()));
+        if(filtro.getEmpresa() != null) {
+            parametros.add(new ParametroPesquisaIgual("idEmpresa", filtro.getEmpresa()));
+        }
+        if(filtro.getTipo() != null) {
+            parametros.add(new ParametroPesquisaIgual("tipoEmpresa", filtro.getTipo()));
+        }
         parametros.add(new ParametroPesquisaIgual("posto.id", filtro.getPontoDeVenda()));
         return parametros;
     }
