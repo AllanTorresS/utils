@@ -96,6 +96,7 @@ public final  class Rotas {
     public static final  String CICLO_REPASSE_API                    = BASE_API + "/cicloRepasse";
     public static final  String REEMBOLSO_API                        = BASE_API + "/reembolso";
     public static final  String REEMBOLSO_CONECTCAR_API              = BASE_API + "/reembolsoConectcar";
+    public static final  String DETALHE_REEMBOLSO_CONECTCAR_API      = BASE_API + "/detalheReembolsoConectcar";
     public static final  String ABASTECIMENTO_API                    = BASE_API + "/abastecimento";
     public static final  String ABASTECIMENTO_FROTA_API              = BASE_API + "/abastecimentoFrota";
     public static final  String ABASTECIMENTO_REVENDA_API            = BASE_API + "/abastecimentoRevenda";
