@@ -26,6 +26,8 @@ public final  class Rotas {
     public static final  String CREDENCIAMENT0_POSTO_ACESSO_API       = BASE_API_PUBLICA + "/credenciamentoPosto/acesso";
     public static final  String CREDENCIAMENT0_FROTA_ACESSO_API       = BASE_API_PUBLICA + "/credenciamentoFrota/acesso";
     public static final  String MODULO_INTERNO_ACESSO_API             = BASE_API_PUBLICA + "/moduloInterno/acesso";
+    
+    public static final  String TRANSACAO_CONECTCAR_API        = BASE_API_PUBLICA + "/conectcar";
 
     // APIs estaticas
     public static final  String API_ESTATICA_MOTORISTA       = BASE_API_ESTATICA + "/motorista";
@@ -43,11 +45,13 @@ public final  class Rotas {
     public static final  String STATUS_PERMISSAO_PRECO_API           = BASE_API + "/statusPermissaoPreco";
     public static final  String STATUS_INTEGRACAO_API                = BASE_API + "/statusIntegracao";
     public static final  String STATUS_INTEGRACAO_REEMBOLSO_API      = BASE_API + "/statusIntegracaoReembolso";
+    public static final  String STATUS_INTEGRACAO_REEMBOLSO_CONECTCAR_API      = BASE_API + "/statusIntegracaoReembolsoConectcar";
     public static final  String STATUS_BLOQUEIO_API                  = BASE_API + "/statusBloqueio";
     public static final  String STATUS_HABILITACAO_API               = BASE_API + "/statusHabilitacao";
     public static final  String STATUS_POSSE_API                     = BASE_API + "/statusPosse";
     public static final  String STATUS_COBRANCA_API                  = BASE_API + "/statusCobranca";
     public static final  String STATUS_REEMBOLSO_API                 = BASE_API + "/statusReembolso";
+    public static final  String STATUS_REEMBOLSO_CONECTCAR_API       = BASE_API + "/statusReembolsoConectcar";
     public static final  String CLASSIFICACAO_API                    = BASE_API + "/classificacao";
     public static final  String ESTADOS_API                          = BASE_API + "/estado";
     public static final  String VEICULO_API                          = BASE_API + "/veiculo";
@@ -88,8 +92,10 @@ public final  class Rotas {
     public static final  String MICROMERCADO_API                     = BASE_API + "/importarMicromercado";
     public static final  String NEGOCIACOES_API                      = BASE_API + "/negociacoes";
     public static final  String COBRANCA_API                         = BASE_API + "/cobranca";
+    public static final  String COBRANCA_CONECTCAR_API               = BASE_API + "/cobrancaConectcar";
     public static final  String CICLO_REPASSE_API                    = BASE_API + "/cicloRepasse";
     public static final  String REEMBOLSO_API                        = BASE_API + "/reembolso";
+    public static final  String REEMBOLSO_CONECTCAR_API              = BASE_API + "/reembolsoConectcar";
     public static final  String ABASTECIMENTO_API                    = BASE_API + "/abastecimento";
     public static final  String ABASTECIMENTO_FROTA_API              = BASE_API + "/abastecimentoFrota";
     public static final  String ABASTECIMENTO_REVENDA_API            = BASE_API + "/abastecimentoRevenda";
@@ -121,6 +127,11 @@ public final  class Rotas {
     public static final  String POSTO_CREDENCIADO_API                = BASE_API + "/postoCredenciado";
     public static final  String DOCUMENTO_API                        = BASE_API + "/documento";
     public static final  String CREDENCIAMENTO_FROTA_API             = BASE_API + "/credenciamentoFrota";
+    public static final  String DASHBOARD_CONECTCAR_API              = BASE_API + "/dashboardConectcar";
+    public static final  String PEDIDO_TAG_API                       = BASE_API + "/pedidoTag";
+    public static final  String ATIVACAO_TAG_API                     = BASE_API + "/ativacaoTag";
+    public static final  String UTILIZACAO_TAG_API                   = BASE_API + "/utilizacaoTag";
+    public static final  String FROTA_CONECTCAR_API                  = BASE_API + "/frota/conectcar";
 
     public static final String CAMPANHA_API                          = BASE_API + "/campanha";
     public static final String BANDEIRA_API                          = BASE_API + "/bandeira";
