@@ -40,12 +40,6 @@ public enum StatusPrecoNegociacao implements IEnumComLabel<StatusPrecoNegociacao
         if(StatusPreco.CANCELADO.equals(status)){
             return CANCELADO;
         }
-        if(StatusPreco.AGENDADO.equals(status)){
-            return AGENDADO;
-        }
-        if(StatusPreco.AGENDADO_PENDENTE.equals(status)){
-            return AGENDADO_PENDENTE;
-        }
         return null;
     }
 
@@ -65,12 +59,6 @@ public enum StatusPrecoNegociacao implements IEnumComLabel<StatusPrecoNegociacao
         }
         if(CANCELADO.equals(this)) {
             return Collections.singletonList(StatusPreco.CANCELADO);
-        }
-        if(AGENDADO.equals(this)){
-            return Collections.singletonList(StatusPreco.AGENDADO);
-        }
-        if(AGENDADO_PENDENTE.equals(this)){
-            return Collections.singletonList(StatusPreco.AGENDADO_PENDENTE);
         }
         return Collections.emptyList();
     }
