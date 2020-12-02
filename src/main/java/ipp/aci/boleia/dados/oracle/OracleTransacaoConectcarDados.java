@@ -271,7 +271,11 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
         if (filtro.getTipo() != null && filtro.getTipo().getName() != null) {            
             parametros.add(new ParametroPesquisaIgual("tipoTransacao", TipoTransacaoConectcar.valueOf(filtro.getTipo().getName()).getValue()));            
         }
-        
+
+        if (filtro.getReembolso() != null && filtro.getReembolso().getId() != null) {            
+            parametros.add(new ParametroPesquisaIgual("reembolso.id", filtro.getReembolso().getId()));            
+        }
+
         if (filtro.getStatusTag() != null && filtro.getStatusTag().getName() != null) {
         	if(filtro.getStatusTag().getName().equals(StatusAtivacao.ATIVO.name())) {
         		parametros.add(new ParametroPesquisaNulo("tag.dataAtivacao", true));
