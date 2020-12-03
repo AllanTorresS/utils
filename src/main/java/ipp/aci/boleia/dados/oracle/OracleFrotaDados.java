@@ -54,16 +54,16 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
     private UtilitarioAmbiente ambiente;
 
     private static final String CLAUSULA_DATA_REEMB_GERADO = 
-        " tc.reembolso IS NOT NULL AND " +
-        " ((r.dataPagamento is null AND (r.dataVencimentoPgto >= :dataInicial AND r.dataVencimentoPgto <= :dataFinal)) " +
-        " OR (r.dataPagamento >= :dataInicial AND r.dataPagamento <= :dataFinal)) ";
+            " tc.reembolso IS NOT NULL AND " +
+            " ((r.dataPagamento is null AND (r.dataVencimentoPgto >= :dataInicial AND r.dataVencimentoPgto <= :dataFinal)) " +
+            " OR (r.dataPagamento >= :dataInicial AND r.dataPagamento <= :dataFinal)) ";
 
     private static final String CLAUSULA_DATA_REEMB_NAO_GERADO = 
-        " tc.reembolso IS NULL AND " +
-        " ((f.modoPagamento = " + ModalidadePagamento.POS_PAGO.getValue() +
-        " AND (trunc(tc.dataFimPeriodo + prz.prazoReembolso) >= :dataInicial AND trunc(tc.dataFimPeriodo + prz.prazoReembolso) <= :dataFinal)) " +
-        " OR (f.modoPagamento = " + ModalidadePagamento.PRE_PAGO.getValue() +
-        " AND (trunc(tc.dataFimPeriodo + 2) >= :dataInicial AND trunc(tc.dataFimPeriodo + 2) <= :dataFinal))) ";
+            " tc.reembolso IS NULL AND " +
+            " ((f.modoPagamento = " + ModalidadePagamento.POS_PAGO.getValue() +
+            " AND (trunc(tc.dataFimPeriodo + prz.prazoReembolso) >= :dataInicial AND trunc(tc.dataFimPeriodo + prz.prazoReembolso) <= :dataFinal)) " +
+            " OR (f.modoPagamento = " + ModalidadePagamento.PRE_PAGO.getValue() +
+            " AND (trunc(tc.dataFimPeriodo + 2) >= :dataInicial AND trunc(tc.dataFimPeriodo + 2) <= :dataFinal))) ";
 
 
     private static final String CONSULTA_DONO_FROTA_COM_ACUMULO =
