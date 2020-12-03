@@ -64,7 +64,8 @@ public enum TemplatePlanilha {
     TEMPLATE_ATIVACAO_TAG("template-ativacao-tag.xlsx"),
 	TEMPLATE_RELATORIO_ATIVACAO_TAG("template-relatorio-ativacao-tag.xlsx"),
 	TEMPLATE_PESQUISAR_GERAL_FROTA("template-pesquisar-geral-frota.xlsx"),
-	TEMPLATE_UTILIZACAO_TAG("template-utilizacao-tag.xlsx");
+	TEMPLATE_UTILIZACAO_TAG("template-utilizacao-tag.xlsx"),
+	TEMPLATE_RELATORIO_REEMBOLSO_CONECTCAR("template-relatorio-reembolso-conectcar.xlsx");
 
     private static final String BASE_TEMPLATE = "/template-planilhas/";
 
