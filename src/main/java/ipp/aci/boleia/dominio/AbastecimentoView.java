@@ -11,7 +11,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.UUID;
 
 /**
  * Representa o abastecimento de forma generica, agrupando as Empresas Abastecedoras
