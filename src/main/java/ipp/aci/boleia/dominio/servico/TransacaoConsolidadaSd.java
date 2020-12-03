@@ -306,6 +306,7 @@ public class TransacaoConsolidadaSd {
     public void verificarCiclosAVencer() {
         Date dataAtual = utilitarioAmbiente.buscarDataAmbiente();
         List<TransacaoConsolidada> transacoes24horas;
+        List<TransacaoConsolidada> transacoes72horas;
 
         // 24 horas
         Date dataVencimento24hrMin = obterPrimeiroInstanteDia(adicionarDiasData(dataAtual,1));
@@ -313,8 +314,19 @@ public class TransacaoConsolidadaSd {
         transacoes24horas = repositorio.obterConsolidacoesSemNotaFiscalEntreDatas(
                 dataVencimento24hrMin, dataVencimento24hrMax);
 
+        // 72 horas
+        Date dataVencimento72hMin = obterPrimeiroInstanteDia(adicionarDiasData(dataAtual, 3));
+        Date dataVencimento72hMax = obterUltimoInstanteDia(adicionarDiasData(dataAtual, 3));
+        transacoes72horas = repositorio.obterConsolidacoesSemNotaFiscalEntreDatas(
+                dataVencimento72hMin, dataVencimento72hMax);
+
         if(!transacoes24horas.isEmpty()) {
             notificacaoUsuarioSd.enviarNotificacaoCiclosAVencerSolucao();
+            transacoes24horas.forEach(notificacaoUsuarioSd::enviarNotificacaoCiclosAVencerRevenda);
+        }
+
+        if (!transacoes72horas.isEmpty()) {
+            transacoes72horas.forEach(notificacaoUsuarioSd::enviarNotificacaoCiclosAVencerRevenda);
         }
     }
 
@@ -370,6 +382,16 @@ public class TransacaoConsolidadaSd {
             transacoes.forEach(this::atualizarConsolidadoNotaFiscal);
             notificacaoUsuarioSd.enviarNotificacaoCiclosEncerrados(ontemComecoDoDia);
         }
+    }
+
+    /**
+     * Envia uma notificação para o gestor da revenda
+     * sobre o início do período de ajuste de um ciclo
+     *
+     * @param ciclo O ciclo cujo período de ajuste se iniciou
+     */
+    public void enviarNotificacaoCicloEmAjuste(TransacaoConsolidada ciclo) {
+        notificacaoUsuarioSd.enviarNotificacaoCicloEmAjuste(ciclo);
     }
 
     /**
@@ -855,14 +877,15 @@ public class TransacaoConsolidadaSd {
      * Atualiza o status de uma transação consolidada para "em ajuste" ou "fechada",
      * reprocessando a mesma
      * @param consolidado Transacao consolidada a ser processada
-     *
+     * @return A transação consolidada atualizada
      */
-    public void atualizarCicloConsolidado(TransacaoConsolidada consolidado) {
+    public TransacaoConsolidada atualizarCicloConsolidado(TransacaoConsolidada consolidado) {
         atualizarStatusCicloConsolidado(consolidado);
         processarValoresTransacaoConsolidada(consolidado);
         if(consolidado.esta(StatusTransacaoConsolidada.FECHADA)) {
             reverterEdicoesPendentes(consolidado);
         }
+        return consolidado;
     }
 
     /**

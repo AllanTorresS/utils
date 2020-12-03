@@ -124,6 +124,10 @@ public class Unidade implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @Column(name="DS_CONNECTCTA_TOKEN")
     private String connectCTAToken;
 
+    @NotNull
+    @Column(name = "ID_STATUS")
+    private Integer status;
+
     @Override
     public Long getId() {
         return id;
@@ -314,6 +318,14 @@ public class Unidade implements IPersistente, IExclusaoLogica, IPertenceFrota {
 
     public void setConnectCTAToken(String connectCTAToken) {
         this.connectCTAToken = connectCTAToken;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 
     @Transient

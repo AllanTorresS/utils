@@ -5,10 +5,12 @@ import ipp.aci.boleia.dominio.Rede;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgualIgnoreCase;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -36,5 +38,10 @@ public class OracleRedeDados extends OracleRepositorioBoleiaDados<Rede> implemen
         parametros.add(new ParametroPesquisaLike("nomeRede",termo));
         ParametroOrdenacaoColuna ordenacao = new ParametroOrdenacaoColuna("nomeRede");
         return pesquisar(ordenacao, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+    @Override
+    public Rede obterPorPontoDeVenda(Long idPv) {
+        return pesquisarUnico(new ParametroPesquisaIn("pontosDeVenda", Collections.singleton(idPv)));
     }
 }
