@@ -987,7 +987,11 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             consulta = consulta.replace(CLAUSULA_FROTA, "");
         }
 
-        parametros.add(new ParametroPesquisaIgual("statusCiclo", filtro.getStatusCiclo().getValue()));
+        if (filtro.getStatusCiclo() != null && filtro.getStatusCiclo().getName() != null) {
+            parametros.add(new ParametroPesquisaIgual("statusCiclo", StatusTransacaoConsolidada.valueOf(filtro.getStatusCiclo().getName()).getValue()));
+        } else if (filtro.getStatusCiclo().getValue() != null) {
+            parametros.add(new ParametroPesquisaIgual("statusCiclo", filtro.getStatusCiclo().getValue()));
+        }
 
         return pesquisar(null, consulta, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
@@ -1013,7 +1017,11 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             consulta = consulta.replace(CLAUSULA_FROTA, "");
         }
 
-        parametros.add(new ParametroPesquisaIgual("statusCiclo", filtro.getStatusCiclo().getValue()));
+        if (filtro.getStatusCiclo() != null && filtro.getStatusCiclo().getName() != null) {
+            parametros.add(new ParametroPesquisaIgual("statusCiclo", StatusTransacaoConsolidada.valueOf(filtro.getStatusCiclo().getName()).getValue()));
+        } else if (filtro.getStatusCiclo().getValue() != null) {
+            parametros.add(new ParametroPesquisaIgual("statusCiclo", filtro.getStatusCiclo().getValue()));
+        }
 
         return pesquisar(filtro.getPaginacao(), consulta, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }

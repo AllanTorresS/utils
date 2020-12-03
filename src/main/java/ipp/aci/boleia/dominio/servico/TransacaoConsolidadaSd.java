@@ -306,6 +306,7 @@ public class TransacaoConsolidadaSd {
     public void verificarCiclosAVencer() {
         Date dataAtual = utilitarioAmbiente.buscarDataAmbiente();
         List<TransacaoConsolidada> transacoes24horas;
+        List<TransacaoConsolidada> transacoes72horas;
 
         // 24 horas
         Date dataVencimento24hrMin = obterPrimeiroInstanteDia(adicionarDiasData(dataAtual,1));
@@ -313,8 +314,19 @@ public class TransacaoConsolidadaSd {
         transacoes24horas = repositorio.obterConsolidacoesSemNotaFiscalEntreDatas(
                 dataVencimento24hrMin, dataVencimento24hrMax);
 
+        // 72 horas
+        Date dataVencimento72hMin = obterPrimeiroInstanteDia(adicionarDiasData(dataAtual, 3));
+        Date dataVencimento72hMax = obterUltimoInstanteDia(adicionarDiasData(dataAtual, 3));
+        transacoes72horas = repositorio.obterConsolidacoesSemNotaFiscalEntreDatas(
+                dataVencimento72hMin, dataVencimento72hMax);
+
         if(!transacoes24horas.isEmpty()) {
             notificacaoUsuarioSd.enviarNotificacaoCiclosAVencerSolucao();
+            transacoes24horas.forEach(notificacaoUsuarioSd::enviarNotificacaoCiclosAVencerRevenda);
+        }
+
+        if (!transacoes72horas.isEmpty()) {
+            transacoes72horas.forEach(notificacaoUsuarioSd::enviarNotificacaoCiclosAVencerRevenda);
         }
     }
 
