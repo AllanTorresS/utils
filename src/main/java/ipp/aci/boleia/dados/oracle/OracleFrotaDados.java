@@ -55,15 +55,15 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
 
     private static final String CLAUSULA_DATA_REEMB_GERADO = 
         " tc.reembolso IS NOT NULL AND " +
-        " ((r.dataPagamento is null AND (r.dataVencimentoPgto >= :dataInicioPeriodo AND r.dataVencimentoPgto <= :dataFimPeriodo)) " +
-        " OR (r.dataPagamento >= :dataInicioPeriodo AND r.dataPagamento <= :dataFimPeriodo)) ";
+        " ((r.dataPagamento is null AND (r.dataVencimentoPgto >= :dataInicial AND r.dataVencimentoPgto <= :dataFinal)) " +
+        " OR (r.dataPagamento >= :dataInicial AND r.dataPagamento <= :dataFinal)) ";
 
     private static final String CLAUSULA_DATA_REEMB_NAO_GERADO = 
         " tc.reembolso IS NULL AND " +
-        " (fpv.frota.modoPagamento = " + ModalidadePagamento.POS_PAGO.getValue() +
-        " AND (tc.dataFimPeriodo + p.prazoReembolso >= :dataInicioPeriodo AND tc.dataFimPeriodo + p.prazoReembolso <= :dataFimPeriodo)) " +
-        " OR ((fpv.frota.modoPagamento = " + ModalidadePagamento.PRE_PAGO.getValue() +
-        " AND (tc.dataFimPeriodo + 2 >= :dataInicioPeriodo AND tc.dataFimPeriodo + 2 <= :dataFimPeriodo))) ";
+        " ((f.modoPagamento = " + ModalidadePagamento.POS_PAGO.getValue() +
+        " AND (trunc(tc.dataFimPeriodo + prz.prazoReembolso) >= :dataInicial AND trunc(tc.dataFimPeriodo + prz.prazoReembolso) <= :dataFinal)) " +
+        " OR (f.modoPagamento = " + ModalidadePagamento.PRE_PAGO.getValue() +
+        " AND (trunc(tc.dataFimPeriodo + 2) >= :dataInicial AND trunc(tc.dataFimPeriodo + 2) <= :dataFinal))) ";
 
 
     private static final String CONSULTA_DONO_FROTA_COM_ACUMULO =
@@ -102,9 +102,11 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
                     "TransacaoConsolidada tc " +
                     "JOIN tc.frotaPtov fp " +
                     "JOIN fp.frota f " +
+                    "LEFT JOIN tc.reembolso r " +
+                    "JOIN tc.prazos prz " +
                     "WHERE " +
-                    "( " + CLAUSULA_DATA_REEMB_GERADO + ") " +
-                    "OR ( " + CLAUSULA_DATA_REEMB_NAO_GERADO + ") " +
+                    "(( " + CLAUSULA_DATA_REEMB_GERADO + ") " +
+                    "OR ( " + CLAUSULA_DATA_REEMB_NAO_GERADO + ")) " +
                     "AND (fp.pontoVenda.id IN :idsPvs) " +
                     "ORDER BY f.nomeRazaoFrota";
 
