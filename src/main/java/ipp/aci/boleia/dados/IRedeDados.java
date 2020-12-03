@@ -23,4 +23,11 @@ public interface IRedeDados extends IRepositorioBoleiaDados<Rede> {
      * @return lista de redes localizadas
      */
     List<Rede> pesquisar(String termo);
+
+    /**
+     * Obtém a rede de um ponto de venda
+     * @param idPv Identificador do ponto de venda
+     * @return A rede correspondente
+     */
+    Rede obterPorPontoDeVenda(Long idPv);
 }
