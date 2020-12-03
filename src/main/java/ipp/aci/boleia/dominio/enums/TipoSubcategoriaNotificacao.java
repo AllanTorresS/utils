@@ -48,7 +48,8 @@ public enum TipoSubcategoriaNotificacao {
     CAMPANHA_REJEITADA                                  (38L, TipoCategoriaNotificacao.GERAIS),
     ALTERACAO_ABASTECIMENTO_EXPIRADA                    (39L, TipoCategoriaNotificacao.FINANCEIRAS),
     ABASTECIMENTO_INVALIDAR_SALDO_FROTA                 (40L, TipoCategoriaNotificacao.FINANCEIRAS),
-    NOTA_FISCAL_NAO_EMITIDA_REVENDA                     (41L, TipoCategoriaNotificacao.FINANCEIRAS);
+    NOTA_FISCAL_NAO_EMITIDA_REVENDA                     (41L, TipoCategoriaNotificacao.FINANCEIRAS),
+    CICLO_EM_AJUSTE                                     (42L, TipoCategoriaNotificacao.FINANCEIRAS);
 
     private final Long value;
     private final TipoCategoriaNotificacao categoria;

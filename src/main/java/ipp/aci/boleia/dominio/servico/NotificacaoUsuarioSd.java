@@ -3,6 +3,7 @@ package ipp.aci.boleia.dominio.servico;
 import ipp.aci.boleia.dados.IAutorizacaoPagamentoDados;
 import ipp.aci.boleia.dados.INotificacaoDados;
 import ipp.aci.boleia.dados.INotificacaoUsuarioDados;
+import ipp.aci.boleia.dados.IRedeDados;
 import ipp.aci.boleia.dados.ITransacaoConsolidadaDados;
 import ipp.aci.boleia.dados.IUsuarioDados;
 import ipp.aci.boleia.dominio.AutorizacaoPagamento;
@@ -14,6 +15,7 @@ import ipp.aci.boleia.dominio.NotaFiscal;
 import ipp.aci.boleia.dominio.Notificacao;
 import ipp.aci.boleia.dominio.NotificacaoUsuario;
 import ipp.aci.boleia.dominio.PrecoBase;
+import ipp.aci.boleia.dominio.Rede;
 import ipp.aci.boleia.dominio.TransacaoConsolidada;
 import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.Veiculo;
@@ -78,6 +80,9 @@ public class NotificacaoUsuarioSd {
 
     @Autowired
     private IAutorizacaoPagamentoDados repositorioAutorizacaoPagamento;
+
+    @Autowired
+    private IRedeDados repositorioRede;
 
     @Autowired
     private EmailSd emailSd;
@@ -784,5 +789,21 @@ public class NotificacaoUsuarioSd {
      */
     public void excluirNotificacoesPorDataLimite(Date dataLimite) {
         repositorio.excluirNotificacoesAteUmaDataLimite(dataLimite);
+    }
+
+    /**
+     * Notifica o gestor da revenda sobre entrada do ciclo no período de ajuste
+     * @param ciclo O ciclo sobre o qual o gestor será notificado
+     */
+    public void enviarNotificacaoCicloEmAjuste(TransacaoConsolidada ciclo) {
+        Rede rede = repositorioRede.obterPorPontoDeVenda(ciclo.getFrotaPtov().getPontoVenda().getId());
+        List<Usuario> usuarios = repositorioUsuarios.obterGestorPorRede(rede.getId());
+        enviarNotificacao(
+                TipoSubcategoriaNotificacao.CICLO_EM_AJUSTE,
+                usuarios,
+                UtilitarioFormatacaoData.formatarDataCurta(ciclo.getDataInicioPeriodo()),
+                UtilitarioFormatacaoData.formatarDataCurta(ciclo.getDataFimPeriodo()),
+                UtilitarioFormatacaoData.formatarPeriodoDias(ciclo.getDataInicioPeriodo(), ciclo.getDataFimPeriodo(), false, " de ")
+        );
     }
 }
