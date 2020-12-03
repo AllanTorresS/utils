@@ -9,8 +9,9 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgu
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
-import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaiorOuIgual;
+import ipp.aci.boleia.dominio.vo.EmpresaAbastecedoraVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaUltimosAbastecimentosVo;
+import ipp.aci.boleia.dominio.vo.QuantidadeAbastecidaVeiculoVo;
 import ipp.aci.boleia.util.Ordenacao;
 import org.springframework.stereotype.Repository;
 
@@ -23,6 +24,12 @@ import java.util.List;
  */
 @Repository
 public class OracleAbastecimentoViewDados extends OracleRepositorioBoleiaDados<AbastecimentoView> implements IAbastecimentoViewDados {
+
+    private static final String QUERY_PESQUISAR_EMPRESA_ABASTECEDORA =
+            "SELECT DISTINCT new ipp.aci.boleia.dominio.vo.EmpresaAbastecedoraVo(" +
+                    "a.idEmpresa, a.tipoEmpresa,  a.cnpjEmpresa,  a.nomeEmpresa) " +
+                    "FROM AbastecimentoView a " +
+                    "WHERE a.nomeEmpresa LIKE '%%'||:termo||'%%' ";
 
     /**
      * Instancia o repositorio
@@ -39,6 +46,11 @@ public class OracleAbastecimentoViewDados extends OracleRepositorioBoleiaDados<A
             filtro.getPaginacao().getParametrosOrdenacaoColuna().add(new ParametroOrdenacaoColuna("dataProcessamento", Ordenacao.DECRESCENTE));
         }
         return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+    @Override
+    public List<EmpresaAbastecedoraVo> obterEmpresasPorTermo(String termo) {
+        return pesquisar(null, QUERY_PESQUISAR_EMPRESA_ABASTECEDORA, EmpresaAbastecedoraVo.class, new ParametroPesquisaIgual("termo", termo)).getRegistros();
     }
 
     /**
