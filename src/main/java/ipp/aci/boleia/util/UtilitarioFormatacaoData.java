@@ -510,13 +510,13 @@ public final class UtilitarioFormatacaoData {
     
     /**
      * Diminui uma determinada quantidade de dias da data
-     * @param date
+     * @param data
      * @param qtdDias
-     * @return Mês de referencia
+     * @return A data com descréssimo de dias com a quantidade de dias passada
      */
-    public static String diminuirDias(Date date, int qtdDias) {
+    public static String diminuirDias(Date data, int qtdDias) {
     	Calendar calendar = Calendar.getInstance();
-    	calendar.setTime(date);
+    	calendar.setTime(data);
     	calendar.add(Calendar.DAY_OF_MONTH, -qtdDias);
     	return formatarDataMesAno(calendar.getTime());
     }
