@@ -592,4 +592,34 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
                     MotivoEstorno.obterPorValor(autorizacaoPagamento.getMotivoEstorno()).getSemAlteracao()) ||
                     (autorizacaoPagamento.getValorTotal().compareTo(BigDecimal.ZERO) < 0 && existeCancelado));
     }
+
+    /**
+     *  Verifica se todos os abastecimentos do consolidados são estornados ou não
+     * @return true, caso todos sejam estornados, ou false, caso contrário
+     */
+    @Transient
+    public boolean todasTransacoesSaoEstornadas(){
+        boolean existeCancelado = getAutorizacoesPagamentoAssociadas().stream().anyMatch(AutorizacaoPagamento::estaCancelado);
+        return getAutorizacoesPagamentoAssociadas().stream()
+                .allMatch(autorizacaoPagamento -> (autorizacaoPagamento.estaCancelado() &&
+                        !MotivoEstorno.obterPorValor(autorizacaoPagamento.getMotivoEstorno()).getSemAlteracao()) ||
+                        (autorizacaoPagamento.getValorTotal().compareTo(BigDecimal.ZERO) < 0 && existeCancelado));
+    }
+
+    /**
+     *  Verifica se todos os abastecimentos do consolidados são cancelados ou estornados não
+     * @return a lista de transações canceladas
+     */
+    @Transient
+    public boolean todasTransacoesEstornadasOuCanceladas(){
+        boolean existeCancelado = getAutorizacoesPagamentoAssociadas().stream().anyMatch( autorizacaoPagamento -> autorizacaoPagamento.estaCancelado()
+                && MotivoEstorno.obterPorValor(autorizacaoPagamento.getMotivoEstorno()).getSemAlteracao());
+        boolean existeEstornado = getAutorizacoesPagamentoAssociadas().stream().anyMatch( autorizacaoPagamento -> autorizacaoPagamento.estaCancelado()
+                && !MotivoEstorno.obterPorValor(autorizacaoPagamento.getMotivoEstorno()).getSemAlteracao());
+
+        return getAutorizacoesPagamentoAssociadas().stream()
+                .allMatch(autorizacaoPagamento -> ((autorizacaoPagamento.estaCancelado() ||
+                        (autorizacaoPagamento.getValorTotal().compareTo(BigDecimal.ZERO) < 0) && existeCancelado && existeEstornado)));
+    }
+
 }
