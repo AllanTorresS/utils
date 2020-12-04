@@ -705,7 +705,7 @@ public class Usuario implements IPersistente, IExclusaoLogica, IPertenceFrota, I
      * @return true se o usuario for coordenador de alguma coordenadoria.
      */
     @JsonIgnore
-    private Boolean isCoordenador() {
+    public Boolean isCoordenador() {
         return !CollectionUtils.isEmpty(this.coordenadoriasCoordenador);
     }
 
