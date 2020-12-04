@@ -98,7 +98,7 @@ public class OracleAgenciadorFreteReembolsoDados extends OracleRepositorioBoleia
     @Override
     public List<AgenciadorFreteReembolso> obterReembolsosPorStatus(StatusDocumento status) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
-        parametros.add(new ParametroPesquisaIgual("documentoJde.status", status));
+        parametros.add(new ParametroPesquisaIgual("documentoJde.status", status.getValue()));
         parametros.add(new ParametroPesquisaMenorOuIgual("documentoJde.numeroTentativasEnvio", NUMERO_MAXIMO_TENTATIVAS_ENVIO));
         return pesquisar((InformacaoPaginacao)null, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
