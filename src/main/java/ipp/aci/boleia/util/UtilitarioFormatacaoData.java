@@ -507,4 +507,17 @@ public final class UtilitarioFormatacaoData {
         SimpleDateFormat padraoDiaMes = new SimpleDateFormat(ConstantesFormatacao.FORMATO_DIA_MES);
         return padraoDia.format(dataInicio) + "-" + padraoDiaMes.format(dataFim);
     }
+    
+    /**
+     * Diminui uma determinada quantidade de dias da data
+     * @param date
+     * @param qtdDias
+     * @return Mês de referencia
+     */
+    public static String diminuirDias(Date date, int qtdDias) {
+    	Calendar calendar = Calendar.getInstance();
+    	calendar.setTime(date);
+    	calendar.add(Calendar.DAY_OF_MONTH, -qtdDias);
+    	return formatarDataMesAno(calendar.getTime());
+    }
 }
