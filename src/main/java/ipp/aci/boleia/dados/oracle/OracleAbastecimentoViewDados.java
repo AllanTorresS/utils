@@ -11,8 +11,8 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
 import ipp.aci.boleia.dominio.vo.EmpresaAbastecedoraVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaUltimosAbastecimentosVo;
-import ipp.aci.boleia.dominio.vo.QuantidadeAbastecidaVeiculoVo;
 import ipp.aci.boleia.util.Ordenacao;
+import ipp.aci.boleia.util.UtilitarioFormatacao;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -25,11 +25,19 @@ import java.util.List;
 @Repository
 public class OracleAbastecimentoViewDados extends OracleRepositorioBoleiaDados<AbastecimentoView> implements IAbastecimentoViewDados {
 
+    private static final String TO_LOWER = "LOWER(%s)";
+
+    private static final String REMOVER_ACENTO = "TRANSLATE( %s, " +
+            "'âãäåāăąÁÂÃÄÅĀĂĄèééêëēĕėęěĒĔĖĘĚìíîïìĩīĭÌÍÎÏÌĨĪĬóôõöōŏőÒÓÔÕÖŌŎŐùúûüũūŭůÙÚÛÜŨŪŬŮ'," +
+            "'aaaaaaaaaaaaaaaeeeeeeeeeeeeeeeiiiiiiiiiiiiiiiiooooooooooooooouuuuuuuuuuuuuuuu')";
+
+
     private static final String QUERY_PESQUISAR_EMPRESA_ABASTECEDORA =
             "SELECT DISTINCT new ipp.aci.boleia.dominio.vo.EmpresaAbastecedoraVo(" +
                     "a.idEmpresa, a.tipoEmpresa,  a.cnpjEmpresa,  a.nomeEmpresa) " +
                     "FROM AbastecimentoView a " +
-                    "WHERE LOWER(a.nomeEmpresa) LIKE '%%'||:termo||'%%' ";
+                    "WHERE "+ String.format(TO_LOWER, String.format(REMOVER_ACENTO, "a.nomeEmpresa")) + " LIKE '%%'||:termo||'%%' " +
+                    "OR to_char(a.cnpjEmpresa) LIKE '%%'||:termoCnpj||'%%' ";
 
     /**
      * Instancia o repositorio
@@ -51,7 +59,9 @@ public class OracleAbastecimentoViewDados extends OracleRepositorioBoleiaDados<A
     @Override
     public List<EmpresaAbastecedoraVo> obterEmpresasPorTermo(String termo) {
         termo = termo.toLowerCase();
-        return pesquisar(null, QUERY_PESQUISAR_EMPRESA_ABASTECEDORA, EmpresaAbastecedoraVo.class, new ParametroPesquisaIgual("termo", termo)).getRegistros();
+        termo = UtilitarioFormatacao.removerAcentos(termo);
+        String termoCnpj = termo.replaceAll("[-./]+", "").replaceFirst("^0+(?!$)", "");
+        return pesquisar(null, QUERY_PESQUISAR_EMPRESA_ABASTECEDORA, EmpresaAbastecedoraVo.class, new ParametroPesquisaIgual("termo", termo), new ParametroPesquisaIgual("termoCnpj", termoCnpj)).getRegistros();
     }
 
     /**
