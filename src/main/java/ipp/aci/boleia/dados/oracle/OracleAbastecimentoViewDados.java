@@ -29,7 +29,7 @@ public class OracleAbastecimentoViewDados extends OracleRepositorioBoleiaDados<A
             "SELECT DISTINCT new ipp.aci.boleia.dominio.vo.EmpresaAbastecedoraVo(" +
                     "a.idEmpresa, a.tipoEmpresa,  a.cnpjEmpresa,  a.nomeEmpresa) " +
                     "FROM AbastecimentoView a " +
-                    "WHERE a.nomeEmpresa LIKE '%%'||:termo||'%%' ";
+                    "WHERE LOWER(a.nomeEmpresa) LIKE '%%'||:termo||'%%' ";
 
     /**
      * Instancia o repositorio
@@ -50,6 +50,7 @@ public class OracleAbastecimentoViewDados extends OracleRepositorioBoleiaDados<A
 
     @Override
     public List<EmpresaAbastecedoraVo> obterEmpresasPorTermo(String termo) {
+        termo = termo.toLowerCase();
         return pesquisar(null, QUERY_PESQUISAR_EMPRESA_ABASTECEDORA, EmpresaAbastecedoraVo.class, new ParametroPesquisaIgual("termo", termo)).getRegistros();
     }
 
