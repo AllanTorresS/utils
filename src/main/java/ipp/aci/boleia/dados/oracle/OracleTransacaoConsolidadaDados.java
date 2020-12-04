@@ -347,7 +347,6 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "AND (f_ptov.frota.id = :idFrota OR :idFrota is null) " +
                     "AND (tc.valorReembolso <> 0 or rm.valorReembolso <> 0) " +
                     "AND tc.valorReembolso is not null " +
-                    "AND (tc.statusConsolidacao = :statusConsolidacao or :statusConsolidacao is null) " +
                 "GROUP BY " +
                     "CASE " +
                         "WHEN rm.status=1 THEN trunc(rm.dataPagamento) " +
