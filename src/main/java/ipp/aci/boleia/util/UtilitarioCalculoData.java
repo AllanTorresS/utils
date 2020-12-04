@@ -477,4 +477,18 @@ public final class UtilitarioCalculoData {
 	public static Boolean isPosterior(Date dataAtual, Date data) {
     	return obterPrimeiroInstanteDia(data).after(obterPrimeiroInstanteDia(dataAtual));
 	}
+	
+	/**
+     * Diminui uma determinada quantidade de dias da data
+     * @param data
+     * @param qtdDias
+     * @return A data com descréssimo de dias com a quantidade de dias passada
+     */
+    public static Date diminuirDias(Date data, int qtdDias) {
+    	Calendar calendar = Calendar.getInstance();
+    	calendar.setTime(data);
+    	calendar.add(Calendar.DAY_OF_MONTH, -qtdDias);
+    	return calendar.getTime();
+    }
+    
 }
