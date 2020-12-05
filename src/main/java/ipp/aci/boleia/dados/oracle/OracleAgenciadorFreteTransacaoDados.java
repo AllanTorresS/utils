@@ -15,7 +15,6 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.vo.agenciadorfrete.FiltroRelatorioTransacaoVo;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
-import ipp.aci.boleia.util.UtilitarioFormatacaoData;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
@@ -73,11 +72,11 @@ public class OracleAgenciadorFreteTransacaoDados extends OracleRepositorioBoleia
     public ResultadoPaginado<Transacao> pesquisar(FiltroRelatorioTransacaoVo filtro) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
         if (filtro.getDe()!= null) {
-            Date data = UtilitarioFormatacaoData.lerDataIso8601(filtro.getDe());
+            Date data = filtro.getDe();
             parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataCriacao", UtilitarioCalculoData.obterPrimeiroInstanteDia(data)));
         }
         if (filtro.getAte() != null) {
-            Date data = UtilitarioFormatacaoData.lerDataIso8601(filtro.getAte());
+            Date data = filtro.getAte();
             parametros.add(new ParametroPesquisaDataMenorOuIgual("dataCriacao", UtilitarioCalculoData.obterUltimoInstanteDia(data)));
         }
         if (filtro.getIdsPontoVenda() != null) {
