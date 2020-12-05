@@ -81,9 +81,9 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
     "SELECT DISTINCT f " +
     "FROM TransacaoConsolidada tc " +
     "JOIN tc.frotaPtov.frota f " +
-    "WHERE ((:idConsolidado IS NULL OR tc.id = :idConsolidado) " +
-    "OR (:idCobranca IS NULL OR tc.cobranca.id = :idCobranca) " +
-    "OR (:idReembolso IS NULL OR tc.reembolso.id = :idReembolso)) " +
+    "WHERE ((:idConsolidado IS NOT NULL AND tc.id = :idConsolidado) " +
+    "OR (:idCobranca IS NOT NULL AND tc.cobranca.id = :idCobranca) " +
+    "OR (:idReembolso IS NOT NULL AND tc.reembolso.id = :idReembolso)) " +
     "     AND f.excluido = 0";
 
 
