@@ -385,6 +385,16 @@ public class TransacaoConsolidadaSd {
     }
 
     /**
+     * Envia uma notificação para o gestor da revenda
+     * sobre o início do período de ajuste de um ciclo
+     *
+     * @param ciclo O ciclo cujo período de ajuste se iniciou
+     */
+    public void enviarNotificacaoCicloEmAjuste(TransacaoConsolidada ciclo) {
+        notificacaoUsuarioSd.enviarNotificacaoCicloEmAjuste(ciclo);
+    }
+
+    /**
      * Busca o volume realizado para um dado produto no ultimo ciclo fechado
      *
      * @param idFrota A frota
@@ -867,14 +877,15 @@ public class TransacaoConsolidadaSd {
      * Atualiza o status de uma transação consolidada para "em ajuste" ou "fechada",
      * reprocessando a mesma
      * @param consolidado Transacao consolidada a ser processada
-     *
+     * @return A transação consolidada atualizada
      */
-    public void atualizarCicloConsolidado(TransacaoConsolidada consolidado) {
+    public TransacaoConsolidada atualizarCicloConsolidado(TransacaoConsolidada consolidado) {
         atualizarStatusCicloConsolidado(consolidado);
         processarValoresTransacaoConsolidada(consolidado);
         if(consolidado.esta(StatusTransacaoConsolidada.FECHADA)) {
             reverterEdicoesPendentes(consolidado);
         }
+        return consolidado;
     }
 
     /**
