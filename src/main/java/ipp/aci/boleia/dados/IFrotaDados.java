@@ -179,7 +179,7 @@ public interface IFrotaDados extends IRepositorioBoleiaDados<Frota> {
     
     /**
      * Obtém a frota associada ao consolidado, cobrança ou reembolso informado
-     * @param idCobranca o filtro de pesquisa 
+     * @param filtro o filtro de pesquisa
      * @return a frota associada ao filtro informado
      */
     Frota obterPorConsolidadoCobrancaOuReembolso(FiltroPesquisaAbastecimentoVo filtro);
