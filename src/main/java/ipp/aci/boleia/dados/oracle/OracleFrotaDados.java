@@ -105,8 +105,7 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
                     "LEFT JOIN tc.reembolso r " +
                     "JOIN tc.prazos prz " +
                     "WHERE " +
-                    "(( " + CLAUSULA_DATA_REEMB_GERADO + ") " +
-                    "OR ( " + CLAUSULA_DATA_REEMB_NAO_GERADO + ")) " +
+                    "((" + CLAUSULA_DATA_REEMB_GERADO + ") OR (" + CLAUSULA_DATA_REEMB_NAO_GERADO + "))" +
                     "AND (fp.pontoVenda.id IN :idsPvs) " +
                     "ORDER BY f.nomeRazaoFrota";
 
@@ -468,7 +467,7 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
             parametros.add(new ParametroPesquisaIn("idsPvs", usuarioLogado.getPontosDeVenda().stream().map(PontoDeVenda::getId).collect(Collectors.toList())));
         }
 
-        return pesquisar(null, CONSULTA_FROTAS_ASSOCIADAS_A_CICLOS_CONTIDOS_NO_PERIODO, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+        return pesquisarComExcluidos(null, CONSULTA_FROTAS_ASSOCIADAS_A_CICLOS_CONTIDOS_NO_PERIODO, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
 
     @Override
@@ -485,6 +484,6 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
             parametros.add(new ParametroPesquisaIn("idsPvs", usuarioLogado.getPontosDeVenda().stream().map(PontoDeVenda::getId).collect(Collectors.toList())));
         }
 
-        return pesquisar(null, CONSULTA_FROTAS_PARA_DETALHE_CICLO, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+        return pesquisarComExcluidos(null, CONSULTA_FROTAS_PARA_DETALHE_CICLO, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
 }
