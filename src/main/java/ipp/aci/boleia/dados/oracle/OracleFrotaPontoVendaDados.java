@@ -60,7 +60,7 @@ public class OracleFrotaPontoVendaDados extends OracleRepositorioBoleiaDados<Fro
     @Override
     public ResultadoPaginado<FrotaPontoVenda> pesquisarPostosCredenciados(FiltroPesquisaPostoCredenciadoVo filtro) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
-        povoarParametroIgual("frota.id", filtro.getFrota().getId(), parametros);
+        povoarParametroIgual("frota.id", filtro.getFrota() != null ? filtro.getFrota().getId() : null, parametros);
         povoarParametroIgual("pontoVenda.id", filtro.getPontoVenda() != null ? filtro.getPontoVenda().getId() : null, parametros);
         povoarParametroLike("pontoVenda.municipio", filtro.getCidade(), parametros);
         povoarParametroIgual("pontoVenda.uf", filtro.getUf() != null ? filtro.getUf().getName() : null, parametros);

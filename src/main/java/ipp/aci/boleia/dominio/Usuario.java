@@ -106,7 +106,7 @@ public class Usuario implements IPersistente, IExclusaoLogica, IPertenceFrota, I
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "CD_TIPO_PERFIL")
     private TipoPerfil tipoPerfil;
 
@@ -705,7 +705,7 @@ public class Usuario implements IPersistente, IExclusaoLogica, IPertenceFrota, I
      * @return true se o usuario for coordenador de alguma coordenadoria.
      */
     @JsonIgnore
-    private Boolean isCoordenador() {
+    public Boolean isCoordenador() {
         return !CollectionUtils.isEmpty(this.coordenadoriasCoordenador);
     }
 
