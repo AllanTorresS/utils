@@ -15,6 +15,7 @@ public class FiltroPesquisaDetalheCicloVo extends BaseFiltroPaginado {
     private EntidadeVo frota;
     private EnumVo statusCiclo;
     private EnumVo statusNf;
+    private EmpresaUnidadeVo empresaUnidade;
 
     public Date getInicio() {
         return inicio;
@@ -70,5 +71,13 @@ public class FiltroPesquisaDetalheCicloVo extends BaseFiltroPaginado {
 
     public void setStatusNf(EnumVo statusNf) {
         this.statusNf = statusNf;
+    }
+
+    public EmpresaUnidadeVo getEmpresaUnidade() {
+        return empresaUnidade;
+    }
+
+    public void setEmpresaUnidade(EmpresaUnidadeVo empresaUnidade) {
+        this.empresaUnidade = empresaUnidade;
     }
 }

@@ -13,6 +13,7 @@ public class FiltroPesquisaReembolsoGraficoVo extends BaseFiltroPaginado {
     private Date dataFimPesquisa;
     private Long idFrotaSelecionada;
     private Long idPontoDeVendaSelecionado;
+    private EmpresaUnidadeVo empresaUnidadeSelecionada;
 
     public Date getDataInicioPesquisa() {
         return dataInicioPesquisa;
@@ -44,5 +45,13 @@ public class FiltroPesquisaReembolsoGraficoVo extends BaseFiltroPaginado {
 
     public void setIdPontoDeVendaSelecionado(Long idPontoDeVendaSelecionado) {
         this.idPontoDeVendaSelecionado = idPontoDeVendaSelecionado;
+    }
+
+    public EmpresaUnidadeVo getEmpresaUnidadeSelecionada() {
+        return empresaUnidadeSelecionada;
+    }
+
+    public void setEmpresaUnidadeSelecionada(EmpresaUnidadeVo empresaUnidadeSelecionada) {
+        this.empresaUnidadeSelecionada = empresaUnidadeSelecionada;
     }
 }
