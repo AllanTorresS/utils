@@ -4,6 +4,7 @@ import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaAbastecimentoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFinanceiroVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFrotaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialFrotaVo;
@@ -175,4 +176,11 @@ public interface IFrotaDados extends IRepositorioBoleiaDados<Frota> {
      * @return lista das frotas que atendem aos criterios de busca
      */
     List<Frota> pesquisarFrotasAssociadasACiclosContidosNoPeriodo(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado);
+    
+    /**
+     * Obtém a frota associada ao consolidado, cobrança ou reembolso informado
+     * @param filtro o filtro de pesquisa
+     * @return a frota associada ao filtro informado
+     */
+    Frota obterPorConsolidadoCobrancaOuReembolso(FiltroPesquisaAbastecimentoVo filtro);
 }

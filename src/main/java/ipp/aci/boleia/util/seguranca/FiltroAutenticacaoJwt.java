@@ -22,6 +22,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -75,11 +77,18 @@ public class FiltroAutenticacaoJwt implements Filter {
     @Autowired
     private RenovadorTokenJwt renovadorTokenJwt;
 
+    @Autowired
+    private IFiltroInterceptacaoForwardJwt filtroInterceptacaoForwardJwt;
+
     @Override
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
 
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) resp;
+
+        if (filtroInterceptacaoForwardJwt.encaminharRequisicao(request, response)) {
+            return;
+        }
 
         if (isUrlProtegida(request) && isMetodoDiferenteDeOptions(request)) {
 
@@ -98,6 +107,10 @@ public class FiltroAutenticacaoJwt implements Filter {
                 if (deveInterromperFiltroSessaoOuTokenInvalido(response, encodedJwtToken, fingerprint)) {
                     return;
                 }
+                Usuario usuario = ambiente.getUsuarioLogado();
+                if (usuario != null && !StringUtils.isEmpty(request.getHeader(ambiente.getChaveHeaderUsuarioRelatorio()))) {
+                    registrarUsuarioRelatorioSessao(request.getHeader(ambiente.getChaveHeaderUsuarioRelatorio()));
+                }
             }
 
             if (request.getRequestURL().toString().contains("/downloadTokenGeneration")) {
@@ -115,6 +128,24 @@ public class FiltroAutenticacaoJwt implements Filter {
         }
 
         chain.doFilter(request, response);
+    }
+
+    /**
+     * Registra um usuário que requisitou emissão de relatório na sessão
+     * @param id O id do usuário
+     */
+    private void registrarUsuarioRelatorioSessao(String id) {
+        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+        HttpSession session = attr.getRequest().getSession();
+        try {
+            Long idUsuario = Long.parseLong(id);
+            Usuario usuario = servicosDeUsuario.obterPorIdSemIsolamentoComPermissoes(idUsuario);
+            if (usuario != null) {
+                session.setAttribute(ambiente.getChaveHeaderUsuarioRelatorio(), usuario);
+            }
+        } catch (NumberFormatException nfe) {
+            LOGGER.debug(nfe.getMessage(), nfe);
+        }
     }
 
     private void limparCookies(HttpServletRequest req, HttpServletResponse resp) {

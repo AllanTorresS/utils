@@ -5,12 +5,12 @@ import ipp.aci.boleia.dominio.agenciadorfrete.Consolidado;
 import ipp.aci.boleia.dominio.agenciadorfrete.Transacao;
 import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Implementa as regras de negócio relativas a Cobrança utilizado pelo Agenciador de Frete (AgenciadorFreteCobranca)
@@ -18,19 +18,15 @@ import java.util.List;
 @Component
 public class AgenciadorFreteCobrancaSd {
 
-    @Autowired
-    private AbastecimentoSd abastecimentoSd;
-
     /***
      * Obtém o desconto do saque
      * @param consolidados a lista de consolidados
      * @return o desconto do saque
      */
-    public BigDecimal obterDescontoSaque(List<Consolidado> consolidados) {
-        return consolidados.stream().flatMap(c -> c.getTransacoes().stream()
-                .filter(t -> t.getSaque() != null))
+    public Optional<BigDecimal> obterDescontoSaque(List<Consolidado> consolidados) {
+        return consolidados.stream().flatMap(c -> c.getTransacoes().stream().filter(Transacao::temSaque))
                 .map(t -> t.getSaque().getTaxaAgenciadorFrete())
-                .reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+                .reduce(BigDecimal::add);
     }
 
     /***
@@ -40,7 +36,7 @@ public class AgenciadorFreteCobrancaSd {
      */
     public BigDecimal obterDescontoAbastecimento(List<Consolidado> consolidados) {
         return consolidados.stream().flatMap(c -> c.getTransacoes().stream())
-                .map(t -> abastecimentoSd.obterValorTotalFee(t.getAbastecimento()))
+                .map(t -> t.getAbastecimento().obterValorTotalFee())
                 .reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
     }
 
@@ -49,12 +45,10 @@ public class AgenciadorFreteCobrancaSd {
      * @param consolidado o consolidado
      * @return o valor total do saque
      */
-    public BigDecimal obterValorTotalSaque(Consolidado consolidado) {
-        return consolidado.getTransacoes().stream()
-                .filter(t -> t.getSaque() != null)
+    public Optional<BigDecimal> obterValorTotalSaque(Consolidado consolidado) {
+        return consolidado.getTransacoes().stream().filter(Transacao::temSaque)
                 .map(t -> t.getSaque().getValorSolicitado())
-                .reduce(BigDecimal::add)
-                .orElse(BigDecimal.ZERO);
+                .reduce(BigDecimal::add);
     }
 
     /***
@@ -62,12 +56,10 @@ public class AgenciadorFreteCobrancaSd {
      * @param consolidados a lista consolidado
      * @return o valor total do saque
      */
-    public BigDecimal obterValorTotalSaque(List<Consolidado> consolidados) {
-        return  consolidados.stream().flatMap(c -> c.getTransacoes().stream()
-                .filter(t -> t.getSaque() != null))
+    public Optional<BigDecimal> obterValorTotalSaque(List<Consolidado> consolidados) {
+        return  consolidados.stream().flatMap(c -> c.getTransacoes().stream().filter(Transacao::temSaque))
                 .map(t -> t.getSaque().getValorSolicitado())
-                .reduce(BigDecimal::add)
-                .orElse(BigDecimal.ZERO);
+                .reduce(BigDecimal::add);
     }
 
     /***
@@ -76,8 +68,7 @@ public class AgenciadorFreteCobrancaSd {
      * @return o valor total do abastecimento
      */
     public BigDecimal obterValorTotalAbastecimento(Consolidado consolidado) {
-        return consolidado.getTransacoes().stream()
-                .map(t -> abastecimentoSd.obterValorTotal(t.getAbastecimento()))
+        return consolidado.getTransacoes().stream().map(t -> t.getAbastecimento().obterValorTotal())
                 .reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
     }
 
@@ -87,8 +78,7 @@ public class AgenciadorFreteCobrancaSd {
      * @return a data fim
      */
     public Date obterDataFim(AgenciadorFreteCobranca cobranca) {
-        return cobranca.getConsolidados().stream()
-                .map(Consolidado::getDataFimPeriodo)
-                .findFirst().orElseThrow(() -> new ExcecaoBoleiaRuntime(Erro.ERRO_INTEGRACAO));
+        return cobranca.getConsolidados().stream().findFirst().map(Consolidado::getDataFimPeriodo)
+                .orElseThrow(() -> new ExcecaoBoleiaRuntime(Erro.ERRO_INTEGRACAO));
     }
 }
