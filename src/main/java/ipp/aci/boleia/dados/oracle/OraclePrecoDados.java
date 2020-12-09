@@ -6,6 +6,7 @@ import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.Preco;
 import ipp.aci.boleia.dominio.TipoCombustivel;
 import ipp.aci.boleia.dominio.enums.StatusPreco;
+import ipp.aci.boleia.dominio.enums.StatusPrecoNegociacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
@@ -18,6 +19,8 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaior;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDiferente;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaPrecoVo;
 import ipp.aci.boleia.util.Ordenacao;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
@@ -203,8 +206,22 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
             if (filtro.getTipoCombustivel() != null && filtro.getTipoCombustivel().getId() != null) {
                 parametros.add(new ParametroPesquisaIgual("precoBase.precoMicromercado.tipoCombustivel", filtro.getTipoCombustivel().getId()));
             }
-            if (filtro.getStatus() != null && filtro.getStatus().getName() != null) {
-                parametros.add(new ParametroPesquisaIgual("status", StatusPreco.valueOf(filtro.getStatus().getName()).getValue()));
+            if (filtro.getStatus() != null && filtro.getStatus().getLabel() != null) {
+                if (filtro.getStatus().getLabel().equals(StatusPrecoNegociacao.AGENDADO.getLabel())) {
+                    parametros.add(new ParametroPesquisaOr(
+                    new ParametroPesquisaIgual("status", StatusPreco.VIGENTE.getValue()),
+                    new ParametroPesquisaIgual("status", StatusPreco.ACEITO.getValue())));
+                    parametros.add(new ParametroPesquisaDataMaior("dataVigencia", ambiente.buscarDataAmbiente()));
+                } else if(filtro.getStatus().getLabel().equals(StatusPrecoNegociacao.AGENDADO_PENDENTE.getLabel())) {
+                    parametros.add(new ParametroPesquisaOr(
+                    new ParametroPesquisaIgual("status", StatusPreco.PENDENTE.getValue()),
+                    new ParametroPesquisaIgual("status", StatusPreco.NOVO.getValue())));
+                    parametros.add(new ParametroPesquisaDataMaior("dataVigencia", ambiente.buscarDataAmbiente()));
+                } else {
+                    parametros.add(new ParametroPesquisaIn("status", Arrays.asList(statusPossiveis)));
+                    parametros.add(new ParametroPesquisaOr(new ParametroPesquisaDataMenorOuIgual("dataVigencia", ambiente.buscarDataAmbiente()),
+                    new ParametroPesquisaNulo("dataVigencia")));
+                }
             } else {
                 parametros.add(new ParametroPesquisaIn("status", Arrays.asList(statusPossiveis)));
             }
@@ -239,6 +256,8 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
         parametros.add(new ParametroPesquisaIgual("frotaPtov.pontoVenda.id", idPosto));
         parametros.add(new ParametroPesquisaIgual("frotaPtov.frota.id", idFrota));
         parametros.add(new ParametroPesquisaIgual("precoBase.precoMicromercado.tipoCombustivel.id", idTipoCombustivel));
+        parametros.add(new ParametroPesquisaDiferente("status", StatusPreco.CANCELADO.getValue()));
+        parametros.add(new ParametroPesquisaDiferente("status", StatusPreco.REJEITADO.getValue()));
         parametros.add(new ParametroPesquisaDataMenorOuIgual("dataVigencia", dataVigencia));
         parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataVigencia", dataVigencia));
 
