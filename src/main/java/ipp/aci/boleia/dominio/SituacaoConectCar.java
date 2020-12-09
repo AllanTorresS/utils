@@ -12,7 +12,6 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Formula;
-import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 
 import ipp.aci.boleia.dominio.enums.MotivoLiberacaoConectCar;

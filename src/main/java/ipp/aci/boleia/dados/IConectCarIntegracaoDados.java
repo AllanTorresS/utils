@@ -17,9 +17,10 @@ public interface IConectCarIntegracaoDados {
 	
 	boolean bloquearTag(TagDadosIntegracaoVo corpo) throws ExcecaoValidacao;
 	boolean desbloquearTag(TagDadosIntegracaoVo corpo) throws ExcecaoValidacao;
+	boolean desvincularTag(TagDadosIntegracaoVo corpo) throws ExcecaoValidacao;
 	ConectCarBloqueioResponseVo ativarEmLote(AtivacaoLoteIntegracaoVo corpo) throws ExcecaoValidacao;	
 	ConectCarPedidoResponseVo criarPedidoEntrega(ConectcarCriarPedidoEntregaVo corpo) throws ExcecaoValidacao;
 	boolean bloquearContrato(ConectCarBloquearContratoRequestVo corpo) throws ExcecaoValidacao;
 	boolean desbloquearContrato(ConectCarDesbloquearContratoRequestVo corpo) throws ExcecaoValidacao;
-	
+
 }
