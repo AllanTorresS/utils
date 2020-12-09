@@ -115,6 +115,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
     private static final String CLAUSULA_NOTA_SEM_EMISSAO =
             " TC.statusNotaFiscal = " + StatusNotaFiscal.SEM_EMISSAO.getValue() + " ";
 
+    private static final String CLAUSULA_REEMBOLSO_ATRASADO = "(trunc(r.dataVencimentoPgto) < trunc(SYSDATE) AND r.valorReembolso > 0 AND r.status <> " + StatusPagamentoReembolso.PAGO.getValue() + ")";
+
     private static final String CONSULTA_CONSOLIDADO_POR_FROTA_PV_DATA =
             " select t " +
                     " from TransacaoConsolidada t" +
@@ -289,24 +291,24 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "FROM TransacaoConsolidada tc " +
                     "LEFT JOIN tc.frotaPtov fpv " +
                     "LEFT JOIN tc.reembolso r " +
-                    "WHERE tc.dataInicioPeriodo >= :dataInicioPeriodo AND tc.dataFimPeriodo <= :dataFimPeriodo " +
+                    "WHERE r.dataPagamento >= :dataInicioPeriodo AND r.dataPagamento <= :dataFimPeriodo " +
                     "AND (fpv.pontoVenda.id IN :idsPvs) " +
                     "AND (fpv.frota.id = :idFrota OR :idFrota is null) " +
                     "AND (tc.statusConsolidacao = :statusConsolidacao or :statusConsolidacao is null) " +
                     "AND (tc.valorTotal <> 0 OR tc.valorTotalNotaFiscal <> 0) " +
-                    "AND r.status = 1";
+                    "AND r.status = " + StatusPagamentoReembolso.PAGO.getValue();
 
-    private static final String CONSULTA_NUMERO_REEMBOLSOS_POR_STATUS =
+    private static final String CONSULTA_NUMERO_REEMBOLSOS_ATRASADOS =
             "SELECT count(*) " +
                     "FROM TransacaoConsolidada tc " +
-                    "LEFT JOIN tc.frotaPtov fpv " +
-                    "LEFT JOIN tc.reembolso r " +
-                    "WHERE tc.dataInicioPeriodo >= :dataInicioPeriodo AND tc.dataFimPeriodo <= :dataFimPeriodo " +
-                    "AND (fpv.pontoVenda.id IN :idsPvs) " +
+                    "JOIN tc.frotaPtov fpv " +
+                    "JOIN tc.reembolso r " +
+                    "WHERE (fpv.pontoVenda.id IN :idsPvs) " +
                     "AND (fpv.frota.id = :idFrota OR :idFrota is null) " +
-                    "AND (tc.statusConsolidacao = :statusConsolidacao or :statusConsolidacao is null) " +
                     "AND (tc.valorTotal <> 0 OR tc.valorTotalNotaFiscal <> 0) " +
-                    "AND (trunc(r.dataVencimentoPgto) < trunc(SYSDATE) AND r.valorReembolso > 0 AND r.status <> " + StatusPagamentoReembolso.PAGO.getValue() + ")";
+                    "AND tc.statusConsolidacao = " + StatusTransacaoConsolidada.FECHADA.getValue() + " " +
+                    "AND (r.dataVencimentoPgto >= :dataInicio AND r.dataVencimentoPgto <= :dataFim) " +
+                    "AND " + CLAUSULA_REEMBOLSO_ATRASADO;
 
 
     private static final String CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO =
@@ -1217,8 +1219,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
     public Integer obterNumeroReembolsosAtrasados(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado){
         List<ParametroPesquisa> parametros = new ArrayList<>();
 
-        parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataInicioPeriodo", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe())));
-        parametros.add(new ParametroPesquisaDataMenorOuIgual("dataFimPeriodo", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte())));
+        parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataInicio", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe())));
+        parametros.add(new ParametroPesquisaDataMenorOuIgual("dataFim", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte())));
 
         if(filtro.getPontoDeVenda() != null && filtro.getPontoDeVenda().getId() != null) {
             parametros.add(new ParametroPesquisaIn("idsPvs", Collections.singletonList(filtro.getPontoDeVenda().getId())));
@@ -1231,13 +1233,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             parametros.add(new ParametroPesquisaIgual("idFrota", null));
         }
 
-        if(filtro.getStatusCiclo() != null && filtro.getStatusCiclo().getName() != null){
-            parametros.add(new ParametroPesquisaIgual("statusConsolidacao", StatusTransacaoConsolidada.valueOf(filtro.getStatusCiclo().getName()).getValue()));
-        }else{
-            parametros.add(new ParametroPesquisaIgual("statusConsolidacao", null));
-        }
-
-        Long numeroCiclosAtrasados = pesquisarUnicoSemIsolamentoDados(CONSULTA_NUMERO_REEMBOLSOS_POR_STATUS, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        Long numeroCiclosAtrasados = pesquisarUnicoSemIsolamentoDados(CONSULTA_NUMERO_REEMBOLSOS_ATRASADOS, parametros.toArray(new ParametroPesquisa[parametros.size()]));
         return numeroCiclosAtrasados.intValue();
     }
 

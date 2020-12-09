@@ -211,7 +211,8 @@ public interface ITransacaoConsolidadaDados extends IRepositorioBoleiaDados<Tran
      */
     List<PontosGraficoFinanceiroVo> obterPontosGraficoReembolsos(FiltroPesquisaReembolsoGraficoVo filtro, Usuario usuarioLogado);
 
-    /** Obtém o número de ciclos com reembolso atrasados para mostrar no banner
+    /**
+     * Obtém o número de ciclos com reembolso atrasados para mostrar no banner
      *
      * @param filtro O filtro com as informações que devem ser consideradas na busca.
      * @param usuario Usuario logado que solicita a pesquisa.
