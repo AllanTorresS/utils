@@ -107,7 +107,7 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
                     "WHERE " +
                     "((" + CLAUSULA_DATA_REEMB_GERADO + ") OR (" + CLAUSULA_DATA_REEMB_NAO_GERADO + "))" +
                     "AND (fp.pontoVenda.id IN :idsPvs) " +
-                    "ORDER BY f.nomeRazaoFrota";
+                    "ORDER BY f.razaoSocial";
 
     private static final String CONSULTA_FROTAS_PARA_DETALHE_CICLO =
             "SELECT DISTINCT f " +
