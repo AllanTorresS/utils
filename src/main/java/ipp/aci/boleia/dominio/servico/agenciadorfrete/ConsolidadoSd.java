@@ -20,7 +20,7 @@ public class ConsolidadoSd {
      */
     public List<Consolidado> obterConsolidadosComSaque(List<Consolidado> consolidados) {
         return consolidados.stream()
-                .filter(c -> c.getTransacoes() != null && c.getTransacoes().stream().anyMatch(Transacao::temSaque))
+                .filter(c -> c.getTransacoes() != null && c.getTransacoes().stream().anyMatch(t->t.getSaque() != null))
                 .collect(Collectors.toList());
     }
 }
