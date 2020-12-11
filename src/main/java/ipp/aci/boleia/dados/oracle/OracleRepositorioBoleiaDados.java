@@ -366,11 +366,25 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
      *
      * @param paginacao   Os dados da paginacao
      * @param queryString A consulta em HQL
+     * @param tipoResultado A classe do tipo do objeto de retorno
+     * @param parametros  Os parametros da busca
+     * @param <T> O tipo do objeto de retorno
+     * @return O resultado da consulta, contendo os dados de paginacao
+     */
+    protected <T> ResultadoPaginado<T> pesquisarComExcluidos(InformacaoPaginacao paginacao, String queryString, Class<T> tipoResultado, ParametroPesquisa... parametros) {
+        return pesquisar(paginacao, queryString, true, true, tipoResultado, parametros);
+    }
+
+    /**
+     * Realiza uma pesquisa com paginação de uma servicos a partir de uma queryString considerando também os registros excluídos.
+     *
+     * @param paginacao   Os dados da paginacao
+     * @param queryString A consulta em HQL
      * @param parametros  Os parametros da busca
      * @return O resultado da consulta, contendo os dados de paginacao
      */
     protected ResultadoPaginado<T> pesquisarComExcluidos(InformacaoPaginacao paginacao, String queryString, ParametroPesquisa... parametros) {
-        return pesquisar(paginacao, queryString, true, true, getClassePersistente(), parametros);
+        return pesquisarComExcluidos(paginacao, queryString, getClassePersistente(), parametros);
     }
 
     /**

@@ -9,7 +9,6 @@ public class DadosExportacaoPdfFinanceiroVo extends DadosExportacaoPdfBaseVo {
     private String filtroFrotaCnpj;
     private String filtroPosto;
     private String filtroPostoCnpj;
-    private String filtroStatus;
     private String reembolsoTotalPago;
 
     public String getFiltroPeriodo() {
@@ -50,14 +49,6 @@ public class DadosExportacaoPdfFinanceiroVo extends DadosExportacaoPdfBaseVo {
 
     public void setFiltroPostoCnpj(String filtroPostoCnpj) {
         this.filtroPostoCnpj = filtroPostoCnpj;
-    }
-
-    public String getFiltroStatus() {
-        return filtroStatus;
-    }
-
-    public void setFiltroStatus(String filtroStatus) {
-        this.filtroStatus = filtroStatus;
     }
 
     public String getReembolsoTotalPago() {

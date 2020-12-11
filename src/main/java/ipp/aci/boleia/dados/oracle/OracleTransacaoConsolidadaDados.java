@@ -294,7 +294,6 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "WHERE r.dataPagamento >= :dataInicioPeriodo AND r.dataPagamento <= :dataFimPeriodo " +
                     "AND (fpv.pontoVenda.id IN :idsPvs) " +
                     "AND (fpv.frota.id = :idFrota OR :idFrota is null) " +
-                    "AND (tc.statusConsolidacao = :statusConsolidacao or :statusConsolidacao is null) " +
                     "AND (tc.valorTotal <> 0 OR tc.valorTotalNotaFiscal <> 0) " +
                     "AND r.status = " + StatusPagamentoReembolso.PAGO.getValue();
 
@@ -320,8 +319,9 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "OR (r.dataPagamento >= :dataInicioPeriodo AND r.dataPagamento <= :dataFimPeriodo)) " +
                     "AND (fpv.pontoVenda.id IN :idsPvs) " +
                     "AND (fpv.frota.id = :idFrota OR :idFrota is null) " +
-                    "AND (tc.statusConsolidacao = :statusConsolidacao or :statusConsolidacao is null) " +
                     "AND (tc.valorFaturamento <> 0 OR tc.valorReembolso <> 0 OR tc.valorTotalNotaFiscal <> 0 OR tc.quantidadeAbastecimentos <> 0) " +
+                    "AND (tc.unidade.id = :idUnidade OR :idUnidade is null) " +
+                    "AND (tc.empresaAgregada.id = :idEmpresaAgregada OR :idEmpresaAgregada is null) " +
                     "AND (r.status in (" + StatusPagamentoReembolso.PAGO.getValue() + ", " + StatusPagamentoReembolso.ATRASADO.getValue() + ", " + StatusPagamentoReembolso.NF_ATRASADA.getValue() + ", " + StatusPagamentoReembolso.A_DESCONTAR.getValue() + ")) " +
                     "ORDER BY %s ";
 
@@ -355,7 +355,6 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "AND (f_ptov.frota.id = :idFrota OR :idFrota is null) " +
                     "AND (tc.valorReembolso <> 0 or rm.valorReembolso <> 0) " +
                     "AND tc.valorReembolso is not null " +
-                    "AND (tc.statusConsolidacao = :statusConsolidacao or :statusConsolidacao is null) " +
                     "AND (tc.unidade.id = :idUnidade OR :idUnidade is null) " +
                     "AND (tc.empresaAgregada.id = :idEmpresaAgregada OR :idEmpresaAgregada is null) " +
                 "GROUP BY " +
@@ -1027,7 +1026,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         if(filtro.getEmpresaUnidade() != null && filtro.getEmpresaUnidade().getId() != null
                 && filtro.getEmpresaUnidade().getTipo() != null
                 && TipoEntidadeUnidadeEmpresaAgregada.UNIDADE.name().equals(filtro.getEmpresaUnidade().getTipo().getName())) {
-            parametros.add(new ParametroPesquisaIgual("unidadeId", filtro.getEmpresaUnidade().getId()));
+            parametros.add(new ParametroPesquisaIgual("unidadeId", filtro.getEmpresaUnidade().getIdUnidade()));
         } else {
             consulta = consulta.replace(CLAUSULA_UNIDADE, "");
         }
@@ -1035,7 +1034,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         if(filtro.getEmpresaUnidade() != null && filtro.getEmpresaUnidade().getId() != null
                 && filtro.getEmpresaUnidade().getTipo() != null
                 && TipoEntidadeUnidadeEmpresaAgregada.EMPRESA_AGREGADA.name().equals(filtro.getEmpresaUnidade().getTipo().getName())) {
-            parametros.add(new ParametroPesquisaIgual("empresaAgregadaId", filtro.getEmpresaUnidade().getId()));
+            parametros.add(new ParametroPesquisaIgual("empresaAgregadaId", filtro.getEmpresaUnidade().getIdEmpresaAgregada()));
         } else {
             consulta = consulta.replace(CLAUSULA_EMPRESA_AGREGADA, "");
         }
@@ -1073,7 +1072,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         if(filtro.getEmpresaUnidade() != null && filtro.getEmpresaUnidade().getId() != null
                 && filtro.getEmpresaUnidade().getTipo() != null
                 && TipoEntidadeUnidadeEmpresaAgregada.UNIDADE.name().equals(filtro.getEmpresaUnidade().getTipo().getName())) {
-            parametros.add(new ParametroPesquisaIgual("unidadeId", filtro.getEmpresaUnidade().getId()));
+            parametros.add(new ParametroPesquisaIgual("unidadeId", filtro.getEmpresaUnidade().getIdUnidade()));
         } else {
             consulta = consulta.replace(CLAUSULA_UNIDADE, "");
         }
@@ -1081,7 +1080,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         if(filtro.getEmpresaUnidade() != null && filtro.getEmpresaUnidade().getId() != null
                 && filtro.getEmpresaUnidade().getTipo() != null
                 && TipoEntidadeUnidadeEmpresaAgregada.EMPRESA_AGREGADA.name().equals(filtro.getEmpresaUnidade().getTipo().getName())) {
-            parametros.add(new ParametroPesquisaIgual("empresaAgregadaId", filtro.getEmpresaUnidade().getId()));
+            parametros.add(new ParametroPesquisaIgual("empresaAgregadaId", filtro.getEmpresaUnidade().getIdEmpresaAgregada()));
         } else {
             consulta = consulta.replace(CLAUSULA_EMPRESA_AGREGADA, "");
         }
@@ -1114,10 +1113,16 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             parametros.add(new ParametroPesquisaIgual("idFrota", null));
         }
 
-        if(filtro.getStatusCiclo() != null && filtro.getStatusCiclo().getName() != null){
-            parametros.add(new ParametroPesquisaIgual("statusConsolidacao", StatusTransacaoConsolidada.valueOf(filtro.getStatusCiclo().getName()).getValue()));
-        }else{
-            parametros.add(new ParametroPesquisaIgual("statusConsolidacao", null));
+        if (filtro.getEmpresaUnidade() != null && filtro.getEmpresaUnidade().getId() != null && filtro.getEmpresaUnidade().getTipo() != null && TipoEntidadeUnidadeEmpresaAgregada.UNIDADE.name().equals(filtro.getEmpresaUnidade().getTipo().getName())) {
+            parametros.add(new ParametroPesquisaIgual("idUnidade", filtro.getEmpresaUnidade().getIdUnidade()));
+        } else {
+            parametros.add(new ParametroPesquisaIgual("idUnidade", null));
+        }
+
+        if (filtro.getEmpresaUnidade() != null && filtro.getEmpresaUnidade().getId() != null && filtro.getEmpresaUnidade().getTipo() != null && TipoEntidadeUnidadeEmpresaAgregada.EMPRESA_AGREGADA.name().equals(filtro.getEmpresaUnidade().getTipo().getName())) {
+            parametros.add(new ParametroPesquisaIgual("idEmpresaAgregada", filtro.getEmpresaUnidade().getIdEmpresaAgregada()));
+        } else {
+            parametros.add(new ParametroPesquisaIgual("idEmpresaAgregada", null));
         }
 
         String ordenacao = " ";
@@ -1155,12 +1160,6 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             parametros.add(new ParametroPesquisaIgual("idFrota", null));
         }
 
-        if(filtro.getStatusCiclo() != null && filtro.getStatusCiclo().getName() != null){
-            parametros.add(new ParametroPesquisaIgual("statusConsolidacao", StatusTransacaoConsolidada.valueOf(filtro.getStatusCiclo().getName()).getValue()));
-        }else{
-            parametros.add(new ParametroPesquisaIgual("statusConsolidacao", null));
-        }
-
         BigDecimal totalReembolso = pesquisarUnicoSemIsolamentoDados(CONSULTA_TOTAL_REEMBOLSO_PERIODO, parametros.toArray(new ParametroPesquisa[parametros.size()]));
         return totalReembolso != null ? totalReembolso : BigDecimal.ZERO;
     }
@@ -1186,20 +1185,14 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
 
         parametros.add(new ParametroPesquisaIgual("idFrota", filtro.getIdFrotaSelecionada()));
 
-        if(filtro.getStatusConsolidacaoSelecionado() != null && filtro.getStatusConsolidacaoSelecionado().getName() != null){
-            parametros.add(new ParametroPesquisaIgual("statusConsolidacao", StatusTransacaoConsolidada.valueOf(filtro.getStatusConsolidacaoSelecionado().getName()).getValue()));
-        }else{
-            parametros.add(new ParametroPesquisaIgual("statusConsolidacao", null));
-        }
-
         if (filtro.getEmpresaUnidadeSelecionada() != null && filtro.getEmpresaUnidadeSelecionada().getId() != null && filtro.getEmpresaUnidadeSelecionada().getTipo() != null && TipoEntidadeUnidadeEmpresaAgregada.UNIDADE.name().equals(filtro.getEmpresaUnidadeSelecionada().getTipo().getName())) {
-            parametros.add(new ParametroPesquisaIgual("idUnidade", filtro.getEmpresaUnidadeSelecionada().getId()));
+            parametros.add(new ParametroPesquisaIgual("idUnidade", filtro.getEmpresaUnidadeSelecionada().getIdUnidade()));
         } else {
             parametros.add(new ParametroPesquisaIgual("idUnidade", null));
         }
 
         if (filtro.getEmpresaUnidadeSelecionada() != null && filtro.getEmpresaUnidadeSelecionada().getId() != null && filtro.getEmpresaUnidadeSelecionada().getTipo() != null && TipoEntidadeUnidadeEmpresaAgregada.EMPRESA_AGREGADA.name().equals(filtro.getEmpresaUnidadeSelecionada().getTipo().getName())) {
-            parametros.add(new ParametroPesquisaIgual("idEmpresaAgregada", filtro.getEmpresaUnidadeSelecionada().getId()));
+            parametros.add(new ParametroPesquisaIgual("idEmpresaAgregada", filtro.getEmpresaUnidadeSelecionada().getIdEmpresaAgregada()));
         } else {
             parametros.add(new ParametroPesquisaIgual("idEmpresaAgregada", null));
         }
@@ -1255,17 +1248,16 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         }
 
         if (filtro.getEmpresaUnidade() != null && filtro.getEmpresaUnidade().getId() != null && filtro.getEmpresaUnidade().getTipo() != null && TipoEntidadeUnidadeEmpresaAgregada.UNIDADE.name().equals(filtro.getEmpresaUnidade().getTipo().getName())) {
-            parametrosPesquisa.add(new ParametroPesquisaIgual("unidadeId", filtro.getEmpresaUnidade().getId()));
+            parametrosPesquisa.add(new ParametroPesquisaIgual("unidadeId", filtro.getEmpresaUnidade().getIdUnidade()));
         } else {
             parametrosPesquisa.add(new ParametroPesquisaIgual("unidadeId", null));
         }
 
         if (filtro.getEmpresaUnidade() != null && filtro.getEmpresaUnidade().getId() != null && filtro.getEmpresaUnidade().getTipo() != null && TipoEntidadeUnidadeEmpresaAgregada.EMPRESA_AGREGADA.name().equals(filtro.getEmpresaUnidade().getTipo().getName())) {
-            parametrosPesquisa.add(new ParametroPesquisaIgual("empresaAgregadaId", filtro.getEmpresaUnidade().getId()));
+            parametrosPesquisa.add(new ParametroPesquisaIgual("empresaAgregadaId", filtro.getEmpresaUnidade().getIdEmpresaAgregada()));
         } else {
             parametrosPesquisa.add(new ParametroPesquisaIgual("empresaAgregadaId", null));
         }
-
 
         return pesquisar(null, CONSULTA_DETALHAMENTO_CICLO_PV, AgrupamentoTransacaoConsolidadaPvVo.class, parametrosPesquisa.toArray(new ParametroPesquisa[parametrosPesquisa.size()])).getRegistros();
     }
