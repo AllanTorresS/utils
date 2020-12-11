@@ -23,6 +23,8 @@ import static ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso.ATRASADO;
 import static ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso.A_DESCONTAR;
 import static ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso.NF_ATRASADA;
 import static ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso.PAGO;
+import static ipp.aci.boleia.dominio.enums.TipoEntidadeUnidadeEmpresaAgregada.EMPRESA_AGREGADA;
+import static ipp.aci.boleia.dominio.enums.TipoEntidadeUnidadeEmpresaAgregada.UNIDADE;
 
 /**
  * Implementação do repositório de dados da entidade Empresa/Unidade.
@@ -33,7 +35,7 @@ public class OracleEmpresaUnidadeDados extends OracleRepositorioBoleiaDados<Empr
     private static final String CONSULTA_EMPRESA_UNIDADE_PARA_FINANCEIRO =
             "SELECT new ipp.aci.boleia.dominio.vo.EmpresaUnidadeVo(" +
                     "(CASE WHEN tc.unidade IS NOT NULL THEN euUnidade.id ELSE euAgregada.id END)," +
-                    "(CASE WHEN tc.unidade IS NOT NULL THEN 1 ELSE 2 END)," +
+                    "(CASE WHEN tc.unidade IS NOT NULL THEN " + UNIDADE.getValue() + " ELSE " + EMPRESA_AGREGADA.getValue() + " END)," +
                     "f.id," +
                     "u.id," +
                     "ea.id" +
@@ -53,7 +55,7 @@ public class OracleEmpresaUnidadeDados extends OracleRepositorioBoleiaDados<Empr
             "      ((r.dataPagamento is null AND (r.dataVencimentoPgto >= :dataInicial AND r.dataVencimentoPgto <= :dataFinal)) OR (r.dataPagamento >= :dataInicial AND r.dataPagamento <= :dataFinal)) AND " +
             "      (r.status in (" + PAGO.getValue() + ", " + ATRASADO.getValue() + ", " + NF_ATRASADA.getValue() + ", " + A_DESCONTAR.getValue() + ")) " +
             "GROUP BY (CASE WHEN tc.unidade IS NOT NULL THEN euUnidade.id ELSE euAgregada.id END), " +
-            "         (CASE WHEN tc.unidade IS NOT NULL THEN 1 ELSE 2 END), " +
+            "         (CASE WHEN tc.unidade IS NOT NULL THEN " + UNIDADE.getValue() + " ELSE " + EMPRESA_AGREGADA.getValue() + " END), " +
             "         f.id, " +
             "         u.id, " +
             "         ea.id";
@@ -61,7 +63,7 @@ public class OracleEmpresaUnidadeDados extends OracleRepositorioBoleiaDados<Empr
     private static final String CONSULTA_EMPRESA_UNIDADE_PARA_DETALHAMENTO_CICLO =
             "SELECT new ipp.aci.boleia.dominio.vo.EmpresaUnidadeVo(" +
                     "(CASE WHEN tc.unidade IS NOT NULL THEN euUnidade.id ELSE euAgregada.id END)," +
-                    "(CASE WHEN tc.unidade IS NOT NULL THEN 1 ELSE 2 END)," +
+                    "(CASE WHEN tc.unidade IS NOT NULL THEN " + UNIDADE.getValue() + " ELSE " + EMPRESA_AGREGADA.getValue() + " END)," +
                     "f.id," +
                     "u.id," +
                     "ea.id" +
@@ -81,9 +83,9 @@ public class OracleEmpresaUnidadeDados extends OracleRepositorioBoleiaDados<Empr
                     "      TRUNC(tc.dataInicioPeriodo) = TRUNC(:dataInicial) AND " +
                     "      TRUNC(tc.dataFimPeriodo) = TRUNC(:dataFinal) AND " +
                     "      tc.statusConsolidacao = :statusConsolidacao AND " +
-                    "      (tc.reembolso is NULL OR (r.status <> 1 AND r.status <> 2)) " +
+                    "      (tc.reembolso is NULL OR (r.status <> " + PAGO.getValue() + " AND r.status <> " + ATRASADO.getValue() + ")) " +
                     "GROUP BY (CASE WHEN tc.unidade IS NOT NULL THEN euUnidade.id ELSE euAgregada.id END), " +
-                    "         (CASE WHEN tc.unidade IS NOT NULL THEN 1 ELSE 2 END), " +
+                    "         (CASE WHEN tc.unidade IS NOT NULL THEN " + UNIDADE.getValue() + " ELSE " + EMPRESA_AGREGADA.getValue() + " END), " +
                     "         f.id, " +
                     "         u.id, " +
                     "         ea.id";
