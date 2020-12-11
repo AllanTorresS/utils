@@ -12,8 +12,10 @@ public class FiltroPesquisaFinanceiroVo extends FiltroBasePeriodoPaginado {
     private Date de;
     private Date ate;
     private EntidadeVo frota;
+    private String razaoSocialFrota;
     private String cnpjFrota;
     private EntidadeVo pontoDeVenda;
+    private String nomePontoDeVenda;
     private String cnpjPontoDeVenda;
     private EmpresaUnidadeVo empresaUnidade;
 
@@ -41,6 +43,14 @@ public class FiltroPesquisaFinanceiroVo extends FiltroBasePeriodoPaginado {
         this.frota = frota;
     }
 
+    public String getRazaoSocialFrota() {
+        return razaoSocialFrota;
+    }
+
+    public void setRazaoSocialFrota(String razaoSocialFrota) {
+        this.razaoSocialFrota = razaoSocialFrota;
+    }
+
     public String getCnpjFrota() {
         return cnpjFrota;
     }
@@ -55,6 +65,14 @@ public class FiltroPesquisaFinanceiroVo extends FiltroBasePeriodoPaginado {
 
     public void setPontoDeVenda(EntidadeVo pontoDeVenda) {
         this.pontoDeVenda = pontoDeVenda;
+    }
+
+    public String getNomePontoDeVenda() {
+        return nomePontoDeVenda;
+    }
+
+    public void setNomePontoDeVenda(String nomePontoDeVenda) {
+        this.nomePontoDeVenda = nomePontoDeVenda;
     }
 
     public String getCnpjPontoDeVenda() {
