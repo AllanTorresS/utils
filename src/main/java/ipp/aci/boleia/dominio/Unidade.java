@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -127,6 +128,9 @@ public class Unidade implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @NotNull
     @Column(name = "ID_STATUS")
     private Integer status;
+
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "unidade")
+    private EmpresaUnidade empresaUnidade;
 
     @Override
     public Long getId() {
@@ -326,6 +330,14 @@ public class Unidade implements IPersistente, IExclusaoLogica, IPertenceFrota {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public EmpresaUnidade getEmpresaUnidade() {
+        return empresaUnidade;
+    }
+
+    public void setEmpresaUnidade(EmpresaUnidade empresaUnidade) {
+        this.empresaUnidade = empresaUnidade;
     }
 
     @Transient

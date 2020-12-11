@@ -17,6 +17,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -129,6 +130,9 @@ public class EmpresaAgregada implements IPersistente, IExclusaoLogica, IPertence
     @NotNull
     @Column(name = "ID_EXIGE_NOTA_FISCAL")
     private Boolean exigeNotaFiscal;
+
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "empresaAgregada")
+    private EmpresaUnidade empresaUnidade;
 
     @Version
     @Column(name = "NO_VERSAO")
@@ -320,6 +324,14 @@ public class EmpresaAgregada implements IPersistente, IExclusaoLogica, IPertence
 
     public void setExigeNotaFiscal(Boolean exigeNotaFiscal) {
         this.exigeNotaFiscal = exigeNotaFiscal;
+    }
+
+    public EmpresaUnidade getEmpresaUnidade() {
+        return empresaUnidade;
+    }
+
+    public void setEmpresaUnidade(EmpresaUnidade empresaUnidade) {
+        this.empresaUnidade = empresaUnidade;
     }
 
     public Long getVersao() {

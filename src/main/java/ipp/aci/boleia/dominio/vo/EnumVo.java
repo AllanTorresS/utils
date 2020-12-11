@@ -1,5 +1,6 @@
 package ipp.aci.boleia.dominio.vo;
 
+import ipp.aci.boleia.dominio.enums.IEnumComValor;
 import ipp.aci.boleia.util.i18n.IEnumComLabel;
 
 /**
@@ -27,6 +28,9 @@ public class EnumVo {
     public <E extends IEnumComLabel> EnumVo(E e) {
         this.setName(e.toString());
         this.label = e.getLabel();
+        if(e instanceof IEnumComValor) {
+            this.value = ((IEnumComValor) e).getValue();
+        }
     }
 
     /**
