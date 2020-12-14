@@ -7,6 +7,7 @@ import ipp.aci.boleia.dominio.vo.conectcar.ConectCarDesbloquearContratoRequestVo
 import ipp.aci.boleia.dominio.vo.conectcar.ConectCarPedidoResponseVo;
 import ipp.aci.boleia.dominio.vo.conectcar.ConectcarCriarPedidoEntregaVo;
 import ipp.aci.boleia.dominio.vo.conectcar.TagDadosIntegracaoVo;
+import ipp.aci.boleia.dominio.vo.conectcar.TagSubstituicaoIntegracaoVo;
 import ipp.aci.boleia.util.excecao.ExcecaoValidacao;
 
 /**
@@ -22,5 +23,6 @@ public interface IConectCarIntegracaoDados {
 	ConectCarPedidoResponseVo criarPedidoEntrega(ConectcarCriarPedidoEntregaVo corpo) throws ExcecaoValidacao;
 	boolean bloquearContrato(ConectCarBloquearContratoRequestVo corpo) throws ExcecaoValidacao;
 	boolean desbloquearContrato(ConectCarDesbloquearContratoRequestVo corpo) throws ExcecaoValidacao;
+	boolean substituirTag(TagSubstituicaoIntegracaoVo corpo) throws ExcecaoValidacao;
 
 }
