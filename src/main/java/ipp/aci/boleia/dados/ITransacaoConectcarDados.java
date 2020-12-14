@@ -48,15 +48,15 @@ public interface ITransacaoConectcarDados extends IRepositorioBoleiaDados<Transa
 	 * Obtem uma transacao por um código de transação da conectcar
 	 * 
 	 * @param codigoTransacaoConectcar Código de transação da conectCar
-	 * @return
+	 * @return Transação da ConnectCar
 	 */
 	TransacaoConectcar obterTransacoesPorIdConectcar(Long codigoTransacaoConectcar);
 	
 	/**
 	 * Obtem as transações de uma cobrança
 	 * 
-	 * @param idCobranca
-	 * @return
+	 * @param idCobranca Identificador da cobrança para listar as transações
+	 * @return Lista das transações relacionadas à cobrança informada
 	 */
 	List<TransacaoConectcar> obterTransacoesPorCobranca(Long idCobranca);
 
