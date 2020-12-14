@@ -14,7 +14,7 @@ public class OracleSaldoVeiculoDados extends OracleRepositorioBoleiaDados<SaldoV
 
     private static final String UPDATE_SALDOS = "update SaldoVeiculo s " +
             " set s.valorConsumido = 0, s.litrosConsumidos = 0" +
-            " where s.veiculo in ( select v from Veiculo v where agregado = " + ClassificacaoAgregado.PROPRIO.getValue() + " )";
+            " where s.veiculo.excluido = 0";
 
     /**
      * Instancia o repositorio
