@@ -56,6 +56,7 @@ import java.util.stream.Collectors;
 
 import static ipp.aci.boleia.util.UtilitarioCalculoData.adicionarMesesData;
 import static ipp.aci.boleia.util.UtilitarioCalculoData.obterPrimeiroDiaMes;
+import static ipp.aci.boleia.util.UtilitarioCalculoData.obterUltimoDiaMes;
 
 /**
  * Respositorio de entidades AutorizacaoPagamento Consolidada
@@ -96,7 +97,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "SUM(CASE WHEN RM.valorDesconto IS NULL THEN TC.valorDesconto ELSE RM.valorDesconto END), " +
                     "SUM(CASE WHEN TC.empresaAgregada IS NOT NULL OR TC.unidade IS NOT NULL OR F.semNotaFiscal IS NULL OR F.semNotaFiscal = false THEN TC.valorTotalNotaFiscal ELSE 0 END), " +
                     "SUM(CASE WHEN TC.empresaAgregada IS NOT NULL OR TC.unidade IS NOT NULL OR F.semNotaFiscal IS NULL OR F.semNotaFiscal = false THEN TC.valorEmitidoNotaFiscal ELSE 0 END), " +
-                    "SUM(TC.quantidadeAbastecimentos)) ";
+                    "SUM(TC.quantidadeAbastecimentos), " +
+                    "CASE WHEN TC.reembolso is NULL THEN 6 ELSE RM.status END) ";
 
     private static final String CLAUSULA_NOTA_ATRASADA =
             " TRUNC(TC.prazos.dataLimiteEmissaoNfe) <  TRUNC(SYSDATE) " +
@@ -429,7 +431,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
     /**
      * Busca uma lista de transações consolidadas de um ponto de venda agrupadas por data e status.
      */
-    private static final String CONSULTA_TRANSACOES_CONSOLIDADAS_AGRUPADAS_POR_PV =
+    private static final String CONSULTA_CICLOS_ATUAIS_POR_PV =
             "SELECT " + CLAUSULA_CONSTRUTOR_AGRUPAMENTO_CONSOLIDADO_PV +
                     "FROM TransacaoConsolidada TC " +
                     "JOIN TC.frotaPtov FP " +
@@ -440,9 +442,9 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "LEFT JOIN TC.unidade U	" +
                     "WHERE FP.pontoVenda.id IN :idsPvs AND " +
                     "      TRUNC(TC.dataInicioPeriodo) >= TRUNC(:dataInicio) AND " +
-                    "      TRUNC(TC.dataFimPeriodo) <= TRUNC(:dataFim) AND " +
-                    "      (TC.reembolso is NULL OR (RM.dataPagamento IS NULL AND TRUNC(RM.dataVencimentoPgto) >= TRUNC(SYSDATE) AND RM.valorReembolso >= 0)) " +
-                    "GROUP BY TC.dataInicioPeriodo, TC.dataFimPeriodo, TC.statusConsolidacao " +
+                    "      TRUNC(TC.dataFimPeriodo) <= TRUNC(:dataFim) " +
+                    "GROUP BY TC.dataInicioPeriodo, TC.dataFimPeriodo, TC.statusConsolidacao, " +
+                    "         CASE WHEN TC.reembolso is NULL THEN 6 ELSE RM.status END " +
                     "ORDER BY CASE WHEN TC.statusConsolidacao = " + StatusTransacaoConsolidada.EM_AJUSTE.getValue() + " THEN 1 " +
                     "              WHEN TC.statusConsolidacao = " + StatusTransacaoConsolidada.EM_ABERTO.getValue() + " THEN 2 " +
                     "              ELSE 3 " +
@@ -469,7 +471,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "      (:empresaAgregadaId IS NULL OR TC.empresaAgregada.id = :empresaAgregadaId) AND " +
                     "      (:statusNf IS NULL OR (TRUNC(TC.dataInicioPeriodo) = TRUNC(:dataInicioCicloAtual) AND (TC.statusNotaFiscal = :statusNf)) OR (TRUNC(TC.dataInicioPeriodo) < TRUNC(:dataInicioCicloAtual))) AND " +
                     "      (TC.reembolso is NULL OR (RM.dataPagamento IS NULL AND TRUNC(RM.dataVencimentoPgto) >= TRUNC(SYSDATE) AND RM.valorReembolso >= 0)) " +
-                    "GROUP BY TC.dataInicioPeriodo, TC.dataFimPeriodo, TC.statusConsolidacao ";
+                    "GROUP BY TC.dataInicioPeriodo, TC.dataFimPeriodo, TC.statusConsolidacao, " +
+                    "         CASE WHEN TC.reembolso is NULL THEN 6 ELSE RM.status END";
 
     @Autowired
     private UtilitarioAmbiente ambiente;
@@ -1263,12 +1266,15 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
     }
 
     @Override
-    public List<AgrupamentoTransacaoConsolidadaPvVo> pesquisarTransacoesConsolidadasAgrupadasParaPv(Long idPv, Date dataInicioPeriodo, Date dataFimPeriodo) {
+    public List<AgrupamentoTransacaoConsolidadaPvVo> pesquisarCiclosAtuaisPorPv(Long idPv) {
+        Date agora = ambiente.buscarDataAmbiente();
+        Date dataInicioPeriodo = obterPrimeiroDiaMes(adicionarMesesData(agora, -1));
+        Date dataFimPeriodo = obterUltimoDiaMes(agora);
 
         List<ParametroPesquisa> parametrosPesquisa = new ArrayList<>();
         popularParametrosDataEPvBoxFinanceiro(parametrosPesquisa, idPv, dataInicioPeriodo, dataFimPeriodo);
 
-        return pesquisar(null, CONSULTA_TRANSACOES_CONSOLIDADAS_AGRUPADAS_POR_PV, AgrupamentoTransacaoConsolidadaPvVo.class, parametrosPesquisa.toArray(new ParametroPesquisa[parametrosPesquisa.size()])).getRegistros();
+        return pesquisar(null, CONSULTA_CICLOS_ATUAIS_POR_PV, AgrupamentoTransacaoConsolidadaPvVo.class, parametrosPesquisa.toArray(new ParametroPesquisa[parametrosPesquisa.size()])).getRegistros();
     }
 
     @Override
