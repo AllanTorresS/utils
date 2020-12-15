@@ -221,14 +221,12 @@ public interface ITransacaoConsolidadaDados extends IRepositorioBoleiaDados<Tran
     Integer obterNumeroReembolsosAtrasados(FiltroPesquisaFinanceiroVo filtro, Usuario usuario);
 
     /**
-     * Busca uma lista com transações consolidadas agrupadas para ponto de venda.
+     * Busca a lista dos ciclos atuais agrupados para um pv.
      *
      * @param idPv Identificador do ponto de venda.
-     * @param dataInicioPeriodo A data início utilizada na pesquisa.
-     * @param dataFimPeriodo A data fim utilizada na pesquisa.
      * @return Uma lista com as transações consolidadas agrupadas.
      */
-    List<AgrupamentoTransacaoConsolidadaPvVo> pesquisarTransacoesConsolidadasAgrupadasParaPv(Long idPv, Date dataInicioPeriodo, Date dataFimPeriodo);
+    List<AgrupamentoTransacaoConsolidadaPvVo> pesquisarCiclosAtuaisPorPv(Long idPv);
 
     /**
      * Busca uma lista com transações consolidadas agrupadas para ponto de venda.
