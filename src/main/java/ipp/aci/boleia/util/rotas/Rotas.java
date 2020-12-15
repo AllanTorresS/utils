@@ -86,6 +86,7 @@ public final  class Rotas {
     public static final  String TRANS_CONSOL_REVENDA_API             = BASE_API + "/transacaoConsolidadaRevenda";
     public static final  String TRANS_CONSOL_SOLUCAO_API             = BASE_API + "/transacaoConsolidadaSolucao";
     public static final  String FINANCEIRO_REVENDA                   = BASE_API + "/financeiroRevenda";
+    public static final  String FINANCEIRO_FROTA                     = BASE_API + "/financeiroFrota";
     public static final  String PRECO_API                            = BASE_API + "/preco";
     public static final  String PRECO_BASE_API                       = BASE_API + "/precoBase";
     public static final  String PRECO_MICROMERCADO_API               = BASE_API + "/precoMicromercado";
