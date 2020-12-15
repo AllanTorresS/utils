@@ -12,14 +12,17 @@ import ipp.aci.boleia.dominio.ReembolsoConectcar;
 import ipp.aci.boleia.dominio.enums.StatusIntegracaoReembolsoConectcarJde;
 import ipp.aci.boleia.dominio.enums.StatusIntegracaoReembolsoJde;
 import ipp.aci.boleia.dominio.enums.StatusLiberacaoReembolsoJde;
+import ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso;
 import ipp.aci.boleia.dominio.enums.StatusPagamentoReembolsoConectcar;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDiferente;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMenor;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaReembolsoConectcarVo;
 import ipp.aci.boleia.util.Ordenacao;
 
@@ -77,6 +80,13 @@ public class OracleReembolsoConectcarDados extends OracleRepositorioBoleiaDados<
             }
         }
     }
+
+	@Override
+	public List<ReembolsoConectcar> buscarReembolsosParaConsultarAvisoCredito() {
+		return pesquisar(new ParametroOrdenacaoColuna("dataVencimentoPagto",Ordenacao.DECRESCENTE),
+				new ParametroPesquisaNulo("numeroDocumento", false),
+				new ParametroPesquisaDiferente("status", StatusPagamentoReembolso.PAGO.getValue()));
+	}
 
 	/**
 	 * Cria uma lista de parametros para a montagem da consulta de reembolso a ser exibida no grid
