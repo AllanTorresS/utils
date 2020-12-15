@@ -324,7 +324,7 @@ public class NotificacaoUsuarioSd {
         String nomeFrota = preco.getFrota().getNomeRazaoFrota();
         String nomePontoVenda = preco.getPontoVenda().getNome();
         String nomeProduto = preco.getPrecoBase().getPrecoMicromercado().getTipoCombustivel().getDescricao();
-        String descontoSolicitado = UtilitarioFormatacao.formatarDecimalComTresCasas(preco.getDescontoSolicitado());
+        String descontoSolicitado = UtilitarioFormatacao.formatarDecimalComTresCasas(preco.getDescontoSolicitado() != null ? preco.getDescontoSolicitado() : preco.getDescontoVigente());
         List<Usuario> usuariosPreco = repositorioUsuarios.obterPorTipoPerfilPermissao(TipoPerfilUsuario.INTERNO.getValue(), ChavePermissao.getChave(ChavePermissao.PRECO_CONSULTAR_E_VISUALIZAR));
         enviarNotificacao(TipoSubcategoriaNotificacao.NOVA_SOLICITACAO_ACORDO_ESPECIAL, usuariosPreco, nomeFrota, nomeProduto, nomePontoVenda, descontoSolicitado, id.toString());
     }
