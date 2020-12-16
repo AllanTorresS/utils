@@ -123,7 +123,9 @@ public class PrecoNegociadoSd {
         preco.setDescontoVigente(preco.getDescontoSolicitado());
         preco.setDescontoSolicitado(null);
         preco.setDataAtualizacao(dataAtualizacao);
-        preco.setDataVigencia(dataAtualizacao);
+        if(preco.getDataVigencia() == null) {
+            preco.setDataVigencia(dataAtualizacao);
+        }
         preco.setStatus(automatico ? StatusPreco.VIGENTE.getValue() : StatusPreco.ACEITO.getValue());
         return repositorioPreco.armazenar(preco);
     }
