@@ -206,25 +206,7 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
             if (filtro.getTipoCombustivel() != null && filtro.getTipoCombustivel().getId() != null) {
                 parametros.add(new ParametroPesquisaIgual("precoBase.precoMicromercado.tipoCombustivel", filtro.getTipoCombustivel().getId()));
             }
-            if (filtro.getStatus() != null && filtro.getStatus().getLabel() != null) {
-                if (filtro.getStatus().getLabel().equals(StatusPrecoNegociacao.AGENDADO.getLabel())) {
-                    parametros.add(new ParametroPesquisaOr(
-                    new ParametroPesquisaIgual("status", StatusPreco.VIGENTE.getValue()),
-                    new ParametroPesquisaIgual("status", StatusPreco.ACEITO.getValue())));
-                    parametros.add(new ParametroPesquisaDataMaior("dataVigencia", ambiente.buscarDataAmbiente()));
-                } else if(filtro.getStatus().getLabel().equals(StatusPrecoNegociacao.AGENDADO_PENDENTE.getLabel())) {
-                    parametros.add(new ParametroPesquisaOr(
-                    new ParametroPesquisaIgual("status", StatusPreco.PENDENTE.getValue()),
-                    new ParametroPesquisaIgual("status", StatusPreco.NOVO.getValue())));
-                    parametros.add(new ParametroPesquisaDataMaior("dataVigencia", ambiente.buscarDataAmbiente()));
-                } else {
-                    parametros.add(new ParametroPesquisaIn("status", Arrays.asList(statusPossiveis)));
-                    parametros.add(new ParametroPesquisaOr(new ParametroPesquisaDataMenorOuIgual("dataVigencia", ambiente.buscarDataAmbiente()),
-                    new ParametroPesquisaNulo("dataVigencia")));
-                }
-            } else {
-                parametros.add(new ParametroPesquisaIn("status", Arrays.asList(statusPossiveis)));
-            }
+            montarParametroStatus(filtro, parametros, statusPossiveis);
             if (filtro.getUfPontoDeVenda() != null) {
                 parametros.add(new ParametroPesquisaIgual("frotaPtov.pontoVenda.uf", filtro.getUfPontoDeVenda().getName()));
             }
@@ -262,6 +244,31 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
         parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataVigencia", dataVigencia));
 
         return pesquisar((ParametroOrdenacaoColuna) null, parametros.toArray(new ParametroPesquisa[parametros.size()])).stream().findFirst().orElse(null);
+    }
+
+    private void montarParametroStatus(FiltroPesquisaPrecoVo filtro, List<ParametroPesquisa> parametros, Integer... statusPossiveis) {
+        if (filtro.getStatus() != null && filtro.getStatus().getLabel() != null) {
+            if (filtro.getStatus().getLabel().equals(StatusPrecoNegociacao.AGENDADO.getLabel())) {
+                parametros.add(new ParametroPesquisaOr(
+                new ParametroPesquisaIgual("status", StatusPreco.VIGENTE.getValue()),
+                new ParametroPesquisaIgual("status", StatusPreco.ACEITO.getValue())));
+                parametros.add(new ParametroPesquisaDataMaior("dataVigencia", ambiente.buscarDataAmbiente()));
+            } else if(filtro.getStatus().getLabel().equals(StatusPrecoNegociacao.AGENDADO_PENDENTE.getLabel())) {
+                parametros.add(new ParametroPesquisaOr(
+                new ParametroPesquisaIgual("status", StatusPreco.PENDENTE.getValue()),
+                new ParametroPesquisaIgual("status", StatusPreco.NOVO.getValue())));
+                parametros.add(new ParametroPesquisaDataMaior("dataVigencia", ambiente.buscarDataAmbiente()));
+            } else if(filtro.getStatus().getLabel().equals(StatusPrecoNegociacao.CANCELADO.getLabel()) || 
+                filtro.getStatus().getLabel().equals(StatusPrecoNegociacao.REJEITADO.getLabel())) {
+                parametros.add(new ParametroPesquisaIn("status", Arrays.asList(statusPossiveis)));
+            } else {
+                parametros.add(new ParametroPesquisaIn("status", Arrays.asList(statusPossiveis)));
+                parametros.add(new ParametroPesquisaOr(new ParametroPesquisaDataMenorOuIgual("dataVigencia", ambiente.buscarDataAmbiente()),
+                new ParametroPesquisaNulo("dataVigencia")));
+            }
+        } else {
+            parametros.add(new ParametroPesquisaIn("status", Arrays.asList(statusPossiveis)));
+        }
     }
 
 
