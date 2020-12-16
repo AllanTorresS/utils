@@ -24,5 +24,6 @@ public interface IConectCarIntegracaoDados {
 	boolean bloquearContrato(ConectCarBloquearContratoRequestVo corpo) throws ExcecaoValidacao;
 	boolean desbloquearContrato(ConectCarDesbloquearContratoRequestVo corpo) throws ExcecaoValidacao;
 	boolean substituirTag(TagSubstituicaoIntegracaoVo corpo) throws ExcecaoValidacao;
+	public boolean verificarTag(TagDadosIntegracaoVo corpo) throws ExcecaoValidacao;
 
 }
