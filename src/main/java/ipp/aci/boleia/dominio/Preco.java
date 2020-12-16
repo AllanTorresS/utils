@@ -237,7 +237,7 @@ public class Preco implements IPersistente, IPertenceRevendedor, IPertenceFrota 
 
     @Transient
     public String getPrecoComAcordo(){
-        if(status.equals(StatusPreco.PENDENTE.getValue()) || status.equals(StatusPreco.NOVO.getValue())){
+        if(getDescontoSolicitado() != null){
             return UtilitarioFormatacao.formatarDecimalComTresCasas(precoBase.getPreco().add(getDescontoSolicitado()));
         }
         return UtilitarioFormatacao.formatarDecimalComTresCasas(preco);
