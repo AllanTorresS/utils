@@ -106,4 +106,10 @@ public interface ICobrancaDados extends IRepositorioBoleiaDados<Cobranca> {
      */
     Cobranca desanexar(Cobranca cobranca);
 
+    /**
+     * Obtém listas de cobranças relacionadas a ciclos postergados
+     * @return A lista de cobranças a serem postergadas
+     */
+    List<Cobranca> obterCobrancasASeremPostergadas();
+
 }

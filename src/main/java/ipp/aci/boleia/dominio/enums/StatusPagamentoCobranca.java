@@ -9,8 +9,9 @@ import ipp.aci.boleia.util.i18n.IEnumComLabel;
 public enum StatusPagamentoCobranca implements IEnumComLabel<StatusPagamentoCobranca> {
 
     PAGO(1),
-    EM_ABERTO(0),
-    VENCIDO(2);
+    A_VENCER(0),
+    VENCIDO(2),
+    POSTERGADO(3);
 
     private final Integer value;
 

@@ -4,6 +4,7 @@ import ipp.aci.boleia.dados.ICobrancaDados;
 import ipp.aci.boleia.dominio.Cobranca;
 import ipp.aci.boleia.dominio.enums.StatusIntegracaoJde;
 import ipp.aci.boleia.dominio.enums.StatusPagamentoCobranca;
+import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
 import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
@@ -240,6 +241,14 @@ public class OracleCobrancaDados extends OracleRepositorioBoleiaDados<Cobranca> 
 		return super.desanexar(cobranca);
 	}
 
+	@Override
+	public List<Cobranca> obterCobrancasASeremPostergadas() {
+		List<ParametroPesquisa> parametros = new ArrayList<>();
+		parametros.add(new ParametroPesquisaIgual("transacoesConsolidadas.processouPostergacao", 1));
+		parametros.add(new ParametroPesquisaIgual("transacoesConsolidadas.statusConsolidacao", StatusTransacaoConsolidada.FECHADA.getValue()));
+		return pesquisar(new ParametroOrdenacaoColuna("dataVencimentoPgto", Ordenacao.CRESCENTE), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+	}
+
 	/**
 	 * Constroi um {@link ParametroPesquisa} para status de cobrança
 	 * @param valor O valor correspontente ao status desejado
@@ -250,7 +259,7 @@ public class OracleCobrancaDados extends OracleRepositorioBoleiaDados<Cobranca> 
 		if(StatusPagamentoCobranca.VENCIDO.equals(statusPagamento)) {
 			return new ParametroPesquisaAnd(
 					new ParametroPesquisaOr(
-							new ParametroPesquisaIgual("status", StatusPagamentoCobranca.EM_ABERTO.getValue()),
+							new ParametroPesquisaIgual("status", StatusPagamentoCobranca.A_VENCER.getValue()),
 							new ParametroPesquisaIgual("status", StatusPagamentoCobranca.VENCIDO.getValue())
 					),
 					new ParametroPesquisaDataMenor(
@@ -263,7 +272,7 @@ public class OracleCobrancaDados extends OracleRepositorioBoleiaDados<Cobranca> 
 
 		ParametroPesquisa parametroStatus =  new ParametroPesquisaIgual("status", valor);
 
-		if(statusPagamento.equals(StatusPagamentoCobranca.EM_ABERTO)) {
+		if(statusPagamento.equals(StatusPagamentoCobranca.A_VENCER)) {
 			return new ParametroPesquisaAnd(
 					parametroStatus,
 					new ParametroPesquisaOr(
@@ -290,7 +299,7 @@ public class OracleCobrancaDados extends OracleRepositorioBoleiaDados<Cobranca> 
 				if(statusPagamento.getName() != null) {
 					if (StatusPagamentoCobranca.valueOf(statusPagamento.getName()).getValue().equals(StatusPagamentoCobranca.VENCIDO.getValue())){
 						parametrosStatusOr.addParametro(new ParametroPesquisaAnd(
-							new ParametroPesquisaOr(new ParametroPesquisaIgual("status", StatusPagamentoCobranca.EM_ABERTO.getValue()),new ParametroPesquisaIgual("status", StatusPagamentoCobranca.VENCIDO.getValue())),
+							new ParametroPesquisaOr(new ParametroPesquisaIgual("status", StatusPagamentoCobranca.A_VENCER.getValue()),new ParametroPesquisaIgual("status", StatusPagamentoCobranca.VENCIDO.getValue())),
 							new ParametroPesquisaDataMenor("dataVencimentoPagto", UtilitarioCalculoData.obterPrimeiroInstanteDia(ambiente.buscarDataAmbiente()))
 						));
 					} else {
@@ -298,7 +307,7 @@ public class OracleCobrancaDados extends OracleRepositorioBoleiaDados<Cobranca> 
 
 						parametrosPesquisaAnd.addParametro(new ParametroPesquisaIgual("status", StatusPagamentoCobranca.valueOf(statusPagamento.getName()).getValue()));
 
-						if (StatusPagamentoCobranca.valueOf(statusPagamento.getName()).getValue().equals(StatusPagamentoCobranca.EM_ABERTO.getValue())){
+						if (StatusPagamentoCobranca.valueOf(statusPagamento.getName()).getValue().equals(StatusPagamentoCobranca.A_VENCER.getValue())){
 							parametrosPesquisaAnd.addParametro(new ParametroPesquisaOr(
 								new ParametroPesquisaDataMaiorOuIgual("dataVencimentoPagto", ambiente.buscarDataAmbiente()),
 								new ParametroPesquisaNulo("dataVencimentoPagto"))
