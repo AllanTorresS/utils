@@ -247,7 +247,7 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
     }
 
     private void montarParametroStatus(FiltroPesquisaPrecoVo filtro, List<ParametroPesquisa> parametros, Integer... statusPossiveis) {
-        if (filtro.getStatus() != null && filtro.getStatus().getLabel() != null) {
+        if (filtro.getStatus() != null && filtro.getStatus().getLabel() != null && filtro.getStatus().getName() != null) {
             if (filtro.getStatus().getLabel().equals(StatusPrecoNegociacao.AGENDADO.getLabel())) {
                 parametros.add(new ParametroPesquisaOr(
                 new ParametroPesquisaIgual("status", StatusPreco.VIGENTE.getValue()),
