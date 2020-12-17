@@ -70,6 +70,17 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
      */
     private static final String PRECOCOMBUSTIVEL_FORMULA = "QT_TOTAL_LIT_ABAS * VA_UNITARIO_ABAS";
 
+    /**
+     * Formula necessária para possibilitar a ordenação padrão dos abastecimentos exibidos
+     * na tela de detalhamento de NF.
+     */
+    private static final String CHAVE_ORDENACAO_FINANCEIRO_FORMULA =
+                    "CASE WHEN AP.CD_TRANS_CONSOL_POSTERGADA IS NOT NULL AND AP.ID_STATUS = 1 THEN 0 " +
+                    "     WHEN AP.CD_TRANS_CONSOL_POSTERGADA IS NOT NULL AND AP.ID_STATUS <> 1 THEN 1 " +
+                    "     WHEN AP.CD_TRANS_CONSOL_POSTERGADA IS NULL AND (AP.ID_STATUS_EDICAO = 1 OR AP.ID_STATUS = -1) THEN 2 " +
+                    "     ELSE 3 " +
+                    "END";
+
     @Id
     @Column(name = "CD_AUTORIZACAO_PAGAMENTO")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_AUTORIZACAO_PAGAMENTO")
@@ -470,6 +481,10 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     @NotAudited
     @Formula(PRECOCOMBUSTIVEL_FORMULA)
     private BigDecimal precoCombustivelTotal;
+
+    @NotAudited
+    @Formula(CHAVE_ORDENACAO_FINANCEIRO_FORMULA)
+    private Integer chaveOrdenacaoFinanceiro;
 
     @Transient
     private TipoErroAutorizacaoPagamento tipoErroAutorizacaoPagamento;
@@ -1322,6 +1337,14 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
 
     public void setPrecoCombustivelTotal(BigDecimal precoCombustivelTotal) {
         this.precoCombustivelTotal = precoCombustivelTotal;
+    }
+
+    public Integer getChaveOrdenacaoFinanceiro() {
+        return chaveOrdenacaoFinanceiro;
+    }
+
+    public void setChaveOrdenacaoFinanceiro(Integer chaveOrdenacaoFinanceiro) {
+        this.chaveOrdenacaoFinanceiro = chaveOrdenacaoFinanceiro;
     }
 
     /**
