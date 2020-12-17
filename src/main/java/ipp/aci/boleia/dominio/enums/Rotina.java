@@ -46,7 +46,8 @@ public enum Rotina implements IEnumComLabel<Rotina> {
     PUBLICACAO_DE_DOCUMENTOS(35),
     VERIFICACAO_STATUS_AG_FRETE(36),
 	COBRANCA_CONECTCAR(37),
-	REEMBOLSO_CONECTCAR(38);
+    REEMBOLSO_CONECTCAR(38),
+    VIGENCIA_PRECO_AGENDADO(39);
 
     private final Integer value;
 
