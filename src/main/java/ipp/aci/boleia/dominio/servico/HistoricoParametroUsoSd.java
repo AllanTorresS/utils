@@ -89,7 +89,13 @@ public class HistoricoParametroUsoSd {
             historicoAtivacao.setDataInativacao(utilitarioAmbiente.buscarDataAmbiente());
             repositorio.armazenar(historicoAtivacao);
         } else {
-            throw new ExcecaoValidacao(ERRO_HISTORICO_NAO_ENCONTRADO);
+            HistoricoParametroUso historico = new HistoricoParametroUso();
+            historico.setFrota(parametroUso.getFrota());
+            historico.setParametroSistema(parametroUso.getParametroSistema());
+            historico.setRestritivo(parametroUso.getRestritivo());
+            historico.setDataAtivacao(utilitarioAmbiente.buscarDataAmbiente());
+            historico.setDataInativacao(utilitarioAmbiente.buscarDataAmbiente());
+            repositorio.armazenar(historico);
         }
     }
 

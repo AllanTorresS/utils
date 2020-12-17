@@ -74,7 +74,18 @@ public class HistoricoParametroPostosPermitidosSd {
             historicoParametroPostosPermitidos.setDataDesautorizacao(utilitarioAmbiente.buscarDataAmbiente());
             repositorio.armazenar(historicoParametroPostosPermitidos);
         } else {
-            throw new ExcecaoValidacao(Erro.ERRO_HISTORICO_NAO_ENCONTRADO);
+            TipoRestricaoPostosPermitidos tipoRestricaoPostoPermitido = parametroUsoPostoPermitido.getTipoRestricaoPostoPermitido();
+            BigDecimal maximoValor = parametroUsoPostoPermitido.getMaximoValor();
+            BigDecimal maximoLitros = parametroUsoPostoPermitido.getMaximoLitros();
+
+            HistoricoParametroPostosPermitidos historico = new HistoricoParametroPostosPermitidos();
+            historico.setPontoVenda(parametroUsoPostoPermitido.getPontoVenda());
+            historico.setDataAutorizacao(utilitarioAmbiente.buscarDataAmbiente());
+            historico.setDataDesautorizacao(utilitarioAmbiente.buscarDataAmbiente());
+            historico.setHistoricoParametroUso(historicoParametroUso);
+            historico.setTipoRestricao(tipoRestricaoPostoPermitido.getValor());
+            historico.setValorMaximoRestricao(tipoRestricaoPostoPermitido.isValor() ? maximoValor : maximoLitros);
+            repositorio.armazenar(historico);
         }
     }
 
