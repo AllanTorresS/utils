@@ -37,7 +37,11 @@ public final class UtilitarioConsolidado {
 	 * @return A data final do ciclo
 	 */
 	public static Date calcularDataFim(Date dataCriacao, int diasCiclo) {
-		Date inicio = calcularDataInicio(dataCriacao, diasCiclo);
-		return DateUtils.addDays(inicio, diasCiclo);
+		final int diasCicloAplicado = diasCiclo - 1;
+		if (diasCicloAplicado <= 0) {
+			return UtilitarioCalculoData.obterUltimoInstanteDia(dataCriacao);
+		}
+		Date inicio =  UtilitarioCalculoData.obterUltimoInstanteDia(calcularDataInicio(dataCriacao, diasCiclo));
+		return DateUtils.addDays(inicio, diasCicloAplicado);
 	}
 }

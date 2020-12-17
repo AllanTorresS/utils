@@ -3,17 +3,14 @@ package ipp.aci.boleia.dados.oracle;
 import ipp.aci.boleia.dados.IMotorGeracaoRelatoriosDados;
 import ipp.aci.boleia.dominio.MotorGeracaoRelatorios;
 import ipp.aci.boleia.dominio.enums.StatusMotorGeradorRelatorio;
-import ipp.aci.boleia.dominio.enums.TipoExtensaoArquivo;
 import ipp.aci.boleia.dominio.enums.TipoRelatorioMotorGerador;
-import ipp.aci.boleia.dominio.pesquisa.comum.BaseFiltroPaginado;
-import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
+import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaMotorGeracaoRelatoriosVo;
-import ipp.aci.boleia.util.UtilitarioJson;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -62,23 +59,24 @@ public class OracleMotorGeracaoRelatorioDados extends OracleRepositorioBoleiaDad
     }
 
     @Override
-    public <F extends BaseFiltroPaginado> Boolean pesquisarGeracaoRelatorioEmAndamento(F filtro, TipoRelatorioMotorGerador tipoRelatorio) {
-        List<MotorGeracaoRelatorios> resposta = pesquisar((ParametroOrdenacaoColuna) null,
-                new ParametroPesquisaIgual("status", StatusMotorGeradorRelatorio.EM_ANDAMENTO.getValue()),
-                new ParametroPesquisaIgual("usuario", ambiente.getUsuarioLogado()),
-                new ParametroPesquisaIgual("tipoRelatorio", tipoRelatorio.getValue()),
-                new ParametroPesquisaIgual("filtro", UtilitarioJson.toJSON(filtro)));
-        return !resposta.isEmpty();
+    public MotorGeracaoRelatorios obterRelatorioParaProcessamento(Long id) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+
+        parametros.add(new ParametroPesquisaIgual("id", id));
+
+        return pesquisar(new InformacaoPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]))
+                .getRegistros().stream().findFirst().orElse(null);
     }
 
     @Override
-    public <F extends BaseFiltroPaginado> Boolean pesquisarGeracaoRelatorioEmAndamento(F filtro, TipoRelatorioMotorGerador tipoRelatorio, TipoExtensaoArquivo tipoExtensaoArquivo) {
-        List<MotorGeracaoRelatorios> resposta = pesquisar((ParametroOrdenacaoColuna) null,
-                new ParametroPesquisaIgual("status", StatusMotorGeradorRelatorio.EM_ANDAMENTO.getValue()),
-                new ParametroPesquisaIgual("usuario", ambiente.getUsuarioLogado()),
-                new ParametroPesquisaIgual("tipoRelatorio", tipoRelatorio.getValue()),
-                new ParametroPesquisaIgual("extensaoArquivo", tipoExtensaoArquivo.getValue()),
-                new ParametroPesquisaIgual("filtro", UtilitarioJson.toJSON(filtro)));
-        return !resposta.isEmpty();
+    public Boolean pesquisaRelatorioEmAndamento(String filtro, Integer tipoRelatorio) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+
+        parametros.add(new ParametroPesquisaIgual("filtro", filtro));
+        parametros.add(new ParametroPesquisaIgual("tipoRelatorio", tipoRelatorio));
+        parametros.add(new ParametroPesquisaIgual("status", StatusMotorGeradorRelatorio.EM_ANDAMENTO.getValue()));
+
+        return pesquisar(new InformacaoPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]))
+                .getRegistros().stream().findFirst().isPresent();
     }
 }

@@ -6,6 +6,8 @@ package ipp.aci.boleia.dominio.pesquisa.comum;
 public class BaseFiltroPaginado {
 
     private InformacaoPaginacao paginacao;
+    private Long perfilUsuario;
+    private Long identificadorUsuario;
 
     public BaseFiltroPaginado(){
     }
@@ -34,6 +36,22 @@ public class BaseFiltroPaginado {
      */
     public void setPaginacao(InformacaoPaginacao paginacao) {
         this.paginacao = paginacao;
+    }
+
+    public Long getPerfilUsuario() {
+        return perfilUsuario;
+    }
+
+    public void setPerfilUsuario(Long perfilUsuario) {
+        this.perfilUsuario = perfilUsuario;
+    }
+
+    public Long getIdentificadorUsuario() {
+        return identificadorUsuario;
+    }
+
+    public void setIdentificadorUsuario(Long identificadorUsuario) {
+        this.identificadorUsuario = identificadorUsuario;
     }
 
     /**

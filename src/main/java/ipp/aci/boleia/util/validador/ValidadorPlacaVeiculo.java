@@ -29,7 +29,7 @@ public final class ValidadorPlacaVeiculo {
             return false;
         }
         String placaFormatada = UtilitarioFormatacao.formatarPlacaVeiculo(placa);
-        return placaFormatada.length() == 7 && PATTERN_PLACA_MERCOSUL.matcher(placaFormatada).matches()
-                || placaFormatada.length() == 8 && PATTERN_PLACA.matcher(placaFormatada).matches();
+        return placaFormatada != null && (placaFormatada.length() == 7 && PATTERN_PLACA_MERCOSUL.matcher(placaFormatada).matches()
+                || placaFormatada.length() == 8 && PATTERN_PLACA.matcher(placaFormatada).matches());
     }
 }

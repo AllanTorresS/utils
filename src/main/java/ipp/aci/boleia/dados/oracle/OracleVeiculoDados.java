@@ -13,6 +13,7 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgualIgnoreCase;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialVeiculoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaVeiculoVo;
 import ipp.aci.boleia.dominio.vo.externo.FiltroPesquisaVeiculoExtVo;
 import ipp.aci.boleia.dominio.vo.frotista.FiltroPesquisaVeiculoFrtVo;
@@ -229,5 +230,10 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
         filtro.setPlaca(identificador);
         ResultadoPaginado<Veiculo> resultadoBusca = pesquisar(filtro);
         return resultadoBusca.getTotalItems() > 0 ? resultadoBusca.getRegistros().stream().findFirst().get() : null;
+    }
+    @Override
+    public List<Veiculo> obterPorIdentificadorInterno(FiltroPesquisaParcialVeiculoVo filtro) {
+        return pesquisar((ParametroOrdenacaoColuna) null,
+                new ParametroPesquisaLike("identificadorInterno", filtro.getTermo()));
     }
 }

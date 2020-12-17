@@ -477,7 +477,7 @@ public final class UtilitarioFormatacao {
      * @param valor O valor a ser formatado
      * @return O valor formatado
      */
-    public static String formatarCpjCnpjApresentacao(String valor) {
+    public static String formatarCpfCnpjApresentacao(String valor) {
         if (valor == null) {
             return "";
         }

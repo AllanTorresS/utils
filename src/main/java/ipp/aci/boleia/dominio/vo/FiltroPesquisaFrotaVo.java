@@ -15,7 +15,9 @@ public class FiltroPesquisaFrotaVo extends BaseFiltroPaginado {
     private EnumVo status;
     private EnumVo statusContrato;
     private EnumVo statusApiToken;
-
+    private EntidadeVo assessor;
+    private EnumVo statusConectcar;
+	private Boolean possuiCondicaoComercialConectcar;
 
     public String getCnpj() {
         return cnpj;
@@ -80,4 +82,28 @@ public class FiltroPesquisaFrotaVo extends BaseFiltroPaginado {
     public void setFrota(EntidadeVo frota) {
         this.frota = frota;
     }
+
+    public EntidadeVo getAssessor() {
+        return assessor;
+    }
+
+    public void setAssessor(EntidadeVo assessor) {
+        this.assessor = assessor;
+    }
+	
+	public Boolean getPossuiCondicaoComercialConectcar() {
+		return possuiCondicaoComercialConectcar;
+	}
+
+	public void setPossuiCondicaoComercialConectcar(Boolean possuiCondicaoComercialConectcar) {
+		this.possuiCondicaoComercialConectcar = possuiCondicaoComercialConectcar;
+	}
+
+	public EnumVo getStatusConectcar() {
+		return statusConectcar;
+	}
+
+	public void setStatusConectcar(EnumVo statusConectcar) {
+		this.statusConectcar = statusConectcar;
+	}
 }

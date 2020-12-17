@@ -8,6 +8,7 @@ import ipp.aci.boleia.dominio.enums.StatusAcumuloKmv;
 import ipp.aci.boleia.dominio.enums.StatusApiToken;
 import ipp.aci.boleia.dominio.enums.StatusContrato;
 import ipp.aci.boleia.dominio.enums.StatusFrota;
+import ipp.aci.boleia.dominio.enums.StatusFrotaConectcar;
 import ipp.aci.boleia.dominio.enums.TipoAcumuloKmv;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
@@ -23,6 +24,7 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaAbastecimentoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFinanceiroVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFrotaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialFrotaVo;
@@ -30,6 +32,8 @@ import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import ipp.aci.boleia.dominio.vo.apco.ClienteProFrotaVo;
+
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -73,6 +77,15 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
             "WHERE tc.cobranca.id = :idCobranca " +
             "     AND f.excluido = 0";
 
+    private static final String CONSULTA_FROTA_POR_COBRANCA_REEMBOLSO_CONSOLIDADO =
+    "SELECT DISTINCT f " +
+    "FROM TransacaoConsolidada tc " +
+    "JOIN tc.frotaPtov.frota f " +
+    "WHERE ((:idConsolidado IS NOT NULL AND tc.id = :idConsolidado) " +
+    "OR (:idCobranca IS NOT NULL AND tc.cobranca.id = :idCobranca) " +
+    "OR (:idReembolso IS NOT NULL AND tc.reembolso.id = :idReembolso)) " +
+    "     AND f.excluido = 0";
+
 
     private static final String CONSULTA_CLIENTE_PROFROTAS =
             "SELECT new ipp.aci.boleia.dominio.vo.apco.ClienteProFrotaVo(" +
@@ -105,6 +118,7 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
         povoarParametroIgual("id", filtro.getFrota() != null ? filtro.getFrota().getId() : null, parametros);
         povoarParametroLike("municipio", filtro.getCidade(), parametros);
         povoarParametroLike("unidadeFederativa", filtro.getUf() != null ? filtro.getUf().getName() : null, parametros);
+        povoarParametroIgual("usuarioAssessorResponsavel.id", filtro.getAssessor() != null ? filtro.getAssessor().getId() : null, parametros);
 
         if (filtro.getCnpj() != null) {
             parametros.add(new ParametroPesquisaIgual("cnpj", UtilitarioFormatacao.obterLongMascara(filtro.getCnpj())));
@@ -124,6 +138,34 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
         if (filtro.getStatus() != null && filtro.getStatus().getName() != null) {
             parametros.add(new ParametroPesquisaIgual("status", StatusFrota.valueOf(filtro.getStatus().getName()).getValue()));
         }
+        
+        if (filtro.getStatusConectcar() != null && filtro.getStatusConectcar().getName() != null) {
+        	
+        	if (StatusFrotaConectcar.ATIVO.equals(StatusFrotaConectcar.valueOf(filtro.getStatusConectcar().getName()))) {
+        		parametros.add(new ParametroPesquisaOr(
+                        new ParametroPesquisaNulo("situacaoConectCar"),
+                        new ParametroPesquisaIgual("situacaoConectCar.status", StatusFrota.ATIVO.getValue())
+                ));
+        	} else {
+        		parametros.add(new ParametroPesquisaIgual("situacaoConectCar.status", StatusFrota.INATIVO.getValue()));
+        	}
+        }
+        
+        if (filtro.getPossuiCondicaoComercialConectcar() != null && filtro.getPossuiCondicaoComercialConectcar()) {
+            parametros.add(new ParametroPesquisaNulo("condicoesComerciais", true));
+        }
+        
+        if (filtro.getPaginacao() != null && CollectionUtils.isNotEmpty(filtro.getPaginacao().getParametrosOrdenacaoColuna())) {
+            ParametroOrdenacaoColuna parametro = filtro.getPaginacao().getParametrosOrdenacaoColuna().get(0);
+            String nomeOrdenacao = parametro.getNome();
+            if (nomeOrdenacao != null) {
+            	if (nomeOrdenacao.contentEquals("statusConectcar")) {
+            		filtro.getPaginacao().getParametrosOrdenacaoColuna().remove(0);
+                    filtro.getPaginacao().getParametrosOrdenacaoColuna().add(0, new ParametroOrdenacaoColuna("situacaoConectCar.status", parametro.getSentidoOrdenacao()));                    
+                }
+            }
+        }
+        
         povoarParametroApiToken(filtro, parametros);
         return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
@@ -372,6 +414,16 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
     @Override
     public Frota obterPorCobranca(Long idCobranca) {
         return pesquisarUnico(CONSULTA_FROTA_POR_COBRANCA, new ParametroPesquisaIgual("idCobranca", idCobranca));
+    }
+
+    @Override
+    public Frota obterPorConsolidadoCobrancaOuReembolso(FiltroPesquisaAbastecimentoVo filtro) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaIgual("idConsolidado", filtro.getIdConsolidado()));
+        parametros.add(new ParametroPesquisaIgual("idCobranca", filtro.getIdCobranca()));
+        parametros.add(new ParametroPesquisaIgual("idReembolso", filtro.getIdReembolso()));
+
+        return pesquisarUnicoSemIsolamentoDados(CONSULTA_FROTA_POR_COBRANCA_REEMBOLSO_CONSOLIDADO,parametros.toArray(new ParametroPesquisa[parametros.size()])); 
     }
 
     @Override

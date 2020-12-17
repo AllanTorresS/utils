@@ -10,6 +10,7 @@ public final class ExternoRotas {
     public static final String BASE_API = "/api/externo";
     public static final String FROTAS_LEVES_API = BASE_API + "/frotasleves";
     public static final String AGENCIADOR_FRETE_API = BASE_API + "/agenciadorfrete";
+    public static final String CONECTCAR_API = BASE_API + "/conectcar";
 
     // APIs
     public static final String TELEMETRIA_API = BASE_API + "/telemetria";
@@ -24,7 +25,8 @@ public final class ExternoRotas {
     public static final String FROTA_API = BASE_API + "/frota";
     public static final String AGENCIADOR_POSTO_API = AGENCIADOR_FRETE_API + "/posto";
     public static final String MOTORISTA_AUTONOMO_API = AGENCIADOR_FRETE_API + "/motoristaautonomo";
-
+    public static final String TRANSACAO_CONECTCAR_API = CONECTCAR_API + "/transacao";    
+    public static final String RESPOSTA_LEAD_CONECTCAR_API = CONECTCAR_API + "/lead";
 
     // Produces
     public static final String PRODUCES_APPLICATION = "application";

@@ -171,4 +171,27 @@ public class VeiculoSd {
             throw new ExcecaoValidacao(mensagens.obterMensagem("erro.pdv.veiculo.inativo.na.frota", placa.toUpperCase(), formatarCnpjApresentacao(frota.getCnpj()), frota.getNomeFantasia()));
         }
     }
+
+    /**
+     * Verifica o último hodômetro de um veículo
+     *
+     * @param idVeiculo id do veículo
+     * @return último hodômetro registrado
+     */
+    public Long retornarUltimoHodometro(Long idVeiculo) {
+        Veiculo veiculo = veiculoDados.obterPorId(idVeiculo);
+        return veiculo.getHodometro() != null ? veiculo.getHodometro() : 0L;
+    }
+
+    /**
+     * Verifica o último horímetro de um veículo
+     *
+     * @param idVeiculo id do veículo
+     * @return último horímetro registrado
+     */
+    public BigDecimal retornarUltimoHorimetro(Long idVeiculo) {
+        Veiculo veiculo = veiculoDados.obterPorId(idVeiculo);
+        return veiculo.getHorimetro() != null ? veiculo.getHorimetro() : BigDecimal.ZERO;
+    }
+
 }

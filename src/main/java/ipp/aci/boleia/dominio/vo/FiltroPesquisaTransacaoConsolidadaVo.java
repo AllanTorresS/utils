@@ -1,17 +1,14 @@
 package ipp.aci.boleia.dominio.vo;
 
-import ipp.aci.boleia.dominio.pesquisa.comum.BaseFiltroPaginado;
+import ipp.aci.boleia.dominio.pesquisa.comum.FiltroBasePeriodoPaginado;
 
-import java.util.Date;
 import java.util.List;
 
 /**
  * Filtro para pesquisa de transação consolidada
  */
-public class FiltroPesquisaTransacaoConsolidadaVo extends BaseFiltroPaginado {
+public class FiltroPesquisaTransacaoConsolidadaVo extends FiltroBasePeriodoPaginado {
 
-    private Date de;
-    private Date ate;
     private String notaFiscal;
     private String numeroSerie;
     private List<EnumVo> statusEmissaoNF;
@@ -23,22 +20,6 @@ public class FiltroPesquisaTransacaoConsolidadaVo extends BaseFiltroPaginado {
     private Long tipoPerfilUsuario;
     private List<Long> idsPontosDeVenda;
     private Long idFrotaUsuario;
-
-    public Date getDe(){
-        return de;
-    }
-
-    public void setDe(Date de) {
-        this.de = de;
-    }
-
-    public Date getAte() {
-        return ate;
-    }
-
-    public void setAte(Date ate) {
-        this.ate = ate;
-    }
 
     public String getNotaFiscal() {
         return notaFiscal;
