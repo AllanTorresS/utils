@@ -72,7 +72,9 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
    private static final String QUERY_VALOR_UTILIZADO =
     		 "SELECT NVL(SUM(tc.valorTotal),0) " +
              " FROM TransacaoConectcar tc " +
-             "WHERE tc.frota.id  = :idFrota ";
+             " LEFT JOIN tc.cobranca c " +
+             "WHERE tc.frota.id  = :idFrota " +
+             "  AND c.dataPagamento is null";
 
     private static final String QUERY_ULTIMA_TRANSACAO =
    		 "SELECT tc " +
