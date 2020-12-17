@@ -15,7 +15,6 @@ import ipp.aci.boleia.util.excecao.ExcecaoValidacao;
  */
 public interface IConectCarIntegracaoDados {
 	
-	
 	boolean bloquearTag(TagDadosIntegracaoVo corpo) throws ExcecaoValidacao;
 	boolean desbloquearTag(TagDadosIntegracaoVo corpo) throws ExcecaoValidacao;
 	boolean desvincularTag(TagDadosIntegracaoVo corpo) throws ExcecaoValidacao;
@@ -24,6 +23,5 @@ public interface IConectCarIntegracaoDados {
 	boolean bloquearContrato(ConectCarBloquearContratoRequestVo corpo) throws ExcecaoValidacao;
 	boolean desbloquearContrato(ConectCarDesbloquearContratoRequestVo corpo) throws ExcecaoValidacao;
 	boolean substituirTag(TagSubstituicaoIntegracaoVo corpo) throws ExcecaoValidacao;
-	public boolean verificarTag(TagDadosIntegracaoVo corpo) throws ExcecaoValidacao;
 
 }
