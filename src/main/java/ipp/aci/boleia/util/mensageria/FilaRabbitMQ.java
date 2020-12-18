@@ -123,18 +123,18 @@ public class FilaRabbitMQ {
      */
     public void enviarMensagem(String chaveRota, String mensagem) {
 
-        try (Channel canal = getConexao().createChannel()){
+        try (Channel channel = getConexao().createChannel()){
             
             Map<String, Object> args = new HashMap<String, Object>();
             args.put("x-delayed-type", "direct");
-            canal.exchangeDeclare(nomeTopicoRelatorio, getTipoExchange(), true, false, args);
+            channel.exchangeDeclare(nomeTopicoRelatorio, getTipoExchange(), true, false, args);
 
             StringBuilder nomeChaveRota = new StringBuilder(prefixoChaveRota);
             nomeChaveRota.append(chaveRota);
 
             Map<String, Object> headers = new HashMap<String, Object>();
             headers.put("x-delay", 2000);
-            canal.basicPublish(nomeTopicoRelatorio, nomeChaveRota.toString(),
+            channel.basicPublish(nomeTopicoRelatorio, nomeChaveRota.toString(),
                     new AMQP.BasicProperties.Builder()
                         .headers(headers)
                         .contentType("text/plain")
@@ -142,13 +142,16 @@ public class FilaRabbitMQ {
                         .priority(1)
                         .build(),
                     mensagem.getBytes());
-        } catch (IOException | TimeoutException e) {
+        } catch (IOException e) {
+            conexao = null;
+            throw new ExcecaoBoleiaRuntime(e);
+        } catch(TimeoutException e){
             throw new ExcecaoBoleiaRuntime(e);
         }
     }
 
     private Connection getConexao() throws IOException, TimeoutException {    
-        if (conexao == null || !conexao.isOpen()){
+        if (conexao == null){
             conexao = fabricaConexoes.newConnection();
         }
         return conexao;
