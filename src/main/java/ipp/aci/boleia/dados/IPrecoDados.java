@@ -59,6 +59,12 @@ public interface IPrecoDados extends IRepositorioBoleiaDados<Preco> {
     List<Preco> obterParaVigenciaAutomatica(Date dataCorte);
 
     /**
+     * Busca os preços negociados agendados cuja data de vigência é anterior à atual
+     * @return Preços em negociação que devem entrar em vigência
+     */
+    List<Preco> obterAgendamentosParaVigenciaAutomatica();
+
+    /**
      * Busca o preco pendente ou novo para um determinado PontoVenda, Frota e tipo combustivel
      * @param frota a Frota a ser filtrada
      * @param posto O Ponto de Venda a ser filtrado
