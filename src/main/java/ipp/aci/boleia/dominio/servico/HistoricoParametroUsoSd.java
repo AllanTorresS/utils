@@ -18,7 +18,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import static ipp.aci.boleia.dominio.enums.ParametroSistema.POSTOS_AUTORIZADOS_ABASTECIMENTO;
-import static ipp.aci.boleia.util.excecao.Erro.ERRO_HISTORICO_NAO_ENCONTRADO;
 
 /**
  * Serviços de domínio da entidade {@link HistoricoParametroUso}.
