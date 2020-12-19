@@ -54,7 +54,7 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
             " WHERE " +
             "     tc.id = :idCombustivel " +
             "     AND pv.id = :idPontoVenda " +
-            "     AND f.id = :idFrota " +
+            "     AND (f.id = :idFrota OR :idFrota IS NULL) " +
             "     AND (p.dataVigencia <= :dataAbastecimento OR p.dataAtualizacao <= :dataAbastecimento) " +
             "     AND p.status IN :statusValidos  " +
             "     ORDER BY  " +
@@ -158,7 +158,7 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
         parametros.add(new ParametroPesquisaDataMenorOuIgual("dataAbastecimento", ambiente.buscarDataAmbiente()));
         parametros.add(new ParametroPesquisaIn("statusValidos", statusValidos));
 
-        return pesquisar(null, CONSULTA_NEGOCIACOES, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+        return pesquisarSemIsolamentoDados(null, CONSULTA_NEGOCIACOES, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
 
 
