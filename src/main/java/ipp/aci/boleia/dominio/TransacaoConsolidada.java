@@ -172,6 +172,10 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     @Column(name = "ID_PROCESSOU_POSTERGACAO")
     private boolean processouPostergacao;
 
+    @NotNull
+    @Column(name = "ID_FROTA_EXIGE_NF")
+    private boolean frotaExigeNF;
+
     @Override
     public Long getId() {
         return id;
@@ -458,6 +462,14 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
 
     public void setProcessouPostergacao(boolean processouPostergacao) {
         this.processouPostergacao = processouPostergacao;
+    }
+
+    public boolean isFrotaExigeNF() {
+        return frotaExigeNF;
+    }
+
+    public void setFrotaExigeNF(boolean frotaExigeNF) {
+        this.frotaExigeNF = frotaExigeNF;
     }
 
     /**
