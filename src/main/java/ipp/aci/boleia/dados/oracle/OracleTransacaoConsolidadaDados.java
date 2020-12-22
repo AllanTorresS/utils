@@ -71,7 +71,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
     private static final String CLAUSULA_EXIGE_NOTA = "( TC.frotaExigeNF = true or TC.unidade is not null or TC.empresaAgregada is not null ) ";
     private static final String CLAUSULA_ORDENACAO_GRID_DETALHAMENTO = "ORDER BY " +
             "CASE WHEN (" + CLAUSULA_EXIGE_NOTA + " AND TC.valorTotalNotaFiscal > 0) THEN (TC.valorEmitidoNotaFiscal / TC.valorTotalNotaFiscal) " +
-            "WHEN (F.semNotaFiscal = 1 AND TC.unidade IS NULL AND TC.empresaAgregada IS NULL) THEN 2 " +
+            "WHEN (TC.frotaExigeNF = false AND TC.unidade IS NULL AND TC.empresaAgregada IS NULL) THEN 2 " +
             "ELSE 3 " +
             "END ";
     private static final String CLAUSULA_DATA_REEMB_GERADO = 
