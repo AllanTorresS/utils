@@ -26,7 +26,7 @@ import javax.validation.constraints.Size;
 public class ParametroNotaFiscal implements IPersistente {
 
     @Id
-    @Column(name = "CD_PARAM_NF")
+    @Column(name = "CD_PARAMETRO_NF")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_PARAM_NF")
     @SequenceGenerator(name = "SEQ_PARAM_NF", sequenceName = "SEQ_PARAM_NF", allocationSize = 1)
     private Long id;
