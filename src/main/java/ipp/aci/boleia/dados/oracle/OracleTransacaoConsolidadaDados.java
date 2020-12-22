@@ -69,7 +69,12 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
     private static final String CLAUSULA_EMPRESA_AGREGADA = "( EA.id = :empresaAgregadaId ) AND ";
     private static final String CLAUSULA_UNIDADE = "( U.id = :unidadeId ) AND ";
     private static final String CLAUSULA_EXIGE_NOTA = "( ( F.semNotaFiscal is null or F.semNotaFiscal = 0 ) or TC.unidade is not null or TC.empresaAgregada is not null ) ";
-    
+    private static final String CLAUSULA_ORDENACAO_GRID_DETALHAMENTO = "ORDER BY " +
+            "CASE WHEN (" + CLAUSULA_EXIGE_NOTA + " AND TC.valorTotalNotaFiscal > 0) THEN (TC.valorEmitidoNotaFiscal / TC.valorTotalNotaFiscal) " +
+            "WHEN (F.semNotaFiscal = 1 AND TC.unidade IS NULL AND TC.empresaAgregada IS NULL) THEN 2 " +
+            "ELSE 3 " +
+            "END ";
+
     private static final String CLAUSULA_DATA_REEMB_GERADO = 
             " tc.reembolso IS NOT NULL AND " +
             " ((rm.dataPagamento is null AND (rm.dataVencimentoPgto >= :dataInicioPeriodo AND rm.dataVencimentoPgto <= :dataFimPeriodo)) " +
@@ -376,7 +381,11 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                 "ORDER BY dataPagamento ASC ";
 
     /**
-     * Busca uma lista de transações consolidadas de um ponto de venda pertencentes a um agrupamento.
+     * Busca uma lista de transações consolidadas de um ponto de venda pertencentes a um agrupamento com a seguinte ordenação:
+     *
+     * 1. Ordem crescente da porcentagem de nota fiscal
+     * 2. Isentos de nota fiscal
+     * 3. Demais casos sem emissão de nota fiscal
      */
     private static final String CONSULTA_TRANSACOES_CONSOLIDADAS_DE_AGRUPAMENTO =
     "SELECT TC " +
@@ -394,39 +403,9 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             CLAUSULA_FROTA +
             CLAUSULA_UNIDADE +
             CLAUSULA_EMPRESA_AGREGADA +
-            "(:statusNf IS NULL OR (TRUNC(TC.dataInicioPeriodo) = TRUNC(:dataInicioCicloAtual) AND (TC.statusNotaFiscal = :statusNf)) OR (TRUNC(TC.dataInicioPeriodo) < TRUNC(:dataInicioCicloAtual))) AND " +
-            "      (TC.reembolso is NULL OR (RM.dataPagamento IS NULL AND TRUNC(RM.dataVencimentoPgto) >= TRUNC(SYSDATE) AND RM.valorReembolso >= 0)) ";
-
-    /**
-     * Busca uma lista de transações consolidadas de um ponto de venda pertencentes a um agrupamento com a seguinte ordenação:
-     *
-     * 1. Ordem crescente da porcentagem de nota fiscal
-     * 2. Isentos de nota fiscal
-     * 3. Demais casos sem emissão de nota fiscal
-     */
-    private static final String CONSULTA_TRANSACOES_CONSOLIDADAS_DE_AGRUPAMENTO_GRID =
-    "SELECT TC " +
-            "FROM TransacaoConsolidada TC " +
-            "JOIN TC.frotaPtov FP " +
-            "JOIN FP.frota F " +
-            "JOIN TC.prazos TCP " +
-            "LEFT JOIN TC.reembolso RM	" +
-            "LEFT JOIN TC.empresaAgregada EA " +
-            "LEFT JOIN TC.unidade U	" +
-            "WHERE FP.pontoVenda.id IN :idsPvs AND " +
-            "      TRUNC(TC.dataInicioPeriodo) = TRUNC(:dataInicio) AND " +
-            "      TRUNC(TC.dataFimPeriodo) = TRUNC(:dataFim) AND " +
-            "      TC.statusConsolidacao = :statusCiclo AND " +
-            CLAUSULA_FROTA +
-            CLAUSULA_UNIDADE +
-            CLAUSULA_EMPRESA_AGREGADA +
-            "(:statusNf IS NULL OR (TRUNC(TC.dataInicioPeriodo) = TRUNC(:dataInicioCicloAtual) AND (TC.statusNotaFiscal = :statusNf)) OR (TRUNC(TC.dataInicioPeriodo) < TRUNC(:dataInicioCicloAtual))) AND " +
-            "      (TC.reembolso is NULL OR (RM.dataPagamento IS NULL AND TRUNC(RM.dataVencimentoPgto) >= TRUNC(SYSDATE))) " +
-            "ORDER BY " +
-                "CASE WHEN (" + CLAUSULA_EXIGE_NOTA + " AND TC.valorTotalNotaFiscal > 0) THEN (TC.valorEmitidoNotaFiscal / TC.valorTotalNotaFiscal) " +
-                    "WHEN (F.semNotaFiscal = 1 AND TC.unidade IS NULL AND TC.empresaAgregada IS NULL) THEN 2 " +
-                    "ELSE 3 " +
-                "END ";
+            "(:statusNf IS NULL OR TC.statusNotaFiscal = :statusNf) AND " +
+            "(TC.reembolso is null OR RM.status = " + StatusPagamentoReembolso.EM_ABERTO.getValue() + "OR RM.status = " + StatusPagamentoReembolso.PREVISTO.getValue() + ") " +
+            CLAUSULA_ORDENACAO_GRID_DETALHAMENTO;
 
     /**
      * Busca uma lista de transações consolidadas de um ponto de venda agrupadas por data e status.
@@ -469,8 +448,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "      (:frotaId IS NULL OR F.id = :frotaId) AND " +
                     "      (:unidadeId IS NULL OR TC.unidade.id = :unidadeId) AND " +
                     "      (:empresaAgregadaId IS NULL OR TC.empresaAgregada.id = :empresaAgregadaId) AND " +
-                    "      (:statusNf IS NULL OR (TRUNC(TC.dataInicioPeriodo) = TRUNC(:dataInicioCicloAtual) AND (TC.statusNotaFiscal = :statusNf)) OR (TRUNC(TC.dataInicioPeriodo) < TRUNC(:dataInicioCicloAtual))) AND " +
-                    "      (TC.reembolso is NULL OR (RM.dataPagamento IS NULL AND TRUNC(RM.dataVencimentoPgto) >= TRUNC(SYSDATE) AND RM.valorReembolso >= 0)) " +
+                    "      (:statusNf IS NULL OR (TRUNC(TC.dataInicioPeriodo) = TRUNC(:dataInicioCicloAtual) AND (TC.statusNotaFiscal = :statusNf)) OR (TRUNC(TC.dataInicioPeriodo) < TRUNC(:dataInicioCicloAtual))) " +
                     "GROUP BY TC.dataInicioPeriodo, TC.dataFimPeriodo, TC.statusConsolidacao, " +
                     "         CASE WHEN TC.reembolso is NULL THEN 6 ELSE RM.status END";
 
@@ -1012,7 +990,6 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         List<ParametroPesquisa> parametros = new ArrayList<>();
 
         popularParametrosDataEPvBoxFinanceiro(parametros, filtro.getIdPv(), filtro.getInicio(), filtro.getFim());
-        parametros.add(new ParametroPesquisaIgual("dataInicioCicloAtual", filtro.getInicio()));
 
         if(filtro.getStatusNf() != null && filtro.getStatusNf().getName() != null) {
             parametros.add(new ParametroPesquisaIgual("statusNf", StatusNotaFiscal.valueOf(filtro.getStatusNf().getName()).getValue()));
@@ -1048,17 +1025,18 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             parametros.add(new ParametroPesquisaIgual("statusCiclo", filtro.getStatusCiclo().getValue()));
         }
 
+        consulta = consulta.replace(CLAUSULA_ORDENACAO_GRID_DETALHAMENTO, "");
+
         return pesquisar(null, consulta, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
 
     @Override
     public ResultadoPaginado<TransacaoConsolidada> pesquisarTransacoesDetalhamentoDeCiclo(FiltroPesquisaDetalheCicloVo filtro) {
-        String consulta = CONSULTA_TRANSACOES_CONSOLIDADAS_DE_AGRUPAMENTO_GRID;
+        String consulta = CONSULTA_TRANSACOES_CONSOLIDADAS_DE_AGRUPAMENTO;
 
         List<ParametroPesquisa> parametros = new ArrayList<>();
 
         popularParametrosDataEPvBoxFinanceiro(parametros, filtro.getIdPv(), filtro.getInicio(), filtro.getFim());
-        parametros.add(new ParametroPesquisaIgual("dataInicioCicloAtual", filtro.getInicio()));
 
         if(filtro.getStatusNf() != null && filtro.getStatusNf().getName() != null) {
             parametros.add(new ParametroPesquisaIgual("statusNf", StatusNotaFiscal.valueOf(filtro.getStatusNf().getName()).getValue()));
