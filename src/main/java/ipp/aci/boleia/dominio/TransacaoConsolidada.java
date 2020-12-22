@@ -554,7 +554,7 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
      */
     @Transient
     public boolean exigeEmissaoNF() {
-        return frotaPtov.getFrota().exigeNotaFiscal() || unidade != null || empresaAgregada != null;
+        return frotaExigeNF || unidade != null || empresaAgregada != null;
     }
 
     /**

@@ -68,7 +68,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
     private static final String CLAUSULA_FROTA = "( F.id = :frotaId ) AND ";
     private static final String CLAUSULA_EMPRESA_AGREGADA = "( EA.id = :empresaAgregadaId ) AND ";
     private static final String CLAUSULA_UNIDADE = "( U.id = :unidadeId ) AND ";
-    private static final String CLAUSULA_EXIGE_NOTA = "( ( F.semNotaFiscal is null or F.semNotaFiscal = 0 ) or TC.unidade is not null or TC.empresaAgregada is not null ) ";
+    private static final String CLAUSULA_EXIGE_NOTA = "( TC.frotaExigeNF = true or TC.unidade is not null or TC.empresaAgregada is not null ) ";
     
     private static final String CLAUSULA_DATA_REEMB_GERADO = 
             " tc.reembolso IS NOT NULL AND " +
@@ -95,8 +95,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "SUM(TC.valorFaturamento), " +
                     "SUM(CASE WHEN RM.valorReembolso IS NULL THEN TC.valorReembolso ELSE RM.valorReembolso END), " +
                     "SUM(CASE WHEN RM.valorDesconto IS NULL THEN TC.valorDesconto ELSE RM.valorDesconto END), " +
-                    "SUM(CASE WHEN TC.empresaAgregada IS NOT NULL OR TC.unidade IS NOT NULL OR F.semNotaFiscal IS NULL OR F.semNotaFiscal = false THEN TC.valorTotalNotaFiscal ELSE 0 END), " +
-                    "SUM(CASE WHEN TC.empresaAgregada IS NOT NULL OR TC.unidade IS NOT NULL OR F.semNotaFiscal IS NULL OR F.semNotaFiscal = false THEN TC.valorEmitidoNotaFiscal ELSE 0 END), " +
+                    "SUM(CASE WHEN TC.empresaAgregada IS NOT NULL OR TC.unidade IS NOT NULL OR TC.frotaExigeNF = true THEN TC.valorTotalNotaFiscal ELSE 0 END), " +
+                    "SUM(CASE WHEN TC.empresaAgregada IS NOT NULL OR TC.unidade IS NOT NULL OR TC.frotaExigeNF = true THEN TC.valorEmitidoNotaFiscal ELSE 0 END), " +
                     "SUM(TC.quantidadeAbastecimentos), " +
                     "CASE WHEN TC.reembolso is NULL THEN 6 ELSE RM.status END) ";
 
@@ -197,9 +197,9 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "   AND (F.id = :idFrota OR :idFrota is null) " +
                     "   AND (PV.id = :idPontoVenda OR :idPontoVenda is null) " +
                     "   AND (" +
-                    "           (F.semNotaFiscal IS NULL OR F.semNotaFiscal = false) " +
-                    "           OR (TC.empresaAgregada.id IS NOT NULL) " +
-                    "           OR (TC.unidade.id IS NOT NULL)" +
+                    "           TC.frotaExigeNF = true " +
+                    "           OR TC.empresaAgregada.id IS NOT NULL " +
+                    "           OR TC.unidade.id IS NOT NULL" +
                     "       ) " +
                     "   AND (TC.empresaAgregada.id = :idEmpresaAgregada OR :idEmpresaAgregada is null) " +
                     "   AND (TC.unidade.id = :idUnidade OR :idUnidade is null) " +
@@ -424,7 +424,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             "      (TC.reembolso is NULL OR (RM.dataPagamento IS NULL AND TRUNC(RM.dataVencimentoPgto) >= TRUNC(SYSDATE))) " +
             "ORDER BY " +
                 "CASE WHEN (" + CLAUSULA_EXIGE_NOTA + " AND TC.valorTotalNotaFiscal > 0) THEN (TC.valorEmitidoNotaFiscal / TC.valorTotalNotaFiscal) " +
-                    "WHEN (F.semNotaFiscal = 1 AND TC.unidade IS NULL AND TC.empresaAgregada IS NULL) THEN 2 " +
+                    "WHEN (TC.frotaExigeNF = false AND TC.unidade IS NULL AND TC.empresaAgregada IS NULL) THEN 2 " +
                     "ELSE 3 " +
                 "END ";
 
@@ -731,8 +731,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
 
         if ((filtro.getStatusPagamento() != null) && (!filtro.getStatusPagamento().isEmpty())) {
 
-            String exigeNF = "((TC.frotaPtov.frota.semNotaFiscal IS NULL OR TC.frotaPtov.frota.semNotaFiscal = false) OR TC.unidade IS NOT NULL OR TC.empresaAgregada IS NOT NULL)";
-            String naoExigeNF = "(TC.frotaPtov.frota.semNotaFiscal = true AND TC.unidade IS NULL OR TC.empresaAgregada IS NULL)";
+            String exigeNF = "(TC.frotaExigeNF = true OR TC.unidade IS NOT NULL OR TC.empresaAgregada IS NOT NULL)";
+            String naoExigeNF = "(TC.frotaExigeNF = false AND TC.unidade IS NULL OR TC.empresaAgregada IS NULL)";
             pesquisaStatusReembolso = "" +
                     "    AND CASE " +
                     "        WHEN TC.statusNotaFiscal = " + StatusNotaFiscal.EMITIDA.getValue() + " AND RE.status = " + StatusPagamentoReembolso.PAGO.getValue() + " THEN  " + StatusPagamentoReembolso.PAGO.getValue() +
