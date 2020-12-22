@@ -64,6 +64,9 @@ public enum StatusPrecoNegociacao implements IEnumComLabel<StatusPrecoNegociacao
         if(CANCELADO.equals(this)) {
             return Collections.singletonList(StatusPreco.CANCELADO);
         }
+        if(REJEITADO.equals(this)) {
+            return Collections.singletonList(StatusPreco.REJEITADO);
+        }
         return Collections.emptyList();
     }
 
