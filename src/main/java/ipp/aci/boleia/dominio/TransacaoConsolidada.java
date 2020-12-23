@@ -624,7 +624,7 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
 
     /**
      * Verifica se todos os abastecimentos do consolidado possuem pendência de nota fiscal
-     * @return True caso todas estejam sem emissão, false caso contrário
+     * @return True caso todas estejam com pendência, false caso contrário
      */
     @Transient
     public boolean todasTransacoesPossuemPendenciaNF() {
