@@ -241,14 +241,6 @@ public class OracleCobrancaDados extends OracleRepositorioBoleiaDados<Cobranca> 
 		return super.desanexar(cobranca);
 	}
 
-	@Override
-	public List<Cobranca> obterCobrancasASeremPostergadas() {
-		List<ParametroPesquisa> parametros = new ArrayList<>();
-		parametros.add(new ParametroPesquisaIgual("transacoesConsolidadas.processouPostergacao", 1));
-		parametros.add(new ParametroPesquisaIgual("transacoesConsolidadas.statusConsolidacao", StatusTransacaoConsolidada.FECHADA.getValue()));
-		return pesquisar(new ParametroOrdenacaoColuna("dataVencimentoPgto", Ordenacao.CRESCENTE), parametros.toArray(new ParametroPesquisa[parametros.size()]));
-	}
-
 	/**
 	 * Constroi um {@link ParametroPesquisa} para status de cobrança
 	 * @param valor O valor correspontente ao status desejado
