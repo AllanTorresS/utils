@@ -28,6 +28,7 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
+import ipp.aci.boleia.dominio.vo.AgrupamentoTransacaoConsolidadaFrotaVo;
 import ipp.aci.boleia.dominio.vo.AgrupamentoTransacaoConsolidadaPvVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheCicloVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFinanceiroVo;
@@ -329,7 +330,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "AND " + CLAUSULA_REEMBOLSO_ATRASADO;
 
 
-    private static final String CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO =
+    private static final String CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO_REVENDA =
             "SELECT tc " +
                     "FROM TransacaoConsolidada tc " +
                     "LEFT JOIN tc.frotaPtov fpv " +
@@ -344,24 +345,51 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "AND (r.status in (" + StatusPagamentoReembolso.PAGO.getValue() + ", " + StatusPagamentoReembolso.ATRASADO.getValue() + ", " + StatusPagamentoReembolso.NF_ATRASADA.getValue() + ", " + StatusPagamentoReembolso.A_DESCONTAR.getValue() + ")) " +
                     "ORDER BY %s ";
 
+    private static final String CLAUSULA_DATA_FIM_PERIODO = "CASE " +
+            "WHEN TCP.possuiPrazoAjuste = 1 THEN trunc(TCP.dataLimiteEmissaoNfe) " +
+            "ELSE trunc(TC.dataFimPeriodo) " +
+            "END ";
+
+    private static final String CLAUSULA_STATUS_PAGAMENTO = "CASE WHEN C is null THEN " + StatusPagamentoCobranca.EM_ABERTO.getValue() + " ELSE C.status END ";
+
+    private static final String CLAUSULA_DATA_VENCIMENTO = "CASE WHEN C is not null THEN C.dataVencimentoVigente ELSE TCP.dataLimitePagamento END ";
+
     private static final String CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO_FROTA =
-            "SELECT tc " +
-                    "FROM TransacaoConsolidada tc " +
-                    "LEFT JOIN tc.frotaPtov fpv " +
-                    "LEFT JOIN tc.cobranca c " +
-                    "JOIN tc.prazos tcp " +
-                    "WHERE (fpv.frota.id = :idFrota OR :idFrota is null) " +
-                    "AND ((c.dataPagamento is null AND (c.dataVencimentoVigente >= :dataInicioPeriodo AND c.dataVencimentoVigente <= :dataFimPeriodo)) " +
-                    "OR (c.dataPagamento >= :dataInicioPeriodo AND c.dataPagamento <= :dataFimPeriodo)) " +
-                    "AND (tc.valorTotalNotaFiscal <> 0 OR tc.quantidadeAbastecimentos <> 0) " +
-                    "AND (tc.statusConsolidacao = :statusConsolidacao OR :statusConsolidacao is null) " +
-                    "AND (c.status = :statusPagamento OR :statusPagamento is null) " +
+            "SELECT new ipp.aci.boleia.dominio.vo.AgrupamentoTransacaoConsolidadaFrotaVo( " +
+                        "TC.dataInicioPeriodo, " +
+                        "TC.dataFimPeriodo, " +
+                        "SUM(TC.valorTotal), " +
+                        "SUM(TC.valorDescontoAbastecimentos), " +
+                        "TC.statusConsolidacao, " +
+                        CLAUSULA_STATUS_PAGAMENTO + ", " +
+                        "SUM(TC.quantidadeAbastecimentos), " +
+                        CLAUSULA_DATA_VENCIMENTO + ", " +
+                        "C.dataPagamento, " +
+                        "CASE WHEN " + CLAUSULA_EXIGE_NOTA + " THEN 1 ELSE 0 END, " +
+                        "SUM(TC.valorEmitidoNotaFiscal), " +
+                        "SUM(TC.valorTotalNotaFiscal)" +
+                    ") " +
+                    "FROM TransacaoConsolidada TC " +
+                    "LEFT JOIN TC.frotaPtov FPV " +
+                    "LEFT JOIN FPV.frota F " +
+                    "LEFT JOIN TC.cobranca C " +
+                    "JOIN TC.prazos TCP " +
+                    "WHERE (F.id = :idFrota OR :idFrota is null) " +
+                    "AND ((TC.dataInicioPeriodo >= :dataInicioPeriodo AND TC.dataFimPeriodo <= :dataFimPeriodo) OR (TC.dataFimPeriodo >= :dataInicioPeriodo AND TC.dataInicioPeriodo <= :dataFimPeriodo)) " +
+                    "AND (TC.statusConsolidacao = :statusConsolidacao OR :statusConsolidacao is null) " +
+                    "AND (TC.quantidadeAbastecimentos > 0) " +
+                    "AND (C.status = :statusPagamento OR :statusPagamento is null) " +
                     "GROUP BY " +
-                        "fpv.frota.id, " +
-                        "CASE " +
-                            "WHEN tcp.possuiPrazoAjuste = 1 THEN trunc(tcp.dataLimiteEmissaoNfe) " +
-                            "ELSE trunc(tc.dataFimPeriodo) " +
-                        "END " +
+                        "F.id, " +
+                        "TC.dataInicioPeriodo, " +
+                        "TC.dataFimPeriodo, " +
+                        CLAUSULA_DATA_FIM_PERIODO + ", " +
+                        CLAUSULA_STATUS_PAGAMENTO + ", " +
+                        CLAUSULA_DATA_VENCIMENTO + ", " +
+                        "CASE WHEN " + CLAUSULA_EXIGE_NOTA + " THEN 1 ELSE 0 END, " +
+                        "TC.statusConsolidacao," +
+                        "C.dataPagamento," +
+                        "C.status " +
                     "ORDER BY %s ";
 
     private static final String CONSULTA_PONTOS_GRAFICO =
@@ -1150,7 +1178,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         }
 
         //Monta a consulta completa da grid do financeiro
-        String consultaPesquisaGridFinanceiro = String.format(CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO, ordenacao);
+        String consultaPesquisaGridFinanceiro = String.format(CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO_REVENDA, ordenacao);
 
         return pesquisar(filtro.getPaginacao(), consultaPesquisaGridFinanceiro, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
@@ -1302,7 +1330,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
     }
 
     @Override
-    public ResultadoPaginado<TransacaoConsolidada> pesquisarTransacoesFinanceiroFrota(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado) {
+    public ResultadoPaginado<AgrupamentoTransacaoConsolidadaFrotaVo> pesquisarTransacoesFinanceiroFrota(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
 
         parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataInicioPeriodo", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe())));
@@ -1328,18 +1356,18 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
 
         String ordenacao = " ";
         if(filtro.getPaginacao().getParametrosOrdenacaoColuna().isEmpty()) {
-            ordenacao = "CASE WHEN c.status = " + StatusPagamentoCobranca.VENCIDO.getValue() + " THEN 0 " +
-                    "WHEN tc.statusConsolidacao = " + StatusTransacaoConsolidada.FECHADA.getValue() + " AND c.status = " + StatusPagamentoCobranca.EM_ABERTO.getValue() + " AND tc.valorEmitidoNotaFiscal > 0 THEN 1 " +
-                    "ELSE 2 END, c.dataPagamento, c.dataVencimentoVigente ";
+            ordenacao = "CASE WHEN C.status = " + StatusPagamentoCobranca.VENCIDO.getValue() + " THEN 0 " +
+                    "WHEN TC.statusConsolidacao = " + StatusTransacaoConsolidada.FECHADA.getValue() + " AND C.status = " + StatusPagamentoCobranca.EM_ABERTO.getValue() + " AND SUM(TC.valorEmitidoNotaFiscal) > 0 THEN 1 " +
+                    "ELSE 2 END, C.dataPagamento, " + CLAUSULA_DATA_VENCIMENTO;
         } else {
-            String campoOrdenacao= "c.dataPagamento %s, c.dataVencimentoVigente ";
+            String campoOrdenacao= "C.dataPagamento %s, " + CLAUSULA_DATA_VENCIMENTO;
             String direcaoOrdenacao = filtro.getPaginacao().getParametrosOrdenacaoColuna().get(0).isDecrescente() ? " DESC" : " ";
             ordenacao = String.format(campoOrdenacao, direcaoOrdenacao);
         }
 
         String consultaPesquisaGridFinanceiro = String.format(CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO_FROTA, ordenacao);
 
-        return pesquisar(filtro.getPaginacao(), consultaPesquisaGridFinanceiro, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        return pesquisar(filtro.getPaginacao(), consultaPesquisaGridFinanceiro, AgrupamentoTransacaoConsolidadaFrotaVo.class, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
     @Override
