@@ -40,8 +40,8 @@ public class ParametroNotaFiscal implements IPersistente {
     private Integer localDestino;
 
     @NotNull
-    @Column(name = "ID_AGRAPADA")
-    private Boolean nfAgrupadas;
+    @Column(name = "ID_TIPO_AGRUPAMENTO")
+    private Integer nfTipoAgrupamento;
 
     @Size(max = 250)
     @Column(name = "NM_DADOS")
@@ -77,12 +77,12 @@ public class ParametroNotaFiscal implements IPersistente {
         this.localDestino = localDestino;
     }
 
-    public Boolean getNfAgrupadas() {
-        return nfAgrupadas;
+    public Integer getNfTipoAgrupamento() {
+        return nfTipoAgrupamento;
     }
 
-    public void setNfAgrupadas(Boolean nfAgrupadas) {
-        this.nfAgrupadas = nfAgrupadas;
+    public void setNfTipoAgrupamento(Integer nfTipoAgrupamento) {
+        this.nfTipoAgrupamento = nfTipoAgrupamento;
     }
 
     public String getDadosAdicionais() {
