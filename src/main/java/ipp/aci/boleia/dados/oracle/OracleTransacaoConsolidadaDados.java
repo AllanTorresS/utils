@@ -349,10 +349,19 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "FROM TransacaoConsolidada tc " +
                     "LEFT JOIN tc.frotaPtov fpv " +
                     "LEFT JOIN tc.cobranca c " +
+                    "JOIN tc.prazos tcp " +
                     "WHERE (fpv.frota.id = :idFrota OR :idFrota is null) " +
+                    "AND ((c.dataPagamento is null AND (c.dataVencimentoVigente >= :dataInicioPeriodo AND c.dataVencimentoVigente <= :dataFimPeriodo)) " +
+                    "OR (c.dataPagamento >= :dataInicioPeriodo AND c.dataPagamento <= :dataFimPeriodo)) " +
                     "AND (tc.valorTotalNotaFiscal <> 0 OR tc.quantidadeAbastecimentos <> 0) " +
                     "AND (tc.statusConsolidacao = :statusConsolidacao OR :statusConsolidacao is null) " +
-                    "AND (c.status = :statusPagamento OR :statusPagamento is null)" +
+                    "AND (c.status = :statusPagamento OR :statusPagamento is null) " +
+                    "GROUP BY " +
+                        "fpv.frota.id, " +
+                        "CASE " +
+                            "WHEN tcp.possuiPrazoAjuste = 1 THEN trunc(tcp.dataLimiteEmissaoNfe) " +
+                            "ELSE trunc(tc.dataFimPeriodo) " +
+                        "END " +
                     "ORDER BY %s ";
 
     private static final String CONSULTA_PONTOS_GRAFICO =
@@ -1305,8 +1314,16 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             parametros.add(new ParametroPesquisaIgual("idFrota", usuarioLogado.getFrota().getId()));
         }
 
-        if(filtro.getStatusCiclo() != null) {
+        if(filtro.getStatusCiclo() != null && filtro.getStatusCiclo().getValue() != null) {
+            parametros.add(new ParametroPesquisaIgual("statusConsolidacao", filtro.getStatusCiclo().getValue()));
+        } else {
+            parametros.add(new ParametroPesquisaIgual("statusConsolidacao", null));
+        }
 
+        if(filtro.getStatusPagamento() != null && filtro.getStatusPagamento().getValue() != null) {
+            parametros.add(new ParametroPesquisaIgual("statusPagamento", filtro.getStatusPagamento().getValue()));
+        } else {
+            parametros.add(new ParametroPesquisaIgual("statusPagamento", null));
         }
 
         String ordenacao = " ";
