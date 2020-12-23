@@ -623,11 +623,11 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     }
 
     /**
-     * Verifica se todos os abastecimentos do consolidado estão sem emissão de nota fiscal
+     * Verifica se todos os abastecimentos do consolidado possuem pendência de nota fiscal
      * @return True caso todas estejam sem emissão, false caso contrário
      */
     @Transient
-    public boolean todasTransacoesSemEmissaoNF() {
+    public boolean todasTransacoesPossuemPendenciaNF() {
         return getAutorizacoesPagamentoAssociadas().stream().allMatch(autorizacaoPagamento -> autorizacaoPagamento.isPendenteEmissaoNF(false));
     }
 
