@@ -622,4 +622,13 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
                         (autorizacaoPagamento.getValorTotal().compareTo(BigDecimal.ZERO) < 0) && existeCancelado && existeEstornado)));
     }
 
+    /**
+     * Verifica se todos os abastecimentos do consolidado possuem pendência de nota fiscal
+     * @return True caso todas estejam com pendência, false caso contrário
+     */
+    @Transient
+    public boolean todasTransacoesPossuemPendenciaNF() {
+        return getAutorizacoesPagamentoAssociadas().stream().allMatch(autorizacaoPagamento -> autorizacaoPagamento.isPendenteEmissaoNF(false));
+    }
+
 }
