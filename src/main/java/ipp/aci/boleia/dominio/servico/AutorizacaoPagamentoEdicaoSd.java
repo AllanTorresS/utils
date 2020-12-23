@@ -60,7 +60,7 @@ public class AutorizacaoPagamentoEdicaoSd {
      */
     public void alterarDadosAbastecimentoFrota(AutorizacaoPagamento abastecimento, Frota frota) {
         abastecimento.setFrota(frota);
-        abastecimento.setFrotaExigeNF(frota.exigeNotaFiscal());
+        abastecimento.setFrotaExigeNF(abastecimento.isFrotaExigeNF());
         abastecimento.setCnpjFrota(frota.getCnpj());
         abastecimento.setRazaoSocialFrota(frota.getNomeRazaoFrota());
     }
