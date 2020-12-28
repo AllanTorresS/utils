@@ -1,6 +1,9 @@
 package ipp.aci.boleia.dominio.enums;
 
+import java.util.HashMap;
+import java.util.Map;
 
+import ipp.aci.boleia.util.TemplatePlanilha;
 import ipp.aci.boleia.util.i18n.IEnumComLabel;
 
 /**
@@ -30,7 +33,7 @@ public enum TipoRelatorioMotorGerador implements IEnumComLabel<TipoRelatorioMoto
     RELATORIO_ABASTECIMENTOS_NO_PERIODO(19, obterMapaTemplatesAbastecimentosPeriodo()),
     RELATORIO_ATIVACAO_TAG(20, obterMapaTemplatesAtivacaoTag()),
     RELATORIO_GERAL_FROTA(21, obterMapaTemplatesFrotaGeral()),
-    RELATORIO_COBRANCA_CONECTCAR(22, obterMapaTemplatesCobrancaConectcar());
+    RELATORIO_COBRANCA_CONECTCAR(22, obterMapaTemplatesCobrancaConectcar()),
 	RELATORIO_UTILIZACAO_TAG(23, obterMapaTemplatesUtilizacaoTag()),
 	RELATORIO_REEMBOLSO_CONECTCAR(24, obterMapaTemplatesReembolsoConectcar());
 
