@@ -46,6 +46,7 @@ public class UtilitarioExcel {
     private static final String TIPO_DATA = "leitura.excel.tipo.data.label";
     private static final String TIPO_ENUM = "leitura.excel.tipo.enum.label";
     private static final String TIPO_EMAIL = "leitura.excel.tipo.email.label";
+    private static final String CELULA_VAZIA = "texto.comum.vazio";
 
     public static final String ERRO_VALIDACAO_INVALIDO = "leitura.excel.erro.validacao.invalido";
     public static final String ERRO_VALIDACAO_SUBTIPO = "leitura.excel.erro.validacao.tipoSubtipo";
@@ -87,8 +88,11 @@ public class UtilitarioExcel {
      * @param valor valor a ser inserido na célula
      */
     private void escreverCelula(Cell celula, String valor) {
-        if(valor != null) {
+        if(valor != null && !valor.isEmpty()) {
             celula.setCellValue(valor);
+        }
+        else {
+            celula.setCellValue(mensagens.obterMensagem(CELULA_VAZIA));
         }
     }
 
@@ -101,6 +105,8 @@ public class UtilitarioExcel {
     private void escreverCelula(Cell celula, Double valor) {
         if(valor != null) {
             celula.setCellValue(valor);
+        } else {
+            celula.setCellValue(mensagens.obterMensagem(CELULA_VAZIA));
         }
     }
 

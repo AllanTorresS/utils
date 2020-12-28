@@ -24,6 +24,7 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaAbastecimentoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFinanceiroVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFrotaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialFrotaVo;
@@ -76,6 +77,15 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
             "WHERE tc.cobranca.id = :idCobranca " +
             "     AND f.excluido = 0";
 
+    private static final String CONSULTA_FROTA_POR_COBRANCA_REEMBOLSO_CONSOLIDADO =
+    "SELECT DISTINCT f " +
+    "FROM TransacaoConsolidada tc " +
+    "JOIN tc.frotaPtov.frota f " +
+    "WHERE ((:idConsolidado IS NOT NULL AND tc.id = :idConsolidado) " +
+    "OR (:idCobranca IS NOT NULL AND tc.cobranca.id = :idCobranca) " +
+    "OR (:idReembolso IS NOT NULL AND tc.reembolso.id = :idReembolso)) " +
+    "     AND f.excluido = 0";
+
 
     private static final String CONSULTA_CLIENTE_PROFROTAS =
             "SELECT new ipp.aci.boleia.dominio.vo.apco.ClienteProFrotaVo(" +
@@ -108,6 +118,7 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
         povoarParametroIgual("id", filtro.getFrota() != null ? filtro.getFrota().getId() : null, parametros);
         povoarParametroLike("municipio", filtro.getCidade(), parametros);
         povoarParametroLike("unidadeFederativa", filtro.getUf() != null ? filtro.getUf().getName() : null, parametros);
+        povoarParametroIgual("usuarioAssessorResponsavel.id", filtro.getAssessor() != null ? filtro.getAssessor().getId() : null, parametros);
 
         if (filtro.getCnpj() != null) {
             parametros.add(new ParametroPesquisaIgual("cnpj", UtilitarioFormatacao.obterLongMascara(filtro.getCnpj())));
@@ -403,6 +414,16 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
     @Override
     public Frota obterPorCobranca(Long idCobranca) {
         return pesquisarUnico(CONSULTA_FROTA_POR_COBRANCA, new ParametroPesquisaIgual("idCobranca", idCobranca));
+    }
+
+    @Override
+    public Frota obterPorConsolidadoCobrancaOuReembolso(FiltroPesquisaAbastecimentoVo filtro) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaIgual("idConsolidado", filtro.getIdConsolidado()));
+        parametros.add(new ParametroPesquisaIgual("idCobranca", filtro.getIdCobranca()));
+        parametros.add(new ParametroPesquisaIgual("idReembolso", filtro.getIdReembolso()));
+
+        return pesquisarUnicoSemIsolamentoDados(CONSULTA_FROTA_POR_COBRANCA_REEMBOLSO_CONSOLIDADO,parametros.toArray(new ParametroPesquisa[parametros.size()])); 
     }
 
     @Override

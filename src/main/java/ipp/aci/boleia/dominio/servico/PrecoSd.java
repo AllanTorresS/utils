@@ -31,10 +31,13 @@ import java.util.Set;
 public class PrecoSd {
 
     @Autowired
-    private IPrecoDados repositorioPreco;
+    private PrecoNegociadoSd precoNegociadoSd;
 
     @Autowired
     private IPrecoBaseDados repositorioPrecoBase;
+
+    @Autowired
+    private IPrecoDados repositorioPreco;
 
     @Autowired
     private IFrotaPontoVendaDados frotaPtovDados;
@@ -103,7 +106,7 @@ public class PrecoSd {
             if(!somenteNovos){
                 BigDecimal descontoVigente = preco.getDescontoVigente();
 
-                preco.sairDeVigencia();
+                preco = precoNegociadoSd.sairDeVigencia(preco, precoBase.getDataAtualizacao());
                 repositorioPreco.armazenarSemIsolamentoDeDados(preco);
 
                 preco = new Preco();
@@ -113,6 +116,7 @@ public class PrecoSd {
                 preco.setPreco(descontoVigente != null ? precoBase.getPreco().add(descontoVigente) : precoBase.getPreco());
                 preco.setPrecoBase(precoBase);
                 preco.setDataAtualizacao(precoBase.getDataAtualizacao());
+                preco.setDataVigencia(precoBase.getDataAtualizacao());
 
                 repositorioPreco.armazenarSemIsolamentoDeDados(preco);
             }
@@ -146,6 +150,7 @@ public class PrecoSd {
             preco.setPrecoBase(precoBase);
             preco.setPreco(precoBase.getPreco());
             preco.setDataAtualizacao(precoBase.getDataAtualizacao());
+            preco.setDataVigencia(precoBase.getDataAtualizacao());
             repositorioPreco.armazenarSemIsolamentoDeDados(preco);
             idFrotas.add(frotaPtov.getFrota().getId());
         }
@@ -180,32 +185,6 @@ public class PrecoSd {
         preco.entrarEmVigencia(ambiente.buscarDataAmbiente(), true);
         preco = repositorioPrecoBase.armazenarSemIsolamentoDeDados(preco);
         return propagarAtualizacaoPrecoBase(preco);
-    }
-
-
-    /**
-     * Aplica novo preco vigente ou já em aceite, conforme o novo acordo recém aceitado
-     * e gera registro de histórico do preço vigente anterior ao aceite.
-     *
-     * @param precoAtual preco que sera alterado.
-     * @param automatico flag indicando se o aceite foi automatico
-     */
-    public void aceitarNovoAcordo(Preco precoAtual, Boolean automatico) {
-        Preco novoPreco = new Preco();
-        novoPreco.setPreco(precoAtual.getPreco());
-        novoPreco.setDataAtualizacao(precoAtual.getDataAtualizacao());
-        novoPreco.setDescontoSolicitado(precoAtual.getDescontoSolicitado());
-        novoPreco.setDescontoVigente(precoAtual.getDescontoVigente());
-        novoPreco.setFrotaPtov(precoAtual.getFrotaPtov());
-        novoPreco.setPrecoBase(precoAtual.getPrecoBase());
-        novoPreco.setJustificativa(precoAtual.getJustificativa());
-        novoPreco.setVolumeEstimado(precoAtual.getVolumeEstimado());
-        novoPreco.setDataSolicitacao(precoAtual.getDataSolicitacao());
-        novoPreco.setStatus(precoAtual.getStatus());
-        precoAtual.setStatus(StatusPreco.HISTORICO.getValue());
-        repositorioPreco.armazenar(precoAtual);
-        novoPreco.aceitarDesconto(ambiente.buscarDataAmbiente(), automatico);
-        repositorioPreco.armazenar(novoPreco);
     }
 
     /**

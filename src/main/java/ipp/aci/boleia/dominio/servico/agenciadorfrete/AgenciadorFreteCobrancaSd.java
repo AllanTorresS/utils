@@ -2,7 +2,6 @@ package ipp.aci.boleia.dominio.servico.agenciadorfrete;
 
 import ipp.aci.boleia.dominio.agenciadorfrete.AgenciadorFreteCobranca;
 import ipp.aci.boleia.dominio.agenciadorfrete.Consolidado;
-import ipp.aci.boleia.dominio.agenciadorfrete.Transacao;
 import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
 import org.springframework.stereotype.Component;
@@ -23,7 +22,7 @@ public class AgenciadorFreteCobrancaSd {
      * @return o desconto do saque
      */
     public BigDecimal obterDescontoSaque(List<Consolidado> consolidados) {
-        return consolidados.stream().flatMap(c -> c.getTransacoes().stream().filter(Transacao::temSaque))
+        return consolidados.stream().flatMap(c -> c.getTransacoes().stream().filter(t -> t.getSaque() != null))
                 .map(t -> t.getSaque().getTaxaAgenciadorFrete())
                 .reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
     }
@@ -45,7 +44,7 @@ public class AgenciadorFreteCobrancaSd {
      * @return o valor total do saque
      */
     public BigDecimal obterValorTotalSaque(Consolidado consolidado) {
-        return consolidado.getTransacoes().stream().filter(Transacao::temSaque)
+        return consolidado.getTransacoes().stream().filter(t->t.getSaque() != null)
                 .map(t -> t.getSaque().getValorSolicitado())
                 .reduce(BigDecimal::add)
                 .orElse(BigDecimal.ZERO);
@@ -57,7 +56,7 @@ public class AgenciadorFreteCobrancaSd {
      * @return o valor total do saque
      */
     public BigDecimal obterValorTotalSaque(List<Consolidado> consolidados) {
-        return  consolidados.stream().flatMap(c -> c.getTransacoes().stream().filter(Transacao::temSaque))
+        return  consolidados.stream().flatMap(c -> c.getTransacoes().stream().filter(t-> t.getSaque() != null))
                 .map(t -> t.getSaque().getValorSolicitado())
                 .reduce(BigDecimal::add)
                 .orElse(BigDecimal.ZERO);

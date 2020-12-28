@@ -7,27 +7,29 @@ import ipp.aci.boleia.util.i18n.IEnumComLabel;
  */
 public enum TipoDashboard implements IEnumComLabel<TipoDashboard> {
 
-    NENHUM(-1, null),
-    INTERNO_SIMPLES(0, TipoPerfilUsuario.INTERNO.getValue()),
-    INTERNO_GERAL(1, TipoPerfilUsuario.INTERNO.getValue()),
-    COMERCIAL(2, TipoPerfilUsuario.INTERNO.getValue()),
-    FINANCEIRO(3, TipoPerfilUsuario.INTERNO.getValue()),
-    FROTA(4, TipoPerfilUsuario.FROTA.getValue()),
-    REVENDA(5, TipoPerfilUsuario.REVENDA.getValue());
+    NENHUM(-1, null, false),
+    INTERNO_SIMPLES(0, TipoPerfilUsuario.INTERNO.getValue(), false),
+    INTERNO_GERAL(1, TipoPerfilUsuario.INTERNO.getValue(), false),
+    COMERCIAL(2, TipoPerfilUsuario.INTERNO.getValue(), true),
+    FINANCEIRO(3, TipoPerfilUsuario.INTERNO.getValue(), false),
+    FROTA(4, TipoPerfilUsuario.FROTA.getValue(), false),
+    REVENDA(5, TipoPerfilUsuario.REVENDA.getValue(), false);
 
     public static final String DECODE_FORMULA = "DECODE(ID_TIPO_DASHBOARD, -1, 'Nenhum', 0, 'Interno Simples', 1, 'Interno Geral', 2, 'Comercial', 3, 'Financeiro', 4, 'Frota', 5, 'Revenda')";
 
     private final Integer value;
     private final Long tipoPerfil;
+    private final Boolean assessor;
 
     /**
      * Construtor
      *
      * @param value O valor do enum
      */
-    TipoDashboard(final Integer value, final Long tipoPerfil) {
+    TipoDashboard(final Integer value, final Long tipoPerfil, final Boolean assessor) {
         this.value = value;
         this.tipoPerfil = tipoPerfil;
+        this.assessor = assessor;
     }
 
     /**
@@ -41,6 +43,10 @@ public enum TipoDashboard implements IEnumComLabel<TipoDashboard> {
 
     public Long getTipoPerfil() {
         return tipoPerfil;
+    }
+
+    public Boolean isAssessor() {
+        return assessor;
     }
 
     /**

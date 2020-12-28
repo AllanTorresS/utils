@@ -11,7 +11,9 @@ import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgualIgnoreCase;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDiferente;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaRotaVo;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.apache.commons.collections4.CollectionUtils;
@@ -58,8 +60,8 @@ public class OracleRotaDados extends OracleRepositorioBoleiaDados<Rota> implemen
             " JOIN ponto.rota rota " + 
             " JOIN ponto.pontoVenda pontoVenda " +
             " JOIN rota.frota frota " +
-            " WHERE " + 
-            "     pontoVenda.id = :idPontoVenda " + 
+            " WHERE " +
+            "     pontoVenda.id = :idPontoVenda " +
             "     AND frota.id = :idFrota";
 
     private static final String NOME_ORIGEM_DESTINO = " CONCAT( " +
@@ -104,8 +106,8 @@ public class OracleRotaDados extends OracleRepositorioBoleiaDados<Rota> implemen
                     "    ) " +
                     "    AND (:quantidadePvs IS NULL OR " + COUNT_PVS + " > 0) " +
                     "    AND (:nome IS NULL OR LOWER(" + removerAcentosCampo("r.nome") + ") like :nome) " +
-                    "    AND (:idFrota IS NULL OR f.id = :idFrota) " +
                     "    AND (r.excluido = 0) " +
+                    "    AND ((:possuiListaFrota = false AND (:idFrota IS NULL OR f.id = :idFrota)) OR (:possuiListaFrota = true AND f.id in (:idFrotasAssociadas))) " +
                     "    AND r.planoViagem IS NULL " +
                     "    %s %s ";
 
@@ -134,9 +136,21 @@ public class OracleRotaDados extends OracleRepositorioBoleiaDados<Rota> implemen
         params.add(new ParametroPesquisaLike("nomeOrigem", StringUtils.isNotBlank(filtro.getOrigem()) ? filtro.getOrigem() : null));
         params.add(new ParametroPesquisaLike("nome", StringUtils.isNotBlank(filtro.getNome()) ? filtro.getNome() : null));
         params.add(new ParametroPesquisaIgual("idPontoVenda", filtro.getPontoVenda() != null ? filtro.getPontoVenda().getId() : null));
-
         Usuario usuario = ambiente.getUsuarioLogado();
-        params.add(new ParametroPesquisaIgual("idFrota", usuario.getTipoPerfil().isFrotista() ? usuario.getFrota().getId() : null));
+        if(usuario.getTipoPerfil().isInterno() && !usuario.possuiFrotasAssociadas()){
+            params.add(new ParametroPesquisaDiferente("idFrota", null));
+            params.add(new ParametroPesquisaIn("idFrotasAssociadas",null));
+            params.add(new ParametroPesquisaIgual("possuiListaFrota", false));
+        }
+        if(usuario.getTipoPerfil().isFrotista()){
+            params.add(new ParametroPesquisaIgual("idFrota", usuario.getFrota().getId()));
+            params.add(new ParametroPesquisaIgual("idFrotasAssociadas", null));
+            params.add(new ParametroPesquisaIgual("possuiListaFrota", false));
+        } else if(usuario.getTipoPerfil().isInterno() && usuario.possuiFrotasAssociadas()){
+            params.add(new ParametroPesquisaIn("idFrotasAssociadas",usuario.listarIdsFrotasAssociadas()));
+            params.add(new ParametroPesquisaIgual("idFrota", null));
+            params.add(new ParametroPesquisaIgual("possuiListaFrota", true));
+        }
 
         ResultadoPaginado<Object[]> resultadoBruto = pesquisar(filtro.getPaginacao(), montarClausulaOrdenacaoDinamica(filtro), Object[].class, params.toArray(new ParametroPesquisa[params.size()]));
         return mapearResultadoPesquisa(resultadoBruto);

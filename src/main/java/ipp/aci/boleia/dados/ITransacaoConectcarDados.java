@@ -1,14 +1,14 @@
 package ipp.aci.boleia.dados;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-
 import ipp.aci.boleia.dominio.TransacaoConectcar;
 import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaTransacaoConsolidadaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaUtilizacaoTagVo;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Contrato para implementacao de repositorios de consolidações de Transacao Conectcar Consolidada
@@ -48,15 +48,15 @@ public interface ITransacaoConectcarDados extends IRepositorioBoleiaDados<Transa
 	 * Obtem uma transacao por um código de transação da conectcar
 	 * 
 	 * @param codigoTransacaoConectcar Código de transação da conectCar
-	 * @return
+	 * @return Transação da ConnectCar
 	 */
 	TransacaoConectcar obterTransacoesPorIdConectcar(Long codigoTransacaoConectcar);
 	
 	/**
 	 * Obtem as transações de uma cobrança
 	 * 
-	 * @param idCobranca
-	 * @return
+	 * @param idCobranca Identificador da cobrança para listar as transações
+	 * @return Lista das transações relacionadas à cobrança informada
 	 */
 	List<TransacaoConectcar> obterTransacoesPorCobranca(Long idCobranca);
 
@@ -85,7 +85,6 @@ public interface ITransacaoConectcarDados extends IRepositorioBoleiaDados<Transa
      * Executa a consulta de registros baseado em um filtro de pesquisa
      *
      * @param filtro parâmetros utilizados na consulta
-     * @param usuarioLogado usuario logado que solicita a pesquisa
      * @return lista de registros encontrados
      */
     ResultadoPaginado<TransacaoConectcar> pesquisarUtilizacaoTag(FiltroPesquisaUtilizacaoTagVo filtro);

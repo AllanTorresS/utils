@@ -2,7 +2,7 @@ package ipp.aci.boleia.dominio.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import ipp.aci.boleia.dominio.enums.TipoPerfilUsuario;
-import ipp.aci.boleia.dominio.pesquisa.comum.BaseFiltroPaginado;
+import ipp.aci.boleia.dominio.pesquisa.comum.FiltroBasePeriodoPaginado;
 
 import java.util.Date;
 import java.util.List;
@@ -10,14 +10,12 @@ import java.util.List;
 /**
  * Filtro para pesquisa de abastecimento
  */
-public class FiltroPesquisaAbastecimentoVo extends BaseFiltroPaginado {
+public class FiltroPesquisaAbastecimentoVo extends FiltroBasePeriodoPaginado {
 
     private Long idConsolidado;
     private boolean considerarPostergados;
     private Long idCobranca;
     private Long idReembolso;
-    private Date de;
-    private Date ate;
     private Date requisicaoDe;
     private Date requisicaoAte;
     private Date processamentoDe;
@@ -26,6 +24,7 @@ public class FiltroPesquisaAbastecimentoVo extends BaseFiltroPaginado {
     private String placa;
     private EnumVo statusAutorizacao;
     private EntidadeVo frota;
+    private List<Long> idsFrotas;
     private EntidadeVo pontoDeVenda;
     private List<Long> idsPontoVenda;
     private boolean contingencia;
@@ -42,6 +41,7 @@ public class FiltroPesquisaAbastecimentoVo extends BaseFiltroPaginado {
     private Boolean apenasEstornos;
     private TipoPerfilUsuario tipoPerfilUsuario;
     private Boolean apenasAjustados;
+    private String identificadorInterno;
 
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss.SSSZ")
     private Date dataHoraProcessamentoDe;
@@ -55,22 +55,6 @@ public class FiltroPesquisaAbastecimentoVo extends BaseFiltroPaginado {
 
     public void setDataAbastecimento(Date dataAbastecimento) {
         this.dataAbastecimento = dataAbastecimento;
-    }
-
-    public Date getDe() {
-        return de;
-    }
-
-    public void setDe(Date de) {
-        this.de = de;
-    }
-
-    public Date getAte() {
-        return ate;
-    }
-
-    public void setAte(Date ate) {
-        this.ate = ate;
     }
 
     public String getPlaca() {
@@ -95,6 +79,14 @@ public class FiltroPesquisaAbastecimentoVo extends BaseFiltroPaginado {
 
     public void setFrota(EntidadeVo frota) {
         this.frota = frota;
+    }
+
+    public List<Long> getIdsFrotas() {
+        return idsFrotas;
+    }
+
+    public void setIdsFrotas(List<Long> idsFrotas) {
+        this.idsFrotas = idsFrotas;
     }
 
     public EntidadeVo getPontoDeVenda() {
@@ -292,4 +284,8 @@ public class FiltroPesquisaAbastecimentoVo extends BaseFiltroPaginado {
     public Boolean isApenasAjustados() { return apenasAjustados; }
 
     public void setApenasAjustados(Boolean apenasAjustados) { this.apenasAjustados = apenasAjustados; }
+
+    public String getIdentificadorInterno() { return identificadorInterno; }
+
+    public void setIdentificadorInterno(String identificadorInterno) {this.identificadorInterno = identificadorInterno;}
 }
