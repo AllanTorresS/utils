@@ -350,7 +350,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             "ELSE trunc(TC.dataFimPeriodo) " +
             "END ";
 
-    private static final String CLAUSULA_STATUS_PAGAMENTO = "CASE WHEN C is null THEN " + StatusPagamentoCobranca.EM_ABERTO.getValue() + " ELSE C.status END ";
+    private static final String CLAUSULA_STATUS_PAGAMENTO = "CASE WHEN C is null THEN " + StatusPagamentoCobranca.A_VENCER.getValue() + " ELSE C.status END ";
 
     private static final String CLAUSULA_DATA_VENCIMENTO = "CASE WHEN C is not null THEN C.dataVencimentoVigente ELSE TCP.dataLimitePagamento END ";
 
@@ -373,6 +373,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "LEFT JOIN TC.frotaPtov FPV " +
                     "LEFT JOIN FPV.frota F " +
                     "LEFT JOIN TC.cobranca C " +
+                    "LEFT JOIN TC.empresaAgregada EA " +
+                    "LEFT JOIN TC.unidade U	" +
                     "JOIN TC.prazos TCP " +
                     "WHERE (F.id = :idFrota OR :idFrota is null) " +
                     "AND ((TC.dataInicioPeriodo >= :dataInicioPeriodo AND TC.dataFimPeriodo <= :dataFimPeriodo) OR (TC.dataFimPeriodo >= :dataInicioPeriodo AND TC.dataInicioPeriodo <= :dataFimPeriodo)) " +
@@ -1357,7 +1359,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         String ordenacao = " ";
         if(filtro.getPaginacao().getParametrosOrdenacaoColuna().isEmpty()) {
             ordenacao = "CASE WHEN C.status = " + StatusPagamentoCobranca.VENCIDO.getValue() + " THEN 0 " +
-                    "WHEN TC.statusConsolidacao = " + StatusTransacaoConsolidada.FECHADA.getValue() + " AND C.status = " + StatusPagamentoCobranca.EM_ABERTO.getValue() + " AND SUM(TC.valorEmitidoNotaFiscal) > 0 THEN 1 " +
+                    "WHEN TC.statusConsolidacao = " + StatusTransacaoConsolidada.FECHADA.getValue() + " AND C.status = " + StatusPagamentoCobranca.A_VENCER.getValue() + " AND SUM(TC.valorEmitidoNotaFiscal) > 0 THEN 1 " +
                     "ELSE 2 END, C.dataPagamento, " + CLAUSULA_DATA_VENCIMENTO;
         } else {
             String campoOrdenacao= "C.dataPagamento %s, " + CLAUSULA_DATA_VENCIMENTO;
@@ -1385,6 +1387,11 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
 
         BigDecimal totalReembolso = pesquisarUnicoSemIsolamentoDados(CONSULTA_TOTAL_REEMBOLSO_PERIODO, parametros.toArray(new ParametroPesquisa[parametros.size()]));
         return totalReembolso != null ? totalReembolso : BigDecimal.ZERO;
+    }
+
+    @Override
+    public ResultadoPaginado<TransacaoConsolidada> pesquisarConsolidadosFinanceiroFrota(FiltroPesquisaFinanceiroVo filtro) {
+        return null;
     }
 
     /**
