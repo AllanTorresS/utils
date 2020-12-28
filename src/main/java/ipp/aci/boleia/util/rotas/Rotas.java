@@ -126,6 +126,7 @@ public final  class Rotas {
     public static final  String CREDENCIAMENTO_POSTO_API             = BASE_API + "/credenciamentoPosto";
     public static final  String POSTO_CREDENCIADO_API                = BASE_API + "/postoCredenciado";
     public static final  String DOCUMENTO_API                        = BASE_API + "/documento";
+    public static final  String PARAMETRO_NF_API                     = BASE_API + "/parametro-nf";
     public static final  String CREDENCIAMENTO_FROTA_API             = BASE_API + "/credenciamentoFrota";
     public static final  String DASHBOARD_CONECTCAR_API              = BASE_API + "/dashboardConectcar";
     public static final  String PEDIDO_TAG_API                       = BASE_API + "/pedidoTag";
