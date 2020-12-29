@@ -303,6 +303,16 @@ public enum TipoRelatorioMotorGerador implements IEnumComLabel<TipoRelatorioMoto
     private static Map<TipoPerfilUsuario, TemplatePlanilha> obterMapaTemplatesFinanceiroRevenda() {
         Map<TipoPerfilUsuario, TemplatePlanilha> mapa = new HashMap<>();
         mapa.put(TipoPerfilUsuario.REVENDA, TemplatePlanilha.TEMPLATE_RELATORIO_FINANCEIRO_REVENDA);
+        return mapa;
+    }
+
+    /**
+     * Gera um mapa de templates por perfil para um tipo de relatório (financeiro - frota)
+     *
+     * @return O mapa criado
+     */
+    private static Map<TipoPerfilUsuario, TemplatePlanilha> obterMapaTemplatesFinanceiroFrota() {
+        Map<TipoPerfilUsuario, TemplatePlanilha> mapa = new HashMap<>();
         mapa.put(TipoPerfilUsuario.FROTA, TemplatePlanilha.TEMPLATE_RELATORIO_FINANCEIRO_FROTA);
         return mapa;
     }
