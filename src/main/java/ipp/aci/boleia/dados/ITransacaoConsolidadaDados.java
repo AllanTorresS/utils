@@ -281,11 +281,4 @@ public interface ITransacaoConsolidadaDados extends IRepositorioBoleiaDados<Tran
      * @return O valor cobrado
      */
     BigDecimal obterTotalCobrancaPeriodo(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado);
-
-    /**
-     * Pesquisa os consolidados dentro de um período estipulado
-     * @param filtro O filtro fornecido
-     * @return A lista de transações encontradas
-     */
-    ResultadoPaginado<TransacaoConsolidada> pesquisarConsolidadosFinanceiroFrota(FiltroPesquisaFinanceiroVo filtro);
 }

@@ -1389,11 +1389,6 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         return totalReembolso != null ? totalReembolso : BigDecimal.ZERO;
     }
 
-    @Override
-    public ResultadoPaginado<TransacaoConsolidada> pesquisarConsolidadosFinanceiroFrota(FiltroPesquisaFinanceiroVo filtro) {
-        return null;
-    }
-
     /**
      *  Popula os parâmetros de pesquisa em comum entre as duas consultas de box do financeiro
      * @param parametrosPesquisa A lista de parâmetros
