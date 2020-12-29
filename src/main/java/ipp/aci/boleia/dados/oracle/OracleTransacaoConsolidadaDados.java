@@ -1355,20 +1355,36 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             parametros.add(new ParametroPesquisaIgual("statusPagamento", null));
         }
 
-        String ordenacao = " ";
-        if(filtro.getPaginacao().getParametrosOrdenacaoColuna().isEmpty()) {
-            ordenacao = "CASE WHEN C.status = " + StatusPagamentoCobranca.VENCIDO.getValue() + " THEN 0 " +
-                    "WHEN TC.statusConsolidacao = " + StatusTransacaoConsolidada.FECHADA.getValue() + " AND C.status = " + StatusPagamentoCobranca.A_VENCER.getValue() + " AND SUM(TC.valorEmitidoNotaFiscal) > 0 THEN 1 " +
-                    "ELSE 2 END, C.dataPagamento, " + CLAUSULA_DATA_VENCIMENTO;
-        } else {
-            String campoOrdenacao= "C.dataPagamento %s, " + CLAUSULA_DATA_VENCIMENTO;
-            String direcaoOrdenacao = filtro.getPaginacao().getParametrosOrdenacaoColuna().get(0).isDecrescente() ? " DESC" : " ";
-            ordenacao = String.format(campoOrdenacao, direcaoOrdenacao);
-        }
+        String ordenacao = criarParametroOrdenacaoFinanceiroFrota(filtro.getPaginacao().getParametrosOrdenacaoColuna());
 
         String consultaPesquisaGridFinanceiro = String.format(CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO_FROTA, ordenacao);
 
         return pesquisar(filtro.getPaginacao(), consultaPesquisaGridFinanceiro, AgrupamentoTransacaoConsolidadaFrotaVo.class, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+    /**
+     * Cria parâmetro de ordenação em caso de manipulação de ordenação do grid
+     * @param parametrosOrdenacaoColuna O parâmetro de ordenação
+     * @return A cláusula de ordenação criada
+     */
+    private String criarParametroOrdenacaoFinanceiroFrota(List<ParametroOrdenacaoColuna> parametrosOrdenacaoColuna) {
+        if(parametrosOrdenacaoColuna != null && parametrosOrdenacaoColuna.isEmpty()) {
+            return "CASE WHEN C.status = " + StatusPagamentoCobranca.VENCIDO.getValue() + " THEN 0 " +
+                    "WHEN TC.statusConsolidacao = " + StatusTransacaoConsolidada.FECHADA.getValue() + " AND C.status = " + StatusPagamentoCobranca.A_VENCER.getValue() + " AND SUM(TC.valorEmitidoNotaFiscal) > 0 THEN 1 " +
+                    "ELSE 2 END ";
+        } else if (parametrosOrdenacaoColuna != null && !parametrosOrdenacaoColuna.isEmpty()) {
+            String nomeColunaStatusCiclo = "statusConsolidacao";
+            String direcaoOrdenacao = (parametrosOrdenacaoColuna.get(0).isDecrescente() ? "DESC" : "ASC");
+            if (nomeColunaStatusCiclo.equals(parametrosOrdenacaoColuna.get(0).getNome())) {
+                return "CASE WHEN TC.statusConsolidacao = " + StatusTransacaoConsolidada.EM_ABERTO.getValue() + " THEN 1 " +
+                        "WHEN TC.statusConsolidacao = " + StatusTransacaoConsolidada.EM_AJUSTE.getValue() + " THEN 2 " +
+                        "ELSE 3 END " + direcaoOrdenacao;
+            }
+            else {
+                return "TC.dataFimPeriodo " + direcaoOrdenacao;
+            }
+        }
+        return "TC.dataFimPeriodo ASC";
     }
 
     @Override
