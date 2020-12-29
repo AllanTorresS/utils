@@ -417,6 +417,9 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     @Column(name="ID_UNIDADE_EXIGE_NF")
     private Boolean unidadeExigeNf;
 
+    @Column(name = "ID_FROTA_EXIGE_NF")
+    private boolean frotaExigeNF;
+
     @Max(99999999L)
     @Column(name = "CD_PTOV_ABADI")
     private Long numeroAbadiPv;
@@ -1315,6 +1318,14 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
         this.unidadeExigeNf = unidadeExigeNf;
     }
 
+    public boolean isFrotaExigeNF() {
+        return frotaExigeNF;
+    }
+
+    public void setFrotaExigeNF(boolean frotaExigeNF) {
+        this.frotaExigeNF = frotaExigeNF;
+    }
+
     public Long getNumeroAbadiPv() {
         return numeroAbadiPv;
     }
@@ -1711,7 +1722,7 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
      */
     @Transient
     public boolean exigeEmissaoNF() {
-        return frota.exigeNotaFiscal() || unidadePossuiExigenciaNF() || empresaAgregadaPossuiExigenciaNF();
+        return isFrotaExigeNF() || unidadePossuiExigenciaNF() || empresaAgregadaPossuiExigenciaNF();
     }
 
     /**
