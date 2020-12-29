@@ -90,7 +90,7 @@ public class FiltroPesquisaFrotaVo extends BaseFiltroPaginado {
     public void setAssessor(EntidadeVo assessor) {
         this.assessor = assessor;
     }
-	
+
 	public Boolean getPossuiCondicaoComercialConectcar() {
 		return possuiCondicaoComercialConectcar;
 	}
@@ -106,4 +106,5 @@ public class FiltroPesquisaFrotaVo extends BaseFiltroPaginado {
 	public void setStatusConectcar(EnumVo statusConectcar) {
 		this.statusConectcar = statusConectcar;
 	}
+
 }

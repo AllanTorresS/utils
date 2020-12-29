@@ -1,6 +1,10 @@
 package ipp.aci.boleia.dados;
 
+import ipp.aci.boleia.dominio.Frota;
+import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.Preco;
+import ipp.aci.boleia.dominio.TipoCombustivel;
+import ipp.aci.boleia.dominio.enums.StatusPreco;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaPrecoVo;
 
@@ -48,9 +52,35 @@ public interface IPrecoDados extends IRepositorioBoleiaDados<Preco> {
     Preco obterPorDataFrotaPvCombustivel(Long idFrota, Long idPontoVenda, Long idTipoCombustivel, Date dataAbastecimento);
 
     /**
-     * Obtem precos em negociacao novos ou pendentes cuja data expirou em relação a solicitacao
-     * @param dataCorte minima aceita para aprovar
-     * @return Precos novos ou pendentes que estao apos a data
+     * Busca os preços negociados cuja data expirou em relação a solicitação de alteração
+     * @param dataCorte Data minima aceita para aprovação
+     * @return Preços em negociação que estão após a data
      */
-    List<Preco> buscarAcordosNovosOuPendentesParaVigenciaAutomatica(Date dataCorte);
+    List<Preco> obterParaVigenciaAutomatica(Date dataCorte);
+
+    /**
+     * Busca os preços negociados agendados cuja data de vigência é anterior à atual
+     * @return Preços em negociação que devem entrar em vigência
+     */
+    List<Preco> obterAgendamentosParaVigenciaAutomatica();
+
+    /**
+     * Busca o preco pendente ou novo para um determinado PontoVenda, Frota e tipo combustivel
+     * @param frota a Frota a ser filtrada
+     * @param posto O Ponto de Venda a ser filtrado
+     * @param tipoCombustivel O id do tipo de combustivel
+     * @param status Lista de status a serem filtrados
+     * @return O preco pendente ou novo, caso exista
+     */
+    List<Preco> obterPrecos(Frota frota, PontoDeVenda posto, TipoCombustivel tipoCombustivel, List<StatusPreco> status);
+
+    /**
+     * Busca o preco agendado a partir de uma data de vigência para um determinado PontoVenda,Frota e tipo combustível
+     * @param idFrota O id da Frota a ser filtrada
+     * @param idPosto O id do Ponto de Venda a ser filtrado
+     * @param idTipoCombustivel O id do tipo de combustivel
+     * @param dataVigencia A data de vigência
+     * @return O preco agendado
+     */
+    Preco obterAgendamentoPorFrotaPvCombustivelDataVigencia(Long idFrota, Long idPosto, Long idTipoCombustivel, Date dataVigencia);
 }

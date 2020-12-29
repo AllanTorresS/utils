@@ -17,6 +17,7 @@ import ipp.aci.boleia.dominio.vo.EnumVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaMediaConsumoVo;
 import ipp.aci.boleia.dominio.vo.MediaConsumoVo;
 import ipp.aci.boleia.dominio.vo.VolumeAbastecidoTipoCombustivelVo;
+import ipp.aci.boleia.util.UtilitarioFormatacao;
 import ipp.aci.boleia.util.negocio.ParametrosPesquisaBuilder;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 
@@ -43,12 +44,6 @@ import static ipp.aci.boleia.util.UtilitarioCalculoData.obterUltimoInstanteDia;
 public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<AutorizacaoPagamento> implements IMediaConsumoDados {
     @Autowired
     private UtilitarioAmbiente utilitarioAmbiente;
-    
-    private static final String REMOVER_ACENTO = "TRANSLATE( %s, " +
-            "'âãäåāăąÁÂÃÄÅĀĂĄèééêëēĕėęěĒĔĖĘĚìíîïìĩīĭÌÍÎÏÌĨĪĬóôõöōŏőÒÓÔÕÖŌŎŐùúûüũūŭůÙÚÛÜŨŪŬŮ'," +
-            "'aaaaaaaaaaaaaaaeeeeeeeeeeeeeeeiiiiiiiiiiiiiiiiooooooooooooooouuuuuuuuuuuuuuuu')";
-
-    private static final String TO_LOWER = "LOWER(%s)";
 
     private static final String QUERY_PESQUISAR_MEDIA_CONSUMO_MOTORISTA =
             "SELECT new ipp.aci.boleia.dominio.vo.MediaConsumoVo(" +
@@ -79,7 +74,7 @@ public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<Autori
                     "a.status = " + StatusAutorizacao.AUTORIZADO.getValue() + " AND " +
                     "a.dataRequisicao BETWEEN :de and :ate AND " +
                     "( :idFrota IS NULL OR a.frota.id = :idFrota) AND " +
-                    "( :motorista IS NULL OR " + String.format(TO_LOWER, String.format(REMOVER_ACENTO, "a.nomeMotorista")) + " LIKE :motorista OR cast(a.cpfMotorista as string) LIKE :motorista) AND " +
+                    "( :motorista IS NULL OR " + String.format(UtilitarioFormatacao.TO_LOWER, String.format(UtilitarioFormatacao.REMOVER_ACENTO, "a.nomeMotorista")) + " LIKE :motorista OR cast(a.cpfMotorista as string) LIKE :motorista) AND " +
                     "( :motoristaClassificacao IS NULL " +
                     "OR :motoristaClassificacao = " + ClassificacaoAgregado.AGREGADO.getValue() + " AND a.cnpjEmpresaMotorista IS NOT NULL " +
                     "OR :motoristaClassificacao = " + ClassificacaoAgregado.PROPRIO.getValue() + " AND a.cnpjEmpresaMotorista IS NULL) AND " +
@@ -147,7 +142,7 @@ public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<Autori
                     "(a.valorUnitarioAbastecimento IS NULL or a.valorUnitarioAbastecimento >= 0) AND " +
                     "a.dataRequisicao BETWEEN :de and :ate AND " +
                     "( :idFrota IS NULL OR a.frota.id = :idFrota) AND " +
-                    "( :placa IS NULL OR " + String.format(TO_LOWER, String.format(REMOVER_ACENTO, "a.placaVeiculo")) + " LIKE :placa ) AND " +
+                    "( :placa IS NULL OR " + String.format(UtilitarioFormatacao.TO_LOWER, String.format(UtilitarioFormatacao.REMOVER_ACENTO, "a.placaVeiculo")) + " LIKE :placa ) AND " +
                     "( :veiculoClassificacao IS NULL " +
                     "OR :veiculoClassificacao = " + ClassificacaoAgregado.AGREGADO.getValue() + " AND a.cnpjEmpresaVeiculo IS NOT NULL " +
                     "OR :veiculoClassificacao = " + ClassificacaoAgregado.PROPRIO.getValue() + " AND a.cnpjEmpresaVeiculo IS NULL) AND " +
@@ -174,7 +169,7 @@ public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<Autori
                     "(a.valorUnitarioAbastecimento IS NULL or a.valorUnitarioAbastecimento >= 0) AND " +
                     "a.dataRequisicao BETWEEN :de and :ate AND " +
                     "( :idFrota IS NULL OR a.frota.id = :idFrota) AND " +
-                    "( :placa IS NULL OR " + String.format(TO_LOWER, String.format(REMOVER_ACENTO, "a.placaVeiculo")) + " LIKE :placa ) AND " +
+                    "( :placa IS NULL OR " + String.format(UtilitarioFormatacao.TO_LOWER, String.format(UtilitarioFormatacao.REMOVER_ACENTO, "a.placaVeiculo")) + " LIKE :placa ) AND " +
                     "( :veiculoClassificacao IS NULL " +
                     "OR :veiculoClassificacao = " + ClassificacaoAgregado.AGREGADO.getValue() + " AND a.cnpjEmpresaVeiculo IS NOT NULL " +
                     "OR :veiculoClassificacao = " + ClassificacaoAgregado.PROPRIO.getValue() + " AND a.cnpjEmpresaVeiculo IS NULL) AND " +
@@ -216,7 +211,7 @@ public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<Autori
                     "(a.valorUnitarioAbastecimento IS NULL or a.valorUnitarioAbastecimento >= 0) AND " +
                     "a.dataRequisicao BETWEEN :de and :ate AND " +
                     "( :idFrota IS NULL OR a.frota.id = :idFrota) AND " +
-                    "( :motorista IS NULL OR "  + String.format(TO_LOWER, String.format(REMOVER_ACENTO, "a.nomeMotorista")) + " LIKE :motorista OR cast(a.cpfMotorista as string) LIKE :motorista) AND " +
+                    "( :motorista IS NULL OR "  + String.format(UtilitarioFormatacao.TO_LOWER, String.format(UtilitarioFormatacao.REMOVER_ACENTO, "a.nomeMotorista")) + " LIKE :motorista OR cast(a.cpfMotorista as string) LIKE :motorista) AND " +
                     "( :motoristaClassificacao IS NULL " +
                     "OR :motoristaClassificacao = " + ClassificacaoAgregado.AGREGADO.getValue() + " AND a.cnpjEmpresaMotorista IS NOT NULL " +
                     "OR :motoristaClassificacao = " + ClassificacaoAgregado.PROPRIO.getValue() + " AND a.cnpjEmpresaMotorista IS NULL) AND " +
@@ -224,7 +219,7 @@ public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<Autori
                     "( :motoristaGrupo IS NULL OR a.nomeGrupoMotorista = :motoristaGrupo) AND " +
                     "( :motoristaEmpresa IS NULL OR a.razaoSocialEmpresaMotorista = :motoristaEmpresa) AND " +
                     "( :subTipoVeiculo IS NULL OR a.subTipoVeiculo = :subTipoVeiculo) AND " +
-                    "( :placa IS NULL OR " + String.format(TO_LOWER, String.format(REMOVER_ACENTO, "a.placaVeiculo")) + " LIKE :placa ) " +
+                    "( :placa IS NULL OR " + String.format(UtilitarioFormatacao.TO_LOWER, String.format(UtilitarioFormatacao.REMOVER_ACENTO, "a.placaVeiculo")) + " LIKE :placa ) " +
                     " %s " +
                     "GROUP BY upper(a.nomeMotorista), a.cpfMotorista, a.cnpjUnidadeMotorista, a.razaoSocialFrota, a.cnpjFrota, " +
                     "a.nomeUnidadeMotorista, a.codigoGrupoMotorista, a.nomeGrupoMotorista,  a.agregadoMotorista, " +
@@ -250,7 +245,7 @@ public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<Autori
                     "( :razaoSocialEmpresaMotorista IS NULL OR a.razaoSocialEmpresaMotorista = :razaoSocialEmpresaMotorista) AND " +
                     "( :razaoSocialEmpresaVeiculo IS NULL OR a.razaoSocialEmpresaVeiculo = :razaoSocialEmpresaVeiculo) AND " +
                     "( :subTipoVeiculo IS NULL OR a.subTipoVeiculo = :subTipoVeiculo) AND " +
-                    "( :placa IS NULL OR " + String.format(TO_LOWER, String.format(REMOVER_ACENTO, "a.placaVeiculo")) + " LIKE :placa ) " +
+                    "( :placa IS NULL OR " + String.format(UtilitarioFormatacao.TO_LOWER, String.format(UtilitarioFormatacao.REMOVER_ACENTO, "a.placaVeiculo")) + " LIKE :placa ) " +
                     " %s " +
                     "ORDER BY a.dataRequisicao DESC ";
 

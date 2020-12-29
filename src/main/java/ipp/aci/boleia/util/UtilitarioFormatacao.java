@@ -20,6 +20,13 @@ public final class UtilitarioFormatacao {
     public static final int TAMANHO_CPF = 11;
     public static final int TAMANHO_CNPJ = 14;
 
+
+    public static final String TO_LOWER = "LOWER(%s)";
+
+    public static final String REMOVER_ACENTO = "TRANSLATE( %s, " +
+            "'âãäåāăąÁÂÃÄÅĀĂĄèééêëēĕėęěĒĔĖĘĚìíîïìĩīĭÌÍÎÏÌĨĪĬóôõöōŏőÒÓÔÕÖŌŎŐùúûüũūŭůÙÚÛÜŨŪŬŮ'," +
+            "'aaaaaaaaaaaaaaaeeeeeeeeeeeeeeeiiiiiiiiiiiiiiiiooooooooooooooouuuuuuuuuuuuuuuu')";
+
     /**
      * Impede a instanciacao e a heranca
      */

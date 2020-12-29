@@ -128,5 +128,9 @@ public class OracleFrotaPontoVendaDados extends OracleRepositorioBoleiaDados<Fro
 
 	}
 
+    @Override
+    public FrotaPontoVenda buscarPorCnpjFrotaCnpjPv(Long cnpjFrota, Long cnpjPv) {
+		return pesquisarUnico(new ParametroPesquisaIgual("frota.cnpj", cnpjFrota), new ParametroPesquisaIgual("pontoVenda.cnpj", cnpjPv));
+    }
 
 }

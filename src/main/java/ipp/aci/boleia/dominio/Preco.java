@@ -87,6 +87,10 @@ public class Preco implements IPersistente, IPertenceRevendedor, IPertenceFrota 
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataAtualizacao;
 
+    @Column(name = "DT_VIGENCIA")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataVigencia;
+
     @NotAudited
     @Formula(StatusPreco.DECODE_FORMULA)
     private String statusConvertidoAcordo;
@@ -137,13 +141,6 @@ public class Preco implements IPersistente, IPertenceRevendedor, IPertenceFrota 
         this.statusConvertidoNegociado = statusConvertidoNegociado;
     }
 
-    /**
-     * Marca o preco como historico saindo de vigencia
-     */
-    public void sairDeVigencia() {
-        this.setStatus(StatusPreco.HISTORICO.getValue());
-    }
-
     public PrecoBase getPrecoBase() {
         return precoBase;
     }
@@ -158,42 +155,6 @@ public class Preco implements IPersistente, IPertenceRevendedor, IPertenceFrota 
 
     public void setPreco(BigDecimal preco) {
         this.preco = preco;
-    }
-
-    /**
-     * Aprova o desconto solicitado pelo frotista
-     * @param dataAtualizacao a data de atualizacao
-     * @param automatico desconto automatico ou manual
-     */
-    public void aceitarDesconto(Date dataAtualizacao, Boolean automatico) {
-        this.setPreco(this.getPrecoBase().getPreco().add(this.getDescontoSolicitado()));
-        this.setDescontoVigente(this.getDescontoSolicitado());
-        this.setDescontoSolicitado(null);
-        this.setDataAtualizacao(dataAtualizacao);
-        if(automatico) {
-            this.setStatus(StatusPreco.VIGENTE.getValue());
-        } else {
-            this.setStatus(StatusPreco.ACEITO.getValue());
-        }
-    }
-
-    /**
-     * Reprova o desconto solicitado com dada justificativa
-     * @param justificativa do revendedor
-     */
-    public void rejeitarDesconto(String justificativa) {
-        this.setStatus(StatusPreco.REJEITADO.getValue());
-        this.setJustificativa(justificativa);
-    }
-
-    /**
-     * Remove um desconto previamente acordado entre frota e PV
-     * @param dataAtualizacao a data de atualizacao do desconto
-     */
-    public void excluirDesconto(Date dataAtualizacao) {
-        this.setDescontoSolicitado(null);
-        this.setDataAtualizacao(dataAtualizacao);
-        this.setStatus(StatusPreco.VIGENTE.getValue());
     }
 
     public String getJustificativa() {
@@ -226,6 +187,14 @@ public class Preco implements IPersistente, IPertenceRevendedor, IPertenceFrota 
 
     public void setDataSolicitacao(Date dataSolicitacao) {
         this.dataSolicitacao = dataSolicitacao;
+    }
+
+    public Date getDataVigencia() {
+        return dataVigencia;
+    }
+
+    public void setDataVigencia(Date dataVigencia) {
+        this.dataVigencia = dataVigencia;
     }
 
     @Transient
@@ -268,7 +237,7 @@ public class Preco implements IPersistente, IPertenceRevendedor, IPertenceFrota 
 
     @Transient
     public String getPrecoComAcordo(){
-        if(status.equals(StatusPreco.PENDENTE.getValue()) || status.equals(StatusPreco.NOVO.getValue())){
+        if(getDescontoSolicitado() != null){
             return UtilitarioFormatacao.formatarDecimalComTresCasas(precoBase.getPreco().add(getDescontoSolicitado()));
         }
         return UtilitarioFormatacao.formatarDecimalComTresCasas(preco);
