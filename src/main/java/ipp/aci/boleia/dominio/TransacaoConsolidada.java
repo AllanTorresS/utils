@@ -172,6 +172,10 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     @Column(name = "ID_PROCESSOU_POSTERGACAO")
     private boolean processouPostergacao;
 
+    @NotNull
+    @Column(name = "ID_FROTA_EXIGE_NF")
+    private boolean frotaExigeNF;
+
     @Override
     public Long getId() {
         return id;
@@ -460,6 +464,14 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
         this.processouPostergacao = processouPostergacao;
     }
 
+    public boolean isFrotaExigeNF() {
+        return frotaExigeNF;
+    }
+
+    public void setFrotaExigeNF(boolean frotaExigeNF) {
+        this.frotaExigeNF = frotaExigeNF;
+    }
+
     /**
      * Gera uma chave unica para cada TransacaoConsolidada, tendo o objetivo de garantir que cada ciclo seja unico no banco de dados.
      * Existe uma constraint (UQ_CHAVE_TRANS_CONSOL) no banco que valida a unicidade da chave.
@@ -542,7 +554,7 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
      */
     @Transient
     public boolean exigeEmissaoNF() {
-        return frotaPtov.getFrota().exigeNotaFiscal() || unidade != null || empresaAgregada != null;
+        return frotaExigeNF || unidade != null || empresaAgregada != null;
     }
 
     /**
@@ -620,6 +632,15 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
         return getAutorizacoesPagamentoAssociadas().stream()
                 .allMatch(autorizacaoPagamento -> ((autorizacaoPagamento.estaCancelado() ||
                         (autorizacaoPagamento.getValorTotal().compareTo(BigDecimal.ZERO) < 0) && existeCancelado && existeEstornado)));
+    }
+
+    /**
+     * Verifica se todos os abastecimentos do consolidado possuem pendência de nota fiscal
+     * @return True caso todas estejam com pendência, false caso contrário
+     */
+    @Transient
+    public boolean todasTransacoesPossuemPendenciaNF() {
+        return getAutorizacoesPagamentoAssociadas().stream().allMatch(autorizacaoPagamento -> autorizacaoPagamento.isPendenteEmissaoNF(false));
     }
 
 }

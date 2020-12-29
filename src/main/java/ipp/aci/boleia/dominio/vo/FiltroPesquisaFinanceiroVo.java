@@ -17,6 +17,8 @@ public class FiltroPesquisaFinanceiroVo extends FiltroBasePeriodoPaginado {
     private EntidadeVo pontoDeVenda;
     private String nomePontoDeVenda;
     private String cnpjPontoDeVenda;
+    private EnumVo statusCiclo;
+    private EnumVo statusPagamento;
     private EmpresaUnidadeVo empresaUnidade;
 
     public Date getDe(){
@@ -89,6 +91,22 @@ public class FiltroPesquisaFinanceiroVo extends FiltroBasePeriodoPaginado {
 
     public void setEmpresaUnidade(EmpresaUnidadeVo empresaUnidade) {
         this.empresaUnidade = empresaUnidade;
+    }
+
+    public EnumVo getStatusCiclo() {
+        return statusCiclo;
+    }
+
+    public void setStatusCiclo(EnumVo statusCiclo) {
+        this.statusCiclo = statusCiclo;
+    }
+
+    public EnumVo getStatusPagamento() {
+        return statusPagamento;
+    }
+
+    public void setStatusPagamento(EnumVo statusPagamento) {
+        this.statusPagamento = statusPagamento;
     }
 }
 
