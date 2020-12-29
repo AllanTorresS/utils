@@ -110,6 +110,9 @@ public class TransacaoConectcar implements IPersistente, IPertenceFrota {
 	@JoinColumn(name = "CD_TAG_CONECTCAR")
 	private TagConectcar tag;
 
+	@Column(name = "CD_TAG_CONECTCAR", insertable = false, updatable = false)
+	private Long numeroTag;
+
 	@Column(name = "DS_PRACA")
 	private String praca;
 
@@ -348,6 +351,14 @@ public class TransacaoConectcar implements IPersistente, IPertenceFrota {
 
 	public void setQuantidadeEixos(Integer quantidadeEixos) {
 		this.quantidadeEixos = quantidadeEixos;
+	}
+
+	public Long getNumeroTag() {
+		return numeroTag;
+	}
+
+	public void setNumeroTag(Long numeroTag) {
+		this.numeroTag = numeroTag;
 	}
 
 }
