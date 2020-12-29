@@ -41,6 +41,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static ipp.aci.boleia.util.UtilitarioLambda.verificarTodosNaoNulos;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 
 /**
@@ -643,4 +644,18 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
         return getAutorizacoesPagamentoAssociadas().stream().allMatch(autorizacaoPagamento -> autorizacaoPagamento.isPendenteEmissaoNF(false));
     }
 
+    /**
+     * Retorna o percentual de emissão da transação consolidada.
+     *
+     * @return Porcentagem informando o quanto o ciclo já foi emitido.
+     */
+    @Transient
+    public BigDecimal getPercentualEmissao() {
+        if(StatusNotaFiscal.EMITIDA.getValue().equals(getStatusNotaFiscal())) {
+            return BigDecimal.valueOf(100);
+        } else if(verificarTodosNaoNulos(getValorTotalNotaFiscal(), getValorEmitidoNotaFiscal()) && getValorTotalNotaFiscal().compareTo(BigDecimal.ZERO) != 0) {
+            return getValorEmitidoNotaFiscal().divide(getValorTotalNotaFiscal(), 2, BigDecimal.ROUND_HALF_DOWN).multiply(new BigDecimal(100));
+        }
+        return null;
+    }
 }
