@@ -91,6 +91,10 @@ public class Preco implements IPersistente, IPertenceRevendedor, IPertenceFrota 
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataVigencia;
 
+    @Column(name = "DATA_AGENDAMENTO")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataAgendamento;
+
     @NotAudited
     @Formula(StatusPreco.DECODE_FORMULA)
     private String statusConvertidoAcordo;
@@ -241,5 +245,13 @@ public class Preco implements IPersistente, IPertenceRevendedor, IPertenceFrota 
             return UtilitarioFormatacao.formatarDecimalComTresCasas(precoBase.getPreco().add(getDescontoSolicitado()));
         }
         return UtilitarioFormatacao.formatarDecimalComTresCasas(preco);
+    }
+
+    public Date getDataAgendamento() {
+        return dataAgendamento;
+    }
+
+    public void setDataAgendamento(Date dataAgendamento) {
+        this.dataAgendamento = dataAgendamento;
     }
 }
