@@ -143,6 +143,7 @@ public final  class Rotas {
     public static final String DETALHAMENTO_NF_API                   = BASE_API + "/detalhamentoNotaFiscal";
     public static final String PRECO_FRETE_API                       = BASE_API + "/precofrete";
     public static final String DETALHAMENTO_CICLO_REVENDA_API        = BASE_API + "/detalhamentoCicloRevenda";
+    public static final String DETALHE_COBRANCA_API                  = BASE_API + "/detalheCobranca";
 
     /**
      * Construtor privado, impede instanciacao e heranca
