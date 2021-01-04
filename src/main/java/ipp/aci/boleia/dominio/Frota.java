@@ -341,7 +341,7 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @Column(name="ID_EXIBIR_DESCONTO_TOTAL")
     private Boolean exibirDesconto;
 
-    @Column(name = "ID_LOCAL_DESTINO")
+    @Column(name = "ID_LOCAL_DESTINO_NFE")
     private Boolean localDestino;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "frota")

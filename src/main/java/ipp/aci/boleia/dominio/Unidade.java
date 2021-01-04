@@ -121,7 +121,7 @@ public class Unidade implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @Column(name = "ID_EXIGE_NF")
     private Boolean exigeNotaFiscal;
 
-    @Column(name = "ID_LOCAL_DESTINO")
+    @Column(name = "ID_LOCAL_DESTINO_NFE")
     private Boolean localDestino;
 
     @Column(name="DS_CONNECTCTA_TOKEN")
