@@ -56,12 +56,12 @@ public class Preco implements IPersistente, IPertenceRevendedor, IPertenceFrota 
         "JOIN boleia_schema.ptov_preco PP2 " +
         "ON MP2.cd_micromercado_preco = PP2.cd_micromercado_preco " +
         "JOIN boleia_schema.frota_ptov_preco FPP2 " +
-        "ON PP2.CD_PTOV_PRECO = FPP2.CD_PTOV_PRECO AND FPP.CD_FROTA_PTOV = FPP2.CD_FROTA_PTOV AND FPP.CD_FROTA_PTOV_PRECO <> FPP2.CD_FROTA_PTOV_PRECO " +
+        "ON PP2.cd_ptov_preco = FPP2.cd_ptov_preco AND FPP.cd_frota_ptov = FPP2.cd_frota_ptov AND FPP.cd_frota_ptov_preco <> FPP2.cd_frota_ptov_preco " +
         "WHERE " +
         "FPP.CD_FROTA_PTOV_PRECO = CD_FROTA_PTOV_PRECO " +
         "AND ((FPP.dt_vigencia IS NOT NULL AND FPP2.dt_vigencia > DT_VIGENCIA) " +
         "OR (FPP.dt_vigencia IS NULL AND FPP2.dt_vigencia IS NOT NULL)) " +
-        "AND FPP2.status NOT IN (4,7) " +
+        "AND FPP2.id_status NOT IN (4,7) " +
         "ORDER BY FPP2.dt_vigencia) " +
         "WHERE rownum <= 1) ";
 
