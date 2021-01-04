@@ -513,6 +513,22 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "GROUP BY TC.dataInicioPeriodo, TC.dataFimPeriodo, TC.statusConsolidacao, " +
                     "         CASE WHEN TC.reembolso is NULL THEN " + StatusPagamentoReembolso.PREVISTO.getValue() + " ELSE RM.status END";
 
+    /**
+     * Busca uma lista nfs por consolidados
+     */
+    private static final String CONSULTA_EXPORTACAO_NFS_CICLOS =
+            "SELECT TC" +
+                    "FROM TransacaoConsolidada TC " +
+                    "LEFT JOIN TC.frotaPtov FPV " +
+                    "LEFT JOIN FPV.frota F " +
+                    "LEFT JOIN TC.cobranca C " +
+                    "JOIN TC.prazos TCP " +
+                    "WHERE (F.id = :idFrota OR :idFrota is null) " +
+                    "AND ((TC.dataInicioPeriodo >= :dataInicioPeriodo AND TC.dataFimPeriodo <= :dataFimPeriodo) OR (TC.dataFimPeriodo >= :dataInicioPeriodo AND TC.dataInicioPeriodo <= :dataFimPeriodo)) " +
+                    "AND (TC.statusConsolidacao = :statusConsolidacao OR :statusConsolidacao is null) " +
+                    "AND (TC.quantidadeAbastecimentos > 0) " +
+                    "AND (C.status = :statusPagamento OR :statusPagamento is null) ";
+
     @Autowired
     private UtilitarioAmbiente ambiente;
 
@@ -1386,6 +1402,34 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
 
         BigDecimal totalReembolso = pesquisarUnicoSemIsolamentoDados(CONSULTA_TOTAL_REEMBOLSO_PERIODO, parametros.toArray(new ParametroPesquisa[parametros.size()]));
         return totalReembolso != null ? totalReembolso : BigDecimal.ZERO;
+    }
+
+    @Override
+    public List<TransacaoConsolidada> pesquisarConsolidadoFrota(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+
+        parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataInicioPeriodo", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe())));
+        parametros.add(new ParametroPesquisaDataMenorOuIgual("dataFimPeriodo", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte())));
+
+        if(filtro.getFrota() != null && filtro.getFrota().getId() != null){
+            parametros.add(new ParametroPesquisaIgual("idFrota", filtro.getFrota().getId()));
+        } else if (usuarioLogado.isFrotista()){
+            parametros.add(new ParametroPesquisaIgual("idFrota", usuarioLogado.getFrota().getId()));
+        }
+
+        if(filtro.getStatusCiclo() != null && filtro.getStatusCiclo().getValue() != null) {
+            parametros.add(new ParametroPesquisaIgual("statusConsolidacao", filtro.getStatusCiclo().getValue()));
+        } else {
+            parametros.add(new ParametroPesquisaIgual("statusConsolidacao", null));
+        }
+
+        if(filtro.getStatusPagamento() != null && filtro.getStatusPagamento().getValue() != null) {
+            parametros.add(new ParametroPesquisaIgual("statusPagamento", filtro.getStatusPagamento().getValue()));
+        } else {
+            parametros.add(new ParametroPesquisaIgual("statusPagamento", null));
+        }
+
+        return pesquisar(null, CONSULTA_EXPORTACAO_NFS_CICLOS, TransacaoConsolidada.class, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
 
     /**
