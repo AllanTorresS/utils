@@ -115,7 +115,7 @@ public class Preco implements IPersistente, IPertenceRevendedor, IPertenceFrota 
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataVigencia;
 
-    @Column(name = "DATA_AGENDAMENTO")
+    @Column(name = "DT_AGENDAMENTO")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataAgendamento;
 
