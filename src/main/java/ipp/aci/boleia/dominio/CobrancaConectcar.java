@@ -107,6 +107,9 @@ public class CobrancaConectcar implements IPersistente, IPertenceFrota {
 	@Column(name = "ID_TIPO_COBR")
 	private Integer tipo;
 
+	@Column(name = "NO_PEDIDO")
+	private Long numeroPedido;
+
 	@Column(name = "NO_NF")
 	private Long numeroNotaFiscal;
 
@@ -318,6 +321,14 @@ public class CobrancaConectcar implements IPersistente, IPertenceFrota {
 
 	public void setNumeroNotaFiscal(Long numeroNotaFiscal) {
 		this.numeroNotaFiscal = numeroNotaFiscal;
+	}
+
+	public Long getNumeroPedido() {
+		return numeroPedido;
+	}
+
+	public void setNumeroPedido(Long numeroPedido) {
+		this.numeroPedido = numeroPedido;
 	}
 
 }

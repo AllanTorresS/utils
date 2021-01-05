@@ -114,6 +114,13 @@ public class OracleCobrancaConectcarDados extends OracleRepositorioBoleiaDados<C
 	}
 
 	@Override
+	public List<CobrancaConectcar> buscarCobrancasParaConsultarNotaFiscal() {
+		return pesquisar(new ParametroOrdenacaoColuna("dataVencimentoPagto",Ordenacao.DECRESCENTE),
+				new ParametroPesquisaNulo("numeroPedido", true),
+				new ParametroPesquisaNulo("numeroNotaFiscal", false));
+	}
+
+	@Override
 	public CobrancaConectcar obterUltimaCobranca(Long idFrota) {
 		List<ParametroPesquisa> parametros = new ArrayList<>();
 		parametros.add(new ParametroPesquisaIgual("transacoesConsolidadas.frota.id", idFrota));
