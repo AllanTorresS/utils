@@ -192,8 +192,4 @@ public class Transacao implements IPersistente {
     public void setPlacaVeiculo(String placaVeiculo) {
         this.placaVeiculo = placaVeiculo;
     }
-
-    public Boolean temSaque() {
-        return true;
-    }
 }
