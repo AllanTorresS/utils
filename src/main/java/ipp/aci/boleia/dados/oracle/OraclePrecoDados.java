@@ -55,7 +55,7 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
             "     tc.id = :idCombustivel " +
             "     AND pv.id = :idPontoVenda " +
             "     AND (f.id = :idFrota OR :idFrota IS NULL) " +
-            "     AND (p.status IN :statusValidos OR (p.status in :statusPenNov AND p.dataVigencia <= :dataAbastecimento))  " +
+            "     AND p.status IN :statusValidos " +
             "     AND (p.dataVigencia <= :dataAbastecimento OR (p.dataAtualizacao <= :dataAbastecimento AND p.dataVigencia IS NULL)) " +            
             "     AND p.status IN :statusValidos  " +
             "     ORDER BY  " +
@@ -87,12 +87,8 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
         List<Integer> statusValidos = new ArrayList<>();
         statusValidos.add(StatusPreco.VIGENTE.getValue());
         statusValidos.add(StatusPreco.ACEITO.getValue());
-  
-        //Uma negociação pendente ou nova que não foi aceita até sua data de vigência, deve ser
-        //aceita automaticamente
-        List<Integer> statusPendenteOuNovo = new ArrayList<>();
-        statusPendenteOuNovo.add(StatusPreco.PENDENTE.getValue());
-        statusPendenteOuNovo.add(StatusPreco.NOVO.getValue());
+        statusValidos.add(StatusPreco.PENDENTE.getValue());
+        statusValidos.add(StatusPreco.NOVO.getValue());
 
         List<ParametroPesquisa> parametros = new ArrayList<>();
         parametros.add(new ParametroPesquisaIgual("idCombustivel", idTipoCombustivel));
@@ -100,7 +96,6 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
         parametros.add(new ParametroPesquisaIgual("idFrota", idFrota));
         parametros.add(new ParametroPesquisaDataMenorOuIgual("dataAbastecimento", ambiente.buscarDataAmbiente()));
         parametros.add(new ParametroPesquisaIn("statusValidos", statusValidos));
-        parametros.add(new ParametroPesquisaIn("statusPenNov", statusPendenteOuNovo));
 
         List<Preco> precosAcordo = pesquisar(paginacao, CONSULTA_NEGOCIACOES, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
         return precosAcordo.stream().findFirst().orElse(null);
@@ -113,12 +108,8 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
         statusValidos.add(StatusPreco.VIGENTE.getValue());
         statusValidos.add(StatusPreco.ACEITO.getValue());
         statusValidos.add(StatusPreco.HISTORICO.getValue());
-
-        //Uma negociação pendente ou nova que não foi aceita até sua data de vigência, deve ser
-        //aceita automaticamente
-        List<Integer> statusPendenteOuNovo = new ArrayList<>();
-        statusPendenteOuNovo.add(StatusPreco.PENDENTE.getValue());
-        statusPendenteOuNovo.add(StatusPreco.NOVO.getValue());
+        statusValidos.add(StatusPreco.PENDENTE.getValue());
+        statusValidos.add(StatusPreco.NOVO.getValue());
 
         List<ParametroPesquisa> parametros = new ArrayList<>();
         parametros.add(new ParametroPesquisaIgual("idCombustivel", idTipoCombustivel));
@@ -126,7 +117,6 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
         parametros.add(new ParametroPesquisaIgual("idFrota", idFrota));
         parametros.add(new ParametroPesquisaDataMenorOuIgual("dataAbastecimento", dataAbastecimento));
         parametros.add(new ParametroPesquisaIn("statusValidos", statusValidos));
-        parametros.add(new ParametroPesquisaIn("statusPenNov", statusPendenteOuNovo));
 
         List<Preco> precosAcordo = pesquisar(null, CONSULTA_NEGOCIACOES, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
         return precosAcordo.stream().findFirst().orElse(null);
@@ -166,19 +156,14 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
         List<Integer> statusValidos = new ArrayList<>();
         statusValidos.add(StatusPreco.VIGENTE.getValue());
         statusValidos.add(StatusPreco.ACEITO.getValue());
-
-        //Uma negociação pendente ou nova que não foi aceita até sua data de vigência, deve ser
-        //aceita automaticamente
-        List<Integer> statusPendenteOuNovo = new ArrayList<>();
-        statusPendenteOuNovo.add(StatusPreco.PENDENTE.getValue());
-        statusPendenteOuNovo.add(StatusPreco.NOVO.getValue());
+        statusValidos.add(StatusPreco.PENDENTE.getValue());
+        statusValidos.add(StatusPreco.NOVO.getValue());
 
         parametros.add(new ParametroPesquisaIgual("idCombustivel", idTipoCombustivel));
         parametros.add(new ParametroPesquisaIgual("idPontoVenda", idPontoVenda));
         parametros.add(new ParametroPesquisaIgual("idFrota", null));
         parametros.add(new ParametroPesquisaDataMenorOuIgual("dataAbastecimento", ambiente.buscarDataAmbiente()));
         parametros.add(new ParametroPesquisaIn("statusValidos", statusValidos));
-        parametros.add(new ParametroPesquisaIn("statusPenNov", statusPendenteOuNovo));
 
         return pesquisarSemIsolamentoDados(null, CONSULTA_NEGOCIACOES, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
