@@ -342,7 +342,7 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     private Boolean exibirDesconto;
 
     @Column(name = "ID_LOCAL_DESTINO_NFE")
-    private Boolean localDestino;
+    private Boolean localDestinoNfe;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "frota")
     private List<EmpresaAgregada> empresasAgregadas;
@@ -1332,11 +1332,11 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
 		this.totalTagsAtivas = totalTagsAtivas;
 	}
 
-    public Boolean getLocalDestino() {
-        return localDestino;
+    public Boolean getLocalDestinoNfe() {
+        return localDestinoNfe;
     }
 
-    public void setLocalDestino(Boolean localDestino) {
-        this.localDestino = localDestino;
+    public void setLocalDestinoNfe(Boolean localDestinoNfe) {
+        this.localDestinoNfe = localDestinoNfe;
     }
 }
