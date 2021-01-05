@@ -341,6 +341,9 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @Column(name="ID_EXIBIR_DESCONTO_TOTAL")
     private Boolean exibirDesconto;
 
+    @Column(name = "ID_LOCAL_PADRAO_NFE_UF")
+    private Boolean localDestinoPadraoNfeUf;
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "frota")
     private List<EmpresaAgregada> empresasAgregadas;
 
@@ -375,7 +378,7 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     
     @OneToOne(mappedBy = "frota")
     private SituacaoConectCar situacaoConectCar;
-  
+
     @NotAudited
     @Formula("(SELECT NVL(COUNT(0), 0) FROM BOLEIA_SCHEMA.TAG_CONECTCAR T WHERE T.CD_FROTA = CD_FROTA)")
     private Integer totalTags;
@@ -1327,5 +1330,13 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
 
 	public void setTotalTagsAtivas(Integer totalTagsAtivas) {
 		this.totalTagsAtivas = totalTagsAtivas;
-	}    
+	}
+
+    public Boolean getLocalDestinoPadraoNfeUf() {
+        return localDestinoPadraoNfeUf;
+    }
+
+    public void setLocalDestinoPadraoNfeUf(Boolean localDestinoPadraoNfeUf) {
+        this.localDestinoPadraoNfeUf = localDestinoPadraoNfeUf;
+    }
 }
