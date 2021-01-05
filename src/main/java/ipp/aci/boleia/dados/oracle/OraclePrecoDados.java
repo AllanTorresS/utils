@@ -243,12 +243,18 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
                 parametros.add(new ParametroPesquisaOr(
                 new ParametroPesquisaIgual("status", StatusPreco.VIGENTE.getValue()),
                 new ParametroPesquisaIgual("status", StatusPreco.ACEITO.getValue())));
-                parametros.add(new ParametroPesquisaDataMaior("dataVigencia", ambiente.buscarDataAmbiente()));
+                parametros.add(new ParametroPesquisaDataMaior("dataAgendamento", ambiente.buscarDataAmbiente()));
             } else if(filtro.getStatus().getLabel().equals(StatusPrecoNegociacao.AGENDADO_PENDENTE.getLabel())) {
                 parametros.add(new ParametroPesquisaOr(
                 new ParametroPesquisaIgual("status", StatusPreco.PENDENTE.getValue()),
                 new ParametroPesquisaIgual("status", StatusPreco.NOVO.getValue())));
+                parametros.add(new ParametroPesquisaDataMaior("dataAgendamento", ambiente.buscarDataAmbiente()));
+            } else if(filtro.getStatus().getLabel().equals(StatusPrecoNegociacao.NEGOCIACAO.getLabel())) {
+                parametros.add(new ParametroPesquisaOr(
+                new ParametroPesquisaIgual("status", StatusPreco.PENDENTE.getValue()),
+                new ParametroPesquisaIgual("status", StatusPreco.NOVO.getValue())));
                 parametros.add(new ParametroPesquisaDataMaior("dataVigencia", ambiente.buscarDataAmbiente()));
+                parametros.add(new ParametroPesquisaNulo("dataAgendamento"));
             } else if(filtro.getStatus().getLabel().equals(StatusPrecoNegociacao.VIGENTE.getLabel())) {
                 parametros.add(new ParametroPesquisaOr(
                     new ParametroPesquisaNulo("dataVigencia"),
