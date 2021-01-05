@@ -99,6 +99,7 @@ public final class ConstantesJde {
     public static final String PEDIDO_VENDA_CENARIO = "736";
     public static final String PEDIDO_VENDA_ITEM_CODIGO_PRODUTO = "791039";
     public static final String PEDIDO_VENDA_PRIMEIRO_ITEM_LISTA_KEY = "1";
+    public static final String CONSULTA_NF_TIPO_DOCUMENTO = "VK";
     
     /**
      * Impede instanciacao e heranca
