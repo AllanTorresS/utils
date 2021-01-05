@@ -39,9 +39,6 @@ public class PrecoNegociadoSd {
     public Preco definirPrecoNegociadoApartirDePrecoBase(Preco precoAtual){
         Date dataAtualizacao = ambiente.buscarDataAmbiente();
 
-        precoAtual = sairDeVigencia(precoAtual, dataAtualizacao);
-        repositorioPreco.armazenar(precoAtual);
-
         Preco novoPreco = new Preco();
         novoPreco.setFrotaPtov(precoAtual.getFrotaPtov());
         novoPreco.setStatus(StatusPreco.VIGENTE.getValue());
@@ -62,12 +59,7 @@ public class PrecoNegociadoSd {
      * @return Preco novo
      */
     public Preco aceitarNovoAcordo(Preco novoPreco, boolean automatico) {
-        Preco precoAtual = repositorioPreco.obterAtualPorFrotaPvCombustivel(novoPreco.getFrota().getId(), novoPreco.getPontoVenda().getId(), novoPreco.getPrecoBase().getPrecoMicromercado().getTipoCombustivel().getId());
         Date dataAtualizacao = ambiente.buscarDataAmbiente();
-        if(precoAtual != null) {
-            precoAtual = sairDeVigencia(precoAtual, dataAtualizacao);
-            repositorioPreco.armazenar(precoAtual);
-        }
         return aceitarDesconto(novoPreco, dataAtualizacao, automatico);
     }
 
@@ -81,18 +73,6 @@ public class PrecoNegociadoSd {
         preco.setDataAtualizacao(dataAtualizacao);
         preco.setStatus(StatusPreco.CANCELADO.getValue());
         return repositorioPreco.armazenar(preco);
-    }
-
-    /**
-     * Marca o preco como historico saindo de vigencia
-     * @param preco O preco
-     * @param dataAtualizacao A data de atualização
-     * @return Preco historico
-     */
-    public Preco sairDeVigencia(Preco preco, Date dataAtualizacao) {
-        preco.setStatus(StatusPreco.HISTORICO.getValue());
-        preco.setDataAtualizacao(dataAtualizacao);
-        return preco;
     }
 
     /**
@@ -123,7 +103,7 @@ public class PrecoNegociadoSd {
         preco.setDescontoVigente(preco.getDescontoSolicitado());
         preco.setDescontoSolicitado(null);
         preco.setDataAtualizacao(dataAtualizacao);
-        if(preco.getDataVigencia() == null) {
+        if(preco.getDataAgendamento() == null) {
             preco.setDataVigencia(dataAtualizacao);
         }
         preco.setStatus(automatico ? StatusPreco.VIGENTE.getValue() : StatusPreco.ACEITO.getValue());

@@ -109,6 +109,20 @@ public final class UtilitarioCalculoData {
 		return c.getTime();
 	}
 
+	public static  Date configurarDataComHorarioDeVigencia (Date data) {
+		if(data==null) {
+			return null;
+		}
+		Calendar c = Calendar.getInstance();
+		c.setTime(data);
+		c.set(Calendar.HOUR_OF_DAY, 12);
+		c.set(Calendar.MINUTE, 00);
+		c.set(Calendar.SECOND, 00);
+		c.set(Calendar.MILLISECOND, 000);
+
+		return c.getTime();
+	}
+
 	/**
 	 * Adiciona minutos a data informada
 	 *
