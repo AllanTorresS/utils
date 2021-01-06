@@ -256,7 +256,7 @@ public class NotaFiscal implements IPersistente, IPertenceRevendedor, IPertenceF
      */
     @Transient
     public boolean emitidaMesAtual(Date dataAtual)  {
-        return UtilitarioCalculoData.isMesCorrente(dataAtual, dataEmissao);
+        return UtilitarioCalculoData.isMesEAnoCorrente(dataAtual, dataEmissao);
     }
 
     /**
