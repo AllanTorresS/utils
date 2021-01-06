@@ -4,6 +4,7 @@ import ipp.aci.boleia.dados.IFrotaDados;
 import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.Usuario;
+import ipp.aci.boleia.dominio.enums.ModalidadePagamento;
 import ipp.aci.boleia.dominio.enums.StatusAcumuloKmv;
 import ipp.aci.boleia.dominio.enums.StatusApiToken;
 import ipp.aci.boleia.dominio.enums.StatusContrato;
@@ -25,14 +26,14 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaAbastecimentoVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheCicloVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFinanceiroVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFrotaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialFrotaVo;
+import ipp.aci.boleia.dominio.vo.apco.ClienteProFrotaVo;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
-import ipp.aci.boleia.dominio.vo.apco.ClienteProFrotaVo;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +53,18 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
 
     @Autowired
     private UtilitarioAmbiente ambiente;
+
+    private static final String CLAUSULA_DATA_REEMB_GERADO =
+            " tc.reembolso IS NOT NULL AND " +
+            " ((r.dataPagamento is null AND (r.dataVencimentoPgto >= :dataInicial AND r.dataVencimentoPgto <= :dataFinal)) " +
+            " OR (r.dataPagamento >= :dataInicial AND r.dataPagamento <= :dataFinal)) ";
+
+    private static final String CLAUSULA_DATA_REEMB_NAO_GERADO =
+            " tc.reembolso IS NULL AND " +
+            " ((f.modoPagamento = " + ModalidadePagamento.POS_PAGO.getValue() +
+            " AND (trunc(tc.dataFimPeriodo + prz.prazoReembolso) >= :dataInicial AND trunc(tc.dataFimPeriodo + prz.prazoReembolso) <= :dataFinal)) " +
+            " OR (f.modoPagamento = " + ModalidadePagamento.PRE_PAGO.getValue() +
+            " AND (trunc(tc.dataFimPeriodo + 2) >= :dataInicial AND trunc(tc.dataFimPeriodo + 2) <= :dataFinal))) ";
 
 
     private static final String CONSULTA_DONO_FROTA_COM_ACUMULO =
@@ -99,9 +112,25 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
                     "TransacaoConsolidada tc " +
                     "JOIN tc.frotaPtov fp " +
                     "JOIN fp.frota f " +
+                    "LEFT JOIN tc.reembolso r " +
+                    "JOIN tc.prazos prz " +
                     "WHERE " +
-                    "(tc.dataInicioPeriodo >= :dataInicial and tc.dataFimPeriodo <= :dataFinal) " +
+                    "((" + CLAUSULA_DATA_REEMB_GERADO + ") OR (" + CLAUSULA_DATA_REEMB_NAO_GERADO + "))" +
                     "AND (fp.pontoVenda.id IN :idsPvs) " +
+                    "ORDER BY f.razaoSocial";
+
+    private static final String CONSULTA_FROTAS_PARA_DETALHE_CICLO =
+            "SELECT DISTINCT f " +
+                    "FROM " +
+                    "TransacaoConsolidada tc " +
+                    "JOIN tc.frotaPtov fp " +
+                    "JOIN fp.frota f " +
+                    "LEFT JOIN tc.reembolso rm	" +
+                    "WHERE " +
+                    "   (trunc(tc.dataInicioPeriodo) = trunc(:dataInicial) and trunc(tc.dataFimPeriodo) = trunc(:dataFinal)) AND " +
+                    "   (tc.statusConsolidacao = :statusCiclo) AND " +
+                    "   (fp.pontoVenda.id IN :idsPvs) AND " +
+                    "   (tc.reembolso is NULL OR (rm.dataPagamento IS NULL AND TRUNC(rm.dataVencimentoPgto) >= TRUNC(SYSDATE) AND rm.valorReembolso >= 0)) " +
                     "ORDER BY f.nomeRazaoFrota";
 
     /**
@@ -138,9 +167,9 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
         if (filtro.getStatus() != null && filtro.getStatus().getName() != null) {
             parametros.add(new ParametroPesquisaIgual("status", StatusFrota.valueOf(filtro.getStatus().getName()).getValue()));
         }
-        
+
         if (filtro.getStatusConectcar() != null && filtro.getStatusConectcar().getName() != null) {
-        	
+
         	if (StatusFrotaConectcar.ATIVO.equals(StatusFrotaConectcar.valueOf(filtro.getStatusConectcar().getName()))) {
         		parametros.add(new ParametroPesquisaOr(
                         new ParametroPesquisaNulo("situacaoConectCar"),
@@ -150,22 +179,22 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
         		parametros.add(new ParametroPesquisaIgual("situacaoConectCar.status", StatusFrota.INATIVO.getValue()));
         	}
         }
-        
+
         if (filtro.getPossuiCondicaoComercialConectcar() != null && filtro.getPossuiCondicaoComercialConectcar()) {
             parametros.add(new ParametroPesquisaNulo("condicoesComerciais", true));
         }
-        
+
         if (filtro.getPaginacao() != null && CollectionUtils.isNotEmpty(filtro.getPaginacao().getParametrosOrdenacaoColuna())) {
             ParametroOrdenacaoColuna parametro = filtro.getPaginacao().getParametrosOrdenacaoColuna().get(0);
             String nomeOrdenacao = parametro.getNome();
             if (nomeOrdenacao != null) {
             	if (nomeOrdenacao.contentEquals("statusConectcar")) {
             		filtro.getPaginacao().getParametrosOrdenacaoColuna().remove(0);
-                    filtro.getPaginacao().getParametrosOrdenacaoColuna().add(0, new ParametroOrdenacaoColuna("situacaoConectCar.status", parametro.getSentidoOrdenacao()));                    
+                    filtro.getPaginacao().getParametrosOrdenacaoColuna().add(0, new ParametroOrdenacaoColuna("situacaoConectCar.status", parametro.getSentidoOrdenacao()));
                 }
             }
         }
-        
+
         povoarParametroApiToken(filtro, parametros);
         return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
@@ -423,7 +452,7 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
         parametros.add(new ParametroPesquisaIgual("idCobranca", filtro.getIdCobranca()));
         parametros.add(new ParametroPesquisaIgual("idReembolso", filtro.getIdReembolso()));
 
-        return pesquisarUnicoSemIsolamentoDados(CONSULTA_FROTA_POR_COBRANCA_REEMBOLSO_CONSOLIDADO,parametros.toArray(new ParametroPesquisa[parametros.size()])); 
+        return pesquisarUnicoSemIsolamentoDados(CONSULTA_FROTA_POR_COBRANCA_REEMBOLSO_CONSOLIDADO,parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
     @Override
@@ -458,6 +487,23 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
             parametros.add(new ParametroPesquisaIn("idsPvs", usuarioLogado.getPontosDeVenda().stream().map(PontoDeVenda::getId).collect(Collectors.toList())));
         }
 
-        return pesquisar(null, CONSULTA_FROTAS_ASSOCIADAS_A_CICLOS_CONTIDOS_NO_PERIODO, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+        return pesquisarComExcluidos(null, CONSULTA_FROTAS_ASSOCIADAS_A_CICLOS_CONTIDOS_NO_PERIODO, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+    }
+
+    @Override
+    public List<Frota> pesquisarFrotasParaDetalheCiclo(FiltroPesquisaDetalheCicloVo filtro, Usuario usuarioLogado) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+
+        parametros.add(new ParametroPesquisaIgual("dataInicial", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getInicio())));
+        parametros.add(new ParametroPesquisaIgual("dataFinal", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getFim())));
+        parametros.add(new ParametroPesquisaIgual("statusCiclo", filtro.getStatusCiclo().getValue()));
+
+        if(filtro.getIdPv() != null) {
+            parametros.add(new ParametroPesquisaIn("idsPvs", Collections.singletonList(filtro.getIdPv())));
+        } else if(usuarioLogado.isRevendedor()) {
+            parametros.add(new ParametroPesquisaIn("idsPvs", usuarioLogado.getPontosDeVenda().stream().map(PontoDeVenda::getId).collect(Collectors.toList())));
+        }
+
+        return pesquisarComExcluidos(null, CONSULTA_FROTAS_PARA_DETALHE_CICLO, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
 }
