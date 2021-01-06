@@ -1,14 +1,14 @@
 package ipp.aci.boleia.dados;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-
 import ipp.aci.boleia.dominio.TransacaoConectcar;
 import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaTransacaoConsolidadaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaUtilizacaoTagVo;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Contrato para implementacao de repositorios de consolidações de Transacao Conectcar Consolidada
@@ -48,15 +48,15 @@ public interface ITransacaoConectcarDados extends IRepositorioBoleiaDados<Transa
 	 * Obtem uma transacao por um código de transação da conectcar
 	 * 
 	 * @param codigoTransacaoConectcar Código de transação da conectCar
-	 * @return
+	 * @return A transação correspondente ao código de transação
 	 */
 	TransacaoConectcar obterTransacoesPorIdConectcar(Long codigoTransacaoConectcar);
 	
 	/**
 	 * Obtem as transações de uma cobrança
 	 * 
-	 * @param idCobranca
-	 * @return
+	 * @param idCobranca O identificador da cobrança
+	 * @return As transações relativas à cobrança
 	 */
 	List<TransacaoConectcar> obterTransacoesPorCobranca(Long idCobranca);
 
