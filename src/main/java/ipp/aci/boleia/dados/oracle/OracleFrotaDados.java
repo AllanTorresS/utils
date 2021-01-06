@@ -10,6 +10,7 @@ import ipp.aci.boleia.dominio.enums.StatusApiToken;
 import ipp.aci.boleia.dominio.enums.StatusContrato;
 import ipp.aci.boleia.dominio.enums.StatusFrota;
 import ipp.aci.boleia.dominio.enums.StatusFrotaConectcar;
+import ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso;
 import ipp.aci.boleia.dominio.enums.TipoAcumuloKmv;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
@@ -130,7 +131,7 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
                     "   (trunc(tc.dataInicioPeriodo) = trunc(:dataInicial) and trunc(tc.dataFimPeriodo) = trunc(:dataFinal)) AND " +
                     "   (tc.statusConsolidacao = :statusCiclo) AND " +
                     "   (fp.pontoVenda.id IN :idsPvs) AND " +
-                    "   (tc.reembolso is NULL OR (rm.dataPagamento IS NULL AND TRUNC(rm.dataVencimentoPgto) >= TRUNC(SYSDATE) AND rm.valorReembolso >= 0)) " +
+                    "   (tc.reembolso is NULL OR tc.reembolso.status = " + StatusPagamentoReembolso.EM_ABERTO.getValue() + " OR tc.reembolso.status = " + StatusPagamentoReembolso.PREVISTO.getValue() + ")" +
                     "ORDER BY f.nomeRazaoFrota";
 
     /**
