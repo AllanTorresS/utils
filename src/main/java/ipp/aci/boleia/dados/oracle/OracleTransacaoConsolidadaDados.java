@@ -364,6 +364,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                         "SUM(TC.quantidadeAbastecimentos), " +
                         CLAUSULA_DATA_VENCIMENTO + ", " +
                         "C.dataPagamento, " +
+                        "C.statusIntegracaoJDE, " +
+                        "C.id, " +
                         "CASE WHEN " + CLAUSULA_EXIGE_NOTA + " THEN 1 ELSE 0 END, " +
                         "SUM(TC.valorEmitidoNotaFiscal), " +
                         "SUM(TC.valorTotalNotaFiscal)" +
@@ -390,7 +392,9 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                         "CASE WHEN " + CLAUSULA_EXIGE_NOTA + " THEN 1 ELSE 0 END, " +
                         "TC.statusConsolidacao," +
                         "C.dataPagamento," +
-                        "C.status " +
+                        "C.status," +
+                        "C.statusIntegracaoJDE," +
+                        "C.id " +
                     "ORDER BY %s ";
 
     private static final String CONSULTA_PONTOS_GRAFICO =
@@ -514,10 +518,10 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "         CASE WHEN TC.reembolso is NULL THEN " + StatusPagamentoReembolso.PREVISTO.getValue() + " ELSE RM.status END";
 
     /**
-     * Busca uma lista nfs por consolidados
+     * Busca uma lista de consolidados
      */
-    private static final String CONSULTA_EXPORTACAO_NFS_CICLOS =
-            "SELECT TC" +
+    private static final String CONSULTA_CONSOLIDADO_FROTA =
+            "SELECT TC " +
                     "FROM TransacaoConsolidada TC " +
                     "LEFT JOIN TC.frotaPtov FPV " +
                     "LEFT JOIN FPV.frota F " +
@@ -1429,7 +1433,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             parametros.add(new ParametroPesquisaIgual("statusPagamento", null));
         }
 
-        return pesquisar(null, CONSULTA_EXPORTACAO_NFS_CICLOS, TransacaoConsolidada.class, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+        return pesquisar(null, CONSULTA_CONSOLIDADO_FROTA, TransacaoConsolidada.class, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
 
     /**

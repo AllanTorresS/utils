@@ -1,5 +1,7 @@
 package ipp.aci.boleia.dominio.vo;
 
+import ipp.aci.boleia.dominio.enums.StatusIntegracaoJde;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -19,6 +21,8 @@ public class AgrupamentoTransacaoConsolidadaFrotaVo {
     private Boolean exigeNota;
     private BigDecimal valorEmitidoNotaFiscal;
     private BigDecimal valorTotalNotaFiscal;
+    private EnumVo statusIntegracao;
+    private Long idCobranca;
 
     /**
      * Construtor default
@@ -36,6 +40,8 @@ public class AgrupamentoTransacaoConsolidadaFrotaVo {
      * @param statusPagamento O status de pagamento da cobrança
      * @param quantidadeAbastecimentos A quantidade de abastecimentos na cobrança
      * @param dataVencimento A data de vencimento da cobrança
+     * @param statusIntegracao o status da integração da cobrança
+     * @param idCobranca o id da cobrança
      * @param dataPagamento A data de pagamento da cobrança
      * @param exigeNota Se há exigência de nota para emissão da cobrança
      * @param valorEmitidoNotaFiscal Valor total emitido
@@ -44,7 +50,7 @@ public class AgrupamentoTransacaoConsolidadaFrotaVo {
     public AgrupamentoTransacaoConsolidadaFrotaVo(Date dataInicioPeriodo, Date dataFimPeriodo, BigDecimal valorTotal,
                                                   BigDecimal valorDesconto, Integer statusConsolidacao,
                                                   Integer statusPagamento, Long quantidadeAbastecimentos,
-                                                  Date dataVencimento, Date dataPagamento, Integer exigeNota, BigDecimal valorEmitidoNotaFiscal,
+                                                  Date dataVencimento, Date dataPagamento, Integer statusIntegracao, Long idCobranca, Integer exigeNota, BigDecimal valorEmitidoNotaFiscal,
                                                   BigDecimal valorTotalNotaFiscal) {
         this.dataInicioPeriodo = dataInicioPeriodo;
         this.dataFimPeriodo = dataFimPeriodo;
@@ -58,6 +64,10 @@ public class AgrupamentoTransacaoConsolidadaFrotaVo {
         this.exigeNota = exigeNota == 1 ? true : false;
         this.valorEmitidoNotaFiscal = valorEmitidoNotaFiscal;
         this.valorTotalNotaFiscal = valorTotalNotaFiscal;
+        this.idCobranca = idCobranca;
+        if(statusIntegracao != null) {
+            this.statusIntegracao = new EnumVo(StatusIntegracaoJde.obterPorValor(statusIntegracao));
+        }
     }
 
     public Date getDataInicioPeriodo() {
@@ -154,5 +164,21 @@ public class AgrupamentoTransacaoConsolidadaFrotaVo {
 
     public void setDataPagamento(Date dataPagamento) {
         this.dataPagamento = dataPagamento;
+    }
+
+    public EnumVo getStatusIntegracao() {
+        return statusIntegracao;
+    }
+
+    public void setStatusIntegracao(EnumVo statusIntegracao) {
+        this.statusIntegracao = statusIntegracao;
+    }
+
+    public Long getIdCobranca() {
+        return idCobranca;
+    }
+
+    public void setIdCobranca(Long idCobranca) {
+        this.idCobranca = idCobranca;
     }
 }
