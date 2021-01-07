@@ -1473,6 +1473,29 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
     }
 
     @Override
+    public ResultadoPaginado<TransacaoConsolidada> pesquisarConsolidadosCobrancaFrotaExportacao(FiltroPesquisaFinanceiroVo filtro){
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+
+        parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataInicioPeriodo", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe())));
+        parametros.add(new ParametroPesquisaDataMenorOuIgual("dataFimPeriodo", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte())));
+        parametros.add(new ParametroPesquisaIgual("idFrota", filtro.getFrota().getId()));
+
+        if (filtro.getStatusCiclo() != null && filtro.getStatusCiclo().getValue() != null){
+            parametros.add(new ParametroPesquisaIgual("statusCiclo", filtro.getStatusCiclo().getValue()));
+        } else{
+            parametros.add(new ParametroPesquisaIgual("statusCiclo", null));
+        }
+
+        if (filtro.getStatusPagamento() != null && filtro.getStatusPagamento().getValue() != null){
+            parametros.add(new ParametroPesquisaIgual("statusPagamento", filtro.getStatusPagamento().getValue()));
+        } else{
+            parametros.add(new ParametroPesquisaIgual("statusPagamento", null));
+        }
+
+        return pesquisar(filtro.getPaginacao(), CONSULTA_CONSOLIDADOS_EXPORTACAO_FROTA, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+    @Override
     public BigDecimal obterTotalCobrancaPeriodo(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
 
