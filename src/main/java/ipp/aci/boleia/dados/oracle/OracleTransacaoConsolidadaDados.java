@@ -366,7 +366,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                         "SUM(TC.quantidadeAbastecimentos), " +
                         CLAUSULA_DATA_VENCIMENTO + ", " +
                         "C.dataPagamento, " +
-                        "CASE WHEN " + CLAUSULA_EXIGE_NOTA + " THEN 1 ELSE 0 END, " +
+                        "MAX(CASE WHEN " + CLAUSULA_EXIGE_NOTA + " THEN 1 ELSE 0 END), " +
                         "SUM(TC.valorEmitidoNotaFiscal), " +
                         "SUM(TC.valorTotalNotaFiscal)" +
                     ") " +
@@ -389,7 +389,6 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                         CLAUSULA_DATA_FIM_PERIODO + ", " +
                         CLAUSULA_STATUS_PAGAMENTO + ", " +
                         CLAUSULA_DATA_VENCIMENTO + ", " +
-                        "CASE WHEN " + CLAUSULA_EXIGE_NOTA + " THEN 1 ELSE 0 END, " +
                         "TC.statusConsolidacao," +
                         "C.dataPagamento," +
                         "C.status " +
