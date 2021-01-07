@@ -235,6 +235,7 @@ public interface ITransacaoConsolidadaDados extends IRepositorioBoleiaDados<Tran
      * @return Uma lista com as transações consolidadas agrupadas.
      */
     List<AgrupamentoTransacaoConsolidadaPvVo> pesquisarDetalheCicloParaPv(FiltroPesquisaDetalheCicloVo filtro);
+
     /**
      * Altera o estado da entidade para desanexado
      * @param transacaoConsolidada transacao consolidada a cobrança a ser desanexada
@@ -287,4 +288,11 @@ public interface ITransacaoConsolidadaDados extends IRepositorioBoleiaDados<Tran
      * @return Uma lista com as transações consolidadas.
      */
     List<TransacaoConsolidada> pesquisarConsolidadoFrota(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado);
+
+    /**
+     * Obtém os detalhes de transações realizadas por uma frota em um período
+     * @param filtro O filtro fornecido
+     * @return Os dados encontrados
+     */
+    List<TransacaoConsolidada> obterDetalheDadosFinanceiroFrota(FiltroPesquisaFinanceiroVo filtro);
 }
