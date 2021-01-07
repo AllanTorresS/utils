@@ -3,6 +3,7 @@ package ipp.aci.boleia.dominio.vo;
 import ipp.aci.boleia.dominio.pesquisa.comum.FiltroBasePeriodoPaginado;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Filtro para pesquisa de transação consolidada
@@ -18,7 +19,7 @@ public class FiltroPesquisaFinanceiroVo extends FiltroBasePeriodoPaginado {
     private String nomePontoDeVenda;
     private String cnpjPontoDeVenda;
     private EnumVo statusCiclo;
-    private EnumVo statusPagamento;
+    private List<EnumVo> statusPagamento;
     private EmpresaUnidadeVo empresaUnidade;
 
     public Date getDe(){
@@ -101,11 +102,11 @@ public class FiltroPesquisaFinanceiroVo extends FiltroBasePeriodoPaginado {
         this.statusCiclo = statusCiclo;
     }
 
-    public EnumVo getStatusPagamento() {
+    public List<EnumVo> getStatusPagamento() {
         return statusPagamento;
     }
 
-    public void setStatusPagamento(EnumVo statusPagamento) {
+    public void setStatusPagamento(List<EnumVo> statusPagamento) {
         this.statusPagamento = statusPagamento;
     }
 }
