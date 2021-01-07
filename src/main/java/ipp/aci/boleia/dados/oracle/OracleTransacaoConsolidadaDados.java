@@ -314,9 +314,11 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "FROM TransacaoConsolidada tc " +
                     "LEFT JOIN tc.frotaPtov fpv " +
                     "LEFT JOIN tc.cobranca c " +
-                    "WHERE c.dataPagamento >= :dataInicioPeriodo AND c.dataPagamento <= :dataFimPeriodo " +
+                    "WHERE ((tc.dataInicioPeriodo >= :dataInicioPeriodo AND tc.dataFimPeriodo <= :dataFimPeriodo) OR (tc.dataFimPeriodo >= :dataInicioPeriodo AND tc.dataInicioPeriodo <= :dataFimPeriodo)) " +
                     "AND (fpv.frota.id = :idFrota OR :idFrota is null) " +
                     "AND (tc.valorTotal <> 0 OR tc.valorTotalNotaFiscal <> 0) " +
+                    "AND (tc.quantidadeAbastecimentos > 0) " +
+                    "AND (tc.statusConsolidacao = :statusCiclo OR :statusCiclo is null) " +
                     "AND c.status = " + StatusPagamentoCobranca.PAGO.getValue();
 
     private static final String CONSULTA_NUMERO_REEMBOLSOS_ATRASADOS =
@@ -331,6 +333,17 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "AND (r.dataVencimentoPgto >= :dataInicio AND r.dataVencimentoPgto <= :dataFim) " +
                     "AND " + CLAUSULA_REEMBOLSO_ATRASADO;
 
+    private static final String CONSULTA_CONSOLIDADOS_EXPORTACAO_FROTA =
+            "SELECT tc " +
+                    "FROM TransacaoConsolidada tc " +
+                    "LEFT JOIN tc.frotaPtov fpv " +
+                    "JOIN tc.reembolso r " +
+                    "LEFT JOIN tc.cobranca c " +
+                    "WHERE ((tc.dataInicioPeriodo >= :dataInicioPeriodo AND tc.dataFimPeriodo <= :dataFimPeriodo) OR (tc.dataFimPeriodo >= :dataInicioPeriodo AND tc.dataInicioPeriodo <= :dataFimPeriodo)) " +
+                    "AND (fpv.frota.id = :idFrota) " +
+                    "AND (c.status = :statusPagamento OR :statusPagamento is null) " +
+                    "AND (tc.quantidadeAbastecimentos > 0) " +
+                    "AND (tc.statusConsolidacao = :statusCiclo OR :statusCiclo is null)";
 
     private static final String CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO_REVENDA =
             "SELECT tc " +
@@ -1437,6 +1450,29 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
     }
 
     @Override
+    public ResultadoPaginado<TransacaoConsolidada> pesquisarConsolidadosCobrancaFrotaExportacao(FiltroPesquisaFinanceiroVo filtro){
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+
+        parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataInicioPeriodo", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe())));
+        parametros.add(new ParametroPesquisaDataMenorOuIgual("dataFimPeriodo", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte())));
+        parametros.add(new ParametroPesquisaIgual("idFrota", filtro.getFrota().getId()));
+
+        if (filtro.getStatusCiclo() != null && filtro.getStatusCiclo().getValue() != null){
+            parametros.add(new ParametroPesquisaIgual("statusCiclo", filtro.getStatusCiclo().getValue()));
+        } else{
+            parametros.add(new ParametroPesquisaIgual("statusCiclo", null));
+        }
+
+        if (filtro.getStatusPagamento() != null && filtro.getStatusPagamento().getValue() != null){
+            parametros.add(new ParametroPesquisaIgual("statusPagamento", filtro.getStatusPagamento().getValue()));
+        } else{
+            parametros.add(new ParametroPesquisaIgual("statusPagamento", null));
+        }
+
+        return pesquisar(filtro.getPaginacao(), CONSULTA_CONSOLIDADOS_EXPORTACAO_FROTA, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+    @Override
     public BigDecimal obterTotalCobrancaPeriodo(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
 
@@ -1448,8 +1484,13 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         } else if (usuarioLogado.isFrotista()){
             parametros.add(new ParametroPesquisaIgual("idFrota", usuarioLogado.getFrota().getId()));
         }
+        if(filtro.getStatusCiclo() != null && filtro.getStatusCiclo().getValue() != null){
+            parametros.add(new ParametroPesquisaIgual("statusCiclo", filtro.getStatusCiclo().getValue()));
+        } else{
+            parametros.add(new ParametroPesquisaIgual("statusCiclo", null));
+        }
 
-        BigDecimal totalReembolso = pesquisarUnicoSemIsolamentoDados(CONSULTA_TOTAL_REEMBOLSO_PERIODO, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        BigDecimal totalReembolso = pesquisarUnicoSemIsolamentoDados(CONSULTA_TOTAL_COBRANCA_PERIODO, parametros.toArray(new ParametroPesquisa[parametros.size()]));
         return totalReembolso != null ? totalReembolso : BigDecimal.ZERO;
     }
 
