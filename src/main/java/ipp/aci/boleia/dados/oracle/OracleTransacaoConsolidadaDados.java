@@ -382,7 +382,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "AND ((TC.dataInicioPeriodo >= :dataInicioPeriodo AND TC.dataFimPeriodo <= :dataFimPeriodo) OR (TC.dataFimPeriodo >= :dataInicioPeriodo AND TC.dataInicioPeriodo <= :dataFimPeriodo)) " +
                     "AND (TC.statusConsolidacao = :statusConsolidacao OR :statusConsolidacao is null) " +
                     "AND (TC.quantidadeAbastecimentos > 0) " +
-                    "AND ((C.status IS NULL AND :statusPagamento = " + A_VENCER.getValue() + ") OR C.status = :statusPagamento OR :statusPagamento is null) " +
+                    "%s " +
                     "GROUP BY " +
                         "F.id, " +
                         "TC.dataInicioPeriodo, " +
@@ -1364,15 +1364,16 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             parametros.add(new ParametroPesquisaIgual("statusConsolidacao", null));
         }
 
-        if(filtro.getStatusPagamento() != null && filtro.getStatusPagamento().getValue() != null) {
-            parametros.add(new ParametroPesquisaIgual("statusPagamento", filtro.getStatusPagamento().getValue()));
-        } else {
-            parametros.add(new ParametroPesquisaIgual("statusPagamento", null));
+        String filtroStatus = " ";
+        if(filtro.getStatusPagamento() != null) {
+            filtroStatus = "AND ((C.status IS NULL AND " + A_VENCER.getValue() + " IN :statusPagamento) OR C.status IN :statusPagamento) ";
+            List<Integer> listaStatus = filtro.getStatusPagamento().stream().map(x -> StatusPagamentoCobranca.valueOf(x.getName()).getValue()).collect(Collectors.toList());
+            parametros.add(new ParametroPesquisaIn("statusPagamento", listaStatus));
         }
 
         String ordenacao = criarParametroOrdenacaoFinanceiroFrota(filtro.getPaginacao().getParametrosOrdenacaoColuna());
 
-        String consultaPesquisaGridFinanceiro = String.format(CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO_FROTA, ordenacao);
+        String consultaPesquisaGridFinanceiro = String.format(CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO_FROTA, filtroStatus, ordenacao);
 
         return pesquisar(filtro.getPaginacao(), consultaPesquisaGridFinanceiro, AgrupamentoTransacaoConsolidadaFrotaVo.class, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
