@@ -66,12 +66,11 @@ public class ReembolsoBaseSd {
     /**
      * Define a data de vencimento do pagamento de um reembolso.
      *
-     * @param dataLimiteEmissaoNf Data limite para emissão de notas fiscais.
+     * @param dataReferencia Data de referência.
      * @return A data de vencimento do pagamento.
      */
-    public Date definirDataVencimentoPagamento(Date dataLimiteEmissaoNf) {
+    public Date definirDataVencimentoPagamento(Date dataReferencia) {
         Date dataAtual = utilitarioAmbiente.buscarDataAmbiente();
-        Date dataReferencia = dataLimiteEmissaoNf.compareTo(dataAtual) < 0 ? dataAtual : dataLimiteEmissaoNf;
         Date dataVencimento = UtilitarioCalculoData.adicionarDiasData(dataReferencia, QUANTIDADE_DIAS_A_MAIS_REEMBOLSO);
         return obterPrimeiroInstanteDia(dataVencimento);
     }
