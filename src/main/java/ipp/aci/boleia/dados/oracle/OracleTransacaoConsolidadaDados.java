@@ -370,7 +370,12 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                         "C.id, " +
                         "CASE WHEN " + CLAUSULA_EXIGE_NOTA + " THEN 1 ELSE 0 END, " +
                         "SUM(TC.valorEmitidoNotaFiscal), " +
-                        "SUM(TC.valorTotalNotaFiscal)" +
+                        "SUM(TC.valorTotalNotaFiscal), " +
+                        "MAX((SELECT CASE WHEN COUNT(NF.CD_NFE) > 0 THEN 1 ELSE 0 END " +
+                        "        FROM AUTORIZACAO_PAGAMENTO AP" +
+                        "        INNER JOIN AUTORIZACAO_NOTA AN on AP.CD_AUTORIZACAO_PAGAMENTO = AN.CD_AUTORIZACAO_PAGAMENTO" +
+                        "        INNER JOIN NOTA_FISCAL NF on (AN.CD_NFE = NF.CD_NFE AND NF.ID_JUSTIF = 0)" +
+                        "        WHERE ((AP.CD_TRANS_CONSOL_POSTERGADA IS NULL AND AP.CD_TRANS_CONSOL = TC.CD_TRANS_CONSOL) OR AP.CD_TRANS_CONSOL_POSTERGADA = TC.CD_TRANS_CONSOL)))"+
                     ") " +
                     "FROM TransacaoConsolidada TC " +
                     "LEFT JOIN TC.frotaPtov FPV " +
