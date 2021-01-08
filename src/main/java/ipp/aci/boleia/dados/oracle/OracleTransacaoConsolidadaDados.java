@@ -58,6 +58,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ipp.aci.boleia.dominio.enums.StatusPagamentoCobranca.A_VENCER;
 import static ipp.aci.boleia.util.UtilitarioCalculoData.adicionarMesesData;
 import static ipp.aci.boleia.util.UtilitarioCalculoData.obterPrimeiroDiaMes;
 import static ipp.aci.boleia.util.UtilitarioCalculoData.obterUltimoDiaMes;
@@ -351,7 +352,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             "ELSE trunc(TC.dataFimPeriodo) " +
             "END ";
 
-    private static final String CLAUSULA_STATUS_PAGAMENTO = "CASE WHEN C is null THEN " + StatusPagamentoCobranca.A_VENCER.getValue() + " ELSE C.status END ";
+    private static final String CLAUSULA_STATUS_PAGAMENTO = "CASE WHEN C is null THEN " + A_VENCER.getValue() + " ELSE C.status END ";
 
     private static final String CLAUSULA_DATA_VENCIMENTO = "CASE WHEN C is not null THEN C.dataVencimentoVigente ELSE TCP.dataLimitePagamento END ";
 
@@ -368,7 +369,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                         "C.dataPagamento, " +
                         "C.statusIntegracaoJDE, " +
                         "C.id, " +
-                        "CASE WHEN " + CLAUSULA_EXIGE_NOTA + " THEN 1 ELSE 0 END, " +
+                        "MAX(CASE WHEN " + CLAUSULA_EXIGE_NOTA + " THEN 1 ELSE 0 END), " +
                         "SUM(TC.valorEmitidoNotaFiscal), " +
                         "SUM(TC.valorTotalNotaFiscal), " +
                         "MAX((SELECT CASE WHEN COUNT(NF.CD_NFE) > 0 THEN 1 ELSE 0 END " +
@@ -388,7 +389,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "AND ((TC.dataInicioPeriodo >= :dataInicioPeriodo AND TC.dataFimPeriodo <= :dataFimPeriodo) OR (TC.dataFimPeriodo >= :dataInicioPeriodo AND TC.dataInicioPeriodo <= :dataFimPeriodo)) " +
                     "AND (TC.statusConsolidacao = :statusConsolidacao OR :statusConsolidacao is null) " +
                     "AND (TC.quantidadeAbastecimentos > 0) " +
-                    "AND (C.status = :statusPagamento OR :statusPagamento is null) " +
+                    "%s " +
                     "GROUP BY " +
                         "F.id, " +
                         "TC.dataInicioPeriodo, " +
@@ -396,7 +397,6 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                         CLAUSULA_DATA_FIM_PERIODO + ", " +
                         CLAUSULA_STATUS_PAGAMENTO + ", " +
                         CLAUSULA_DATA_VENCIMENTO + ", " +
-                        "CASE WHEN " + CLAUSULA_EXIGE_NOTA + " THEN 1 ELSE 0 END, " +
                         "TC.statusConsolidacao," +
                         "C.dataPagamento," +
                         "C.status," +
@@ -1389,15 +1389,16 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             parametros.add(new ParametroPesquisaIgual("statusConsolidacao", null));
         }
 
-        if(filtro.getStatusPagamento() != null && filtro.getStatusPagamento().getValue() != null) {
-            parametros.add(new ParametroPesquisaIgual("statusPagamento", filtro.getStatusPagamento().getValue()));
-        } else {
-            parametros.add(new ParametroPesquisaIgual("statusPagamento", null));
+        String filtroStatus = " ";
+        if(filtro.getStatusPagamento() != null) {
+            filtroStatus = "AND ((C.status IS NULL AND " + A_VENCER.getValue() + " IN :statusPagamento) OR C.status IN :statusPagamento) ";
+            List<Integer> listaStatus = filtro.getStatusPagamento().stream().map(x -> StatusPagamentoCobranca.valueOf(x.getName()).getValue()).collect(Collectors.toList());
+            parametros.add(new ParametroPesquisaIn("statusPagamento", listaStatus));
         }
 
         String ordenacao = criarParametroOrdenacaoFinanceiroFrota(filtro.getPaginacao().getParametrosOrdenacaoColuna());
 
-        String consultaPesquisaGridFinanceiro = String.format(CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO_FROTA, ordenacao);
+        String consultaPesquisaGridFinanceiro = String.format(CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO_FROTA, filtroStatus, ordenacao);
 
         return pesquisar(filtro.getPaginacao(), consultaPesquisaGridFinanceiro, AgrupamentoTransacaoConsolidadaFrotaVo.class, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
@@ -1410,7 +1411,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
     private String criarParametroOrdenacaoFinanceiroFrota(List<ParametroOrdenacaoColuna> parametrosOrdenacaoColuna) {
         if(parametrosOrdenacaoColuna != null && parametrosOrdenacaoColuna.isEmpty()) {
             return "CASE WHEN C.status = " + StatusPagamentoCobranca.VENCIDO.getValue() + " THEN 0 " +
-                    "WHEN TC.statusConsolidacao = " + StatusTransacaoConsolidada.FECHADA.getValue() + " AND C.status = " + StatusPagamentoCobranca.A_VENCER.getValue() + " AND SUM(TC.valorEmitidoNotaFiscal) > 0 THEN 1 " +
+                    "WHEN TC.statusConsolidacao = " + StatusTransacaoConsolidada.FECHADA.getValue() + " AND C.status = " + A_VENCER.getValue() + " AND SUM(TC.valorEmitidoNotaFiscal) > 0 THEN 1 " +
                     "ELSE 2 END ";
         } else if (parametrosOrdenacaoColuna != null && !parametrosOrdenacaoColuna.isEmpty()) {
             String nomeColunaStatusCiclo = "statusConsolidacao";
