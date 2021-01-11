@@ -1387,7 +1387,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         if(parametrosOrdenacaoColuna != null && parametrosOrdenacaoColuna.isEmpty()) {
             return "CASE WHEN C.status = " + StatusPagamentoCobranca.VENCIDO.getValue() + " THEN 0 " +
                     "WHEN TC.statusConsolidacao = " + StatusTransacaoConsolidada.FECHADA.getValue() + " AND C.status = " + A_VENCER.getValue() + " AND SUM(TC.valorEmitidoNotaFiscal) > 0 THEN 1 " +
-                    "ELSE 2 END ";
+                    "ELSE 2 END ASC, " +
+                    "TC.dataFimPeriodo ASC";
         } else if (parametrosOrdenacaoColuna != null && !parametrosOrdenacaoColuna.isEmpty()) {
             String nomeColunaStatusCiclo = "statusConsolidacao";
             String direcaoOrdenacao = (parametrosOrdenacaoColuna.get(0).isDecrescente() ? "DESC" : "ASC");
