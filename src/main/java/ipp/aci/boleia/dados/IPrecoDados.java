@@ -69,7 +69,7 @@ public interface IPrecoDados extends IRepositorioBoleiaDados<Preco> {
      * @param frota a Frota a ser filtrada
      * @param posto O Ponto de Venda a ser filtrado
      * @param tipoCombustivel O id do tipo de combustivel
-     * @return Os precos pendentes ou novos não agendado, caso existam
+     * @return Os precos pendentes ou novos não agendados, caso existam
      */
     List<Preco> obterPrecosEmNegociacaoNaoAgendados(Frota frota, PontoDeVenda posto, TipoCombustivel tipoCombustivel);
 
