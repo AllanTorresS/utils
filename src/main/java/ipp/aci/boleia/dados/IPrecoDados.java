@@ -65,7 +65,7 @@ public interface IPrecoDados extends IRepositorioBoleiaDados<Preco> {
     List<Preco> obterAgendamentosParaVigenciaAutomatica();
 
     /**
-     * Busca para um determinado PontoVenda, Frota e tipo combustivel os precos com status pendente ou novo que não foi agendado
+     * Busca para um determinado PontoVenda, Frota e tipo combustivel os precos com status pendente ou novo que não foram agendados
      * @param frota a Frota a ser filtrada
      * @param posto O Ponto de Venda a ser filtrado
      * @param tipoCombustivel O id do tipo de combustivel
