@@ -23,7 +23,6 @@ public class AgrupamentoTransacaoConsolidadaFrotaVo {
     private BigDecimal valorTotalNotaFiscal;
     private EnumVo statusIntegracao;
     private Long idCobranca;
-    private Boolean possuiNf;
 
     /**
      * Construtor default
@@ -47,13 +46,12 @@ public class AgrupamentoTransacaoConsolidadaFrotaVo {
      * @param exigeNota Se há exigência de nota para emissão da cobrança
      * @param valorEmitidoNotaFiscal Valor total emitido
      * @param valorTotalNotaFiscal Valor total a ser emitido
-     * @param possuiNf informa se o consolidado possui nota
      */
     public AgrupamentoTransacaoConsolidadaFrotaVo(Date dataInicioPeriodo, Date dataFimPeriodo, BigDecimal valorTotal,
                                                   BigDecimal valorDesconto, Integer statusConsolidacao,
                                                   Integer statusPagamento, Long quantidadeAbastecimentos,
                                                   Date dataVencimento, Date dataPagamento, Integer statusIntegracao, Long idCobranca, Integer exigeNota, BigDecimal valorEmitidoNotaFiscal,
-                                                  BigDecimal valorTotalNotaFiscal, Integer possuiNf) {
+                                                  BigDecimal valorTotalNotaFiscal) {
         this.dataInicioPeriodo = dataInicioPeriodo;
         this.dataFimPeriodo = dataFimPeriodo;
         this.valorTotal = valorTotal;
@@ -70,7 +68,6 @@ public class AgrupamentoTransacaoConsolidadaFrotaVo {
         if(statusIntegracao != null) {
             this.statusIntegracao = new EnumVo(StatusIntegracaoJde.obterPorValor(statusIntegracao));
         }
-        this.possuiNf = possuiNf == 1 ? true : false;
     }
 
     public Date getDataInicioPeriodo() {
@@ -185,11 +182,4 @@ public class AgrupamentoTransacaoConsolidadaFrotaVo {
         this.idCobranca = idCobranca;
     }
 
-    public Boolean getPossuiNf() {
-        return possuiNf;
-    }
-
-    public void setPossuiNf(Boolean possuiNf) {
-        this.possuiNf = possuiNf;
-    }
 }
