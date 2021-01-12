@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import ipp.aci.boleia.dados.IHistoricoFrotaDados;
+import ipp.aci.boleia.dados.IHistoricoFrotaPontoVendaDados;
+import ipp.aci.boleia.dominio.historico.HistoricoFrota;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -78,6 +81,30 @@ public class FrotaSd {
     
     @Autowired
 	private ILeadCredenciamentoDados repositorioLeadCredenciamento;
+
+    @Autowired
+    private IHistoricoFrotaDados historicoFrotaDados;
+
+
+    /**
+     * Armazena os dados de uma frota
+     * @param frota A frota  ser armazenada
+     * @return A frota armazenada
+     */
+    public Frota armazenar(Frota frota) {
+        if(frota.getId() != null) {
+            Frota dadosAntigos = repositorio.obterPorId(frota.getId());
+            if(dadosAntigos != null) {
+                HistoricoFrota historicoFrota = new HistoricoFrota();
+                historicoFrota.setFrota(dadosAntigos);
+                historicoFrota.setDataHistorico(ambiente.buscarDataAmbiente());
+                historicoFrota.setExigeNotaFiscal(dadosAntigos.exigeNotaFiscal());
+                historicoFrota.setLocalDestinoPadraoNfeUf(dadosAntigos.getLocalDestinoPadraoNfeUf());
+                historicoFrotaDados.armazenar(historicoFrota);
+            }
+        }
+        return repositorio.armazenar(frota);
+    }
 
     /**
      * Prepara uma frota para realizar pre cadastro

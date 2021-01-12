@@ -4,12 +4,16 @@ import ipp.aci.boleia.dados.IComandaDigitalDados;
 import ipp.aci.boleia.dados.IEmpresaAgregadaDados;
 import ipp.aci.boleia.dados.IFrotaDados;
 import ipp.aci.boleia.dados.IGrupoOperacionalDados;
+import ipp.aci.boleia.dados.IHistoricoUnidadeDados;
 import ipp.aci.boleia.dados.IMotoristaDados;
 import ipp.aci.boleia.dados.IUnidadeDados;
 import ipp.aci.boleia.dados.IUsuarioDados;
 import ipp.aci.boleia.dados.IVeiculoDados;
+import ipp.aci.boleia.dominio.EmpresaAgregada;
 import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.Unidade;
+import ipp.aci.boleia.dominio.historico.HistoricoEmpresaAgregada;
+import ipp.aci.boleia.dominio.historico.HistoricoUnidade;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -49,6 +53,29 @@ public class UnidadeSd {
 
     @Autowired
     private IEmpresaAgregadaDados empresaAgregadaDados;
+
+    @Autowired
+    private IHistoricoUnidadeDados historicoUnidadeDados;
+
+    /**
+     * Armazena os dados de uma unidade
+     * @param unidade A unidade  ser armazenada
+     * @return A unidade armazenada
+     */
+    public Unidade armazenar(Unidade unidade) {
+        if(unidade.getId() != null) {
+            Unidade dadosAntigos = repositorio.obterPorId(unidade.getId());
+            if(dadosAntigos != null) {
+                HistoricoUnidade historicoUnidade = new HistoricoUnidade();
+                historicoUnidade.setUnidade(dadosAntigos);
+                historicoUnidade.setDataHistorico(ambiente.buscarDataAmbiente());
+                historicoUnidade.setExigeNotaFiscal(dadosAntigos.getExigeNotaFiscal());
+                historicoUnidade.setLocalDestinoPadraoNfeUf(dadosAntigos.getLocalDestinoPadraoNfeUf());
+                historicoUnidadeDados.armazenar(historicoUnidade);
+            }
+        }
+        return repositorio.armazenar(unidade);
+    }
 
     /**
      * Obtem a unidade matriz para a frota logada
