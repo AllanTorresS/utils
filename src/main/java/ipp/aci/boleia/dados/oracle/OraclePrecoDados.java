@@ -138,7 +138,7 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
     }
 
     @Override
-    public List<Preco> obterPrecosEmNegociacao(Frota frota, PontoDeVenda posto, TipoCombustivel tipoCombustivel) {
+    public List<Preco> obterPrecosEmNegociacaoNaoAgendados(Frota frota, PontoDeVenda posto, TipoCombustivel tipoCombustivel) {
         List<Integer> statusValues = Arrays.asList(StatusPreco.PENDENTE.getValue(), StatusPreco.NOVO.getValue());
         return pesquisar(
                 new ParametroOrdenacaoColuna("dataAtualizacao", Ordenacao.DECRESCENTE),
