@@ -379,6 +379,9 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @OneToOne(mappedBy = "frota")
     private SituacaoConectCar situacaoConectCar;
 
+    @OneToOne(mappedBy = "frota")
+    private ParametroNotaFiscal parametroNotaFiscal;
+
     @NotAudited
     @Formula("(SELECT NVL(COUNT(0), 0) FROM BOLEIA_SCHEMA.TAG_CONECTCAR T WHERE T.CD_FROTA = CD_FROTA)")
     private Integer totalTags;
@@ -1315,6 +1318,14 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
 	public void setSituacaoConectCar(SituacaoConectCar situacaoConectCar) {
 		this.situacaoConectCar = situacaoConectCar;
 	}
+
+    public ParametroNotaFiscal getParametroNotaFiscal() {
+        return parametroNotaFiscal;
+    }
+
+    public void setParametroNotaFiscal(ParametroNotaFiscal parametroNotaFiscal) {
+        this.parametroNotaFiscal = parametroNotaFiscal;
+    }
 
 	public Integer getTotalTags() {
 		return totalTags;
