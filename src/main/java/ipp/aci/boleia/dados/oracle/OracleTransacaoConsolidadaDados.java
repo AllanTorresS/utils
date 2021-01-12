@@ -354,7 +354,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
 
     private static final String CLAUSULA_STATUS_PAGAMENTO = "CASE WHEN C is null THEN " + A_VENCER.getValue() + " ELSE C.status END ";
 
-    private static final String CLAUSULA_DATA_VENCIMENTO = "CASE WHEN C is not null THEN C.dataVencimentoVigente ELSE TCP.dataLimitePagamento END ";
+    private static final String CLAUSULA_DATA_VENCIMENTO = "CASE WHEN (C IS NOT NULL AND C.dataVencimentoVigente IS NOT NULL) THEN C.dataVencimentoVigente ELSE TCP.dataLimitePagamento END ";
 
     private static final String CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO_FROTA =
             "SELECT new ipp.aci.boleia.dominio.vo.AgrupamentoTransacaoConsolidadaFrotaVo( " +
@@ -1407,7 +1407,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         if(parametrosOrdenacaoColuna != null && parametrosOrdenacaoColuna.isEmpty()) {
             return "CASE WHEN C.status = " + StatusPagamentoCobranca.VENCIDO.getValue() + " THEN 0 " +
                     "WHEN TC.statusConsolidacao = " + StatusTransacaoConsolidada.FECHADA.getValue() + " AND C.status = " + A_VENCER.getValue() + " AND SUM(TC.valorEmitidoNotaFiscal) > 0 THEN 1 " +
-                    "ELSE 2 END ";
+                    "ELSE 2 END ASC, " +
+                    "TC.dataFimPeriodo ASC";
         } else if (parametrosOrdenacaoColuna != null && !parametrosOrdenacaoColuna.isEmpty()) {
             String nomeColunaStatusCiclo = "statusConsolidacao";
             String direcaoOrdenacao = (parametrosOrdenacaoColuna.get(0).isDecrescente() ? "DESC" : "ASC");
