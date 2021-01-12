@@ -369,7 +369,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                         "C.dataPagamento, " +
                         "MAX(CASE WHEN " + CLAUSULA_EXIGE_NOTA + " THEN 1 ELSE 0 END), " +
                         "SUM(TC.valorEmitidoNotaFiscal), " +
-                        "SUM(TC.valorTotalNotaFiscal)" +
+                        "SUM(TC.valorTotalNotaFiscal), " +
+                        "C.id " +
                     ") " +
                     "FROM TransacaoConsolidada TC " +
                     "LEFT JOIN TC.frotaPtov FPV " +
@@ -392,7 +393,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                         CLAUSULA_DATA_VENCIMENTO + ", " +
                         "TC.statusConsolidacao," +
                         "C.dataPagamento," +
-                        "C.status " +
+                        "C.status, " +
+                        "C.id " +
                     "ORDER BY %s ";
 
     private static final String CONSULTA_PONTOS_GRAFICO =
@@ -1217,6 +1219,9 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         parametros.add(new ParametroPesquisaIgual("frotaPtov.frota.id", filtro.getFrota().getId()));
         parametros.add(new ParametroPesquisaIgual("statusConsolidacao", filtro.getStatusCiclo().getValue()));
         parametros.add(new ParametroPesquisaDiferente("quantidadeAbastecimentos", 0L));
+        if(filtro.getIdCobranca() != null) {
+            parametros.add(new ParametroPesquisaIgual("cobranca.id", filtro.getIdCobranca()));
+        }
 
         return pesquisar((ParametroOrdenacaoColuna) null, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
