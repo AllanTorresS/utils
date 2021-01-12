@@ -19,6 +19,7 @@ public class AgrupamentoTransacaoConsolidadaFrotaVo {
     private Boolean exigeNota;
     private BigDecimal valorEmitidoNotaFiscal;
     private BigDecimal valorTotalNotaFiscal;
+    private Long idCobranca;
 
     /**
      * Construtor default
@@ -40,12 +41,13 @@ public class AgrupamentoTransacaoConsolidadaFrotaVo {
      * @param exigeNota Se há exigência de nota para emissão da cobrança
      * @param valorEmitidoNotaFiscal Valor total emitido
      * @param valorTotalNotaFiscal Valor total a ser emitido
+     * @param idCobranca Identificador da cobrança vinculada as transações agrupadas
      */
     public AgrupamentoTransacaoConsolidadaFrotaVo(Date dataInicioPeriodo, Date dataFimPeriodo, BigDecimal valorTotal,
                                                   BigDecimal valorDesconto, Integer statusConsolidacao,
                                                   Integer statusPagamento, Long quantidadeAbastecimentos,
                                                   Date dataVencimento, Date dataPagamento, Integer exigeNota, BigDecimal valorEmitidoNotaFiscal,
-                                                  BigDecimal valorTotalNotaFiscal) {
+                                                  BigDecimal valorTotalNotaFiscal, Long idCobranca) {
         this.dataInicioPeriodo = dataInicioPeriodo;
         this.dataFimPeriodo = dataFimPeriodo;
         this.valorTotal = valorTotal;
@@ -58,6 +60,7 @@ public class AgrupamentoTransacaoConsolidadaFrotaVo {
         this.exigeNota = exigeNota == 1 ? true : false;
         this.valorEmitidoNotaFiscal = valorEmitidoNotaFiscal;
         this.valorTotalNotaFiscal = valorTotalNotaFiscal;
+        this.idCobranca = idCobranca;
     }
 
     public Date getDataInicioPeriodo() {
@@ -154,5 +157,13 @@ public class AgrupamentoTransacaoConsolidadaFrotaVo {
 
     public void setDataPagamento(Date dataPagamento) {
         this.dataPagamento = dataPagamento;
+    }
+
+    public Long getIdCobranca() {
+        return idCobranca;
+    }
+
+    public void setIdCobranca(Long idCobranca) {
+        this.idCobranca = idCobranca;
     }
 }

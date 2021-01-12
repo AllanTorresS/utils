@@ -21,6 +21,7 @@ public class FiltroPesquisaFinanceiroVo extends FiltroBasePeriodoPaginado {
     private EnumVo statusCiclo;
     private List<EnumVo> statusPagamento;
     private EmpresaUnidadeVo empresaUnidade;
+    private Long idCobranca;
 
     public Date getDe(){
         return de;
@@ -108,6 +109,14 @@ public class FiltroPesquisaFinanceiroVo extends FiltroBasePeriodoPaginado {
 
     public void setStatusPagamento(List<EnumVo> statusPagamento) {
         this.statusPagamento = statusPagamento;
+    }
+
+    public Long getIdCobranca() {
+        return idCobranca;
+    }
+
+    public void setIdCobranca(Long idCobranca) {
+        this.idCobranca = idCobranca;
     }
 }
 
