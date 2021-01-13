@@ -15,9 +15,7 @@ public enum TipoArquivo {
     RELATORIO_48_HORAS_PDF_TEMP_DATASOURCE("relatorio_48_horas/pdf_temp_datasource/",".csv","text/csv", false, 120),
     NOTA_FISCAL_ARMAZEM("nfe_anexo_armazem/", ".xml", "text/xml", false, 120),
     DOWNLOAD_PRESIGNED_NOTA_FISCAL_PDF("download_presigned/nota_fiscal/pdf/", ".pdf", "application/pdf", false, 120),
-    DOWNLOAD_PRESIGNED_NOTA_FISCAL_XML("download_presigned/nota_fiscal/xml/", ".xml", "text/xml", false, 120),
-    DOWNLOAD_PRESIGNED_NOTA_FISCAL_PDF_ZIP("download_presigned/nota_fiscal/pdf/", ".zip", "application/zip", false, 120),
-    DOWNLOAD_PRESIGNED_NOTA_FISCAL_XML_ZIP("download_presigned/nota_fiscal/xml/", ".zip", "application/zip", false, 120);
+    DOWNLOAD_PRESIGNED_NOTA_FISCAL_XML("download_presigned/nota_fiscal/xml/", ".xml", "text/xml", false, 120);
 
     public static final String PREFIXO_BASE64 = "base64,";
 
