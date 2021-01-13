@@ -1,15 +1,6 @@
 package ipp.aci.boleia.dominio.servico;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.auth0.jwt.interfaces.DecodedJWT;
-
 import ipp.aci.boleia.dados.IEmailEnvioDados;
 import ipp.aci.boleia.dados.IFrotaDados;
 import ipp.aci.boleia.dados.ILeadCredenciamentoDados;
@@ -42,6 +33,13 @@ import ipp.aci.boleia.util.seguranca.UtilitarioJwt;
 import ipp.aci.boleia.util.validador.ValidadorAlfanumerico;
 import ipp.aci.boleia.util.validador.ValidadorCnpj;
 import ipp.aci.boleia.util.validador.ValidadorCpf;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Implementa as regras de negocio relacionadas a entidade Frota
@@ -78,6 +76,20 @@ public class FrotaSd {
     
     @Autowired
 	private ILeadCredenciamentoDados repositorioLeadCredenciamento;
+
+    @Autowired
+    private HistoricoFrotaSd historicoFrotaSd;
+
+
+    /**
+     * Armazena os dados de uma frota
+     * @param frota A frota  ser armazenada
+     * @return A frota armazenada
+     */
+    public Frota armazenar(Frota frota) {
+        historicoFrotaSd.armazenar(frota);
+        return repositorio.armazenar(frota);
+    }
 
     /**
      * Prepara uma frota para realizar pre cadastro
@@ -402,7 +414,6 @@ public class FrotaSd {
         if (ValidadorCpf.invalidCPF(cpfResponsavelFrota)) {
             throw new ExcecaoValidacao(mensagens.obterMensagem("frota.servico.cpfParticipanteResponsavelInvalido"));
         }
-
     }
 
     /**
