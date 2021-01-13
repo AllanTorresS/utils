@@ -1237,6 +1237,9 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         parametros.add(new ParametroPesquisaIgual("frotaPtov.frota.id", filtro.getFrota().getId()));
         parametros.add(new ParametroPesquisaIgual("statusConsolidacao", filtro.getStatusCiclo().getValue()));
         parametros.add(new ParametroPesquisaDiferente("quantidadeAbastecimentos", 0L));
+        if(filtro.getIdCobranca() != null) {
+            parametros.add(new ParametroPesquisaIgual("cobranca.id", filtro.getIdCobranca()));
+        }
 
         return pesquisar((ParametroOrdenacaoColuna) null, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
