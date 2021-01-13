@@ -11,7 +11,6 @@ import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Formula;
-import org.hibernate.annotations.Where;
 import org.hibernate.envers.AuditJoinTable;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
@@ -470,7 +469,7 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
      * @param dataCriacao Data de criação da frota
      * @param dataAtualizacao Data de atualização da frota
      * @param connectCTAToken Token do connect
-     * @param condicoesComerciais
+     * @param condicoesComerciais As condições comerciais da frota
      */
     public Frota(Long id, Long cnpj, Integer status, String nomeRazaoFrota, String statusConvertido, String razaoSocial, String nomeFantasia, Long inscricaoEstadual, Long inscricaoMunicipal, Integer cep, String logradouro, Integer numero, String complemento, String bairro, String municipio, String unidadeFederativa, String assessorResponsavel, Usuario usuarioAssessorResponsavel, Integer dddTelefone, Long telefone, String email, String nomeResponsavelFrota, Long cpfResponsavelFrota, String cargoResponsavelFrota, Integer dddTelefoneResponsavelFrota, Long telefoneResponsavelFrota, String emailResponsavelFrota, Integer faixaQtdVeicPesados, Integer faixaQtdVeicLeves, Long volumeEstimadoDiesel, Long volumeEstimadoCicloOtto, Integer modoPagamento, Integer porte, Integer segmentoAtuacao, Integer statusContrato, String statusContratoConvertido, Date inicioContrato, Integer prazoContrato, Date dataHabilitacao, Date dataSaldoZerado, Boolean permiteAcordoEspecial, Boolean excluido, String codigoIBGE, String codCatBeneficioFiscal, Integer numeroJdeInterno, List<GrupoOperacional> gruposOperacionais, List<Veiculo> veiculos, List<Motorista> motoristas, List<Unidade> unidades, List<FrotaPontoVenda> negociacoes, ParametroCiclo parametroCiclo, SaldoFrota saldo, List<ApiToken> apiTokens, Long versao, Boolean postoInterno, Long numeroSequencialJde, Date inicioAtivacaoTemporaria, Date fimAtivacaoTemporaria, List<FrotaParametroSistema> parametrosSistema, Boolean semNotaFiscal, Date dataAceiteTermos, Boolean primeiraCompra, List<EmpresaAgregada> empresasAgregadas, List<Permissao> permissoes, Date dataCriacao, Date dataAtualizacao, String connectCTAToken, CondicoesComerciais condicoesComerciais, SituacaoConectCar situacaoConectCar, List<TagConectcar> tagsAtivas, List<TagConectcar> tagsInativas) {
         this.id = id;

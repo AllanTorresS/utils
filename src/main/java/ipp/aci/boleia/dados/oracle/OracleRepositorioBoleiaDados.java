@@ -15,18 +15,19 @@ import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaAnd;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataEntre;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaior;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenor;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDiferente;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaEmpty;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaEntre;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaFetch;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgualIgnoreCase;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
-import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaEntre;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaior;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaiorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMenor;
@@ -1238,6 +1239,10 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
             Path<Date> navegacaoCampo = obterAtributoEntidade(campo, entityRoot, usarLeftJoins, false, cachePaths);
             Predicate greaterThanOrEqualTo = builder.greaterThanOrEqualTo(navegacaoCampo, (Date) valor);
             predicates.add(greaterThanOrEqualTo);
+        } else if (param instanceof ParametroPesquisaDataEntre) {
+            Path<Date> navegacaoCampo = obterAtributoEntidade(campo, entityRoot, usarLeftJoins, false, cachePaths);
+            Predicate between = builder.between(navegacaoCampo, (Date)valor, ((ParametroPesquisaDataEntre) param).getValorSecundario());
+            predicates.add(between);
         }
     }
 
