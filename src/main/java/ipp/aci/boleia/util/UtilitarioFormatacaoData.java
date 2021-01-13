@@ -193,6 +193,16 @@ public final class UtilitarioFormatacaoData {
     }
 
     /**
+     * Formata uma data para uma String com o formato PADRAO_ISO_8601 com millis e timezone
+     *
+     * @param data A data a ser formatada
+     * @return A data formatada no formato PADRAO_ISO_8601 com millis e timezone
+     */
+    public static String formatarDataIso8601ComTimeZoneMillis(Date data) {
+        return data == null ? null : new SimpleDateFormat(ConstantesFormatacao.FORMATO_ISO_8601_COM_MILLIS_E_TIMEZONE).format(data);
+    }
+
+    /**
      * Le uma data a partir de uma String o formato PADRAO_DATA_CURTA
      *
      * @param texto O texto a ser interpretado

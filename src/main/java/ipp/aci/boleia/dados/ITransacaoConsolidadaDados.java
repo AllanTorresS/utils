@@ -283,6 +283,14 @@ public interface ITransacaoConsolidadaDados extends IRepositorioBoleiaDados<Tran
     BigDecimal obterTotalCobrancaPeriodo(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado);
 
     /**
+     * Pesquisa os consolidados de uma frota
+     * @param filtro o filtro com as informações que devem ser consideradas na busca.
+     * @param usuarioLogado o usuario logado
+     * @return Uma lista com as transações consolidadas.
+     */
+    List<TransacaoConsolidada> pesquisarConsolidadoFrota(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado);
+
+    /**
      * Obtém os detalhes de transações realizadas por uma frota em um período
      * @param filtro O filtro fornecido
      * @return Os dados encontrados
