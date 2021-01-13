@@ -527,9 +527,11 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "FROM TransacaoConsolidada TC " +
                     "LEFT JOIN TC.frotaPtov FPV " +
                     "LEFT JOIN FPV.frota F " +
+                    "LEFT JOIN FPV.pontoVenda PV " +
                     "LEFT JOIN TC.cobranca C " +
                     "JOIN TC.prazos TCP " +
                     "WHERE (F.id = :idFrota OR :idFrota is null) " +
+                    "AND (PV.id = :idPv OR :idPv is null) " +
                     "AND ((TC.dataInicioPeriodo >= :dataInicioPeriodo AND TC.dataFimPeriodo <= :dataFimPeriodo) OR (TC.dataFimPeriodo >= :dataInicioPeriodo AND TC.dataInicioPeriodo <= :dataFimPeriodo)) " +
                     "AND (TC.statusConsolidacao = :statusConsolidacao OR :statusConsolidacao is null) " +
                     "AND (TC.quantidadeAbastecimentos > 0) " +
@@ -1235,8 +1237,13 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         parametros.add(new ParametroPesquisaDataEntre("dataInicioPeriodo", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe()), UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getDe())));
         parametros.add(new ParametroPesquisaDataEntre("dataFimPeriodo", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getAte()), UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte())));
         parametros.add(new ParametroPesquisaIgual("frotaPtov.frota.id", filtro.getFrota().getId()));
-        parametros.add(new ParametroPesquisaIgual("statusConsolidacao", filtro.getStatusCiclo().getValue()));
+        if(filtro.getStatusCiclo() != null) {
+            parametros.add(new ParametroPesquisaIgual("statusConsolidacao", filtro.getStatusCiclo().getValue()));
+        }
         parametros.add(new ParametroPesquisaDiferente("quantidadeAbastecimentos", 0L));
+        if(filtro.getPontoDeVenda() != null) {
+            parametros.add(new ParametroPesquisaIgual("frotaPtov.pontoVenda.id", filtro.getPontoDeVenda().getId()));
+        }
         if(filtro.getIdCobranca() != null) {
             parametros.add(new ParametroPesquisaIgual("cobranca.id", filtro.getIdCobranca()));
         }
@@ -1455,6 +1462,12 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             parametros.add(new ParametroPesquisaIgual("idFrota", filtro.getFrota().getId()));
         } else if (usuarioLogado.isFrotista()){
             parametros.add(new ParametroPesquisaIgual("idFrota", usuarioLogado.getFrota().getId()));
+        }
+
+        if(filtro.getPontoDeVenda() != null && filtro.getPontoDeVenda().getId() != null){
+            parametros.add(new ParametroPesquisaIgual("idPv", filtro.getPontoDeVenda().getId()));
+        } else {
+            parametros.add(new ParametroPesquisaIgual("idPv", null));
         }
 
         if(filtro.getStatusCiclo() != null && filtro.getStatusCiclo().getValue() != null) {
