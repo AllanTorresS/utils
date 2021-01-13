@@ -1,14 +1,7 @@
 package ipp.aci.boleia.dominio.servico;
 
-import ipp.aci.boleia.dados.IComandaDigitalDados;
-import ipp.aci.boleia.dados.IEmpresaAgregadaDados;
-import ipp.aci.boleia.dados.IFrotaDados;
-import ipp.aci.boleia.dados.IGrupoOperacionalDados;
 import ipp.aci.boleia.dados.IHistoricoUnidadeDados;
-import ipp.aci.boleia.dados.IMotoristaDados;
 import ipp.aci.boleia.dados.IUnidadeDados;
-import ipp.aci.boleia.dados.IUsuarioDados;
-import ipp.aci.boleia.dados.IVeiculoDados;
 import ipp.aci.boleia.dominio.Unidade;
 import ipp.aci.boleia.dominio.historico.HistoricoUnidade;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
@@ -21,34 +14,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class HistoricoUnidadeSd {
 
-
     @Autowired
     private UtilitarioAmbiente ambiente;
 
     @Autowired
     private IUnidadeDados repositorio;
-
-    @Autowired
-    private IFrotaDados repositorioFrota;
-
-    @Autowired
-    private IComandaDigitalDados repositorioComandaDigital;
-
-    @Autowired
-    private IGrupoOperacionalDados grupoOperacionalDados;
-
-    @Autowired
-    private IMotoristaDados motoristaDados;
-
-    @Autowired
-    private IVeiculoDados veiculoDados;
-
-    @Autowired
-    private IUsuarioDados usuarioDados;
-
-    @Autowired
-    private IEmpresaAgregadaDados empresaAgregadaDados;
-
+    
     @Autowired
     private IHistoricoUnidadeDados historicoUnidadeDados;
 
