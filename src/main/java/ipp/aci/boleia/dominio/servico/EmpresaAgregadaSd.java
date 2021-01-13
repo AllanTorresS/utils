@@ -1,13 +1,9 @@
 package ipp.aci.boleia.dominio.servico;
 
 import ipp.aci.boleia.dados.IEmpresaAgregadaDados;
-import ipp.aci.boleia.dados.IHistoricoEmpresaAgregadaDados;
 import ipp.aci.boleia.dados.IMotoristaDados;
 import ipp.aci.boleia.dados.IVeiculoDados;
 import ipp.aci.boleia.dominio.EmpresaAgregada;
-import ipp.aci.boleia.dominio.Frota;
-import ipp.aci.boleia.dominio.historico.HistoricoEmpresaAgregada;
-import ipp.aci.boleia.dominio.historico.HistoricoFrota;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -32,7 +28,7 @@ public class EmpresaAgregadaSd {
     private IVeiculoDados veiculoDados;
 
     @Autowired
-    private IHistoricoEmpresaAgregadaDados empresaAgregadaDados;
+    private HistoricoEmpresaAgregadaSd empresaAgregadaSd;
 
     /**
      * Armazena os dados de uma empresa agregada
@@ -40,16 +36,7 @@ public class EmpresaAgregadaSd {
      * @return A empresa agregada armazenada
      */
     public EmpresaAgregada armazenar(EmpresaAgregada empresaAgregada) {
-        if(empresaAgregada.getId() != null) {
-            EmpresaAgregada dadosAntigos = repositorio.obterPorId(empresaAgregada.getId());
-            if(dadosAntigos != null) {
-                HistoricoEmpresaAgregada historicoEmpresaAgregada = new HistoricoEmpresaAgregada();
-                historicoEmpresaAgregada.setEmpresaAgregada(dadosAntigos);
-                historicoEmpresaAgregada.setDataHistorico(ambiente.buscarDataAmbiente());
-                historicoEmpresaAgregada.setExigeNotaFiscal(dadosAntigos.getExigeNotaFiscal());
-                empresaAgregadaDados.armazenar(historicoEmpresaAgregada);
-            }
-        }
+        empresaAgregadaSd.armazenar(empresaAgregada);
         return repositorio.armazenar(empresaAgregada);
     }
 
@@ -81,7 +68,7 @@ public class EmpresaAgregadaSd {
      * @return Quantidade
      */
     public Long obterQuantidadeRelacionados(EmpresaAgregada empresaAgregada) {
-        Long quantidade = 0L;
+        long quantidade = 0L;
         quantidade += empresaAgregada.getVeiculos().size();
         quantidade += empresaAgregada.getMotoristas().size();
 

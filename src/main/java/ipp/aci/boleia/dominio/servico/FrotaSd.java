@@ -1,18 +1,6 @@
 package ipp.aci.boleia.dominio.servico;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import ipp.aci.boleia.dados.IHistoricoFrotaDados;
-import ipp.aci.boleia.dados.IHistoricoFrotaPontoVendaDados;
-import ipp.aci.boleia.dominio.historico.HistoricoFrota;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.auth0.jwt.interfaces.DecodedJWT;
-
 import ipp.aci.boleia.dados.IEmailEnvioDados;
 import ipp.aci.boleia.dados.IFrotaDados;
 import ipp.aci.boleia.dados.ILeadCredenciamentoDados;
@@ -45,6 +33,13 @@ import ipp.aci.boleia.util.seguranca.UtilitarioJwt;
 import ipp.aci.boleia.util.validador.ValidadorAlfanumerico;
 import ipp.aci.boleia.util.validador.ValidadorCnpj;
 import ipp.aci.boleia.util.validador.ValidadorCpf;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Implementa as regras de negocio relacionadas a entidade Frota
@@ -83,7 +78,7 @@ public class FrotaSd {
 	private ILeadCredenciamentoDados repositorioLeadCredenciamento;
 
     @Autowired
-    private IHistoricoFrotaDados historicoFrotaDados;
+    private HistoricoFrotaSd historicoFrotaSd;
 
 
     /**
@@ -92,17 +87,7 @@ public class FrotaSd {
      * @return A frota armazenada
      */
     public Frota armazenar(Frota frota) {
-        if(frota.getId() != null) {
-            Frota dadosAntigos = repositorio.obterPorId(frota.getId());
-            if(dadosAntigos != null) {
-                HistoricoFrota historicoFrota = new HistoricoFrota();
-                historicoFrota.setFrota(dadosAntigos);
-                historicoFrota.setDataHistorico(ambiente.buscarDataAmbiente());
-                historicoFrota.setExigeNotaFiscal(dadosAntigos.exigeNotaFiscal());
-                historicoFrota.setLocalDestinoPadraoNfeUf(dadosAntigos.getLocalDestinoPadraoNfeUf());
-                historicoFrotaDados.armazenar(historicoFrota);
-            }
-        }
+        historicoFrotaSd.armazenar(frota);
         return repositorio.armazenar(frota);
     }
 
@@ -429,7 +414,6 @@ public class FrotaSd {
         if (ValidadorCpf.invalidCPF(cpfResponsavelFrota)) {
             throw new ExcecaoValidacao(mensagens.obterMensagem("frota.servico.cpfParticipanteResponsavelInvalido"));
         }
-
     }
 
     /**
