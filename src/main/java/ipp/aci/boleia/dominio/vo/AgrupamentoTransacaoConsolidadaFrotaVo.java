@@ -23,6 +23,7 @@ public class AgrupamentoTransacaoConsolidadaFrotaVo {
     private BigDecimal valorTotalNotaFiscal;
     private EnumVo statusIntegracao;
     private Long idCobranca;
+    private Long numeroDocumento;
 
     /**
      * Construtor default
@@ -42,6 +43,7 @@ public class AgrupamentoTransacaoConsolidadaFrotaVo {
      * @param dataVencimento A data de vencimento da cobrança
      * @param statusIntegracao o status da integração da cobrança
      * @param idCobranca o id da cobrança
+     * @param numeroDocumento o número de documento da cobrança
      * @param dataPagamento A data de pagamento da cobrança
      * @param exigeNota Se há exigência de nota para emissão da cobrança
      * @param valorEmitidoNotaFiscal Valor total emitido
@@ -50,7 +52,7 @@ public class AgrupamentoTransacaoConsolidadaFrotaVo {
     public AgrupamentoTransacaoConsolidadaFrotaVo(Date dataInicioPeriodo, Date dataFimPeriodo, BigDecimal valorTotal,
                                                   BigDecimal valorDesconto, Integer statusConsolidacao,
                                                   Integer statusPagamento, Long quantidadeAbastecimentos,
-                                                  Date dataVencimento, Date dataPagamento, Integer statusIntegracao, Long idCobranca, Integer exigeNota, BigDecimal valorEmitidoNotaFiscal,
+                                                  Date dataVencimento, Date dataPagamento, Integer statusIntegracao, Long idCobranca , Long numeroDocumento, Integer exigeNota, BigDecimal valorEmitidoNotaFiscal,
                                                   BigDecimal valorTotalNotaFiscal) {
         this.dataInicioPeriodo = dataInicioPeriodo;
         this.dataFimPeriodo = dataFimPeriodo;
@@ -65,6 +67,7 @@ public class AgrupamentoTransacaoConsolidadaFrotaVo {
         this.valorEmitidoNotaFiscal = valorEmitidoNotaFiscal;
         this.valorTotalNotaFiscal = valorTotalNotaFiscal;
         this.idCobranca = idCobranca;
+        this.numeroDocumento = numeroDocumento;
         if(statusIntegracao != null) {
             this.statusIntegracao = new EnumVo(StatusIntegracaoJde.obterPorValor(statusIntegracao));
         }
@@ -182,4 +185,11 @@ public class AgrupamentoTransacaoConsolidadaFrotaVo {
         this.idCobranca = idCobranca;
     }
 
+    public Long getNumeroDocumento() {
+        return numeroDocumento;
+    }
+
+    public void setNumeroDocumento(Long numeroDocumento) {
+        this.numeroDocumento = numeroDocumento;
+    }
 }
