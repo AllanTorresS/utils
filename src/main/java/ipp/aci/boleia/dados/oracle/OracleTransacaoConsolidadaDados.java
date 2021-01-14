@@ -369,6 +369,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                         "C.dataPagamento, " +
                         "C.statusIntegracaoJDE, " +
                         "C.id, " +
+                        "C.numeroDocumento, " +
                         "MAX(CASE WHEN " + CLAUSULA_EXIGE_NOTA + " THEN 1 ELSE 0 END), " +
                         "SUM(TC.valorEmitidoNotaFiscal), " +
                         "SUM(TC.valorTotalNotaFiscal)" +
