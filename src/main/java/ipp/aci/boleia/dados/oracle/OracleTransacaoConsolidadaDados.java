@@ -397,7 +397,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                         "C.dataPagamento," +
                         "C.status," +
                         "C.statusIntegracaoJDE," +
-                        "C.id " +
+                        "C.id," +
+                        "C.numeroDocumento "+
                     "ORDER BY %s ";
 
     private static final String CONSULTA_PONTOS_GRAFICO =
