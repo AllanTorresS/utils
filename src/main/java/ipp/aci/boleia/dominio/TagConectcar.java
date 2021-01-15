@@ -40,11 +40,22 @@ public class TagConectcar implements IPersistente {
 	
 	@Column(name = "DT_BLOQUEIO")
 	private Date dataBloqueio;
-	         
+
+	@Column(name = "DT_EXCLUSAO")
+	private Date dataExclusao;
+
 	/**
 	 * Construtor padrão da entidade.
 	 */
 	public TagConectcar() {}
+
+	/**
+	 * Construtor por ID e data de ativação
+	 */
+	public TagConectcar(Long id, Date dataExclusao) {
+		this.id = id;
+		this.dataExclusao = dataExclusao;
+	}
 
 	public Long getId() {
 		return id;
@@ -85,9 +96,17 @@ public class TagConectcar implements IPersistente {
 	public void setDataBloqueio(Date dataBloqueio) {
 		this.dataBloqueio = dataBloqueio;
 	}
-	
+
+	public Date getDataExclusao() {
+		return dataExclusao;
+	}
+
+	public void setDataExclusao(Date dataExclusao) {
+		this.dataExclusao = dataExclusao;
+	}
+
 	public boolean isAtivo(){
-		if(dataAtivacao != null) {
+		if(dataBloqueio == null) {
 			return true;
 		}
 		
@@ -136,4 +155,5 @@ public class TagConectcar implements IPersistente {
 			return false;
 		return true;
 	}
+
 }
