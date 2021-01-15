@@ -49,12 +49,11 @@ public class OracleTagConectcarDados extends OracleRepositorioBoleiaDados<TagCon
          " ORDER BY t.id ASC";
 	
 	private static final String QUERY_HISTORICO_TAGS =
-		"select cd_tag_conectcar as id, dt_exclusao as dataExclusao " +
+		"select cd_tag_conectcar, dt_exclusao " +
 		"from BOLEIA_AUD.tag_conectcar_aud " +
 		"WHERE DS_PLACA = :placa " +
-		"AND DT_EXCLUSAO IS NOT NULL " +
-		"GROUP BY cd_tag_conectcar";
-	
+		"AND DT_EXCLUSAO IS NOT NULL";
+
     /**
      * Instancia o repositório
      */
