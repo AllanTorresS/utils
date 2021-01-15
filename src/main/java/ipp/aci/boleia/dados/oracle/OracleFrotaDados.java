@@ -33,6 +33,7 @@ import ipp.aci.boleia.util.UtilitarioFormatacao;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import ipp.aci.boleia.dominio.vo.apco.ClienteProFrotaVo;
 
+import ipp.aci.boleia.util.seguranca.UtilitarioIsolamentoInformacoes;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +53,6 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
 
     @Autowired
     private UtilitarioAmbiente ambiente;
-
 
     private static final String CONSULTA_DONO_FROTA_COM_ACUMULO =
             "SELECT DISTINCT fr" +
@@ -113,6 +113,7 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
 
     @Override
     public ResultadoPaginado<Frota> pesquisar(FiltroPesquisaFrotaVo filtro) {
+        Usuario usuarioLogado = ambiente.getUsuarioLogado();
         List<ParametroPesquisa> parametros = new ArrayList<>();
 
         povoarParametroIgual("id", filtro.getFrota() != null ? filtro.getFrota().getId() : null, parametros);
@@ -167,7 +168,11 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
         }
         
         povoarParametroApiToken(filtro, parametros);
-        return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        if(UtilitarioIsolamentoInformacoes.isUsuarioInternoAssessorOuCoordenador(usuarioLogado)) {
+            return pesquisarSemIsolamentoDados(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        } else {
+            return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        }
     }
 
     /**
@@ -232,7 +237,21 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
     public List<Frota> pesquisarPorCnpjRazaoSocial(FiltroPesquisaParcialFrotaVo filtro) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
         povoarParametrosParaAutocomplete(filtro, parametros);
+
         return pesquisar(new ParametroOrdenacaoColuna("razaoSocial"), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+    @Override
+    public List<Frota> pesquisarPorCnpjRazaoSocialValidacaoSegregacao(FiltroPesquisaParcialFrotaVo filtro) {
+        Usuario usuarioLogado = ambiente.getUsuarioLogado();
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        povoarParametrosParaAutocomplete(filtro, parametros);
+
+        if(UtilitarioIsolamentoInformacoes.isUsuarioInternoAssessorOuCoordenador(usuarioLogado)) {
+            return pesquisarSemIsolamentoDados(new ParametroOrdenacaoColuna("razaoSocial"), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        } else {
+            return pesquisar(new ParametroOrdenacaoColuna("razaoSocial"), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        }
     }
 
     @Override

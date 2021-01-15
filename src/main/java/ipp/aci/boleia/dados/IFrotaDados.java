@@ -47,13 +47,20 @@ public interface IFrotaDados extends IRepositorioBoleiaDados<Frota> {
     List<Frota> pesquisarPorCnpjRazaoSocial(FiltroPesquisaParcialFrotaVo filtro);
 
     /**
+     * Pesquisa por frotas utilizando os campos CNPJ e/ou Razao Social
+     * @param filtro Filtro contendo os parametros da pesquisa
+     * @return Lista com as entidades encontradas sem segregação
+     */
+    List<Frota> pesquisarPorCnpjRazaoSocialValidacaoSegregacao(FiltroPesquisaParcialFrotaVo filtro);
+
+    /**
      * Pesquisa todas as frotas relacionadas a um certo termo.
      * @param termoPesquisa trecho do nome da frota.
      * @return Lista de frota encontradas
      */
     List<Frota> pesquisarParaAutocomplete(String termoPesquisa);
 
-    /**
+     /**
      * Realiza uma pesquisa de frota por posto interno
      * @param idFrota o ID da frota
      * @return true se a frota tiver posto interno, false caso contrario
