@@ -3,6 +3,7 @@ package ipp.aci.boleia.dados.oracle;
 import ipp.aci.boleia.dados.IFrotaPontoVendaDados;
 import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.FrotaPontoVenda;
+import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.enums.StatusAtivacao;
 import ipp.aci.boleia.dominio.enums.StatusBloqueio;
 import ipp.aci.boleia.dominio.enums.StatusFrota;
@@ -16,6 +17,9 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.vo.AutorizacaoPagamentoOrfaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaPostoCredenciadoVo;
 import ipp.aci.boleia.util.Ordenacao;
+import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
+import ipp.aci.boleia.util.seguranca.UtilitarioIsolamentoInformacoes;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.Query;
@@ -30,7 +34,8 @@ import java.util.stream.Collectors;
  */
 @Repository
 public class OracleFrotaPontoVendaDados extends OracleRepositorioBoleiaDados<FrotaPontoVenda> implements IFrotaPontoVendaDados {
-
+	@Autowired
+	private UtilitarioAmbiente ambiente;
 	/**
 	 * Obtém a lista de autorizações de pagamentos orfãs.
 	 *
@@ -59,7 +64,9 @@ public class OracleFrotaPontoVendaDados extends OracleRepositorioBoleiaDados<Fro
 
     @Override
     public ResultadoPaginado<FrotaPontoVenda> pesquisarPostosCredenciados(FiltroPesquisaPostoCredenciadoVo filtro) {
-        List<ParametroPesquisa> parametros = new ArrayList<>();
+		Usuario usuarioLogado = ambiente.getUsuarioLogado();
+
+		List<ParametroPesquisa> parametros = new ArrayList<>();
         povoarParametroIgual("frota.id", filtro.getFrota() != null ? filtro.getFrota().getId() : null, parametros);
         povoarParametroIgual("pontoVenda.id", filtro.getPontoVenda() != null ? filtro.getPontoVenda().getId() : null, parametros);
         povoarParametroLike("pontoVenda.municipio", filtro.getCidade(), parametros);
@@ -69,7 +76,11 @@ public class OracleFrotaPontoVendaDados extends OracleRepositorioBoleiaDados<Fro
         if (filtro.getStatusBloqueio() != null && filtro.getStatusBloqueio().getName() != null) {
             parametros.add(new ParametroPesquisaIgual("statusBloqueio", StatusBloqueio.valueOf(filtro.getStatusBloqueio().getName()).getValue()));
         }
-        return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        if(UtilitarioIsolamentoInformacoes.isUsuarioInternoAssessorOuCoordenador(usuarioLogado)) {
+			return pesquisarSemIsolamentoDados(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+		} else {
+			return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+		}
     }
 
 	@Override
