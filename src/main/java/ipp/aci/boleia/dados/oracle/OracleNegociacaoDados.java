@@ -58,7 +58,18 @@ public class OracleNegociacaoDados extends OracleRepositorioBoleiaDados<Negociac
 
     @Override
     public ResultadoPaginado<Negociacao> pesquisaPaginada(FiltroPesquisaNegociacaoVo filtro) {
-        Usuario usuarioLogado = ambiente.getUsuarioLogado();
+        List<ParametroPesquisa> parametros = montarParametroPesquisa(filtro);
+        if(filtro.getPaginacao() != null
+                && filtro.getPaginacao().getParametrosOrdenacaoColuna().isEmpty()) {
+            filtro.getPaginacao().getParametrosOrdenacaoColuna().add(new ParametroOrdenacaoColuna("frotaPtov.frota.nomeFantasia"));
+            filtro.getPaginacao().getParametrosOrdenacaoColuna().add(new ParametroOrdenacaoColuna("frotaPtov.pontoVenda.nome"));
+        }
+      
+        return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+    @Override
+    public ResultadoPaginado<Negociacao> pesquisaPaginadaValidacaoSegregacao(FiltroPesquisaNegociacaoVo filtro, Usuario usuarioLogado) {
         List<ParametroPesquisa> parametros = montarParametroPesquisa(filtro);
         if(filtro.getPaginacao() != null
                 && filtro.getPaginacao().getParametrosOrdenacaoColuna().isEmpty()) {
