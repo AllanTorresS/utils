@@ -18,11 +18,19 @@ public interface IVeiculoDados extends IRepositorioBoleiaDados<Veiculo> {
 
 	/**
 	 * Pesquisa Veiculo a partir do filtro informado
-	 * 
+	 *
 	 * @param filtro O filtro da busca
 	 * @return Uma lista de entidades localizadas
 	 */
 	ResultadoPaginado<Veiculo> pesquisar(FiltroPesquisaVeiculoVo filtro);
+
+	/**
+	 * Pesquisa Veiculo a partir do filtro informado
+	 *
+	 * @param filtro O filtro da busca
+	 * @return Uma lista de entidades localizadas com cota do veiculo
+	 */
+	ResultadoPaginado<Veiculo> pesquisarCotaVeiculo(FiltroPesquisaVeiculoVo filtro);
 
 	/**
 	 * Pesquisa Veículos para a API do frotista a partir do filtro informado

@@ -71,6 +71,24 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
     }
 
     @Override
+    public ResultadoPaginado<Veiculo> pesquisarCotaVeiculo(FiltroPesquisaVeiculoVo filtro) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        criarParametrosBasicosConsulta(filtro, parametros);
+        if (filtro.getUnidade() != null && filtro.getUnidade().getId() != null) {
+            if (filtro.getUnidade().getId() > 0) {
+                parametros.add(new ParametroPesquisaIgual("unidade", filtro.getUnidade().getId()));
+            } else {
+                parametros.add(new ParametroPesquisaNulo("unidade"));
+            }
+        }
+        return pesquisar(filtro.getPaginacao(), CONSULTA_COTA_VEICULO_HQL, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+    private static final String CONSULTA_COTA_VEICULO_HQL = "SELECT DISTINCT v" +
+            " FROM Veiculo v " +
+            " LEFT JOIN fetch v.saldoVeiculo sv";
+
+    @Override
     public ResultadoPaginadoFrtVo<Veiculo> pesquisar(FiltroPesquisaVeiculoExtVo filtro) {
         ParametroPesquisa[] parametros = criaParametrosBasicosConsultaApi(filtro)
                 .adicionarParametros(new ParametroPesquisaIgual(PARAM_CNPJ_FROTA, filtro.getCnpjFrota()))
