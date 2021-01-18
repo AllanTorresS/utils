@@ -36,6 +36,10 @@ public class ParametroNotaFiscal implements IPersistente {
     private Frota frota;
 
     @NotNull
+    @Column(name = "ID_COMB_PROD_SERV")
+    private Boolean separarPorCombustivelProdutoServico;
+
+    @NotNull
     @Column(name = "ID_LOCAL_DESTINO")
     private Integer localDestino;
 
@@ -99,5 +103,13 @@ public class ParametroNotaFiscal implements IPersistente {
 
     public void setVersao(Long versao) {
         this.versao = versao;
+    }
+
+    public Boolean getSepararPorCombustivelProdutoServico() {
+        return separarPorCombustivelProdutoServico;
+    }
+
+    public void setSepararPorCombustivelProdutoServico(Boolean separarPorCombustivelProdutoServico) {
+        this.separarPorCombustivelProdutoServico = separarPorCombustivelProdutoServico;
     }
 }
