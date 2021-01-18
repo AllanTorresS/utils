@@ -85,8 +85,7 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
     }
 
     private static final String CONSULTA_COTA_VEICULO_HQL = "SELECT DISTINCT v" +
-            " FROM Veiculo v " +
-            " LEFT JOIN fetch v.saldoVeiculo sv";
+            " FROM Veiculo v ";
 
     @Override
     public ResultadoPaginadoFrtVo<Veiculo> pesquisar(FiltroPesquisaVeiculoExtVo filtro) {
