@@ -851,7 +851,7 @@ public class PontoDeVenda implements IPersistente, IExclusaoLogica, IPertenceRev
     @Transient
     public Componente getComponenteAreaAbastecimento() {
         return this.getComponentes().stream()
-                .filter(c ->  AtividadeComponente.obterCodigosAreaAbastecimento().contains(c.getAtividadeComponente().getCodigoCorporativo()))
+                .filter(c ->  AtividadeComponente.obterCodigosAreaAbastecimento().contains(c.getAtividadeComponente() != null ? c.getAtividadeComponente().getCodigoCorporativo() : null))
                 .findFirst()
                 .orElse(null);
     }
