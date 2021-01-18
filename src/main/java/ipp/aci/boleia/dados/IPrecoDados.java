@@ -65,22 +65,21 @@ public interface IPrecoDados extends IRepositorioBoleiaDados<Preco> {
     List<Preco> obterAgendamentosParaVigenciaAutomatica();
 
     /**
-     * Busca o preco pendente ou novo para um determinado PontoVenda, Frota e tipo combustivel
+     * Busca para um determinado PontoVenda, Frota e tipo combustivel os precos com status pendente ou novo que não foram agendados
      * @param frota a Frota a ser filtrada
      * @param posto O Ponto de Venda a ser filtrado
      * @param tipoCombustivel O id do tipo de combustivel
-     * @param status Lista de status a serem filtrados
-     * @return O preco pendente ou novo, caso exista
+     * @return Os precos pendentes ou novos não agendados, caso existam
      */
-    List<Preco> obterPrecos(Frota frota, PontoDeVenda posto, TipoCombustivel tipoCombustivel, List<StatusPreco> status);
+    List<Preco> obterPrecosEmNegociacaoNaoAgendados(Frota frota, PontoDeVenda posto, TipoCombustivel tipoCombustivel);
 
     /**
-     * Busca o preco agendado a partir de uma data de vigência para um determinado PontoVenda,Frota e tipo combustível
+     * Busca o preco agendado a partir de uma data de agendamento para um determinado PontoVenda,Frota e tipo combustível
      * @param idFrota O id da Frota a ser filtrada
      * @param idPosto O id do Ponto de Venda a ser filtrado
      * @param idTipoCombustivel O id do tipo de combustivel
-     * @param dataVigencia A data de vigência
+     * @param dataAgendamento A data de agendamento
      * @return O preco agendado
      */
-    Preco obterAgendamentoPorFrotaPvCombustivelDataVigencia(Long idFrota, Long idPosto, Long idTipoCombustivel, Date dataVigencia);
+    Preco obterAgendamentoPorFrotaPvCombustivelDataAgendamento(Long idFrota, Long idPosto, Long idTipoCombustivel, Date dataAgendamento);
 }
