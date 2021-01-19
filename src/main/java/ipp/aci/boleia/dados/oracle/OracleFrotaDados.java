@@ -10,6 +10,7 @@ import ipp.aci.boleia.dominio.enums.StatusContrato;
 import ipp.aci.boleia.dominio.enums.StatusFrota;
 import ipp.aci.boleia.dominio.enums.StatusFrotaConectcar;
 import ipp.aci.boleia.dominio.enums.TipoAcumuloKmv;
+import ipp.aci.boleia.dominio.enums.StatusAtivado;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
@@ -24,6 +25,7 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDiferente;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaAbastecimentoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFinanceiroVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFrotaVo;
@@ -153,6 +155,11 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
         
         if (filtro.getPossuiCondicaoComercialConectcar() != null && filtro.getPossuiCondicaoComercialConectcar()) {
             parametros.add(new ParametroPesquisaNulo("condicoesComerciais", true));
+        }
+
+        if (this.ambiente.getUsuarioLogado().isRevendedor()) {
+            parametros.add(new ParametroPesquisaIgual("negociacoes.pontoVenda.rede.id", this.ambiente.getUsuarioLogado().getRede().getId()));
+            parametros.add(new ParametroPesquisaDiferente("semNotaFiscal", StatusAtivado.ATIVO.getValue()));
         }
         
         if (filtro.getPaginacao() != null && CollectionUtils.isNotEmpty(filtro.getPaginacao().getParametrosOrdenacaoColuna())) {
