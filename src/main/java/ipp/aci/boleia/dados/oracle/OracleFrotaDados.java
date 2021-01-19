@@ -157,8 +157,8 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
             parametros.add(new ParametroPesquisaNulo("condicoesComerciais", true));
         }
 
-        if (this.ambiente.getUsuarioLogado().isRevendedor()) {
-            parametros.add(new ParametroPesquisaIgual("negociacoes.pontoVenda.rede.id", this.ambiente.getUsuarioLogado().getRede().getId()));
+        if (ambiente.getUsuarioLogado().isRevendedor()) {
+            parametros.add(new ParametroPesquisaIgual("negociacoes.pontoVenda.rede.id", ambiente.getUsuarioLogado().getRede().getId()));
             parametros.add(new ParametroPesquisaDiferente("semNotaFiscal", StatusAtivado.ATIVO.getValue()));
         }
         
