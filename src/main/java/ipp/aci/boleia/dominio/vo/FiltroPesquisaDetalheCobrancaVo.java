@@ -9,12 +9,21 @@ import java.util.List;
  * @author pedro.silva
  */
 public class FiltroPesquisaDetalheCobrancaVo {
+    private Long idConsolidado;
     private Date de;
     private Date ate;
     private EntidadeVo motorista;
     private String placaVeiculo;
     private List<EntidadeVo> outrosServicos;
     private Boolean notaFiscalEmitida;
+
+    public Long getIdConsolidado() {
+        return idConsolidado;
+    }
+
+    public void setIdConsolidado(Long idConsolidado) {
+        this.idConsolidado = idConsolidado;
+    }
 
     public Date getDe() {
         return de;
