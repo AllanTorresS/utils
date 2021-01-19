@@ -46,6 +46,9 @@ public class HistoricoParametroNotaFiscal implements IPersistente {
     @Column(name = "ID_TIPO_AGRUPAMENTO")
     private Integer nfTipoAgrupamento;
 
+    @Column(name = "ID_COMB_PROD_SERV")
+    private Boolean separarPorCombustivelProdutoServico;
+
     @Column(name = "NM_DADOS")
     private String dadosAdicionais;
 
@@ -95,5 +98,13 @@ public class HistoricoParametroNotaFiscal implements IPersistente {
 
     public void setDadosAdicionais(String dadosAdicionais) {
         this.dadosAdicionais = dadosAdicionais;
+    }
+
+    public Boolean getSepararPorCombustivelProdutoServico() {
+        return separarPorCombustivelProdutoServico;
+    }
+
+    public void setSepararPorCombustivelProdutoServico(Boolean separarPorCombustivelProdutoServico) {
+        this.separarPorCombustivelProdutoServico = separarPorCombustivelProdutoServico;
     }
 }
