@@ -10,8 +10,7 @@ import java.util.List;
  */
 public class FiltroPesquisaDetalheCobrancaVo {
     private Long idConsolidado;
-    private Date de;
-    private Date ate;
+    private Date dataAbastecimento;
     private EntidadeVo motorista;
     private String placaVeiculo;
     private List<EntidadeVo> outrosServicos;
@@ -25,20 +24,12 @@ public class FiltroPesquisaDetalheCobrancaVo {
         this.idConsolidado = idConsolidado;
     }
 
-    public Date getDe() {
-        return de;
+    public Date getDataAbastecimento() {
+        return dataAbastecimento;
     }
 
-    public void setDe(Date de) {
-        this.de = de;
-    }
-
-    public Date getAte() {
-        return ate;
-    }
-
-    public void setAte(Date ate) {
-        this.ate = ate;
+    public void setDataAbastecimento(Date dataAbastecimento) {
+        this.dataAbastecimento = dataAbastecimento;
     }
 
     public EntidadeVo getMotorista() {
