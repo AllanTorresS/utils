@@ -110,10 +110,10 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
                     "              where a.frota.id = au.frota.id and a.veiculo.id = au.veiculo.id " +
                     "    )))" +
             " FROM Veiculo v " +
-                " JOIN v.saldoVeiculo sv " +
-                " JOIN v.frota f " +
-                " JOIN v.subtipoVeiculo stv " +
-                " JOIN v.empresaAgregada ep ";
+                " LEFT JOIN v.saldoVeiculo sv " +
+                " LEFT JOIN v.frota f " +
+                " LEFT JOIN v.subtipoVeiculo stv " +
+                " LEFT JOIN v.empresaAgregada ep ";
 
     @Override
     public ResultadoPaginadoFrtVo<Veiculo> pesquisar(FiltroPesquisaVeiculoExtVo filtro) {
