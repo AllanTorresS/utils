@@ -9,6 +9,7 @@ public class ConectCarConsultaPedidoTagResponseVo {
 
 	private Boolean sucesso;
 	private String statusPedido;
+	private List<HistoricoStatusPedidoParceiroVo> historicoStatusPedido;
 	private List<ConectCarNotificacoesResponseVo> notificacoes;
 
 	/**
@@ -51,6 +52,14 @@ public class ConectCarConsultaPedidoTagResponseVo {
 
 	public void setNotificacoes(List<ConectCarNotificacoesResponseVo> notificacoes) {
 		this.notificacoes = notificacoes;
+	}
+
+	public List<HistoricoStatusPedidoParceiroVo> getHistoricoStatusPedido() {
+		return historicoStatusPedido;
+	}
+
+	public void setHistoricoStatusPedido(List<HistoricoStatusPedidoParceiroVo> historicoStatusPedido) {
+		this.historicoStatusPedido = historicoStatusPedido;
 	}
 
 }
