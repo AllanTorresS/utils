@@ -106,9 +106,6 @@ public class PrecoSd {
             if(!somenteNovos){
                 BigDecimal descontoVigente = preco.getDescontoVigente();
 
-                preco = precoNegociadoSd.sairDeVigencia(preco, precoBase.getDataAtualizacao());
-                repositorioPreco.armazenarSemIsolamentoDeDados(preco);
-
                 preco = new Preco();
                 preco.setFrotaPtov(frotaPtov);
                 preco.setDescontoVigente(descontoVigente);

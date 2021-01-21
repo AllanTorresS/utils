@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
+import javax.annotation.PostConstruct;
 
 /**
  * Componente responsável pela configuração da conexão com servidor RabbitMQ utilizado para exportação de relatórios
@@ -52,7 +53,20 @@ public class FilaRabbitMQ {
     private String vhost;
 
     private Channel canal;
+    
+    private ConnectionFactory fabricaConexoes;
+    
+    private Connection conexao;
 
+    @PostConstruct
+    private void criarFabricaDeConexoes(){
+        fabricaConexoes = new ConnectionFactory();
+        fabricaConexoes.setHost(nomeHost);
+        fabricaConexoes.setUsername(username);
+        fabricaConexoes.setPassword(password);
+        fabricaConexoes.setVirtualHost(vhost);
+    }
+    
     protected String getNomeHost() {
         return nomeHost;
     }
@@ -108,15 +122,9 @@ public class FilaRabbitMQ {
      * @param mensagem A mensagem a ser enviada
      */
     public void enviarMensagem(String chaveRota, String mensagem) {
-        ConnectionFactory fabricaConexoes = new ConnectionFactory();
-        fabricaConexoes.setHost(nomeHost);
-        fabricaConexoes.setUsername(username);
-        fabricaConexoes.setPassword(password);
-        fabricaConexoes.setVirtualHost(vhost);
 
-        try {
-            Connection connection = fabricaConexoes.newConnection();
-            Channel canal = connection.createChannel();
+        try (Channel canal = getConexao().createChannel()){
+            
             Map<String, Object> args = new HashMap<String, Object>();
             args.put("x-delayed-type", "direct");
             canal.exchangeDeclare(nomeTopicoRelatorio, getTipoExchange(), true, false, args);
@@ -137,5 +145,12 @@ public class FilaRabbitMQ {
         } catch (IOException | TimeoutException e) {
             throw new ExcecaoBoleiaRuntime(e);
         }
+    }
+
+    private Connection getConexao() throws IOException, TimeoutException {    
+        if (conexao == null || !conexao.isOpen()){
+            conexao = fabricaConexoes.newConnection();
+        }
+        return conexao;
     }
 }

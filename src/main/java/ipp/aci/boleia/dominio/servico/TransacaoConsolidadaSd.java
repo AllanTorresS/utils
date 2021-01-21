@@ -306,6 +306,7 @@ public class TransacaoConsolidadaSd {
     public void verificarCiclosAVencer() {
         Date dataAtual = utilitarioAmbiente.buscarDataAmbiente();
         List<TransacaoConsolidada> transacoes24horas;
+        List<TransacaoConsolidada> transacoes72horas;
 
         // 24 horas
         Date dataVencimento24hrMin = obterPrimeiroInstanteDia(adicionarDiasData(dataAtual,1));
@@ -313,8 +314,19 @@ public class TransacaoConsolidadaSd {
         transacoes24horas = repositorio.obterConsolidacoesSemNotaFiscalEntreDatas(
                 dataVencimento24hrMin, dataVencimento24hrMax);
 
+        // 72 horas
+        Date dataVencimento72hMin = obterPrimeiroInstanteDia(adicionarDiasData(dataAtual, 3));
+        Date dataVencimento72hMax = obterUltimoInstanteDia(adicionarDiasData(dataAtual, 3));
+        transacoes72horas = repositorio.obterConsolidacoesSemNotaFiscalEntreDatas(
+                dataVencimento72hMin, dataVencimento72hMax);
+
         if(!transacoes24horas.isEmpty()) {
             notificacaoUsuarioSd.enviarNotificacaoCiclosAVencerSolucao();
+            transacoes24horas.forEach(notificacaoUsuarioSd::enviarNotificacaoCiclosAVencerRevenda);
+        }
+
+        if (!transacoes72horas.isEmpty()) {
+            transacoes72horas.forEach(notificacaoUsuarioSd::enviarNotificacaoCiclosAVencerRevenda);
         }
     }
 
@@ -370,6 +382,16 @@ public class TransacaoConsolidadaSd {
             transacoes.forEach(this::atualizarConsolidadoNotaFiscal);
             notificacaoUsuarioSd.enviarNotificacaoCiclosEncerrados(ontemComecoDoDia);
         }
+    }
+
+    /**
+     * Envia uma notificação para o gestor da revenda
+     * sobre o início do período de ajuste de um ciclo
+     *
+     * @param ciclo O ciclo cujo período de ajuste se iniciou
+     */
+    public void enviarNotificacaoCicloEmAjuste(TransacaoConsolidada ciclo) {
+        notificacaoUsuarioSd.enviarNotificacaoCicloEmAjuste(ciclo);
     }
 
     /**
@@ -610,32 +632,33 @@ public class TransacaoConsolidadaSd {
      * @param transacaoConsolidada O ciclo
      * @param listaAutorizacaoPagamento A lista de abastecimetnos do ciclo
      */
-    private void atualizarStatusEmissaoNota(TransacaoConsolidada transacaoConsolidada, List<AutorizacaoPagamento> listaAutorizacaoPagamento) {
-        boolean valorNotasMaiorZero = transacaoConsolidada.getValorTotalNotaFiscal().compareTo(BigDecimal.ZERO) > 0;
-        boolean valorNotasZero = transacaoConsolidada.getValorTotalNotaFiscal().compareTo(BigDecimal.ZERO) == 0;
+    public void atualizarStatusEmissaoNota(TransacaoConsolidada transacaoConsolidada, List<AutorizacaoPagamento> listaAutorizacaoPagamento) {
+        BigDecimal valorEmitidoNotaFiscal = transacaoConsolidada.getValorEmitidoNotaFiscal();
+        BigDecimal valorTotalNotaFiscal = transacaoConsolidada.getValorTotalNotaFiscal();
+
+        boolean valorNotasMaiorZero = valorTotalNotaFiscal.compareTo(BigDecimal.ZERO) > 0;
         boolean todosAbastPossuemNotaEmitidaOuJustificativa = listaAutorizacaoPagamento.stream().allMatch(AutorizacaoPagamento::notaFiscalEstaEmitido);
-        boolean totalCicloMenorIgualZero = transacaoConsolidada.getValorTotalNotaFiscal().compareTo(BigDecimal.ZERO) <= 0;
         boolean quantidadeDeTransacoesPositivasAutorizadasIgualZero = obterQuantidadeDeTransacoesAutorizadasDoCiclo(transacaoConsolidada) == 0;
+        boolean possuiValorEmitido = valorEmitidoNotaFiscal.compareTo(BigDecimal.ZERO) > 0;
+        boolean possuiValorASerEmitido = valorEmitidoNotaFiscal.compareTo(valorTotalNotaFiscal) < 0;
 
         //Se o ciclo esta EM AJUSTE ou FECHADO, verifica se o consolidado atende as condicoes para ter statusNF EMITIDA
         //Caso atenda, seta o status como EMITIDA
-        //Caso nao atenda, seta o status como PENDENTE
-        if(!transacaoConsolidada.esta(StatusTransacaoConsolidada.EM_ABERTO)){
-            if(!transacaoConsolidada.exigeEmissaoNF()){
+        //Caso nao atenda, seta o status como PARCIALMENTE_EMITIDA ou PENDENTE
+        if(!transacaoConsolidada.esta(StatusTransacaoConsolidada.EM_ABERTO)) {
+            if ((valorNotasMaiorZero && todosAbastPossuemNotaEmitidaOuJustificativa) || !transacaoConsolidada.exigeEmissaoNF()) {
                 transacaoConsolidada.setStatusNotaFiscal(StatusNotaFiscal.EMITIDA.getValue());
-            } else {
-                if ((valorNotasMaiorZero && todosAbastPossuemNotaEmitidaOuJustificativa) || (valorNotasZero && totalCicloMenorIgualZero)) {
-                    transacaoConsolidada.setStatusNotaFiscal(StatusNotaFiscal.EMITIDA.getValue());
-                } else {
-                    transacaoConsolidada.setStatusNotaFiscal(StatusNotaFiscal.PENDENTE.getValue());
-                }
+            } else if(transacaoConsolidada.esta(FECHADA) && possuiValorEmitido && possuiValorASerEmitido) {
+                transacaoConsolidada.setStatusNotaFiscal(StatusNotaFiscal.PARCIALMENTE_EMITIDA.getValue());
+            } else  {
+                transacaoConsolidada.setStatusNotaFiscal(StatusNotaFiscal.PENDENTE.getValue());
             }
-        }else{
+        } else {
             transacaoConsolidada.setStatusNotaFiscal(StatusNotaFiscal.PENDENTE.getValue());
         }
 
         //Se o ciclo esta fechado e tiver zero abastecimentos aprovados com valor positivo, seu status NF deve ser SEM EMISSAO
-        if(transacaoConsolidada.esta(FECHADA) && quantidadeDeTransacoesPositivasAutorizadasIgualZero){
+        if(transacaoConsolidada.esta(FECHADA) && transacaoConsolidada.exigeEmissaoNF() && (quantidadeDeTransacoesPositivasAutorizadasIgualZero || !possuiValorEmitido)){
             transacaoConsolidada.setStatusNotaFiscal(StatusNotaFiscal.SEM_EMISSAO.getValue());
         }
 
@@ -854,14 +877,15 @@ public class TransacaoConsolidadaSd {
      * Atualiza o status de uma transação consolidada para "em ajuste" ou "fechada",
      * reprocessando a mesma
      * @param consolidado Transacao consolidada a ser processada
-     *
+     * @return A transação consolidada atualizada
      */
-    public void atualizarCicloConsolidado(TransacaoConsolidada consolidado) {
+    public TransacaoConsolidada atualizarCicloConsolidado(TransacaoConsolidada consolidado) {
         atualizarStatusCicloConsolidado(consolidado);
         processarValoresTransacaoConsolidada(consolidado);
         if(consolidado.esta(StatusTransacaoConsolidada.FECHADA)) {
             reverterEdicoesPendentes(consolidado);
         }
+        return consolidado;
     }
 
     /**
@@ -1175,19 +1199,5 @@ public class TransacaoConsolidadaSd {
         prazosConsolidado.setPossuiPrazoAjuste(possuiPrazoAjuste);
 
         return prazosConsolidado;
-    }
-
-    /**
-     * Verifica se um ciclo contem somente abastecimentos negativos
-     *
-     * @param idTransacaoConsolidada identificador da transação consolidada (ciclo) de interesse
-     * @return true, caso todas as transacoes do ciclo forem negativas
-     */
-    public boolean cicloTemSomenteTransacoesNegativas(Long idTransacaoConsolidada) {
-        TransacaoConsolidada transacaoConsolidada = repositorio.obterPorId(idTransacaoConsolidada);
-
-        return transacaoConsolidada.getAutorizacoesPagamentoAssociadas().stream()
-                .filter(AutorizacaoPagamento::estaAutorizadaOuCancelada)
-                .noneMatch(autorizacaoPagamento -> autorizacaoPagamento.getValorTotal().compareTo(BigDecimal.ZERO) >= 0);
     }
 }

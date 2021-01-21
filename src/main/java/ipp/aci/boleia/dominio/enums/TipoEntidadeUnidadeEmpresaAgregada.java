@@ -5,7 +5,7 @@ import ipp.aci.boleia.util.i18n.IEnumComLabel;
 /**
  * Enumera as entidades Unidade e Empresa Agregada.
  */
-public enum TipoEntidadeUnidadeEmpresaAgregada implements IEnumComLabel<TipoEntidadeUnidadeEmpresaAgregada> {
+public enum TipoEntidadeUnidadeEmpresaAgregada implements IEnumComLabel<TipoEntidadeUnidadeEmpresaAgregada>, IEnumComValor {
 
     MATRIZ(0),
     UNIDADE(1),
@@ -22,6 +22,7 @@ public enum TipoEntidadeUnidadeEmpresaAgregada implements IEnumComLabel<TipoEnti
         this.value = value;
     }
 
+    @Override
     public Integer getValue() {
         return value;
     }

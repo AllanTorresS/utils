@@ -1,7 +1,6 @@
 package ipp.aci.boleia.dominio.servico.agenciadorfrete;
 
 import ipp.aci.boleia.dominio.agenciadorfrete.Consolidado;
-import ipp.aci.boleia.dominio.agenciadorfrete.Transacao;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
