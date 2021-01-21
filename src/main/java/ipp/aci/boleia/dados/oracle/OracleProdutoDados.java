@@ -4,6 +4,7 @@ import ipp.aci.boleia.dados.IProdutoDados;
 import ipp.aci.boleia.dominio.Produto;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDiferente;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,11 +16,26 @@ import java.util.List;
 @Repository
 public class OracleProdutoDados extends OracleRepositorioBoleiaDados<Produto> implements IProdutoDados {
 
+    private static final String LISTAR_PRODUTOS_POR_CONSOLIDADO =
+            "SELECT p " +
+            "FROM Produto p " +
+            "JOIN p.itensAutorizacaoPagamento ia " +
+            "JOIN ia.autorizacaoPagamento ap " +
+            "WHERE (ap.transacaoConsolidadaPostergada.id = :idConsolidado OR ap.transacaoConsolidada.id = :idConsolidado) AND " +
+            "      p.nome NOT LIKE 'Outros' " +
+            "ORDER BY p.nome";
+
     /**
      * Instancia o repositório
      */
     public OracleProdutoDados() {
         super(Produto.class);
+    }
+
+    @Override
+    public List<Produto> listarPorConsolidado(Long idConsolidado) {
+        ParametroPesquisaIgual parametroConsolidado = new ParametroPesquisaIgual("idConsolidado", idConsolidado);
+        return pesquisar(null, LISTAR_PRODUTOS_POR_CONSOLIDADO, parametroConsolidado).getRegistros();
     }
 
     @Override

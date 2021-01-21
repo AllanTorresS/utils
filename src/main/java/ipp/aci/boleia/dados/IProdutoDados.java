@@ -11,6 +11,14 @@ import java.util.List;
 public interface IProdutoDados extends IRepositorioBoleiaDados<Produto> {
 
     /**
+     * Lista os produtos existentes em um consolidado.
+     *
+     * @param idConsolidado Identificador do consolidado.
+     * @return Lista de produtos
+     */
+    List<Produto> listarPorConsolidado(Long idConsolidado);
+
+    /**
      * Obtem todos os produtos cadastrados, ordenando-os pelo nome, mas mantendo
      * o produto "Outros" como o ultimo da lisa.
      *
