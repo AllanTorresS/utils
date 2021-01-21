@@ -11,11 +11,11 @@ public enum MotivoLiberacaoConectCar implements IEnumComLabel<MotivoLiberacaoCon
 	DEBITO_VENCIDO(1),
     INADIMPLECIA (2),
     SUSPEITA_FRAUDE (3),
-    SUSPEITA_ATIVIDADE (4),
+    SUSPENSAO_ATIVIDADES (4),
     CREDITO_EXCEDIDO (5),
     OUTROS(6);
 
-	public static final String DECODE_FORMULA = "DECODE(ID_MOTIVO, 1, 'Débito Vencido', 2, 'Inadimplência', 3, 'Suspeita de Fraude', 4 , 'Suspeita de Ativade', 5, 'Crédito Excedido', 6, 'Outros')";
+	public static final String DECODE_FORMULA = "DECODE(ID_MOTIVO, 1, 'Débito Vencido', 2, 'Inadimplência', 3, 'Suspeita de Fraude', 4 , 'Suspensão de Atividades', 5, 'Crédito Excedido', 6, 'Outros')";
 	
     private final Integer value;
 

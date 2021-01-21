@@ -1,6 +1,6 @@
 package ipp.aci.boleia.util.seguranca;
 
-/**
+/**pedido
  * Enumera as chaves de permissao do sistema para concessao
  * de permissoes de acesso nas APIs REST
  */
@@ -183,6 +183,7 @@ public final class ChavePermissao {
     
     public static final String LEAD_DASHBOARD_CONECTCAR 					= SPRING_ROLE_PREFIX + "LEAD_DASHBOARD_CONECTCAR" + SPRING_ROLE_SUFFIX;
     public static final String PEDIDO_TAG 									= SPRING_ROLE_PREFIX + "PEDIDO_TAG" + SPRING_ROLE_SUFFIX;
+    public static final String RASTREAR_PEDIDO_TAG 							= SPRING_ROLE_PREFIX + "RASTREAR_PEDIDO_TAG" + SPRING_ROLE_SUFFIX;
     public static final String ATIVACAO_TAG 								= SPRING_ROLE_PREFIX + "ATIVACAO_TAG" + SPRING_ROLE_SUFFIX;
     public static final String ATIVAR_INATIVAR_TAG						    = SPRING_ROLE_PREFIX + "ATIVAR_INATIVAR_TAG" + SPRING_ROLE_SUFFIX;
     public static final String UTILIZACAO_TAG  								= SPRING_ROLE_PREFIX + "UTILIZACAO_TAG" + SPRING_ROLE_SUFFIX;	

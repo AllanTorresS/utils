@@ -15,7 +15,9 @@ import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaPedidoTagVo;
+import ipp.aci.boleia.util.Ordenacao;
 
 /**
  * Repositório de entidades PedidoTag
@@ -83,6 +85,11 @@ public class OraclePedidoTagDados extends OracleRepositorioBoleiaDados<PedidoTag
 	@Override
 	public PedidoTag obterPorCobranca(Long idCobranca) {
 		return pesquisarUnico(new ParametroPesquisaIgual("cobranca.id", idCobranca));
+	}
+
+	@Override
+	public List<PedidoTag> obterPedidosSemStatusRastreio() {
+		return pesquisar(new ParametroOrdenacaoColuna("id", Ordenacao.CRESCENTE), new ParametroPesquisaNulo("statusRastreio", false), new ParametroPesquisaNulo("numeroPedidoConectcar", true));
 	}
 
 }
