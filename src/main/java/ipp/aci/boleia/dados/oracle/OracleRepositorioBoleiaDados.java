@@ -358,7 +358,33 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
      * @return O resultado da consulta, contendo os dados de paginacao
      */
     protected ResultadoPaginado<T> pesquisar(InformacaoPaginacao paginacao, String queryString, ParametroPesquisa... parametros) {
-        return pesquisar(paginacao, queryString, true, getClassePersistente(), parametros);
+        return pesquisar(paginacao, queryString, true, false, getClassePersistente(), parametros);
+    }
+
+    /**
+     * Realiza uma pesquisa com paginação de uma servicos a partir de uma queryString considerando também os registros excluídos.
+     *
+     * @param paginacao   Os dados da paginacao
+     * @param queryString A consulta em HQL
+     * @param tipoResultado A classe do tipo do objeto de retorno
+     * @param parametros  Os parametros da busca
+     * @param <T> O tipo do objeto de retorno
+     * @return O resultado da consulta, contendo os dados de paginacao
+     */
+    protected <T> ResultadoPaginado<T> pesquisarComExcluidos(InformacaoPaginacao paginacao, String queryString, Class<T> tipoResultado, ParametroPesquisa... parametros) {
+        return pesquisar(paginacao, queryString, true, true, tipoResultado, parametros);
+    }
+
+    /**
+     * Realiza uma pesquisa com paginação de uma servicos a partir de uma queryString considerando também os registros excluídos.
+     *
+     * @param paginacao   Os dados da paginacao
+     * @param queryString A consulta em HQL
+     * @param parametros  Os parametros da busca
+     * @return O resultado da consulta, contendo os dados de paginacao
+     */
+    protected ResultadoPaginado<T> pesquisarComExcluidos(InformacaoPaginacao paginacao, String queryString, ParametroPesquisa... parametros) {
+        return pesquisarComExcluidos(paginacao, queryString, getClassePersistente(), parametros);
     }
 
     /**
@@ -372,7 +398,7 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
      * @return O resultado da consulta, contendo os dados de paginacao
      */
     protected <K> ResultadoPaginado<K> pesquisar(InformacaoPaginacao paginacao, String queryString, Class<K> tipoResultado, ParametroPesquisa... parametros) {
-        return pesquisar(paginacao, queryString, true, tipoResultado, parametros);
+        return pesquisar(paginacao, queryString, true, false, tipoResultado, parametros);
     }
 
     /**
@@ -406,7 +432,7 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
      * @return O resultado da consulta, contendo os dados de paginacao
      */
     protected ResultadoPaginado<T> pesquisarSemIsolamentoDados(InformacaoPaginacao paginacao, String queryString, ParametroPesquisa... parametros) {
-        return pesquisar(paginacao, queryString, false, getClassePersistente(), parametros);
+        return pesquisar(paginacao, queryString, false, false, getClassePersistente(), parametros);
     }
 
     /**
@@ -508,20 +534,24 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
      * @param parametros  Os parametros da consulta
      * @return O resultado da consulta
      */
-    private <K> ResultadoPaginado<K> pesquisar(InformacaoPaginacao paginacao, String queryString, Boolean isolamento, Class<K> tipoRetorno, ParametroPesquisa... parametros) {
+    private <K> ResultadoPaginado<K> pesquisar(InformacaoPaginacao paginacao, String queryString, boolean isolamento, boolean considerarExcluidos, Class<K> tipoRetorno, ParametroPesquisa... parametros) {
         ResultadoPaginado<K> resultado = new ResultadoPaginado<>();
         if (paginacao != null) {
             Query query = criarConsultaComParametros(queryString, parametros);
 
             List<K> totalRegistros = query.getResultList();
-            totalRegistros = removerRegistrosExcluidos(totalRegistros, tipoRetorno);
+            if(!considerarExcluidos) {
+                totalRegistros = removerRegistrosExcluidos(totalRegistros, tipoRetorno);
+            }
 
             List<K> registrosPaginados = aplicarPaginacaoListaRegistros(paginacao, totalRegistros);
             resultado.setRegistros(registrosPaginados);
             resultado.setTotalItems(totalRegistros.size());
         } else {
             List<K> registros = criarConsultaComParametros(queryString, parametros).getResultList();
-            registros = removerRegistrosExcluidos(registros, tipoRetorno);
+            if(!considerarExcluidos) {
+                registros = removerRegistrosExcluidos(registros, tipoRetorno);
+            }
             resultado.setRegistros(registros);
             resultado.setTotalItems(registros.size());
         }

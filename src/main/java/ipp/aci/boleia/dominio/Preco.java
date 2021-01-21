@@ -290,4 +290,34 @@ public class Preco implements IPersistente, IPertenceRevendedor, IPertenceFrota 
     public void setDataAgendamento(Date dataAgendamento) {
         this.dataAgendamento = dataAgendamento;
     }
+
+    /**
+	 * Verifica se a data atual é anterior à data de agendamento
+	 * @param dataHoraCorrente data atual
+	 * @return se a data atual é ou não anterior à data de agendamento
+	 */
+    @Transient
+    public boolean isAnteriorDataAgendamento(Date dataHoraCorrente) {
+        return dataAgendamento != null && dataAgendamento.compareTo(dataHoraCorrente) > 0;
+    }
+
+    /**
+	 * Verifica se a data atual é posterior à data fim
+	 * @param dataHoraCorrente data atual
+	 * @return se a data atual é ou não posterior à data fim
+	 */
+    @Transient
+    public boolean isPosteriorDataFim(Date dataHoraCorrente) {
+        return dataFim != null && dataFim.compareTo(dataHoraCorrente) < 0;
+    }
+
+    /**
+	 * Verifica se a data atual é posterior à data de vigência
+	 * @param dataHoraCorrente data atual
+	 * @return se a data atual é ou não posterior à data de vigência
+	 */
+    @Transient
+    public boolean isPosteriorDataVigencia(Date dataHoraCorrente) {
+        return dataVigencia != null && dataVigencia.compareTo(dataHoraCorrente) < 0;
+    }
 }

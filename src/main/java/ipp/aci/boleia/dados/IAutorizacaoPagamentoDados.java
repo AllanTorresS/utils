@@ -389,4 +389,12 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
      * @return transacao negativa
      */
     AutorizacaoPagamento obterTransacaoNegativaOriundaDeEstorno(AutorizacaoPagamento transacaoEstornada);
+
+    /**
+     * Busca as autorizações pertencentes a um ciclo
+     *
+     * @param filtro O filtro da busca
+     * @return Uma lista de AutorizacaoPagamento
+     */
+    List<AutorizacaoPagamento> obterAutorizacoesDoCiclo(FiltroPesquisaAbastecimentoVo filtro);
 }
