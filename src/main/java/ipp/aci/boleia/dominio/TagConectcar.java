@@ -1,7 +1,11 @@
 package ipp.aci.boleia.dominio;
 
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
+
+import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.Where;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +13,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import java.util.Date;
@@ -43,6 +48,11 @@ public class TagConectcar implements IPersistente {
 
 	@Column(name = "DT_EXCLUSAO")
 	private Date dataExclusao;
+	
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DS_PLACA", insertable = false, updatable = false, referencedColumnName = "DS_PLACA")
+	@Where(clause = "DT_ATIVACAO IS NOT NULL AND DT_BLOQUEIO IS NULL AND DT_EXCLUSAO IS NULL")
+	private Veiculo veiculo;
 
 	/**
 	 * Construtor padrão da entidade.
@@ -103,6 +113,14 @@ public class TagConectcar implements IPersistente {
 
 	public void setDataExclusao(Date dataExclusao) {
 		this.dataExclusao = dataExclusao;
+	}
+
+	public Veiculo getVeiculo() {
+		return veiculo;
+	}
+
+	public void setVeiculo(Veiculo veiculo) {
+		this.veiculo = veiculo;
 	}
 
 	public boolean isAtivo(){
