@@ -101,6 +101,14 @@ public class Produto implements IPersistente, IExclusaoLogica {
 
     public void setDisponivelPdv(Boolean utilizadoPdv) { this.disponivelPdv = utilizadoPdv; }
 
+    public List<ItemAutorizacaoPagamento> getItensAutorizacaoPagamento() {
+        return itensAutorizacaoPagamento;
+    }
+
+    public void setItensAutorizacaoPagamento(List<ItemAutorizacaoPagamento> itensAutorizacaoPagamento) {
+        this.itensAutorizacaoPagamento = itensAutorizacaoPagamento;
+    }
+
     @Transient
     public boolean isDisponivelPdv() {
         return this.disponivelPdv != null && this.disponivelPdv;
