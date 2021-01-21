@@ -540,6 +540,19 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "AND (TC.quantidadeAbastecimentos > 0) " +
                     "%s ";
 
+    private static final String CONSULTA_DETALHES_FINANCEIRO_FROTA_EXPORTACAO =
+            "SELECT TC " +
+                    "FROM TransacaoConsolidada TC " +
+                    "LEFT JOIN TC.frotaPtov FPV " +
+                    "LEFT JOIN FPV.frota F " +
+                    "LEFT JOIN FPV.pontoVenda PV " +
+                    "WHERE (F.id = :idFrota) " +
+                    "AND (PV.id = :idPv OR :idPv is null) " +
+                    "AND ((TC.dataInicioPeriodo >= :dataInicioPeriodo AND TC.dataFimPeriodo <= :dataFimPeriodo) OR (TC.dataFimPeriodo >= :dataInicioPeriodo AND TC.dataInicioPeriodo <= :dataFimPeriodo)) " +
+                    "AND (TC.statusConsolidacao = :statusConsolidacao OR :statusConsolidacao is null) " +
+                    "AND (TC.quantidadeAbastecimentos > 0) " +
+                    "ORDER BY TC.dataInicioPeriodo";
+
     @Autowired
     private UtilitarioAmbiente ambiente;
 
@@ -1252,6 +1265,30 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         }
 
         return pesquisar((ParametroOrdenacaoColuna) null, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+
+
+    @Override
+    public List<TransacaoConsolidada> obterDetalhesDadosFinanceiroFrotaParaExportacao(FiltroPesquisaFinanceiroVo filtro) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+
+        parametros.add(new ParametroPesquisaIgual("dataInicioPeriodo", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe())));
+        parametros.add(new ParametroPesquisaIgual("dataFimPeriodo", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte())));
+        parametros.add(new ParametroPesquisaIgual("idFrota", filtro.getFrota().getId()));
+        if(filtro.getStatusCiclo() != null) {
+            parametros.add(new ParametroPesquisaIgual("statusConsolidacao", filtro.getStatusCiclo().getValue()));
+        } else {
+            parametros.add(new ParametroPesquisaIgual("statusConsolidacao", null));
+        }
+
+        if(filtro.getPontoDeVenda() != null) {
+            parametros.add(new ParametroPesquisaIgual("idPv", filtro.getPontoDeVenda().getId()));
+        } else {
+            parametros.add(new ParametroPesquisaIgual("idPv", null));
+        }
+
+        return pesquisar(filtro.getPaginacao(), CONSULTA_DETALHES_FINANCEIRO_FROTA_EXPORTACAO, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
 
     /**
