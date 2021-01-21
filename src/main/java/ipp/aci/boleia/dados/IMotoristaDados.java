@@ -17,6 +17,15 @@ import java.util.List;
 public interface IMotoristaDados extends IRepositorioBoleiaDados<Motorista> {
 
     /**
+     * Busca a lista de motoristas presentes em um consolidado.
+     *
+     * @param termo Termo usado para filtrar os motoristas por nome.
+     * @param idConsolidado Identificador do consolidado.
+     * @return a lista de motoristas
+     */
+    List<Motorista> listarMotoristasPorTermoEConsolidado(String termo, Long idConsolidado);
+
+    /**
      * Pesquisa Motoristas a partir do filtro informado
      *
      * @param filtro O filtro da busca

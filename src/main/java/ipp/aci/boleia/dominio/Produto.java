@@ -7,11 +7,14 @@ import ipp.aci.boleia.dominio.interfaces.IPersistente;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 /**
  * Representa a tabela de Produto
@@ -46,6 +49,9 @@ public class Produto implements IPersistente, IExclusaoLogica {
 
     @Column(name = "ID_EXCLUIDO")
     private Boolean excluido;
+
+    @OneToMany(mappedBy = "produto", fetch = FetchType.LAZY)
+    private List<ItemAutorizacaoPagamento> itensAutorizacaoPagamento;
 
     @Override
     public Long getId() {
