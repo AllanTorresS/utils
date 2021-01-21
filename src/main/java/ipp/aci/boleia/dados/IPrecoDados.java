@@ -4,6 +4,7 @@ import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.Preco;
 import ipp.aci.boleia.dominio.TipoCombustivel;
+import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.enums.StatusPreco;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaPrecoVo;
@@ -30,7 +31,16 @@ public interface IPrecoDados extends IRepositorioBoleiaDados<Preco> {
      * @param statusPossiveis status permitidos na consulta
      * @return Uma lista de negociações.
      */
+    ResultadoPaginado<Preco> pesquisaPrecoPaginadaValidacaoSegregacao(FiltroPesquisaPrecoVo filtro, Boolean acordo, Usuario usuarioLogado, Integer... statusPossiveis );
+
+    /** Busca as negociações realizadas de acordo com o perfil do usuário
+     * @param filtro Filtro de pesquisa do preço negociado
+     * @param acordo Define se deve obter apenas precos em solicitacao de acordo
+     * @param statusPossiveis status permitidos na consulta
+     * @return Uma lista de negociações.
+     */
     ResultadoPaginado<Preco> pesquisaPrecoPaginada(FiltroPesquisaPrecoVo filtro, Boolean acordo, Integer... statusPossiveis );
+
 
     /**
      * Busca o preco atual para um determinado PontoVenda,Frota e tipo combustivel
