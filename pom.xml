@@ -6,7 +6,7 @@
 
     <groupId>ipp.aci.boleia</groupId>
     <artifactId>boleia-dominioUtil</artifactId>
-    <version>4.7.0-6-PARAM-NF-SNAPSHOT</version>
+    <version>4.9.3-0-PARAM-NF-SNAPSHOT</version>
 
     <properties>
         <main.basedir>${project.basedir}</main.basedir>

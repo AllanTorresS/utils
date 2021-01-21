@@ -54,9 +54,10 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
             " WHERE " +
             "     tc.id = :idCombustivel " +
             "     AND pv.id = :idPontoVenda " +
-            "     AND f.id = :idFrota " +
-            "     AND (p.dataVigencia <= :dataAbastecimento OR p.dataAtualizacao <= :dataAbastecimento) " +
-            "     AND (p.status IN :statusValidos OR (p.status in :statusPenNov AND p.dataVigencia <= :dataAbastecimento))  " +
+            "     AND (f.id = :idFrota OR :idFrota IS NULL) " +
+            "     AND p.status IN :statusValidos " +
+            "     AND (p.dataVigencia <= :dataAbastecimento OR (p.dataAtualizacao <= :dataAbastecimento AND p.dataVigencia IS NULL)) " +            
+            "     AND p.status IN :statusValidos  " +
             "     ORDER BY  " +
             "     (CASE WHEN p.dataVigencia IS NULL THEN 0 ELSE 1 END) DESC,  " +
             "     p.dataVigencia DESC , p.dataAtualizacao DESC ";
@@ -86,20 +87,15 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
         List<Integer> statusValidos = new ArrayList<>();
         statusValidos.add(StatusPreco.VIGENTE.getValue());
         statusValidos.add(StatusPreco.ACEITO.getValue());
+        statusValidos.add(StatusPreco.PENDENTE.getValue());
+        statusValidos.add(StatusPreco.NOVO.getValue());
 
-        //Uma negociação pendente ou nova que não foi aceita até sua data de vigência, deve ser
-        //aceita automaticamente
-        List<Integer> statusPendenteOuNovo = new ArrayList<>();
-        statusPendenteOuNovo.add(StatusPreco.PENDENTE.getValue());
-        statusPendenteOuNovo.add(StatusPreco.NOVO.getValue());
-  
         List<ParametroPesquisa> parametros = new ArrayList<>();
         parametros.add(new ParametroPesquisaIgual("idCombustivel", idTipoCombustivel));
         parametros.add(new ParametroPesquisaIgual("idPontoVenda", idPontoVenda));
         parametros.add(new ParametroPesquisaIgual("idFrota", idFrota));
         parametros.add(new ParametroPesquisaDataMenorOuIgual("dataAbastecimento", ambiente.buscarDataAmbiente()));
         parametros.add(new ParametroPesquisaIn("statusValidos", statusValidos));
-        parametros.add(new ParametroPesquisaIn("statusPenNov", statusPendenteOuNovo));
 
         List<Preco> precosAcordo = pesquisar(paginacao, CONSULTA_NEGOCIACOES, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
         return precosAcordo.stream().findFirst().orElse(null);
@@ -112,12 +108,8 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
         statusValidos.add(StatusPreco.VIGENTE.getValue());
         statusValidos.add(StatusPreco.ACEITO.getValue());
         statusValidos.add(StatusPreco.HISTORICO.getValue());
-
-        //Uma negociação pendente ou nova que não foi aceita até sua data de vigência, deve ser
-        //aceita automaticamente
-        List<Integer> statusPendenteOuNovo = new ArrayList<>();
-        statusPendenteOuNovo.add(StatusPreco.PENDENTE.getValue());
-        statusPendenteOuNovo.add(StatusPreco.NOVO.getValue());
+        statusValidos.add(StatusPreco.PENDENTE.getValue());
+        statusValidos.add(StatusPreco.NOVO.getValue());
 
         List<ParametroPesquisa> parametros = new ArrayList<>();
         parametros.add(new ParametroPesquisaIgual("idCombustivel", idTipoCombustivel));
@@ -125,7 +117,6 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
         parametros.add(new ParametroPesquisaIgual("idFrota", idFrota));
         parametros.add(new ParametroPesquisaDataMenorOuIgual("dataAbastecimento", dataAbastecimento));
         parametros.add(new ParametroPesquisaIn("statusValidos", statusValidos));
-        parametros.add(new ParametroPesquisaIn("statusPenNov", statusPendenteOuNovo));
 
         List<Preco> precosAcordo = pesquisar(null, CONSULTA_NEGOCIACOES, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
         return precosAcordo.stream().findFirst().orElse(null);
@@ -135,25 +126,31 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
     public List<Preco> obterParaVigenciaAutomatica(Date dataCorte) {
         return pesquisar((ParametroOrdenacaoColuna) null,
                 new ParametroPesquisaIn("status", Arrays.asList(StatusPreco.NOVO.getValue(), StatusPreco.PENDENTE.getValue())),
-                new ParametroPesquisaOr(
-                    new ParametroPesquisaAnd(
-                        new ParametroPesquisaDataMenorOuIgual("dataSolicitacao", dataCorte),
-                        new ParametroPesquisaNulo("dataVigencia")
-                    ),
-                    new ParametroPesquisaDataMenorOuIgual("dataVigencia", ambiente.buscarDataAmbiente())
-                )
-        );
+                new ParametroPesquisaDataMenorOuIgual("dataSolicitacao", dataCorte),
+                new ParametroPesquisaNulo("dataVigencia"));     
     }
 
     @Override
-    public List<Preco> obterPrecos(Frota frota, PontoDeVenda posto, TipoCombustivel tipoCombustivel, List<StatusPreco> status) {
-        List<Integer> statusValues = status.stream().map(StatusPreco::getValue).collect(Collectors.toList());
+    public List<Preco> obterAgendamentosParaVigenciaAutomatica() {
+        return pesquisar((ParametroOrdenacaoColuna) null,
+                new ParametroPesquisaIn("status", Arrays.asList(StatusPreco.NOVO.getValue(), StatusPreco.PENDENTE.getValue())),
+                new ParametroPesquisaDataMenorOuIgual("dataVigencia", ambiente.buscarDataAmbiente()));    
+    }
+
+    @Override
+    public List<Preco> obterPrecosEmNegociacaoNaoAgendados(Frota frota, PontoDeVenda posto, TipoCombustivel tipoCombustivel) {
+        List<Integer> statusValues = Arrays.asList(StatusPreco.PENDENTE.getValue(), StatusPreco.NOVO.getValue());
         return pesquisar(
                 new ParametroOrdenacaoColuna("dataAtualizacao", Ordenacao.DECRESCENTE),
                 new ParametroPesquisaIgual("precoBase.precoMicromercado.tipoCombustivel.id", tipoCombustivel.getId()),
                 new ParametroPesquisaIgual("frotaPtov.pontoVenda.id", posto.getId()),
                 new ParametroPesquisaIgual("frotaPtov.frota.id", frota.getId()),
-                new ParametroPesquisaIn("status", statusValues)
+                new ParametroPesquisaIn("status", statusValues),
+                new ParametroPesquisaNulo("dataAgendamento"),
+                new ParametroPesquisaOr(
+                    new ParametroPesquisaDataMaior("dataVigencia", ambiente.buscarDataAmbiente()),
+                    new ParametroPesquisaNulo("dataVigencia")
+                )
         );
     }
 
@@ -164,21 +161,16 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
         List<Integer> statusValidos = new ArrayList<>();
         statusValidos.add(StatusPreco.VIGENTE.getValue());
         statusValidos.add(StatusPreco.ACEITO.getValue());
-
-        //Uma negociação pendente ou nova que não foi aceita até sua data de vigência, deve ser
-        //aceita automaticamente
-        List<Integer> statusPendenteOuNovo = new ArrayList<>();
-        statusPendenteOuNovo.add(StatusPreco.PENDENTE.getValue());
-        statusPendenteOuNovo.add(StatusPreco.NOVO.getValue());
+        statusValidos.add(StatusPreco.PENDENTE.getValue());
+        statusValidos.add(StatusPreco.NOVO.getValue());
 
         parametros.add(new ParametroPesquisaIgual("idCombustivel", idTipoCombustivel));
         parametros.add(new ParametroPesquisaIgual("idPontoVenda", idPontoVenda));
         parametros.add(new ParametroPesquisaIgual("idFrota", null));
-        parametros.add(new ParametroPesquisaDataMenorOuIgual("dataAtual", ambiente.buscarDataAmbiente()));
+        parametros.add(new ParametroPesquisaDataMenorOuIgual("dataAbastecimento", ambiente.buscarDataAmbiente()));
         parametros.add(new ParametroPesquisaIn("statusValidos", statusValidos));
-        parametros.add(new ParametroPesquisaIn("statusPenNov", statusPendenteOuNovo));
 
-        return pesquisar(null, CONSULTA_NEGOCIACOES, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+        return pesquisarSemIsolamentoDados(null, CONSULTA_NEGOCIACOES, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
 
 
@@ -206,25 +198,7 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
             if (filtro.getTipoCombustivel() != null && filtro.getTipoCombustivel().getId() != null) {
                 parametros.add(new ParametroPesquisaIgual("precoBase.precoMicromercado.tipoCombustivel", filtro.getTipoCombustivel().getId()));
             }
-            if (filtro.getStatus() != null && filtro.getStatus().getLabel() != null) {
-                if (filtro.getStatus().getLabel().equals(StatusPrecoNegociacao.AGENDADO.getLabel())) {
-                    parametros.add(new ParametroPesquisaOr(
-                    new ParametroPesquisaIgual("status", StatusPreco.VIGENTE.getValue()),
-                    new ParametroPesquisaIgual("status", StatusPreco.ACEITO.getValue())));
-                    parametros.add(new ParametroPesquisaDataMaior("dataVigencia", ambiente.buscarDataAmbiente()));
-                } else if(filtro.getStatus().getLabel().equals(StatusPrecoNegociacao.AGENDADO_PENDENTE.getLabel())) {
-                    parametros.add(new ParametroPesquisaOr(
-                    new ParametroPesquisaIgual("status", StatusPreco.PENDENTE.getValue()),
-                    new ParametroPesquisaIgual("status", StatusPreco.NOVO.getValue())));
-                    parametros.add(new ParametroPesquisaDataMaior("dataVigencia", ambiente.buscarDataAmbiente()));
-                } else {
-                    parametros.add(new ParametroPesquisaIn("status", Arrays.asList(statusPossiveis)));
-                    parametros.add(new ParametroPesquisaOr(new ParametroPesquisaDataMenorOuIgual("dataVigencia", ambiente.buscarDataAmbiente()),
-                    new ParametroPesquisaNulo("dataVigencia")));
-                }
-            } else {
-                parametros.add(new ParametroPesquisaIn("status", Arrays.asList(statusPossiveis)));
-            }
+            montarParametroStatus(filtro, parametros, statusPossiveis);
             if (filtro.getUfPontoDeVenda() != null) {
                 parametros.add(new ParametroPesquisaIgual("frotaPtov.pontoVenda.uf", filtro.getUfPontoDeVenda().getName()));
             }
@@ -251,17 +225,70 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
     }
 
     @Override
-    public Preco obterAgendamentoPorFrotaPvCombustivelDataVigencia(Long idFrota, Long idPosto, Long idTipoCombustivel, Date dataVigencia){
+    public Preco obterAgendamentoPorFrotaPvCombustivelDataAgendamento(Long idFrota, Long idPosto, Long idTipoCombustivel, Date dataAgendamento){
         List<ParametroPesquisa> parametros = new ArrayList<>();
         parametros.add(new ParametroPesquisaIgual("frotaPtov.pontoVenda.id", idPosto));
         parametros.add(new ParametroPesquisaIgual("frotaPtov.frota.id", idFrota));
         parametros.add(new ParametroPesquisaIgual("precoBase.precoMicromercado.tipoCombustivel.id", idTipoCombustivel));
         parametros.add(new ParametroPesquisaDiferente("status", StatusPreco.CANCELADO.getValue()));
         parametros.add(new ParametroPesquisaDiferente("status", StatusPreco.REJEITADO.getValue()));
-        parametros.add(new ParametroPesquisaDataMenorOuIgual("dataVigencia", dataVigencia));
-        parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataVigencia", dataVigencia));
+        parametros.add(new ParametroPesquisaDataMenorOuIgual("dataAgendamento", dataAgendamento));
+        parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataAgendamento", dataAgendamento));
 
         return pesquisar((ParametroOrdenacaoColuna) null, parametros.toArray(new ParametroPesquisa[parametros.size()])).stream().findFirst().orElse(null);
+    }
+
+    private void montarParametroStatus(FiltroPesquisaPrecoVo filtro, List<ParametroPesquisa> parametros, Integer... statusPossiveis) {
+        List<Integer> statusVigentes = Arrays.asList(
+            StatusPreco.VIGENTE.getValue(), StatusPreco.ACEITO.getValue(), StatusPreco.PENDENTE.getValue(), StatusPreco.NOVO.getValue() 
+        );
+
+        if (filtro.getStatus() != null && filtro.getStatus().getLabel() != null && filtro.getStatus().getName() != null) {
+            if (filtro.getStatus().getLabel().equals(StatusPrecoNegociacao.AGENDADO.getLabel())) {
+                parametros.add(new ParametroPesquisaOr(
+                new ParametroPesquisaIgual("status", StatusPreco.VIGENTE.getValue()),
+                new ParametroPesquisaIgual("status", StatusPreco.ACEITO.getValue())));
+                parametros.add(new ParametroPesquisaDataMaior("dataAgendamento", ambiente.buscarDataAmbiente()));
+            } else if(filtro.getStatus().getLabel().equals(StatusPrecoNegociacao.AGENDADO_PENDENTE.getLabel())) {
+                parametros.add(new ParametroPesquisaOr(
+                new ParametroPesquisaIgual("status", StatusPreco.PENDENTE.getValue()),
+                new ParametroPesquisaIgual("status", StatusPreco.NOVO.getValue())));
+                parametros.add(new ParametroPesquisaDataMaior("dataAgendamento", ambiente.buscarDataAmbiente()));
+            } else if(filtro.getStatus().getLabel().equals(StatusPrecoNegociacao.NEGOCIACAO.getLabel())) {
+                parametros.add(new ParametroPesquisaOr(
+                new ParametroPesquisaIgual("status", StatusPreco.PENDENTE.getValue()),
+                new ParametroPesquisaIgual("status", StatusPreco.NOVO.getValue())));
+                parametros.add(new ParametroPesquisaDataMaior("dataVigencia", ambiente.buscarDataAmbiente()));
+                parametros.add(new ParametroPesquisaNulo("dataAgendamento"));
+            } else if(filtro.getStatus().getLabel().equals(StatusPrecoNegociacao.VIGENTE.getLabel())) {
+                parametros.add(new ParametroPesquisaOr(
+                    new ParametroPesquisaNulo("dataVigencia"),
+                    new ParametroPesquisaDataMenorOuIgual("dataVigencia", ambiente.buscarDataAmbiente())
+                ));
+                parametros.add(new ParametroPesquisaIn("status", statusVigentes));
+                parametros.add(new ParametroPesquisaOr(
+                    new ParametroPesquisaNulo("dataFim"),
+                    new ParametroPesquisaDataMaiorOuIgual("dataFim", ambiente.buscarDataAmbiente())
+                ));
+            } else if(filtro.getStatus().getLabel().equals(StatusPrecoNegociacao.HISTORICO.getLabel())) {
+                parametros.add(new ParametroPesquisaOr(
+                    new ParametroPesquisaIgual("status", StatusPreco.HISTORICO.getValue()),
+                    new ParametroPesquisaAnd(
+                        new ParametroPesquisaDataMenorOuIgual("dataFim", ambiente.buscarDataAmbiente()),
+                        new ParametroPesquisaIn("status", statusVigentes)
+                    )
+                ));
+            } else if(filtro.getStatus().getLabel().equals(StatusPrecoNegociacao.CANCELADO.getLabel()) || 
+                filtro.getStatus().getLabel().equals(StatusPrecoNegociacao.REJEITADO.getLabel())) {
+                parametros.add(new ParametroPesquisaIn("status", Arrays.asList(statusPossiveis)));
+            } else {
+                parametros.add(new ParametroPesquisaIn("status", Arrays.asList(statusPossiveis)));
+                parametros.add(new ParametroPesquisaOr(new ParametroPesquisaDataMenorOuIgual("dataVigencia", ambiente.buscarDataAmbiente()),
+                new ParametroPesquisaNulo("dataVigencia")));
+            }
+        } else {
+            parametros.add(new ParametroPesquisaIn("status", Arrays.asList(statusPossiveis)));
+        }
     }
 
 

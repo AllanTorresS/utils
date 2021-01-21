@@ -12,8 +12,12 @@ public class FiltroPesquisaFinanceiroVo extends FiltroBasePeriodoPaginado {
     private Date de;
     private Date ate;
     private EntidadeVo frota;
+    private String razaoSocialFrota;
+    private String cnpjFrota;
     private EntidadeVo pontoDeVenda;
-    private EnumVo statusCiclo;
+    private String nomePontoDeVenda;
+    private String cnpjPontoDeVenda;
+    private EmpresaUnidadeVo empresaUnidade;
 
     public Date getDe(){
         return de;
@@ -39,6 +43,22 @@ public class FiltroPesquisaFinanceiroVo extends FiltroBasePeriodoPaginado {
         this.frota = frota;
     }
 
+    public String getRazaoSocialFrota() {
+        return razaoSocialFrota;
+    }
+
+    public void setRazaoSocialFrota(String razaoSocialFrota) {
+        this.razaoSocialFrota = razaoSocialFrota;
+    }
+
+    public String getCnpjFrota() {
+        return cnpjFrota;
+    }
+
+    public void setCnpjFrota(String cnpjFrota) {
+        this.cnpjFrota = cnpjFrota;
+    }
+
     public EntidadeVo getPontoDeVenda() {
         return pontoDeVenda;
     }
@@ -47,12 +67,28 @@ public class FiltroPesquisaFinanceiroVo extends FiltroBasePeriodoPaginado {
         this.pontoDeVenda = pontoDeVenda;
     }
 
-    public EnumVo getStatusCiclo() {
-        return statusCiclo;
+    public String getNomePontoDeVenda() {
+        return nomePontoDeVenda;
     }
 
-    public void setStatusCiclo(EnumVo statusCiclo) {
-        this.statusCiclo = statusCiclo;
+    public void setNomePontoDeVenda(String nomePontoDeVenda) {
+        this.nomePontoDeVenda = nomePontoDeVenda;
+    }
+
+    public String getCnpjPontoDeVenda() {
+        return cnpjPontoDeVenda;
+    }
+
+    public void setCnpjPontoDeVenda(String cnpjPontoDeVenda) {
+        this.cnpjPontoDeVenda = cnpjPontoDeVenda;
+    }
+
+    public EmpresaUnidadeVo getEmpresaUnidade() {
+        return empresaUnidade;
+    }
+
+    public void setEmpresaUnidade(EmpresaUnidadeVo empresaUnidade) {
+        this.empresaUnidade = empresaUnidade;
     }
 }
 

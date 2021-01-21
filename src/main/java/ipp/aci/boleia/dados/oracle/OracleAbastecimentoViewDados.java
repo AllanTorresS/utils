@@ -25,18 +25,11 @@ import java.util.List;
 @Repository
 public class OracleAbastecimentoViewDados extends OracleRepositorioBoleiaDados<AbastecimentoView> implements IAbastecimentoViewDados {
 
-    private static final String TO_LOWER = "LOWER(%s)";
-
-    private static final String REMOVER_ACENTO = "TRANSLATE( %s, " +
-            "'âãäåāăąÁÂÃÄÅĀĂĄèééêëēĕėęěĒĔĖĘĚìíîïìĩīĭÌÍÎÏÌĨĪĬóôõöōŏőÒÓÔÕÖŌŎŐùúûüũūŭůÙÚÛÜŨŪŬŮ'," +
-            "'aaaaaaaaaaaaaaaeeeeeeeeeeeeeeeiiiiiiiiiiiiiiiiooooooooooooooouuuuuuuuuuuuuuuu')";
-
-
     private static final String QUERY_PESQUISAR_EMPRESA_ABASTECEDORA =
             "SELECT DISTINCT new ipp.aci.boleia.dominio.vo.EmpresaAbastecedoraVo(" +
                     "a.idEmpresa, a.tipoEmpresa,  a.cnpjEmpresa,  a.nomeEmpresa) " +
                     "FROM AbastecimentoView a " +
-                    "WHERE "+ String.format(TO_LOWER, String.format(REMOVER_ACENTO, "a.nomeEmpresa")) + " LIKE '%%'||:termo||'%%' " +
+                    "WHERE "+ String.format(UtilitarioFormatacao.TO_LOWER, String.format(UtilitarioFormatacao.REMOVER_ACENTO, "a.nomeEmpresa")) + " LIKE '%%'||:termo||'%%' " +
                     "OR to_char(a.cnpjEmpresa) LIKE '%%'||:termoCnpj||'%%' ";
 
     /**

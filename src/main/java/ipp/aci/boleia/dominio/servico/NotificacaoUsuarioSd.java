@@ -3,6 +3,7 @@ package ipp.aci.boleia.dominio.servico;
 import ipp.aci.boleia.dados.IAutorizacaoPagamentoDados;
 import ipp.aci.boleia.dados.INotificacaoDados;
 import ipp.aci.boleia.dados.INotificacaoUsuarioDados;
+import ipp.aci.boleia.dados.IRedeDados;
 import ipp.aci.boleia.dados.ITransacaoConsolidadaDados;
 import ipp.aci.boleia.dados.IUsuarioDados;
 import ipp.aci.boleia.dominio.AutorizacaoPagamento;
@@ -15,6 +16,7 @@ import ipp.aci.boleia.dominio.Notificacao;
 import ipp.aci.boleia.dominio.NotificacaoUsuario;
 import ipp.aci.boleia.dominio.Preco;
 import ipp.aci.boleia.dominio.PrecoBase;
+import ipp.aci.boleia.dominio.Rede;
 import ipp.aci.boleia.dominio.TransacaoConsolidada;
 import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.Veiculo;
@@ -23,6 +25,7 @@ import ipp.aci.boleia.dominio.enums.ParametroSistema;
 import ipp.aci.boleia.dominio.enums.StatusAlteracaoPrecoPosto;
 import ipp.aci.boleia.dominio.enums.StatusCampanha;
 import ipp.aci.boleia.dominio.enums.StatusFrota;
+import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
 import ipp.aci.boleia.dominio.enums.TipoCategoriaNotificacao;
 import ipp.aci.boleia.dominio.enums.TipoPerfilUsuario;
 import ipp.aci.boleia.dominio.enums.TipoSubcategoriaNotificacao;
@@ -78,6 +81,9 @@ public class NotificacaoUsuarioSd {
 
     @Autowired
     private IAutorizacaoPagamentoDados repositorioAutorizacaoPagamento;
+
+    @Autowired
+    private IRedeDados repositorioRede;
 
     @Autowired
     private EmailSd emailSd;
@@ -250,6 +256,24 @@ public class NotificacaoUsuarioSd {
     }
 
     /**
+     * Envia uma notificação ao gestor da revenda informando que há prazos de emissão de notas fiscais
+     * expirando em 72 horas ou 24 horas
+     * @param consolidado O ciclo com prazo de emissão prestes a expirar
+     */
+    public void enviarNotificacaoCiclosAVencerRevenda(TransacaoConsolidada consolidado) {
+        List<Usuario> usuarios = repositorioUsuarios.obterGestorPorRede(consolidado.getFrotaPtov().getPontoVenda().getRede().getId());
+        enviarNotificacao(
+                TipoSubcategoriaNotificacao.NOTA_FISCAL_NAO_EMITIDA_REVENDA,
+                usuarios,
+                UtilitarioFormatacaoData.formatarDataCurta(consolidado.getDataInicioPeriodo()),
+                UtilitarioFormatacaoData.formatarDataCurta(consolidado.getDataFimPeriodo()),
+                consolidado.getPontoVenda().getId().toString(),
+                StatusTransacaoConsolidada.obterPorValor(consolidado.getStatusConsolidacao()).name(),
+                UtilitarioFormatacaoData.formatarPeriodoDias(consolidado.getDataInicioPeriodo(), consolidado.getDataFimPeriodo(), false, " de ")
+        );
+    }
+
+    /**
      * Envia um email ao gestor da revenda informando que ha prazos de emissão de notas fiscais
      * expirados há 24 ou 72 horas
      *
@@ -324,7 +348,7 @@ public class NotificacaoUsuarioSd {
         String nomeFrota = preco.getFrota().getNomeRazaoFrota();
         String nomePontoVenda = preco.getPontoVenda().getNome();
         String nomeProduto = preco.getPrecoBase().getPrecoMicromercado().getTipoCombustivel().getDescricao();
-        String descontoSolicitado = UtilitarioFormatacao.formatarDecimalComTresCasas(preco.getDescontoSolicitado());
+        String descontoSolicitado = UtilitarioFormatacao.formatarDecimalComTresCasas(preco.getDescontoSolicitado() != null ? preco.getDescontoSolicitado() : preco.getDescontoVigente());
         List<Usuario> usuariosPreco = repositorioUsuarios.obterPorTipoPerfilPermissao(TipoPerfilUsuario.INTERNO.getValue(), ChavePermissao.getChave(ChavePermissao.PRECO_CONSULTAR_E_VISUALIZAR));
         enviarNotificacao(TipoSubcategoriaNotificacao.NOVA_SOLICITACAO_ACORDO_ESPECIAL, usuariosPreco, nomeFrota, nomeProduto, nomePontoVenda, descontoSolicitado, id.toString());
     }
@@ -773,5 +797,21 @@ public class NotificacaoUsuarioSd {
      */
     public void excluirNotificacoesPorDataLimite(Date dataLimite) {
         repositorio.excluirNotificacoesAteUmaDataLimite(dataLimite);
+    }
+
+    /**
+     * Notifica o gestor da revenda sobre entrada do ciclo no período de ajuste
+     * @param ciclo O ciclo sobre o qual o gestor será notificado
+     */
+    public void enviarNotificacaoCicloEmAjuste(TransacaoConsolidada ciclo) {
+        Rede rede = repositorioRede.obterPorPontoDeVenda(ciclo.getFrotaPtov().getPontoVenda().getId());
+        List<Usuario> usuarios = repositorioUsuarios.obterGestorPorRede(rede.getId());
+        enviarNotificacao(
+                TipoSubcategoriaNotificacao.CICLO_EM_AJUSTE,
+                usuarios,
+                UtilitarioFormatacaoData.formatarDataCurta(ciclo.getDataInicioPeriodo()),
+                UtilitarioFormatacaoData.formatarDataCurta(ciclo.getDataFimPeriodo()),
+                UtilitarioFormatacaoData.formatarPeriodoDias(ciclo.getDataInicioPeriodo(), ciclo.getDataFimPeriodo(), false, " de ")
+        );
     }
 }
