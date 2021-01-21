@@ -1,7 +1,11 @@
 package ipp.aci.boleia.dados.oracle;
 
 import ipp.aci.boleia.dados.IPrecoDados;
-import ipp.aci.boleia.dominio.*;
+import ipp.aci.boleia.dominio.Frota;
+import ipp.aci.boleia.dominio.PontoDeVenda;
+import ipp.aci.boleia.dominio.Preco;
+import ipp.aci.boleia.dominio.TipoCombustivel;
+import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.enums.StatusPreco;
 import ipp.aci.boleia.dominio.enums.StatusPrecoNegociacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
