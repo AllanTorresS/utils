@@ -1,6 +1,7 @@
 package ipp.aci.boleia.dados.oracle;
 
 import ipp.aci.boleia.dados.IVeiculoDados;
+import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.Veiculo;
 import ipp.aci.boleia.dominio.enums.ClassificacaoAgregado;
 import ipp.aci.boleia.dominio.enums.StatusAtivacao;
@@ -11,8 +12,10 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgu
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaFetch;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgualIgnoreCase;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
+import ipp.aci.boleia.dominio.vo.CotaVeiculoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialVeiculoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaVeiculoVo;
 import ipp.aci.boleia.dominio.vo.externo.FiltroPesquisaVeiculoExtVo;
@@ -20,6 +23,8 @@ import ipp.aci.boleia.dominio.vo.frotista.FiltroPesquisaVeiculoFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.InformacaoPaginacaoFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.ResultadoPaginadoFrtVo;
 import ipp.aci.boleia.util.negocio.ParametrosPesquisaBuilder;
+import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.Query;
@@ -31,6 +36,9 @@ import java.util.List;
  */
 @Repository
 public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> implements IVeiculoDados {
+
+    @Autowired
+    private UtilitarioAmbiente ambiente;
 
     private static final String PARAM_ID = "id";
     private static final String PARAM_PLACA = "placa";
@@ -69,6 +77,58 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
         }
         return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
+
+    @Override
+    public ResultadoPaginado<CotaVeiculoVo> pesquisarCotaVeiculo(FiltroPesquisaVeiculoVo filtro) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        criarParametrosBasicosConsulta(filtro, parametros);
+        if (filtro.getUnidade() != null && filtro.getUnidade().getId() != null) {
+            if (filtro.getUnidade().getId() > 0) {
+                parametros.add(new ParametroPesquisaIgual("unidade", filtro.getUnidade().getId()));
+            } else {
+                parametros.add(new ParametroPesquisaNulo("unidade"));
+            }
+        }
+
+        Usuario usuario = ambiente.getUsuarioLogado();
+        List <Long> idFrota = usuario.listarIdsFrotasAssociadas();
+
+        if (idFrota.size() > 0) {
+            return pesquisar(filtro.getPaginacao() ,
+                    CONSULTA_COTA_VEICULO_HQL ,
+                    CotaVeiculoVo.class ,
+                    new ParametroPesquisaIn("idFrota", idFrota));
+        } else {
+            return new ResultadoPaginado<CotaVeiculoVo>(new ArrayList<CotaVeiculoVo>(), 0);
+        }
+    }
+
+    String CONSULTA_COTA_VEICULO_HQL =
+            " SELECT DISTINCT new ipp.aci.boleia.dominio.vo.CotaVeiculoVo(" +
+                    "   v.id, " +
+                    "   f.razaoSocial, " +
+                    "   v.placa, " +
+                    "   ep.razaoSocial, " +
+                    "   v.agregado," +
+                    "   stv.descricao, " +
+                    "   sv.cotaValor, " +
+                    "   sv.valorConsumido, " +
+                    "   (" +
+                    "        SELECT DISTINCT m.nome " +
+                    "          FROM AutorizacaoPagamento  au " +
+                    "          JOIN au.motorista m "+
+                    "          WHERE au.frota.id =  v.frota.id  and au.veiculo.id = v.id "+
+                    "          and au.dataProcessamento = "+
+                    "             ( select MAX(a.dataProcessamento) from AutorizacaoPagamento a"+
+                    "                  JOIN a.motorista  m "+
+                    "              where a.frota.id = au.frota.id and a.veiculo.id = au.veiculo.id " +
+                    "    )))" +
+            " FROM Veiculo v " +
+                " LEFT JOIN v.saldoVeiculo sv " +
+                " LEFT JOIN v.frota f " +
+                " LEFT JOIN v.subtipoVeiculo stv " +
+                " LEFT JOIN v.empresaAgregada ep " +
+                " WHERE v.frota.id IN (:idFrota) ";
 
     @Override
     public ResultadoPaginadoFrtVo<Veiculo> pesquisar(FiltroPesquisaVeiculoExtVo filtro) {
