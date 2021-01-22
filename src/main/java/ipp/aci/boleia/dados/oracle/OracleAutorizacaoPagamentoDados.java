@@ -173,17 +173,18 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                     "AND (" + String.format(TO_LOWER, String.format(REMOVER_ACENTO, "a.placaVeiculo")) + " LIKE :placaVeiculo OR :placaVeiculo IS NULL) ";
     
     private static final String CONSULTA_ABASTECIMENTOS_COBRANCA = 
-            "SELECT a " +
+            "SELECT DISTINCT a " +
                     "FROM AutorizacaoPagamento a " +
+                    "LEFT JOIN a.items i " +
                     " WHERE " +
                     " (a.transacaoConsolidada.id = :idConsolidado OR a.transacaoConsolidadaPostergada.id = :idConsolidado) " +
                     " AND ((a.status = 1 AND (a.valorTotal > 0 OR " +
                     " (SELECT ab.transacaoConsolidada.id FROM AutorizacaoPagamento ab WHERE ab.id = a.idAutorizacaoEstorno) <> a.transacaoConsolidada.id)) " +
                     " OR (a.status = -1 AND a.transacaoConsolidadaPostergada.id = :idConsolidado)) " +
-                    " AND (:dataRequisicao IS NULL OR a.dataRequisicao = :dataRequisicao) " +
+                    " AND (:dataRequisicao IS NULL OR TRUNC(a.dataRequisicao) = :dataRequisicao) " +
                     " AND (:idMotorista IS NULL OR a.motorista.id = :idMotorista) " +
                     " AND (:placaVeiculo IS NULL OR " + String.format(TO_LOWER, String.format(REMOVER_ACENTO, "a.placaVeiculo")) + " LIKE :placaVeiculo ) " +
-                    " AND a.statusNotaFiscal = :statusNotaFiscal " +
+                    " AND (:statusNotaFiscal IS NULL OR a.statusNotaFiscal = :statusNotaFiscal) " +
                     " %s ";
 
     /**
@@ -1119,10 +1120,12 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         parametros.add(new ParametroPesquisaIgual("dataRequisicao", filtro.getDataAbastecimento()));
         parametros.add(new ParametroPesquisaIgual("placaVeiculo", filtro.getPlacaVeiculo()));
 
-        if(filtro.getNotaFiscalEmitida() != null){
+        if(filtro.getNotaFiscalEmitida() != null && filtro.getNotaFiscalEmitida()){
             parametros.add(new ParametroPesquisaIgual("statusNotaFiscal", StatusNotaFiscalAbastecimento.EMITIDA.getValue()));
-        } else {
+        } else if (filtro.getNotaFiscalEmitida() != null && !filtro.getNotaFiscalEmitida()) {
             parametros.add(new ParametroPesquisaIgual("statusNotaFiscal", StatusNotaFiscalAbastecimento.PENDENTE.getValue()));
+        } else {
+            parametros.add(new ParametroPesquisaIgual("statusNotaFiscal", null));
         }
 
         if (filtro.getMotorista() != null ) {
@@ -1135,7 +1138,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         StringBuffer strBufferFiltroOutrosServicos = new StringBuffer(filtroOutrosServicos);
         if(filtro.getOutrosServicos() != null && !filtro.getOutrosServicos().isEmpty()) {
             for(EntidadeVo servico : filtro.getOutrosServicos()) {
-                strBufferFiltroOutrosServicos.append(" AND items.id = " + servico.getId());
+                strBufferFiltroOutrosServicos.append(" AND i.produto = " + servico.getId());
             }
         }
 
