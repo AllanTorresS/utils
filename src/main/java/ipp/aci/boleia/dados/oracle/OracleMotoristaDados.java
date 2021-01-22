@@ -54,7 +54,8 @@ public class OracleMotoristaDados extends OracleRepositorioBoleiaDados<Motorista
             "FROM Motorista m " +
             "JOIN m.autorizacoesPagamento ap " +
             "WHERE (ap.transacaoConsolidadaPostergada.id = :idConsolidado OR ap.transacaoConsolidada.id = :idConsolidado) AND " +
-            "       m.nome LIKE :nome";
+            "       m.nome LIKE :nome AND " +
+            "       m.excluido = false";
 
     /**
      * Instancia o repositorio
