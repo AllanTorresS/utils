@@ -34,7 +34,9 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMenor;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMenorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
+import ipp.aci.boleia.dominio.vo.EntidadeVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaAbastecimentoVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheCobrancaVo;
 import ipp.aci.boleia.dominio.vo.QuantidadeAbastecidaVeiculoVo;
 import ipp.aci.boleia.dominio.vo.TransacaoPendenteVo;
 import ipp.aci.boleia.dominio.vo.apco.VolumeVendasClienteProFrotaVo;
@@ -169,6 +171,20 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                     "AND (a.dataRequisicao >= :dataRequisicaoDe OR :dataRequisicaoDe IS NULL) " +
                     "AND (a.dataRequisicao <= :dataRequisicaoAte OR :dataRequisicaoAte IS NULL) " +
                     "AND (" + String.format(TO_LOWER, String.format(REMOVER_ACENTO, "a.placaVeiculo")) + " LIKE :placaVeiculo OR :placaVeiculo IS NULL) ";
+    
+    private static final String CONSULTA_ABASTECIMENTOS_COBRANCA = 
+            "SELECT a " +
+                    "FROM AutorizacaoPagamento a " +
+                    " WHERE " +
+                    " (a.transacaoConsolidada.id = :idConsolidado OR a.transacaoConsolidadaPostergada.id = :idConsolidado) " +
+                    " AND ((a.status = 1 AND (a.valorTotal > 0 OR " +
+                    " (SELECT ab.transacaoConsolidada.id FROM AutorizacaoPagamento ab WHERE ab.id = a.idAutorizacaoEstorno) <> a.transacaoConsolidada.id)) " +
+                    " OR (a.status = -1 AND a.transacaoConsolidadaPostergada.id = :idConsolidado)) " +
+                    " AND (:dataRequisicao IS NULL OR a.dataRequisicao = :dataRequisicao) " +
+                    " AND (:idMotorista IS NULL OR a.motorista.id = :idMotorista) " +
+                    " AND (:placaVeiculo IS NULL OR " + String.format(TO_LOWER, String.format(REMOVER_ACENTO, "a.placaVeiculo")) + " LIKE :placaVeiculo ) " +
+                    " AND a.statusNotaFiscal = :statusNotaFiscal " +
+                    " %s ";
 
     /**
      * Instancia o repositorio
@@ -1093,5 +1109,45 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         List<ParametroPesquisa> parametros = montarParametroPesquisa(filtro);
 
         return pesquisar((ParametroOrdenacaoColuna)null, (ParametroPesquisa[])parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+    @Override
+    public ResultadoPaginado<AutorizacaoPagamento> pesquisaPaginadaDetalheCobranca(FiltroPesquisaDetalheCobrancaVo filtro) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+
+        parametros.add(new ParametroPesquisaIgual("idConsolidado", filtro.getIdConsolidado()));
+        parametros.add(new ParametroPesquisaIgual("dataRequisicao", filtro.getDataAbastecimento()));
+        parametros.add(new ParametroPesquisaIgual("placaVeiculo", filtro.getPlacaVeiculo()));
+
+        if(filtro.getNotaFiscalEmitida() != null){
+            parametros.add(new ParametroPesquisaIgual("statusNotaFiscal", StatusNotaFiscalAbastecimento.EMITIDA.getValue()));
+        } else {
+            parametros.add(new ParametroPesquisaIgual("statusNotaFiscal", StatusNotaFiscalAbastecimento.PENDENTE.getValue()));
+        }
+
+        if (filtro.getMotorista() != null ) {
+            parametros.add(new ParametroPesquisaIgual("idMotorista", filtro.getMotorista().getId()));
+        } else {
+            parametros.add(new ParametroPesquisaIgual("idMotorista", null));
+        }
+
+        String filtroOutrosServicos = " ";
+        StringBuffer strBufferFiltroOutrosServicos = new StringBuffer(filtroOutrosServicos);
+        if(filtro.getOutrosServicos() != null && !filtro.getOutrosServicos().isEmpty()) {
+            for(EntidadeVo servico : filtro.getOutrosServicos()) {
+                strBufferFiltroOutrosServicos.append(" AND items.id = " + servico.getId());
+            }
+        }
+
+        if(filtro.getPaginacao() == null || filtro.getPaginacao().getParametrosOrdenacaoColuna().isEmpty()) {
+            filtro.getPaginacao().setParametrosOrdenacaoColuna(Arrays.asList(
+                new ParametroOrdenacaoColuna("chaveOrdenacaoFinanceiro"),
+                new ParametroOrdenacaoColuna("dataRequisicao")
+            ));
+        }
+
+        String consultaPesquisa = String.format(CONSULTA_ABASTECIMENTOS_COBRANCA, strBufferFiltroOutrosServicos.toString());
+
+        return pesquisar(filtro.getPaginacao(), consultaPesquisa, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 }
