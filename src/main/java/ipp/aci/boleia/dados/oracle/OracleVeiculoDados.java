@@ -15,7 +15,7 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgualIgnoreCas
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
-import ipp.aci.boleia.dominio.vo.CotaVeiculoVo;
+import ipp.aci.boleia.dominio.vo.DadosCotaVeiculoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialVeiculoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaVeiculoVo;
 import ipp.aci.boleia.dominio.vo.externo.FiltroPesquisaVeiculoExtVo;
@@ -79,7 +79,7 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
     }
 
     @Override
-    public ResultadoPaginado<CotaVeiculoVo> pesquisarCotaVeiculo(FiltroPesquisaVeiculoVo filtro) {
+    public ResultadoPaginado<DadosCotaVeiculoVo> pesquisarCotaVeiculo(FiltroPesquisaVeiculoVo filtro) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
         criarParametrosBasicosConsulta(filtro, parametros);
         if (filtro.getUnidade() != null && filtro.getUnidade().getId() != null) {
@@ -96,21 +96,22 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
         if (idFrota.size() > 0) {
             return pesquisar(filtro.getPaginacao() ,
                     CONSULTA_COTA_VEICULO_HQL ,
-                    CotaVeiculoVo.class ,
+                    DadosCotaVeiculoVo.class ,
                     new ParametroPesquisaIn("idFrota", idFrota));
         } else {
-            return new ResultadoPaginado<CotaVeiculoVo>(new ArrayList<CotaVeiculoVo>(), 0);
+            return new ResultadoPaginado<DadosCotaVeiculoVo>(new ArrayList<DadosCotaVeiculoVo>(), 0);
         }
     }
 
     String CONSULTA_COTA_VEICULO_HQL =
-            " SELECT DISTINCT new ipp.aci.boleia.dominio.vo.CotaVeiculoVo(" +
+            " SELECT DISTINCT new ipp.aci.boleia.dominio.vo.DadosCotaVeiculoVo(" +
                     "   v.id, " +
-                    "   f.razaoSocial, " +
                     "   v.placa, " +
-                    "   ep.razaoSocial, " +
+                    "   ep.id, " +
+                    "   ep.cnpj, " +
+                    "   ep.razaoSocial," +
+                    "   ep.fantasia," +
                     "   v.agregado," +
-                    "   stv.descricao, " +
                     "   sv.cotaValor, " +
                     "   sv.valorConsumido, " +
                     "   (" +
@@ -122,11 +123,20 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
                     "             ( select MAX(a.dataProcessamento) from AutorizacaoPagamento a"+
                     "                  JOIN a.motorista  m "+
                     "              where a.frota.id = au.frota.id and a.veiculo.id = au.veiculo.id " +
-                    "    )))" +
+                    "    )), " +
+                    " f.id," +
+                    " f.cnpj, " +
+                    " f.razaoSocial, " +
+                    " tv.id ," +
+                    " tv.descricao, " +
+                    " stv.id, " +
+                    " stv.descricao " +
+                    " ) " +
             " FROM Veiculo v " +
                 " LEFT JOIN v.saldoVeiculo sv " +
                 " LEFT JOIN v.frota f " +
                 " LEFT JOIN v.subtipoVeiculo stv " +
+                " LEFT JOIN stv.tipoVeiculo tv " +
                 " LEFT JOIN v.empresaAgregada ep " +
                 " WHERE v.frota.id IN (:idFrota) ";
 
