@@ -314,9 +314,11 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "FROM TransacaoConsolidada tc " +
                     "LEFT JOIN tc.frotaPtov fpv " +
                     "LEFT JOIN tc.cobranca c " +
-                    "WHERE c.dataPagamento >= :dataInicioPeriodo AND c.dataPagamento <= :dataFimPeriodo " +
+                    "WHERE ((tc.dataInicioPeriodo >= :dataInicioPeriodo AND tc.dataFimPeriodo <= :dataFimPeriodo) OR (tc.dataFimPeriodo >= :dataInicioPeriodo AND tc.dataInicioPeriodo <= :dataFimPeriodo)) " +
                     "AND (fpv.frota.id = :idFrota OR :idFrota is null) " +
                     "AND (tc.valorTotal <> 0 OR tc.valorTotalNotaFiscal <> 0) " +
+                    "AND (tc.quantidadeAbastecimentos > 0) " +
+                    "AND (tc.statusConsolidacao = :statusCiclo OR :statusCiclo is null) " +
                     "AND c.status = " + StatusPagamentoCobranca.PAGO.getValue();
 
     private static final String CONSULTA_NUMERO_REEMBOLSOS_ATRASADOS =
@@ -330,7 +332,6 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "AND tc.statusConsolidacao = " + StatusTransacaoConsolidada.FECHADA.getValue() + " " +
                     "AND (r.dataVencimentoPgto >= :dataInicio AND r.dataVencimentoPgto <= :dataFim) " +
                     "AND " + CLAUSULA_REEMBOLSO_ATRASADO;
-
 
     private static final String CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO_REVENDA =
             "SELECT tc " +
@@ -538,6 +539,19 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "AND (TC.statusConsolidacao = :statusConsolidacao OR :statusConsolidacao is null) " +
                     "AND (TC.quantidadeAbastecimentos > 0) " +
                     "%s ";
+
+    private static final String CONSULTA_DETALHES_FINANCEIRO_FROTA_EXPORTACAO =
+            "SELECT TC " +
+                    "FROM TransacaoConsolidada TC " +
+                    "LEFT JOIN TC.frotaPtov FPV " +
+                    "LEFT JOIN FPV.frota F " +
+                    "LEFT JOIN FPV.pontoVenda PV " +
+                    "WHERE (F.id = :idFrota) " +
+                    "AND (PV.id = :idPv OR :idPv is null) " +
+                    "AND ((TC.dataInicioPeriodo >= :dataInicioPeriodo AND TC.dataFimPeriodo <= :dataFimPeriodo) OR (TC.dataFimPeriodo >= :dataInicioPeriodo AND TC.dataInicioPeriodo <= :dataFimPeriodo)) " +
+                    "AND (TC.statusConsolidacao = :statusConsolidacao OR :statusConsolidacao is null) " +
+                    "AND (TC.quantidadeAbastecimentos > 0) " +
+                    "ORDER BY TC.dataInicioPeriodo";
 
     @Autowired
     private UtilitarioAmbiente ambiente;
@@ -1253,6 +1267,30 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         return pesquisar((ParametroOrdenacaoColuna) null, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
+
+
+    @Override
+    public List<TransacaoConsolidada> obterDetalhesDadosFinanceiroFrotaParaExportacao(FiltroPesquisaFinanceiroVo filtro) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+
+        parametros.add(new ParametroPesquisaIgual("dataInicioPeriodo", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe())));
+        parametros.add(new ParametroPesquisaIgual("dataFimPeriodo", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte())));
+        parametros.add(new ParametroPesquisaIgual("idFrota", filtro.getFrota().getId()));
+        if(filtro.getStatusCiclo() != null) {
+            parametros.add(new ParametroPesquisaIgual("statusConsolidacao", filtro.getStatusCiclo().getValue()));
+        } else {
+            parametros.add(new ParametroPesquisaIgual("statusConsolidacao", null));
+        }
+
+        if(filtro.getPontoDeVenda() != null) {
+            parametros.add(new ParametroPesquisaIgual("idPv", filtro.getPontoDeVenda().getId()));
+        } else {
+            parametros.add(new ParametroPesquisaIgual("idPv", null));
+        }
+
+        return pesquisar(filtro.getPaginacao(), CONSULTA_DETALHES_FINANCEIRO_FROTA_EXPORTACAO, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+    }
+
     /**
      * Retorna uma lista com os parametros comuns para busca de consolidados associados a reembolsos pagos, previstos existentes e previstos nao gerados
      * @param filtro filtro contendo as informações que devem ser consideradas na consulta.
@@ -1448,8 +1486,13 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         } else if (usuarioLogado.isFrotista()){
             parametros.add(new ParametroPesquisaIgual("idFrota", usuarioLogado.getFrota().getId()));
         }
+        if(filtro.getStatusCiclo() != null && filtro.getStatusCiclo().getValue() != null){
+            parametros.add(new ParametroPesquisaIgual("statusCiclo", filtro.getStatusCiclo().getValue()));
+        } else{
+            parametros.add(new ParametroPesquisaIgual("statusCiclo", null));
+        }
 
-        BigDecimal totalReembolso = pesquisarUnicoSemIsolamentoDados(CONSULTA_TOTAL_REEMBOLSO_PERIODO, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        BigDecimal totalReembolso = pesquisarUnicoSemIsolamentoDados(CONSULTA_TOTAL_COBRANCA_PERIODO, parametros.toArray(new ParametroPesquisa[parametros.size()]));
         return totalReembolso != null ? totalReembolso : BigDecimal.ZERO;
     }
 
