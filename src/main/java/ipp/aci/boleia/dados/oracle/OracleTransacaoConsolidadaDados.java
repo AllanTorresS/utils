@@ -1270,7 +1270,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
 
 
     @Override
-    public List<TransacaoConsolidada> obterDetalhesDadosFinanceiroFrotaParaExportacao(FiltroPesquisaFinanceiroVo filtro) {
+    public ResultadoPaginado<TransacaoConsolidada> obterDetalhesDadosFinanceiroFrotaParaExportacao(FiltroPesquisaFinanceiroVo filtro) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
 
         parametros.add(new ParametroPesquisaIgual("dataInicioPeriodo", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe())));
@@ -1288,7 +1288,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             parametros.add(new ParametroPesquisaIgual("idPv", null));
         }
 
-        return pesquisar(filtro.getPaginacao(), CONSULTA_DETALHES_FINANCEIRO_FROTA_EXPORTACAO, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+        return pesquisar(filtro.getPaginacao(), CONSULTA_DETALHES_FINANCEIRO_FROTA_EXPORTACAO, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
     /**
