@@ -1,12 +1,10 @@
 package ipp.aci.boleia.dominio.vo;
 
-import ipp.aci.boleia.dominio.pesquisa.comum.BaseFiltroPaginado;
-
 /**
  * Objeto que representa uma requisição de preenchimento de cabeçalho de relatórios com cabeçalhos dinâmicos
  * @param <F> O tipo do objeto de filtro
  */
-public class RequisicaoCabecalhoRelatorioVo<F extends BaseFiltroPaginado> {
+public class RequisicaoCabecalhoRelatorioVo<F> {
     private String conteudoCabecalho;
     private F filtro;
 
