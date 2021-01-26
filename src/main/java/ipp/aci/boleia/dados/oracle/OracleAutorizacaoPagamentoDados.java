@@ -175,7 +175,6 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     private static final String CONSULTA_ABASTECIMENTOS_COBRANCA = 
             "SELECT DISTINCT a " +
                     "FROM AutorizacaoPagamento a " +
-                    "LEFT JOIN a.items i " +
                     " WHERE " +
                     " (a.transacaoConsolidada.id = :idConsolidado OR a.transacaoConsolidadaPostergada.id = :idConsolidado) " +
                     " AND ((a.status = 1 AND (a.valorTotal > 0 OR " +
@@ -1137,8 +1136,9 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         String filtroOutrosServicos = " ";
         StringBuffer strBufferFiltroOutrosServicos = new StringBuffer(filtroOutrosServicos);
         if(filtro.getOutrosServicos() != null && !filtro.getOutrosServicos().isEmpty()) {
+            String listaProdutos = " (SELECT i.produto FROM ItemAutorizacaoPagamento i WHERE i.autorizacaoPagamento.id = a.id) ";
             for(EntidadeVo servico : filtro.getOutrosServicos()) {
-                strBufferFiltroOutrosServicos.append(" AND i.produto = " + servico.getId());
+                strBufferFiltroOutrosServicos.append(" AND " + servico.getId() + " IN " + listaProdutos );
             }
         }
 
