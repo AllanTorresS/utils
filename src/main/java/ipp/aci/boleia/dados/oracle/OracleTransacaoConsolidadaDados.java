@@ -309,8 +309,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "AND r.status = " + StatusPagamentoReembolso.PAGO.getValue();
 
     private static final String CONSULTA_TOTAL_COBRANCA_PERIODO =
-            " SELECT SUM(CASE WHEN c.valorTotalAjustado IS NOT NULL THEN c.valorTotalAjustado "+
-                    "ELSE c.valorTotal END) " +
+            " SELECT SUM(CASE WHEN tc.valorEmitidoNotaFiscal > 0 THEN (tc.valorEmitidoNotaFiscal - tc.valorDescontoAbastecimentos) " +
+                    "ELSE 0 END) " +
                     "FROM TransacaoConsolidada tc " +
                     "LEFT JOIN tc.frotaPtov fpv " +
                     "LEFT JOIN tc.cobranca c " +
@@ -319,7 +319,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "AND (tc.valorTotal <> 0 OR tc.valorTotalNotaFiscal <> 0) " +
                     "AND (tc.quantidadeAbastecimentos > 0) " +
                     "AND (tc.statusConsolidacao = :statusCiclo OR :statusCiclo is null) " +
-                    "AND c.status = " + StatusPagamentoCobranca.PAGO.getValue();
+                    "%s ";
 
     private static final String CONSULTA_NUMERO_REEMBOLSOS_ATRASADOS =
             "SELECT count(*) " +
@@ -1502,7 +1502,15 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             parametros.add(new ParametroPesquisaIgual("statusCiclo", null));
         }
 
-        BigDecimal totalReembolso = pesquisarUnicoSemIsolamentoDados(CONSULTA_TOTAL_COBRANCA_PERIODO, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        String filtroStatus = " ";
+        if(filtro.getStatusPagamento() != null) {
+            filtroStatus = "AND ((c.status IS NULL AND " + A_VENCER.getValue() + " IN :statusPagamento) OR c.status IN :statusPagamento) ";
+            List<Integer> listaStatus = filtro.getStatusPagamento().stream().map(x -> StatusPagamentoCobranca.valueOf(x.getName()).getValue()).collect(Collectors.toList());
+            parametros.add(new ParametroPesquisaIn("statusPagamento", listaStatus));
+        }
+        String consulta = String.format(CONSULTA_TOTAL_COBRANCA_PERIODO, filtroStatus);
+
+        BigDecimal totalReembolso = pesquisarUnicoSemIsolamentoDados(consulta, parametros.toArray(new ParametroPesquisa[parametros.size()]));
         return totalReembolso != null ? totalReembolso : BigDecimal.ZERO;
     }
 
