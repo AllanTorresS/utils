@@ -90,14 +90,23 @@ public class OracleUsuarioDados extends OracleRepositorioBoleiaDados<Usuario> im
         return pesquisarUnicoSemIsolamentoDados(new ParametroPesquisaIgual("token", token));
     }
 
-    @Override
-    public ResultadoPaginado<Usuario> pesquisaPaginada(FiltroPesquisaUsuarioVo filtro) {
+    private ResultadoPaginado<Usuario> pesquisaPaginada(FiltroPesquisaUsuarioVo filtro, boolean isolamentoDados) {
         Map<String, ParametroPesquisa> parametros = montarParametroPesquisa(filtro);
         StringBuilder query = new StringBuilder(QUERY_PESQUISA_PAGINADA);
         povoarParametrosPesquisa(parametros, query);
         montarParametrosOrdenacao(filtro, query);
         return pesquisar(filtro.getPaginacao(), query.toString(),
                 parametros.values().toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+    @Override
+    public ResultadoPaginado<Usuario> pesquisaPaginada(FiltroPesquisaUsuarioVo filtro) {
+        return pesquisaPaginada(filtro, true);
+    }
+
+    @Override
+    public ResultadoPaginado<Usuario> pesquisaPaginadaSemIsolamento(FiltroPesquisaUsuarioVo filtro) {
+        return pesquisaPaginada(filtro, false);
     }
 
     /**
