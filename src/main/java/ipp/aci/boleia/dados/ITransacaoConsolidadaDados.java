@@ -302,5 +302,5 @@ public interface ITransacaoConsolidadaDados extends IRepositorioBoleiaDados<Tran
      * @param filtro O filtro fornecido
      * @return Os dados encontrados
      */
-    List<TransacaoConsolidada> obterDetalhesDadosFinanceiroFrotaParaExportacao(FiltroPesquisaFinanceiroVo filtro);
+    ResultadoPaginado<TransacaoConsolidada> obterDetalhesDadosFinanceiroFrotaParaExportacao(FiltroPesquisaFinanceiroVo filtro);
 }
