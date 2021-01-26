@@ -546,11 +546,13 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "LEFT JOIN TC.frotaPtov FPV " +
                     "LEFT JOIN FPV.frota F " +
                     "LEFT JOIN FPV.pontoVenda PV " +
+                    "LEFT JOIN TC.cobranca C " +
                     "WHERE (F.id = :idFrota) " +
                     "AND (PV.id = :idPv OR :idPv is null) " +
                     "AND ((TC.dataInicioPeriodo >= :dataInicioPeriodo AND TC.dataFimPeriodo <= :dataFimPeriodo) OR (TC.dataFimPeriodo >= :dataInicioPeriodo AND TC.dataInicioPeriodo <= :dataFimPeriodo)) " +
                     "AND (TC.statusConsolidacao = :statusConsolidacao OR :statusConsolidacao is null) " +
                     "AND (TC.quantidadeAbastecimentos > 0) " +
+                    "%s " +
                     "ORDER BY TC.dataInicioPeriodo";
 
     @Autowired
@@ -1288,7 +1290,15 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             parametros.add(new ParametroPesquisaIgual("idPv", null));
         }
 
-        return pesquisar(filtro.getPaginacao(), CONSULTA_DETALHES_FINANCEIRO_FROTA_EXPORTACAO, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        String filtroStatus = " ";
+        if(filtro.getStatusPagamento() != null) {
+            filtroStatus = "AND ((C.status IS NULL AND " + A_VENCER.getValue() + " IN :statusPagamento) OR C.status IN :statusPagamento) ";
+            List<Integer> listaStatus = filtro.getStatusPagamento().stream().map(x -> StatusPagamentoCobranca.valueOf(x.getName()).getValue()).collect(Collectors.toList());
+            parametros.add(new ParametroPesquisaIn("statusPagamento", listaStatus));
+        }
+        String consulta = String.format(CONSULTA_DETALHES_FINANCEIRO_FROTA_EXPORTACAO, filtroStatus);
+
+        return pesquisar(filtro.getPaginacao(), consulta, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
     /**
