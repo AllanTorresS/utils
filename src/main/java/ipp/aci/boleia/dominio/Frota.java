@@ -382,6 +382,9 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @OneToOne(mappedBy = "frota")
     private ParametroNotaFiscal parametroNotaFiscal;
 
+    @Column(name = "ID_LEMBRAR_PARAMETRIZACAO_NF")
+    private Boolean lembrarParametrizacaoNf;
+
     @NotAudited
     @Formula("(SELECT NVL(COUNT(0), 0) FROM BOLEIA_SCHEMA.TAG_CONECTCAR T WHERE T.CD_FROTA = CD_FROTA)")
     private Integer totalTags;
@@ -1349,5 +1352,13 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
 
     public void setLocalDestinoPadraoNfeUf(Boolean localDestinoPadraoNfeUf) {
         this.localDestinoPadraoNfeUf = localDestinoPadraoNfeUf;
+    }
+
+    public Boolean getLembrarParametrizacaoNf() {
+        return lembrarParametrizacaoNf;
+    }
+
+    public void setLembrarParametrizacaoNf(Boolean lembrarParametrizacaoNf) {
+        this.lembrarParametrizacaoNf = lembrarParametrizacaoNf;
     }
 }
