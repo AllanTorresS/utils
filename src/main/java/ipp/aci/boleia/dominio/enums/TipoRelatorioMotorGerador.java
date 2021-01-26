@@ -35,7 +35,8 @@ public enum TipoRelatorioMotorGerador implements IEnumComLabel<TipoRelatorioMoto
     RELATORIO_ATIVACAO_TAG(20, obterMapaTemplatesAtivacaoTag()),
     RELATORIO_GERAL_FROTA(21, obterMapaTemplatesFrotaGeral()),
     RELATORIO_COBRANCA_CONECTCAR(22, obterMapaTemplatesCobrancaConectcar()),
-	RELATORIO_FINANCEIRO_FROTA(23, obterMapaTemplatesFinanceiroFrota());
+	RELATORIO_FINANCEIRO_FROTA(23, obterMapaTemplatesFinanceiroFrota()),
+    RELATORIO_DETALHAMENTO_COBRANCA(24, obterMapaTemplatesDetalhamentoCobranca());
 
     private final Integer value;
     private final Map<TipoPerfilUsuario, TemplatePlanilha> templatePerfil;
@@ -360,6 +361,17 @@ public enum TipoRelatorioMotorGerador implements IEnumComLabel<TipoRelatorioMoto
         Map<TipoPerfilUsuario, TemplatePlanilha> mapa = new HashMap<>();
         mapa.put(TipoPerfilUsuario.INTERNO, TemplatePlanilha.TEMPLATE_RELATORIO_COBRANCA_CONECTCAR);
         mapa.put(TipoPerfilUsuario.FROTA, TemplatePlanilha.TEMPLATE_RELATORIO_COBRANCA_CONECTCAR);
+        return mapa;
+    }
+
+    /**
+     * Gera um mapa de templates por perfil para um tipo de relatório (Detalhamento Cobrança)
+     *
+     * @return O mapa criado
+     */
+    private static Map<TipoPerfilUsuario, TemplatePlanilha> obterMapaTemplatesDetalhamentoCobranca() {
+        Map<TipoPerfilUsuario, TemplatePlanilha> mapa = new HashMap<>();
+        mapa.put(TipoPerfilUsuario.FROTA, TemplatePlanilha.TEMPLATE_RELATORIO_DETALHAMENTO_COBRANCA);
         return mapa;
     }
 
