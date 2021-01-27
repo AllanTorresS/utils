@@ -7,7 +7,7 @@ import java.math.BigDecimal;
  */
 public class DadosCotaVeiculoVo {
     private Long idVeiculo;
-    private String  placa;
+    private String placa;
     private Long idEmpresaAgregada;
     private Long cnpjEmpresaAgregada;
     private String razaoSocialEmpresaAgregada;
@@ -23,12 +23,15 @@ public class DadosCotaVeiculoVo {
     private String descricaoTipoVeiculo;
     private Long idSubTipoVeiculo;
     private String descricaoSubTipoVeiculo;
-
+    private Long idUnidade;
+    private Long cnpjUnidade;
+    private Long inscricaoEstadualUnidade;
+    private String nomeUnidade;
 
     /**
      *
      */
-    public DadosCotaVeiculoVo(){
+    public DadosCotaVeiculoVo() {
     }
 
     /**
@@ -50,8 +53,12 @@ public class DadosCotaVeiculoVo {
      * @param descricaoTipoVeiculo
      * @param idSubTipoVeiculo
      * @param descricaoSubTipoVeiculo
+     * @param idUnidade
+     * @param cnpjUnidade
+     * @param inscricaoEstadualUnidade
+     * @param nomeUnidade
      */
-    public DadosCotaVeiculoVo(Long idVeiculo, String placa, Long idEmpresaAgregada, Long cnpjEmpresaAgregada, String razaoSocialEmpresaAgregada, String nomeFantasiaEmpresaAgregada, Integer agregado, BigDecimal cotaVeiculo, BigDecimal saldoVeiculo, String nomeMotorista, Long idFrota, Long cnpjFrota, String razaoSocialFrota, Long idTipoVeiculo, String descricaoTipoVeiculo, Long idSubTipoVeiculo, String descricaoSubTipoVeiculo) {
+    public DadosCotaVeiculoVo(Long idVeiculo, String placa, Long idEmpresaAgregada, Long cnpjEmpresaAgregada, String razaoSocialEmpresaAgregada, String nomeFantasiaEmpresaAgregada, Integer agregado, BigDecimal cotaVeiculo, BigDecimal saldoVeiculo, String nomeMotorista, Long idFrota, Long cnpjFrota, String razaoSocialFrota, Long idTipoVeiculo, String descricaoTipoVeiculo, Long idSubTipoVeiculo, String descricaoSubTipoVeiculo, Long idUnidade, Long cnpjUnidade, Long inscricaoEstadualUnidade, String nomeUnidade) {
         this.idVeiculo = idVeiculo;
         this.placa = placa;
         this.idEmpresaAgregada = idEmpresaAgregada;
@@ -69,6 +76,10 @@ public class DadosCotaVeiculoVo {
         this.descricaoTipoVeiculo = descricaoTipoVeiculo;
         this.idSubTipoVeiculo = idSubTipoVeiculo;
         this.descricaoSubTipoVeiculo = descricaoSubTipoVeiculo;
+        this.idUnidade = idUnidade;
+        this.cnpjUnidade = cnpjUnidade;
+        this.inscricaoEstadualUnidade = inscricaoEstadualUnidade;
+        this.nomeUnidade = nomeUnidade;
     }
 
     public Long getIdVeiculo() {
@@ -205,5 +216,37 @@ public class DadosCotaVeiculoVo {
 
     public void setDescricaoSubTipoVeiculo(String descricaoSubTipoVeiculo) {
         this.descricaoSubTipoVeiculo = descricaoSubTipoVeiculo;
+    }
+
+    public Long getIdUnidade() {
+        return idUnidade;
+    }
+
+    public void setIdUnidade(Long idUnidade) {
+        this.idUnidade = idUnidade;
+    }
+
+    public Long getCnpjUnidade() {
+        return cnpjUnidade;
+    }
+
+    public void setCnpjUnidade(Long cnpjUnidade) {
+        this.cnpjUnidade = cnpjUnidade;
+    }
+
+    public Long getInscricaoEstadualUnidade() {
+        return inscricaoEstadualUnidade;
+    }
+
+    public void setInscricaoEstadualUnidade(Long inscricaoEstadualUnidade) {
+        this.inscricaoEstadualUnidade = inscricaoEstadualUnidade;
+    }
+
+    public String getNomeUnidade() {
+        return nomeUnidade;
+    }
+
+    public void setNomeUnidade(String nomeUnidade) {
+        this.nomeUnidade = nomeUnidade;
     }
 }

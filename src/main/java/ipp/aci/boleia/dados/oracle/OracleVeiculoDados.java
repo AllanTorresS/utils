@@ -131,8 +131,8 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
                     "   v.placa, " +
                     "   ep.id, " +
                     "   ep.cnpj, " +
-                    "   ep.razaoSocial," +
-                    "   ep.fantasia," +
+                    "   ep.razaoSocial, " +
+                    "   ep.fantasia, " +
                     "   v.agregado," +
                     "   sv.cotaValor, " +
                     "   sv.valorConsumido, " +
@@ -152,7 +152,11 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
                     " tv.id ," +
                     " tv.descricao, " +
                     " stv.id, " +
-                    " stv.descricao " +
+                    " stv.descricao, " +
+                    " (CASE WHEN v.unidade IS NOT NULL THEN u.id ELSE null END), " +
+                    " (CASE WHEN v.unidade IS NOT NULL THEN u.cnpj ELSE null END), " +
+                    " (CASE WHEN v.unidade IS NOT NULL THEN u.inscrEstadual ELSE null END), " +
+                    " (CASE WHEN v.unidade IS NOT NULL THEN u.nome ELSE null END) " +
                     " ) " +
             " FROM Veiculo v " +
                 " LEFT JOIN v.saldoVeiculo sv " +
@@ -160,7 +164,8 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
                 " LEFT JOIN v.subtipoVeiculo stv " +
                 " LEFT JOIN stv.tipoVeiculo tv " +
                 " LEFT JOIN v.empresaAgregada ep " +
-                " WHERE ";
+                " LEFT JOIN v.unidade u " +
+            " WHERE ";
 
     @Override
     public ResultadoPaginadoFrtVo<Veiculo> pesquisar(FiltroPesquisaVeiculoExtVo filtro) {

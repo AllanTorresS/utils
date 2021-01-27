@@ -9,6 +9,7 @@ public class FiltroPesquisaCotaVeiculoVo extends BaseFiltroPaginado {
     private EnumVo classificacao;
     private EntidadeVo empresaAgregada;
     private EntidadeVo frota;
+    private EntidadeVo unidade;
 
     public String getPlaca() {
         return placa;
@@ -48,5 +49,13 @@ public class FiltroPesquisaCotaVeiculoVo extends BaseFiltroPaginado {
 
     public void setFrota(EntidadeVo frota) {
         this.frota = frota;
+    }
+
+    public EntidadeVo getUnidade() {
+        return unidade;
+    }
+
+    public void setUnidade(EntidadeVo unidade) {
+        this.unidade = unidade;
     }
 }
