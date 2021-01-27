@@ -46,6 +46,9 @@ public class HistoricoFrota implements IPersistente {
     @Column(name = "ID_LOCAL_PADRAO_NFE_UF")
     private Boolean localDestinoPadraoNfeUf;
 
+    @Column(name = "ID_LEMBRAR_PARAMETRIZACAO_NF")
+    private Boolean lembrarParametrizacaoNf;
+
     public Long getId() {
         return id;
     }
@@ -84,5 +87,13 @@ public class HistoricoFrota implements IPersistente {
 
     public void setLocalDestinoPadraoNfeUf(Boolean localDestinoPadraoNfeUf) {
         this.localDestinoPadraoNfeUf = localDestinoPadraoNfeUf;
+    }
+
+    public Boolean getLembrarParametrizacaoNf() {
+        return lembrarParametrizacaoNf;
+    }
+
+    public void setLembrarParametrizacaoNf(Boolean lembrarParametrizacaoNf) {
+        this.lembrarParametrizacaoNf = lembrarParametrizacaoNf;
     }
 }
