@@ -15,7 +15,8 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgualIgnoreCas
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
-import ipp.aci.boleia.dominio.vo.CotaVeiculoVo;
+import ipp.aci.boleia.dominio.vo.DadosCotaVeiculoVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaCotaVeiculoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialVeiculoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaVeiculoVo;
 import ipp.aci.boleia.dominio.vo.externo.FiltroPesquisaVeiculoExtVo;
@@ -24,12 +25,15 @@ import ipp.aci.boleia.dominio.vo.frotista.InformacaoPaginacaoFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.ResultadoPaginadoFrtVo;
 import ipp.aci.boleia.util.negocio.ParametrosPesquisaBuilder;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.Query;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Respositorio de entidades Veiculo
@@ -79,38 +83,57 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
     }
 
     @Override
-    public ResultadoPaginado<CotaVeiculoVo> pesquisarCotaVeiculo(FiltroPesquisaVeiculoVo filtro) {
+    public ResultadoPaginado<DadosCotaVeiculoVo> pesquisarCotaVeiculo(FiltroPesquisaCotaVeiculoVo filtro) {
+        String consulta = CONSULTA_COTA_VEICULO_HQL;
+        List<Long> idFrota = new ArrayList<>();
+        Usuario usuario = ambiente.getUsuarioLogado();
+
         List<ParametroPesquisa> parametros = new ArrayList<>();
-        criarParametrosBasicosConsulta(filtro, parametros);
-        if (filtro.getUnidade() != null && filtro.getUnidade().getId() != null) {
-            if (filtro.getUnidade().getId() > 0) {
-                parametros.add(new ParametroPesquisaIgual("unidade", filtro.getUnidade().getId()));
-            } else {
-                parametros.add(new ParametroPesquisaNulo("unidade"));
-            }
+
+        if (filtro.getFrota() == null) {
+            idFrota = usuario.listarIdsFrotasAssociadas();
+        } else {
+            idFrota = Arrays.asList(filtro.getFrota().getId().longValue());
+        }
+        parametros.add(new ParametroPesquisaIn("idFrota", idFrota));
+        consulta += " v.frota.id IN (:idFrota) ";
+
+
+        if (filtro.getTipoVeiculo().getId() != null) {
+            parametros.add(new ParametroPesquisaIgual("tipoVeiculo", filtro.getTipoVeiculo().getId().longValue()));
+            consulta += " AND tv.id = :tipoVeiculo " ;
         }
 
-        Usuario usuario = ambiente.getUsuarioLogado();
-        List <Long> idFrota = usuario.listarIdsFrotasAssociadas();
+        Integer classificacao = filtro.getClassificacao() != null && filtro.getClassificacao().getName() != null? ClassificacaoAgregado.valueOf(filtro.getClassificacao().getName()).getValue() : null;
+        if (classificacao != null) {
+            parametros.add(new ParametroPesquisaIgual("classificacao", classificacao));
+            consulta += " AND v.agregado = :classificacao ";
+        }
+
+        if (StringUtils.isNotEmpty(filtro.getPlaca())) {
+            parametros.add(new ParametroPesquisaIgual("placa", filtro.getPlaca().toUpperCase(Locale.ROOT)));
+            consulta += " AND v.placa = :placa ";
+        }
 
         if (idFrota.size() > 0) {
             return pesquisar(filtro.getPaginacao() ,
-                    CONSULTA_COTA_VEICULO_HQL ,
-                    CotaVeiculoVo.class ,
-                    new ParametroPesquisaIn("idFrota", idFrota));
+                    consulta ,
+                    DadosCotaVeiculoVo.class ,
+                    parametros.toArray(new ParametroPesquisa[parametros.size()]));
         } else {
-            return new ResultadoPaginado<CotaVeiculoVo>(new ArrayList<CotaVeiculoVo>(), 0);
+            return new ResultadoPaginado<DadosCotaVeiculoVo>(new ArrayList<DadosCotaVeiculoVo>(), 0);
         }
     }
 
     String CONSULTA_COTA_VEICULO_HQL =
-            " SELECT DISTINCT new ipp.aci.boleia.dominio.vo.CotaVeiculoVo(" +
+            " SELECT DISTINCT new ipp.aci.boleia.dominio.vo.DadosCotaVeiculoVo(" +
                     "   v.id, " +
-                    "   f.razaoSocial, " +
                     "   v.placa, " +
-                    "   ep.razaoSocial, " +
+                    "   ep.id, " +
+                    "   ep.cnpj, " +
+                    "   ep.razaoSocial," +
+                    "   ep.fantasia," +
                     "   v.agregado," +
-                    "   stv.descricao, " +
                     "   sv.cotaValor, " +
                     "   sv.valorConsumido, " +
                     "   (" +
@@ -122,13 +145,22 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
                     "             ( select MAX(a.dataProcessamento) from AutorizacaoPagamento a"+
                     "                  JOIN a.motorista  m "+
                     "              where a.frota.id = au.frota.id and a.veiculo.id = au.veiculo.id " +
-                    "    )))" +
+                    "    )), " +
+                    " f.id," +
+                    " f.cnpj, " +
+                    " f.razaoSocial, " +
+                    " tv.id ," +
+                    " tv.descricao, " +
+                    " stv.id, " +
+                    " stv.descricao " +
+                    " ) " +
             " FROM Veiculo v " +
                 " LEFT JOIN v.saldoVeiculo sv " +
                 " LEFT JOIN v.frota f " +
                 " LEFT JOIN v.subtipoVeiculo stv " +
+                " LEFT JOIN stv.tipoVeiculo tv " +
                 " LEFT JOIN v.empresaAgregada ep " +
-                " WHERE v.frota.id IN (:idFrota) ";
+                " WHERE ";
 
     @Override
     public ResultadoPaginadoFrtVo<Veiculo> pesquisar(FiltroPesquisaVeiculoExtVo filtro) {

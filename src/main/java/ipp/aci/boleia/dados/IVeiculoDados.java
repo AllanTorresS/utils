@@ -3,7 +3,8 @@ package ipp.aci.boleia.dados;
 
 import ipp.aci.boleia.dominio.Veiculo;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
-import ipp.aci.boleia.dominio.vo.CotaVeiculoVo;
+import ipp.aci.boleia.dominio.vo.DadosCotaVeiculoVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaCotaVeiculoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialVeiculoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaVeiculoVo;
 import ipp.aci.boleia.dominio.vo.externo.FiltroPesquisaVeiculoExtVo;
@@ -31,7 +32,7 @@ public interface IVeiculoDados extends IRepositorioBoleiaDados<Veiculo> {
 	 * @param filtro O filtro da busca
 	 * @return Uma lista de entidades localizadas com cota do veiculo
 	 */
-	ResultadoPaginado<CotaVeiculoVo> pesquisarCotaVeiculo(FiltroPesquisaVeiculoVo filtro);
+	ResultadoPaginado<DadosCotaVeiculoVo> pesquisarCotaVeiculo(FiltroPesquisaCotaVeiculoVo filtro);
 
 	/**
 	 * Pesquisa Veículos para a API do frotista a partir do filtro informado
