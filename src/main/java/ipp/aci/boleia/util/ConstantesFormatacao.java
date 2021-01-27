@@ -6,6 +6,7 @@ package ipp.aci.boleia.util;
 public final class ConstantesFormatacao {
 
     public static final String FORMATO_MOEDA_REAL = "R$ ###,##0.";
+    public static final String FORMATO_MOEDA_REAL_SEM_PREFIXO = "###,##0.";
     public static final String FORMATO_MOEDA_REAL_COM_SINAL = "+R$ ###,##0.00;-R$ ";
     public static final String FORMATO_PERCENTUAL = "##0.00%";
     public static final String FORMATO_KILOMETROS = "###,### Km";
