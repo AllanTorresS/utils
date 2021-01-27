@@ -38,6 +38,7 @@ public class HistoricoFrotaSd {
                 historicoFrota.setDataHistorico(ambiente.buscarDataAmbiente());
                 historicoFrota.setExigeNotaFiscal(dadosAntigos.exigeNotaFiscal());
                 historicoFrota.setLocalDestinoPadraoNfeUf(dadosAntigos.getLocalDestinoPadraoNfeUf());
+                historicoFrota.setLembrarParametrizacaoNf(dadosAntigos.getLembrarParametrizacaoNf());
                 return historicoFrotaDados.armazenar(historicoFrota);
             }
         }
