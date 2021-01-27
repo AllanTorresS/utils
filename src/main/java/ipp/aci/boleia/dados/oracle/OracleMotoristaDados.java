@@ -54,7 +54,7 @@ public class OracleMotoristaDados extends OracleRepositorioBoleiaDados<Motorista
             "FROM Motorista m " +
             "JOIN m.autorizacoesPagamento ap " +
             "WHERE (ap.transacaoConsolidadaPostergada.id = :idConsolidado OR ap.transacaoConsolidada.id = :idConsolidado) AND " +
-            "       m.nome LIKE :nome AND " +
+            "       upper(m.nome) LIKE :nome AND " +
             "       m.excluido = false";
 
     /**
@@ -67,7 +67,7 @@ public class OracleMotoristaDados extends OracleRepositorioBoleiaDados<Motorista
     @Override
     public List<Motorista> listarMotoristasPorTermoEConsolidado(String termo, Long idConsolidado) {
         ParametroPesquisaIgual parametroConsolidado = new ParametroPesquisaIgual("idConsolidado", idConsolidado);
-        ParametroPesquisaIgual parametroTermo = new ParametroPesquisaIgual("nome", "%" + termo + "%");
+        ParametroPesquisaIgual parametroTermo = new ParametroPesquisaIgual("nome", "%" + termo.toUpperCase() + "%");
         return pesquisar(null, LISTAR_MOTORISTAS_POR_CONSOLIDADO, parametroConsolidado, parametroTermo).getRegistros();
     }
 
