@@ -309,14 +309,12 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "AND r.status = " + StatusPagamentoReembolso.PAGO.getValue();
 
     private static final String CONSULTA_TOTAL_COBRANCA_PERIODO =
-            " SELECT SUM(CASE WHEN tc.valorEmitidoNotaFiscal > 0 THEN (tc.valorEmitidoNotaFiscal - tc.valorDescontoAbastecimentos) " +
-                    "ELSE 0 END) " +
+            " SELECT SUM(tc.valorTotal) " +
                     "FROM TransacaoConsolidada tc " +
                     "LEFT JOIN tc.frotaPtov fpv " +
                     "LEFT JOIN tc.cobranca c " +
                     "WHERE ((tc.dataInicioPeriodo >= :dataInicioPeriodo AND tc.dataFimPeriodo <= :dataFimPeriodo) OR (tc.dataFimPeriodo >= :dataInicioPeriodo AND tc.dataInicioPeriodo <= :dataFimPeriodo)) " +
                     "AND (fpv.frota.id = :idFrota OR :idFrota is null) " +
-                    "AND (tc.valorTotal <> 0 OR tc.valorTotalNotaFiscal <> 0) " +
                     "AND (tc.quantidadeAbastecimentos > 0) " +
                     "AND (tc.statusConsolidacao = :statusCiclo OR :statusCiclo is null) " +
                     "%s ";
