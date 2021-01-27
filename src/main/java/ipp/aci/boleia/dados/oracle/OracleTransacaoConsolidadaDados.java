@@ -551,7 +551,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "AND (TC.statusConsolidacao = :statusConsolidacao OR :statusConsolidacao is null) " +
                     "AND (TC.quantidadeAbastecimentos > 0) " +
                     "%s " +
-                    "ORDER BY TC.dataInicioPeriodo";
+                    "ORDER BY TC.dataFimPeriodo";
 
     @Autowired
     private UtilitarioAmbiente ambiente;
@@ -1264,7 +1264,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             parametros.add(new ParametroPesquisaIgual("cobranca.id", filtro.getIdCobranca()));
         }
 
-        return pesquisar((ParametroOrdenacaoColuna) null, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        return pesquisar(new ParametroOrdenacaoColuna("dataFimPeriodo"), parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
 
