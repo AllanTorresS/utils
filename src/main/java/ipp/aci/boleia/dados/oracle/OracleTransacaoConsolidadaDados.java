@@ -347,7 +347,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "AND (r.status in (" + StatusPagamentoReembolso.PAGO.getValue() + ", " + StatusPagamentoReembolso.ATRASADO.getValue() + ", " + StatusPagamentoReembolso.NF_ATRASADA.getValue() + ", " + StatusPagamentoReembolso.A_DESCONTAR.getValue() + ")) " +
                     "ORDER BY %s ";
 
-    private static final String CLAUSULA_DATA_FIM_PERIODO = "CASE " +
+    private static final String CLAUSULA_DATA_LIMITE_EMISSAO = "CASE " +
             "WHEN TCP.possuiPrazoAjuste = 1 THEN trunc(TCP.dataLimiteEmissaoNfe) " +
             "ELSE trunc(TC.dataFimPeriodo) " +
             "END ";
@@ -367,6 +367,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                         "SUM(TC.quantidadeAbastecimentos), " +
                         CLAUSULA_DATA_VENCIMENTO + ", " +
                         "C.dataPagamento, " +
+                        CLAUSULA_DATA_LIMITE_EMISSAO + ", " +
                         "C.statusIntegracaoJDE, " +
                         "C.id, " +
                         "C.numeroDocumento, " +
@@ -390,7 +391,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                         "F.id, " +
                         "TC.dataInicioPeriodo, " +
                         "TC.dataFimPeriodo, " +
-                        CLAUSULA_DATA_FIM_PERIODO + ", " +
+                        CLAUSULA_DATA_LIMITE_EMISSAO + ", " +
                         CLAUSULA_STATUS_PAGAMENTO + ", " +
                         CLAUSULA_DATA_VENCIMENTO + ", " +
                         "TC.statusConsolidacao," +

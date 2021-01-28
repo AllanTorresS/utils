@@ -8,6 +8,7 @@ import ipp.aci.boleia.dominio.Unidade;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaAbastecimentoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheCobrancaVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaQtdTransacoesFrotaVo;
 import ipp.aci.boleia.dominio.vo.QuantidadeAbastecidaVeiculoVo;
 import ipp.aci.boleia.dominio.vo.TransacaoPendenteVo;
 import ipp.aci.boleia.dominio.vo.frotista.FiltroPesquisaAbastecimentoFrtVo;
@@ -406,4 +407,11 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
      * @return Uma lista de ResultadoPaginado localizadas
      */
     ResultadoPaginado<AutorizacaoPagamento> pesquisaPaginadaDetalheCobranca(FiltroPesquisaDetalheCobrancaVo filtro);
+
+    /**
+     * Obtem a quantidade de transações de um ciclo ou agrupamento de ciclos para a visão da frota
+     * @param filtro o filtro de pesquisa informado
+     * @return A quantidade de transações
+     */
+    Long obterQuantidadeTransacoesFrota(FiltroPesquisaQtdTransacoesFrotaVo filtro); 
 }
