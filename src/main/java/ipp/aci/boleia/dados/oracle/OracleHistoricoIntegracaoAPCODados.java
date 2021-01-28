@@ -40,6 +40,7 @@ public class OracleHistoricoIntegracaoAPCODados extends OracleRepositorioBoleiaD
 		infoPag.getParametrosOrdenacaoColuna().add(new ParametroOrdenacaoColuna("dataOperacao", Ordenacao.DECRESCENTE));
 
 		parametros.add(new ParametroPesquisaIgual("status", StatusIntegracaoAPCO.SUCESSO.getValue()));
+		parametros.add(new ParametroPesquisaIgual("excluido",0 ));
 		parametros.add(new ParametroPesquisaDataMenorOuIgual("dataOperacao", dataAtual));
 		List<HistoricoIntegracaoAPCO> resultado = pesquisar(infoPag,parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
 

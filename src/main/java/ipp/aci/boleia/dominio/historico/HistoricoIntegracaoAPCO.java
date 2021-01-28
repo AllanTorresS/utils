@@ -46,6 +46,9 @@ public class HistoricoIntegracaoAPCO  implements IPersistente {
 	@Size(max=3000)
 	private String descricaoErro;
 
+	@Column(name = "ID_EXCLUIDO")
+	private Boolean excluido;
+
 
 	/**
 	 * Construtor default
@@ -66,6 +69,7 @@ public class HistoricoIntegracaoAPCO  implements IPersistente {
 		this.dataOperacao = dataOperacao;
 		this.status = status;
 		this.descricaoErro = StringUtils.truncate(descricaoErro,TAMANHO_MAXIMO_DESCRICAO_ERRO);
+		this.excluido = false;
 	}
 
 
