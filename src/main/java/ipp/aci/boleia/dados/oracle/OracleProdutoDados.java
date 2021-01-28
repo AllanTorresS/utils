@@ -17,7 +17,7 @@ import java.util.List;
 public class OracleProdutoDados extends OracleRepositorioBoleiaDados<Produto> implements IProdutoDados {
 
     private static final String LISTAR_PRODUTOS_POR_CONSOLIDADO =
-            "SELECT p " +
+            "SELECT DISTINCT p " +
             "FROM Produto p " +
             "JOIN p.itensAutorizacaoPagamento ia " +
             "JOIN ia.autorizacaoPagamento ap " +
