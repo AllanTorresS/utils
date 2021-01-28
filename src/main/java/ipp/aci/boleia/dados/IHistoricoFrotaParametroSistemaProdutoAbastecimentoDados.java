@@ -1,0 +1,7 @@
+package ipp.aci.boleia.dados;
+
+import ipp.aci.boleia.dominio.HistoricoFrotaParametroSistemaProdutoAbastecimento;
+
+
+public interface IHistoricoFrotaParametroSistemaProdutoAbastecimentoDados extends IRepositorioBoleiaDados<HistoricoFrotaParametroSistemaProdutoAbastecimento> {
+}
