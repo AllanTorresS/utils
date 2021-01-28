@@ -32,6 +32,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -85,67 +86,42 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
     @Override
     public ResultadoPaginado<DadosCotaVeiculoVo> pesquisarCotaVeiculo(FiltroPesquisaCotaVeiculoVo filtro) {
         String consulta = CONSULTA_COTA_VEICULO_HQL;
-        List<Long> idFrota = new ArrayList<>();
-        Usuario usuario = ambiente.getUsuarioLogado();
 
         List<ParametroPesquisa> parametros = new ArrayList<>();
-
-        if (filtro.getFrota() == null) {
-            idFrota = usuario.listarIdsFrotasAssociadas();
-        } else {
-            idFrota = Arrays.asList(filtro.getFrota().getId().longValue());
-        }
+        List<Long> idFrota = filtro.getFrota() != null ? Collections.singletonList(filtro.getFrota().getId()) : null;
         parametros.add(new ParametroPesquisaIn("idFrota", idFrota));
-        consulta += " v.frota.id IN (:idFrota) ";
-
-
-        if (filtro.getTipoVeiculo().getId() != null) {
-            parametros.add(new ParametroPesquisaIgual("tipoVeiculo", filtro.getTipoVeiculo().getId().longValue()));
-            consulta += " AND tv.id = :tipoVeiculo " ;
-        }
+        parametros.add(new ParametroPesquisaIgual("tipoVeiculo", filtro.getTipoVeiculo().getId() != null ? filtro.getTipoVeiculo().getId() : null));
 
         Integer classificacao = filtro.getClassificacao() != null && filtro.getClassificacao().getName() != null? ClassificacaoAgregado.valueOf(filtro.getClassificacao().getName()).getValue() : null;
-        if (classificacao != null) {
-            parametros.add(new ParametroPesquisaIgual("classificacao", classificacao));
-            consulta += " AND v.agregado = :classificacao ";
-        }
+        parametros.add(new ParametroPesquisaIgual("classificacao", classificacao));
+        parametros.add(new ParametroPesquisaIgual("placa", filtro.getPlaca() != null ? filtro.getPlaca() : null));
 
-        if (StringUtils.isNotEmpty(filtro.getPlaca())) {
-            parametros.add(new ParametroPesquisaIgual("placa", filtro.getPlaca().toUpperCase(Locale.ROOT)));
-            consulta += " AND v.placa = :placa ";
-        }
-
-        if (idFrota.size() > 0) {
-            return pesquisar(filtro.getPaginacao() ,
-                    consulta ,
-                    DadosCotaVeiculoVo.class ,
-                    parametros.toArray(new ParametroPesquisa[parametros.size()]));
-        } else {
-            return new ResultadoPaginado<DadosCotaVeiculoVo>(new ArrayList<DadosCotaVeiculoVo>(), 0);
-        }
-    }
+        return pesquisar(filtro.getPaginacao() ,
+                consulta ,
+                DadosCotaVeiculoVo.class ,
+                parametros.toArray(new ParametroPesquisa[parametros.size()]));
+}
 
     String CONSULTA_COTA_VEICULO_HQL =
             " SELECT DISTINCT new ipp.aci.boleia.dominio.vo.DadosCotaVeiculoVo(" +
                     "   v.id, " +
                     "   v.placa, " +
-                    "   ep.id, " +
-                    "   ep.cnpj, " +
-                    "   ep.razaoSocial, " +
-                    "   ep.fantasia, " +
+                    "   (CASE WHEN v.empresaAgregada IS NOT NULL THEN ep.id ELSE null END), " +
+                    "   (CASE WHEN v.empresaAgregada IS NOT NULL THEN ep.cnpj ELSE null END), " +
+                    "   (CASE WHEN v.empresaAgregada IS NOT NULL THEN ep.razaoSocial ELSE null END), " +
+                    "   (CASE WHEN v.empresaAgregada IS NOT NULL THEN ep.fantasia ELSE null END), " +
                     "   v.agregado," +
                     "   sv.cotaValor, " +
                     "   sv.valorConsumido, " +
                     "   (" +
-                    "        SELECT DISTINCT m.nome " +
+                    "        SELECT DISTINCT au.nomeMotorista " +
                     "          FROM AutorizacaoPagamento  au " +
-                    "          JOIN au.motorista m "+
                     "          WHERE au.frota.id =  v.frota.id  and au.veiculo.id = v.id "+
-                    "          and au.dataProcessamento = "+
-                    "             ( select MAX(a.dataProcessamento) from AutorizacaoPagamento a"+
-                    "                  JOIN a.motorista  m "+
+                    "          and au.id = "+
+                    "             ( select MAX(a.id) from AutorizacaoPagamento a"+
                     "              where a.frota.id = au.frota.id and a.veiculo.id = au.veiculo.id " +
-                    "    )), " +
+                    "    )" +
+                    "), " +
                     " f.id," +
                     " f.cnpj, " +
                     " f.razaoSocial, " +
@@ -164,8 +140,12 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
                 " LEFT JOIN v.subtipoVeiculo stv " +
                 " LEFT JOIN stv.tipoVeiculo tv " +
                 " LEFT JOIN v.empresaAgregada ep " +
-                " LEFT JOIN v.unidade u " +
-            " WHERE ";
+                " LEFT JOIN v.unidade u  " +
+                " WHERE (:idFrota       IS NULL OR v.frota.id IN (:idFrota)) " +
+                "   AND (:tipoVeiculo   IS NULL OR tv.id = :tipoVeiculo )" +
+                "   AND (:classificacao IS NULL OR v.agregado = :classificacao )" +
+                "   AND (:placa         IS NULL OR v.placa = :placa )";
+    ;
 
     @Override
     public ResultadoPaginadoFrtVo<Veiculo> pesquisar(FiltroPesquisaVeiculoExtVo filtro) {
