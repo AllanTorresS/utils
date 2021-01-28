@@ -1444,7 +1444,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         }
 
         String filtroStatus = " ";
-        if(filtro.getStatusPagamento() != null) {
+        if(filtro.getStatusPagamento() != null && !filtro.getStatusPagamento().isEmpty()) {
             filtroStatus = "AND ((C.status IS NULL AND " + A_VENCER.getValue() + " IN :statusPagamento) OR C.status IN :statusPagamento) ";
             List<Integer> listaStatus = filtro.getStatusPagamento().stream().map(x -> StatusPagamentoCobranca.valueOf(x.getName()).getValue()).collect(Collectors.toList());
             parametros.add(new ParametroPesquisaIn("statusPagamento", listaStatus));
@@ -1502,7 +1502,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         }
 
         String filtroStatus = " ";
-        if(filtro.getStatusPagamento() != null) {
+        if(filtro.getStatusPagamento() != null && !filtro.getStatusPagamento().isEmpty()) {
             filtroStatus = "AND ((c.status IS NULL AND " + A_VENCER.getValue() + " IN :statusPagamento) OR c.status IN :statusPagamento) ";
             List<Integer> listaStatus = filtro.getStatusPagamento().stream().map(x -> StatusPagamentoCobranca.valueOf(x.getName()).getValue()).collect(Collectors.toList());
             parametros.add(new ParametroPesquisaIn("statusPagamento", listaStatus));
