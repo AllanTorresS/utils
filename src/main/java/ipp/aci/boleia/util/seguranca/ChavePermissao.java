@@ -206,6 +206,7 @@ public final class ChavePermissao {
     public static final String PARCERIAS_VISUALIZAR                         = SPRING_ROLE_PREFIX + "PARCERIAS_VISUALIZAR" + SPRING_ROLE_SUFFIX;
 
     public static final String FINANCEIRO_CONSULTAR                         = SPRING_ROLE_PREFIX + "FINANCEIRO_CONSULTAR" + SPRING_ROLE_SUFFIX;
+    public static final String FINANCEIRO_DETALHAR_CICLOS                   = SPRING_ROLE_PREFIX + "FINANCEIRO_DETALHAR_CICLOS" + SPRING_ROLE_SUFFIX;
     public static final String FINANCEIRO_EXPORTAR_XLS                      = SPRING_ROLE_PREFIX + "FINANCEIRO_EXPORTAR_XLS" + SPRING_ROLE_SUFFIX;
     public static final String FINANCEIRO_EXPORTAR_PDF                      = SPRING_ROLE_PREFIX + "FINANCEIRO_EXPORTAR_PDF" + SPRING_ROLE_SUFFIX;
 

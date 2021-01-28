@@ -15,6 +15,7 @@ import java.util.List;
 import static ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso.ATRASADO;
 import static ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso.A_DESCONTAR;
 import static ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso.EM_ABERTO;
+import static ipp.aci.boleia.util.UtilitarioCalculoData.obterPrimeiroInstanteDia;
 
 /**
  * Serviços base de domínio da entidade {@link ipp.aci.boleia.dominio.Reembolso}.
@@ -43,7 +44,7 @@ public class ReembolsoBaseSd {
         if(!reembolso.isPago()) {
             if(reembolso.getValorReembolso().compareTo(BigDecimal.ZERO) < 0) {
                 statusReembolso = A_DESCONTAR;
-            } else if(reembolso.getDataVencimentoPgto().before(dataHoraCorrente)) {
+            } else if(obterPrimeiroInstanteDia(reembolso.getDataVencimentoPgto()).before(obterPrimeiroInstanteDia(dataHoraCorrente))) {
                 statusReembolso = ATRASADO;
             } else {
                 statusReembolso = EM_ABERTO;
@@ -65,13 +66,12 @@ public class ReembolsoBaseSd {
     /**
      * Define a data de vencimento do pagamento de um reembolso.
      *
-     * @param dataLimiteEmissaoNf Data limite para emissão de notas fiscais.
+     * @param dataReferencia Data de referência.
      * @return A data de vencimento do pagamento.
      */
-    public Date definirDataVencimentoPagamento(Date dataLimiteEmissaoNf) {
+    public Date definirDataVencimentoPagamento(Date dataReferencia) {
         Date dataAtual = utilitarioAmbiente.buscarDataAmbiente();
-        Date dataReferencia = dataLimiteEmissaoNf.compareTo(dataAtual) < 0 ? dataAtual : dataLimiteEmissaoNf;
         Date dataVencimento = UtilitarioCalculoData.adicionarDiasData(dataReferencia, QUANTIDADE_DIAS_A_MAIS_REEMBOLSO);
-        return UtilitarioCalculoData.obterPrimeiroInstanteDia(dataVencimento);
+        return obterPrimeiroInstanteDia(dataVencimento);
     }
 }

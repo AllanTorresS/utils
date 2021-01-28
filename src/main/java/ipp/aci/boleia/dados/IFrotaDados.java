@@ -5,6 +5,7 @@ import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaAbastecimentoVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheCicloVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFinanceiroVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFrotaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialFrotaVo;
@@ -40,11 +41,25 @@ public interface IFrotaDados extends IRepositorioBoleiaDados<Frota> {
     ResultadoPaginado<Frota> pesquisar(FiltroPesquisaFrotaVo filtro);
 
     /**
+     * Pesquisa frota a partir do filtro informado
+     * @param filtro O filtro da busca e usuário logado
+     * @return Uma lista de entidades localizadas sem segregação
+     */
+    ResultadoPaginado<Frota> pesquisarValidacaoSegregacao(FiltroPesquisaFrotaVo filtro, Usuario usuario);
+
+    /**
      * Pesquisa por frotas utilizando os campos CNPJ e/ou Razao Social
      * @param filtro Filtro contendo os parametros da pesquisa
      * @return Lista com as entidades encontradas
      */
     List<Frota> pesquisarPorCnpjRazaoSocial(FiltroPesquisaParcialFrotaVo filtro);
+
+    /**
+     * Pesquisa por frotas utilizando os campos CNPJ e/ou Razao Social
+     * @param filtro Filtro contendo os parametros da  e usuario logado
+     * @return Lista com as entidades encontradas sem segregação
+     */
+    List<Frota> pesquisarPorCnpjRazaoSocialValidacaoSegregacao(FiltroPesquisaParcialFrotaVo filtro, Usuario usuarioLogado);
 
     /**
      * Pesquisa todas as frotas relacionadas a um certo termo.
@@ -53,7 +68,7 @@ public interface IFrotaDados extends IRepositorioBoleiaDados<Frota> {
      */
     List<Frota> pesquisarParaAutocomplete(String termoPesquisa);
 
-    /**
+     /**
      * Realiza uma pesquisa de frota por posto interno
      * @param idFrota o ID da frota
      * @return true se a frota tiver posto interno, false caso contrario
@@ -176,11 +191,20 @@ public interface IFrotaDados extends IRepositorioBoleiaDados<Frota> {
      * @return lista das frotas que atendem aos criterios de busca
      */
     List<Frota> pesquisarFrotasAssociadasACiclosContidosNoPeriodo(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado);
-    
+
     /**
      * Obtém a frota associada ao consolidado, cobrança ou reembolso informado
      * @param filtro o filtro de pesquisa
      * @return a frota associada ao filtro informado
      */
     Frota obterPorConsolidadoCobrancaOuReembolso(FiltroPesquisaAbastecimentoVo filtro);
+
+    /**
+     * Obtém a lista das frotas a serem exibidas no filtro de pesquisa do detalhe de ciclo.
+     *
+     * @param filtro O filtro de pesquisa (datas de inicio e fim do periodo)
+     * @param usuarioLogado Usuario logado
+     * @return lista das frotas que atendem aos criterios de busca
+     */
+    List<Frota> pesquisarFrotasParaDetalheCiclo(FiltroPesquisaDetalheCicloVo filtro, Usuario usuarioLogado);
 }

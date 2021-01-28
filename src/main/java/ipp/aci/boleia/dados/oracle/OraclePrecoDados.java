@@ -5,6 +5,7 @@ import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.Preco;
 import ipp.aci.boleia.dominio.TipoCombustivel;
+import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.enums.StatusPreco;
 import ipp.aci.boleia.dominio.enums.StatusPrecoNegociacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
@@ -26,6 +27,7 @@ import ipp.aci.boleia.util.Ordenacao;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 
+import ipp.aci.boleia.util.seguranca.UtilitarioIsolamentoInformacoes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -74,8 +76,22 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
 
     @Override
     public ResultadoPaginado<Preco> pesquisaPrecoPaginada(FiltroPesquisaPrecoVo filtro, Boolean acordo, Integer... statusPossiveis) {
+
         List<ParametroPesquisa> parametros = montarParametroPesquisa(filtro, acordo, statusPossiveis);
+
         return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+    @Override
+    public ResultadoPaginado<Preco> pesquisaPrecoPaginadaValidacaoSegregacao(FiltroPesquisaPrecoVo filtro, Boolean acordo, Usuario usuarioLogado, Integer... statusPossiveis) {
+
+        List<ParametroPesquisa> parametros = montarParametroPesquisa(filtro, acordo, statusPossiveis);
+
+        if(UtilitarioIsolamentoInformacoes.isUsuarioInternoAssessorOuCoordenador(usuarioLogado)){
+            return pesquisarSemIsolamentoDados(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        }else {
+            return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        }
     }
 
     @Override
@@ -138,14 +154,19 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
     }
 
     @Override
-    public List<Preco> obterPrecos(Frota frota, PontoDeVenda posto, TipoCombustivel tipoCombustivel, List<StatusPreco> status) {
-        List<Integer> statusValues = status.stream().map(StatusPreco::getValue).collect(Collectors.toList());
+    public List<Preco> obterPrecosEmNegociacaoNaoAgendados(Frota frota, PontoDeVenda posto, TipoCombustivel tipoCombustivel) {
+        List<Integer> statusValues = Arrays.asList(StatusPreco.PENDENTE.getValue(), StatusPreco.NOVO.getValue());
         return pesquisar(
                 new ParametroOrdenacaoColuna("dataAtualizacao", Ordenacao.DECRESCENTE),
                 new ParametroPesquisaIgual("precoBase.precoMicromercado.tipoCombustivel.id", tipoCombustivel.getId()),
                 new ParametroPesquisaIgual("frotaPtov.pontoVenda.id", posto.getId()),
                 new ParametroPesquisaIgual("frotaPtov.frota.id", frota.getId()),
-                new ParametroPesquisaIn("status", statusValues)
+                new ParametroPesquisaIn("status", statusValues),
+                new ParametroPesquisaNulo("dataAgendamento"),
+                new ParametroPesquisaOr(
+                    new ParametroPesquisaDataMaior("dataVigencia", ambiente.buscarDataAmbiente()),
+                    new ParametroPesquisaNulo("dataVigencia")
+                )
         );
     }
 
@@ -220,15 +241,15 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
     }
 
     @Override
-    public Preco obterAgendamentoPorFrotaPvCombustivelDataVigencia(Long idFrota, Long idPosto, Long idTipoCombustivel, Date dataVigencia){
+    public Preco obterAgendamentoPorFrotaPvCombustivelDataAgendamento(Long idFrota, Long idPosto, Long idTipoCombustivel, Date dataAgendamento){
         List<ParametroPesquisa> parametros = new ArrayList<>();
         parametros.add(new ParametroPesquisaIgual("frotaPtov.pontoVenda.id", idPosto));
         parametros.add(new ParametroPesquisaIgual("frotaPtov.frota.id", idFrota));
         parametros.add(new ParametroPesquisaIgual("precoBase.precoMicromercado.tipoCombustivel.id", idTipoCombustivel));
         parametros.add(new ParametroPesquisaDiferente("status", StatusPreco.CANCELADO.getValue()));
         parametros.add(new ParametroPesquisaDiferente("status", StatusPreco.REJEITADO.getValue()));
-        parametros.add(new ParametroPesquisaDataMenorOuIgual("dataVigencia", dataVigencia));
-        parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataVigencia", dataVigencia));
+        parametros.add(new ParametroPesquisaDataMenorOuIgual("dataAgendamento", dataAgendamento));
+        parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataAgendamento", dataAgendamento));
 
         return pesquisar((ParametroOrdenacaoColuna) null, parametros.toArray(new ParametroPesquisa[parametros.size()])).stream().findFirst().orElse(null);
     }

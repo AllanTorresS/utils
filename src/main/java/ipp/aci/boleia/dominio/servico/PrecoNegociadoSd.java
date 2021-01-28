@@ -70,7 +70,9 @@ public class PrecoNegociadoSd {
      * @return Preco cancelado
      */
     public Preco excluirDesconto(Preco preco, Date dataAtualizacao) {
-        preco.setDataAtualizacao(dataAtualizacao);
+        if(preco.getDataVigencia() != null) {
+            preco.setDataAtualizacao(dataAtualizacao);
+        }
         preco.setStatus(StatusPreco.CANCELADO.getValue());
         return repositorioPreco.armazenar(preco);
     }
@@ -121,7 +123,9 @@ public class PrecoNegociadoSd {
     public Preco rejeitarDesconto(Preco preco, String justificativa, Date dataAtualizacao) {
         preco.setStatus(StatusPreco.REJEITADO.getValue());
         preco.setJustificativa(justificativa);
-        preco.setDataAtualizacao(dataAtualizacao);
+        if(preco.getDataVigencia() != null) {
+            preco.setDataAtualizacao(dataAtualizacao);
+        }
         return repositorioPreco.armazenar(preco);
     }
 }
