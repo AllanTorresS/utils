@@ -1,6 +1,7 @@
 package ipp.aci.boleia.dominio.vo;
 
-import ipp.aci.boleia.dominio.pesquisa.comum.BaseFiltroPaginado;
+import ipp.aci.boleia.dominio.pesquisa.comum.FiltroBasePeriodoPaginado;
+
 import java.util.Date;
 import java.util.List;
 
@@ -9,7 +10,7 @@ import java.util.List;
  *
  * @author pedro.silva
  */
-public class FiltroPesquisaDetalheCobrancaVo extends BaseFiltroPaginado {
+public class FiltroPesquisaDetalheCobrancaVo extends FiltroBasePeriodoPaginado {
     private Long idConsolidado;
     private Date dataAbastecimento;
     private EntidadeVo motorista;
