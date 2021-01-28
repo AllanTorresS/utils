@@ -4,6 +4,7 @@ import ipp.aci.boleia.dados.IAutorizacaoPagamentoDados;
 import ipp.aci.boleia.dominio.AtividadeComponente;
 import ipp.aci.boleia.dominio.AutorizacaoPagamento;
 import ipp.aci.boleia.dominio.EmpresaAgregada;
+import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.TransacaoConsolidada;
 import ipp.aci.boleia.dominio.Unidade;
 import ipp.aci.boleia.dominio.enums.ClassificacaoAgregado;
@@ -37,6 +38,7 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
 import ipp.aci.boleia.dominio.vo.EntidadeVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaAbastecimentoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheCobrancaVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaQtdTransacoesFrotaVo;
 import ipp.aci.boleia.dominio.vo.QuantidadeAbastecidaVeiculoVo;
 import ipp.aci.boleia.dominio.vo.TransacaoPendenteVo;
 import ipp.aci.boleia.dominio.vo.apco.VolumeVendasClienteProFrotaVo;
@@ -172,20 +174,57 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                     "AND (a.dataRequisicao <= :dataRequisicaoAte OR :dataRequisicaoAte IS NULL) " +
                     "AND (" + String.format(TO_LOWER, String.format(REMOVER_ACENTO, "a.placaVeiculo")) + " LIKE :placaVeiculo OR :placaVeiculo IS NULL) ";
     
+    private static final String CLAUSULA_STATUS_AUTORIZACAO = 
+            " AND ((A.status = 1 AND (A.valorTotal > 0 OR " +
+            " ((SELECT AB.transacaoConsolidada.id FROM AutorizacaoPagamento AB WHERE AB.id = A.idAutorizacaoEstorno) <> A.transacaoConsolidada.id AND A.transacaoConsolidada.quantidadeAbastecimentos > 0))) " +
+            " OR (A.status = -1 AND A.transacaoConsolidadaPostergada IS NOT NULL)) ";
+        
     private static final String CONSULTA_ABASTECIMENTOS_COBRANCA = 
-            "SELECT DISTINCT a " +
-                    "FROM AutorizacaoPagamento a " +
-                    "LEFT JOIN a.items i " +
+            "SELECT DISTINCT A " +
+                    "FROM AutorizacaoPagamento A " +
                     " WHERE " +
-                    " (a.transacaoConsolidada.id = :idConsolidado OR a.transacaoConsolidadaPostergada.id = :idConsolidado) " +
-                    " AND ((a.status = 1 AND (a.valorTotal > 0 OR " +
-                    " (SELECT ab.transacaoConsolidada.id FROM AutorizacaoPagamento ab WHERE ab.id = a.idAutorizacaoEstorno) <> a.transacaoConsolidada.id)) " +
-                    " OR (a.status = -1 AND a.transacaoConsolidadaPostergada.id = :idConsolidado)) " +
-                    " AND (:dataRequisicao IS NULL OR TRUNC(a.dataRequisicao) = :dataRequisicao) " +
-                    " AND (:idMotorista IS NULL OR a.motorista.id = :idMotorista) " +
-                    " AND (:placaVeiculo IS NULL OR " + String.format(TO_LOWER, String.format(REMOVER_ACENTO, "a.placaVeiculo")) + " LIKE :placaVeiculo ) " +
-                    " AND (:statusNotaFiscal IS NULL OR a.statusNotaFiscal = :statusNotaFiscal) " +
+                    " (A.transacaoConsolidada.id = :idConsolidado OR A.transacaoConsolidadaPostergada.id = :idConsolidado) " +
+                    CLAUSULA_STATUS_AUTORIZACAO +
+                    " AND (:dataRequisicao IS NULL OR TRUNC(A.dataRequisicao) = :dataRequisicao) " +
+                    " AND (:idMotorista IS NULL OR A.motorista.id = :idMotorista) " +
+                    " AND (:placaVeiculo IS NULL OR " + String.format(TO_LOWER, String.format(REMOVER_ACENTO, "A.placaVeiculo")) + " LIKE :placaVeiculo ) " +
+                    " AND (:statusNotaFiscal IS NULL OR A.statusNotaFiscal = :statusNotaFiscal) " +
                     " %s ";
+
+
+    private static final String CLAUSULA_DATA_LIMITE_EMISSAO = "CASE " +
+            "WHEN %s.possuiPrazoAjuste = 1 THEN trunc(%s.dataLimiteEmissaoNfe) " +
+            "ELSE trunc(%s.dataFimPeriodo) " +
+            "END ";
+
+    private static final String CLAUSULA_DATA_VENCIMENTO = "CASE WHEN (%s IS NOT NULL AND %s.dataVencimentoVigente IS NOT NULL) THEN %s.dataVencimentoVigente ELSE %s.dataLimitePagamento END ";
+    
+    private static final String CONSULTA_QUANTIDADE_TRANSACOES_FROTA =
+            "SELECT COUNT(DISTINCT A) " +
+                    "FROM AutorizacaoPagamento A " +
+                    "LEFT JOIN A.frota F " +
+                    "LEFT JOIN A.pontoVenda PV " +
+                    "JOIN A.transacaoConsolidada TC " +
+                    "JOIN TC.prazos TCP " +
+                    "LEFT JOIN A.transacaoConsolidadaPostergada TP " +
+                    "LEFT JOIN TP.prazos TPP " +
+                    "LEFT JOIN TC.cobranca C " +
+                    "LEFT JOIN TP.cobranca CP " +
+                    "WHERE " +
+                    "(:idConsolidado IS NULL OR TC.id = :idConsolidado OR TP.id = :idConsolidado) " +
+                    "AND (:idFrota IS NULL OR F.id = :idFrota) " +
+                    "AND (:dataInicioPeriodo IS NULL AND :dataFimPeriodo IS NULL OR " + 
+                    "(A.dataProcessamento >= :dataInicioPeriodo AND A.dataProcessamento <= :dataFimPeriodo) " +
+                    " OR (A.dataProcessamento >= :dataInicioPeriodo AND A.dataProcessamento <= :dataLimiteEmissao AND A.valorTotal < 0 ) " +
+                    "OR (A.dataPostergacao >= :dataInicioPeriodo AND A.dataPostergacao <= :dataFimPeriodo)) " +
+                    "AND (:statusConsolidacao IS NULL OR (TC.statusConsolidacao = :statusConsolidacao OR TP.statusConsolidacao = :statusConsolidacao))  " +
+                    "AND (:idCobranca IS NULL OR C.id = :idCobranca OR CP.id = :idCobranca) " +
+                    "AND (:dataLimiteEmissao IS NULL OR :dataLimiteEmissao = " + String.format(CLAUSULA_DATA_LIMITE_EMISSAO, "TCP", "TCP", "TC") + 
+                    " OR :dataLimiteEmissao = " + String.format(CLAUSULA_DATA_LIMITE_EMISSAO, "TPP", "TPP", "TP") + " ) " +
+                    " AND (:dataVencimento IS NULL OR :dataVencimento = " + String.format(CLAUSULA_DATA_VENCIMENTO,"C", "C", "C", "TCP") + 
+                    " OR :dataVencimento = " + String.format(CLAUSULA_DATA_VENCIMENTO,"CP", "CP", "CP", "TPP")  + " ) " +
+                    CLAUSULA_STATUS_AUTORIZACAO;
+
 
     /**
      * Instancia o repositorio
@@ -1137,8 +1176,9 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         String filtroOutrosServicos = " ";
         StringBuffer strBufferFiltroOutrosServicos = new StringBuffer(filtroOutrosServicos);
         if(filtro.getOutrosServicos() != null && !filtro.getOutrosServicos().isEmpty()) {
+            String listaProdutos = " (SELECT i.produto FROM ItemAutorizacaoPagamento i WHERE i.autorizacaoPagamento.id = a.id) ";
             for(EntidadeVo servico : filtro.getOutrosServicos()) {
-                strBufferFiltroOutrosServicos.append(" AND i.produto = " + servico.getId());
+                strBufferFiltroOutrosServicos.append(" AND " + servico.getId() + " IN " + listaProdutos );
             }
         }
 
@@ -1153,4 +1193,21 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
 
         return pesquisar(filtro.getPaginacao(), consultaPesquisa, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
+
+    @Override
+    public Long obterQuantidadeTransacoesFrota(FiltroPesquisaQtdTransacoesFrotaVo filtro) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+
+        parametros.add(new ParametroPesquisaIgual("idConsolidado", filtro.getIdConsolidado()));
+        parametros.add(new ParametroPesquisaIgual("idFrota", filtro.getIdFrota()));
+        parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataInicioPeriodo", filtro.getDataInicioPeriodo()));
+        parametros.add(new ParametroPesquisaDataMenorOuIgual("dataFimPeriodo", filtro.getDataFimPeriodo()));
+        parametros.add(new ParametroPesquisaIgual("statusConsolidacao", filtro.getStatusConsolidacao()));
+        parametros.add(new ParametroPesquisaIgual("idCobranca", filtro.getIdCobranca()));
+        parametros.add(new ParametroPesquisaIgual("dataLimiteEmissao", filtro.getDataLimiteEmissao()));
+        parametros.add(new ParametroPesquisaIgual("dataVencimento", filtro.getDataVencimento()));
+
+        return pesquisarUnicoSemIsolamentoDados(CONSULTA_QUANTIDADE_TRANSACOES_FROTA, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
 }

@@ -18,6 +18,7 @@ public class AgrupamentoTransacaoConsolidadaFrotaVo {
     private Long quantidadeAbastecimentos;
     private Date dataVencimento;
     private Date dataPagamento;
+    private Date dataLimiteEmissao;
     private Boolean exigeNota;
     private BigDecimal valorEmitidoNotaFiscal;
     private BigDecimal valorTotalNotaFiscal;
@@ -45,6 +46,7 @@ public class AgrupamentoTransacaoConsolidadaFrotaVo {
      * @param idCobranca o id da cobrança
      * @param numeroDocumento o número de documento da cobrança
      * @param dataPagamento A data de pagamento da cobrança
+     * @param dataLimiteEmissao A data limite para emissão de nota fiscal
      * @param exigeNota Se há exigência de nota para emissão da cobrança
      * @param valorEmitidoNotaFiscal Valor total emitido
      * @param valorTotalNotaFiscal Valor total a ser emitido
@@ -52,7 +54,7 @@ public class AgrupamentoTransacaoConsolidadaFrotaVo {
     public AgrupamentoTransacaoConsolidadaFrotaVo(Date dataInicioPeriodo, Date dataFimPeriodo, BigDecimal valorTotal,
                                                   BigDecimal valorDesconto, Integer statusConsolidacao,
                                                   Integer statusPagamento, Long quantidadeAbastecimentos,
-                                                  Date dataVencimento, Date dataPagamento, Integer statusIntegracao, Long idCobranca , Long numeroDocumento, Integer exigeNota, BigDecimal valorEmitidoNotaFiscal,
+                                                  Date dataVencimento, Date dataPagamento, Date dataLimiteEmissao, Integer statusIntegracao, Long idCobranca , Long numeroDocumento, Integer exigeNota, BigDecimal valorEmitidoNotaFiscal,
                                                   BigDecimal valorTotalNotaFiscal) {
         this.dataInicioPeriodo = dataInicioPeriodo;
         this.dataFimPeriodo = dataFimPeriodo;
@@ -63,6 +65,7 @@ public class AgrupamentoTransacaoConsolidadaFrotaVo {
         this.quantidadeAbastecimentos = quantidadeAbastecimentos;
         this.dataVencimento = dataVencimento;
         this.dataPagamento = dataPagamento;
+        this.dataLimiteEmissao = dataLimiteEmissao;
         this.exigeNota = exigeNota == 1 ? true : false;
         this.valorEmitidoNotaFiscal = valorEmitidoNotaFiscal;
         this.valorTotalNotaFiscal = valorTotalNotaFiscal;
@@ -167,6 +170,14 @@ public class AgrupamentoTransacaoConsolidadaFrotaVo {
 
     public void setDataPagamento(Date dataPagamento) {
         this.dataPagamento = dataPagamento;
+    }
+
+    public Date getDataLimiteEmissao() {
+        return dataLimiteEmissao;
+    }
+
+    public void setDataLimiteEmissao(Date dataLimiteEmissao) {
+        this.dataLimiteEmissao = dataLimiteEmissao;
     }
 
     public EnumVo getStatusIntegracao() {
