@@ -61,10 +61,12 @@ public enum TemplatePlanilha {
     TEMPLATE_RELATORIO_ABASTECIMENTOS_ESTORNADOS("template-relatorio-abastecimentos-estornados.xlsx"),
     TEMPLATE_RELATORIO_ABASTECIMENTOS_AJUSTADOS("template-relatorio-abastecimentos-ajustados.xlsx"),
     TEMPLATE_RELATORIO_FINANCEIRO_REVENDA("template-relatorio-financeiro-revenda.xlsx"),
+    TEMPLATE_RELATORIO_FINANCEIRO_FROTA("template-relatorio-financeiro-frota.xlsx"),
     TEMPLATE_RELATORIO_ABASTECIMENTOS_NO_PERIODO("template-relatorio-abastecimento-no-periodo.xlsx"),
     TEMPLATE_ATIVACAO_TAG("template-ativacao-tag.xlsx"),
 	TEMPLATE_RELATORIO_ATIVACAO_TAG("template-relatorio-ativacao-tag.xlsx"),
-	TEMPLATE_PESQUISAR_GERAL_FROTA("template-relatorio-geral-frota.xlsx");
+	TEMPLATE_PESQUISAR_GERAL_FROTA("template-relatorio-geral-frota.xlsx"),
+    TEMPLATE_RELATORIO_DETALHAMENTO_COBRANCA("template-relatorio-detalhamento-cobranca.xlsx");
 
     private static final String BASE_TEMPLATE = "/template-planilhas/";
 

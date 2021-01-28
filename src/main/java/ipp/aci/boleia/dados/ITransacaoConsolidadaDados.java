@@ -296,4 +296,11 @@ public interface ITransacaoConsolidadaDados extends IRepositorioBoleiaDados<Tran
      * @return Os dados encontrados
      */
     List<TransacaoConsolidada> obterDetalheDadosFinanceiroFrota(FiltroPesquisaFinanceiroVo filtro);
+
+    /**
+     * Obtém os detalhes de transações realizadas por uma frota em um período para exportação
+     * @param filtro O filtro fornecido
+     * @return Os dados encontrados
+     */
+    ResultadoPaginado<TransacaoConsolidada> obterDetalhesDadosFinanceiroFrotaParaExportacao(FiltroPesquisaFinanceiroVo filtro);
 }

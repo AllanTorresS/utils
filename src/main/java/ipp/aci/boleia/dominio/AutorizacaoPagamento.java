@@ -1262,6 +1262,11 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
         return getNotasFiscais() != null ? getNotasFiscaisSemJustificativa().size() : 0;
     }
 
+    @Transient
+    public Integer getQuantidadeJustificativas() {
+        return getNotasFiscais() != null ? getNotasFiscaisComJustificativa().size() : 0;
+    }
+
     public String getUuidAbastecimento() {
         return uuidAbastecimento;
     }
