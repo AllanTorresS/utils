@@ -1028,7 +1028,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         parametros.add(new ParametroPesquisaIgual("dataRequisicaoDe", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDataAbastecimento())));
         parametros.add(new ParametroPesquisaIgual("dataRequisicaoAte", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getDataAbastecimento())));
 
-        parametros.add(new ParametroPesquisaIgual("placaVeiculo", filtro.getPlaca().toLowerCase()));
+        parametros.add(new ParametroPesquisaIgual("placaVeiculo", filtro.getPlaca() != null ? filtro.getPlaca().toLowerCase() : null));
 
         Long quantidadePostergados = pesquisarUnicoSemIsolamentoDados(CONSULTA_QUANTIDADE_ABASTECIMENTOS_POSTERGADOS, parametros.toArray(new ParametroPesquisa[parametros.size()]));
         return quantidadePostergados.intValue();
@@ -1093,5 +1093,13 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         List<ParametroPesquisa> parametros = montarParametroPesquisa(filtro);
 
         return pesquisar((ParametroOrdenacaoColuna)null, (ParametroPesquisa[])parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+    @Override
+    public List<AutorizacaoPagamento> obterPorTransacoesConsolidadas(List<Long> idsTransacoesConsolidadas) {
+        List<ParametroPesquisa> params = new ArrayList<>();
+        params.add(new ParametroPesquisaFetch("transacaoConsolidada"));
+        params.add(new ParametroPesquisaIn("transacaoConsolidada.id", idsTransacoesConsolidadas));
+        return pesquisar((ParametroOrdenacaoColuna) null, params.toArray(new ParametroPesquisa[params.size()]));
     }
 }
