@@ -13,6 +13,7 @@ public final class ConstantesFormatacao {
     public static final String FORMATO_HORAS = "###,##0.00 H";
     public static final String FORMATO_LITROS = "###,##0.000 L";
     public static final String FORMATO_LITROS_DUAS_CASAS = "###,##0.00 L";
+    public static final String FORMATO_DUAS_CASAS = "###,##0.00";
     public static final String FORMATO_TRES_CASAS = "##0.000";
     public static final String FORMATO_MDR = "###,##0.00";
     public static final String FORMATO_TELEFONE_DEZ = "(##) ####-####";
