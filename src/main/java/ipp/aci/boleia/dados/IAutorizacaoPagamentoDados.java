@@ -414,4 +414,12 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
      * @return A quantidade de transações
      */
     Long obterQuantidadeTransacoesFrota(FiltroPesquisaQtdTransacoesFrotaVo filtro); 
+
+    /**
+     * Obtem a quantidade de notas fiscais associadas a transações pertencentes a um ciclo
+     * ou agrupamento de ciclos 
+     * @param filtro o filtro de pesquisa informado
+     * @return A quantidade de notas fiscais
+     */
+    Long obterQuantidadeNotasAgrupamento(FiltroPesquisaQtdTransacoesFrotaVo filtro);
 }

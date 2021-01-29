@@ -191,7 +191,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                     " AND (:statusNotaFiscal IS NULL OR A.statusNotaFiscal = :statusNotaFiscal) " +
                     " %s ";
 
-
+  
     private static final String CLAUSULA_DATA_LIMITE_EMISSAO = "CASE " +
             "WHEN %s.possuiPrazoAjuste = 1 THEN trunc(%s.dataLimiteEmissaoNfe) " +
             "ELSE trunc(%s.dataFimPeriodo) " +
@@ -199,6 +199,16 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
 
     private static final String CLAUSULA_DATA_VENCIMENTO = "CASE WHEN (%s IS NOT NULL AND %s.dataVencimentoVigente IS NOT NULL) THEN %s.dataVencimentoVigente ELSE %s.dataLimitePagamento END ";
     
+    private static final String CLAUSULA_COMUM_CONSULTAS_AGRUPAMENTOS = 
+            "AND (:idFrota IS NULL OR F.id = :idFrota) " +
+            "AND (:statusConsolidacao IS NULL OR (TC.statusConsolidacao = :statusConsolidacao OR TP.statusConsolidacao = :statusConsolidacao))  " +
+            "AND (:idCobranca IS NULL OR C.id = :idCobranca OR CP.id = :idCobranca) " +
+            "AND (:dataLimiteEmissao IS NULL OR :dataLimiteEmissao = " + String.format(CLAUSULA_DATA_LIMITE_EMISSAO, "TCP", "TCP", "TC") + 
+            " OR :dataLimiteEmissao = " + String.format(CLAUSULA_DATA_LIMITE_EMISSAO, "TPP", "TPP", "TP") + " ) " +
+            " AND (:dataVencimento IS NULL OR :dataVencimento = " + String.format(CLAUSULA_DATA_VENCIMENTO,"C", "C", "C", "TCP") + 
+            " OR :dataVencimento = " + String.format(CLAUSULA_DATA_VENCIMENTO,"CP", "CP", "CP", "TPP")  + " ) " +
+            CLAUSULA_STATUS_AUTORIZACAO;
+  
     private static final String CONSULTA_QUANTIDADE_TRANSACOES_FROTA =
             "SELECT COUNT(DISTINCT A) " +
                     "FROM AutorizacaoPagamento A " +
@@ -212,19 +222,30 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                     "LEFT JOIN TP.cobranca CP " +
                     "WHERE " +
                     "(:idConsolidado IS NULL OR TC.id = :idConsolidado OR TP.id = :idConsolidado) " +
-                    "AND (:idFrota IS NULL OR F.id = :idFrota) " +
                     "AND (:dataInicioPeriodo IS NULL AND :dataFimPeriodo IS NULL OR " + 
                     "(A.dataProcessamento >= :dataInicioPeriodo AND A.dataProcessamento <= :dataFimPeriodo) " +
                     " OR (A.dataProcessamento >= :dataInicioPeriodo AND A.dataProcessamento <= :dataLimiteEmissao AND A.valorTotal < 0 ) " +
                     "OR (A.dataPostergacao >= :dataInicioPeriodo AND A.dataPostergacao <= :dataFimPeriodo)) " +
-                    "AND (:statusConsolidacao IS NULL OR (TC.statusConsolidacao = :statusConsolidacao OR TP.statusConsolidacao = :statusConsolidacao))  " +
-                    "AND (:idCobranca IS NULL OR C.id = :idCobranca OR CP.id = :idCobranca) " +
-                    "AND (:dataLimiteEmissao IS NULL OR :dataLimiteEmissao = " + String.format(CLAUSULA_DATA_LIMITE_EMISSAO, "TCP", "TCP", "TC") + 
-                    " OR :dataLimiteEmissao = " + String.format(CLAUSULA_DATA_LIMITE_EMISSAO, "TPP", "TPP", "TP") + " ) " +
-                    " AND (:dataVencimento IS NULL OR :dataVencimento = " + String.format(CLAUSULA_DATA_VENCIMENTO,"C", "C", "C", "TCP") + 
-                    " OR :dataVencimento = " + String.format(CLAUSULA_DATA_VENCIMENTO,"CP", "CP", "CP", "TPP")  + " ) " +
-                    CLAUSULA_STATUS_AUTORIZACAO;
+                    CLAUSULA_COMUM_CONSULTAS_AGRUPAMENTOS;
 
+
+    private static final String CONSULTA_QUANTIDADE_NOTAS =
+            "SELECT COUNT(DISTINCT N) " +
+                    "FROM AutorizacaoPagamento A " +
+                    "LEFT JOIN A.frota F " +
+                    "LEFT JOIN A.pontoVenda PV " +
+                    "JOIN A.transacaoConsolidada TC " +
+                    "JOIN TC.prazos TCP " +
+                    "LEFT JOIN A.transacaoConsolidadaPostergada TP " +
+                    "LEFT JOIN TP.prazos TPP " +
+                    "LEFT JOIN TC.cobranca C " +
+                    "LEFT JOIN TP.cobranca CP " +
+                    "JOIN A.notasFiscais N " +
+                    "WHERE " +
+                    "((A.dataProcessamento >= :dataInicioPeriodo AND A.dataProcessamento <= :dataFimPeriodo AND A.transacaoConsolidadaPostergada IS NULL) " +
+                    "OR (A.dataPostergacao >= :dataInicioPeriodo AND A.dataPostergacao <= :dataFimPeriodo)) " +
+                    "AND N.isJustificativa = 0 " +
+                    CLAUSULA_COMUM_CONSULTAS_AGRUPAMENTOS;
 
     /**
      * Instancia o repositorio
@@ -1208,6 +1229,21 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         parametros.add(new ParametroPesquisaIgual("dataVencimento", filtro.getDataVencimento()));
 
         return pesquisarUnicoSemIsolamentoDados(CONSULTA_QUANTIDADE_TRANSACOES_FROTA, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+    @Override
+    public Long obterQuantidadeNotasAgrupamento(FiltroPesquisaQtdTransacoesFrotaVo filtro) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+
+        parametros.add(new ParametroPesquisaIgual("idFrota", filtro.getIdFrota()));
+        parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataInicioPeriodo", filtro.getDataInicioPeriodo()));
+        parametros.add(new ParametroPesquisaDataMenorOuIgual("dataFimPeriodo", filtro.getDataFimPeriodo()));
+        parametros.add(new ParametroPesquisaIgual("statusConsolidacao", filtro.getStatusConsolidacao()));
+        parametros.add(new ParametroPesquisaIgual("idCobranca", filtro.getIdCobranca()));
+        parametros.add(new ParametroPesquisaIgual("dataLimiteEmissao", filtro.getDataLimiteEmissao()));
+        parametros.add(new ParametroPesquisaIgual("dataVencimento", filtro.getDataVencimento()));
+
+        return pesquisarUnicoSemIsolamentoDados(CONSULTA_QUANTIDADE_NOTAS, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
 }
