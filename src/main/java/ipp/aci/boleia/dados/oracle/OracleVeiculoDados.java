@@ -95,6 +95,8 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
         Integer classificacao = filtro.getClassificacao() != null && filtro.getClassificacao().getName() != null? ClassificacaoAgregado.valueOf(filtro.getClassificacao().getName()).getValue() : null;
         parametros.add(new ParametroPesquisaIgual("classificacao", classificacao));
         parametros.add(new ParametroPesquisaIgual("placa", filtro.getPlaca() != null ? filtro.getPlaca() : null));
+        parametros.add(new ParametroPesquisaIgual("empresaAgregada", filtro.getEmpresaAgregada().getId() != null ? filtro.getEmpresaAgregada().getId() : null));
+        parametros.add(new ParametroPesquisaIgual("unidade", filtro.getUnidade().getId() != null ? filtro.getUnidade().getId() : null));
 
         return pesquisar(filtro.getPaginacao() ,
                 consulta ,
@@ -141,10 +143,12 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
                 " LEFT JOIN stv.tipoVeiculo tv " +
                 " LEFT JOIN v.empresaAgregada ep " +
                 " LEFT JOIN v.unidade u  " +
-                " WHERE (:idFrota       IS NULL OR v.frota.id IN (:idFrota)) " +
-                "   AND (:tipoVeiculo   IS NULL OR tv.id = :tipoVeiculo )" +
-                "   AND (:classificacao IS NULL OR v.agregado = :classificacao )" +
-                "   AND (:placa         IS NULL OR v.placa = :placa )";
+                " WHERE (:idFrota           IS NULL OR v.frota.id IN (:idFrota)) " +
+                "   AND (:tipoVeiculo       IS NULL OR tv.id = :tipoVeiculo )" +
+                "   AND (:classificacao     IS NULL OR v.agregado = :classificacao )" +
+                "   AND (:placa             IS NULL OR v.placa = :placa )" +
+                "   AND (:empresaAgregada   IS NULL OR ep.id = :empresaAgregada )" +
+                "   AND (:unidade           IS NULL OR u.id = :unidade )";
     ;
 
     @Override
