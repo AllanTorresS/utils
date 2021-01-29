@@ -4,7 +4,6 @@ import ipp.aci.boleia.dados.IAutorizacaoPagamentoDados;
 import ipp.aci.boleia.dominio.AtividadeComponente;
 import ipp.aci.boleia.dominio.AutorizacaoPagamento;
 import ipp.aci.boleia.dominio.EmpresaAgregada;
-import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.TransacaoConsolidada;
 import ipp.aci.boleia.dominio.Unidade;
 import ipp.aci.boleia.dominio.enums.ClassificacaoAgregado;
@@ -1197,7 +1196,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         String filtroOutrosServicos = " ";
         StringBuffer strBufferFiltroOutrosServicos = new StringBuffer(filtroOutrosServicos);
         if(filtro.getOutrosServicos() != null && !filtro.getOutrosServicos().isEmpty()) {
-            String listaProdutos = " (SELECT i.produto FROM ItemAutorizacaoPagamento i WHERE i.autorizacaoPagamento.id = a.id) ";
+            String listaProdutos = " (SELECT I.produto FROM ItemAutorizacaoPagamento I WHERE I.autorizacaoPagamento.id = A.id) ";
             for(EntidadeVo servico : filtro.getOutrosServicos()) {
                 strBufferFiltroOutrosServicos.append(" AND " + servico.getId() + " IN " + listaProdutos );
             }
