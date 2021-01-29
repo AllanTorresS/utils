@@ -12,12 +12,12 @@ import org.springframework.stereotype.Repository;
  * @author tiago.marques
  */
 @Repository
-public class OracleHistoricoFrotaParametroSistemaProdutoAbastecimentoDadosDados extends OracleRepositorioBoleiaDados<HistoricoFrotaParametroSistemaProdutoAbastecimento> implements IHistoricoFrotaParametroSistemaProdutoAbastecimentoDados {
+public class OracleHistoricoFrotaParametroSistemaConsumoDados extends OracleRepositorioBoleiaDados<HistoricoFrotaParametroSistemaProdutoAbastecimento> implements IHistoricoFrotaParametroSistemaProdutoAbastecimentoDados {
 
     /**
      * Construtor do repositório.
      */
-    public OracleHistoricoFrotaParametroSistemaProdutoAbastecimentoDadosDados() {
+    public OracleHistoricoFrotaParametroSistemaConsumoDados() {
         super(HistoricoFrotaParametroSistemaProdutoAbastecimento.class);
     }
 }
