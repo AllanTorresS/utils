@@ -45,6 +45,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Collection;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -198,6 +199,18 @@ public class Usuario implements IPersistente, IExclusaoLogica, IPertenceFrota, I
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "usuarioAssessorResponsavel")
     @JsonIgnoreProperties("usuarioAssessorResponsavel")
     private List<Frota> frotasAssessoradas;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "usuarioConsultorHunter")
+    @JsonIgnoreProperties("usuarioConsultorHunter")
+    private List<Frota> frotasAssessoradasConsultorHunter;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "usuarioConsultorFarmerPesado")
+    @JsonIgnoreProperties("usuarioConsultorFarmerPesado")
+    private List<Frota> frotasAssessoradasConsultorFarmerPesado;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "usuarioConsultorFarmerLeve")
+    @JsonIgnoreProperties("usuarioConsultorFarmerLeve")
+    private List<Frota> frotasAssessoradasConsultorFarmerLeve;
 
     @Transient
     private Set<Permissao> permissoes;
@@ -468,6 +481,30 @@ public class Usuario implements IPersistente, IExclusaoLogica, IPertenceFrota, I
         this.frotasAssessoradas = frotasAssessoradas;
     }
 
+    public List<Frota> getFrotasAssessoradasConsultorHunter() {
+        return frotasAssessoradasConsultorHunter;
+    }
+
+    public void setFrotasAssessoradasConsultorHunter(List<Frota> frotasAssessoradasConsultorHunter) {
+        this.frotasAssessoradasConsultorHunter = frotasAssessoradasConsultorHunter;
+    }
+
+    public List<Frota> getFrotasAssessoradasConsultorFarmerPesado() {
+        return frotasAssessoradasConsultorFarmerPesado;
+    }
+
+    public void setFrotasAssessoradasConsultorFarmerPesado(List<Frota> frotasAssessoradasConsultorFarmerPesado) {
+        this.frotasAssessoradasConsultorFarmerPesado = frotasAssessoradasConsultorFarmerPesado;
+    }
+
+    public List<Frota> getFrotasAssessoradasConsultorFarmerLeve() {
+        return frotasAssessoradasConsultorFarmerLeve;
+    }
+
+    public void setFrotasAssessoradasConsultorFarmerLeve(List<Frota> frotasAssessoradasConsultorFarmerLeve) {
+        this.frotasAssessoradasConsultorFarmerLeve = frotasAssessoradasConsultorFarmerLeve;
+    }
+
     public Date getBloqueioTemporario() {
         return bloqueioTemporario;
     }
@@ -717,7 +754,13 @@ public class Usuario implements IPersistente, IExclusaoLogica, IPertenceFrota, I
     @JsonIgnore
     public List<Long> listarIdsFrotasAssessoradas() {
         if (isAssessor()) {
-            return this.frotasAssessoradas.stream().map(Frota::getId).collect(Collectors.toList());
+            return Stream.of(this.frotasAssessoradas,
+                            this.frotasAssessoradasConsultorHunter,
+                            this.frotasAssessoradasConsultorFarmerPesado,
+                            this.frotasAssessoradasConsultorFarmerLeve)
+                    .flatMap(Collection::stream)
+                    .map(Frota::getId)
+                    .collect(Collectors.toList());
         }
         return Collections.emptyList();
     }
@@ -738,6 +781,9 @@ public class Usuario implements IPersistente, IExclusaoLogica, IPertenceFrota, I
      */
     @JsonIgnore
     public Boolean isAssessor() {
-        return !CollectionUtils.isEmpty(this.frotasAssessoradas);
+        return !CollectionUtils.isEmpty(this.frotasAssessoradas)
+                || !CollectionUtils.isEmpty(this.frotasAssessoradasConsultorHunter)
+                || !CollectionUtils.isEmpty(this.frotasAssessoradasConsultorFarmerLeve)
+                || !CollectionUtils.isEmpty(this.frotasAssessoradasConsultorFarmerPesado);
     }
 }
