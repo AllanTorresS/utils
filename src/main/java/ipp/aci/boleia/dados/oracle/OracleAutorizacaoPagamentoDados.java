@@ -170,6 +170,15 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                     "AND (a.dataRequisicao <= :dataRequisicaoAte OR :dataRequisicaoAte IS NULL) " +
                     "AND (" + String.format(TO_LOWER, String.format(REMOVER_ACENTO, "a.placaVeiculo")) + " LIKE :placaVeiculo OR :placaVeiculo IS NULL) ";
 
+    private static final String CONSULTA_VIGENTES_POR_CICLOS =
+            " SELECT a FROM AutorizacaoPagamento a " +
+            " JOIN FETCH a.transacaoConsolidada tc " +
+            " JOIN FETCH tc.prazos tc_p " +
+            " LEFT JOIN FETCH a.transacaoConsolidadaPostergada tcp " +
+            " LEFT JOIN FETCH tcp.prazos tcp_p " +
+            " WHERE " +
+            "     ((tc.id IN (:idsTransacoesConsolidadas) AND tcp IS NULL) OR tcp.id IN (:idsTransacoesConsolidadas)) ";
+
     /**
      * Instancia o repositorio
      */
@@ -1098,8 +1107,6 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     @Override
     public List<AutorizacaoPagamento> obterPorTransacoesConsolidadas(List<Long> idsTransacoesConsolidadas) {
         List<ParametroPesquisa> params = new ArrayList<>();
-        params.add(new ParametroPesquisaFetch("transacaoConsolidada"));
-        params.add(new ParametroPesquisaIn("transacaoConsolidada.id", idsTransacoesConsolidadas));
-        return pesquisar((ParametroOrdenacaoColuna) null, params.toArray(new ParametroPesquisa[params.size()]));
+        return pesquisar((InformacaoPaginacao) null, CONSULTA_VIGENTES_POR_CICLOS, new ParametroPesquisaIgual("idsTransacoesConsolidadas", idsTransacoesConsolidadas)).getRegistros();
     }
 }
