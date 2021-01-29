@@ -134,6 +134,21 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @JoinColumn(name = "CD_USUARIO_ASSESSOR_RESP")
     @JsonIgnoreProperties("frotasAssessoradas")
     private Usuario usuarioAssessorResponsavel;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_USUARIO_CONSULTOR_HUNTER")
+    @JsonIgnoreProperties("frotasAssessoradas")
+    private Usuario usuarioConsultorHunter;
+        
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_USUARIO_CONSULTOR_FARMER_PESADO")
+    @JsonIgnoreProperties("frotasAssessoradas")
+    private Usuario usuarioConsultorFarmerPesado;
+            
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_USUARIO_CONSULTOR_FARMER_LEVE")
+    @JsonIgnoreProperties("frotasAssessoradas")
+    private Usuario usuarioConsultorFarmerLeve;
 
     @Max(99)
     @NotNull
@@ -690,6 +705,30 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
 
     public void setUsuarioAssessorResponsavel(Usuario usuarioAssessorResponsavel) {
         this.usuarioAssessorResponsavel = usuarioAssessorResponsavel;
+    }
+
+    public Usuario getUsuarioConsultorHunter() {
+        return usuarioConsultorHunter;
+    }
+
+    public void setUsuarioConsultorHunter(Usuario usuarioConsultorHunter) {
+        this.usuarioConsultorHunter = usuarioConsultorHunter;
+    }
+
+    public Usuario getUsuarioConsultorFarmerPesado() {
+        return usuarioConsultorFarmerPesado;
+    }
+
+    public void setUsuarioConsultorFarmerPesado(Usuario usuarioConsultorFarmerPesado) {
+        this.usuarioConsultorFarmerPesado = usuarioConsultorFarmerPesado;
+    }
+
+    public Usuario getUsuarioConsultorFarmerLeve() {
+        return usuarioConsultorFarmerLeve;
+    }
+
+    public void setUsuarioConsultorFarmerLeve(Usuario usuarioConsultorFarmerLeve) {
+        this.usuarioConsultorFarmerLeve = usuarioConsultorFarmerLeve;
     }
 
     public Integer getDddTelefone() {
