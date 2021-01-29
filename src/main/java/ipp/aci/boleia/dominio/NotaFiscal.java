@@ -268,6 +268,10 @@ public class NotaFiscal implements IPersistente, IPertenceRevendedor, IPertenceF
      */
     @Transient
     public String getNomeArquivoSemExtensao() {
-        return getNumero();
+        String nomeArquivoSemExtensao = getNumero();
+        if(getNumeroSerie() != null) {
+            nomeArquivoSemExtensao = nomeArquivoSemExtensao.concat("_").concat(getNumeroSerie());
+        }
+        return nomeArquivoSemExtensao;
     }
 }
