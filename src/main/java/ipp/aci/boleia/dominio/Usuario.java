@@ -760,6 +760,7 @@ public class Usuario implements IPersistente, IExclusaoLogica, IPertenceFrota, I
                             this.frotasAssessoradasConsultorFarmerLeve)
                     .flatMap(Collection::stream)
                     .map(Frota::getId)
+                    .distinct()
                     .collect(Collectors.toList());
         }
         return Collections.emptyList();

@@ -126,14 +126,25 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @Column(name = "SG_UF")
     private String unidadeFederativa;
 
+    /**
+     * @deprecated
+     * Atributo legado, os assessores responsaveis agora estao dividido em tipos de consultores de negocio diferentes.
+     * No entanto o atributo nao pode ser removido pois sera migrado aos poucos.
+     */
     @Size(max=250)
     @Column(name = "NM_ASSESSOR_RESP")
-    @Deprecated
+    @Deprecated   
     private String assessorResponsavel;
 
+    /**
+     * @deprecated
+     * Atributo legado, os assessores responsaveis agora estao dividido em tipos de consultores de negocio diferentes.
+     * No entanto o atributo nao pode ser removido pois sera migrado aos poucos.
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_USUARIO_ASSESSOR_RESP")
     @JsonIgnoreProperties("frotasAssessoradas")
+    @Deprecated
     private Usuario usuarioAssessorResponsavel;
     
     @ManyToOne(fetch = FetchType.LAZY)
