@@ -776,14 +776,38 @@ public class Usuario implements IPersistente, IExclusaoLogica, IPertenceFrota, I
     }
 
     /**
-     * Valida se o usuario eh assessor de alguma frota.
-     * @return true se o usuario for assessor de alguma frota.
+     * Valida se o usuario eh assessor ou consultor de alguma frota.
+     * @return true se o usuario for assessor ou consultor de alguma frota.
      */
     @JsonIgnore
     public Boolean isAssessor() {
         return !CollectionUtils.isEmpty(this.frotasAssessoradas)
                 || !CollectionUtils.isEmpty(this.frotasAssessoradasConsultorHunter)
-                || !CollectionUtils.isEmpty(this.frotasAssessoradasConsultorFarmerLeve)
-                || !CollectionUtils.isEmpty(this.frotasAssessoradasConsultorFarmerPesado);
+                || !CollectionUtils.isEmpty(this.frotasAssessoradasConsultorFarmerPesado)
+                || !CollectionUtils.isEmpty(this.frotasAssessoradasConsultorFarmerLeve);
+    }
+
+    /**
+     * Valida se o usuario eh consultor de negocios hunter de alguma frota.
+     * @return true se o usuario for assessor de alguma frota.
+     */
+    public boolean isConsultorHunter() {
+        return !CollectionUtils.isEmpty(this.frotasAssessoradasConsultorHunter);
+    }
+
+    /**
+     * Valida se o usuario eh consultor de negocios farmer pesado de alguma frota.
+     * @return true se o usuario for farmer pesado de alguma frota.
+     */
+    public boolean isConsultorFarmerPesado() {
+        return !CollectionUtils.isEmpty(this.frotasAssessoradasConsultorFarmerPesado);
+    }
+
+    /**
+     * Valida se o usuario eh consultor de negocios farmer leve de alguma frota.
+     * @return true se o usuario for farmer leve de alguma frota.
+     */
+    public boolean isConsultorFarmerLeve() {
+        return !CollectionUtils.isEmpty(this.frotasAssessoradasConsultorFarmerLeve);
     }
 }
