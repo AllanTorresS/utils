@@ -10,8 +10,11 @@ import ipp.aci.boleia.dominio.interfaces.IPertenceRevendedor;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioFormatacaoData;
 import ipp.aci.boleia.util.seguranca.UtilitarioCriptografia;
+import org.hibernate.annotations.Formula;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -54,6 +57,8 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
 
     private static final long serialVersionUID = 8095939439819340567L;
 
+    private static final String QT_COMPLETA_ABASTECIMENTO_FORMULA = "(SELECT Q.QT_COMPLETA_ABASTECIMENTOS FROM BOLEIA_SCHEMA.V_T_CONSOL_QT_ABASTECIMENTO Q WHERE Q.CD_TRANS_CONSOL = CD_TRANS_CONSOL)";
+
     @Id
     @Column(name = "CD_TRANS_CONSOL")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_TRANS_CONSOL")
@@ -92,6 +97,11 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
 
     @Column(name = "QT_ABASTECIMENTOS")
     private Long quantidadeAbastecimentos;
+
+    @NotAudited
+    @Formula(QT_COMPLETA_ABASTECIMENTO_FORMULA)
+    @Basic(fetch = FetchType.LAZY)
+    private Long quantidadeCompletaAbastecimentos;
 
     @Column(name = "ID_STATUS_NF")
     private Integer statusNotaFiscal;
@@ -243,12 +253,32 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
         this.reembolso = reembolso;
     }
 
+    /**
+     * Retorna a quantidade de abastecimentos da transação consolidada.
+     * OBS.: Não considera os abastecimentos com valor negativo.
+     *
+     * @return A quantidade de abastecimentos.
+     */
     public Long getQuantidadeAbastecimentos() {
         return quantidadeAbastecimentos;
     }
 
     public void setQuantidadeAbastecimentos(Long quantidadeAbastecimentos) {
         this.quantidadeAbastecimentos = quantidadeAbastecimentos;
+    }
+
+    /**
+     * Retorna a quantidade completa de abastecimentos da transação consolidada.
+     * OBS.: Considera os abastecimentos com valor negativo.
+     *
+     * @return A quantidade completa de abastecimentos.
+     */
+    public Long getQuantidadeCompletaAbastecimentos() {
+        return quantidadeCompletaAbastecimentos;
+    }
+
+    public void setQuantidadeCompletaAbastecimentos(Long quantidadeCompletaAbastecimentos) {
+        this.quantidadeCompletaAbastecimentos = quantidadeCompletaAbastecimentos;
     }
 
     public List<AutorizacaoPagamento> getAutorizacaoPagamentos() {

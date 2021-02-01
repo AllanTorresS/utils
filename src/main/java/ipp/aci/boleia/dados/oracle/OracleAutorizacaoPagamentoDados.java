@@ -208,26 +208,6 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
             " OR :dataVencimento = " + String.format(CLAUSULA_DATA_VENCIMENTO,"CP", "CP", "CP", "TPP")  + " ) " +
             CLAUSULA_STATUS_AUTORIZACAO;
   
-    private static final String CONSULTA_QUANTIDADE_TRANSACOES_FROTA =
-            "SELECT COUNT(DISTINCT A) " +
-                    "FROM AutorizacaoPagamento A " +
-                    "LEFT JOIN A.frota F " +
-                    "LEFT JOIN A.pontoVenda PV " +
-                    "JOIN A.transacaoConsolidada TC " +
-                    "JOIN TC.prazos TCP " +
-                    "LEFT JOIN A.transacaoConsolidadaPostergada TP " +
-                    "LEFT JOIN TP.prazos TPP " +
-                    "LEFT JOIN TC.cobranca C " +
-                    "LEFT JOIN TP.cobranca CP " +
-                    "WHERE " +
-                    "(:idConsolidado IS NULL OR TC.id = :idConsolidado OR TP.id = :idConsolidado) " +
-                    "AND (:dataInicioPeriodo IS NULL AND :dataFimPeriodo IS NULL OR " + 
-                    "(A.dataProcessamento >= :dataInicioPeriodo AND A.dataProcessamento <= :dataFimPeriodo) " +
-                    " OR (A.dataProcessamento >= :dataInicioPeriodo AND A.dataProcessamento <= :dataLimiteEmissao AND A.valorTotal < 0 ) " +
-                    "OR (A.dataPostergacao >= :dataInicioPeriodo AND A.dataPostergacao <= :dataFimPeriodo)) " +
-                    CLAUSULA_COMUM_CONSULTAS_AGRUPAMENTOS;
-
-
     private static final String CONSULTA_QUANTIDADE_NOTAS =
             "SELECT COUNT(DISTINCT N) " +
                     "FROM AutorizacaoPagamento A " +
@@ -1212,22 +1192,6 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         String consultaPesquisa = String.format(CONSULTA_ABASTECIMENTOS_COBRANCA, strBufferFiltroOutrosServicos.toString());
 
         return pesquisar(filtro.getPaginacao(), consultaPesquisa, parametros.toArray(new ParametroPesquisa[parametros.size()]));
-    }
-
-    @Override
-    public Long obterQuantidadeTransacoesFrota(FiltroPesquisaQtdTransacoesFrotaVo filtro) {
-        List<ParametroPesquisa> parametros = new ArrayList<>();
-
-        parametros.add(new ParametroPesquisaIgual("idConsolidado", filtro.getIdConsolidado()));
-        parametros.add(new ParametroPesquisaIgual("idFrota", filtro.getIdFrota()));
-        parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataInicioPeriodo", filtro.getDataInicioPeriodo()));
-        parametros.add(new ParametroPesquisaDataMenorOuIgual("dataFimPeriodo", filtro.getDataFimPeriodo()));
-        parametros.add(new ParametroPesquisaIgual("statusConsolidacao", filtro.getStatusConsolidacao()));
-        parametros.add(new ParametroPesquisaIgual("idCobranca", filtro.getIdCobranca()));
-        parametros.add(new ParametroPesquisaIgual("dataLimiteEmissao", filtro.getDataLimiteEmissao()));
-        parametros.add(new ParametroPesquisaIgual("dataVencimento", filtro.getDataVencimento()));
-
-        return pesquisarUnicoSemIsolamentoDados(CONSULTA_QUANTIDADE_TRANSACOES_FROTA, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
     @Override

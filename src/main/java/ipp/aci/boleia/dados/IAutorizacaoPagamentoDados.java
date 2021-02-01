@@ -409,13 +409,6 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
     ResultadoPaginado<AutorizacaoPagamento> pesquisaPaginadaDetalheCobranca(FiltroPesquisaDetalheCobrancaVo filtro);
 
     /**
-     * Obtem a quantidade de transações de um ciclo ou agrupamento de ciclos para a visão da frota
-     * @param filtro o filtro de pesquisa informado
-     * @return A quantidade de transações
-     */
-    Long obterQuantidadeTransacoesFrota(FiltroPesquisaQtdTransacoesFrotaVo filtro); 
-
-    /**
      * Obtem a quantidade de notas fiscais associadas a transações pertencentes a um ciclo
      * ou agrupamento de ciclos 
      * @param filtro o filtro de pesquisa informado
