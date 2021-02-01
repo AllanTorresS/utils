@@ -189,7 +189,8 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                     " AND (:idMotorista IS NULL OR A.motorista.id = :idMotorista) " +
                     " AND (:placaVeiculo IS NULL OR " + String.format(TO_LOWER, String.format(REMOVER_ACENTO, "A.placaVeiculo")) + " LIKE :placaVeiculo ) " +
                     " AND (:statusNotaFiscal IS NULL OR A.statusNotaFiscal = :statusNotaFiscal) " +
-                    " %s ";
+                    " %s " +
+                    " ORDER BY %s ";
 
   
     private static final String CLAUSULA_DATA_LIMITE_EMISSAO = "CASE " +
@@ -1203,14 +1204,19 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
             }
         }
 
+        String ordenacao = "";
         if(filtro.getPaginacao() == null || filtro.getPaginacao().getParametrosOrdenacaoColuna().isEmpty()) {
-            filtro.getPaginacao().setParametrosOrdenacaoColuna(Arrays.asList(
-                new ParametroOrdenacaoColuna("chaveOrdenacaoFinanceiro"),
-                new ParametroOrdenacaoColuna("dataRequisicao")
-            ));
+            ordenacao = " CASE WHEN A.transacaoConsolidadaPostergada IS NOT NULL AND A.status = 1 THEN 0 " +
+            "     WHEN A.transacaoConsolidadaPostergada IS NOT NULL AND A.status <> 1 THEN 1 " +
+            "     WHEN A.transacaoConsolidadaPostergada IS NULL AND (A.statusEdicao = 1 OR A.status = -1) THEN 2 " +
+            "     ELSE 3 " +
+            " END, A.dataRequisicao ";
+        } else {
+            String sentido = filtro.getPaginacao().getParametrosOrdenacaoColuna().get(0).getSentidoOrdenacao().equals(Ordenacao.DECRESCENTE) ? " DESC" : " ";
+            ordenacao = " A.dataRequisicao " + sentido;
         }
 
-        String consultaPesquisa = String.format(CONSULTA_ABASTECIMENTOS_COBRANCA, strBufferFiltroOutrosServicos.toString());
+        String consultaPesquisa = String.format(CONSULTA_ABASTECIMENTOS_COBRANCA, strBufferFiltroOutrosServicos.toString(), ordenacao);
 
         return pesquisar(filtro.getPaginacao(), consultaPesquisa, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
