@@ -170,6 +170,15 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                     "AND (a.dataRequisicao <= :dataRequisicaoAte OR :dataRequisicaoAte IS NULL) " +
                     "AND (" + String.format(TO_LOWER, String.format(REMOVER_ACENTO, "a.placaVeiculo")) + " LIKE :placaVeiculo OR :placaVeiculo IS NULL) ";
 
+    private static final String CONSULTA_VIGENTES_POR_CICLOS =
+            " SELECT a FROM AutorizacaoPagamento a " +
+            " JOIN FETCH a.transacaoConsolidada tc " +
+            " JOIN FETCH tc.prazos tc_p " +
+            " LEFT JOIN FETCH a.transacaoConsolidadaPostergada tcp " +
+            " LEFT JOIN FETCH tcp.prazos tcp_p " +
+            " WHERE " +
+            "     ((tc.id IN (:idsTransacoesConsolidadas) AND tcp IS NULL) OR tcp.id IN (:idsTransacoesConsolidadas)) ";
+
     /**
      * Instancia o repositorio
      */
@@ -1028,7 +1037,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         parametros.add(new ParametroPesquisaIgual("dataRequisicaoDe", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDataAbastecimento())));
         parametros.add(new ParametroPesquisaIgual("dataRequisicaoAte", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getDataAbastecimento())));
 
-        parametros.add(new ParametroPesquisaIgual("placaVeiculo", filtro.getPlaca().toLowerCase()));
+        parametros.add(new ParametroPesquisaIgual("placaVeiculo", filtro.getPlaca() != null ? filtro.getPlaca().toLowerCase() : null));
 
         Long quantidadePostergados = pesquisarUnicoSemIsolamentoDados(CONSULTA_QUANTIDADE_ABASTECIMENTOS_POSTERGADOS, parametros.toArray(new ParametroPesquisa[parametros.size()]));
         return quantidadePostergados.intValue();
@@ -1093,5 +1102,11 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         List<ParametroPesquisa> parametros = montarParametroPesquisa(filtro);
 
         return pesquisar((ParametroOrdenacaoColuna)null, (ParametroPesquisa[])parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+    @Override
+    public List<AutorizacaoPagamento> obterPorTransacoesConsolidadas(List<Long> idsTransacoesConsolidadas) {
+        List<ParametroPesquisa> params = new ArrayList<>();
+        return pesquisar((InformacaoPaginacao) null, CONSULTA_VIGENTES_POR_CICLOS, new ParametroPesquisaIgual("idsTransacoesConsolidadas", idsTransacoesConsolidadas)).getRegistros();
     }
 }
