@@ -176,7 +176,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     private static final String CLAUSULA_STATUS_AUTORIZACAO = 
             " AND ((A.status = 1 AND (A.valorTotal > 0 OR " +
             " ((SELECT AB.transacaoConsolidada.id FROM AutorizacaoPagamento AB WHERE AB.id = A.idAutorizacaoEstorno) <> A.transacaoConsolidada.id AND A.transacaoConsolidada.quantidadeAbastecimentos > 0))) " +
-            " OR (A.status = -1 AND A.transacaoConsolidadaPostergada IS NOT NULL)) ";
+            " OR (A.status = -1 AND (SELECT AB.transacaoConsolidada.id FROM AutorizacaoPagamento AB WHERE AB.idAutorizacaoEstorno = A.id AND AB.valorTotal < 0) <> A.transacaoConsolidada.id)) ";
         
     private static final String CONSULTA_ABASTECIMENTOS_COBRANCA = 
             "SELECT DISTINCT A " +
