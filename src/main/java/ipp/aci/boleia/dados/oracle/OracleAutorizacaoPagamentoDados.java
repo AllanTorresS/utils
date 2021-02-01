@@ -1154,8 +1154,52 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
 
     @Override
     public ResultadoPaginado<AutorizacaoPagamento> pesquisaPaginadaDetalheCobranca(FiltroPesquisaDetalheCobrancaVo filtro) {
-        List<ParametroPesquisa> parametros = new ArrayList<>();
+        List<ParametroPesquisa> parametros = montarParametrosPesquisaDetalheCobranca(filtro);
+        String ordenacao = montarOrdenacaoDetalheCobranca(filtro);
+        String filtroOutrosServicos = montarFiltroOutroServicosDetalheCobranca(filtro);
 
+        String consultaPesquisa = String.format(CONSULTA_ABASTECIMENTOS_COBRANCA, filtroOutrosServicos, ordenacao);
+
+        return pesquisar(filtro.getPaginacao(), consultaPesquisa, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+    @Override
+    public List<AutorizacaoPagamento> pesquisaDetalheCobrancaSemPaginacao(FiltroPesquisaDetalheCobrancaVo filtro) {
+        List<ParametroPesquisa> parametros = montarParametrosPesquisaDetalheCobranca(filtro);
+        String ordenacao = montarOrdenacaoDetalheCobranca(filtro);
+        String filtroOutrosServicos = montarFiltroOutroServicosDetalheCobranca(filtro);
+
+        String consultaPesquisa = String.format(CONSULTA_ABASTECIMENTOS_COBRANCA, filtroOutrosServicos, ordenacao);
+        return pesquisar(null, consultaPesquisa, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+    }
+
+    /**
+     * Monta string de ordenação da consulta de detalhe da cobrança
+     * @param filtro O filtro fornecido
+     * @return A string de ordenação montada
+     */
+    private String montarOrdenacaoDetalheCobranca(FiltroPesquisaDetalheCobrancaVo filtro) {
+        String ordenacao = "";
+        if(filtro.getPaginacao() == null || filtro.getPaginacao().getParametrosOrdenacaoColuna().isEmpty()) {
+            ordenacao = " CASE WHEN A.transacaoConsolidadaPostergada IS NOT NULL AND A.status = 1 THEN 0 " +
+                    "     WHEN A.transacaoConsolidadaPostergada IS NOT NULL AND A.status <> 1 THEN 1 " +
+                    "     WHEN A.transacaoConsolidadaPostergada IS NULL AND (A.statusEdicao = 1 OR A.status = -1) THEN 2 " +
+                    "     ELSE 3 " +
+                    " END, A.dataRequisicao ";
+        } else {
+            String sentido = filtro.getPaginacao().getParametrosOrdenacaoColuna().get(0).getSentidoOrdenacao().equals(Ordenacao.DECRESCENTE) ? " DESC" : " ";
+            ordenacao = " A.dataRequisicao " + sentido;
+        }
+        return ordenacao;
+    }
+
+    /**
+     * Monta lista de parâmetros de pesquisa para a consulta de detalhe da cobrança
+     * @param filtro O filtro fornecido
+     * @return A lista de parâmetros
+     */
+    private List<ParametroPesquisa> montarParametrosPesquisaDetalheCobranca(FiltroPesquisaDetalheCobrancaVo filtro) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
         parametros.add(new ParametroPesquisaIgual("idConsolidado", filtro.getIdConsolidado()));
         parametros.add(new ParametroPesquisaIgual("dataRequisicao", filtro.getDataAbastecimento()));
         parametros.add(new ParametroPesquisaIgual("placaVeiculo", filtro.getPlacaVeiculo()));
@@ -1174,6 +1218,15 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
             parametros.add(new ParametroPesquisaIgual("idMotorista", null));
         }
 
+        return parametros;
+    }
+
+    /**
+     * Monta parte do filtro relativa a outros serviços na consulta de detalhe de cobrança
+     * @param filtro O filtro fornecido
+     * @return A string de filtro montada
+     */
+    private String montarFiltroOutroServicosDetalheCobranca(FiltroPesquisaDetalheCobrancaVo filtro) {
         String filtroOutrosServicos = " ";
         StringBuffer strBufferFiltroOutrosServicos = new StringBuffer(filtroOutrosServicos);
         if(filtro.getOutrosServicos() != null && !filtro.getOutrosServicos().isEmpty()) {
@@ -1182,22 +1235,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                 strBufferFiltroOutrosServicos.append(" AND " + servico.getId() + " IN " + listaProdutos );
             }
         }
-
-        String ordenacao = "";
-        if(filtro.getPaginacao() == null || filtro.getPaginacao().getParametrosOrdenacaoColuna().isEmpty()) {
-            ordenacao = " CASE WHEN A.transacaoConsolidadaPostergada IS NOT NULL AND A.status = 1 THEN 0 " +
-            "     WHEN A.transacaoConsolidadaPostergada IS NOT NULL AND A.status <> 1 THEN 1 " +
-            "     WHEN A.transacaoConsolidadaPostergada IS NULL AND (A.statusEdicao = 1 OR A.status = -1) THEN 2 " +
-            "     ELSE 3 " +
-            " END, A.dataRequisicao ";
-        } else {
-            String sentido = filtro.getPaginacao().getParametrosOrdenacaoColuna().get(0).getSentidoOrdenacao().equals(Ordenacao.DECRESCENTE) ? " DESC" : " ";
-            ordenacao = " A.dataRequisicao " + sentido;
-        }
-
-        String consultaPesquisa = String.format(CONSULTA_ABASTECIMENTOS_COBRANCA, strBufferFiltroOutrosServicos.toString(), ordenacao);
-
-        return pesquisar(filtro.getPaginacao(), consultaPesquisa, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        return strBufferFiltroOutrosServicos.toString();
     }
 
     @Override

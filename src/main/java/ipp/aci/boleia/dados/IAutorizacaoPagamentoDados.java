@@ -415,4 +415,12 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
      * @return A quantidade de notas fiscais
      */
     Long obterQuantidadeNotasAgrupamento(FiltroPesquisaQtdTransacoesFrotaVo filtro);
+
+    /**
+     * Realiza pesquisa sem paginação para obtenção de todos os abastecimentos do ciclo
+     * filtrados de acordo com parâmetros de pesquisa
+     * @param filtro O filtro fornecido
+     * @return Os registros obtidos
+     */
+    List<AutorizacaoPagamento> pesquisaDetalheCobrancaSemPaginacao(FiltroPesquisaDetalheCobrancaVo filtro);
 }
