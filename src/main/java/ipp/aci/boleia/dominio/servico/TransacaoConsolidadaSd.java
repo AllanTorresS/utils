@@ -78,6 +78,7 @@ import static ipp.aci.boleia.util.UtilitarioCalculoData.adicionarDiasData;
 import static ipp.aci.boleia.util.UtilitarioCalculoData.obterPrimeiroInstanteDia;
 import static ipp.aci.boleia.util.UtilitarioCalculoData.obterUltimoInstanteDia;
 import static ipp.aci.boleia.util.UtilitarioLambda.agrupar;
+import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 
 
 /**
@@ -226,6 +227,26 @@ public class TransacaoConsolidadaSd {
             }
         } else {
             throw new ExcecaoRecursoBloqueado(mensagens.obterMensagem("Erro.TRANS_CONSOL_LOCKADO", idTransacaoConsolidada));
+        }
+    }
+
+    /**
+     * Atualiza a última data de emissão do ciclo a partir da nota sendo adicionada ou removida
+     *
+     * @param idCiclo id do consolidado associado à nota
+     * @param dataEmissao data de emissão da nota
+     * @param notaRemovida indica que a nota associada à data de emissão está sendo removida do sistema
+     */
+    public void atualizarUltimaDataEmissaoNf(Long idCiclo, Date dataEmissao, boolean notaRemovida) {
+        TransacaoConsolidada ciclo = repositorio.obterPorId(idCiclo);
+        if (notaRemovida) {
+            if (dataEmissao != null && dataEmissao.equals(ciclo.getDataUltimaEmissaoNf())) {
+                ciclo.setDataUltimaEmissaoNf(emptyIfNull(ciclo.getAutorizacaoPagamentos()).stream().map(a ->
+                        a.getNotasFiscais().stream().map(n -> n.getDataEmissao()).max(Date::compareTo)
+                                .orElse(null)).filter(Objects::nonNull).max(Date::compareTo).orElse(null));
+            }
+        } else if (ciclo.getDataUltimaEmissaoNf() == null || (dataEmissao != null && dataEmissao.after(ciclo.getDataUltimaEmissaoNf()))) {
+            ciclo.setDataUltimaEmissaoNf(dataEmissao);
         }
     }
 
