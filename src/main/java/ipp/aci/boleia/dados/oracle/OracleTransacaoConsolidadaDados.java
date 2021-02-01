@@ -363,7 +363,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                         "SUM(TC.valorDescontoAbastecimentos), " +
                         "TC.statusConsolidacao, " +
                         CLAUSULA_STATUS_PAGAMENTO + ", " +
-                        "SUM(TC.quantidadeAbastecimentos), " +
+                        "SUM(TC.quantidadeCompletaAbastecimentos), " +
                         CLAUSULA_DATA_VENCIMENTO + ", " +
                         "C.dataPagamento, " +
                         CLAUSULA_DATA_LIMITE_EMISSAO + ", " +
