@@ -23,13 +23,16 @@ import ipp.aci.boleia.dominio.vo.frotista.InformacaoPaginacaoFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.ResultadoPaginadoFrtVo;
 import ipp.aci.boleia.util.negocio.ParametrosPesquisaBuilder;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.Query;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Respositorio de entidades Veiculo
@@ -56,6 +59,8 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
     private static final String PARAM_CNPJ_AGREGADA = "empresaAgregada.cnpj";
     private static final String PARAM_CNPJ_FROTA = "frota.cnpj";
     private static final String PARAM_DATA_ATUALIZACAO = "dataAtualizacao";
+
+    private static final String ORDER_BY_CLAUSE = " ORDER BY %s ";
 
     /**
      * Instancia o repositorio
@@ -92,13 +97,34 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
         parametros.add(new ParametroPesquisaIgual("empresaAgregada", filtro.getEmpresaAgregada().getId() != null ? filtro.getEmpresaAgregada().getId() : null));
         parametros.add(new ParametroPesquisaIgual("unidade", filtro.getUnidade().getId() != null ? filtro.getUnidade().getId() : null));
 
+        String ordenacao = " ";
+        if (CollectionUtils.isNotEmpty(filtro.getPaginacao().getParametrosOrdenacaoColuna())) {
+            ParametroOrdenacaoColuna parametroOrdenacaoColuna = filtro.getPaginacao().getParametrosOrdenacaoColuna().get(0);
+            List<String> camposOrdenacao = new ArrayList<>();
+            String direcaoOrdenacao = parametroOrdenacaoColuna.isDecrescente() ? "DESC" : "ASC";
+            switch (parametroOrdenacaoColuna.getNome()) {
+                case "frota.razaoSocial":
+                    camposOrdenacao = Arrays.asList("f.razaoSocial", "ep.razaoSocial", "u.nome");
+                    break;
+                case "tipoVeiculo.descricao":
+                    camposOrdenacao = Collections.singletonList("tv.descricao");
+                    break;
+                case "saldo":
+                    camposOrdenacao = Collections.singletonList("((CASE WHEN sv.VA_COTA_VALOR IS NOT NULL THEN sv.VA_COTA_VALOR ELSE 0 END) - (CASE WHEN sv.VA_CONSUMO_VALOR IS NOT NULL THEN sv.VA_CONSUMO_VALOR ELSE 0 END))");
+                    break;
+            }
+            if (CollectionUtils.isNotEmpty(camposOrdenacao)) {
+                ordenacao = String.format(ORDER_BY_CLAUSE, camposOrdenacao.stream().map(x -> x + " " + direcaoOrdenacao).collect(Collectors.joining(", ")));
+            }
+        }
+
         return pesquisar(filtro.getPaginacao() ,
-                consulta ,
+                consulta.concat(ordenacao) ,
                 parametros.toArray(new ParametroPesquisa[parametros.size()]));
         }
 
     String CONSULTA_COTA_VEICULO_HQL =
-            " SELECT DISTINCT v "+
+            " SELECT v "+
             " FROM Veiculo v " +
             " INNER JOIN v.frota f " +
             " LEFT JOIN v.saldoVeiculo sv " +
