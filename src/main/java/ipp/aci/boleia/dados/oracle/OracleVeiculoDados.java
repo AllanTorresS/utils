@@ -23,6 +23,7 @@ import ipp.aci.boleia.dominio.vo.frotista.InformacaoPaginacaoFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.ResultadoPaginadoFrtVo;
 import ipp.aci.boleia.util.negocio.ParametrosPesquisaBuilder;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -56,6 +57,8 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
     private static final String PARAM_CNPJ_AGREGADA = "empresaAgregada.cnpj";
     private static final String PARAM_CNPJ_FROTA = "frota.cnpj";
     private static final String PARAM_DATA_ATUALIZACAO = "dataAtualizacao";
+
+    private static final String ORDER_BY_CLAUSE = " ORDER BY %s %s ";
 
     /**
      * Instancia o repositorio
@@ -92,8 +95,26 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
         parametros.add(new ParametroPesquisaIgual("empresaAgregada", filtro.getEmpresaAgregada().getId() != null ? filtro.getEmpresaAgregada().getId() : null));
         parametros.add(new ParametroPesquisaIgual("unidade", filtro.getUnidade().getId() != null ? filtro.getUnidade().getId() : null));
 
+        String ordenacao = " ";
+        if (CollectionUtils.isNotEmpty(filtro.getPaginacao().getParametrosOrdenacaoColuna())) {
+            ParametroOrdenacaoColuna parametroOrdenacaoColuna = filtro.getPaginacao().getParametrosOrdenacaoColuna().get(0);
+            String campoOrdenacao = null;
+            String direcaoOrdenacao = parametroOrdenacaoColuna.isDecrescente() ? "DESC" : "ASC";
+            switch (parametroOrdenacaoColuna.getNome()) {
+                case "tipoVeiculo.descricao":
+                    campoOrdenacao = "tv.descricao";
+                    break;
+                case "saldo":
+                    campoOrdenacao = "((CASE WHEN sv.cotaValor IS NOT NULL THEN sv.cotaValor ELSE 0 END) - (CASE WHEN sv.valorConsumido IS NOT NULL THEN sv.valorConsumido ELSE 0 END))";
+                    break;
+            }
+            if (campoOrdenacao != null) {
+                ordenacao = String.format(ORDER_BY_CLAUSE, campoOrdenacao, direcaoOrdenacao);
+            }
+        }
+
         return pesquisar(filtro.getPaginacao() ,
-                consulta ,
+                consulta.concat(ordenacao) ,
                 parametros.toArray(new ParametroPesquisa[parametros.size()]));
         }
 
