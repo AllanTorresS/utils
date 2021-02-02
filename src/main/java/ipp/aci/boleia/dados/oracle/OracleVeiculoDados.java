@@ -110,7 +110,7 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
                     camposOrdenacao = Collections.singletonList("tv.descricao");
                     break;
                 case "saldo":
-                    camposOrdenacao = Collections.singletonList("((CASE WHEN sv.VA_COTA_VALOR IS NOT NULL THEN sv.VA_COTA_VALOR ELSE 0 END) - (CASE WHEN sv.VA_CONSUMO_VALOR IS NOT NULL THEN sv.VA_CONSUMO_VALOR ELSE 0 END))");
+                    camposOrdenacao = Collections.singletonList("((CASE WHEN sv.cotaValor IS NOT NULL THEN sv.cotaValor ELSE 0 END) - (CASE WHEN sv.valorConsumido IS NOT NULL THEN sv.valorConsumido ELSE 0 END))");
                     break;
             }
             if (CollectionUtils.isNotEmpty(camposOrdenacao)) {
