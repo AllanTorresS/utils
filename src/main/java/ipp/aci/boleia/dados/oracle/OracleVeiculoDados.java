@@ -103,9 +103,6 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
             List<String> camposOrdenacao = new ArrayList<>();
             String direcaoOrdenacao = parametroOrdenacaoColuna.isDecrescente() ? "DESC" : "ASC";
             switch (parametroOrdenacaoColuna.getNome()) {
-                case "frota.razaoSocial":
-                    camposOrdenacao = Arrays.asList("f.razaoSocial", "ep.razaoSocial", "u.nome");
-                    break;
                 case "tipoVeiculo.descricao":
                     camposOrdenacao = Collections.singletonList("tv.descricao");
                     break;
