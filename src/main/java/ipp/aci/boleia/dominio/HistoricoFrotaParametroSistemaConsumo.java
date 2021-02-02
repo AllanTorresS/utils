@@ -42,8 +42,8 @@ public class HistoricoFrotaParametroSistemaConsumo implements IPersistente {
 
     @NotNull
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CD_FROTA_PARAM_SIS")
-    private FrotaParametroSistema frotaParametroSistema;
+    @JoinColumn(name = "CD_FROTA_PARAM_SIS_CONSUMO")
+    private FrotaParametroSistemaConsumo frotaParametroSistemaConsumo;
 
     @NotNull
     @Column(name= "VA_PORCENTAGEM_LIMITE_MINIMO")
@@ -73,12 +73,12 @@ public class HistoricoFrotaParametroSistemaConsumo implements IPersistente {
         this.id = id;
     }
 
-    public FrotaParametroSistema getFrotaParametroSistema() {
-        return frotaParametroSistema;
+    public FrotaParametroSistemaConsumo getFrotaParametroSistemaConsumo() {
+        return frotaParametroSistemaConsumo;
     }
 
-    public void setFrotaParametroSistema(FrotaParametroSistema frotaParametroSistema) {
-        this.frotaParametroSistema = frotaParametroSistema;
+    public void setFrotaParametroSistemaConsumo(FrotaParametroSistemaConsumo frotaParametroSistemaConsumo) {
+        this.frotaParametroSistemaConsumo = frotaParametroSistemaConsumo;
     }
 
     public BigDecimal getPorcentagemLimiteMinimo() {
