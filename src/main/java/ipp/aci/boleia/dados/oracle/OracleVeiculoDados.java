@@ -104,6 +104,9 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
                 case "tipoVeiculo.descricao":
                     campoOrdenacao = "tv.descricao";
                     break;
+                case "classificacao.label":
+                    campoOrdenacao = "(CASE WHEN v.agregado = 1 THEN 'AGREGADO' ELSE 'PROPRIO' END)";
+                    break;
                 case "saldo":
                     campoOrdenacao = "((CASE WHEN sv.cotaValor IS NOT NULL THEN sv.cotaValor ELSE 0 END) - (CASE WHEN sv.valorConsumido IS NOT NULL THEN sv.valorConsumido ELSE 0 END))";
                     break;
