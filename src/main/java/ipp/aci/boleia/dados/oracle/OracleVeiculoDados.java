@@ -142,7 +142,7 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
                 "   AND (:unidade           IS NULL OR u.id = :unidade )" +
                 "   AND ps.ativo = 1 " +
                 "   AND ps.parametroSistema = 8 " +
-                "   AND ps.emLitros = 0 ";
+                "   AND ps.emLitros = 0 " ;
 
     @Override
     public ResultadoPaginadoFrtVo<Veiculo> pesquisar(FiltroPesquisaVeiculoExtVo filtro) {
