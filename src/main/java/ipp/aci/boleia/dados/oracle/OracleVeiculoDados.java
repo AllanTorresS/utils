@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
@@ -93,7 +94,7 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
         parametros.add(new ParametroPesquisaIgual("tipoVeiculo", filtro.getTipoVeiculo().getId() != null ? filtro.getTipoVeiculo().getId() : null));
         Integer classificacao = filtro.getClassificacao() != null && filtro.getClassificacao().getName() != null? ClassificacaoAgregado.valueOf(filtro.getClassificacao().getName()).getValue() : null;
         parametros.add(new ParametroPesquisaIgual("classificacao", classificacao));
-        parametros.add(new ParametroPesquisaIgual("placa", filtro.getPlaca() != null ? filtro.getPlaca() : null));
+        parametros.add(new ParametroPesquisaIgual("placa", filtro.getPlaca() != null ? filtro.getPlaca().toUpperCase(Locale.ROOT) : null));
         parametros.add(new ParametroPesquisaIgual("empresaAgregada", filtro.getEmpresaAgregada().getId() != null ? filtro.getEmpresaAgregada().getId() : null));
         parametros.add(new ParametroPesquisaIgual("unidade", filtro.getUnidade().getId() != null ? filtro.getUnidade().getId() : null));
 
@@ -125,19 +126,23 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
 
     String CONSULTA_COTA_VEICULO_HQL =
             " SELECT v "+
-            " FROM Veiculo v " +
-            " INNER JOIN v.frota f " +
-            " LEFT JOIN v.saldoVeiculo sv " +
-            " LEFT JOIN v.subtipoVeiculo stv " +
-            " LEFT JOIN stv.tipoVeiculo tv " +
-            " LEFT JOIN v.empresaAgregada ep " +
-            " LEFT JOIN v.unidade u  " +
-            " WHERE (:idFrota           IS NULL OR v.frota.id IN (:idFrota)) " +
-            "   AND (:tipoVeiculo       IS NULL OR tv.id = :tipoVeiculo )" +
-            "   AND (:classificacao     IS NULL OR v.agregado = :classificacao )" +
-            "   AND (:placa             IS NULL OR v.placa = :placa )" +
-            "   AND (:empresaAgregada   IS NULL OR ep.id = :empresaAgregada )" +
-            "   AND (:unidade           IS NULL OR u.id = :unidade )";
+                " FROM Veiculo v " +
+                " INNER JOIN v.frota f " +
+                " INNER JOIN f.parametrosSistema ps " +
+                " LEFT JOIN v.saldoVeiculo sv " +
+                " LEFT JOIN v.subtipoVeiculo stv " +
+                " LEFT JOIN stv.tipoVeiculo tv " +
+                " LEFT JOIN v.empresaAgregada ep " +
+                " LEFT JOIN v.unidade u  " +
+                " WHERE (:idFrota           IS NULL OR v.frota.id IN (:idFrota)) " +
+                "   AND (:tipoVeiculo       IS NULL OR tv.id = :tipoVeiculo )" +
+                "   AND (:classificacao     IS NULL OR v.agregado = :classificacao )" +
+                "   AND (:placa             IS NULL OR v.placa = :placa )" +
+                "   AND (:empresaAgregada   IS NULL OR ep.id = :empresaAgregada )" +
+                "   AND (:unidade           IS NULL OR u.id = :unidade )" +
+                "   AND ps.ativo = 1 " +
+                "   AND ps.parametroSistema = 8 " +
+                "   AND ps.emLitros = 0 ";
 
     @Override
     public ResultadoPaginadoFrtVo<Veiculo> pesquisar(FiltroPesquisaVeiculoExtVo filtro) {
