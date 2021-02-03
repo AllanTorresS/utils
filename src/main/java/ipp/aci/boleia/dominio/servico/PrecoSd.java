@@ -104,18 +104,24 @@ public class PrecoSd {
         for(Preco preco:precos) {
             FrotaPontoVenda frotaPtov = preco.getFrotaPtov();
             if(!somenteNovos){
-                BigDecimal descontoVigente = preco.getDescontoVigente();
+                Preco novoPreco;
+                if (preco.getDataVigencia() != null && preco.getDataVigencia().after(precoBase.getDataAtualizacao())) {
+                    novoPreco = preco;
+                    novoPreco.setPreco(preco.getDescontoVigente() != null ? precoBase.getPreco().add(preco.getDescontoVigente()) : precoBase.getPreco());
+                } else {
+                    BigDecimal descontoVigente = preco.getDescontoSolicitado() != null ? preco.getDescontoSolicitado() : preco.getDescontoVigente();
+                    novoPreco = new Preco();
 
-                preco = new Preco();
-                preco.setFrotaPtov(frotaPtov);
-                preco.setDescontoVigente(descontoVigente);
-                preco.setStatus(StatusPreco.VIGENTE.getValue());
-                preco.setPreco(descontoVigente != null ? precoBase.getPreco().add(descontoVigente) : precoBase.getPreco());
-                preco.setPrecoBase(precoBase);
-                preco.setDataAtualizacao(precoBase.getDataAtualizacao());
-                preco.setDataVigencia(precoBase.getDataAtualizacao());
+                    novoPreco.setStatus(StatusPreco.VIGENTE.getValue());
+                    novoPreco.setFrotaPtov(frotaPtov);
+                    novoPreco.setDescontoVigente(descontoVigente);
+                    novoPreco.setPreco(descontoVigente != null ? precoBase.getPreco().add(descontoVigente) : precoBase.getPreco());
+                    novoPreco.setPrecoBase(precoBase);
+                    novoPreco.setDataVigencia(precoBase.getDataAtualizacao());
+                }
 
-                repositorioPreco.armazenarSemIsolamentoDeDados(preco);
+                novoPreco.setDataAtualizacao(precoBase.getDataAtualizacao());
+                repositorioPreco.armazenarSemIsolamentoDeDados(novoPreco);
             }
             idFrotaPtov.add(preco.getFrotaPtov().getId());
             idFrotas.add(preco.getFrota().getId());
