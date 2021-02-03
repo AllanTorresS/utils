@@ -6,9 +6,10 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * VO que agrupa transações consolidadas por frota
+ * VO que agrupa transações consolidadas por cobrança
  */
-public class AgrupamentoTransacaoConsolidadaFrotaVo {
+public class AgrupamentoTransacaoConsolidadaCobrancaVo {
+    private Long idFrota;
     private Date dataInicioPeriodo;
     private Date dataFimPeriodo;
     private BigDecimal valorTotal;
@@ -29,11 +30,12 @@ public class AgrupamentoTransacaoConsolidadaFrotaVo {
     /**
      * Construtor default
      */
-    public AgrupamentoTransacaoConsolidadaFrotaVo() {
+    public AgrupamentoTransacaoConsolidadaCobrancaVo() {
     }
 
     /**
      * Construtor do VO
+     * @param idFrota Identificador da frota
      * @param dataInicioPeriodo Data de início do ciclo
      * @param dataFimPeriodo Data de fim do ciclo
      * @param valorTotal O valor total do ciclo
@@ -51,11 +53,12 @@ public class AgrupamentoTransacaoConsolidadaFrotaVo {
      * @param valorEmitidoNotaFiscal Valor total emitido
      * @param valorTotalNotaFiscal Valor total a ser emitido
      */
-    public AgrupamentoTransacaoConsolidadaFrotaVo(Date dataInicioPeriodo, Date dataFimPeriodo, BigDecimal valorTotal,
-                                                  BigDecimal valorDesconto, Integer statusConsolidacao,
-                                                  Integer statusPagamento, Long quantidadeAbastecimentos,
-                                                  Date dataVencimento, Date dataPagamento, Date dataLimiteEmissao, Integer statusIntegracao, Long idCobranca , Long numeroDocumento, Integer exigeNota, BigDecimal valorEmitidoNotaFiscal,
-                                                  BigDecimal valorTotalNotaFiscal) {
+    public AgrupamentoTransacaoConsolidadaCobrancaVo(Long idFrota, Date dataInicioPeriodo, Date dataFimPeriodo,
+                                                     BigDecimal valorTotal, BigDecimal valorDesconto, Integer statusConsolidacao,
+                                                     Integer statusPagamento, Long quantidadeAbastecimentos,
+                                                     Date dataVencimento, Date dataPagamento, Date dataLimiteEmissao, Integer statusIntegracao, Long idCobranca , Long numeroDocumento, Integer exigeNota, BigDecimal valorEmitidoNotaFiscal,
+                                                     BigDecimal valorTotalNotaFiscal) {
+        this.idFrota = idFrota;
         this.dataInicioPeriodo = dataInicioPeriodo;
         this.dataFimPeriodo = dataFimPeriodo;
         this.valorTotal = valorTotal;
@@ -74,6 +77,14 @@ public class AgrupamentoTransacaoConsolidadaFrotaVo {
         if(statusIntegracao != null) {
             this.statusIntegracao = new EnumVo(StatusIntegracaoJde.obterPorValor(statusIntegracao));
         }
+    }
+
+    public Long getIdFrota() {
+        return idFrota;
+    }
+
+    public void setIdFrota(Long idFrota) {
+        this.idFrota = idFrota;
     }
 
     public Date getDataInicioPeriodo() {
