@@ -108,7 +108,13 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
                     campoOrdenacao = "(CASE WHEN v.agregado = 1 THEN 'AGREGADO' ELSE 'PROPRIO' END)";
                     break;
                 case "saldo":
-                    campoOrdenacao = "((CASE WHEN sv.cotaValor IS NOT NULL THEN sv.cotaValor ELSE 0 END) - (CASE WHEN sv.valorConsumido IS NOT NULL THEN sv.valorConsumido ELSE 0 END))";
+                    campoOrdenacao = "(" +
+                                        "CASE WHEN ps.emLitros = 0 THEN " +
+                                            "((CASE WHEN sv.cotaValor IS NOT NULL THEN sv.cotaValor ELSE 0 END) - (CASE WHEN sv.valorConsumido IS NOT NULL THEN sv.valorConsumido ELSE 0 END)) " +
+                                        "ELSE " +
+                                            "((CASE WHEN sv.cotaLitros IS NOT NULL THEN sv.cotaLitros ELSE 0 END) - (CASE WHEN sv.litrosConsumidos IS NOT NULL THEN sv.litrosConsumidos ELSE 0 END)) " +
+                                        "END" +
+                                     ")";
                     break;
             }
             if (campoOrdenacao != null) {
@@ -138,8 +144,7 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
                 "   AND (:empresaAgregada   IS NULL OR ep.id = :empresaAgregada )" +
                 "   AND (:unidade           IS NULL OR u.id = :unidade )" +
                 "   AND ps.ativo = 1 " +
-                "   AND ps.parametroSistema = 8 " +
-                "   AND ps.emLitros = 0 " ;
+                "   AND ps.parametroSistema = 8 ";
 
     @Override
     public ResultadoPaginadoFrtVo<Veiculo> pesquisar(FiltroPesquisaVeiculoExtVo filtro) {
