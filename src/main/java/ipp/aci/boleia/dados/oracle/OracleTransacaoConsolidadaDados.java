@@ -309,7 +309,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "AND r.status = " + StatusPagamentoReembolso.PAGO.getValue();
 
     private static final String CONSULTA_TOTAL_COBRANCA_PERIODO =
-            " SELECT SUM(tc.valorTotal) " +
+            " SELECT SUM(tc.valorTotal) - SUM(tc.valorDescontoAbastecimentos) " +
                     "FROM TransacaoConsolidada tc " +
                     "LEFT JOIN tc.frotaPtov fpv " +
                     "LEFT JOIN tc.cobranca c " +
@@ -1509,8 +1509,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         }
         String consulta = String.format(CONSULTA_TOTAL_COBRANCA_PERIODO, filtroStatus);
 
-        BigDecimal totalReembolso = pesquisarUnicoSemIsolamentoDados(consulta, parametros.toArray(new ParametroPesquisa[parametros.size()]));
-        return totalReembolso != null ? totalReembolso : BigDecimal.ZERO;
+        BigDecimal totalCobranca = pesquisarUnicoSemIsolamentoDados(consulta, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        return totalCobranca != null ? totalCobranca : BigDecimal.ZERO;
     }
 
     @Override
