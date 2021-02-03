@@ -29,9 +29,7 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaFetch;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaior;
-import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaiorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMenor;
-import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMenorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaAbastecimentoVo;
@@ -170,6 +168,30 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                     "AND (a.dataRequisicao >= :dataRequisicaoDe OR :dataRequisicaoDe IS NULL) " +
                     "AND (a.dataRequisicao <= :dataRequisicaoAte OR :dataRequisicaoAte IS NULL) " +
                     "AND (" + String.format(TO_LOWER, String.format(REMOVER_ACENTO, "a.placaVeiculo")) + " LIKE :placaVeiculo OR :placaVeiculo IS NULL) ";
+
+    private static final String CONSULTA_ABASTECIMENTOS_POR_NFE =
+            " SELECT a" +
+            " FROM AutorizacaoPagamento a" +
+            " WHERE a.status = " + StatusAutorizacao.AUTORIZADO.getValue() +
+            "     AND a.statusNotaFiscal = " + StatusNotaFiscalAbastecimento.PENDENTE.getValue() +
+            "     AND a.dataProcessamento <= :dataEmissao" +
+            "     AND a.valorTotal <= :limiteSuperiorTotalNf" +
+            "     AND a.valorTotal >= :limiteInferiorTotalNf" +
+            "     AND EXISTS (" +
+            "         SELECT 1" +
+            "         FROM AutorizacaoPagamento AS a1" +
+            "         INNER JOIN a1.pontoVenda AS pv" +
+            "         INNER JOIN pv.componentes AS c" +
+            "         WHERE c.codigoPessoa = :cnpjEmit" +
+            "             AND a1.id = a.id" +
+            "     ) AND EXISTS (" +
+            "         SELECT 1" +
+            "         FROM AutorizacaoPagamento AS a2" +
+            "         INNER JOIN a2.frota AS f" +
+            "         LEFT JOIN f.unidades AS u" +
+            "         LEFT JOIN f.empresasAgregadas AS eag" +
+            "         WHERE (f.cnpj = :cnpjDest OR u.cnpj = :cnpjDest OR eag.cnpj = :cnpjDest)" +
+            "             AND a.id = a2.id)";
 
     private static final String CONSULTA_VIGENTES_POR_CICLOS =
             " SELECT a FROM AutorizacaoPagamento a " +
@@ -703,21 +725,14 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     public List<AutorizacaoPagamento> obterAbastecimentoPorNota(Long cnpjDest, Long cnpjEmit, Date dataEmissao, BigDecimal valorTotalNota) {
         final BigDecimal toleranciaDeValorNota = BigDecimal.valueOf(.05);
         List<ParametroPesquisa> parametros = new ArrayList<>();
-        parametros.add(new ParametroPesquisaIgual("status", StatusAutorizacao.AUTORIZADO.getValue()));
-        parametros.add(new ParametroPesquisaIgual("pontoVenda.componentes.codigoPessoa", cnpjEmit));
-        parametros.add(
-                new ParametroPesquisaOr(
-                        new ParametroPesquisaIgual("frota.cnpj", cnpjDest),
-                        new ParametroPesquisaIgual("unidade.cnpj", cnpjDest),
-                        new ParametroPesquisaIgual("empresaAgregada.cnpj", cnpjDest)
-                )
-        );
-        parametros.add(new ParametroPesquisaIgual("statusNotaFiscal", StatusNotaFiscalAbastecimento.PENDENTE.getValue()));
-        parametros.add(new ParametroPesquisaDataMenorOuIgual("dataProcessamento", UtilitarioCalculoData.obterUltimoInstanteDia(dataEmissao)));
-        parametros.add(new ParametroPesquisaMenorOuIgual("valorTotal", valorTotalNota.add(toleranciaDeValorNota)));
-        parametros.add(new ParametroPesquisaMaiorOuIgual("valorTotal", valorTotalNota.subtract(toleranciaDeValorNota)));
+        parametros.add(new ParametroPesquisaIgual("dataEmissao", UtilitarioCalculoData.obterUltimoInstanteDia(dataEmissao)));
+        parametros.add(new ParametroPesquisaIgual("cnpjEmit", cnpjEmit));
+        parametros.add(new ParametroPesquisaIgual("cnpjDest", cnpjDest));
+        parametros.add(new ParametroPesquisaIgual("limiteSuperiorTotalNf", valorTotalNota.add(toleranciaDeValorNota)));
+        parametros.add(new ParametroPesquisaIgual("limiteInferiorTotalNf", valorTotalNota.subtract(toleranciaDeValorNota)));
 
-        return pesquisar((InformacaoPaginacao) null, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+        return pesquisar((InformacaoPaginacao) null, CONSULTA_ABASTECIMENTOS_POR_NFE, AutorizacaoPagamento.class,
+                parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
 
     /**
