@@ -2,6 +2,10 @@ package ipp.aci.boleia.dominio.vo;
 
 import ipp.aci.boleia.dominio.pesquisa.comum.BaseFiltroPaginado;
 
+/**
+ * Filtro para pesquisa de cota do veiculo
+ */
+
 public class FiltroPesquisaCotaVeiculoVo extends BaseFiltroPaginado {
 
     private String placa;
