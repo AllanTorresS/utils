@@ -5,6 +5,7 @@ import ipp.aci.boleia.dominio.AutorizacaoPagamento;
 import ipp.aci.boleia.dominio.EmpresaAgregada;
 import ipp.aci.boleia.dominio.TransacaoConsolidada;
 import ipp.aci.boleia.dominio.Unidade;
+import ipp.aci.boleia.dominio.enums.TipoAutorizacaoPagamento;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaAbastecimentoVo;
 import ipp.aci.boleia.dominio.vo.QuantidadeAbastecidaVeiculoVo;
@@ -288,11 +289,11 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
     AutorizacaoPagamento buscaPorCdCTA(Long cdCTA);
 
     /**
-     * Obtem um abastecimento pelo numero do pedido
+     * Obtém um abastecimento POS pelo número do pedido
      * @param idPedido id do pedido
-     * @return abastecimento pertencente ao pedido fornecido
+     * @return abastecimento POS associado ao pedido fornecido
      */
-	AutorizacaoPagamento obterAbastecimentoPorCdPedido(Long idPedido);
+	AutorizacaoPagamento obterAbastecimentoPosPorPedido(Long idPedido);
 
     /**
      * Obtem uma lista de abastecimentos que estao autorizados porem com transacao pendente de confirmacao

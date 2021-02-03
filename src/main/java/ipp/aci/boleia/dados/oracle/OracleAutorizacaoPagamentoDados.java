@@ -134,6 +134,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                     "INNER JOIN abast.pedido ped " +
                     "INNER JOIN ped.transacoesFrotasLeves tfl " +
                     "WHERE abast.status = " + StatusAutorizacao.AUTORIZADO.getValue() +
+                    " AND abast.tipoAutorizacaoPagamento = " + TipoAutorizacaoPagamento.POS_FL.getValue() +
                     " AND tfl.statusConfirmacao = " + StatusConfirmacaoTransacao.NAO_CONFIRMADO.getValue() +
                     " AND tfl.dataRequisicao BETWEEN :limiteInferiorData AND :limiteSuperiorData";
 
@@ -662,9 +663,10 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     }
 
     @Override
-    public AutorizacaoPagamento obterAbastecimentoPorCdPedido(Long idPedido) {
+    public AutorizacaoPagamento obterAbastecimentoPosPorPedido(Long idPedido) {
         return pesquisarUnico(
                 new ParametroPesquisaIgual("pedido.id", idPedido),
+                new ParametroPesquisaIgual("tipoAutorizacaoPagamento", TipoAutorizacaoPagamento.POS_FL.getValue()),
                 new ParametroPesquisaIgual("status", StatusAutorizacao.AUTORIZADO.getValue()),
                 new ParametroPesquisaMaior("valorTotal", BigDecimal.ZERO),
                 new ParametroPesquisaNulo("idAutorizacaoEstorno")
