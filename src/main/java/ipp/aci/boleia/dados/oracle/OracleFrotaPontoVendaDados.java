@@ -18,7 +18,6 @@ import ipp.aci.boleia.dominio.vo.AutorizacaoPagamentoOrfaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaPostoCredenciadoVo;
 import ipp.aci.boleia.util.Ordenacao;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
-import ipp.aci.boleia.util.seguranca.UtilitarioIsolamentoInformacoes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 

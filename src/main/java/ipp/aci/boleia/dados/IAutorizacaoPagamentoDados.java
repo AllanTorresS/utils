@@ -5,7 +5,6 @@ import ipp.aci.boleia.dominio.AutorizacaoPagamento;
 import ipp.aci.boleia.dominio.EmpresaAgregada;
 import ipp.aci.boleia.dominio.TransacaoConsolidada;
 import ipp.aci.boleia.dominio.Unidade;
-import ipp.aci.boleia.dominio.enums.TipoAutorizacaoPagamento;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaAbastecimentoVo;
 import ipp.aci.boleia.dominio.vo.QuantidadeAbastecidaVeiculoVo;
