@@ -95,8 +95,13 @@ public class OracleUsuarioDados extends OracleRepositorioBoleiaDados<Usuario> im
         StringBuilder query = new StringBuilder(QUERY_PESQUISA_PAGINADA);
         povoarParametrosPesquisa(parametros, query);
         montarParametrosOrdenacao(filtro, query);
-        return pesquisar(filtro.getPaginacao(), query.toString(),
-                parametros.values().toArray(new ParametroPesquisa[parametros.size()]));
+        if (isolamentoDados) {
+            return pesquisar(filtro.getPaginacao(), query.toString(),
+                    parametros.values().toArray(new ParametroPesquisa[parametros.size()]));
+        } else {
+            return pesquisarSemIsolamentoDados(filtro.getPaginacao(), query.toString(),
+                    parametros.values().toArray(new ParametroPesquisa[parametros.size()]));
+        }
     }
 
     @Override
