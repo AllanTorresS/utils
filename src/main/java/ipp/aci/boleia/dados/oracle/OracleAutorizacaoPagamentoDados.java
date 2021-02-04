@@ -1202,8 +1202,11 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         List<ParametroPesquisa> parametros = new ArrayList<>();
         parametros.add(new ParametroPesquisaIgual("idConsolidado", filtro.getIdConsolidado()));
         parametros.add(new ParametroPesquisaIgual("dataRequisicao", filtro.getDataAbastecimento()));
-        parametros.add(new ParametroPesquisaIgual("placaVeiculo", filtro.getPlacaVeiculo()));
-
+        if(filtro.getPlacaVeiculo() != null) {
+            parametros.add(new ParametroPesquisaIgual("placaVeiculo", filtro.getPlacaVeiculo().toLowerCase()));
+        } else {
+            parametros.add(new ParametroPesquisaIgual("placaVeiculo", null));
+        }
         if(filtro.getNotaFiscalEmitida() != null && filtro.getNotaFiscalEmitida()){
             parametros.add(new ParametroPesquisaIgual("statusNotaFiscal", StatusNotaFiscalAbastecimento.EMITIDA.getValue()));
         } else if (filtro.getNotaFiscalEmitida() != null && !filtro.getNotaFiscalEmitida()) {
