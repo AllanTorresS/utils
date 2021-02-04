@@ -1,6 +1,6 @@
 package ipp.aci.boleia.dados.oracle;
 
-import ipp.aci.boleia.dados.IHistoricoFrotaParametroSistemaHodometroHorimetro;
+import ipp.aci.boleia.dados.IHistoricoFrotaParametroSistemaHodometroHorimetroDados;
 import ipp.aci.boleia.dominio.HistoricoFrotaParametroSistemaHodometroHorimetro;
 import org.springframework.stereotype.Repository;
 
@@ -10,12 +10,12 @@ import org.springframework.stereotype.Repository;
  * @author rafael.laranjeiro
  */
 @Repository
-public class OracleHistoricoFrotaParametroSistemaHodometroHorimetro extends OracleRepositorioBoleiaDados<HistoricoFrotaParametroSistemaHodometroHorimetro> implements IHistoricoFrotaParametroSistemaHodometroHorimetro {
+public class OracleHistoricoFrotaParametroSistemaHodometroHorimetroDados extends OracleRepositorioBoleiaDados<HistoricoFrotaParametroSistemaHodometroHorimetro> implements IHistoricoFrotaParametroSistemaHodometroHorimetroDados {
 
     /**
      * Construtor do repositório.
      */
-    public OracleHistoricoFrotaParametroSistemaHodometroHorimetro() {
+    public OracleHistoricoFrotaParametroSistemaHodometroHorimetroDados() {
         super(HistoricoFrotaParametroSistemaHodometroHorimetro.class);
     }
 }

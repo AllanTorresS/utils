@@ -7,5 +7,5 @@ import ipp.aci.boleia.dominio.HistoricoFrotaParametroSistemaHodometroHorimetro;
  *
  * @author rafael.laranjeiro
  */
-public interface IHistoricoFrotaParametroSistemaHodometroHorimetro extends IRepositorioBoleiaDados<HistoricoFrotaParametroSistemaHodometroHorimetro> {
+public interface IHistoricoFrotaParametroSistemaHodometroHorimetroDados extends IRepositorioBoleiaDados<HistoricoFrotaParametroSistemaHodometroHorimetro> {
 }
