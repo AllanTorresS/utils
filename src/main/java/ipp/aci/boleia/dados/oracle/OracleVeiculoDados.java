@@ -93,13 +93,13 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
         parametros.add(new ParametroPesquisaIgual("classificacao", classificacao));
         parametros.add(new ParametroPesquisaIgual("placa", filtro.getPlaca() != null ? filtro.getPlaca().toUpperCase(Locale.ROOT) : null));
         parametros.add(new ParametroPesquisaIgual("empresaAgregada", filtro.getEmpresaAgregada().getId() != null ? filtro.getEmpresaAgregada().getId() : null));
-        if (filtro.getUnidade() != null && filtro.getUnidade().getId() != null) {
-            if (filtro.getUnidade().getId() > 0) {
-                parametros.add(new ParametroPesquisaIgual("unidade", filtro.getUnidade().getId()));
-            } else {
-                parametros.add(new ParametroPesquisaNulo("unidade"));
-            }
+
+        if (filtro.getUnidade() != null && filtro.getUnidade().getId() != null && filtro.getUnidade().getId() > 0) {
+            parametros.add(new ParametroPesquisaIgual("unidade", filtro.getUnidade().getId()));
+        } else {
+            parametros.add(new ParametroPesquisaNulo("unidade"));
         }
+
 
         String ordenacao = " ";
         if (CollectionUtils.isNotEmpty(filtro.getPaginacao().getParametrosOrdenacaoColuna())) {
