@@ -10,7 +10,7 @@ import ipp.aci.boleia.dominio.Unidade;
 import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.enums.ModalidadePagamento;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
-import ipp.aci.boleia.dominio.vo.AgrupamentoTransacaoConsolidadaFrotaVo;
+import ipp.aci.boleia.dominio.vo.AgrupamentoTransacaoConsolidadaCobrancaVo;
 import ipp.aci.boleia.dominio.vo.AgrupamentoTransacaoConsolidadaPvVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheCicloVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFinanceiroVo;
@@ -286,7 +286,7 @@ public interface ITransacaoConsolidadaDados extends IRepositorioBoleiaDados<Tran
      * @param usuarioLogado O usuário que solicitou a pesquisa
      * @return A lista de transações consolidadas
      */
-    ResultadoPaginado<AgrupamentoTransacaoConsolidadaFrotaVo> pesquisarTransacoesFinanceiroFrota(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado);
+    ResultadoPaginado<AgrupamentoTransacaoConsolidadaCobrancaVo> pesquisarTransacoesPorCobranca(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado);
 
     /**
      * Obtém o total cobrado de uma frota em um período

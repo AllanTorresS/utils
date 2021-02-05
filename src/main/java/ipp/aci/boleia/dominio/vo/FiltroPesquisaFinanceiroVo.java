@@ -9,9 +9,6 @@ import java.util.List;
  * Filtro para pesquisa de transação consolidada
  */
 public class FiltroPesquisaFinanceiroVo extends FiltroBasePeriodoPaginado {
-
-    private Date de;
-    private Date ate;
     private EntidadeVo frota;
     private String razaoSocialFrota;
     private String cnpjFrota;
@@ -22,22 +19,8 @@ public class FiltroPesquisaFinanceiroVo extends FiltroBasePeriodoPaginado {
     private List<EnumVo> statusPagamento;
     private EmpresaUnidadeVo empresaUnidade;
     private Long idCobranca;
-
-    public Date getDe(){
-        return de;
-    }
-
-    public void setDe(Date de) {
-        this.de = de;
-    }
-
-    public Date getAte() {
-        return ate;
-    }
-
-    public void setAte(Date ate) {
-        this.ate = ate;
-    }
+    private EnumVo statusIntegracao;
+    private Long numeroDocumento;
 
     public EntidadeVo getFrota() {
         return frota;
@@ -117,6 +100,22 @@ public class FiltroPesquisaFinanceiroVo extends FiltroBasePeriodoPaginado {
 
     public void setIdCobranca(Long idCobranca) {
         this.idCobranca = idCobranca;
+    }
+
+    public EnumVo getStatusIntegracao() {
+        return statusIntegracao;
+    }
+
+    public void setStatusIntegracao(EnumVo statusIntegracao) {
+        this.statusIntegracao = statusIntegracao;
+    }
+
+    public Long getNumeroDocumento() {
+        return numeroDocumento;
+    }
+
+    public void setNumeroDocumento(Long numeroDocumento) {
+        this.numeroDocumento = numeroDocumento;
     }
 }
 
