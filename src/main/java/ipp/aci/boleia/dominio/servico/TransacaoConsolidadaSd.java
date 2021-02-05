@@ -746,7 +746,7 @@ public class TransacaoConsolidadaSd {
                 AutorizacaoPagamento autorizacaoCancelada = repositorioAutorizacaoPgto.obterPorId(a.getIdAutorizacaoEstorno());
                 return autorizacaoPagamentoSd.valorDaTransacaoFoiContempladoEmReembolsoGerado(autorizacaoCancelada);
             } else {
-                return !a.isPendenteEmissaoNF(true);
+                return !transacaoConsolidada.exigeEmissaoNF() || !a.isPendenteEmissaoNF(true);
             }
         });
         return somarValoresAutorizacaoPagamento(
