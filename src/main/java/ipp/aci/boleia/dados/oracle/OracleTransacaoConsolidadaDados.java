@@ -309,7 +309,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "AND r.status = " + StatusPagamentoReembolso.PAGO.getValue();
 
     private static final String CONSULTA_TOTAL_COBRANCA_PERIODO =
-            " SELECT SUM(tc.valorTotal) " +
+            " SELECT SUM(tc.valorTotal) - SUM(tc.valorDescontoAbastecimentos) " +
                     "FROM TransacaoConsolidada tc " +
                     "LEFT JOIN tc.frotaPtov fpv " +
                     "LEFT JOIN tc.cobranca c " +
@@ -985,11 +985,16 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         EmpresaAgregada empresaAgregada = abastecimento.empresaAgregadaExigeNf() ? abastecimento.getEmpresaAgregada() : null;
         Unidade unidade = abastecimento.unidadeExigeNf() ? abastecimento.getUnidade() : null;
 
-        return obterConsolidado(frota, pv, modalidadePagamento, empresaAgregada, unidade, dataReferencia);
+        return obterConsolidado(abastecimento.isFrotaExigeNF(), frota, pv, modalidadePagamento, empresaAgregada, unidade, dataReferencia);
     }
 
     @Override
     public TransacaoConsolidada obterConsolidado(Frota frota, PontoDeVenda pv, ModalidadePagamento modalidadePagamento, EmpresaAgregada empresaAgregada, Unidade unidade, Date dataReferencia) {
+        return obterConsolidado(null, frota, pv, modalidadePagamento, empresaAgregada, unidade, dataReferencia);
+    }
+
+    @Override
+    public TransacaoConsolidada obterConsolidado(Boolean frotaExigeNF, Frota frota, PontoDeVenda pv, ModalidadePagamento modalidadePagamento, EmpresaAgregada empresaAgregada, Unidade unidade, Date dataReferencia) {
         ParametroPesquisa parametroEmpresaAgregadaExigeNf = new ParametroPesquisaNulo("empresaAgregada.id");
         ParametroPesquisa parametroUnidadeExigeNf = new ParametroPesquisaNulo("unidade.id");
         if(empresaAgregada != null) {
@@ -998,15 +1003,18 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             parametroUnidadeExigeNf = new ParametroPesquisaIgual("unidade.id", unidade.getId());
         }
 
-        return pesquisarUnico (
-                new ParametroPesquisaDataMenorOuIgual("dataInicioPeriodo", dataReferencia),
-                new ParametroPesquisaDataMaiorOuIgual("dataFimPeriodo", UtilitarioCalculoData.obterPrimeiroInstanteDia(dataReferencia)),
-                new ParametroPesquisaIgual("frotaPtov.pontoVenda.id", pv.getId()),
-                new ParametroPesquisaIgual("frotaPtov.frota.id", frota.getId()),
-                new ParametroPesquisaIgual("modalidadePagamento", modalidadePagamento.getValue()),
-                parametroEmpresaAgregadaExigeNf,
-                parametroUnidadeExigeNf
-        );
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaDataMenorOuIgual("dataInicioPeriodo", dataReferencia));
+        parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataFimPeriodo", UtilitarioCalculoData.obterPrimeiroInstanteDia(dataReferencia)));
+        parametros.add(new ParametroPesquisaIgual("frotaPtov.pontoVenda.id", pv.getId()));
+        parametros.add(new ParametroPesquisaIgual("frotaPtov.frota.id", frota.getId()));
+        parametros.add(new ParametroPesquisaIgual("modalidadePagamento", modalidadePagamento.getValue()));
+        parametros.add(parametroEmpresaAgregadaExigeNf);
+        parametros.add(parametroUnidadeExigeNf);
+        if(frotaExigeNF != null) {
+            parametros.add(new ParametroPesquisaIgual("frotaExigeNF", frotaExigeNF));
+        }
+        return pesquisarUnico(parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
     @Override
@@ -1534,8 +1542,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         }
         String consulta = String.format(CONSULTA_TOTAL_COBRANCA_PERIODO, filtroStatus);
 
-        BigDecimal totalReembolso = pesquisarUnicoSemIsolamentoDados(consulta, parametros.toArray(new ParametroPesquisa[parametros.size()]));
-        return totalReembolso != null ? totalReembolso : BigDecimal.ZERO;
+        BigDecimal totalCobranca = pesquisarUnicoSemIsolamentoDados(consulta, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        return totalCobranca != null ? totalCobranca : BigDecimal.ZERO;
     }
 
     @Override
