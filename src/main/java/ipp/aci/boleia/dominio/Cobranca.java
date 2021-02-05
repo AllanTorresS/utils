@@ -6,6 +6,7 @@ import org.hibernate.annotations.Formula;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -38,6 +39,14 @@ public class Cobranca implements IPersistente, IPertenceFrota {
      * Utilizado para possibilitar a ordenação paginada pela data de vencimento vigente.
      */
     private static final String FORMULA_DATA_VENCIMENTO_VIGENTE = "CASE WHEN DT_VENC_PGTO_AJUSTADA IS NOT NULL THEN DT_VENC_PGTO_AJUSTADA ELSE DT_VENC_PGTO END";
+
+    /**
+     * Utilizados para facilitar a obtenção das informações de ajuste da cobrança.
+     */
+    private static final String FORMULA_USUARIO_ULTIMO_AJUSTE_VALOR = "(SELECT U.NM_USUARIO FROM BOLEIA_SCHEMA.AJUSTE_COBRANCA AC JOIN BOLEIA_SCHEMA.USUARIO U ON AC.CD_USUARIO = U.CD_USUARIO WHERE AC.CD_COBRANCA = CD_COBRANCA AND AC.VR_TOTAL_AJUSTE <> 0 AND AC.DT_AJUSTE = (SELECT MAX(ACI.DT_AJUSTE) FROM BOLEIA_SCHEMA.AJUSTE_COBRANCA ACI WHERE ACI.CD_COBRANCA = CD_COBRANCA AND ACI.VR_TOTAL_AJUSTE <> 0))";
+    private static final String FORMULA_DATA_ULTIMO_AJUSTE_VALOR = "(SELECT AC.DT_AJUSTE FROM BOLEIA_SCHEMA.AJUSTE_COBRANCA AC WHERE AC.CD_COBRANCA = CD_COBRANCA AND AC.VR_TOTAL_AJUSTE <> 0 AND AC.DT_AJUSTE = (SELECT MAX(ACI.DT_AJUSTE) FROM BOLEIA_SCHEMA.AJUSTE_COBRANCA ACI WHERE ACI.CD_COBRANCA = CD_COBRANCA AND ACI.VR_TOTAL_AJUSTE <> 0))";
+    private static final String FORMULA_USUARIO_ULTIMO_AJUSTE_VENCIMENTO = "(SELECT U.NM_USUARIO FROM BOLEIA_SCHEMA.AJUSTE_COBRANCA AC JOIN BOLEIA_SCHEMA.USUARIO U ON AC.CD_USUARIO = U.CD_USUARIO WHERE AC.CD_COBRANCA = CD_COBRANCA AND AC.DT_VENC_AJUSTE IS NOT NULL AND AC.DT_AJUSTE = (SELECT MAX(ACI.DT_AJUSTE) FROM BOLEIA_SCHEMA.AJUSTE_COBRANCA ACI WHERE ACI.CD_COBRANCA = CD_COBRANCA AND ACI.DT_VENC_AJUSTE IS NOT NULL))";
+    private static final String FORMULA_DATA_ULTIMO_AJUSTE_VENCIMENTO = "(SELECT AC.DT_AJUSTE FROM BOLEIA_SCHEMA.AJUSTE_COBRANCA AC WHERE AC.CD_COBRANCA = CD_COBRANCA AND AC.DT_VENC_AJUSTE IS NOT NULL AND AC.DT_AJUSTE = (SELECT MAX(ACI.DT_AJUSTE) FROM BOLEIA_SCHEMA.AJUSTE_COBRANCA ACI WHERE ACI.CD_COBRANCA = CD_COBRANCA AND ACI.DT_VENC_AJUSTE IS NOT NULL))";
 
     @Id
     @Column(name = "CD_COBRANCA")
@@ -109,6 +118,26 @@ public class Cobranca implements IPersistente, IPertenceFrota {
 
     @Column(name = "VR_DESCONTO_ABASTECIMENTOS")
     private BigDecimal valorDescontoAbastecimentos;
+
+    @NotAudited
+    @Basic(fetch = FetchType.LAZY)
+    @Formula(FORMULA_USUARIO_ULTIMO_AJUSTE_VALOR)
+    private String usuarioUltimoAjusteValor;
+
+    @NotAudited
+    @Basic(fetch = FetchType.LAZY)
+    @Formula(FORMULA_DATA_ULTIMO_AJUSTE_VALOR)
+    private Date dataUltimoAjusteValor;
+
+    @NotAudited
+    @Basic(fetch = FetchType.LAZY)
+    @Formula(FORMULA_USUARIO_ULTIMO_AJUSTE_VENCIMENTO)
+    private String usuarioUltimoAjusteVencimento;
+
+    @NotAudited
+    @Basic(fetch = FetchType.LAZY)
+    @Formula(FORMULA_DATA_ULTIMO_AJUSTE_VENCIMENTO)
+    private Date dataUltimoAjusteVencimento;
 
     @Override
     public Long getId() {
@@ -288,6 +317,38 @@ public class Cobranca implements IPersistente, IPertenceFrota {
 
     public void setNumeroTentativasEnvio(Integer numeroTentativasEnvio) {
         this.numeroTentativasEnvio = numeroTentativasEnvio;
+    }
+
+    public String getUsuarioUltimoAjusteValor() {
+        return usuarioUltimoAjusteValor;
+    }
+
+    public void setUsuarioUltimoAjusteValor(String usuarioUltimoAjusteValor) {
+        this.usuarioUltimoAjusteValor = usuarioUltimoAjusteValor;
+    }
+
+    public Date getDataUltimoAjusteValor() {
+        return dataUltimoAjusteValor;
+    }
+
+    public void setDataUltimoAjusteValor(Date dataUltimoAjusteValor) {
+        this.dataUltimoAjusteValor = dataUltimoAjusteValor;
+    }
+
+    public String getUsuarioUltimoAjusteVencimento() {
+        return usuarioUltimoAjusteVencimento;
+    }
+
+    public void setUsuarioUltimoAjusteVencimento(String usuarioUltimoAjusteVencimento) {
+        this.usuarioUltimoAjusteVencimento = usuarioUltimoAjusteVencimento;
+    }
+
+    public Date getDataUltimoAjusteVencimento() {
+        return dataUltimoAjusteVencimento;
+    }
+
+    public void setDataUltimoAjusteVencimento(Date dataUltimoAjusteVencimento) {
+        this.dataUltimoAjusteVencimento = dataUltimoAjusteVencimento;
     }
 
     /**

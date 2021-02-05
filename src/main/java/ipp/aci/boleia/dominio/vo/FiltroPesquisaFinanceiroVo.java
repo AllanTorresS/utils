@@ -19,9 +19,8 @@ public class FiltroPesquisaFinanceiroVo extends FiltroBasePeriodoPaginado {
     private List<EnumVo> statusPagamento;
     private EmpresaUnidadeVo empresaUnidade;
     private Long idCobranca;
-    private EnumVo statusNotaFiscal;
     private EnumVo statusIntegracao;
-    private String numeroDocumento;
+    private Long numeroDocumento;
 
     public EntidadeVo getFrota() {
         return frota;
@@ -103,14 +102,6 @@ public class FiltroPesquisaFinanceiroVo extends FiltroBasePeriodoPaginado {
         this.idCobranca = idCobranca;
     }
 
-    public EnumVo getStatusNotaFiscal() {
-        return statusNotaFiscal;
-    }
-
-    public void setStatusNotaFiscal(EnumVo statusNotaFiscal) {
-        this.statusNotaFiscal = statusNotaFiscal;
-    }
-
     public EnumVo getStatusIntegracao() {
         return statusIntegracao;
     }
@@ -119,11 +110,11 @@ public class FiltroPesquisaFinanceiroVo extends FiltroBasePeriodoPaginado {
         this.statusIntegracao = statusIntegracao;
     }
 
-    public String getNumeroDocumento() {
+    public Long getNumeroDocumento() {
         return numeroDocumento;
     }
 
-    public void setNumeroDocumento(String numeroDocumento) {
+    public void setNumeroDocumento(Long numeroDocumento) {
         this.numeroDocumento = numeroDocumento;
     }
 }
