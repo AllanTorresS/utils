@@ -135,19 +135,6 @@ public interface ITransacaoConsolidadaDados extends IRepositorioBoleiaDados<Tran
     TransacaoConsolidada obterConsolidado(Frota frota, PontoDeVenda pv, ModalidadePagamento modalidadePagamento, EmpresaAgregada empresaAgregada, Unidade unidade, Date dataReferencia);
 
     /**
-     * Busca um consolidado que atenda um conjunto de características.
-     *
-     * @param frota Frota da transação consolidada.
-     * @param pv Ponto de venda da transação consolidada.
-     * @param modalidadePagamento Modalidade de pagamento.
-     * @param empresaAgregada Empresa agregada vinculada a transação consolidada.
-     * @param unidade Unidade vinculada a transação consolidada.
-     * @param dataReferencia Data de referência da transação consolidada.
-     * @return A transação consolidada encontrada.
-     */
-    TransacaoConsolidada obterConsolidado(Boolean frotaExigeNF, Frota frota, PontoDeVenda pv, ModalidadePagamento modalidadePagamento, EmpresaAgregada empresaAgregada, Unidade unidade, Date dataReferencia);
-
-    /**
      * Método que realiza a pesquisa de transações consolidadas para Notas Fiscais no contexto da API
      * do Frotista.
      * 
