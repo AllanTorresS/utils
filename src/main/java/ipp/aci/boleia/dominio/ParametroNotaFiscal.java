@@ -14,7 +14,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
@@ -35,15 +34,12 @@ public class ParametroNotaFiscal implements IPersistente {
     @JoinColumn(name = "CD_FROTA")
     private Frota frota;
 
-    @NotNull
     @Column(name = "ID_COMB_PROD_SERV")
     private Boolean separarPorCombustivelProdutoServico;
 
-    @NotNull
     @Column(name = "ID_LOCAL_DESTINO")
     private Integer localDestino;
 
-    @NotNull
     @Column(name = "ID_TIPO_AGRUPAMENTO")
     private Integer nfTipoAgrupamento;
 
