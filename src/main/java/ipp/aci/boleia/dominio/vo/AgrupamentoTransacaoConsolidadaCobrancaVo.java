@@ -24,6 +24,7 @@ public class AgrupamentoTransacaoConsolidadaCobrancaVo {
     private Integer statusPagamento;
     private Long quantidadeAbastecimentos;
     private Date dataVencimento;
+    private Date dataLimitePagamento;
     private Date dataPagamento;
     private Date dataLimiteEmissao;
     private Boolean exigeNota;
@@ -70,7 +71,8 @@ public class AgrupamentoTransacaoConsolidadaCobrancaVo {
     public AgrupamentoTransacaoConsolidadaCobrancaVo(Long idFrota, String nomeEmpresa, Long cnpjEmpresa, Date dataInicioPeriodo, Date dataFimPeriodo,
                                                      BigDecimal valorTotal, BigDecimal valorDesconto, BigDecimal valorCobrancaAjustado,
                                                      Integer statusConsolidacao, Integer statusPagamento, Long quantidadeAbastecimentos,
-                                                     Date dataVencimento, Date dataPagamento, Date dataLimiteEmissao, Integer statusIntegracao, String mensagemErroIntegracao,
+                                                     Date dataVencimento, Date dataLimitePagamento, Date dataPagamento,
+                                                     Date dataLimiteEmissao, Integer statusIntegracao, String mensagemErroIntegracao,
                                                      Long idCobranca , Long numeroDocumento, Integer exigeNota, BigDecimal valorEmitidoNotaFiscal, BigDecimal valorTotalNotaFiscal,
                                                      String usuarioUltimoAjusteValor, Date dataUltimoAjusteValor, String usuarioUltimoAjusteVencimento, Date dataUltimoAjusteVencimento) {
         this.idFrota = idFrota;
@@ -85,6 +87,7 @@ public class AgrupamentoTransacaoConsolidadaCobrancaVo {
         this.statusPagamento = statusPagamento;
         this.quantidadeAbastecimentos = quantidadeAbastecimentos;
         this.dataVencimento = dataVencimento;
+        this.dataLimitePagamento = dataLimitePagamento;
         this.dataPagamento = dataPagamento;
         this.dataLimiteEmissao = dataLimiteEmissao;
         this.exigeNota = exigeNota == 1 ? true : false;
@@ -196,6 +199,14 @@ public class AgrupamentoTransacaoConsolidadaCobrancaVo {
 
     public void setDataVencimento(Date dataVencimento) {
         this.dataVencimento = dataVencimento;
+    }
+
+    public Date getDataLimitePagamento() {
+        return dataLimitePagamento;
+    }
+
+    public void setDataLimitePagamento(Date dataLimitePagamento) {
+        this.dataLimitePagamento = dataLimitePagamento;
     }
 
     public Boolean getExigeNota() {

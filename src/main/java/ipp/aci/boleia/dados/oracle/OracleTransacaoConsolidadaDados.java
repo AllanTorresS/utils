@@ -353,8 +353,6 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
 
     private static final String CLAUSULA_STATUS_PAGAMENTO = "CASE WHEN C is null THEN " + A_VENCER.getValue() + " ELSE C.status END ";
 
-    private static final String CLAUSULA_DATA_VENCIMENTO = "CASE WHEN (C IS NOT NULL AND C.dataVencimentoVigente IS NOT NULL) THEN C.dataVencimentoVigente ELSE TCP.dataLimitePagamento END ";
-
     private static final String CONSULTAR_CONSOLIDADOS_POR_COBRANCA =
             "SELECT new ipp.aci.boleia.dominio.vo.AgrupamentoTransacaoConsolidadaCobrancaVo( " +
                         "F.id, " +
@@ -368,7 +366,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                         "TC.statusConsolidacao, " +
                         CLAUSULA_STATUS_PAGAMENTO + ", " +
                         "SUM(TC.quantidadeCompletaAbastecimentos), " +
-                        CLAUSULA_DATA_VENCIMENTO + ", " +
+                        "C.dataVencimentoVigente, " +
+                        "TCP.dataLimitePagamento, " +
                         "C.dataPagamento, " +
                         CLAUSULA_DATA_LIMITE_EMISSAO + ", " +
                         "MIN(C.statusIntegracaoJDE), " +
@@ -405,7 +404,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                         "TC.dataFimPeriodo, " +
                         CLAUSULA_DATA_LIMITE_EMISSAO + ", " +
                         CLAUSULA_STATUS_PAGAMENTO + ", " +
-                        CLAUSULA_DATA_VENCIMENTO + ", " +
+                        "C.dataVencimentoVigente, " +
+                        "TCP.dataLimitePagamento, " +
                         "TC.statusConsolidacao," +
                         "C.dataPagamento," +
                         "C.status," +
