@@ -18,6 +18,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Comparator;
@@ -118,6 +119,10 @@ public class Cobranca implements IPersistente, IPertenceFrota {
 
     @Column(name = "VR_DESCONTO_ABASTECIMENTOS")
     private BigDecimal valorDescontoAbastecimentos;
+
+    @NotNull
+    @Column(name = "ID_ULTIMA_COBRANCA_FROTA")
+    private boolean ultimaCobrancaFrota;
 
     @NotAudited
     @Basic(fetch = FetchType.LAZY)
@@ -309,6 +314,14 @@ public class Cobranca implements IPersistente, IPertenceFrota {
 
     public void setValorDescontoAbastecimentos(BigDecimal valorDescontoAbastecimentos) {
         this.valorDescontoAbastecimentos = valorDescontoAbastecimentos;
+    }
+
+    public boolean isUltimaCobrancaFrota() {
+        return ultimaCobrancaFrota;
+    }
+
+    public void setUltimaCobrancaFrota(boolean ultimaCobrancaFrota) {
+        this.ultimaCobrancaFrota = ultimaCobrancaFrota;
     }
 
     public Integer getNumeroTentativasEnvio() {
