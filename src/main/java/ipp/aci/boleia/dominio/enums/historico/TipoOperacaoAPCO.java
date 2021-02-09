@@ -5,8 +5,7 @@ import ipp.aci.boleia.util.i18n.IEnumComLabel;
 
 /**
  * Enumera os tipos de operações de exportação da APCO
- *
- * */
+ */
 public enum TipoOperacaoAPCO implements IEnumComLabel<TipoOperacaoAPCO> {
 	EXPORTAR_FROTA(0),
 	EXPORTAR_VINCULO(1),
