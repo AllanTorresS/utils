@@ -409,14 +409,6 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
     ResultadoPaginado<AutorizacaoPagamento> pesquisaPaginadaDetalheCobranca(FiltroPesquisaDetalheCobrancaVo filtro);
 
     /**
-     * Obtem a quantidade de notas fiscais associadas a transações pertencentes a um ciclo
-     * ou agrupamento de ciclos 
-     * @param filtro o filtro de pesquisa informado
-     * @return A quantidade de notas fiscais
-     */
-    Long obterQuantidadeNotasAgrupamento(FiltroPesquisaQtdTransacoesFrotaVo filtro);
-
-    /**
      * Realiza pesquisa sem paginação para obtenção de todos os abastecimentos do ciclo
      * filtrados de acordo com parâmetros de pesquisa
      * @param filtro O filtro fornecido
