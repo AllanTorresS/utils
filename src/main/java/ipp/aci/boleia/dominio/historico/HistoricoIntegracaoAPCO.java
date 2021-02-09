@@ -3,6 +3,7 @@ package ipp.aci.boleia.dominio.historico;
 
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.Where;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.Column;
@@ -21,6 +22,7 @@ import java.util.Date;
  */
 @Audited
 @Entity
+@Where(clause = "excluido = 0")
 @Table(name = "HISTORICO_INTEGRACAO_APCO")
 public class HistoricoIntegracaoAPCO  implements IPersistente {
 
