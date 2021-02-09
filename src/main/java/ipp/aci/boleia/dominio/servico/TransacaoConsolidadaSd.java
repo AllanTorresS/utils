@@ -45,6 +45,7 @@ import ipp.aci.boleia.util.excecao.ExcecaoSemConteudo;
 import ipp.aci.boleia.util.excecao.ExcecaoValidacao;
 import ipp.aci.boleia.util.i18n.Mensagens;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
+import ipp.aci.boleia.util.seguranca.UtilitarioCriptografia;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,6 +56,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -1195,5 +1197,28 @@ public class TransacaoConsolidadaSd {
         prazosConsolidado.setPossuiPrazoAjuste(possuiPrazoAjuste);
 
         return prazosConsolidado;
+    }
+
+    /**
+     * Gera uma chave identificadora codificada com informações do ciclo
+     * @param dataInicioPeriodo A data de início do ciclo
+     * @param dataFimPeriodo A data de fim do ciclo
+     * @param idFrota O identificador da frota
+     * @return A chave codificada
+     */
+    public String gerarChaveIdentificadoraCodificadaAgrupamentoCiclos(Date dataInicioPeriodo, Date dataFimPeriodo, Long idFrota) {
+        String chave = dataInicioPeriodo.getTime() + "|" +
+                       dataFimPeriodo.getTime() + "|" +
+                       idFrota.toString();
+        return UtilitarioCriptografia.toBase64(chave.getBytes(StandardCharsets.UTF_8));
+    }
+
+    /**
+     * Decodifica a chave identificadora de agrupamento de ciclos
+     * @param chave A chave codificada
+     * @return A chave decodificada
+     */
+    public String decodificarChaveIdentificadoraAgrupamentoCiclos(String chave) {
+        return new String(UtilitarioCriptografia.fromBase64(chave));
     }
 }

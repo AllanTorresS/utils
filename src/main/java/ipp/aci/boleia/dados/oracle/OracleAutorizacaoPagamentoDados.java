@@ -172,7 +172,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                     "AND (a.dataRequisicao >= :dataRequisicaoDe OR :dataRequisicaoDe IS NULL) " +
                     "AND (a.dataRequisicao <= :dataRequisicaoAte OR :dataRequisicaoAte IS NULL) " +
                     "AND (" + String.format(TO_LOWER, String.format(REMOVER_ACENTO, "a.placaVeiculo")) + " LIKE :placaVeiculo OR :placaVeiculo IS NULL) ";
-    
+
     private static final String CLAUSULA_STATUS_AUTORIZACAO = 
             " AND ((A.status = 1 AND (A.valorTotal > 0 OR " +
             " ((SELECT AB.transacaoConsolidada.id FROM AutorizacaoPagamento AB WHERE AB.id = A.idAutorizacaoEstorno) <> A.transacaoConsolidada.id AND A.transacaoConsolidada.quantidadeAbastecimentos > 0))) " +
@@ -181,13 +181,23 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     private static final String CONSULTA_ABASTECIMENTOS_COBRANCA = 
             "SELECT DISTINCT A " +
                     "FROM AutorizacaoPagamento A " +
+                    "LEFT JOIN A.notasFiscais NF" +
                     " WHERE " +
-                    " (A.transacaoConsolidada.id = :idConsolidado OR A.transacaoConsolidadaPostergada.id = :idConsolidado) " +
+                    " (:idConsolidado IS NULL OR A.transacaoConsolidada.id = :idConsolidado OR A.transacaoConsolidadaPostergada.id = :idConsolidado) " +
                     CLAUSULA_STATUS_AUTORIZACAO +
                     " AND (:dataRequisicao IS NULL OR TRUNC(A.dataRequisicao) = :dataRequisicao) " +
                     " AND (:idMotorista IS NULL OR A.motorista.id = :idMotorista) " +
                     " AND (:placaVeiculo IS NULL OR " + String.format(TO_LOWER, String.format(REMOVER_ACENTO, "A.placaVeiculo")) + " LIKE :placaVeiculo ) " +
                     " AND (:statusNotaFiscal IS NULL OR A.statusNotaFiscal = :statusNotaFiscal) " +
+                    " AND (:idPv IS NULL OR A.pontoVenda.id = :idPv) " +
+                    " AND (:numeroNf IS NULL OR LOWER(NF.numero) LIKE :numeroNf) " +
+                    " AND (:serieNf IS NULL OR LOWER(NF.numeroSerie) LIKE :serieNf) " +
+                    " AND (:idFrota IS NULL OR A.frota.id = :idFrota) " +
+                    " AND (" +
+                            "(:dataInicioPeriodo IS NULL AND :dataFimPeriodo IS NULL) " +
+                                " OR (:dataInicioPeriodo <= TRUNC(A.dataRequisicao) AND :dataFimPeriodo >= TRUNC(A.dataRequisicao)" +
+                        ")" +
+                    ")" +
                     " %s " +
                     " ORDER BY %s ";
 
@@ -1180,7 +1190,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
      */
     private String montarOrdenacaoDetalheCobranca(FiltroPesquisaDetalheCobrancaVo filtro) {
         String ordenacao = "";
-        if(filtro.getPaginacao() == null || filtro.getPaginacao().getParametrosOrdenacaoColuna().isEmpty()) {
+        if((filtro.getPaginacao() == null || filtro.getPaginacao().getParametrosOrdenacaoColuna().isEmpty())) {
             ordenacao = " CASE WHEN A.transacaoConsolidadaPostergada IS NOT NULL AND A.status = 1 THEN 0 " +
                     "     WHEN A.transacaoConsolidadaPostergada IS NOT NULL AND A.status <> 1 THEN 1 " +
                     "     WHEN A.transacaoConsolidadaPostergada IS NULL AND (A.statusEdicao = 1 OR A.status = -1) THEN 2 " +
@@ -1200,8 +1210,18 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
      */
     private List<ParametroPesquisa> montarParametrosPesquisaDetalheCobranca(FiltroPesquisaDetalheCobrancaVo filtro) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
-        parametros.add(new ParametroPesquisaIgual("idConsolidado", filtro.getIdConsolidado()));
-        parametros.add(new ParametroPesquisaIgual("dataRequisicao", filtro.getDataAbastecimento()));
+
+        if(filtro.getIdConsolidado() != null) {
+            parametros.add(new ParametroPesquisaIgual("idConsolidado", filtro.getIdConsolidado()));
+        } else {
+            parametros.add(new ParametroPesquisaIgual("idConsolidado", null));
+        }
+        if(filtro.getDataAbastecimento() != null) {
+            parametros.add(new ParametroPesquisaIgual("dataRequisicao", filtro.getDataAbastecimento()));
+        } else {
+            parametros.add(new ParametroPesquisaIgual("dataRequisicao", null));
+        }
+
         if(filtro.getPlacaVeiculo() != null) {
             parametros.add(new ParametroPesquisaIgual("placaVeiculo", filtro.getPlacaVeiculo().toLowerCase()));
         } else {
@@ -1220,6 +1240,41 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         } else {
             parametros.add(new ParametroPesquisaIgual("idMotorista", null));
         }
+
+        if(filtro.getPontoVenda() != null) {
+            parametros.add(new ParametroPesquisaIgual("idPv", filtro.getPontoVenda().getId()));
+        } else {
+            parametros.add(new ParametroPesquisaIgual("idPv", null));
+        }
+
+        if(filtro.getNumeroNf() != null) {
+            parametros.add(new ParametroPesquisaIgual("numeroNf", "%" + filtro.getNumeroNf() + "%"));
+        } else {
+            parametros.add(new ParametroPesquisaIgual("numeroNf", null));
+        }
+        if(filtro.getNumeroSerieNf() != null) {
+            parametros.add(new ParametroPesquisaIgual("serieNf", "%" + filtro.getNumeroSerieNf() + "%"));
+        } else {
+            parametros.add(new ParametroPesquisaIgual("serieNf", null));
+        }
+
+        if(filtro.getDataInicioPeriodo() != null) {
+            parametros.add(new ParametroPesquisaIgual("dataInicioPeriodo", filtro.getDataInicioPeriodo()));
+        } else {
+            parametros.add(new ParametroPesquisaIgual("dataInicioPeriodo", null));
+        }
+        if(filtro.getDataFimPeriodo() != null) {
+            parametros.add(new ParametroPesquisaIgual("dataFimPeriodo", filtro.getDataFimPeriodo()));
+        } else {
+            parametros.add(new ParametroPesquisaIgual("dataFimPeriodo", null));
+        }
+
+        if(filtro.getIdFrota() != null) {
+            parametros.add(new ParametroPesquisaIgual("idFrota", filtro.getIdFrota()));
+        } else {
+            parametros.add(new ParametroPesquisaIgual("idFrota", null));
+        }
+
 
         return parametros;
     }
