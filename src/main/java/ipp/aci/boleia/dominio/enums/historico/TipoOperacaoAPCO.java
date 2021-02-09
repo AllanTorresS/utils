@@ -1,10 +1,11 @@
-package ipp.aci.boleia.dominio.enums;
+package ipp.aci.boleia.dominio.enums.historico;
 
 
 import ipp.aci.boleia.util.i18n.IEnumComLabel;
 
 /**
  * Enumera os tipos de operações de exportação da APCO
+ *
  * */
 public enum TipoOperacaoAPCO implements IEnumComLabel<TipoOperacaoAPCO> {
 	EXPORTAR_FROTA(0),
@@ -32,7 +33,7 @@ public enum TipoOperacaoAPCO implements IEnumComLabel<TipoOperacaoAPCO> {
 	 * @return Enum para o valor
 	 */
 	public static TipoOperacaoAPCO obterPorValor(Integer value) {
-		for(TipoOperacaoAPCO tipoOperacaoAPCO  : TipoOperacaoAPCO.values()) {
+		for(TipoOperacaoAPCO tipoOperacaoAPCO : TipoOperacaoAPCO.values()) {
 			if(tipoOperacaoAPCO.value.equals(value)) {
 				return tipoOperacaoAPCO;
 			}

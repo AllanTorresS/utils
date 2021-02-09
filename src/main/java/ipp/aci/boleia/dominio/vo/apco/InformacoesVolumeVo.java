@@ -22,7 +22,6 @@ public class InformacoesVolumeVo {
 	 */
 	public InformacoesVolumeVo(){
 		// serializacao json
-
 	}
 
 	/**
