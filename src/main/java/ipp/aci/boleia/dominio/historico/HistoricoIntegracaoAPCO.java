@@ -22,7 +22,7 @@ import java.util.Date;
  */
 @Audited
 @Entity
-@Where(clause = "excluido = 0")
+@Where(clause = "ID_EXCLUIDO = 0")
 @Table(name = "HISTORICO_INTEGRACAO_APCO")
 public class HistoricoIntegracaoAPCO  implements IPersistente {
 
