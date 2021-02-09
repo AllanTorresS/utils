@@ -373,6 +373,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                         "MIN(C.statusIntegracaoJDE), " +
                         "MIN(C.mensagemErro), " +
                         "C.id, " +
+                        "C.ultimaCobrancaFrota, " +
                         "MIN(C.numeroDocumento), " +
                         "MAX(CASE WHEN " + CLAUSULA_EXIGE_NOTA + " THEN 1 ELSE 0 END), " +
                         "SUM(CASE WHEN " + CLAUSULA_EXIGE_NOTA + " THEN TC.valorEmitidoNotaFiscal ELSE TC.valorTotalNotaFiscal END), " +
@@ -409,7 +410,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                         "TC.statusConsolidacao," +
                         "C.dataPagamento," +
                         "C.status," +
-                        "C.id " +
+                        "C.id, " +
+                        "C.ultimaCobrancaFrota " +
                     "ORDER BY %s ";
 
     private static final String CONSULTA_PONTOS_GRAFICO =

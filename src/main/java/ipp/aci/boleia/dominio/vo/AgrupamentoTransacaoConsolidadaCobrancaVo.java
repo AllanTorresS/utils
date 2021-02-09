@@ -33,6 +33,7 @@ public class AgrupamentoTransacaoConsolidadaCobrancaVo {
     private EnumVo statusIntegracao;
     private String mensagemErroIntegracao;
     private Long idCobranca;
+    private boolean ultimaCobrancaFrota;
     private Long numeroDocumento;
     private String usuarioUltimoAjusteValor;
     private Date dataUltimoAjusteValor;
@@ -61,19 +62,25 @@ public class AgrupamentoTransacaoConsolidadaCobrancaVo {
      * @param dataVencimento A data de vencimento da cobrança
      * @param statusIntegracao o status da integração da cobrança
      * @param idCobranca o id da cobrança
+     * @param ultimaCobrancaFrota Flag informando se a cobrança é a ultima gerada para a frota
      * @param numeroDocumento o número de documento da cobrança
      * @param dataPagamento A data de pagamento da cobrança
      * @param dataLimiteEmissao A data limite para emissão de nota fiscal
      * @param exigeNota Se há exigência de nota para emissão da cobrança
      * @param valorEmitidoNotaFiscal Valor total emitido
      * @param valorTotalNotaFiscal Valor total a ser emitido
+     * @param usuarioUltimoAjusteValor Nome do usuário que realizou o ultimo ajuste de valor na cobrança
+     * @param dataUltimoAjusteValor Data do ultimo ajuste de valor na cobrança
+     * @param usuarioUltimoAjusteVencimento Nome do usuário que realizou o ultimo ajuste na data de vencimento da cobrança
+     * @param dataUltimoAjusteVencimento Data do ultimo ajuste na data de vencimento da cobrança
      */
     public AgrupamentoTransacaoConsolidadaCobrancaVo(Long idFrota, String nomeEmpresa, Long cnpjEmpresa, Date dataInicioPeriodo, Date dataFimPeriodo,
                                                      BigDecimal valorTotal, BigDecimal valorDesconto, BigDecimal valorCobrancaAjustado,
                                                      Integer statusConsolidacao, Integer statusPagamento, Long quantidadeAbastecimentos,
                                                      Date dataVencimento, Date dataLimitePagamento, Date dataPagamento,
                                                      Date dataLimiteEmissao, Integer statusIntegracao, String mensagemErroIntegracao,
-                                                     Long idCobranca , Long numeroDocumento, Integer exigeNota, BigDecimal valorEmitidoNotaFiscal, BigDecimal valorTotalNotaFiscal,
+                                                     Long idCobranca, Boolean ultimaCobrancaFrota, Long numeroDocumento,
+                                                     Integer exigeNota, BigDecimal valorEmitidoNotaFiscal, BigDecimal valorTotalNotaFiscal,
                                                      String usuarioUltimoAjusteValor, Date dataUltimoAjusteValor, String usuarioUltimoAjusteVencimento, Date dataUltimoAjusteVencimento) {
         this.idFrota = idFrota;
         this.nomeEmpresa = nomeEmpresa;
@@ -90,10 +97,11 @@ public class AgrupamentoTransacaoConsolidadaCobrancaVo {
         this.dataLimitePagamento = dataLimitePagamento;
         this.dataPagamento = dataPagamento;
         this.dataLimiteEmissao = dataLimiteEmissao;
-        this.exigeNota = exigeNota == 1 ? true : false;
+        this.exigeNota = exigeNota == 1;
         this.valorEmitidoNotaFiscal = valorEmitidoNotaFiscal;
         this.valorTotalNotaFiscal = valorTotalNotaFiscal;
         this.idCobranca = idCobranca;
+        this.ultimaCobrancaFrota = ultimaCobrancaFrota != null && ultimaCobrancaFrota;
         this.numeroDocumento = numeroDocumento;
         if(statusIntegracao != null) {
             this.statusIntegracao = new EnumVo(StatusIntegracaoJde.obterPorValor(statusIntegracao));
@@ -271,6 +279,14 @@ public class AgrupamentoTransacaoConsolidadaCobrancaVo {
 
     public void setIdCobranca(Long idCobranca) {
         this.idCobranca = idCobranca;
+    }
+
+    public boolean isUltimaCobrancaFrota() {
+        return ultimaCobrancaFrota;
+    }
+
+    public void setUltimaCobrancaFrota(boolean ultimaCobrancaFrota) {
+        this.ultimaCobrancaFrota = ultimaCobrancaFrota;
     }
 
     public Long getNumeroDocumento() {
