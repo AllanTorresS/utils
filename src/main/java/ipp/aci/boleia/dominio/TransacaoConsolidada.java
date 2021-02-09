@@ -58,7 +58,6 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     private static final long serialVersionUID = 8095939439819340567L;
 
     private static final String QT_COMPLETA_ABASTECIMENTO_FORMULA = "(SELECT Q.QT_COMPLETA_ABASTECIMENTOS FROM BOLEIA_SCHEMA.V_T_CONSOL_QT_ABASTECIMENTO Q WHERE Q.CD_TRANS_CONSOL = CD_TRANS_CONSOL)";
-    private static final String QT_NOTAS_FORMULA = "(SELECT COUNT(DISTINCT NF.CD_NFE) FROM BOLEIA_SCHEMA.AUTORIZACAO_PAGAMENTO AP JOIN BOLEIA_SCHEMA.AUTORIZACAO_NOTA AN ON AP.CD_AUTORIZACAO_PAGAMENTO = AN.CD_AUTORIZACAO_PAGAMENTO JOIN BOLEIA_SCHEMA.NOTA_FISCAL NF ON (AN.CD_NFE = NF.CD_NFE AND NF.ID_JUSTIF = 0) WHERE (AP.CD_TRANS_CONSOL = CD_TRANS_CONSOL AND AP.CD_TRANS_CONSOL_POSTERGADA IS NULL) OR (AP.CD_TRANS_CONSOL_POSTERGADA = CD_TRANS_CONSOL) AND AP.ID_STATUS = 1)";
 
     @Id
     @Column(name = "CD_TRANS_CONSOL")
@@ -103,11 +102,6 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     @Formula(QT_COMPLETA_ABASTECIMENTO_FORMULA)
     @Basic(fetch = FetchType.LAZY)
     private Long quantidadeCompletaAbastecimentos;
-
-    @NotAudited
-    @Formula(QT_NOTAS_FORMULA)
-    @Basic(fetch = FetchType.LAZY)
-    private Long quantidadeNotasFiscais;
 
     @Column(name = "ID_STATUS_NF")
     private Integer statusNotaFiscal;
@@ -285,14 +279,6 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
 
     public void setQuantidadeCompletaAbastecimentos(Long quantidadeCompletaAbastecimentos) {
         this.quantidadeCompletaAbastecimentos = quantidadeCompletaAbastecimentos;
-    }
-
-    public Long getQuantidadeNotasFiscais() {
-        return quantidadeNotasFiscais;
-    }
-
-    public void setQuantidadeNotasFiscais(Long quantidadeNotasFiscais) {
-        this.quantidadeNotasFiscais = quantidadeNotasFiscais;
     }
 
     public List<AutorizacaoPagamento> getAutorizacaoPagamentos() {
