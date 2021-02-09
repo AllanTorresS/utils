@@ -1240,20 +1240,4 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         }
         return strBufferFiltroOutrosServicos.toString();
     }
-
-    @Override
-    public Long obterQuantidadeNotasAgrupamento(FiltroPesquisaQtdTransacoesFrotaVo filtro) {
-        List<ParametroPesquisa> parametros = new ArrayList<>();
-
-        parametros.add(new ParametroPesquisaIgual("idFrota", filtro.getIdFrota()));
-        parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataInicioPeriodo", filtro.getDataInicioPeriodo()));
-        parametros.add(new ParametroPesquisaDataMenorOuIgual("dataFimPeriodo", filtro.getDataFimPeriodo()));
-        parametros.add(new ParametroPesquisaIgual("statusConsolidacao", filtro.getStatusConsolidacao()));
-        parametros.add(new ParametroPesquisaIgual("idCobranca", filtro.getIdCobranca()));
-        parametros.add(new ParametroPesquisaIgual("dataLimiteEmissao", filtro.getDataLimiteEmissao()));
-        parametros.add(new ParametroPesquisaIgual("dataVencimento", filtro.getDataVencimento()));
-
-        return pesquisarUnicoSemIsolamentoDados(CONSULTA_QUANTIDADE_NOTAS, parametros.toArray(new ParametroPesquisa[parametros.size()]));
-    }
-
 }

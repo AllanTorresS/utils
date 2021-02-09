@@ -23,6 +23,7 @@ public class AgrupamentoTransacaoConsolidadaCobrancaVo {
     private Integer statusConsolidacao;
     private Integer statusPagamento;
     private Long quantidadeAbastecimentos;
+    private Long quantidadeNotasFiscais;
     private Date dataVencimento;
     private Date dataLimitePagamento;
     private Date dataPagamento;
@@ -59,6 +60,7 @@ public class AgrupamentoTransacaoConsolidadaCobrancaVo {
      * @param statusConsolidacao O status do consolidado
      * @param statusPagamento O status de pagamento da cobrança
      * @param quantidadeAbastecimentos A quantidade de abastecimentos na cobrança
+     * @param quantidadeNotasFiscais A quantidade de notas fiscais
      * @param dataVencimento A data de vencimento da cobrança
      * @param statusIntegracao o status da integração da cobrança
      * @param idCobranca o id da cobrança
@@ -76,7 +78,7 @@ public class AgrupamentoTransacaoConsolidadaCobrancaVo {
      */
     public AgrupamentoTransacaoConsolidadaCobrancaVo(Long idFrota, String nomeEmpresa, Long cnpjEmpresa, Date dataInicioPeriodo, Date dataFimPeriodo,
                                                      BigDecimal valorTotal, BigDecimal valorDesconto, BigDecimal valorCobrancaAjustado,
-                                                     Integer statusConsolidacao, Integer statusPagamento, Long quantidadeAbastecimentos,
+                                                     Integer statusConsolidacao, Integer statusPagamento, Long quantidadeAbastecimentos, Long quantidadeNotasFiscais,
                                                      Date dataVencimento, Date dataLimitePagamento, Date dataPagamento,
                                                      Date dataLimiteEmissao, Integer statusIntegracao, String mensagemErroIntegracao,
                                                      Long idCobranca, Boolean ultimaCobrancaFrota, Long numeroDocumento,
@@ -93,6 +95,7 @@ public class AgrupamentoTransacaoConsolidadaCobrancaVo {
         this.statusConsolidacao = statusConsolidacao;
         this.statusPagamento = statusPagamento;
         this.quantidadeAbastecimentos = quantidadeAbastecimentos;
+        this.quantidadeNotasFiscais = quantidadeNotasFiscais;
         this.dataVencimento = dataVencimento;
         this.dataLimitePagamento = dataLimitePagamento;
         this.dataPagamento = dataPagamento;
@@ -199,6 +202,14 @@ public class AgrupamentoTransacaoConsolidadaCobrancaVo {
 
     public void setQuantidadeAbastecimentos(Long quantidadeAbastecimentos) {
         this.quantidadeAbastecimentos = quantidadeAbastecimentos;
+    }
+
+    public Long getQuantidadeNotasFiscais() {
+        return quantidadeNotasFiscais;
+    }
+
+    public void setQuantidadeNotasFiscais(Long quantidadeNotasFiscais) {
+        this.quantidadeNotasFiscais = quantidadeNotasFiscais;
     }
 
     public Date getDataVencimento() {
