@@ -69,7 +69,7 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
             "     )" +
             "     AND (p.dataVigencia <= :dataAbastecimento OR (p.dataAtualizacao <= :dataAbastecimento AND p.dataVigencia IS NULL)) " +
             " ORDER BY " +
-            "     p.dataVigencia DESC NULLS LAST, p.dataAtualizacao ";
+            "     p.dataVigencia DESC NULLS LAST, p.dataAtualizacao DESC";
 
     @Autowired
     private UtilitarioAmbiente ambiente;
@@ -189,6 +189,7 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
 
         parametros.add(new ParametroPesquisaIgual("idCombustivel", idTipoCombustivel));
         parametros.add(new ParametroPesquisaIgual("idPontoVenda", idPontoVenda));
+        parametros.add(new ParametroPesquisaIgual("idFrota", null));
         parametros.add(new ParametroPesquisaIgual("dataAbastecimento", ambiente.buscarDataAmbiente()));
         parametros.add(new ParametroPesquisaIgual("statusValidos", statusValidos));
 
