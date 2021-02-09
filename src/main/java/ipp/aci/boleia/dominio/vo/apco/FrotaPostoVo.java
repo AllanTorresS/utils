@@ -14,7 +14,6 @@ public class FrotaPostoVo {
 
 	private Date dataInativacao;
 
-
 	/**
 	 * Construtor Default
 	 */

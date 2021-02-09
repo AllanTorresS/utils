@@ -29,5 +29,4 @@ public class OracleHistoricoErroOperacaoAPCODados extends OracleRepositorioBolei
 	public OracleHistoricoErroOperacaoAPCODados() {
 		super(HistoricoErrosOperacaoAPCO.class);
 	}
-
 }

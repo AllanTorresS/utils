@@ -11,7 +11,6 @@ public enum TipoOperacaoAPCO implements IEnumComLabel<TipoOperacaoAPCO> {
 	EXPORTAR_VINCULO(1),
 	EXPORTAR_VENDAS(2);
 
-
 	private final Integer value;
 
 	/**

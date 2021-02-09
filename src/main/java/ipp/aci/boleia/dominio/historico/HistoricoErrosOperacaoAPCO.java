@@ -50,7 +50,6 @@ public class HistoricoErrosOperacaoAPCO implements IPersistente {
 	@Size(max=3000)
 	private String descricaoErro;
 
-
 	/**
 	 * Construtor default
 	 */
@@ -75,7 +74,6 @@ public class HistoricoErrosOperacaoAPCO implements IPersistente {
 		this.dataFimLote = dataFimLote;
 		this.descricaoErro = StringUtils.truncate(descricaoErro,TAMANHO_MAXIMO_DESCRICAO_ERRO);
 	}
-
 
 	public Long getId() {
 		return id;

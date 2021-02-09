@@ -10,6 +10,4 @@ import java.util.List;
  */
 public interface IHistoricoErroOperacaoAPCODados extends IRepositorioBoleiaDados<HistoricoErrosOperacaoAPCO> {
 
-
-
 }
