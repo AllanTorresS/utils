@@ -55,7 +55,7 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
             " WHERE " +
             "     tc.id = :idCombustivel " +
             "     AND pv.id = :idPontoVenda " +
-            "     AND f.id = :idFrota " +
+            "     AND (f.id = :idFrota OR :idFrota IS NULL) " +
             "     AND p.status IN :statusValidos " +
             "     AND NOT EXISTS ( " +
             "         SELECT 1 FROM Preco p_" +
@@ -64,35 +64,12 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
             "             AND p_.precoBase.id = p.precoBase.id " +
             "             AND p_.frotaPtov.id = p.frotaPtov.id " +
             "             AND p_.status IN :statusValidos " +
-            "             AND (CASE WHEN p_.dataVigencia IS NOT NULL THEN p_.dataVigencia ELSE p.dataAtualizacao END) > (CASE WHEN p.dataVigencia IS NOT NULL THEN p.dataVigencia ELSE p.dataAtualizacao END) " +
-            "             AND (CASE WHEN p_.dataVigencia IS NOT NULL THEN p_.dataVigencia ELSE p.dataAtualizacao END) <= :dataAbastecimento" +
+            "             AND (CASE WHEN p_.dataVigencia IS NOT NULL THEN p_.dataVigencia ELSE p_.dataAtualizacao END) > (CASE WHEN p.dataVigencia IS NOT NULL THEN p.dataVigencia ELSE p.dataAtualizacao END) " +
+            "             AND (CASE WHEN p_.dataVigencia IS NOT NULL THEN p_.dataVigencia ELSE p_.dataAtualizacao END) <= :dataAbastecimento" +
             "     )" +
             "     AND (p.dataVigencia <= :dataAbastecimento OR (p.dataAtualizacao <= :dataAbastecimento AND p.dataVigencia IS NULL)) " +
             " ORDER BY " +
             "     p.dataVigencia DESC NULLS LAST, p.dataAtualizacao ";
-
-    private static final String CONSULTA_NEGOCIACOES_PROPAGACAO =
-            " SELECT p " +
-            " FROM Preco p " +
-            "     JOIN p.precoBase pb " +
-            "     JOIN pb.precoMicromercado pm " +
-            "     JOIN pm.tipoCombustivel tc " +
-            "     JOIN p.frotaPtov fptov " +
-            "     JOIN fptov.pontoVenda pv " +
-            " WHERE " +
-            "     tc.id = :idCombustivel " +
-            "     AND pv.id = :idPontoVenda " +
-            "     AND p.status IN :statusValidos " +
-            "     AND NOT EXISTS ( " +
-            "         SELECT 1 FROM Preco p_" +
-            "         WHERE " +
-            "             p_.id <> p.id " +
-            "             AND p_.precoBase.id = p.precoBase.id " +
-            "             AND p_.frotaPtov.id = p.frotaPtov.id " +
-            "             AND p_.status IN :statusValidos " +
-            "             AND (CASE WHEN p_.dataVigencia IS NOT NULL THEN p_.dataVigencia ELSE p.dataAtualizacao END) > (CASE WHEN p.dataVigencia IS NOT NULL THEN p.dataVigencia ELSE p.dataAtualizacao END) " +
-            "             AND (CASE WHEN p_.dataVigencia IS NOT NULL THEN p_.dataVigencia ELSE p.dataAtualizacao END) <= :dataAbastecimento" +
-            "     )";
 
     @Autowired
     private UtilitarioAmbiente ambiente;
@@ -215,7 +192,7 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
         parametros.add(new ParametroPesquisaIgual("dataAbastecimento", ambiente.buscarDataAmbiente()));
         parametros.add(new ParametroPesquisaIgual("statusValidos", statusValidos));
 
-        return pesquisarSemIsolamentoDados(null, CONSULTA_NEGOCIACOES_PROPAGACAO, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+        return pesquisarSemIsolamentoDados(null, CONSULTA_NEGOCIACOES_VIGENTES, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
 
 
