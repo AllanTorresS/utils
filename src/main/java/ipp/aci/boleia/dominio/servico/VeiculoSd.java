@@ -56,7 +56,7 @@ public class VeiculoSd {
         if(idFrota != null && idCombustivel != null && idPontoVenda != null) {
             preco = precoDados.obterAtualPorFrotaPvCombustivel(idFrota, idPontoVenda, idCombustivel);
         }
-        return preco != null ? preco.getPreco() : null;
+        return preco != null ? preco.getPrecoComAcordo() : null;
     }
 
     /**
@@ -73,7 +73,7 @@ public class VeiculoSd {
         if(idFrota != null && idCombustivel != null && idPontoVenda != null && dataAbastecimento!=null) {
             preco = precoDados.obterPorDataFrotaPvCombustivel(idFrota, idPontoVenda, idCombustivel, dataAbastecimento);
         }
-        return preco != null ? preco.getPreco() : null;
+        return preco != null ? preco.getPrecoComAcordo() : null;
     }
 
     /**

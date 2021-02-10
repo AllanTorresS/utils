@@ -44,7 +44,7 @@ public enum LockAgendamento {
     INTEGRACAO_APCO                                 (ConstantesDuracao.UMA_HORA, ConstantesDuracao.UM_SEGUNDO),
     VERIFICACAO_STATUS_AG_FRETE                     (ConstantesDuracao.DUAS_HORAS, ConstantesDuracao.DUAS_HORAS),
 	COBRANCA_CONECTCAR                              (ConstantesDuracao.DUAS_HORAS, ConstantesDuracao.DUAS_HORAS),
-	REEMBOLSO_CONECTCAR                             (ConstantesDuracao.DUAS_HORAS, ConstantesDuracao.DUAS_HORAS);
+    REEMBOLSO_CONECTCAR                             (ConstantesDuracao.DUAS_HORAS, ConstantesDuracao.DUAS_HORAS);
 
 	private final long duracao;
     private final long duracaoMinima;

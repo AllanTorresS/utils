@@ -126,14 +126,41 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @Column(name = "SG_UF")
     private String unidadeFederativa;
 
+    /**
+     * @deprecated
+     * Atributo legado, os assessores responsaveis agora estao dividido em tipos de consultores de negocio diferentes.
+     * No entanto o atributo nao pode ser removido pois sera migrado aos poucos.
+     */
     @Size(max=250)
     @Column(name = "NM_ASSESSOR_RESP")
+    @Deprecated
     private String assessorResponsavel;
 
+    /**
+     * @deprecated
+     * Atributo legado, os assessores responsaveis agora estao dividido em tipos de consultores de negocio diferentes.
+     * No entanto o atributo nao pode ser removido pois sera migrado aos poucos.
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_USUARIO_ASSESSOR_RESP")
     @JsonIgnoreProperties("frotasAssessoradas")
+    @Deprecated
     private Usuario usuarioAssessorResponsavel;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_USU_CONSULTOR_HUNTER")
+    @JsonIgnoreProperties("frotasAssessoradas")
+    private Usuario usuarioConsultorHunter;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_USU_CONSULTOR_FARMER_PESADO")
+    @JsonIgnoreProperties("frotasAssessoradas")
+    private Usuario usuarioConsultorFarmerPesado;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_USU_CONSULTOR_FARMER_LEVE")
+    @JsonIgnoreProperties("frotasAssessoradas")
+    private Usuario usuarioConsultorFarmerLeve;
 
     @Max(99)
     @NotNull
@@ -469,7 +496,7 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
      * @param dataCriacao Data de criação da frota
      * @param dataAtualizacao Data de atualização da frota
      * @param connectCTAToken Token do connect
-     * @param condicoesComerciais As condições comerciais da frota
+     * @param condicoesComerciais Condições comerciais do contrato da Frota com o Pró-Frotas
      */
     public Frota(Long id, Long cnpj, Integer status, String nomeRazaoFrota, String statusConvertido, String razaoSocial, String nomeFantasia, Long inscricaoEstadual, Long inscricaoMunicipal, Integer cep, String logradouro, Integer numero, String complemento, String bairro, String municipio, String unidadeFederativa, String assessorResponsavel, Usuario usuarioAssessorResponsavel, Integer dddTelefone, Long telefone, String email, String nomeResponsavelFrota, Long cpfResponsavelFrota, String cargoResponsavelFrota, Integer dddTelefoneResponsavelFrota, Long telefoneResponsavelFrota, String emailResponsavelFrota, Integer faixaQtdVeicPesados, Integer faixaQtdVeicLeves, Long volumeEstimadoDiesel, Long volumeEstimadoCicloOtto, Integer modoPagamento, Integer porte, Integer segmentoAtuacao, Integer statusContrato, String statusContratoConvertido, Date inicioContrato, Integer prazoContrato, Date dataHabilitacao, Date dataSaldoZerado, Boolean permiteAcordoEspecial, Boolean excluido, String codigoIBGE, String codCatBeneficioFiscal, Integer numeroJdeInterno, List<GrupoOperacional> gruposOperacionais, List<Veiculo> veiculos, List<Motorista> motoristas, List<Unidade> unidades, List<FrotaPontoVenda> negociacoes, ParametroCiclo parametroCiclo, SaldoFrota saldo, List<ApiToken> apiTokens, Long versao, Boolean postoInterno, Long numeroSequencialJde, Date inicioAtivacaoTemporaria, Date fimAtivacaoTemporaria, List<FrotaParametroSistema> parametrosSistema, Boolean semNotaFiscal, Date dataAceiteTermos, Boolean primeiraCompra, List<EmpresaAgregada> empresasAgregadas, List<Permissao> permissoes, Date dataCriacao, Date dataAtualizacao, String connectCTAToken, CondicoesComerciais condicoesComerciais, SituacaoConectCar situacaoConectCar, List<TagConectcar> tagsAtivas, List<TagConectcar> tagsInativas) {
         this.id = id;
@@ -690,6 +717,30 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
 
     public void setUsuarioAssessorResponsavel(Usuario usuarioAssessorResponsavel) {
         this.usuarioAssessorResponsavel = usuarioAssessorResponsavel;
+    }
+
+    public Usuario getUsuarioConsultorHunter() {
+        return usuarioConsultorHunter;
+    }
+
+    public void setUsuarioConsultorHunter(Usuario usuarioConsultorHunter) {
+        this.usuarioConsultorHunter = usuarioConsultorHunter;
+    }
+
+    public Usuario getUsuarioConsultorFarmerPesado() {
+        return usuarioConsultorFarmerPesado;
+    }
+
+    public void setUsuarioConsultorFarmerPesado(Usuario usuarioConsultorFarmerPesado) {
+        this.usuarioConsultorFarmerPesado = usuarioConsultorFarmerPesado;
+    }
+
+    public Usuario getUsuarioConsultorFarmerLeve() {
+        return usuarioConsultorFarmerLeve;
+    }
+
+    public void setUsuarioConsultorFarmerLeve(Usuario usuarioConsultorFarmerLeve) {
+        this.usuarioConsultorFarmerLeve = usuarioConsultorFarmerLeve;
     }
 
     public Integer getDddTelefone() {

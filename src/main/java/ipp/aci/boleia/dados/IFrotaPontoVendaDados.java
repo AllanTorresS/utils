@@ -3,6 +3,7 @@ package ipp.aci.boleia.dados;
 
 import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.FrotaPontoVenda;
+import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.AutorizacaoPagamentoOrfaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaPostoCredenciadoVo;
@@ -22,6 +23,8 @@ public interface IFrotaPontoVendaDados extends IRepositorioBoleiaDados<FrotaPont
 	 * @return Uma lista de entidades localizadas
 	 */
 	ResultadoPaginado<FrotaPontoVenda> pesquisarPostosCredenciados(FiltroPesquisaPostoCredenciadoVo filtro);
+
+	ResultadoPaginado<FrotaPontoVenda> pesquisarPostosCredenciadosValidacaoSegregacao(FiltroPesquisaPostoCredenciadoVo filtro, Usuario usuario);
 
 	/**
 	 * Lista as relacoes Frota x Ponto Venda nas quais o Ponto Venda possua relação com o
@@ -75,4 +78,12 @@ public interface IFrotaPontoVendaDados extends IRepositorioBoleiaDados<FrotaPont
 	 * @return uma lista contendo as associaçãoes Frota x Posto dessa frota
 	 */
 	List<FrotaPontoVenda> buscarPorFrota(Frota frota);
+
+	/**
+	 * Obtém um registro de FrotaPontoVenda a partir dos CNPJs da frota e da revenda.
+	 * @param cnpjFrota o CNPJ da frota
+	 * @param cnpjPv o CNPJ do posto
+	 * @return o objeto FrotaPontoVenda correspondente
+	 */
+	FrotaPontoVenda buscarPorCnpjFrotaCnpjPv(Long cnpjFrota, Long cnpjPv);
 }

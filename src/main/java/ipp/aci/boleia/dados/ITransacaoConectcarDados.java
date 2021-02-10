@@ -48,15 +48,15 @@ public interface ITransacaoConectcarDados extends IRepositorioBoleiaDados<Transa
 	 * Obtem uma transacao por um código de transação da conectcar
 	 * 
 	 * @param codigoTransacaoConectcar Código de transação da conectCar
-	 * @return A transação correspondente ao código de transação
+	 * @return Transação da ConnectCar
 	 */
 	TransacaoConectcar obterTransacoesPorIdConectcar(Long codigoTransacaoConectcar);
 	
 	/**
 	 * Obtem as transações de uma cobrança
 	 * 
-	 * @param idCobranca O identificador da cobrança
-	 * @return As transações relativas à cobrança
+	 * @param idCobranca Identificador da cobrança para listar as transações
+	 * @return Lista das transações relacionadas à cobrança informada
 	 */
 	List<TransacaoConectcar> obterTransacoesPorCobranca(Long idCobranca);
 
@@ -85,7 +85,6 @@ public interface ITransacaoConectcarDados extends IRepositorioBoleiaDados<Transa
      * Executa a consulta de registros baseado em um filtro de pesquisa
      *
      * @param filtro parâmetros utilizados na consulta
-     * @param usuarioLogado usuario logado que solicita a pesquisa
      * @return lista de registros encontrados
      */
     ResultadoPaginado<TransacaoConectcar> pesquisarUtilizacaoTag(FiltroPesquisaUtilizacaoTagVo filtro);

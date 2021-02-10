@@ -3,12 +3,14 @@ package ipp.aci.boleia.dados.oracle;
 import ipp.aci.boleia.dados.INegociacaoDados;
 import ipp.aci.boleia.dominio.FrotaPontoVenda;
 import ipp.aci.boleia.dominio.Negociacao;
+import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaNegociacaoVo;
+import ipp.aci.boleia.util.seguranca.UtilitarioIsolamentoInformacoes;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -58,7 +60,23 @@ public class OracleNegociacaoDados extends OracleRepositorioBoleiaDados<Negociac
             filtro.getPaginacao().getParametrosOrdenacaoColuna().add(new ParametroOrdenacaoColuna("frotaPtov.frota.nomeFantasia"));
             filtro.getPaginacao().getParametrosOrdenacaoColuna().add(new ParametroOrdenacaoColuna("frotaPtov.pontoVenda.nome"));
         }
+      
         return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+    @Override
+    public ResultadoPaginado<Negociacao> pesquisaPaginadaValidacaoSegregacao(FiltroPesquisaNegociacaoVo filtro, Usuario usuarioLogado) {
+        List<ParametroPesquisa> parametros = montarParametroPesquisa(filtro);
+        if(filtro.getPaginacao() != null
+                && filtro.getPaginacao().getParametrosOrdenacaoColuna().isEmpty()) {
+            filtro.getPaginacao().getParametrosOrdenacaoColuna().add(new ParametroOrdenacaoColuna("frotaPtov.frota.nomeFantasia"));
+            filtro.getPaginacao().getParametrosOrdenacaoColuna().add(new ParametroOrdenacaoColuna("frotaPtov.pontoVenda.nome"));
+        }
+        if(UtilitarioIsolamentoInformacoes.isUsuarioInternoAssessorOuCoordenador(usuarioLogado)){
+            return pesquisarSemIsolamentoDados(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        }else {
+            return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        }
     }
 
     @Override
