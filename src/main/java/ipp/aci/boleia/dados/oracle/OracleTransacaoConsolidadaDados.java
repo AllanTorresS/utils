@@ -414,6 +414,10 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                         "C.ultimaCobrancaFrota " +
                     "ORDER BY %s ";
 
+    private static final String COUNT_CONSULTAR_CONSOLIDADOS_POR_COBRANCA =
+            "SELECT COUNT(*) " +
+            "FROM (" + CONSULTAR_CONSOLIDADOS_POR_COBRANCA + ")";
+
     private static final String CONSULTA_PONTOS_GRAFICO =
             "SELECT new ipp.aci.boleia.dominio.vo.PontosGraficoFinanceiroVo( " +
                 "(CASE " +
@@ -1488,8 +1492,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         String ordenacao = criarParametroOrdenacaoFinanceiroFrota(filtro.getPaginacao().getParametrosOrdenacaoColuna());
 
         String consultaPesquisaGridFinanceiro = String.format(CONSULTAR_CONSOLIDADOS_POR_COBRANCA, filtroStatus, ordenacao);
-
-        return pesquisar(filtro.getPaginacao(), consultaPesquisaGridFinanceiro, AgrupamentoTransacaoConsolidadaCobrancaVo.class, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        String countPesquisaGridFinanceiro = String.format(COUNT_CONSULTAR_CONSOLIDADOS_POR_COBRANCA, filtroStatus, ordenacao);
+        return pesquisar(filtro.getPaginacao(), consultaPesquisaGridFinanceiro, countPesquisaGridFinanceiro, AgrupamentoTransacaoConsolidadaCobrancaVo.class, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
     /**
