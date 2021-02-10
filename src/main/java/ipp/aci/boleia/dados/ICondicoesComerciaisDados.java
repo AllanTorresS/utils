@@ -10,7 +10,7 @@ public interface ICondicoesComerciaisDados extends IRepositorioBoleiaDados<Condi
     /**
      * Obtem a última condição comercial por frota
      * 
-     * @param id da frota 
+     * @param idFrota da frota
      * @return CondicoesComerciais objeto pedido
      */
 	CondicoesComerciais buscarPorFrota(Long idFrota);   

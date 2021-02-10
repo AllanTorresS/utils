@@ -45,6 +45,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Collection;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -198,6 +199,18 @@ public class Usuario implements IPersistente, IExclusaoLogica, IPertenceFrota, I
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "usuarioAssessorResponsavel")
     @JsonIgnoreProperties("usuarioAssessorResponsavel")
     private List<Frota> frotasAssessoradas;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "usuarioConsultorHunter")
+    @JsonIgnoreProperties("usuarioConsultorHunter")
+    private List<Frota> frotasAssessoradasConsultorHunter;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "usuarioConsultorFarmerPesado")
+    @JsonIgnoreProperties("usuarioConsultorFarmerPesado")
+    private List<Frota> frotasAssessoradasConsultorFarmerPesado;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "usuarioConsultorFarmerLeve")
+    @JsonIgnoreProperties("usuarioConsultorFarmerLeve")
+    private List<Frota> frotasAssessoradasConsultorFarmerLeve;
 
     @Transient
     private Set<Permissao> permissoes;
@@ -468,6 +481,30 @@ public class Usuario implements IPersistente, IExclusaoLogica, IPertenceFrota, I
         this.frotasAssessoradas = frotasAssessoradas;
     }
 
+    public List<Frota> getFrotasAssessoradasConsultorHunter() {
+        return frotasAssessoradasConsultorHunter;
+    }
+
+    public void setFrotasAssessoradasConsultorHunter(List<Frota> frotasAssessoradasConsultorHunter) {
+        this.frotasAssessoradasConsultorHunter = frotasAssessoradasConsultorHunter;
+    }
+
+    public List<Frota> getFrotasAssessoradasConsultorFarmerPesado() {
+        return frotasAssessoradasConsultorFarmerPesado;
+    }
+
+    public void setFrotasAssessoradasConsultorFarmerPesado(List<Frota> frotasAssessoradasConsultorFarmerPesado) {
+        this.frotasAssessoradasConsultorFarmerPesado = frotasAssessoradasConsultorFarmerPesado;
+    }
+
+    public List<Frota> getFrotasAssessoradasConsultorFarmerLeve() {
+        return frotasAssessoradasConsultorFarmerLeve;
+    }
+
+    public void setFrotasAssessoradasConsultorFarmerLeve(List<Frota> frotasAssessoradasConsultorFarmerLeve) {
+        this.frotasAssessoradasConsultorFarmerLeve = frotasAssessoradasConsultorFarmerLeve;
+    }
+
     public Date getBloqueioTemporario() {
         return bloqueioTemporario;
     }
@@ -705,7 +742,7 @@ public class Usuario implements IPersistente, IExclusaoLogica, IPertenceFrota, I
      * @return true se o usuario for coordenador de alguma coordenadoria.
      */
     @JsonIgnore
-    private Boolean isCoordenador() {
+    public Boolean isCoordenador() {
         return !CollectionUtils.isEmpty(this.coordenadoriasCoordenador);
     }
 
@@ -717,7 +754,14 @@ public class Usuario implements IPersistente, IExclusaoLogica, IPertenceFrota, I
     @JsonIgnore
     public List<Long> listarIdsFrotasAssessoradas() {
         if (isAssessor()) {
-            return this.frotasAssessoradas.stream().map(Frota::getId).collect(Collectors.toList());
+            return Stream.of(this.frotasAssessoradas,
+                            this.frotasAssessoradasConsultorHunter,
+                            this.frotasAssessoradasConsultorFarmerPesado,
+                            this.frotasAssessoradasConsultorFarmerLeve)
+                    .flatMap(Collection::stream)
+                    .map(Frota::getId)
+                    .distinct()
+                    .collect(Collectors.toList());
         }
         return Collections.emptyList();
     }
@@ -733,11 +777,38 @@ public class Usuario implements IPersistente, IExclusaoLogica, IPertenceFrota, I
     }
 
     /**
-     * Valida se o usuario eh assessor de alguma frota.
-     * @return true se o usuario for assessor de alguma frota.
+     * Valida se o usuario eh assessor ou consultor de alguma frota.
+     * @return true se o usuario for assessor ou consultor de alguma frota.
      */
     @JsonIgnore
     public Boolean isAssessor() {
-        return !CollectionUtils.isEmpty(this.frotasAssessoradas);
+        return !CollectionUtils.isEmpty(this.frotasAssessoradas)
+                || !CollectionUtils.isEmpty(this.frotasAssessoradasConsultorHunter)
+                || !CollectionUtils.isEmpty(this.frotasAssessoradasConsultorFarmerPesado)
+                || !CollectionUtils.isEmpty(this.frotasAssessoradasConsultorFarmerLeve);
+    }
+
+    /**
+     * Valida se o usuario eh consultor de negocios hunter de alguma frota.
+     * @return true se o usuario for assessor de alguma frota.
+     */
+    public boolean isConsultorHunter() {
+        return !CollectionUtils.isEmpty(this.frotasAssessoradasConsultorHunter);
+    }
+
+    /**
+     * Valida se o usuario eh consultor de negocios farmer pesado de alguma frota.
+     * @return true se o usuario for farmer pesado de alguma frota.
+     */
+    public boolean isConsultorFarmerPesado() {
+        return !CollectionUtils.isEmpty(this.frotasAssessoradasConsultorFarmerPesado);
+    }
+
+    /**
+     * Valida se o usuario eh consultor de negocios farmer leve de alguma frota.
+     * @return true se o usuario for farmer leve de alguma frota.
+     */
+    public boolean isConsultorFarmerLeve() {
+        return !CollectionUtils.isEmpty(this.frotasAssessoradasConsultorFarmerLeve);
     }
 }

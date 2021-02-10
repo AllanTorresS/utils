@@ -302,10 +302,14 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "FROM TransacaoConsolidada tc " +
                     "LEFT JOIN tc.frotaPtov fpv " +
                     "LEFT JOIN tc.reembolso r " +
+                    "LEFT JOIN tc.empresaAgregada EA " +
+                    "LEFT JOIN tc.unidade U	" +
                     "WHERE r.dataPagamento >= :dataInicioPeriodo AND r.dataPagamento <= :dataFimPeriodo " +
                     "AND (fpv.pontoVenda.id IN :idsPvs) " +
-                    "AND (fpv.frota.id = :idFrota OR :idFrota is null) " +
-                    "AND (tc.valorTotal <> 0 OR tc.valorTotalNotaFiscal <> 0) " +
+                    "AND (fpv.frota.id = :idFrota OR :idFrota is null) AND " +
+                    CLAUSULA_UNIDADE +
+                    CLAUSULA_EMPRESA_AGREGADA +
+                    "(tc.valorTotal <> 0 OR tc.valorTotalNotaFiscal <> 0) " +
                     "AND r.status = " + StatusPagamentoReembolso.PAGO.getValue();
 
     private static final String CONSULTA_TOTAL_COBRANCA_PERIODO =
@@ -1249,6 +1253,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
     @Override
     public BigDecimal obterTotalReembolsoPeriodo(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
+        String consulta = CONSULTA_TOTAL_REEMBOLSO_PERIODO;
 
         parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataInicioPeriodo", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe())));
         parametros.add(new ParametroPesquisaDataMenorOuIgual("dataFimPeriodo", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte())));
@@ -1263,8 +1268,18 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         } else {
             parametros.add(new ParametroPesquisaIgual("idFrota", null));
         }
+        if (filtro.getEmpresaUnidade() != null && filtro.getEmpresaUnidade().getId() != null && filtro.getEmpresaUnidade().getTipo() != null && TipoEntidadeUnidadeEmpresaAgregada.UNIDADE.name().equals(filtro.getEmpresaUnidade().getTipo().getName())) {
+            parametros.add(new ParametroPesquisaIgual("unidadeId", filtro.getEmpresaUnidade().getIdUnidade()));
+        } else {
+            consulta = consulta.replace(CLAUSULA_UNIDADE, "");
+        }
+        if (filtro.getEmpresaUnidade() != null && filtro.getEmpresaUnidade().getId() != null && filtro.getEmpresaUnidade().getTipo() != null && TipoEntidadeUnidadeEmpresaAgregada.EMPRESA_AGREGADA.name().equals(filtro.getEmpresaUnidade().getTipo().getName())) {
+            parametros.add(new ParametroPesquisaIgual("empresaAgregadaId", filtro.getEmpresaUnidade().getIdEmpresaAgregada()));
+        } else {
+            consulta = consulta.replace(CLAUSULA_EMPRESA_AGREGADA, "");
+        }
 
-        BigDecimal totalReembolso = pesquisarUnicoSemIsolamentoDados(CONSULTA_TOTAL_REEMBOLSO_PERIODO, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        BigDecimal totalReembolso = pesquisarUnicoSemIsolamentoDados(consulta, parametros.toArray(new ParametroPesquisa[parametros.size()]));
         return totalReembolso != null ? totalReembolso : BigDecimal.ZERO;
     }
 

@@ -88,7 +88,7 @@ public class UtilitarioExcel {
      * @param valor valor a ser inserido na célula
      */
     private void escreverCelula(Cell celula, String valor) {
-        if(valor != null) {
+        if(valor != null && !valor.isEmpty()) {
             celula.setCellValue(valor);
         }
         else {

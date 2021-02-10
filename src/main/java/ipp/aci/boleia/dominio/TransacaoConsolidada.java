@@ -40,12 +40,10 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static ipp.aci.boleia.util.UtilitarioLambda.verificarTodosNaoNulos;
-import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 
 /**
  * Representa a tabela de Transacao Consolidada
@@ -161,6 +159,9 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     @Digits(integer = 12, fraction = 4)
     @Column(name = "VR_EMITIDO_NF")
     private BigDecimal valorEmitidoNotaFiscal;
+
+    @Column(name = "DT_ULTIMA_EMISSAO_NF")
+    private Date dataUltimaEmissaoNf;
 
     @DecimalMin("-999999999999.9999")
     @DecimalMax("999999999999.9999")
@@ -337,19 +338,15 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
         return frotaPtov != null ? frotaPtov.getPontoVenda() : null;
     }
 
-    /**
-     * Obtem o a data da última NF
-     *
-     * @return A data da última NF
-     */
-    @Transient
-    public Date getDataUltimaSubidaNF() {
-       return emptyIfNull(this.getAutorizacaoPagamentos()).stream().map(a ->
-               a.getNotasFiscais().stream().map(n -> n.getDataEmissao()).max(Date::compareTo)
-                       .orElse(null)).filter(Objects::nonNull).max(Date::compareTo).orElse(null);
+    public Date getDataUltimaEmissaoNf() {
+       return dataUltimaEmissaoNf;
     }
 
-     /**
+    public void setDataUltimaEmissaoNf(Date dataUltimaEmissaoNf) {
+        this.dataUltimaEmissaoNf = dataUltimaEmissaoNf;
+    }
+
+    /**
      * Obtem o status da consolidacao a partir da data atual
      *
      * @param dataCorrente A data atual
