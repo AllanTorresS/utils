@@ -582,8 +582,7 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
             }
 
             if(countQuery != null) {
-                resultado.setTotalItems((Integer) countQuery.getSingleResult());
-                resultado.setTotalItems(totalRegistros.size());
+                resultado.setTotalItems(((Long) countQuery.getSingleResult()).intValue());
                 resultado.setRegistros(totalRegistros);
             } else {
                 List<K> registrosPaginados = aplicarPaginacaoListaRegistros(paginacao, totalRegistros);
