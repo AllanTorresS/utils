@@ -11,6 +11,7 @@ import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.enums.ModalidadePagamento;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.AgrupamentoTransacaoConsolidadaPvVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheCicloVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFinanceiroVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaReembolsoGraficoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaReembolsoVo;
@@ -210,7 +211,8 @@ public interface ITransacaoConsolidadaDados extends IRepositorioBoleiaDados<Tran
      */
     List<PontosGraficoFinanceiroVo> obterPontosGraficoReembolsos(FiltroPesquisaReembolsoGraficoVo filtro, Usuario usuarioLogado);
 
-    /** Obtém o número de ciclos com reembolso atrasados para mostrar no banner
+    /**
+     * Obtém o número de ciclos com reembolso atrasados para mostrar no banner
      *
      * @param filtro O filtro com as informações que devem ser consideradas na busca.
      * @param usuario Usuario logado que solicita a pesquisa.
@@ -219,14 +221,19 @@ public interface ITransacaoConsolidadaDados extends IRepositorioBoleiaDados<Tran
     Integer obterNumeroReembolsosAtrasados(FiltroPesquisaFinanceiroVo filtro, Usuario usuario);
 
     /**
-     * Busca uma lista com transações consolidadas agrupadas para ponto de venda.
+     * Busca a lista dos ciclos atuais agrupados para um pv.
      *
      * @param idPv Identificador do ponto de venda.
-     * @param dataInicioPeriodo A data início utilizada na pesquisa.
-     * @param dataFimPeriodo A data fim utilizada na pesquisa.
      * @return Uma lista com as transações consolidadas agrupadas.
      */
-    List<AgrupamentoTransacaoConsolidadaPvVo> pesquisarTransacoesConsolidadasAgrupadasParaPv(Long idPv, Date dataInicioPeriodo, Date dataFimPeriodo);
+    List<AgrupamentoTransacaoConsolidadaPvVo> pesquisarCiclosAtuaisPorPv(Long idPv);
+
+    /**
+     * Busca uma lista com transações consolidadas agrupadas para ponto de venda.
+     * @param filtro o filtro com as informações que devem ser consideradas na busca.
+     * @return Uma lista com as transações consolidadas agrupadas.
+     */
+    List<AgrupamentoTransacaoConsolidadaPvVo> pesquisarDetalheCicloParaPv(FiltroPesquisaDetalheCicloVo filtro);
 
     /**
      * Altera o estado da entidade para desanexado
@@ -241,4 +248,20 @@ public interface ITransacaoConsolidadaDados extends IRepositorioBoleiaDados<Tran
      * @return lista de ciclos fechados que nao passaram por postergacao
      */
     List<TransacaoConsolidada> obterCiclosFechadosQueNaoPassaramPorPostergacao();
+
+      /**
+     * Pesquisa uma lista de transações consolidadas pertencentes a um agrupamento de ciclos.
+     *
+     * @param filtro o filtro com as informações que devem ser consideradas na busca.
+     * @return A lista de transações encontradas.
+     */
+    List<TransacaoConsolidada> pesquisarTransacoesDeAgrupamento(FiltroPesquisaDetalheCicloVo filtro);
+
+    /**
+     * Pesquisa uma lista de transações consolidadas pertencentes a um agrupamento de ciclos ordenada
+     *
+     * @param filtro o filtro com as informações que devem ser consideradas na busca.
+     * @return Lista de transações encontrada.
+     */
+    ResultadoPaginado<TransacaoConsolidada> pesquisarTransacoesDetalhamentoDeCiclo(FiltroPesquisaDetalheCicloVo filtro);
 }

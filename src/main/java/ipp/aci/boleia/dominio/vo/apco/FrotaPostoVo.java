@@ -22,7 +22,7 @@ public class FrotaPostoVo {
 	}
 
 	/**
-	 * Construtor do DTO de transações.
+	 * Construtor do VO de vínculos.
 	 *
 	 * @param codComponente o código identificador corporativo do ponto de venda
 	 * @param noSeqCliProFrota o código identificador da frota
@@ -35,12 +35,14 @@ public class FrotaPostoVo {
 	}
 
 	/**
-	 * Construtor do vo.
+	 * Construtor do VO de vínculos considerando que o conceitode inativação de vínculos atualmente
+	 * não existe no Profrotas.
 	 *
-	 * @param frotaPontoVenda Entidade utilizada na criação do vo.
+	 * @param codigoComponente o código identificador corporativo do ponto de venda
+	 * @param noSeqCliProFrota o código identificador da frota
 	 */
-	public FrotaPostoVo(FrotaPontoVenda frotaPontoVenda){
-		this(frotaPontoVenda.getPontoVenda().getComponenteAreaAbastecimento().getCodigoCorporativo(),frotaPontoVenda.getFrota().getId(),null);
+	public FrotaPostoVo(Long codigoComponente, Long noSeqCliProFrota){
+		this(codigoComponente,noSeqCliProFrota,null);
 	}
 
 	public Long getCodComponente() {

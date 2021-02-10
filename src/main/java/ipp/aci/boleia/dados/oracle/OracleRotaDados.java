@@ -42,15 +42,16 @@ public class OracleRotaDados extends OracleRepositorioBoleiaDados<Rota> implemen
             "JOIN ponto.rota rota " +
             "JOIN rota.frota frota " +
             "JOIN ponto.pontoVenda pontoVenda " +
-            "LEFT JOIN pontoVenda.negociacoes negociacoes " +
             "WHERE " +
                     "pontoVenda IS NOT NULL " +
                     "AND rota.id = r.id " +
-                    "AND negociacoes.frota.id = rota.frota.id " +
                     "AND (pontoVenda.restricaoVisibilidade <> " + RestricaoVisibilidadePontoVenda.VISIVEL_APENAS_PARA_FROTAS_COM_VINCULO_ATIVO.getValue() +
                     " OR (" +
                         "pontoVenda.restricaoVisibilidade = " + RestricaoVisibilidadePontoVenda.VISIVEL_APENAS_PARA_FROTAS_COM_VINCULO_ATIVO.getValue() +
-                        " AND negociacoes.statusVinculo = " + StatusVinculoFrotaPontoVenda.ATIVO.getValue() +
+                        " AND EXISTS (SELECT 1 FROM FrotaPontoVenda negociacoes " +
+                        "             WHERE negociacoes.frota.id = frota.id " +
+                        "                   AND negociacoes.pontoVenda.id = pontoVenda.id " +
+                        "                   AND negociacoes.statusVinculo = " + StatusVinculoFrotaPontoVenda.ATIVO.getValue() + ")" +
                     ")))";
     
     private static final String COUNT_ROTAS_COM_PV = 

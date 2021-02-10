@@ -5,13 +5,11 @@ import ipp.aci.boleia.util.i18n.IEnumComLabel;
 /**
  * Indica o status de uma consolidacao de transacoes (ciclo de fatura de abastecimentos)
  */
-public enum StatusTransacaoConsolidada implements IEnumComLabel<StatusTransacaoConsolidada> {
+public enum StatusTransacaoConsolidada implements IEnumComLabel<StatusTransacaoConsolidada>, IEnumComValor {
 
     EM_ABERTO(0),
     FECHADA(1),
-    EM_AJUSTE(2),
-    PARCIALMENTE_EMITIDA(3),
-    SEM_EMISSAO(4);
+    EM_AJUSTE(2);
 
     private final Integer value;
 
@@ -24,6 +22,7 @@ public enum StatusTransacaoConsolidada implements IEnumComLabel<StatusTransacaoC
         this.value = value;
     }
 
+    @Override
     public Integer getValue() {
         return value;
     }

@@ -1,5 +1,6 @@
 package ipp.aci.boleia.dominio.vo;
 
+import ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso;
 import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
 
 import java.beans.Transient;
@@ -23,6 +24,8 @@ public class AgrupamentoTransacaoConsolidadaPvVo {
     private BigDecimal valorDesconto;
     private BigDecimal valorTotalNf;
     private BigDecimal valorEmitidoNf;
+    private Long quantidadeAbastecimentos;
+    private Integer statusPagamentoReembolso;
 
     /**
      * Construtor default.
@@ -43,7 +46,7 @@ public class AgrupamentoTransacaoConsolidadaPvVo {
      * @param valorTotalNf Valor total da nota fiscal.
      * @param valorEmitidoNf Valoro total emitido da nota fiscal.
      */
-    public AgrupamentoTransacaoConsolidadaPvVo(Date dataInicioPeriodo, Date dataFimPeriodo, Date prazoEmissaoNotaFiscal, Integer statusConsolidacao, BigDecimal valorFaturamento, BigDecimal valorReembolso, BigDecimal valorDesconto, BigDecimal valorTotalNf, BigDecimal valorEmitidoNf) {
+    public AgrupamentoTransacaoConsolidadaPvVo(Date dataInicioPeriodo, Date dataFimPeriodo, Date prazoEmissaoNotaFiscal, Integer statusConsolidacao, BigDecimal valorFaturamento, BigDecimal valorReembolso, BigDecimal valorDesconto, BigDecimal valorTotalNf, BigDecimal valorEmitidoNf, Long quantidadeAbastecimentos, Integer statusPagamentoReembolso) {
         this.dataInicioPeriodo = dataInicioPeriodo;
         this.dataFimPeriodo = dataFimPeriodo;
         this.prazoEmissaoNotaFiscal = prazoEmissaoNotaFiscal;
@@ -54,6 +57,8 @@ public class AgrupamentoTransacaoConsolidadaPvVo {
         this.valorDesconto = valorDesconto;
         this.valorTotalNf = valorTotalNf;
         this.valorEmitidoNf = valorEmitidoNf;
+        this.quantidadeAbastecimentos = quantidadeAbastecimentos;
+        this.statusPagamentoReembolso = statusPagamentoReembolso;
     }
 
     public Date getDataInicioPeriodo() {
@@ -136,6 +141,22 @@ public class AgrupamentoTransacaoConsolidadaPvVo {
         this.valorEmitidoNf = valorEmitidoNf;
     }
 
+    public Long getQuantidadeAbastecimentos() {
+        return quantidadeAbastecimentos;
+    }
+
+    public void setQuantidadeAbastecimentos(Long quantidadeAbastecimentos) {
+        this.quantidadeAbastecimentos = quantidadeAbastecimentos;
+    }
+
+    public Integer getStatusPagamentoReembolso() {
+        return statusPagamentoReembolso;
+    }
+
+    public void setStatusPagamentoReembolso(Integer statusPagamentoReembolso) {
+        this.statusPagamentoReembolso = statusPagamentoReembolso;
+    }
+
     /**
      * Indica se uma transação consolidada está em aberto.
      * @return true caso esteja em aberto e false caso contrário.
@@ -163,4 +184,21 @@ public class AgrupamentoTransacaoConsolidadaPvVo {
         return StatusTransacaoConsolidada.FECHADA.getValue().equals(statusConsolidacao);
     }
 
+    /**
+     * Informa se o pagamento do reembolso está em aberto.
+     * @return True caso esteja em aberto.
+     */
+    @Transient
+    public boolean isReembolsoEmAberto() {
+        return StatusPagamentoReembolso.EM_ABERTO.getValue().equals(statusPagamentoReembolso);
+    }
+
+    /**
+     * Informa se o pagamento do reembolso está previsto.
+     * @return True caso esteja previsto.
+     */
+    @Transient
+    public boolean isReembolsoPrevisto() {
+        return StatusPagamentoReembolso.PREVISTO.getValue().equals(statusPagamentoReembolso);
+    }
 }

@@ -1,7 +1,7 @@
 package ipp.aci.boleia.dominio;
 
-
 import ipp.aci.boleia.dominio.enums.ModalidadePagamento;
+import ipp.aci.boleia.dominio.enums.MotivoEstorno;
 import ipp.aci.boleia.dominio.enums.StatusNotaFiscal;
 import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
@@ -37,11 +37,8 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 
 /**
  * Representa a tabela de Transacao Consolidada
@@ -150,6 +147,9 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     @Digits(integer = 12, fraction = 4)
     @Column(name = "VR_EMITIDO_NF")
     private BigDecimal valorEmitidoNotaFiscal;
+
+    @Column(name = "DT_ULTIMA_EMISSAO_NF")
+    private Date dataUltimaEmissaoNf;
 
     @DecimalMin("-999999999999.9999")
     @DecimalMax("999999999999.9999")
@@ -302,19 +302,15 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
         return frotaPtov != null ? frotaPtov.getPontoVenda() : null;
     }
 
-    /**
-     * Obtem o a data da última NF
-     *
-     * @return A data da última NF
-     */
-    @Transient
-    public Date getDataUltimaSubidaNF() {
-       return emptyIfNull(this.getAutorizacaoPagamentos()).stream().map(a ->
-               a.getNotasFiscais().stream().map(n -> n.getDataEmissao()).max(Date::compareTo)
-                       .orElse(null)).filter(Objects::nonNull).max(Date::compareTo).orElse(null);
+    public Date getDataUltimaEmissaoNf() {
+       return dataUltimaEmissaoNf;
     }
 
-     /**
+    public void setDataUltimaEmissaoNf(Date dataUltimaEmissaoNf) {
+        this.dataUltimaEmissaoNf = dataUltimaEmissaoNf;
+    }
+
+    /**
      * Obtem o status da consolidacao a partir da data atual
      *
      * @param dataCorrente A data atual
@@ -565,4 +561,61 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     public List<AutorizacaoPagamento> getAutorizacoesPagamentoAssociadas() {
         return Stream.concat(getAutorizacaoPagamentosStream(), getAutorizacoesPagamentoPostergadasStream()).collect(Collectors.toList());
     }
+
+    /**
+     *  Verifica se todos os abastecimentos do consolidados são negativos ou não
+     * @return true, caso todos sejam negativos, ou false, caso contrário
+     */
+    @Transient
+    public boolean todasTransacoesSaoNegativas(){
+        if (getQuantidadeAbastecimentos() == 0){
+            return getAutorizacoesPagamentoAssociadas().stream()
+                .filter(AutorizacaoPagamento::estaAutorizadaOuCancelada)
+                .noneMatch(autorizacaoPagamento -> autorizacaoPagamento.getValorTotal().compareTo(BigDecimal.ZERO) >= 0);
+        }
+        return false;
+    }
+
+    /**
+     *  Verifica se todos os abastecimentos do consolidados são cancelados ou não
+     * @return true, caso todos sejam cancelados, ou false, caso contrário
+     */
+    @Transient
+    public boolean todasTransacoesSaoCanceladas(){
+        boolean existeCancelado = getAutorizacoesPagamentoAssociadas().stream().anyMatch(AutorizacaoPagamento::estaCancelado);
+        return getAutorizacoesPagamentoAssociadas().stream()
+                .allMatch(autorizacaoPagamento -> (autorizacaoPagamento.estaCancelado() && 
+                    MotivoEstorno.obterPorValor(autorizacaoPagamento.getMotivoEstorno()).getSemAlteracao()) ||
+                    (autorizacaoPagamento.getValorTotal().compareTo(BigDecimal.ZERO) < 0 && existeCancelado));
+    }
+
+    /**
+     *  Verifica se todos os abastecimentos do consolidados são estornados ou não
+     * @return true, caso todos sejam estornados, ou false, caso contrário
+     */
+    @Transient
+    public boolean todasTransacoesSaoEstornadas(){
+        boolean existeCancelado = getAutorizacoesPagamentoAssociadas().stream().anyMatch(AutorizacaoPagamento::estaCancelado);
+        return getAutorizacoesPagamentoAssociadas().stream()
+                .allMatch(autorizacaoPagamento -> (autorizacaoPagamento.estaCancelado() &&
+                        !MotivoEstorno.obterPorValor(autorizacaoPagamento.getMotivoEstorno()).getSemAlteracao()) ||
+                        (autorizacaoPagamento.getValorTotal().compareTo(BigDecimal.ZERO) < 0 && existeCancelado));
+    }
+
+    /**
+     *  Verifica se todos os abastecimentos do consolidados são cancelados ou estornados não
+     * @return a lista de transações canceladas
+     */
+    @Transient
+    public boolean todasTransacoesEstornadasOuCanceladas(){
+        boolean existeCancelado = getAutorizacoesPagamentoAssociadas().stream().anyMatch( autorizacaoPagamento -> autorizacaoPagamento.estaCancelado()
+                && MotivoEstorno.obterPorValor(autorizacaoPagamento.getMotivoEstorno()).getSemAlteracao());
+        boolean existeEstornado = getAutorizacoesPagamentoAssociadas().stream().anyMatch( autorizacaoPagamento -> autorizacaoPagamento.estaCancelado()
+                && !MotivoEstorno.obterPorValor(autorizacaoPagamento.getMotivoEstorno()).getSemAlteracao());
+
+        return getAutorizacoesPagamentoAssociadas().stream()
+                .allMatch(autorizacaoPagamento -> ((autorizacaoPagamento.estaCancelado() ||
+                        (autorizacaoPagamento.getValorTotal().compareTo(BigDecimal.ZERO) < 0) && existeCancelado && existeEstornado)));
+    }
+
 }
