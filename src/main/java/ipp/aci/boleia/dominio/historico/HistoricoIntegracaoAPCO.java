@@ -3,6 +3,7 @@ package ipp.aci.boleia.dominio.historico;
 
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.Where;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.Column;
@@ -21,6 +22,7 @@ import java.util.Date;
  */
 @Audited
 @Entity
+@Where(clause = "ID_EXCLUIDO = 0")
 @Table(name = "HISTORICO_INTEGRACAO_APCO")
 public class HistoricoIntegracaoAPCO  implements IPersistente {
 
@@ -46,6 +48,9 @@ public class HistoricoIntegracaoAPCO  implements IPersistente {
 	@Size(max=3000)
 	private String descricaoErro;
 
+	@Column(name = "ID_EXCLUIDO")
+	private Boolean excluido;
+
 
 	/**
 	 * Construtor default
@@ -66,6 +71,7 @@ public class HistoricoIntegracaoAPCO  implements IPersistente {
 		this.dataOperacao = dataOperacao;
 		this.status = status;
 		this.descricaoErro = StringUtils.truncate(descricaoErro,TAMANHO_MAXIMO_DESCRICAO_ERRO);
+		this.excluido = false;
 	}
 
 

@@ -23,7 +23,7 @@ public enum MotivoLiberacaoConectCar implements IEnumComLabel<MotivoLiberacaoCon
      * Construtor
      *
      * @param value O value do status
-     * @param  semAlteracao verifica se existe alteracao
+
      */
     MotivoLiberacaoConectCar(Integer value) {
         this.value = value;

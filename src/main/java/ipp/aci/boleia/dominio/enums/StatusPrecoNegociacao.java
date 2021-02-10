@@ -15,9 +15,13 @@ public enum StatusPrecoNegociacao implements IEnumComLabel<StatusPrecoNegociacao
 
     VIGENTE,
     NEGOCIACAO,
-    HISTORICO;
+    HISTORICO,
+    REJEITADO,
+    AGENDADO,
+    AGENDADO_PENDENTE,
+    CANCELADO;
 
-    public static final String DECODE_FORMULA = "DECODE(ID_STATUS, 1, 'VIG', 2, 'EM_NEG', 3, 'EM_NEG', 4, 'VIG', 5, 'VIG', 6, 'HIST')";
+    public static final String DECODE_FORMULA = "DECODE(ID_STATUS, 1, 'VIG', 2, 'EM_NEG', 3, 'EM_NEG', 4, 'REJ', 5, 'VIG', 6, 'HIST', 7, 'CANC')";
 
     /**
      * Obtem o status de preco para frota de acordo com o status da entidade
@@ -25,14 +29,20 @@ public enum StatusPrecoNegociacao implements IEnumComLabel<StatusPrecoNegociacao
      * @return Status da frota
      */
     public static StatusPrecoNegociacao obterPorStatusPreco(StatusPreco status) {
-        if(StatusPreco.ACEITO.equals(status) || StatusPreco.VIGENTE.equals(status) || StatusPreco.REJEITADO.equals(status)) {
+        if(StatusPreco.ACEITO.equals(status) || StatusPreco.VIGENTE.equals(status)) {
             return VIGENTE;
         }
         if(StatusPreco.PENDENTE.equals(status) || StatusPreco.NOVO.equals(status)) {
             return NEGOCIACAO;
         }
+        if(StatusPreco.REJEITADO.equals(status)){
+            return REJEITADO;
+        }
         if(StatusPreco.HISTORICO.equals(status)){
             return HISTORICO;
+        }
+        if(StatusPreco.CANCELADO.equals(status)){
+            return CANCELADO;
         }
         return null;
     }
@@ -43,13 +53,19 @@ public enum StatusPrecoNegociacao implements IEnumComLabel<StatusPrecoNegociacao
      */
     public List<StatusPreco> converterParaStatusPreco() {
         if(VIGENTE.equals(this)) {
-            return Arrays.asList(StatusPreco.ACEITO,StatusPreco.VIGENTE,StatusPreco.REJEITADO);
+            return Arrays.asList(StatusPreco.ACEITO,StatusPreco.VIGENTE);
         }
         if(NEGOCIACAO.equals(this)) {
             return Arrays.asList(StatusPreco.PENDENTE,StatusPreco.NOVO);
         }
         if(HISTORICO.equals(this)) {
-            return Arrays.asList(StatusPreco.HISTORICO);
+            return Collections.singletonList(StatusPreco.HISTORICO);
+        }
+        if(CANCELADO.equals(this)) {
+            return Collections.singletonList(StatusPreco.CANCELADO);
+        }
+        if(REJEITADO.equals(this)) {
+            return Collections.singletonList(StatusPreco.REJEITADO);
         }
         return Collections.emptyList();
     }

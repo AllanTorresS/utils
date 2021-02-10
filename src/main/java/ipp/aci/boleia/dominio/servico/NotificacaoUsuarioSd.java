@@ -14,6 +14,7 @@ import ipp.aci.boleia.dominio.Motorista;
 import ipp.aci.boleia.dominio.NotaFiscal;
 import ipp.aci.boleia.dominio.Notificacao;
 import ipp.aci.boleia.dominio.NotificacaoUsuario;
+import ipp.aci.boleia.dominio.Preco;
 import ipp.aci.boleia.dominio.PrecoBase;
 import ipp.aci.boleia.dominio.Rede;
 import ipp.aci.boleia.dominio.TransacaoConsolidada;
@@ -340,13 +341,14 @@ public class NotificacaoUsuarioSd {
     /**
      * Envia uma notificação ao administrador da solução após um frotista
      * solicitar um novo acordo de preço especial.
-     * @param nomeFrota que solicitou a renegociação
-     * @param nomePontoVenda que vai receber a proposta
-     * @param nomeProduto que teve a solicitação de preço renegociado
-     * @param descontoSolicitado O desconto solicitado
-     * @param id O id da negociação
+     * @param preco O preço
      */
-    public void enviarNotitificacaoNovaSolicitacaoAcordoPrecoEspecialRevenda(String nomeFrota, String nomePontoVenda, String nomeProduto, String descontoSolicitado, Long id) {
+    public void enviarNotitificacaoNovaSolicitacaoAcordoPrecoEspecialRevenda(Preco preco) {
+        Long id = preco.getId();
+        String nomeFrota = preco.getFrota().getNomeRazaoFrota();
+        String nomePontoVenda = preco.getPontoVenda().getNome();
+        String nomeProduto = preco.getPrecoBase().getPrecoMicromercado().getTipoCombustivel().getDescricao();
+        String descontoSolicitado = UtilitarioFormatacao.formatarDecimalComTresCasas(preco.getDescontoSolicitado() != null ? preco.getDescontoSolicitado() : preco.getDescontoVigente());
         List<Usuario> usuariosPreco = repositorioUsuarios.obterPorTipoPerfilPermissao(TipoPerfilUsuario.INTERNO.getValue(), ChavePermissao.getChave(ChavePermissao.PRECO_CONSULTAR_E_VISUALIZAR));
         enviarNotificacao(TipoSubcategoriaNotificacao.NOVA_SOLICITACAO_ACORDO_ESPECIAL, usuariosPreco, nomeFrota, nomeProduto, nomePontoVenda, descontoSolicitado, id.toString());
     }
@@ -375,14 +377,15 @@ public class NotificacaoUsuarioSd {
     /**
      * Envia uma notificação ao Gestor da revenda após a solução encaminhar
      * uma solicitação de acordo especial de uma frota.
-     * @param nomeFrota que solicitou a renegociação
-     * @param idRede pertencente ao revendedor.
-     * @param nomePontoVenda que vai receber a proposta
-     * @param nomeProduto que teve a solicitação de preço renegociado
-     * @param descontoSolicitado O desconto solicitado
-     * @param id O id da negociação
+     * @param preco O preco da negociação
      */
-    public void enviarNotitificacaoNovaSolicitacaoAcordoPrecoEspecialSolucao(String nomeFrota, Long idRede, String nomePontoVenda, String nomeProduto, String descontoSolicitado, Long id) {
+    public void enviarNotitificacaoNovaSolicitacaoAcordoPrecoEspecialSolucao(Preco preco) {
+        Long id = preco.getId();
+        String nomeFrota = preco.getFrota().getNomeRazaoFrota();
+        Long idRede = preco.getPontoVenda().getRede().getId();
+        String nomePontoVenda = preco.getPontoVenda().getNome();
+        String nomeProduto = preco.getPrecoBase().getPrecoMicromercado().getTipoCombustivel().getDescricao();
+        String descontoSolicitado = UtilitarioFormatacao.formatarDecimalComTresCasas(preco.getDescontoSolicitado());
         List<Usuario> usuarios = repositorioUsuarios.obterGestorPorRede(idRede);
         enviarNotificacao(TipoSubcategoriaNotificacao.NOVA_SOLICITACAO_ACORDO_ESPECIAL, usuarios, nomeFrota, nomeProduto, nomePontoVenda, descontoSolicitado, id.toString());
     }
@@ -390,55 +393,59 @@ public class NotificacaoUsuarioSd {
     /**
      * Envia uma notificação para o administrado no momento em que o acordo especial foi
      * aprovado pela revenda.
-     * @param nomeFrota nome da Frota de acordo negociado
-     * @param nomeProduto Produto que foi negociado
-     * @param nomePontoVenda Ponto de venda que rejeitou a proposta
-     * @param descontoSolicitado O desconto solicitado
+     * @param preco O preço negociado
      */
-    public void enviarNotificacaoAcordoPrecoEspecialAceitoSolucao(String nomeFrota, String nomePontoVenda, String nomeProduto, String descontoSolicitado) {
+    public void enviarNotificacaoAcordoPrecoEspecialAceitoSolucao(Preco preco) {
+        String nomeFrota = preco.getFrota().getNomeRazaoFrota();
+        String nomePontoVenda = preco.getPontoVenda().getNome();
+        String nomeProduto = preco.getPrecoBase().getPrecoMicromercado().getTipoCombustivel().getDescricao();
+        String descontoSolicitado = UtilitarioFormatacao.formatarDecimalComTresCasas(preco.getDescontoSolicitado());
         List<Usuario> usuarios = repositorioUsuarios.obterPorTipoPerfilPermissao(TipoPerfilUsuario.INTERNO.getValue(), ChavePermissao.getChave(ChavePermissao.PRECO_CONSULTAR_E_VISUALIZAR));
         enviarNotificacao(TipoSubcategoriaNotificacao.ACORDO_ESPECIAL_ACEITO_SOLUCAO, usuarios, nomeFrota, nomeProduto, nomePontoVenda, descontoSolicitado);
     }
 
     /**
-     * Envia uma notificação para o gestor da rede no momento em que o acordo especial foi
+     * Envia uma notificação para o gestor da rede no momento em que o preço negociado foi
      * aprovado pelo administrador.
-     * @param nomeFrota nome da Frota de acordo negociado
-     * @param idRede id da rede que recebera notificacao
-     * @param nomeProduto Produto que foi negociado
-     * @param nomePontoVenda Ponto de venda que rejeitou a proposta
-     * @param descontoSolicitado O desconto solicitado
+     * @param preco Preço negociado
      */
-    public void enviarNotificacaoAcordoPrecoEspecialAceitoRevendedor(String nomeFrota, Long idRede, String nomePontoVenda, String nomeProduto, String descontoSolicitado) {
+    public void enviarNotificacaoAcordoPrecoEspecialAceitoRevendedor(Preco preco) {
+        String nomeFrota = preco.getFrota().getNomeRazaoFrota();
+        Long idRede = preco.getPontoVenda().getRede().getId();
+        String nomePontoVenda = preco.getPontoVenda().getNome();
+        String nomeProduto = preco.getPrecoBase().getPrecoMicromercado().getTipoCombustivel().getDescricao();
+        String descontoSolicitado = UtilitarioFormatacao.formatarDecimalComTresCasas(preco.getDescontoSolicitado());
         List<Usuario> usuarios = repositorioUsuarios.obterGestorPorRede(idRede);
         enviarNotificacao(TipoSubcategoriaNotificacao.ACORDO_ESPECIAL_ACEITO_SOLUCAO, usuarios, nomeFrota, nomeProduto, nomePontoVenda, descontoSolicitado);
     }
 
     /**
-     * Envia uma notificação para o gestor da rede no momento em que o acordo especial foi
+     * Envia uma notificação para o gestor da rede no momento em que o preço negociado foi
      * recusado pelo administrador.
-     * @param nomeFrota nome da Frota de acordo negociado
-     * @param idRede id da rede que recebera notificacao
-     * @param nomeProduto Produto que foi negociado
-     * @param nomePontoVenda Ponto de venda que rejeitou a proposta
-     * @param justificativa justificativa pela rejeitção
-     * @param descontoSolicitado O desconto solicitado
+     * @param preco O preço negociado
      */
-    public void enviarNotificacaoAcordoPrecoEspecialRecusadoRevendedor(String nomeFrota, Long idRede, String nomePontoVenda, String nomeProduto, String descontoSolicitado, String justificativa) {
+    public void enviarNotificacaoAcordoPrecoEspecialRecusadoRevendedor(Preco preco) {
+        String nomeFrota = preco.getFrota().getNomeRazaoFrota();
+        Long idRede = preco.getPontoVenda().getRede().getId();
+        String nomePontoVenda = preco.getPontoVenda().getNome();
+        String nomeProduto = preco.getPrecoBase().getPrecoMicromercado().getTipoCombustivel().getDescricao();
+        String descontoSolicitado = UtilitarioFormatacao.formatarDecimalComTresCasas(preco.getDescontoSolicitado());
+        String justificativa = preco.getJustificativa();
         List<Usuario> usuarios = repositorioUsuarios.obterGestorPorRede(idRede);
         enviarNotificacao(TipoSubcategoriaNotificacao.ACORDO_ESPECIAL_REJEITADO_SOLUCAO, usuarios, nomeFrota, nomeProduto, nomePontoVenda, descontoSolicitado, justificativa);
     }
 
     /**
-     * Envia uma notificação para o administrador no momento em que o acordo especial foi
+     * Envia uma notificação para o administrador no momento em que o preço negociado foi
      * recusado pela revenda.
-     * @param nomeFrota nome da Frota de acordo negociado
-     * @param nomeProduto Produto que foi negociado
-     * @param nomePontoVenda Ponto de venda que rejeitou a proposta
-     * @param justificativa justificativa pela rejeitção
-     * @param descontoSolicitado O desconto solicitado
+     * @param preco O preço negociado
      */
-    public void enviarNotificacaoAcordoPrecoEspecialRecusadoSolucao(String nomeFrota, String nomePontoVenda, String nomeProduto, String descontoSolicitado, String justificativa) {
+    public void enviarNotificacaoAcordoPrecoEspecialRecusadoSolucao(Preco preco) {
+        String nomeFrota = preco.getFrota().getNomeRazaoFrota();
+        String nomePontoVenda = preco.getPontoVenda().getNome();
+        String nomeProduto = preco.getPrecoBase().getPrecoMicromercado().getTipoCombustivel().getDescricao();
+        String descontoSolicitado = UtilitarioFormatacao.formatarDecimalComTresCasas(preco.getDescontoSolicitado());
+        String justificativa = preco.getJustificativa();
         List<Usuario> usuarios = repositorioUsuarios.obterPorTipoPerfilPermissao(TipoPerfilUsuario.INTERNO.getValue(), ChavePermissao.getChave(ChavePermissao.PRECO_CONSULTAR_E_VISUALIZAR));
         enviarNotificacao(TipoSubcategoriaNotificacao.ACORDO_ESPECIAL_REJEITADO_SOLUCAO, usuarios, nomeFrota, nomeProduto, nomePontoVenda, descontoSolicitado, justificativa);
     }
@@ -538,11 +545,12 @@ public class NotificacaoUsuarioSd {
     /**
      * Envia uma notificação para o gestor da frota no momento em que o acordo especial foi
      * aprovado pela revenda.
-     * @param idFrota Frota que receberá a notificação
-     * @param nomeProduto Produto que foi negociado
-     * @param nomePontoVenda Ponto de venda que aceitou a proposta
+     * @param preco O preço negociado
      */
-    public void enviarNotificacaoAcordoPrecoEspecialAceito(Long idFrota, String nomeProduto, String nomePontoVenda) {
+    public void enviarNotificacaoAcordoPrecoEspecialAceito(Preco preco) {
+        Long idFrota = preco.getFrota().getId();
+        String nomeProduto = preco.getPrecoBase().getPrecoMicromercado().getTipoCombustivel().getDescricao();
+        String nomePontoVenda = preco.getPontoVenda().getNome();
         List<Usuario> usuarios = repositorioUsuarios.obterGestorPorFrota(idFrota);
         enviarNotificacao(TipoSubcategoriaNotificacao.ACORDO_ESPECIAL_ACEITO, usuarios, nomeProduto, nomePontoVenda);
     }
