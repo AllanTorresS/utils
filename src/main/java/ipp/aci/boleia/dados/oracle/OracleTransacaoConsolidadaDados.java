@@ -1602,8 +1602,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
     @Override
     public List<TransacaoConsolidada> obterConsolidadosPorPeriodoEFrota(Date dataInicioCiclo, Date dataFimCiclo, Long idFrota) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
-        parametros.add(new ParametroPesquisaIgual("dataInicioPeriodo", UtilitarioCalculoData.obterPrimeiroInstanteDia(dataInicioCiclo)));
-        parametros.add(new ParametroPesquisaIgual("dataFimPeriodo", UtilitarioCalculoData.obterUltimoInstanteDia(dataFimCiclo)));
+        parametros.add(new ParametroPesquisaDataEntre("dataInicioPeriodo", UtilitarioCalculoData.obterPrimeiroInstanteDia(dataInicioCiclo), UtilitarioCalculoData.obterUltimoInstanteDia(dataInicioCiclo)));
+        parametros.add(new ParametroPesquisaDataEntre("dataFimPeriodo", UtilitarioCalculoData.obterPrimeiroInstanteDia(dataFimCiclo), UtilitarioCalculoData.obterUltimoInstanteDia(dataFimCiclo)));
         parametros.add(new ParametroPesquisaIgual("frotaPtov.frota.id", idFrota));
         return pesquisar((InformacaoPaginacao) null, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }

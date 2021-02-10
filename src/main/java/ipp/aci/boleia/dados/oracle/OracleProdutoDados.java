@@ -68,7 +68,7 @@ public class OracleProdutoDados extends OracleRepositorioBoleiaDados<Produto> im
 
     @Override
     public List<Produto> listarPorMultiplosConsolidados(List<Long> idsConsolidados) {
-        ParametroPesquisaIgual parametroConsolidado = new ParametroPesquisaIgual("idsConsolidado", idsConsolidados);
+        ParametroPesquisaIgual parametroConsolidado = new ParametroPesquisaIgual("idsConsolidados", idsConsolidados);
         return pesquisar(null, LISTAR_PRODUTOS_POR_MULTIPLOS_CONSOLIDADOS, parametroConsolidado).getRegistros();
     }
 }
