@@ -110,6 +110,28 @@ public final class UtilitarioCalculoData {
 	}
 
 	/**
+	 * Configura a data de vigência automática de uma negociação pendente.
+	 * @param data data a ser configurada
+	 * @return data de vigência automática
+	 */
+	public static  Date configurarDataComHorarioDeVigencia (Date data) {
+		if(data==null) {
+			return null;
+		}
+
+		//São usados valores imediatamente anteriores ao meio dia para evitar concorrência 
+		//com horários agendados
+		Calendar c = Calendar.getInstance();
+		c.setTime(data);
+		c.set(Calendar.HOUR_OF_DAY, 11);
+		c.set(Calendar.MINUTE, 59);
+		c.set(Calendar.SECOND, 99);
+		c.set(Calendar.MILLISECOND, 999);
+
+		return c.getTime();
+	}
+
+	/**
 	 * Adiciona minutos a data informada
 	 *
 	 * @param data  A data base

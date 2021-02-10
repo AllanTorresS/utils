@@ -1,7 +1,6 @@
 package ipp.aci.boleia.dominio.servico.agenciadorfrete;
 
 import ipp.aci.boleia.dominio.agenciadorfrete.Consolidado;
-import ipp.aci.boleia.dominio.agenciadorfrete.Transacao;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -20,7 +19,7 @@ public class ConsolidadoSd {
      */
     public List<Consolidado> obterConsolidadosComSaque(List<Consolidado> consolidados) {
         return consolidados.stream()
-                .filter(c -> c.getTransacoes() != null && c.getTransacoes().stream().anyMatch(Transacao::temSaque))
+                .filter(c -> c.getTransacoes() != null && c.getTransacoes().stream().anyMatch(t->t.getSaque() != null))
                 .collect(Collectors.toList());
     }
 }

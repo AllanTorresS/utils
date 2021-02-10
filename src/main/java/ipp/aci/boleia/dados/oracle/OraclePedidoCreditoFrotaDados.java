@@ -50,9 +50,8 @@ public class OraclePedidoCreditoFrotaDados extends OracleRepositorioBoleiaDados<
     }
 
     @Override
-    public List<PedidoCreditoFrota> obterTodosAbertos(Date dataAtual) {
+    public List<PedidoCreditoFrota> obterTodosAbertos() {
         return pesquisarSemIsolamentoDados(new ParametroOrdenacaoColuna("id", Ordenacao.DECRESCENTE),
-                new ParametroPesquisaDataMaiorOuIgual("validadePedido", dataAtual),
                 new ParametroPesquisaOr(
                         new ParametroPesquisaIgual("status", StatusPedidoCredito.PENDENTE.getValue()),
                         new ParametroPesquisaIgual("status", StatusPedidoCredito.PROCESSANDO.getValue())),

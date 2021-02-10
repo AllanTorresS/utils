@@ -18,7 +18,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import static ipp.aci.boleia.dominio.enums.ParametroSistema.POSTOS_AUTORIZADOS_ABASTECIMENTO;
-import static ipp.aci.boleia.util.excecao.Erro.ERRO_HISTORICO_NAO_ENCONTRADO;
 
 /**
  * Serviços de domínio da entidade {@link HistoricoParametroUso}.
@@ -89,7 +88,13 @@ public class HistoricoParametroUsoSd {
             historicoAtivacao.setDataInativacao(utilitarioAmbiente.buscarDataAmbiente());
             repositorio.armazenar(historicoAtivacao);
         } else {
-            throw new ExcecaoValidacao(ERRO_HISTORICO_NAO_ENCONTRADO);
+            HistoricoParametroUso historico = new HistoricoParametroUso();
+            historico.setFrota(parametroUso.getFrota());
+            historico.setParametroSistema(parametroUso.getParametroSistema());
+            historico.setRestritivo(parametroUso.getRestritivo());
+            historico.setDataAtivacao(utilitarioAmbiente.buscarDataAmbiente());
+            historico.setDataInativacao(utilitarioAmbiente.buscarDataAmbiente());
+            repositorio.armazenar(historico);
         }
     }
 

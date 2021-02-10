@@ -1,6 +1,7 @@
 package ipp.aci.boleia.dominio;
 
-import java.util.Date;
+import ipp.aci.boleia.dominio.interfaces.IPersistente;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,10 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
-
-import org.hibernate.envers.Audited;
-
-import ipp.aci.boleia.dominio.interfaces.IPersistente;
+import java.util.Date;
 
 /**
  * Representa a tabela de AtivacaoTag

@@ -6,7 +6,6 @@ import ipp.aci.boleia.dominio.enums.StatusPrecoNegociacao;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
 import ipp.aci.boleia.dominio.interfaces.IPertenceRevendedor;
-import ipp.aci.boleia.util.UtilitarioFormatacao;
 import org.hibernate.annotations.Formula;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
@@ -31,6 +30,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+
 /**
  * Representa a tabela de Preco
  */
@@ -40,6 +40,27 @@ import java.util.List;
 public class Preco implements IPersistente, IPertenceRevendedor, IPertenceFrota {
 
     private static final long serialVersionUID = 8665679213043737610L;
+
+    private static final String FORMULA_DATA_FIM = "(SELECT * " +
+        "FROM (SELECT DISTINCT FPP2.dt_vigencia " +
+        "FROM boleia_schema.frota_ptov_preco FPP " +
+        "JOIN boleia_schema.ptov_preco PP " +
+        "ON FPP.cd_ptov_preco = PP.cd_ptov_preco " +
+        "JOIN boleia_schema.micromercado_preco MP " +
+        "ON MP.cd_micromercado_preco = PP.cd_micromercado_preco " +
+        "JOIN boleia_schema.micromercado_preco MP2 " +
+        "ON MP.cd_tipo_combustivel = MP2.cd_tipo_combustivel " +
+        "JOIN boleia_schema.ptov_preco PP2 " +
+        "ON MP2.cd_micromercado_preco = PP2.cd_micromercado_preco " +
+        "JOIN boleia_schema.frota_ptov_preco FPP2 " +
+        "ON PP2.cd_ptov_preco = FPP2.cd_ptov_preco AND FPP.cd_frota_ptov = FPP2.cd_frota_ptov AND FPP.cd_frota_ptov_preco <> FPP2.cd_frota_ptov_preco " +
+        "WHERE " +
+        "FPP.CD_FROTA_PTOV_PRECO = CD_FROTA_PTOV_PRECO " +
+        "AND ((FPP.dt_vigencia IS NOT NULL AND FPP2.dt_vigencia > DT_VIGENCIA) " +
+        "OR (FPP.dt_vigencia IS NULL AND FPP2.dt_vigencia IS NOT NULL)) " +
+        "AND FPP2.id_status NOT IN (4,7) " +
+        "ORDER BY FPP2.dt_vigencia) " +
+        "WHERE rownum <= 1) ";
 
     @Id
     @Column(name = "CD_FROTA_PTOV_PRECO")
@@ -87,6 +108,14 @@ public class Preco implements IPersistente, IPertenceRevendedor, IPertenceFrota 
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataAtualizacao;
 
+    @Column(name = "DT_VIGENCIA")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataVigencia;
+
+    @Column(name = "DT_AGENDAMENTO")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataAgendamento;
+
     @NotAudited
     @Formula(StatusPreco.DECODE_FORMULA)
     private String statusConvertidoAcordo;
@@ -94,6 +123,10 @@ public class Preco implements IPersistente, IPertenceRevendedor, IPertenceFrota 
     @NotAudited
     @Formula(StatusPrecoNegociacao.DECODE_FORMULA)
     private String statusConvertidoNegociado;
+
+    @NotAudited
+    @Formula(FORMULA_DATA_FIM)
+    private Date dataFim;
 
     @Override
     public Long getId() {
@@ -137,13 +170,6 @@ public class Preco implements IPersistente, IPertenceRevendedor, IPertenceFrota 
         this.statusConvertidoNegociado = statusConvertidoNegociado;
     }
 
-    /**
-     * Marca o preco como historico saindo de vigencia
-     */
-    public void sairDeVigencia() {
-        this.setStatus(StatusPreco.HISTORICO.getValue());
-    }
-
     public PrecoBase getPrecoBase() {
         return precoBase;
     }
@@ -158,42 +184,6 @@ public class Preco implements IPersistente, IPertenceRevendedor, IPertenceFrota 
 
     public void setPreco(BigDecimal preco) {
         this.preco = preco;
-    }
-
-    /**
-     * Aprova o desconto solicitado pelo frotista
-     * @param dataAtualizacao a data de atualizacao
-     * @param automatico desconto automatico ou manual
-     */
-    public void aceitarDesconto(Date dataAtualizacao, Boolean automatico) {
-        this.setPreco(this.getPrecoBase().getPreco().add(this.getDescontoSolicitado()));
-        this.setDescontoVigente(this.getDescontoSolicitado());
-        this.setDescontoSolicitado(null);
-        this.setDataAtualizacao(dataAtualizacao);
-        if(automatico) {
-            this.setStatus(StatusPreco.VIGENTE.getValue());
-        } else {
-            this.setStatus(StatusPreco.ACEITO.getValue());
-        }
-    }
-
-    /**
-     * Reprova o desconto solicitado com dada justificativa
-     * @param justificativa do revendedor
-     */
-    public void rejeitarDesconto(String justificativa) {
-        this.setStatus(StatusPreco.REJEITADO.getValue());
-        this.setJustificativa(justificativa);
-    }
-
-    /**
-     * Remove um desconto previamente acordado entre frota e PV
-     * @param dataAtualizacao a data de atualizacao do desconto
-     */
-    public void excluirDesconto(Date dataAtualizacao) {
-        this.setDescontoSolicitado(null);
-        this.setDataAtualizacao(dataAtualizacao);
-        this.setStatus(StatusPreco.VIGENTE.getValue());
     }
 
     public String getJustificativa() {
@@ -226,6 +216,14 @@ public class Preco implements IPersistente, IPertenceRevendedor, IPertenceFrota 
 
     public void setDataSolicitacao(Date dataSolicitacao) {
         this.dataSolicitacao = dataSolicitacao;
+    }
+
+    public Date getDataVigencia() {
+        return dataVigencia;
+    }
+
+    public void setDataVigencia(Date dataVigencia) {
+        this.dataVigencia = dataVigencia;
     }
 
     @Transient
@@ -266,11 +264,54 @@ public class Preco implements IPersistente, IPertenceRevendedor, IPertenceFrota 
         this.volumeEstimado = volumeEstimado;
     }
 
+    public Date getDataFim() {
+        return dataFim;
+    }
+
+    public void setDataFim(Date dataFim) {
+        this.dataFim = dataFim;
+    }
+
     @Transient
-    public String getPrecoComAcordo(){
-        if(status.equals(StatusPreco.PENDENTE.getValue()) || status.equals(StatusPreco.NOVO.getValue())){
-            return UtilitarioFormatacao.formatarDecimalComTresCasas(precoBase.getPreco().add(getDescontoSolicitado()));
-        }
-        return UtilitarioFormatacao.formatarDecimalComTresCasas(preco);
+    public BigDecimal getPrecoComAcordo(){
+        return getDescontoSolicitado() != null ? precoBase.getPreco().add(getDescontoSolicitado()) : preco;
+    }
+
+    public Date getDataAgendamento() {
+        return dataAgendamento;
+    }
+
+    public void setDataAgendamento(Date dataAgendamento) {
+        this.dataAgendamento = dataAgendamento;
+    }
+
+    /**
+	 * Verifica se a data atual é anterior à data de agendamento
+	 * @param dataHoraCorrente data atual
+	 * @return se a data atual é ou não anterior à data de agendamento
+	 */
+    @Transient
+    public boolean isAnteriorDataAgendamento(Date dataHoraCorrente) {
+        return dataAgendamento != null && dataAgendamento.compareTo(dataHoraCorrente) > 0;
+    }
+
+    /**
+	 * Verifica se a data atual é posterior à data fim
+	 * @param dataHoraCorrente data atual
+	 * @return se a data atual é ou não posterior à data fim
+	 */
+    @Transient
+    public boolean isPosteriorDataFim(Date dataHoraCorrente) {
+        return dataFim != null && dataFim.compareTo(dataHoraCorrente) < 0;
+    }
+
+    /**
+	 * Verifica se a data atual é posterior à data de vigência
+	 * @param dataHoraCorrente data atual
+	 * @return se a data atual é ou não posterior à data de vigência
+	 */
+    @Transient
+    public boolean isPosteriorDataVigencia(Date dataHoraCorrente) {
+        return dataVigencia != null && dataVigencia.compareTo(dataHoraCorrente) < 0;
     }
 }

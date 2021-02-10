@@ -62,7 +62,7 @@ public class OracleAgenciadorFreteCobrancaDados extends OracleRepositorioBoleiaD
     @Override
     public List<AgenciadorFreteCobranca> obterCobrancasPorStatus(StatusDocumento status) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
-        parametros.add(new ParametroPesquisaIgual("documentoJde.status", status));
+        parametros.add(new ParametroPesquisaIgual("documentoJde.status", status.getValue()));
         parametros.add(new ParametroPesquisaMenorOuIgual("documentoJde.numeroTentativasEnvio", NUMERO_MAXIMO_TENTATIVAS_ENVIO));
         return pesquisar((InformacaoPaginacao)null, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
