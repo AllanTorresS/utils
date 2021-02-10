@@ -17,6 +17,14 @@ public class FiltroPesquisaDetalheCobrancaVo extends FiltroBasePeriodoPaginado {
     private String placaVeiculo;
     private List<EntidadeVo> outrosServicos;
     private Boolean notaFiscalEmitida;
+    private EntidadeVo pontoVenda;
+    private String numeroNf;
+    private String numeroSerieNf;
+    private Boolean consultaSolucao;
+    private String chaveIdentificacaoAgrupamento;
+    private Date dataInicioPeriodo;
+    private Date dataFimPeriodo;
+    private Long idFrota;
 
     public Long getIdConsolidado() {
         return idConsolidado;
@@ -64,5 +72,69 @@ public class FiltroPesquisaDetalheCobrancaVo extends FiltroBasePeriodoPaginado {
 
     public void setNotaFiscalEmitida(Boolean notaFiscalEmitida) {
         this.notaFiscalEmitida = notaFiscalEmitida;
+    }
+
+    public EntidadeVo getPontoVenda() {
+        return pontoVenda;
+    }
+
+    public void setPontoVenda(EntidadeVo pontoVenda) {
+        this.pontoVenda = pontoVenda;
+    }
+
+    public String getNumeroNf() {
+        return numeroNf;
+    }
+
+    public void setNumeroNf(String numeroNf) {
+        this.numeroNf = numeroNf;
+    }
+
+    public String getNumeroSerieNf() {
+        return numeroSerieNf;
+    }
+
+    public void setNumeroSerieNf(String numeroSerieNf) {
+        this.numeroSerieNf = numeroSerieNf;
+    }
+
+    public Boolean getConsultaSolucao() {
+        return consultaSolucao;
+    }
+
+    public void setConsultaSolucao(Boolean consultaSolucao) {
+        this.consultaSolucao = consultaSolucao;
+    }
+
+    public String getChaveIdentificacaoAgrupamento() {
+        return chaveIdentificacaoAgrupamento;
+    }
+
+    public void setChaveIdentificacaoAgrupamento(String chaveIdentificacaoAgrupamento) {
+        this.chaveIdentificacaoAgrupamento = chaveIdentificacaoAgrupamento;
+    }
+
+    public Date getDataInicioPeriodo() {
+        return dataInicioPeriodo;
+    }
+
+    public void setDataInicioPeriodo(Date dataInicioPeriodo) {
+        this.dataInicioPeriodo = dataInicioPeriodo;
+    }
+
+    public Date getDataFimPeriodo() {
+        return dataFimPeriodo;
+    }
+
+    public void setDataFimPeriodo(Date dataFimPeriodo) {
+        this.dataFimPeriodo = dataFimPeriodo;
+    }
+
+    public Long getIdFrota() {
+        return idFrota;
+    }
+
+    public void setIdFrota(Long idFrota) {
+        this.idFrota = idFrota;
     }
 }
