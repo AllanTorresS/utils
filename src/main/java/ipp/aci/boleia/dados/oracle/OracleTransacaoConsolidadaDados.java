@@ -1584,6 +1584,15 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         return pesquisar(null, consultapesquisarConsolidadoFrota, TransacaoConsolidada.class, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
 
+    @Override
+    public List<TransacaoConsolidada> obterConsolidadosPorPeriodoEFrota(Date dataInicioCiclo, Date dataFimCiclo, Long idFrota) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaIgual("dataInicioPeriodo", UtilitarioCalculoData.obterPrimeiroInstanteDia(dataInicioCiclo)));
+        parametros.add(new ParametroPesquisaIgual("dataFimPeriodo", UtilitarioCalculoData.obterUltimoInstanteDia(dataFimCiclo)));
+        parametros.add(new ParametroPesquisaIgual("frotaPtov.frota.id", idFrota));
+        return pesquisar((InformacaoPaginacao) null, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+    }
+
     /**
      *  Popula os parâmetros de pesquisa em comum entre as duas consultas de box do financeiro
      * @param parametrosPesquisa A lista de parâmetros

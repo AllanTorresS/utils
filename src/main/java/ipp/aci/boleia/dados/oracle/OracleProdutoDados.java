@@ -25,6 +25,15 @@ public class OracleProdutoDados extends OracleRepositorioBoleiaDados<Produto> im
             "      p.nome NOT LIKE 'Outros' " +
             "ORDER BY p.nome";
 
+    private static final String LISTAR_PRODUTOS_POR_MULTIPLOS_CONSOLIDADOS =
+            "SELECT DISTINCT p " +
+                    "FROM Produto p " +
+                    "JOIN p.itensAutorizacaoPagamento ia " +
+                    "JOIN ia.autorizacaoPagamento ap " +
+                    "WHERE (ap.transacaoConsolidadaPostergada.id IN :idsConsolidados OR ap.transacaoConsolidada.id IN :idsConsolidados) AND " +
+                    "      p.nome NOT LIKE 'Outros' " +
+                    "ORDER BY p.nome";
+
     /**
      * Instancia o repositório
      */
@@ -55,5 +64,11 @@ public class OracleProdutoDados extends OracleRepositorioBoleiaDados<Produto> im
         return pesquisar(
                 new ParametroOrdenacaoColuna("nome"),
                 new ParametroPesquisaDiferente("nome", Produto.OUTROS));
+    }
+
+    @Override
+    public List<Produto> listarPorMultiplosConsolidados(List<Long> idsConsolidados) {
+        ParametroPesquisaIgual parametroConsolidado = new ParametroPesquisaIgual("idsConsolidado", idsConsolidados);
+        return pesquisar(null, LISTAR_PRODUTOS_POR_MULTIPLOS_CONSOLIDADOS, parametroConsolidado).getRegistros();
     }
 }

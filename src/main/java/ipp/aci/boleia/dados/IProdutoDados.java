@@ -34,4 +34,12 @@ public interface IProdutoDados extends IRepositorioBoleiaDados<Produto> {
      */
     List<Produto> obterProdutosExcetoOutrosOrdenadosPeloNome();
 
+    /**
+     * Lista os produtos existentes em um grupo de consolidados
+     *
+     * @param idsConsolidados Identificadores dos consolidados.
+     * @return Lista de produtos
+     */
+    List<Produto> listarPorMultiplosConsolidados(List<Long> idsConsolidados);
+
 }

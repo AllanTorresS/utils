@@ -317,4 +317,13 @@ public interface ITransacaoConsolidadaDados extends IRepositorioBoleiaDados<Tran
      * @return Os dados encontrados
      */
     ResultadoPaginado<TransacaoConsolidada> obterDetalhesDadosFinanceiroFrotaParaExportacao(FiltroPesquisaFinanceiroVo filtro);
+
+    /**
+     * Obtém os consolidados correspondentes ao período e frota fornecidos
+     * @param dataInicioCiclo A data de início do ciclo
+     * @param dataFimCiclo A data de fim do ciclo
+     * @param idFrota O identificador da frota
+     * @return Os consolidados encontrados
+     */
+    List<TransacaoConsolidada> obterConsolidadosPorPeriodoEFrota(Date dataInicioCiclo, Date dataFimCiclo, Long idFrota);
 }
