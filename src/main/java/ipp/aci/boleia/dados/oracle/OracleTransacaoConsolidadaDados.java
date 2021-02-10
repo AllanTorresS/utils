@@ -357,6 +357,38 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
 
     private static final String CLAUSULA_STATUS_PAGAMENTO = "CASE WHEN C is null THEN " + A_VENCER.getValue() + " ELSE C.status END ";
 
+    private static final String FROM_CONSULTAR_CONSOLIDADOS_POR_COBRANCA =
+            "FROM TransacaoConsolidada TC " +
+                    "LEFT JOIN TC.frotaPtov FPV " +
+                    "LEFT JOIN FPV.frota F " +
+                    "LEFT JOIN TC.cobranca C " +
+                    "LEFT JOIN TC.empresaAgregada EA " +
+                    "LEFT JOIN TC.unidade U	" +
+                    "JOIN TC.prazos TCP " +
+                    "WHERE (F.id = :idFrota OR :idFrota is null) " +
+                    "AND ((TC.dataInicioPeriodo >= :dataInicioPeriodo AND TC.dataFimPeriodo <= :dataFimPeriodo) OR (TC.dataFimPeriodo >= :dataInicioPeriodo AND TC.dataInicioPeriodo <= :dataFimPeriodo)) " +
+                    "AND (TC.statusConsolidacao = :statusConsolidacao OR :statusConsolidacao is null) " +
+                    "AND (TC.quantidadeAbastecimentos > 0) " +
+                    "AND (C.statusIntegracaoJDE = :statusIntegracao OR :statusIntegracao is null) " +
+                    "AND (C.numeroDocumento = :numeroDocumento OR :numeroDocumento is null) " +
+                    "%s " +
+                    "GROUP BY " +
+                    "F.id, " +
+                    "F.razaoSocial, " +
+                    "F.cnpj, " +
+                    "TC.dataInicioPeriodo, " +
+                    "TC.dataFimPeriodo, " +
+                    CLAUSULA_DATA_LIMITE_EMISSAO + ", " +
+                    CLAUSULA_STATUS_PAGAMENTO + ", " +
+                    "C.dataVencimentoVigente, " +
+                    "TCP.dataLimitePagamento, " +
+                    "TC.statusConsolidacao," +
+                    "C.dataPagamento," +
+                    "C.status," +
+                    "C.id, " +
+                    "C.ultimaCobrancaFrota " +
+                    "ORDER BY %s ";
+
     private static final String CONSULTAR_CONSOLIDADOS_POR_COBRANCA =
             "SELECT new ipp.aci.boleia.dominio.vo.AgrupamentoTransacaoConsolidadaCobrancaVo( " +
                         "F.id, " +
@@ -386,37 +418,9 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                         "MIN(C.dataUltimoAjusteValor), " +
                         "MIN(C.usuarioUltimoAjusteVencimento), " +
                         "MIN(C.dataUltimoAjusteVencimento)" +
-                    ") " +
-                    "FROM TransacaoConsolidada TC " +
-                    "LEFT JOIN TC.frotaPtov FPV " +
-                    "LEFT JOIN FPV.frota F " +
-                    "LEFT JOIN TC.cobranca C " +
-                    "LEFT JOIN TC.empresaAgregada EA " +
-                    "LEFT JOIN TC.unidade U	" +
-                    "JOIN TC.prazos TCP " +
-                    "WHERE (F.id = :idFrota OR :idFrota is null) " +
-                    "AND ((TC.dataInicioPeriodo >= :dataInicioPeriodo AND TC.dataFimPeriodo <= :dataFimPeriodo) OR (TC.dataFimPeriodo >= :dataInicioPeriodo AND TC.dataInicioPeriodo <= :dataFimPeriodo)) " +
-                    "AND (TC.statusConsolidacao = :statusConsolidacao OR :statusConsolidacao is null) " +
-                    "AND (TC.quantidadeAbastecimentos > 0) " +
-                    "AND (C.statusIntegracaoJDE = :statusIntegracao OR :statusIntegracao is null) " +
-                    "AND (C.numeroDocumento = :numeroDocumento OR :numeroDocumento is null) " +
-                    "%s " +
-                    "GROUP BY " +
-                        "F.id, " +
-                        "F.razaoSocial, " +
-                        "F.cnpj, " +
-                        "TC.dataInicioPeriodo, " +
-                        "TC.dataFimPeriodo, " +
-                        CLAUSULA_DATA_LIMITE_EMISSAO + ", " +
-                        CLAUSULA_STATUS_PAGAMENTO + ", " +
-                        "C.dataVencimentoVigente, " +
-                        "TCP.dataLimitePagamento, " +
-                        "TC.statusConsolidacao," +
-                        "C.dataPagamento," +
-                        "C.status," +
-                        "C.id, " +
-                        "C.ultimaCobrancaFrota " +
-                    "ORDER BY %s ";
+                    ") " + FROM_CONSULTAR_CONSOLIDADOS_POR_COBRANCA;
+
+    private static final String COUNT_CONSULTAR_CONSOLIDADOS_POR_COBRANCA = "SELECT SUM(MIN(1)) " + FROM_CONSULTAR_CONSOLIDADOS_POR_COBRANCA;
 
     private static final String CONSULTA_PONTOS_GRAFICO =
             "SELECT new ipp.aci.boleia.dominio.vo.PontosGraficoFinanceiroVo( " +
@@ -1503,8 +1507,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         String ordenacao = criarParametroOrdenacaoFinanceiroFrota(filtro.getPaginacao().getParametrosOrdenacaoColuna());
 
         String consultaPesquisaGridFinanceiro = String.format(CONSULTAR_CONSOLIDADOS_POR_COBRANCA, filtroStatus, ordenacao);
-
-        return pesquisar(filtro.getPaginacao(), consultaPesquisaGridFinanceiro, AgrupamentoTransacaoConsolidadaCobrancaVo.class, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        String countPesquisaGridFinanceiro = String.format(COUNT_CONSULTAR_CONSOLIDADOS_POR_COBRANCA, filtroStatus, ordenacao);
+        return pesquisar(filtro.getPaginacao(), consultaPesquisaGridFinanceiro, countPesquisaGridFinanceiro, AgrupamentoTransacaoConsolidadaCobrancaVo.class, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
     /**
