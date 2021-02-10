@@ -309,7 +309,16 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
                 parametros.add(new ParametroPesquisaOr(new ParametroPesquisaDataMenorOuIgual("dataVigencia", ambiente.buscarDataAmbiente()),
                 new ParametroPesquisaNulo("dataVigencia")));
             }
-        } else {
+        } else if (filtro.getStatus() != null && filtro.getStatus().getName() != null){
+            parametros.add(new ParametroPesquisaOr(
+                    new ParametroPesquisaNulo("dataVigencia"),
+                    new ParametroPesquisaDataMenorOuIgual("dataVigencia", ambiente.buscarDataAmbiente())
+            ));
+            parametros.add(new ParametroPesquisaIn("status", statusVigentes));
+            parametros.add(new ParametroPesquisaOr(new ParametroPesquisaNulo("dataFim"),
+                    new ParametroPesquisaDataMaiorOuIgual("dataFim", ambiente.buscarDataAmbiente())
+            ));
+        }else {
             parametros.add(new ParametroPesquisaIn("status", Arrays.asList(statusPossiveis)));
         }
     }
