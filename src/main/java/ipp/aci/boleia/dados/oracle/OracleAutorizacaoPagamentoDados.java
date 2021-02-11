@@ -1216,11 +1216,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     private String montarOrdenacaoDetalheCobranca(FiltroPesquisaDetalheCobrancaVo filtro) {
         String ordenacao = "";
         if((filtro.getPaginacao() == null || filtro.getPaginacao().getParametrosOrdenacaoColuna().isEmpty())) {
-            ordenacao = " CASE WHEN A.transacaoConsolidadaPostergada IS NOT NULL AND A.status = 1 THEN 0 " +
-                    "     WHEN A.transacaoConsolidadaPostergada IS NOT NULL AND A.status <> 1 THEN 1 " +
-                    "     WHEN A.transacaoConsolidadaPostergada IS NULL AND (A.statusEdicao = 1 OR A.status = -1) THEN 2 " +
-                    "     ELSE 3 " +
-                    " END, A.dataRequisicao ";
+            ordenacao = " A.chaveOrdenacaoFinanceiro, A.dataRequisicao ";
         } else {
             String sentido = filtro.getPaginacao().getParametrosOrdenacaoColuna().get(0).getSentidoOrdenacao().equals(Ordenacao.DECRESCENTE) ? " DESC" : " ";
             ordenacao = " A.dataRequisicao " + sentido;
