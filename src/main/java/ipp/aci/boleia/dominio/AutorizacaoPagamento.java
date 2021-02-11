@@ -75,8 +75,8 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
      * na tela de detalhamento de NF.
      */
     private static final String CHAVE_ORDENACAO_FINANCEIRO_FORMULA =
-                    "CASE WHEN CD_TRANS_CONSOL_POSTERGADA IS NOT NULL AND ID_STATUS = 1 THEN 0 " +
-                    "     WHEN CD_TRANS_CONSOL_POSTERGADA IS NOT NULL AND ID_STATUS <> 1 THEN 1 " +
+            "CASE WHEN CD_TRANS_CONSOL_POSTERGADA IS NOT NULL AND ID_STATUS_EDICAO = 0 AND ID_STATUS = 1 THEN 0 " +
+                    "     WHEN CD_TRANS_CONSOL_POSTERGADA IS NOT NULL AND (ID_STATUS_EDICAO = 1 OR ID_STATUS = -1) THEN 1 " +
                     "     WHEN CD_TRANS_CONSOL_POSTERGADA IS NULL AND (ID_STATUS_EDICAO = 1 OR ID_STATUS = -1) THEN 2 " +
                     "     ELSE 3 " +
                     "END";
