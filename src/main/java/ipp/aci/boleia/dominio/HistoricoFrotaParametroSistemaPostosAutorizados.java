@@ -39,6 +39,9 @@ public class HistoricoFrotaParametroSistemaPostosAutorizados implements IPersist
     @Column(name = "VA_MAXIMO_PERMITIDO")
     private BigDecimal valorMaximoRestricao;
 
+    @Column(name = "VA_MAXIMO_LITROS")
+    private BigDecimal valorMaximoLitros;
+
     @NotNull
     @Column(name = "DT_AUTORIZACAO")
     @Temporal(TemporalType.TIMESTAMP)
@@ -143,6 +146,14 @@ public class HistoricoFrotaParametroSistemaPostosAutorizados implements IPersist
 
     public void setDataAlteracao(Date dataAlteracao) {
         this.dataAlteracao = dataAlteracao;
+    }
+
+    public BigDecimal getValorMaximoLitros() {
+        return valorMaximoLitros;
+    }
+
+    public void setValorMaximoLitros(BigDecimal valorMaximoLitros) {
+        this.valorMaximoLitros = valorMaximoLitros;
     }
 }
 
