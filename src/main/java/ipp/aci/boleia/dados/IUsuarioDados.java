@@ -21,6 +21,13 @@ public interface IUsuarioDados extends IRepositorioBoleiaDados<Usuario> {
     ResultadoPaginado<Usuario> pesquisaPaginada(FiltroPesquisaUsuarioVo filtro);
 
     /**
+     * Pesquisa Usuarios a partir do filtro informado, sem isolamento de dados
+     * @param filtro O filtro da busca
+     * @return Uma lista de entidades localizadas
+     */
+    ResultadoPaginado<Usuario> pesquisaPaginadaSemIsolamento(FiltroPesquisaUsuarioVo filtro);
+
+    /**
      * Pesquisa um usuario pelo nome
      *
      * @param filtro o filtro que contém o nome desejado

@@ -5,7 +5,6 @@ import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.Preco;
 import ipp.aci.boleia.dominio.TipoCombustivel;
 import ipp.aci.boleia.dominio.Usuario;
-import ipp.aci.boleia.dominio.enums.StatusPreco;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaPrecoVo;
 
