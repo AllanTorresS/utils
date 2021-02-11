@@ -25,7 +25,9 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDiferente;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaEmpty;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaFetch;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgualIgnoreCase;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaior;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMenor;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
@@ -33,6 +35,7 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
 import ipp.aci.boleia.dominio.vo.EntidadeVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaAbastecimentoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheCobrancaVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheReembolsoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaQtdTransacoesFrotaVo;
 import ipp.aci.boleia.dominio.vo.QuantidadeAbastecidaVeiculoVo;
 import ipp.aci.boleia.dominio.vo.TransacaoPendenteVo;
@@ -41,6 +44,7 @@ import ipp.aci.boleia.dominio.vo.frotista.FiltroPesquisaAbastecimentoFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.InformacaoPaginacaoFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.ResultadoPaginadoFrtVo;
 import ipp.aci.boleia.util.Ordenacao;
+import ipp.aci.boleia.util.UtilitarioCalculo;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
 import ipp.aci.boleia.util.negocio.ParametrosPesquisaBuilder;
@@ -54,6 +58,11 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static ipp.aci.boleia.dominio.enums.StatusNotaFiscalAbastecimento.EMITIDA;
+import static ipp.aci.boleia.dominio.enums.StatusNotaFiscalAbastecimento.PENDENTE;
+import static ipp.aci.boleia.util.UtilitarioCalculoData.obterPrimeiroInstanteDia;
+import static ipp.aci.boleia.util.UtilitarioCalculoData.obterUltimoInstanteDia;
 
 /**
  * Respositorio de entidades AutorizacaoPagamento
@@ -198,7 +207,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
             " SELECT a" +
             " FROM AutorizacaoPagamento a" +
             " WHERE a.status = " + StatusAutorizacao.AUTORIZADO.getValue() +
-            "     AND a.statusNotaFiscal = " + StatusNotaFiscalAbastecimento.PENDENTE.getValue() +
+            "     AND a.statusNotaFiscal = " + PENDENTE.getValue() +
             "     AND a.dataProcessamento <= :dataEmissao" +
             "     AND a.valorTotal <= :limiteSuperiorTotalNf" +
             "     AND a.valorTotal >= :limiteInferiorTotalNf" +
@@ -540,10 +549,10 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         ParametroPesquisaDataMaiorOuIgual parametroDe = null;
         ParametroPesquisaDataMenorOuIgual parametroAte = null;
         if (de != null) {
-            parametroDe = new ParametroPesquisaDataMaiorOuIgual(campoData, UtilitarioCalculoData.obterPrimeiroInstanteDia(de));
+            parametroDe = new ParametroPesquisaDataMaiorOuIgual(campoData, obterPrimeiroInstanteDia(de));
         }
         if (ate != null) {
-            parametroAte = new ParametroPesquisaDataMenorOuIgual(campoData, UtilitarioCalculoData.obterUltimoInstanteDia(ate));
+            parametroAte = new ParametroPesquisaDataMenorOuIgual(campoData, obterUltimoInstanteDia(ate));
         }
 
         if (parametroDe != null && parametroAte != null) {
@@ -785,7 +794,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     public List<AutorizacaoPagamento> obterAbastecimentoPorNota(Long cnpjDest, Long cnpjEmit, Date dataEmissao, BigDecimal valorTotalNota) {
         final BigDecimal toleranciaDeValorNota = BigDecimal.valueOf(.05);
         List<ParametroPesquisa> parametros = new ArrayList<>();
-        parametros.add(new ParametroPesquisaIgual("dataEmissao", UtilitarioCalculoData.obterUltimoInstanteDia(dataEmissao)));
+        parametros.add(new ParametroPesquisaIgual("dataEmissao", obterUltimoInstanteDia(dataEmissao)));
         parametros.add(new ParametroPesquisaIgual("cnpjEmit", cnpjEmit));
         parametros.add(new ParametroPesquisaIgual("cnpjDest", cnpjDest));
         parametros.add(new ParametroPesquisaIgual("limiteSuperiorTotalNf", valorTotalNota.add(toleranciaDeValorNota)));
@@ -806,8 +815,8 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                         new ParametroPesquisaIgual("id", filtro.getIdentificador())
                 )
                 .adicionarParametros(
-                        new ParametroPesquisaDataMaiorOuIgual("dataProcessamento", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDataInicial())),
-                        new ParametroPesquisaDataMenorOuIgual("dataProcessamento", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getDataFinal()))
+                        new ParametroPesquisaDataMaiorOuIgual("dataProcessamento", obterPrimeiroInstanteDia(filtro.getDataInicial())),
+                        new ParametroPesquisaDataMenorOuIgual("dataProcessamento", obterUltimoInstanteDia(filtro.getDataFinal()))
                 )
                 .adicionarParametros(
                         filtro.getCnpjRevenda(),
@@ -1111,8 +1120,8 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
 
         parametros.add(new ParametroPesquisaIgual("idConsolidado", filtro.getIdConsolidado()));
 
-        parametros.add(new ParametroPesquisaIgual("dataRequisicaoDe", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDataAbastecimento())));
-        parametros.add(new ParametroPesquisaIgual("dataRequisicaoAte", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getDataAbastecimento())));
+        parametros.add(new ParametroPesquisaIgual("dataRequisicaoDe", obterPrimeiroInstanteDia(filtro.getDataAbastecimento())));
+        parametros.add(new ParametroPesquisaIgual("dataRequisicaoAte", obterUltimoInstanteDia(filtro.getDataAbastecimento())));
 
         parametros.add(new ParametroPesquisaIgual("placaVeiculo", filtro.getPlaca() != null ? filtro.getPlaca().toLowerCase() : null));
 
@@ -1199,6 +1208,37 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     }
 
     @Override
+    public ResultadoPaginado<AutorizacaoPagamento> pesquisaPaginadaDetalheReembolso(FiltroPesquisaDetalheReembolsoVo filtro) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaOr(
+           new ParametroPesquisaIgual("transacaoConsolidada.id", filtro.getIdConsolidado()),
+           new ParametroPesquisaIgual("transacaoConsolidadaPostergada.id", filtro.getIdConsolidado())
+        ));
+        if(filtro.getDataAbastecimento() != null) {
+            parametros.add(new ParametroPesquisaDataMenorOuIgual("dataRequisicao", obterUltimoInstanteDia(filtro.getDataAbastecimento())));
+            parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataRequisicao", obterPrimeiroInstanteDia(filtro.getDataAbastecimento())));
+        }
+        if(filtro.getPlacaVeiculo() != null) {
+            parametros.add(new ParametroPesquisaIgualIgnoreCase("placaVeiculo", filtro.getPlacaVeiculo().toUpperCase()));
+        }
+        if(filtro.getOutrosServicos() != null && filtro.getOutrosServicos().size() > 0) {
+            ParametroPesquisaOr parametrosOutrosServicos = new ParametroPesquisaOr();
+            filtro.getOutrosServicos().forEach(s -> parametrosOutrosServicos.addParametro(new ParametroPesquisaIgual("itens.produto.id", s.getId())));
+            parametros.add(parametrosOutrosServicos);
+        }
+        if(filtro.getNumeroNf() != null) {
+            parametros.add(new ParametroPesquisaLike("notasFiscais.numero", filtro.getNumeroNf()));
+        }
+        if(filtro.getNumeroSerieNf() != null) {
+            parametros.add(new ParametroPesquisaLike("notasFiscais.numeroSerie", filtro.getNumeroSerieNf()));
+        }
+        if(filtro.getTransacaoEmitida() != null){
+            parametros.add(new ParametroPesquisaIgual("statusNotaFiscal", filtro.getTransacaoEmitida() ? EMITIDA.getValue() : PENDENTE.getValue()));
+        }
+        return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+    @Override
     public List<AutorizacaoPagamento> pesquisaDetalheCobrancaSemPaginacao(FiltroPesquisaDetalheCobrancaVo filtro) {
         List<ParametroPesquisa> parametros = montarParametrosPesquisaDetalheCobranca(filtro);
         String ordenacao = montarOrdenacaoDetalheCobranca(filtro);
@@ -1249,9 +1289,9 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
             parametros.add(new ParametroPesquisaIgual("placaVeiculo", null));
         }
         if(filtro.getNotaFiscalEmitida() != null && filtro.getNotaFiscalEmitida()){
-            parametros.add(new ParametroPesquisaIgual("statusNotaFiscal", StatusNotaFiscalAbastecimento.EMITIDA.getValue()));
+            parametros.add(new ParametroPesquisaIgual("statusNotaFiscal", EMITIDA.getValue()));
         } else if (filtro.getNotaFiscalEmitida() != null && !filtro.getNotaFiscalEmitida()) {
-            parametros.add(new ParametroPesquisaIgual("statusNotaFiscal", StatusNotaFiscalAbastecimento.PENDENTE.getValue()));
+            parametros.add(new ParametroPesquisaIgual("statusNotaFiscal", PENDENTE.getValue()));
         } else {
             parametros.add(new ParametroPesquisaIgual("statusNotaFiscal", null));
         }

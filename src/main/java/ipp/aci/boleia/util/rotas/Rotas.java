@@ -146,6 +146,7 @@ public final  class Rotas {
     public static final String DETALHAMENTO_CICLO_REVENDA_API        = BASE_API + "/detalhamentoCicloRevenda";
     public static final String VEICULO_COTA_RELATORIO_API            = BASE_API + "/veiculo/cota";
     public static final String DETALHE_COBRANCA_API                  = BASE_API + "/detalheCobranca";
+    public static final String DETALHE_REEMBOLSO_API                 = BASE_API + "/detalheReembolso";
 
     /**
      * Construtor privado, impede instanciacao e heranca

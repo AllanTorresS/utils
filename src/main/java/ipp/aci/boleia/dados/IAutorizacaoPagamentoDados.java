@@ -8,6 +8,7 @@ import ipp.aci.boleia.dominio.Unidade;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaAbastecimentoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheCobrancaVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheReembolsoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaQtdTransacoesFrotaVo;
 import ipp.aci.boleia.dominio.vo.QuantidadeAbastecidaVeiculoVo;
 import ipp.aci.boleia.dominio.vo.TransacaoPendenteVo;
@@ -416,6 +417,14 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
      * @return Uma lista de ResultadoPaginado localizadas
      */
     ResultadoPaginado<AutorizacaoPagamento> pesquisaPaginadaDetalheCobranca(FiltroPesquisaDetalheCobrancaVo filtro);
+
+    /**
+     * Pesquisa uma lista de autorizações de pagamento para o detalhe de reembolso.
+     *
+     * @param filtro O filtro da busca
+     * @return Uma lista de ResultadoPaginado localizadas
+     */
+    ResultadoPaginado<AutorizacaoPagamento> pesquisaPaginadaDetalheReembolso(FiltroPesquisaDetalheReembolsoVo filtro);
 
     /**
      * Obtem a quantidade de notas fiscais associadas a transações pertencentes a um ciclo
