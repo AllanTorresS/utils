@@ -200,7 +200,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                     " AND (" +
                             "(:dataInicioPeriodo IS NULL AND :dataFimPeriodo IS NULL) " +
                             " OR (:dataInicioPeriodo = CASE WHEN TCP IS NOT NULL THEN TO_CHAR(TCP.dataInicioPeriodo, 'DD/MM/YYYY') ELSE TO_CHAR(TC.dataInicioPeriodo, 'DD/MM/YYYY') END " +
-                                " AND :dataFimPeriodo = CASE WHEN TCP IS NOT NULL THEN TO_CHAR(TCP.dataFimPeriodo, 'DD/MM/YYYY') ELSE TO_CHAR(TCP.dataFimPeriodo, 'DD/MM/YYYY') END " +
+                                " AND :dataFimPeriodo = CASE WHEN TCP IS NOT NULL THEN TO_CHAR(TCP.dataFimPeriodo, 'DD/MM/YYYY') ELSE TO_CHAR(TC.dataFimPeriodo, 'DD/MM/YYYY') END " +
                     "            ) " +
                     ")" +
                     " %s " +
