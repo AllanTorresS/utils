@@ -12,6 +12,8 @@ public class FiltroPesquisaFinanceiroVo extends FiltroBasePeriodoPaginado {
     private EntidadeVo frota;
     private String razaoSocialFrota;
     private String cnpjFrota;
+    private EntidadeVo unidade;
+    private EntidadeVo empresaAgregada;
     private EntidadeVo pontoDeVenda;
     private String nomePontoDeVenda;
     private String cnpjPontoDeVenda;
@@ -20,10 +22,29 @@ public class FiltroPesquisaFinanceiroVo extends FiltroBasePeriodoPaginado {
     private EmpresaUnidadeVo empresaUnidade;
     private Long idCobranca;
     private EnumVo statusIntegracao;
+    private List<EnumVo> listaStatusIntegracao;
     private Long numeroDocumento;
+    private List<EnumVo> statusNotaFiscal;
+    
 
     public EntidadeVo getFrota() {
         return frota;
+    }
+
+    public EntidadeVo getUnidade() {
+        return unidade;
+    }
+
+    public void setUnidade(EntidadeVo unidade) {
+        this.unidade = unidade;
+    }
+
+    public EntidadeVo getEmpresaAgregada() {
+        return empresaAgregada;
+    }
+
+    public void setEmpresaAgregada(EntidadeVo empresaAgregada) {
+        this.empresaAgregada = empresaAgregada;
     }
 
     public void setFrota(EntidadeVo frota) {
@@ -110,12 +131,28 @@ public class FiltroPesquisaFinanceiroVo extends FiltroBasePeriodoPaginado {
         this.statusIntegracao = statusIntegracao;
     }
 
+    public List<EnumVo> getListaStatusIntegracao() {
+        return listaStatusIntegracao;
+    }
+
+    public void setListaStatusIntegracao(List<EnumVo> listaStatusIntegracao) {
+        this.listaStatusIntegracao = listaStatusIntegracao;
+    }
+
     public Long getNumeroDocumento() {
         return numeroDocumento;
     }
 
     public void setNumeroDocumento(Long numeroDocumento) {
         this.numeroDocumento = numeroDocumento;
+    }
+
+    public List<EnumVo> getStatusNotaFiscal() {
+        return statusNotaFiscal;
+    }
+
+    public void setStatusNotaFiscal(List<EnumVo> statusNotaFiscal) {
+        this.statusNotaFiscal = statusNotaFiscal;
     }
 }
 
