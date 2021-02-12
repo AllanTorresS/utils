@@ -1,12 +1,12 @@
 package ipp.aci.boleia.dominio;
 
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
-import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
-import org.hibernate.envers.Audited;
+import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
 
@@ -29,16 +29,21 @@ import javax.validation.constraints.NotNull;
  */
 @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 @Entity
-@Table(name = "HIST_FROTA_PARAM_POSTO_AUT")
-public class HistoricoFrotaParametroSistemaPostosAutorizados implements IPersistente {
+@Table(name = "HIST_FROTA_PARAM_PV_AUTORI")
+public class HistoricoFrotaParametroSistemaPostoAutorizadoAbastecimento implements IPersistente, IPertenceFrota {
 
     private static final long serialVersionUID = 7739503034508124428L;
 
     @Id
-    @Column(name = "CD_HIST_FROTA_PARAM_POSTO_AUT")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_HIST_FROTA_PARAM_POSTO_AUT")
-    @SequenceGenerator(name = "SEQ_HIST_FROTA_PARAM_POSTO_AUT", sequenceName = "SEQ_HIST_FROTA_PARAM_POSTO_AUT", allocationSize = 1)
+    @Column(name = "CD_HIST_FROTA_PARAM_PV_AUTORI")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_HIST_FROTA_PARAM_PV_AUTORI")
+    @SequenceGenerator(name = "SEQ_HIST_FROTA_PARAM_PV_AUTORI", sequenceName = "SEQ_HIST_FROTA_PARAM_PV_AUTORI", allocationSize = 1)
     private Long id;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_FROTA_PARAM_SIS")
+    private FrotaParametroSistema frotaParametroSistema;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
@@ -50,15 +55,15 @@ public class HistoricoFrotaParametroSistemaPostosAutorizados implements IPersist
     @JoinColumn(name = "CD_PTOV")
     private PontoDeVenda pontoVenda;
 
-    @NotNull
-    @Column(name = "ID_TIPO_RESTRICAO")
-    private Integer tipoRestricao;
-
-    @Column(name = "VA_MAXIMO_PERMITIDO")
-    private BigDecimal valorMaximoRestricao;
-
     @Column(name = "VA_MAXIMO_LITROS")
-    private BigDecimal valorMaximoLitros;
+    private BigDecimal maximoLitros;
+
+    @Column(name = "VA_MAXIMO_VALOR")
+    private BigDecimal maximoValor;
+
+    @NotNull
+    @Column(name = "ID_AUTORIZADO")
+    private Boolean autorizado;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
@@ -70,9 +75,6 @@ public class HistoricoFrotaParametroSistemaPostosAutorizados implements IPersist
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataAlteracao;
 
-    @NotNull
-    @Column(name = "ID_AUTORIZADO")
-    private Boolean autorizado;
 
     @Override
     public Long getId() {
@@ -92,6 +94,14 @@ public class HistoricoFrotaParametroSistemaPostosAutorizados implements IPersist
         this.frotaParametroSistemaPostoAutorizadoAbastecimento = frotaParametroSistemaPostoAutorizadoAbastecimento;
     }
 
+    public FrotaParametroSistema getFrotaParametroSistema() {
+        return frotaParametroSistema;
+    }
+
+    public void setFrotaParametroSistema(FrotaParametroSistema frotaParametroSistema) {
+        this.frotaParametroSistema = frotaParametroSistema;
+    }
+
     public PontoDeVenda getPontoVenda() {
         return pontoVenda;
     }
@@ -100,20 +110,28 @@ public class HistoricoFrotaParametroSistemaPostosAutorizados implements IPersist
         this.pontoVenda = pontoVenda;
     }
 
-    public Integer getTipoRestricao() {
-        return tipoRestricao;
+    public BigDecimal getMaximoLitros() {
+        return maximoLitros;
     }
 
-    public void setTipoRestricao(Integer tipoRestricao) {
-        this.tipoRestricao = tipoRestricao;
+    public void setMaximoLitros(BigDecimal maximoLitros) {
+        this.maximoLitros = maximoLitros;
     }
 
-    public BigDecimal getValorMaximoRestricao() {
-        return valorMaximoRestricao;
+    public BigDecimal getMaximoValor() {
+        return maximoValor;
     }
 
-    public void setValorMaximoRestricao(BigDecimal valorMaximoRestricao) {
-        this.valorMaximoRestricao = valorMaximoRestricao;
+    public void setMaximoValor(BigDecimal maximoValor) {
+        this.maximoValor = maximoValor;
+    }
+
+    public Boolean getAutorizado() {
+        return autorizado;
+    }
+
+    public void setAutorizado(Boolean autorizado) {
+        this.autorizado = autorizado;
     }
 
     public Usuario getUsuario() {
@@ -132,20 +150,11 @@ public class HistoricoFrotaParametroSistemaPostosAutorizados implements IPersist
         this.dataAlteracao = dataAlteracao;
     }
 
-    public BigDecimal getValorMaximoLitros() {
-        return valorMaximoLitros;
-    }
+    @Override
+    public List<Frota> getFrotas() {
+        return getFrotaParametroSistema().getFrotas();
 
-    public void setValorMaximoLitros(BigDecimal valorMaximoLitros) {
-        this.valorMaximoLitros = valorMaximoLitros;
-    }
 
-    public Boolean getAutorizado() {
-        return autorizado;
-    }
-
-    public void setAutorizado(Boolean autorizado) {
-        this.autorizado = autorizado;
     }
 }
 
