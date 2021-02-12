@@ -47,7 +47,7 @@ public class HistoricoFrotaParametroSistemaPostoAutorizadoAbastecimento implemen
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CD_FROTA_PARAM_POSTO_AUT")
+    @JoinColumn(name = "CD_FROTA_PARAM_SIS_PV_AUTORIZ")
     private FrotaParametroSistemaPostoAutorizadoAbastecimento frotaParametroSistemaPostoAutorizadoAbastecimento;
 
     @NotNull
