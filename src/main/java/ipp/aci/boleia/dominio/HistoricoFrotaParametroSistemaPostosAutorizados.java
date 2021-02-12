@@ -6,13 +6,31 @@ import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.RelationTargetAuditMode;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+
 /**
  * Representa a tabela de Histórico dos Postos Permitidos dos Parametros do Sistema para a Frota
  */
 @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 @Entity
-@Table(name = "HIST_FROTA_PARAM_POST_PERM")
-public class HistoricoFrotaParametroSistemaPostosAutorizados implements IPersistente, IPertenceFrota {
+@Table(name = "HIST_FROTA_PARAM_POSTO_AUT")
+public class HistoricoFrotaParametroSistemaPostosAutorizados implements IPersistente {
 
     private static final long serialVersionUID = 7739503034508124428L;
 
@@ -43,20 +61,6 @@ public class HistoricoFrotaParametroSistemaPostosAutorizados implements IPersist
     private BigDecimal valorMaximoLitros;
 
     @NotNull
-    @Column(name = "DT_AUTORIZACAO")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date dataAutorizacao;
-
-    @Column(name = "DT_DESAUTORIZACAO")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date dataDesautorizacao;
-
-
-    @NotNull
-    @Column(name = "ID_ATIVO")
-    private Boolean ativo;
-
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_USUARIO")
     private Usuario usuario;
@@ -65,6 +69,10 @@ public class HistoricoFrotaParametroSistemaPostosAutorizados implements IPersist
     @Column(name = "DT_ALTERACAO")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataAlteracao;
+
+    @NotNull
+    @Column(name = "ID_AUTORIZADO")
+    private Boolean autorizado;
 
     @Override
     public Long getId() {
@@ -108,30 +116,6 @@ public class HistoricoFrotaParametroSistemaPostosAutorizados implements IPersist
         this.valorMaximoRestricao = valorMaximoRestricao;
     }
 
-    public Date getDataAutorizacao() {
-        return dataAutorizacao;
-    }
-
-    public void setDataAutorizacao(Date dataAutorizacao) {
-        this.dataAutorizacao = dataAutorizacao;
-    }
-
-    public Date getDataDesautorizacao() {
-        return dataDesautorizacao;
-    }
-
-    public void setDataDesautorizacao(Date dataDesautorizacao) {
-        this.dataDesautorizacao = dataDesautorizacao;
-    }
-
-    public Boolean getAtivo() {
-        return ativo;
-    }
-
-    public void setAtivo(Boolean ativo) {
-        this.ativo = ativo;
-    }
-
     public Usuario getUsuario() {
         return usuario;
     }
@@ -154,6 +138,14 @@ public class HistoricoFrotaParametroSistemaPostosAutorizados implements IPersist
 
     public void setValorMaximoLitros(BigDecimal valorMaximoLitros) {
         this.valorMaximoLitros = valorMaximoLitros;
+    }
+
+    public Boolean getAutorizado() {
+        return autorizado;
+    }
+
+    public void setAutorizado(Boolean autorizado) {
+        this.autorizado = autorizado;
     }
 }
 
