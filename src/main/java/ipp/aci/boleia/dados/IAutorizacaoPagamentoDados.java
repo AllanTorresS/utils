@@ -9,6 +9,7 @@ import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaAbastecimentoVo;
 import ipp.aci.boleia.dominio.vo.QuantidadeAbastecidaVeiculoVo;
 import ipp.aci.boleia.dominio.vo.TransacaoPendenteVo;
+import ipp.aci.boleia.dominio.vo.apco.InformacoesVolumeVo;
 import ipp.aci.boleia.dominio.vo.frotista.FiltroPesquisaAbastecimentoFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.ResultadoPaginadoFrtVo;
 import ipp.aci.boleia.dominio.vo.apco.VolumeVendasClienteProFrotaVo;
@@ -288,11 +289,11 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
     AutorizacaoPagamento buscaPorCdCTA(Long cdCTA);
 
     /**
-     * Obtem um abastecimento pelo numero do pedido
+     * Obtém um abastecimento POS pelo número do pedido
      * @param idPedido id do pedido
-     * @return abastecimento pertencente ao pedido fornecido
+     * @return abastecimento POS associado ao pedido fornecido
      */
-	AutorizacaoPagamento obterAbastecimentoPorCdPedido(Long idPedido);
+	AutorizacaoPagamento obterAbastecimentoPosPorPedido(Long idPedido);
 
     /**
      * Obtem uma lista de abastecimentos que estao autorizados porem com transacao pendente de confirmacao
@@ -329,14 +330,15 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
     List<AutorizacaoPagamento> obterAbastecimentoPorNota(Long cnpjDest, Long cnpjEmit, Date dataEmissao, BigDecimal valorTotalNota);
 
     /**
-     * Busca os objetos que representam as vendas consolidadas de combustiveis dentro de
-     * um período de integração entre Profrotas e APCO e realiza o DE-PARA entre os combustiveis.
+     * Busca os objetos que representam as informações necessárias para obter
+     * vendas consolidadas de combustiveis dentro de um período de integração entre Profrotas e APCO,
+     * realizando o DE-PARA entre os combustiveis.
      *
      * @param dataInicial data inicial do período de exportação.
      * @param  dataFinal data final do período de exportação
-     * @return a lista de abastecimentos agrupados do período.
+     * @return a lista de informações de volumes agrupados do período.
      */
-    List<VolumeVendasClienteProFrotaVo> obterVendasProfrotasAPCO(Date dataInicial, Date dataFinal);
+     List<InformacoesVolumeVo> obterInformacoesVendasProfrotasAPCO(Date dataInicial, Date dataFinal);
 
     /**
      * Retorna uma lista com os abastecimentos de um ciclo que tem justificativa associada
@@ -389,4 +391,19 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
      * @return transacao negativa
      */
     AutorizacaoPagamento obterTransacaoNegativaOriundaDeEstorno(AutorizacaoPagamento transacaoEstornada);
+
+    /**
+     * Busca as autorizações pertencentes a um ciclo
+     *
+     * @param filtro O filtro da busca
+     * @return Uma lista de AutorizacaoPagamento
+     */
+    List<AutorizacaoPagamento> obterAutorizacoesDoCiclo(FiltroPesquisaAbastecimentoVo filtro);
+
+    /**
+     * Retorna os abastecimentos associados às transações consolidadas
+     * @param idsTransacoesConsolidadas IDs das transações consolidadas
+     * @return abastecimentos associados às transações consolidadas
+     */
+    List<AutorizacaoPagamento> obterPorTransacoesConsolidadas(List<Long> idsTransacoesConsolidadas);
 }

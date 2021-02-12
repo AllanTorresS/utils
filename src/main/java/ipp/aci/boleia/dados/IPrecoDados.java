@@ -4,7 +4,7 @@ import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.Preco;
 import ipp.aci.boleia.dominio.TipoCombustivel;
-import ipp.aci.boleia.dominio.enums.StatusPreco;
+import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaPrecoVo;
 
@@ -30,7 +30,16 @@ public interface IPrecoDados extends IRepositorioBoleiaDados<Preco> {
      * @param statusPossiveis status permitidos na consulta
      * @return Uma lista de negociações.
      */
+    ResultadoPaginado<Preco> pesquisaPrecoPaginadaValidacaoSegregacao(FiltroPesquisaPrecoVo filtro, Boolean acordo, Usuario usuarioLogado, Integer... statusPossiveis );
+
+    /** Busca as negociações realizadas de acordo com o perfil do usuário
+     * @param filtro Filtro de pesquisa do preço negociado
+     * @param acordo Define se deve obter apenas precos em solicitacao de acordo
+     * @param statusPossiveis status permitidos na consulta
+     * @return Uma lista de negociações.
+     */
     ResultadoPaginado<Preco> pesquisaPrecoPaginada(FiltroPesquisaPrecoVo filtro, Boolean acordo, Integer... statusPossiveis );
+
 
     /**
      * Busca o preco atual para um determinado PontoVenda,Frota e tipo combustivel
@@ -65,22 +74,21 @@ public interface IPrecoDados extends IRepositorioBoleiaDados<Preco> {
     List<Preco> obterAgendamentosParaVigenciaAutomatica();
 
     /**
-     * Busca o preco pendente ou novo para um determinado PontoVenda, Frota e tipo combustivel
+     * Busca para um determinado PontoVenda, Frota e tipo combustivel os precos com status pendente ou novo que não foram agendados
      * @param frota a Frota a ser filtrada
      * @param posto O Ponto de Venda a ser filtrado
      * @param tipoCombustivel O id do tipo de combustivel
-     * @param status Lista de status a serem filtrados
-     * @return O preco pendente ou novo, caso exista
+     * @return Os precos pendentes ou novos não agendados, caso existam
      */
-    List<Preco> obterPrecos(Frota frota, PontoDeVenda posto, TipoCombustivel tipoCombustivel, List<StatusPreco> status);
+    List<Preco> obterPrecosEmNegociacaoNaoAgendados(Frota frota, PontoDeVenda posto, TipoCombustivel tipoCombustivel);
 
     /**
-     * Busca o preco agendado a partir de uma data de vigência para um determinado PontoVenda,Frota e tipo combustível
+     * Busca o preco agendado a partir de uma data de agendamento para um determinado PontoVenda,Frota e tipo combustível
      * @param idFrota O id da Frota a ser filtrada
      * @param idPosto O id do Ponto de Venda a ser filtrado
      * @param idTipoCombustivel O id do tipo de combustivel
-     * @param dataVigencia A data de vigência
+     * @param dataAgendamento A data de agendamento
      * @return O preco agendado
      */
-    Preco obterAgendamentoPorFrotaPvCombustivelDataVigencia(Long idFrota, Long idPosto, Long idTipoCombustivel, Date dataVigencia);
+    Preco obterAgendamentoPorFrotaPvCombustivelDataAgendamento(Long idFrota, Long idPosto, Long idTipoCombustivel, Date dataAgendamento);
 }

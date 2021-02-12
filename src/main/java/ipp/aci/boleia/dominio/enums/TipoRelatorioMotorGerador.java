@@ -1,10 +1,11 @@
 package ipp.aci.boleia.dominio.enums;
 
-import java.util.HashMap;
-import java.util.Map;
 
 import ipp.aci.boleia.util.TemplatePlanilha;
 import ipp.aci.boleia.util.i18n.IEnumComLabel;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Indica o tipo do relatório emitido pelo motor de geração de relatórios
@@ -34,8 +35,9 @@ public enum TipoRelatorioMotorGerador implements IEnumComLabel<TipoRelatorioMoto
     RELATORIO_ATIVACAO_TAG(20, obterMapaTemplatesAtivacaoTag()),
     RELATORIO_GERAL_FROTA(21, obterMapaTemplatesFrotaGeral()),
     RELATORIO_COBRANCA_CONECTCAR(22, obterMapaTemplatesCobrancaConectcar()),
-	RELATORIO_UTILIZACAO_TAG(23, obterMapaTemplatesUtilizacaoTag()),
-	RELATORIO_REEMBOLSO_CONECTCAR(24, obterMapaTemplatesReembolsoConectcar());
+    RELATORIO_COTA_VEICULO(23, obterMapaTemplatesCotaVeiculo()),
+	RELATORIO_UTILIZACAO_TAG(24, obterMapaTemplatesUtilizacaoTag()),
+	RELATORIO_REEMBOLSO_CONECTCAR(25, obterMapaTemplatesReembolsoConectcar());
 
     private final Integer value;
     private final Map<TipoPerfilUsuario, TemplatePlanilha> templatePerfil;
@@ -349,6 +351,18 @@ public enum TipoRelatorioMotorGerador implements IEnumComLabel<TipoRelatorioMoto
         Map<TipoPerfilUsuario, TemplatePlanilha> mapa = new HashMap<>();
         mapa.put(TipoPerfilUsuario.INTERNO, TemplatePlanilha.TEMPLATE_RELATORIO_COBRANCA_CONECTCAR);
         mapa.put(TipoPerfilUsuario.FROTA, TemplatePlanilha.TEMPLATE_RELATORIO_COBRANCA_CONECTCAR);
+        return mapa;
+    }
+    
+    /**
+     * Gera um mapa de templates por perfil para um tipo de relatório (Cota de Veículos)
+     *
+     * @return O mapa criado
+     */
+    private static Map<TipoPerfilUsuario, TemplatePlanilha> obterMapaTemplatesCotaVeiculo() {
+        Map<TipoPerfilUsuario, TemplatePlanilha> mapa = new HashMap<>();
+        mapa.put(TipoPerfilUsuario.INTERNO, TemplatePlanilha.TEMPLATE_RELATORIO_COTA_VEICULO_SOLUCAO);
+        mapa.put(TipoPerfilUsuario.FROTA, TemplatePlanilha.TEMPLATE_RELATORIO_COTA_VEICULO_FROTA);
         return mapa;
     }
 

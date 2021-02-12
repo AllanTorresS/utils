@@ -104,21 +104,17 @@ public class PrecoSd {
         for(Preco preco:precos) {
             FrotaPontoVenda frotaPtov = preco.getFrotaPtov();
             if(!somenteNovos){
-                BigDecimal descontoVigente = preco.getDescontoVigente();
+                BigDecimal descontoVigente = preco.getDescontoSolicitado() != null ? preco.getDescontoSolicitado() : preco.getDescontoVigente();
 
-                preco = precoNegociadoSd.sairDeVigencia(preco, precoBase.getDataAtualizacao());
-                repositorioPreco.armazenarSemIsolamentoDeDados(preco);
-
-                preco = new Preco();
-                preco.setFrotaPtov(frotaPtov);
-                preco.setDescontoVigente(descontoVigente);
-                preco.setStatus(StatusPreco.VIGENTE.getValue());
-                preco.setPreco(descontoVigente != null ? precoBase.getPreco().add(descontoVigente) : precoBase.getPreco());
-                preco.setPrecoBase(precoBase);
-                preco.setDataAtualizacao(precoBase.getDataAtualizacao());
-                preco.setDataVigencia(precoBase.getDataAtualizacao());
-
-                repositorioPreco.armazenarSemIsolamentoDeDados(preco);
+                Preco novoPreco = new Preco();
+                novoPreco.setStatus(StatusPreco.VIGENTE.getValue());
+                novoPreco.setFrotaPtov(frotaPtov);
+                novoPreco.setDescontoVigente(descontoVigente);
+                novoPreco.setPreco(descontoVigente != null ? precoBase.getPreco().add(descontoVigente) : precoBase.getPreco());
+                novoPreco.setPrecoBase(precoBase);
+                novoPreco.setDataVigencia(precoBase.getDataAtualizacao());
+                novoPreco.setDataAtualizacao(precoBase.getDataAtualizacao());
+                repositorioPreco.armazenarSemIsolamentoDeDados(novoPreco);
             }
             idFrotaPtov.add(preco.getFrotaPtov().getId());
             idFrotas.add(preco.getFrota().getId());

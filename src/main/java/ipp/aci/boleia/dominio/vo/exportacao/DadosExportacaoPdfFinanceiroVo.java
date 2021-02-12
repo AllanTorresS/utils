@@ -6,8 +6,9 @@ package ipp.aci.boleia.dominio.vo.exportacao;
 public class DadosExportacaoPdfFinanceiroVo extends DadosExportacaoPdfBaseVo {
     private String filtroPeriodo;
     private String filtroFrota;
+    private String filtroFrotaCnpj;
     private String filtroPosto;
-    private String filtroStatus;
+    private String filtroPostoCnpj;
     private String reembolsoTotalPago;
 
     public String getFiltroPeriodo() {
@@ -34,12 +35,20 @@ public class DadosExportacaoPdfFinanceiroVo extends DadosExportacaoPdfBaseVo {
         this.filtroPosto = filtroPosto;
     }
 
-    public String getFiltroStatus() {
-        return filtroStatus;
+    public String getFiltroFrotaCnpj() {
+        return filtroFrotaCnpj;
     }
 
-    public void setFiltroStatus(String filtroStatus) {
-        this.filtroStatus = filtroStatus;
+    public void setFiltroFrotaCnpj(String filtroFrotaCnpj) {
+        this.filtroFrotaCnpj = filtroFrotaCnpj;
+    }
+
+    public String getFiltroPostoCnpj() {
+        return filtroPostoCnpj;
+    }
+
+    public void setFiltroPostoCnpj(String filtroPostoCnpj) {
+        this.filtroPostoCnpj = filtroPostoCnpj;
     }
 
     public String getReembolsoTotalPago() {
