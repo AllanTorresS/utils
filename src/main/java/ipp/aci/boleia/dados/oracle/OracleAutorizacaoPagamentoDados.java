@@ -44,9 +44,9 @@ import ipp.aci.boleia.dominio.vo.frotista.FiltroPesquisaAbastecimentoFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.InformacaoPaginacaoFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.ResultadoPaginadoFrtVo;
 import ipp.aci.boleia.util.Ordenacao;
-import ipp.aci.boleia.util.UtilitarioCalculo;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
+import ipp.aci.boleia.util.UtilitarioFormatacaoData;
 import ipp.aci.boleia.util.negocio.ParametrosPesquisaBuilder;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Repository;
@@ -183,7 +183,9 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     private static final String CONSULTA_ABASTECIMENTOS_COBRANCA =
             "SELECT DISTINCT A " +
                     "FROM AutorizacaoPagamento A " +
-                    "LEFT JOIN A.notasFiscais NF" +
+                    "LEFT JOIN A.notasFiscais NF " +
+                    "LEFT JOIN A.transacaoConsolidada TC " +
+                    "LEFT JOIN A.transacaoConsolidadaPostergada TCP " +
                     " WHERE " +
                     " (:idConsolidado IS NULL OR A.transacaoConsolidada.id = :idConsolidado OR A.transacaoConsolidadaPostergada.id = :idConsolidado) " +
                     CLAUSULA_STATUS_AUTORIZACAO +
@@ -197,8 +199,9 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                     " AND (:idFrota IS NULL OR A.frota.id = :idFrota) " +
                     " AND (" +
                             "(:dataInicioPeriodo IS NULL AND :dataFimPeriodo IS NULL) " +
-                                " OR (:dataInicioPeriodo <= TRUNC(A.dataRequisicao) AND :dataFimPeriodo >= TRUNC(A.dataRequisicao)" +
-                        ")" +
+                            " OR (:dataInicioPeriodo = CASE WHEN TCP IS NOT NULL THEN TO_CHAR(TCP.dataInicioPeriodo, 'DD/MM/YYYY') ELSE TO_CHAR(TC.dataInicioPeriodo, 'DD/MM/YYYY') END " +
+                                " AND :dataFimPeriodo = CASE WHEN TCP IS NOT NULL THEN TO_CHAR(TCP.dataFimPeriodo, 'DD/MM/YYYY') ELSE TO_CHAR(TC.dataFimPeriodo, 'DD/MM/YYYY') END " +
+                    "            ) " +
                     ")" +
                     " %s " +
                     " ORDER BY %s ";
@@ -1258,8 +1261,16 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         if((filtro.getPaginacao() == null || filtro.getPaginacao().getParametrosOrdenacaoColuna().isEmpty())) {
             ordenacao = " A.chaveOrdenacaoFinanceiro, A.dataRequisicao ";
         } else {
+            String nomeCampoPv = "pontoDeVenda";
+            String nomeCampoChaveOrdenacao = "chaveOrdenacaoFinanceiro";
             String sentido = filtro.getPaginacao().getParametrosOrdenacaoColuna().get(0).getSentidoOrdenacao().equals(Ordenacao.DECRESCENTE) ? " DESC" : " ";
-            ordenacao = " A.dataRequisicao " + sentido;
+            if(nomeCampoPv.equals(filtro.getPaginacao().getParametrosOrdenacaoColuna().get(0).getNome())) {
+                ordenacao = " A.nomePv " + sentido;
+            } else if(nomeCampoChaveOrdenacao.equals(filtro.getPaginacao().getParametrosOrdenacaoColuna().get(0).getNome())) {
+                ordenacao = " A.chaveOrdenacaoFinanceiro, A.dataRequisicao";
+            } else {
+                ordenacao = " A.dataRequisicao " + sentido;
+            }
         }
         return ordenacao;
     }
@@ -1320,12 +1331,12 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         }
 
         if(filtro.getDataInicioPeriodo() != null) {
-            parametros.add(new ParametroPesquisaIgual("dataInicioPeriodo", filtro.getDataInicioPeriodo()));
+            parametros.add(new ParametroPesquisaIgual("dataInicioPeriodo", UtilitarioFormatacaoData.formatarDataCurta(filtro.getDataInicioPeriodo())));
         } else {
             parametros.add(new ParametroPesquisaIgual("dataInicioPeriodo", null));
         }
         if(filtro.getDataFimPeriodo() != null) {
-            parametros.add(new ParametroPesquisaIgual("dataFimPeriodo", filtro.getDataFimPeriodo()));
+            parametros.add(new ParametroPesquisaIgual("dataFimPeriodo", UtilitarioFormatacaoData.formatarDataCurta(filtro.getDataFimPeriodo())));
         } else {
             parametros.add(new ParametroPesquisaIgual("dataFimPeriodo", null));
         }
