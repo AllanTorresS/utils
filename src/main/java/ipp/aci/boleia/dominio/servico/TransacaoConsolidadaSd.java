@@ -29,6 +29,8 @@ import ipp.aci.boleia.dominio.enums.StatusNotaFiscal;
 import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
 import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
+import ipp.aci.boleia.dominio.vo.AgrupamentoTransacaoConsolidadaCobrancaVo;
+import ipp.aci.boleia.dominio.vo.EntidadeVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFinanceiroVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaTransacaoConsolidadaDetalheVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaTransacaoConsolidadaVo;
@@ -38,6 +40,7 @@ import ipp.aci.boleia.util.UtilitarioCalculo;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
 import ipp.aci.boleia.util.UtilitarioFormatacaoData;
+import ipp.aci.boleia.util.UtilitarioLambda;
 import ipp.aci.boleia.util.concorrencia.MapeadorLock;
 import ipp.aci.boleia.util.concorrencia.Sincronizador;
 import ipp.aci.boleia.util.excecao.Erro;
@@ -1271,6 +1274,26 @@ public class TransacaoConsolidadaSd {
         Date dataFimCiclo = obterCampoDataFimChaveIdentificadora(camposChave);
         Long idFrota = obterCampoIdFrotaChaveIdentificadora(camposChave);
         return repositorio.obterConsolidadosPorPeriodoEFrota(dataInicioCiclo, dataFimCiclo, idFrota);
+    }
+
+    /**
+     * Realiza a pesquisa de agrupamento de cobrança passando os filtros de inicio e fim do período e id da frota através de uma chave decodificada
+     * @param chave A chave decodificada
+     * @return O agrupamento encontrado
+     */
+    public AgrupamentoTransacaoConsolidadaCobrancaVo obterAgrupamentoCobrancaPorChaveIdentificadora(String chave){
+        String chaveDecodificada = decodificarChaveIdentificadoraAgrupamentoCiclos(chave);
+        String[] camposChave = dividirChaveIdentificadoraAgrupamentoCiclos(chaveDecodificada);
+
+        FiltroPesquisaFinanceiroVo filtro = new FiltroPesquisaFinanceiroVo();
+        filtro.setDe(obterCampoDataInicioChaveIdentificadora(camposChave));
+        filtro.setAte(obterCampoDataFimChaveIdentificadora(camposChave));
+        filtro.setFrota(new EntidadeVo(obterCampoIdFrotaChaveIdentificadora(camposChave)));
+        filtro.setPaginacao(new InformacaoPaginacao());
+
+        ResultadoPaginado<AgrupamentoTransacaoConsolidadaCobrancaVo> agrupamento = repositorio.pesquisarTransacoesPorCobranca(filtro, utilitarioAmbiente.getUsuarioLogado());
+
+        return agrupamento.getRegistros().stream().findFirst().orElse(null);
     }
 
     /**
