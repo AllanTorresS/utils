@@ -1362,7 +1362,11 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         if(filtro.getOutrosServicos() != null && !filtro.getOutrosServicos().isEmpty()) {
             String listaProdutos = " (SELECT I.produto FROM ItemAutorizacaoPagamento I WHERE I.autorizacaoPagamento.id = A.id) ";
             for(EntidadeVo servico : filtro.getOutrosServicos()) {
-                strBufferFiltroOutrosServicos.append(" AND " + servico.getId() + " IN " + listaProdutos );
+                if(filtro.getOutrosServicos().get(0).equals(servico)) {
+                    strBufferFiltroOutrosServicos.append(" AND " + servico.getId() + " IN " + listaProdutos);
+                } else {
+                    strBufferFiltroOutrosServicos.append(" OR " + servico.getId() + " IN " + listaProdutos);
+                }
             }
         }
         return strBufferFiltroOutrosServicos.toString();
