@@ -575,6 +575,32 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "%s " +
                     "ORDER BY TC.dataFimPeriodo";
 
+    private static final String CLAUSULA_STATUS_INTEGRACAO_REEMBOLSO = " AND (r.statusIntegracao in :statusIntegracao) ";
+
+    private static final String CLAUSULA_STATUS_NOTA_FISCAL = " AND (tc.statusNotaFiscal in :statusNf) ";
+
+    private static final String CLAUSULA_STATUS_PAGAMENTO_REEMBOLSO = " AND ( (r is null AND " +
+             StatusPagamentoReembolso.PREVISTO.getValue() + " in :statusPagamento) OR (r is not null AND r.status in :statusPagamento)) ";
+
+    private static final String CONSULTA_CONSOLIDADOS_GRID_REEMBOLSO_SOLUCAO =
+            "SELECT tc " +
+                    "FROM TransacaoConsolidada tc " +
+                    "LEFT JOIN tc.frotaPtov fpv " +
+                    "JOIN tc.reembolso r " +
+                    "WHERE ((r.dataPagamento is null AND (r.dataVencimentoPgto >= :dataInicioPeriodo AND r.dataVencimentoPgto <= :dataFimPeriodo)) " +
+                    "OR (r.dataPagamento >= :dataInicioPeriodo AND r.dataPagamento <= :dataFimPeriodo)) " +
+                    "AND (fpv.pontoVenda.id  = :idPv OR :idPv is null) " +
+                    "AND (fpv.frota.id = :idFrota OR :idFrota is null) " +
+                    CLAUSULA_STATUS_PAGAMENTO_REEMBOLSO +
+                    CLAUSULA_STATUS_INTEGRACAO_REEMBOLSO +
+                    CLAUSULA_STATUS_NOTA_FISCAL +
+                    "AND (tc.statusConsolidacao = :statusConsolidacao OR :statusConsolidacao is null) " +
+                    "AND (r.numeroDocumento = :numeroDocumento  OR :numeroDocumento is null)" +
+                    "AND (tc.valorFaturamento <> 0 OR tc.valorReembolso <> 0 OR tc.valorTotalNotaFiscal <> 0 OR tc.quantidadeAbastecimentos <> 0) " +
+                    "AND (tc.unidade.id = :idUnidade OR :idUnidade is null) " +
+                    "AND (tc.empresaAgregada.id = :idEmpresaAgregada OR :idEmpresaAgregada is null) " +
+                    "ORDER BY %s ";
+
     @Autowired
     private UtilitarioAmbiente ambiente;
 
@@ -1207,16 +1233,109 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
     }
 
     @Override
-    public ResultadoPaginado<TransacaoConsolidada> pesquisarTransacoesFinanceiro(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado) {
+    public ResultadoPaginado<TransacaoConsolidada> pesquisarTransacoesFinanceiroRevenda(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado) {
+
+        List<ParametroPesquisa> parametros = popularParametrosPesquisaTransacoesFinanceiro(filtro, usuarioLogado);
+
+        String ordenacao = " ";
+        if(filtro.getPaginacao().getParametrosOrdenacaoColuna().isEmpty()) {
+            ordenacao = "CASE WHEN r.status = " + StatusPagamentoReembolso.NF_ATRASADA.getValue() + " THEN 0 " +
+                    "WHEN r.valorReembolso > 0 AND trunc(r.dataVencimentoPgto) < trunc(sysdate()) AND r.status <> " + StatusPagamentoReembolso.PAGO.getValue() + " THEN 1 " + //ATRASADO
+                    "ELSE 2 END, r.dataPagamento, r.dataVencimentoPgto ";
+        } else {
+            String campoOrdenacao= "r.dataPagamento %s, r.dataVencimentoPgto ";
+            String direcaoOrdenacao = filtro.getPaginacao().getParametrosOrdenacaoColuna().get(0).isDecrescente() ? " DESC" : " ";
+            ordenacao = String.format(campoOrdenacao, direcaoOrdenacao);
+        }
+
+        //Monta a consulta completa da grid do financeiro
+        String consultaPesquisaGridFinanceiro = String.format(CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO_REVENDA, ordenacao);
+
+        return pesquisar(filtro.getPaginacao(), consultaPesquisaGridFinanceiro, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+    @Override
+    public ResultadoPaginado<TransacaoConsolidada> pesquisarTransacoesReembolsoSolucao(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado) {
+        List<ParametroPesquisa> parametros = popularParametrosPesquisaTransacoesFinanceiro(filtro, usuarioLogado);
+
+        String consulta = CONSULTA_CONSOLIDADOS_GRID_REEMBOLSO_SOLUCAO;
+
+        if (filtro.getStatusPagamento() != null && !filtro.getStatusPagamento().isEmpty()){
+            List<Integer> listaStatus = filtro.getStatusPagamento().stream().map(x -> StatusPagamentoReembolso.valueOf(x.getName()).getValue()).collect(Collectors.toList());
+            parametros.add(new ParametroPesquisaIn("statusPagamento", listaStatus));
+        }else{
+            consulta = consulta.replace(CLAUSULA_STATUS_PAGAMENTO_REEMBOLSO, "");
+        }
+
+        if (filtro.getListaStatusIntegracao() != null && !filtro.getListaStatusIntegracao().isEmpty()){
+            List<Integer> listaStatus = filtro.getListaStatusIntegracao().stream().map(x -> StatusIntegracaoReembolsoJde.valueOf(x.getName()).getValue()).collect(Collectors.toList());
+            parametros.add(new ParametroPesquisaIn("statusIntegracao", listaStatus));
+        }else{
+            consulta = consulta.replace(CLAUSULA_STATUS_INTEGRACAO_REEMBOLSO, "");
+        }
+
+        if(filtro.getStatusNotaFiscal() != null && !filtro.getStatusNotaFiscal().isEmpty()){
+            List<Integer> listaStatus = filtro.getStatusNotaFiscal().stream().map(x -> StatusNotaFiscal.valueOf(x.getName()).getValue()).collect(Collectors.toList());
+            parametros.add(new ParametroPesquisaIn("statusNf", listaStatus));
+        }else{
+            consulta = consulta.replace(CLAUSULA_STATUS_NOTA_FISCAL, "");
+        }
+
+        if(filtro.getNumeroDocumento() != null){
+            parametros.add(new ParametroPesquisaIgual("numeroDocumento", filtro.getNumeroDocumento()));
+        }else{
+            parametros.add(new ParametroPesquisaIgual("numeroDocumento", null));
+        }
+
+        if (filtro.getStatusCiclo() != null && filtro.getStatusCiclo().getValue() != null){
+            parametros.add(new ParametroPesquisaIgual("statusConsolidacao", filtro.getStatusCiclo().getValue()));
+        }else{
+            parametros.add(new ParametroPesquisaIgual("statusConsolidacao", null));
+        }
+
+
+        String ordenacao = " ";
+        if(filtro.getPaginacao().getParametrosOrdenacaoColuna().isEmpty()) {
+            ordenacao = "CASE WHEN r.status = " + StatusPagamentoReembolso.NF_ATRASADA.getValue() + " THEN 0 " +
+                    "WHEN r.valorReembolso > 0 AND trunc(r.dataVencimentoPgto) < trunc(sysdate()) AND r.status <> " + StatusPagamentoReembolso.PAGO.getValue() + " THEN 1 " + //ATRASADO
+                    "ELSE 2 END, r.dataPagamento, r.dataVencimentoPgto ";
+        } else {
+            String campoOrdenacao= "tc.dataFimPeriodo %s ";
+            String direcaoOrdenacao = filtro.getPaginacao().getParametrosOrdenacaoColuna().get(0).isDecrescente() ? " DESC" : " ";
+            ordenacao = String.format(campoOrdenacao, direcaoOrdenacao);
+        }
+
+        //Monta a consulta completa da grid do reembolso
+        String consultaPesquisaReembolsoSolucao = String.format(consulta, ordenacao);
+
+        return pesquisar(filtro.getPaginacao(), consultaPesquisaReembolsoSolucao, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+
+    }
+
+    /** Popula os parâmetros de pesquisa em comum entre as consultas da Revenda: Financeiro e Solucao: Reembolso
+     *
+     * @param filtro Filtro de pesquisa
+     * @param usuarioLogado Usuário logado que realizou a consulta
+     * @return Lista de parâmetros de pesquisa preenchidos.
+     */
+    private  List<ParametroPesquisa> popularParametrosPesquisaTransacoesFinanceiro(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
 
         parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataInicioPeriodo", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe())));
         parametros.add(new ParametroPesquisaDataMenorOuIgual("dataFimPeriodo", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte())));
 
-        if(filtro.getPontoDeVenda() != null && filtro.getPontoDeVenda().getId() != null) {
-            parametros.add(new ParametroPesquisaIn("idsPvs", Collections.singletonList(filtro.getPontoDeVenda().getId())));
-        } else {
-            parametros.add(new ParametroPesquisaIn("idsPvs", usuarioLogado.getPontosDeVenda().stream().map(PontoDeVenda::getId).collect(Collectors.toList())));
+        if (usuarioLogado.isRevendedor()){
+            if(filtro.getPontoDeVenda() != null && filtro.getPontoDeVenda().getId() != null) {
+                parametros.add(new ParametroPesquisaIn("idsPvs", Collections.singletonList(filtro.getPontoDeVenda().getId())));
+            } else {
+                parametros.add(new ParametroPesquisaIn("idsPvs", usuarioLogado.getPontosDeVenda().stream().map(PontoDeVenda::getId).collect(Collectors.toList())));
+            }
+        } else if(usuarioLogado.isInterno()){
+            if(filtro.getPontoDeVenda() != null && filtro.getPontoDeVenda().getId() != null) {
+                parametros.add(new ParametroPesquisaIgual("idPv", filtro.getPontoDeVenda().getId()));
+            } else{
+                parametros.add(new ParametroPesquisaIgual("idPv", null));
+            }
         }
 
         if(filtro.getFrota() != null && filtro.getFrota().getId() != null){
@@ -1237,21 +1356,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             parametros.add(new ParametroPesquisaIgual("idEmpresaAgregada", null));
         }
 
-        String ordenacao = " ";
-        if(filtro.getPaginacao().getParametrosOrdenacaoColuna().isEmpty()) {
-            ordenacao = "CASE WHEN r.status = " + StatusPagamentoReembolso.NF_ATRASADA.getValue() + " THEN 0 " +
-                    "WHEN r.valorReembolso > 0 AND trunc(r.dataVencimentoPgto) < trunc(sysdate()) AND r.status <> " + StatusPagamentoReembolso.PAGO.getValue() + " THEN 1 " + //ATRASADO
-                    "ELSE 2 END, r.dataPagamento, r.dataVencimentoPgto ";
-        } else {
-            String campoOrdenacao= "r.dataPagamento %s, r.dataVencimentoPgto ";
-            String direcaoOrdenacao = filtro.getPaginacao().getParametrosOrdenacaoColuna().get(0).isDecrescente() ? " DESC" : " ";
-            ordenacao = String.format(campoOrdenacao, direcaoOrdenacao);
-        }
-
-        //Monta a consulta completa da grid do financeiro
-        String consultaPesquisaGridFinanceiro = String.format(CONSULTA_CONSOLIDADOS_GRID_FINANCEIRO_REVENDA, ordenacao);
-
-        return pesquisar(filtro.getPaginacao(), consultaPesquisaGridFinanceiro, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        return parametros;
     }
 
     @Override
