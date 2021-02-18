@@ -40,7 +40,6 @@ import ipp.aci.boleia.util.UtilitarioCalculo;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
 import ipp.aci.boleia.util.UtilitarioFormatacaoData;
-import ipp.aci.boleia.util.UtilitarioLambda;
 import ipp.aci.boleia.util.concorrencia.MapeadorLock;
 import ipp.aci.boleia.util.concorrencia.Sincronizador;
 import ipp.aci.boleia.util.excecao.Erro;
@@ -1241,6 +1240,18 @@ public class TransacaoConsolidadaSd {
         String chave = dataInicioPeriodo.getTime() + "|" +
                        dataFimPeriodo.getTime() + "|" +
                        idFrota.toString();
+        return UtilitarioCriptografia.toBase64(chave.getBytes(StandardCharsets.UTF_8));
+    }
+
+    /**
+     * Gera uma chave identificadora codificada com informações do ciclo
+     * @param consolidado O consolidado a ser usado
+     * @return A chave codificada
+     */
+    public String gerarChaveIdentificadoraCodificadaAgrupamentoCiclos(TransacaoConsolidada consolidado) {
+        String chave = consolidado.getDataInicioPeriodo().getTime() + "|" +
+                consolidado.getDataFimPeriodo().getTime() + "|" +
+                consolidado.getFrota().getId().toString();
         return UtilitarioCriptografia.toBase64(chave.getBytes(StandardCharsets.UTF_8));
     }
 
