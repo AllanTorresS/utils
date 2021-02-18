@@ -15,6 +15,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Where;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 
@@ -49,6 +50,7 @@ public class TagConectcar implements IPersistente {
 	@Column(name = "DT_EXCLUSAO")
 	private Date dataExclusao;
 	
+	@NotAudited
 	@OneToMany(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DS_PLACA", insertable = false, updatable = false, referencedColumnName = "DS_PLACA")
 	@Where(clause = "ID_EXCLUIDO = 0 AND ID_STATUS = 1")
