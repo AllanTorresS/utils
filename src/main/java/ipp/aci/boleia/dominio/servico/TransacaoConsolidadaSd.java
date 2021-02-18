@@ -192,7 +192,7 @@ public class TransacaoConsolidadaSd {
         informacaoPaginacao.setTamanhoPagina(null);
         informacaoPaginacao.setPagina(null);
         filtro.setPaginacao(informacaoPaginacao);
-        return repositorio.pesquisarTransacoesFinanceiro(filtro, usuario);
+        return repositorio.pesquisarTransacoesFinanceiroRevenda(filtro, usuario);
     }
 
     /**
