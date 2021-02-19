@@ -40,7 +40,7 @@ public class HistoricoParametroNotaFiscalSd {
                 historicoParametroNotaFiscal.setLocalDestino(dadosAntigos.getLocalDestino());
                 historicoParametroNotaFiscal.setSepararPorCombustivelProdutoServico(dadosAntigos.getSepararPorCombustivelProdutoServico());
                 historicoParametroNotaFiscal.setDadosAdicionais(dadosAntigos.getDadosAdicionais());
-                historicoParametroNotaFiscal.setLocalDestinoPadrao(parametroNotaFiscal.getUnidadeLocalDestinoPadrao());
+                historicoParametroNotaFiscal.setUnidadeLocalDestinoPadrao(parametroNotaFiscal.getUnidadeLocalDestinoPadrao());
                 return historicoParametroNotaFiscalDados.armazenar(historicoParametroNotaFiscal);
             }
         }
