@@ -51,6 +51,9 @@ public class ParametroNotaFiscal implements IPersistente {
     @Version
     private Long versao;
 
+    @Column(name= "CD_UNIDADE_LOCAL_DEST_PADRAO")
+    private Long unidadeLocalDestinoPadrao;
+
     @Override
     public Long getId() {
         return id;
@@ -107,5 +110,13 @@ public class ParametroNotaFiscal implements IPersistente {
 
     public void setSepararPorCombustivelProdutoServico(Boolean separarPorCombustivelProdutoServico) {
         this.separarPorCombustivelProdutoServico = separarPorCombustivelProdutoServico;
+    }
+
+    public Long getUnidadeLocalDestinoPadrao() {
+        return unidadeLocalDestinoPadrao;
+    }
+
+    public void setUnidadeLocalDestinoPadrao(Long unidadeLocalDestinoPadrao) {
+        this.unidadeLocalDestinoPadrao = unidadeLocalDestinoPadrao;
     }
 }
