@@ -5,7 +5,7 @@ import ipp.aci.boleia.dominio.*;
 /**
  * Repositório de dados da classe {@link HistoricoFrotaParametroSistemaPostoAutorizadoAbastecimento}.
  *
- * @author rafael.laranjeiro
+ * @author felipe.chaves
  */
 public interface IHistoricoFrotaParametroSistemaPostoAutorizadoAbastecimento extends IRepositorioBoleiaDados<HistoricoFrotaParametroSistemaPostoAutorizadoAbastecimento>{
 
