@@ -52,6 +52,9 @@ public class HistoricoParametroNotaFiscal implements IPersistente {
     @Column(name = "NM_DADOS")
     private String dadosAdicionais;
 
+    @Column(name= "CD_LOCAL_DESTINO_PADRAO")
+    private Long localDestinoPadrao;
+
     public Long getId() {
         return id;
     }
@@ -106,5 +109,13 @@ public class HistoricoParametroNotaFiscal implements IPersistente {
 
     public void setSepararPorCombustivelProdutoServico(Boolean separarPorCombustivelProdutoServico) {
         this.separarPorCombustivelProdutoServico = separarPorCombustivelProdutoServico;
+    }
+
+    public Long getLocalDestinoPadrao() {
+        return localDestinoPadrao;
+    }
+
+    public void setLocalDestinoPadrao(Long localDestinoPadrao) {
+        this.localDestinoPadrao = localDestinoPadrao;
     }
 }
