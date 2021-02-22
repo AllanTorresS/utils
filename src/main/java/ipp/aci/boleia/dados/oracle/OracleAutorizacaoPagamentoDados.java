@@ -32,7 +32,6 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaior;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMenor;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
-import ipp.aci.boleia.dominio.vo.EntidadeVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaAbastecimentoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheCobrancaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheReembolsoVo;
@@ -186,6 +185,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                     "LEFT JOIN A.notasFiscais NF " +
                     "LEFT JOIN A.transacaoConsolidada TC " +
                     "LEFT JOIN A.transacaoConsolidadaPostergada TCP " +
+                    "LEFT JOIN A.items I " +
                     " WHERE " +
                     " (:idConsolidado IS NULL OR A.transacaoConsolidada.id = :idConsolidado OR A.transacaoConsolidadaPostergada.id = :idConsolidado) " +
                     CLAUSULA_STATUS_AUTORIZACAO +
@@ -1203,7 +1203,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     public ResultadoPaginado<AutorizacaoPagamento> pesquisaPaginadaDetalheCobranca(FiltroPesquisaDetalheCobrancaVo filtro) {
         List<ParametroPesquisa> parametros = montarParametrosPesquisaDetalheCobranca(filtro);
         String ordenacao = montarOrdenacaoDetalheCobranca(filtro);
-        String filtroOutrosServicos = montarFiltroOutroServicosDetalheCobranca(filtro);
+        String filtroOutrosServicos = montarFiltroOutroServicosDetalheCobranca(filtro, parametros);
 
         String consultaPesquisa = String.format(CONSULTA_ABASTECIMENTOS_COBRANCA, filtroOutrosServicos, ordenacao);
 
@@ -1245,7 +1245,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     public List<AutorizacaoPagamento> pesquisaDetalheCobrancaSemPaginacao(FiltroPesquisaDetalheCobrancaVo filtro) {
         List<ParametroPesquisa> parametros = montarParametrosPesquisaDetalheCobranca(filtro);
         String ordenacao = montarOrdenacaoDetalheCobranca(filtro);
-        String filtroOutrosServicos = montarFiltroOutroServicosDetalheCobranca(filtro);
+        String filtroOutrosServicos = montarFiltroOutroServicosDetalheCobranca(filtro, parametros);
 
         String consultaPesquisa = String.format(CONSULTA_ABASTECIMENTOS_COBRANCA, filtroOutrosServicos, ordenacao);
         return pesquisar(null, consultaPesquisa, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
@@ -1354,20 +1354,15 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     /**
      * Monta parte do filtro relativa a outros serviços na consulta de detalhe de cobrança
      * @param filtro O filtro fornecido
+     * @param parametros Os parâmetros passados para a query
      * @return A string de filtro montada
      */
-    private String montarFiltroOutroServicosDetalheCobranca(FiltroPesquisaDetalheCobrancaVo filtro) {
+    private String montarFiltroOutroServicosDetalheCobranca(FiltroPesquisaDetalheCobrancaVo filtro, List<ParametroPesquisa> parametros) {
         String filtroOutrosServicos = " ";
         StringBuffer strBufferFiltroOutrosServicos = new StringBuffer(filtroOutrosServicos);
         if(filtro.getOutrosServicos() != null && !filtro.getOutrosServicos().isEmpty()) {
-            String listaProdutos = " (SELECT I.produto FROM ItemAutorizacaoPagamento I WHERE I.autorizacaoPagamento.id = A.id) ";
-            for(EntidadeVo servico : filtro.getOutrosServicos()) {
-                if(filtro.getOutrosServicos().get(0).equals(servico)) {
-                    strBufferFiltroOutrosServicos.append(" AND " + servico.getId() + " IN " + listaProdutos);
-                } else {
-                    strBufferFiltroOutrosServicos.append(" OR " + servico.getId() + " IN " + listaProdutos);
-                }
-            }
+            strBufferFiltroOutrosServicos.append(" AND (I.produto.id IN :listaProdutos) ");
+            parametros.add(new ParametroPesquisaIn("listaProdutos", filtro.getOutrosServicos().stream().map(x -> x.getId()).collect(Collectors.toList())));
         }
         return strBufferFiltroOutrosServicos.toString();
     }
