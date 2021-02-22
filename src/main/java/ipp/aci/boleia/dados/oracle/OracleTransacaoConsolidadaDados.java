@@ -579,14 +579,15 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
 
     private static final String CLAUSULA_STATUS_NOTA_FISCAL = " AND (tc.statusNotaFiscal in :statusNf) ";
 
-    private static final String CLAUSULA_STATUS_PAGAMENTO_REEMBOLSO = " AND ( (r is null AND " +
-             StatusPagamentoReembolso.PREVISTO.getValue() + " in :statusPagamento) OR (r is not null AND r.status in :statusPagamento)) ";
-
+    private static final String CLAUSULA_STATUS_PAGAMENTO_REEMBOLSO = " AND ((r is null AND " +
+             StatusPagamentoReembolso.PREVISTO.getValue() + " in :statusPagamento) OR (r is not null AND (r.status in :statusPagamento OR " + 
+             " (r.status = " + StatusPagamentoReembolso.EM_ABERTO.getValue() + " AND " + StatusPagamentoReembolso.PREVISTO.getValue() + " in :statusPagamento)))) ";
+    
     private static final String CONSULTA_CONSOLIDADOS_GRID_REEMBOLSO_SOLUCAO =
             "SELECT tc " +
                     "FROM TransacaoConsolidada tc " +
                     "LEFT JOIN tc.frotaPtov fpv " +
-                    "JOIN tc.reembolso r " +
+                    "LEFT JOIN tc.reembolso r " +
                     "WHERE " +
                     "(tc.dataInicioPeriodo >= :dataInicioPeriodo AND tc.dataFimPeriodo <= :dataFimPeriodo) " +
                     "AND (fpv.pontoVenda.id  = :idPv OR :idPv is null) " +
