@@ -125,7 +125,7 @@ public final class UtilitarioCalculoData {
 		c.setTime(data);
 		c.set(Calendar.HOUR_OF_DAY, 11);
 		c.set(Calendar.MINUTE, 59);
-		c.set(Calendar.SECOND, 99);
+		c.set(Calendar.SECOND, 59);
 		c.set(Calendar.MILLISECOND, 999);
 
 		return c.getTime();
