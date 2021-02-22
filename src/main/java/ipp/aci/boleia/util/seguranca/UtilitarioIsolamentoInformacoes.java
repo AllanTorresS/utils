@@ -224,4 +224,12 @@ public final class UtilitarioIsolamentoInformacoes {
         }
         return false;
     }
+    /**
+     * Verifica se o usuário interno é do tipo assessor ou coordenador para não segregar
+     * @param usuarioLogado O usuário logado
+     * @return true caso o usuário interno seja assessor ou coordenador
+     */
+    public static boolean isUsuarioInternoAssessorOuCoordenador(Usuario usuarioLogado) {
+        return usuarioLogado.isInterno() && usuarioLogado.isAssessor() || usuarioLogado.isInterno() && usuarioLogado.isCoordenador();
+    }
 }

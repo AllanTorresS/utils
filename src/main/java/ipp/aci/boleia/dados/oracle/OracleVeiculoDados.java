@@ -11,8 +11,10 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgu
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaFetch;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgualIgnoreCase;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaCotaVeiculoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialVeiculoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaVeiculoVo;
 import ipp.aci.boleia.dominio.vo.externo.FiltroPesquisaVeiculoExtVo;
@@ -20,17 +22,24 @@ import ipp.aci.boleia.dominio.vo.frotista.FiltroPesquisaVeiculoFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.InformacaoPaginacaoFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.ResultadoPaginadoFrtVo;
 import ipp.aci.boleia.util.negocio.ParametrosPesquisaBuilder;
+import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.Query;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-
+import java.util.Locale;
 /**
  * Respositorio de entidades Veiculo
  */
 @Repository
 public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> implements IVeiculoDados {
+
+    @Autowired
+    private UtilitarioAmbiente ambiente;
 
     private static final String PARAM_ID = "id";
     private static final String PARAM_PLACA = "placa";
@@ -48,6 +57,8 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
     private static final String PARAM_CNPJ_AGREGADA = "empresaAgregada.cnpj";
     private static final String PARAM_CNPJ_FROTA = "frota.cnpj";
     private static final String PARAM_DATA_ATUALIZACAO = "dataAtualizacao";
+
+    private static final String ORDER_BY_CLAUSE = " ORDER BY %s %s ";
 
     /**
      * Instancia o repositorio
@@ -69,6 +80,77 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
         }
         return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
+
+    @Override
+    public ResultadoPaginado<Veiculo> pesquisarCotaVeiculo(FiltroPesquisaCotaVeiculoVo filtro) {
+        String consulta = CONSULTA_COTA_VEICULO_HQL;
+
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        List<Long> idFrota = filtro.getFrota() != null ? Collections.singletonList(filtro.getFrota().getId()) : null;
+        parametros.add(new ParametroPesquisaIn("idFrota", idFrota));
+        parametros.add(new ParametroPesquisaIgual("tipoVeiculo", filtro.getTipoVeiculo().getId() != null ? filtro.getTipoVeiculo().getId() : null));
+        Integer classificacao = filtro.getClassificacao() != null && filtro.getClassificacao().getName() != null? ClassificacaoAgregado.valueOf(filtro.getClassificacao().getName()).getValue() : null;
+        parametros.add(new ParametroPesquisaIgual("classificacao", classificacao));
+        parametros.add(new ParametroPesquisaIgual("placa", filtro.getPlaca() != null ? filtro.getPlaca().toUpperCase(Locale.ROOT) : null));
+        parametros.add(new ParametroPesquisaIgual("empresaAgregada", filtro.getEmpresaAgregada().getId() != null ? filtro.getEmpresaAgregada().getId() : null));
+
+        if (filtro.getUnidade() != null && filtro.getUnidade().getId() != null && filtro.getUnidade().getId() > 0) {
+            parametros.add(new ParametroPesquisaIgual("unidade", filtro.getUnidade().getId()));
+        } else {
+            parametros.add(new ParametroPesquisaNulo("unidade"));
+        }
+
+
+        String ordenacao = " ";
+        if (CollectionUtils.isNotEmpty(filtro.getPaginacao().getParametrosOrdenacaoColuna())) {
+            ParametroOrdenacaoColuna parametroOrdenacaoColuna = filtro.getPaginacao().getParametrosOrdenacaoColuna().get(0);
+            String campoOrdenacao = null;
+            String direcaoOrdenacao = parametroOrdenacaoColuna.isDecrescente() ? "DESC" : "ASC";
+            switch (parametroOrdenacaoColuna.getNome()) {
+                case "tipoVeiculo.descricao":
+                    campoOrdenacao = "tv.descricao";
+                    break;
+                case "classificacao.label":
+                    campoOrdenacao = "(CASE WHEN v.agregado = 1 THEN 'AGREGADO' ELSE 'PROPRIO' END)";
+                    break;
+                case "saldo":
+                    campoOrdenacao = "(" +
+                                        "CASE WHEN ps.emLitros = 0 THEN " +
+                                            "((CASE WHEN sv.cotaValor IS NOT NULL THEN sv.cotaValor ELSE 0 END) - (CASE WHEN sv.valorConsumido IS NOT NULL THEN sv.valorConsumido ELSE 0 END)) " +
+                                        "ELSE " +
+                                            "((CASE WHEN sv.cotaLitros IS NOT NULL THEN sv.cotaLitros ELSE 0 END) - (CASE WHEN sv.litrosConsumidos IS NOT NULL THEN sv.litrosConsumidos ELSE 0 END)) " +
+                                        "END" +
+                                     ")";
+                    break;
+            }
+            if (campoOrdenacao != null) {
+                ordenacao = String.format(ORDER_BY_CLAUSE, campoOrdenacao, direcaoOrdenacao);
+            }
+        }
+
+        return pesquisar(filtro.getPaginacao() ,
+                consulta.concat(ordenacao) ,
+                parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        }
+
+    String CONSULTA_COTA_VEICULO_HQL =
+            " SELECT v "+
+                " FROM Veiculo v " +
+                " INNER JOIN v.frota f " +
+                " INNER JOIN f.parametrosSistema ps " +
+                " LEFT JOIN v.saldoVeiculo sv " +
+                " LEFT JOIN v.subtipoVeiculo stv " +
+                " LEFT JOIN stv.tipoVeiculo tv " +
+                " LEFT JOIN v.empresaAgregada ep " +
+                " LEFT JOIN v.unidade u  " +
+                " WHERE (:idFrota           IS NULL OR v.frota.id IN (:idFrota)) " +
+                "   AND (:tipoVeiculo       IS NULL OR tv.id = :tipoVeiculo )" +
+                "   AND (:classificacao     IS NULL OR v.agregado = :classificacao )" +
+                "   AND (:placa             IS NULL OR v.placa = :placa )" +
+                "   AND (:empresaAgregada   IS NULL OR ep.id = :empresaAgregada )" +
+                "   AND (:unidade           IS NULL OR u.id = :unidade )" +
+                "   AND ps.ativo = 1 " +
+                "   AND ps.parametroSistema = 8 ";
 
     @Override
     public ResultadoPaginadoFrtVo<Veiculo> pesquisar(FiltroPesquisaVeiculoExtVo filtro) {

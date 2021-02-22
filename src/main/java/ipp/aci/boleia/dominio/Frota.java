@@ -126,14 +126,41 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @Column(name = "SG_UF")
     private String unidadeFederativa;
 
+    /**
+     * @deprecated
+     * Atributo legado, os assessores responsaveis agora estao dividido em tipos de consultores de negocio diferentes.
+     * No entanto o atributo nao pode ser removido pois sera migrado aos poucos.
+     */
     @Size(max=250)
     @Column(name = "NM_ASSESSOR_RESP")
+    @Deprecated   
     private String assessorResponsavel;
 
+    /**
+     * @deprecated
+     * Atributo legado, os assessores responsaveis agora estao dividido em tipos de consultores de negocio diferentes.
+     * No entanto o atributo nao pode ser removido pois sera migrado aos poucos.
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_USUARIO_ASSESSOR_RESP")
     @JsonIgnoreProperties("frotasAssessoradas")
+    @Deprecated
     private Usuario usuarioAssessorResponsavel;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_USU_CONSULTOR_HUNTER")
+    @JsonIgnoreProperties("frotasAssessoradas")
+    private Usuario usuarioConsultorHunter;
+        
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_USU_CONSULTOR_FARMER_PESADO")
+    @JsonIgnoreProperties("frotasAssessoradas")
+    private Usuario usuarioConsultorFarmerPesado;
+            
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_USU_CONSULTOR_FARMER_LEVE")
+    @JsonIgnoreProperties("frotasAssessoradas")
+    private Usuario usuarioConsultorFarmerLeve;
 
     @Max(99)
     @NotNull
@@ -699,6 +726,30 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
 
     public void setUsuarioAssessorResponsavel(Usuario usuarioAssessorResponsavel) {
         this.usuarioAssessorResponsavel = usuarioAssessorResponsavel;
+    }
+
+    public Usuario getUsuarioConsultorHunter() {
+        return usuarioConsultorHunter;
+    }
+
+    public void setUsuarioConsultorHunter(Usuario usuarioConsultorHunter) {
+        this.usuarioConsultorHunter = usuarioConsultorHunter;
+    }
+
+    public Usuario getUsuarioConsultorFarmerPesado() {
+        return usuarioConsultorFarmerPesado;
+    }
+
+    public void setUsuarioConsultorFarmerPesado(Usuario usuarioConsultorFarmerPesado) {
+        this.usuarioConsultorFarmerPesado = usuarioConsultorFarmerPesado;
+    }
+
+    public Usuario getUsuarioConsultorFarmerLeve() {
+        return usuarioConsultorFarmerLeve;
+    }
+
+    public void setUsuarioConsultorFarmerLeve(Usuario usuarioConsultorFarmerLeve) {
+        this.usuarioConsultorFarmerLeve = usuarioConsultorFarmerLeve;
     }
 
     public Integer getDddTelefone() {

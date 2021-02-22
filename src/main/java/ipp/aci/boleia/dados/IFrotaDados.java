@@ -41,11 +41,25 @@ public interface IFrotaDados extends IRepositorioBoleiaDados<Frota> {
     ResultadoPaginado<Frota> pesquisar(FiltroPesquisaFrotaVo filtro);
 
     /**
+     * Pesquisa frota a partir do filtro informado
+     * @param filtro O filtro da busca e usuário logado
+     * @return Uma lista de entidades localizadas sem segregação
+     */
+    ResultadoPaginado<Frota> pesquisarValidacaoSegregacao(FiltroPesquisaFrotaVo filtro, Usuario usuario);
+
+    /**
      * Pesquisa por frotas utilizando os campos CNPJ e/ou Razao Social
      * @param filtro Filtro contendo os parametros da pesquisa
      * @return Lista com as entidades encontradas
      */
     List<Frota> pesquisarPorCnpjRazaoSocial(FiltroPesquisaParcialFrotaVo filtro);
+
+    /**
+     * Pesquisa por frotas utilizando os campos CNPJ e/ou Razao Social
+     * @param filtro Filtro contendo os parametros da  e usuario logado
+     * @return Lista com as entidades encontradas sem segregação
+     */
+    List<Frota> pesquisarPorCnpjRazaoSocialValidacaoSegregacao(FiltroPesquisaParcialFrotaVo filtro, Usuario usuarioLogado);
 
     /**
      * Pesquisa todas as frotas relacionadas a um certo termo.
@@ -54,7 +68,7 @@ public interface IFrotaDados extends IRepositorioBoleiaDados<Frota> {
      */
     List<Frota> pesquisarParaAutocomplete(String termoPesquisa);
 
-    /**
+     /**
      * Realiza uma pesquisa de frota por posto interno
      * @param idFrota o ID da frota
      * @return true se a frota tiver posto interno, false caso contrario

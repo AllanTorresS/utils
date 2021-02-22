@@ -435,4 +435,23 @@ public class FrotaSd {
         }
         usuario.transformarEmAssessor();
     }
+
+    /**
+     * Verifica se o email do consultor da frota eh valido.
+     *
+     * @param emailConsultor email do assessor responsavel da frota
+     * @throws ExcecaoValidacao caso o email do consultor da frota nao seja valido.
+     */
+    public void validarConsultor(String emailConsultor) throws ExcecaoValidacao {
+        if (emailConsultor == null) return;
+        
+        final Usuario usuario = repositorioUsuario.obterPorEmail(emailConsultor);
+        if (usuario == null) {
+            throw new ExcecaoValidacao(mensagens.obterMensagem("frota.servico.preCadastro.emailAssessorResponsavel.invalido", emailConsultor));
+        }
+        if (!usuario.isInterno()) {
+            throw new ExcecaoValidacao(mensagens.obterMensagem("frota.servico.preCadastro.emailAssessorResponsavel.usuarioNaoInterno"));
+        }
+        usuario.transformarEmAssessor(); 
+    }
 }

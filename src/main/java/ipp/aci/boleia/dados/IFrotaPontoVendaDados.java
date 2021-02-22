@@ -3,6 +3,7 @@ package ipp.aci.boleia.dados;
 
 import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.FrotaPontoVenda;
+import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.AutorizacaoPagamentoOrfaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaPostoCredenciadoVo;
@@ -22,6 +23,8 @@ public interface IFrotaPontoVendaDados extends IRepositorioBoleiaDados<FrotaPont
 	 * @return Uma lista de entidades localizadas
 	 */
 	ResultadoPaginado<FrotaPontoVenda> pesquisarPostosCredenciados(FiltroPesquisaPostoCredenciadoVo filtro);
+
+	ResultadoPaginado<FrotaPontoVenda> pesquisarPostosCredenciadosValidacaoSegregacao(FiltroPesquisaPostoCredenciadoVo filtro, Usuario usuario);
 
 	/**
 	 * Lista as relacoes Frota x Ponto Venda nas quais o Ponto Venda possua relação com o
