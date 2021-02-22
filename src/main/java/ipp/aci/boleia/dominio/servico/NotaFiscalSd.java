@@ -12,7 +12,11 @@ import ipp.aci.boleia.dominio.Arquivo;
 import ipp.aci.boleia.dominio.AutorizacaoPagamento;
 import ipp.aci.boleia.dominio.NfeAnexosArmazem;
 import ipp.aci.boleia.dominio.NotaFiscal;
+import ipp.aci.boleia.dominio.ParametroNotaFiscal;
 import ipp.aci.boleia.dominio.TransacaoConsolidada;
+import ipp.aci.boleia.dominio.Unidade;
+import ipp.aci.boleia.dominio.Veiculo;
+import ipp.aci.boleia.dominio.enums.LocalDestinoPadroNfe;
 import ipp.aci.boleia.dominio.enums.TipoArquivo;
 import ipp.aci.boleia.dominio.vo.DanfeVo;
 import ipp.aci.boleia.dominio.vo.ItemDanfeVo;
@@ -276,7 +280,6 @@ public class NotaFiscalSd {
         }
     }
 
-
     /**
      * Verifica o conteúdo da nota fiscal para verificação de coerência com os dados editados no abastecimento.
      *
@@ -393,16 +396,34 @@ public class NotaFiscalSd {
      * @param autorizacoesPagamento a transacao consolidada correpondente
      * @param errosEncontrados os erros encontrados
      */
-    private void validarCNPJDestinatario(Document documento, List<AutorizacaoPagamento> autorizacoesPagamento, List<Erro> errosEncontrados) {
+    private void validarCNPJDestinatario(Document documento, List<AutorizacaoPagamento> autorizacoesPagamento, List<Erro> errosEncontrados) throws ExcecaoValidacao {
         String destCnpjToString = notaFiscalParserSd.getString(documento, ConstantesNotaFiscalParser.DEST_CNPJ);
         String destCnpjRaiz = ValidadorCnpj.isValidCNPJ(destCnpjToString) ? UtilitarioFormatacao.formatarCnpjRaizApresentacao(destCnpjToString)
                 : destCnpjToString.substring(0, 8);
+        Long cnpjDest = Long.parseLong(destCnpjRaiz);
 
-        String frotaCnpjToString = Long.toString(getFrotaResponsavelAbastecimentos(autorizacoesPagamento));
-        String frotaCnpjRaiz = ValidadorCnpj.isValidCNPJ(frotaCnpjToString) ? UtilitarioFormatacao.formatarCnpjRaizApresentacao(frotaCnpjToString)
-                : frotaCnpjToString.substring(0, 8);
-        if(!destCnpjRaiz.equals(frotaCnpjRaiz)) {
-            errosEncontrados.add(Erro.NOTA_FISCAL_UPLOAD_CNPJ_DESTINATARIO_INVALIDO);
+        for(AutorizacaoPagamento abastecimento : autorizacoesPagamento) {
+            Long cnpjASerValidado = null;
+            Veiculo veiculo = abastecimento.getVeiculo();
+            boolean veiculoPerenceUnidade = veiculo != null && veiculo.getUnidade() != null && veiculo.getUnidade().getExigeNotaFiscal() != null && veiculo.getUnidade().getExigeNotaFiscal();
+            if (abastecimento.getFrota() != null && abastecimento.getFrota().getParametroNotaFiscal() != null && abastecimento.getFrota().getParametroNotaFiscal() != null) {
+                ParametroNotaFiscal parametroNf = abastecimento.getFrota().getParametroNotaFiscal();
+                if (parametroNf != null && LocalDestinoPadroNfe.ABASTECIMENTO.getValue().equals(parametroNf.getLocalDestino()) && abastecimento.getUnidade() != null && abastecimento.getUnidade().getExigeNotaFiscal()) {
+                    String uf = abastecimento.getUnidade() != null ? abastecimento.getUnidade().getUf() : abastecimento.getFrota().getUnidadeFederativa();
+                    Unidade unidadeLocalDestinoPadrao = abastecimento.getFrota().getUnidades().stream()
+                            .filter(u -> u.getLocalDestinoPadraoNfeUf() && uf.equals(u.getUf()))
+                            .findAny()
+                            .orElse(null);
+                    cnpjASerValidado = unidadeLocalDestinoPadrao != null ? unidadeLocalDestinoPadrao.getCnpj() : abastecimento.getFrota().getCnpj();
+                } else if (parametroNf != null && LocalDestinoPadroNfe.VEICULO.getValue().equals(parametroNf.getLocalDestino()) && veiculoPerenceUnidade) {
+                    cnpjASerValidado = veiculo.getUnidade().getCnpj();
+                } else {
+                    cnpjASerValidado = abastecimento.getFrota().getCnpj();
+                }
+            }
+            if (cnpjASerValidado != null && !cnpjASerValidado.equals(cnpjDest)) {
+                errosEncontrados.add(Erro.NOTA_FISCAL_UPLOAD_CNPJ_DESTINATARIO_INVALIDO);
+            }
         }
     }
 
