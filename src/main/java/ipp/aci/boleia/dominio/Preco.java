@@ -6,12 +6,10 @@ import ipp.aci.boleia.dominio.enums.StatusPrecoNegociacao;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
 import ipp.aci.boleia.dominio.interfaces.IPertenceRevendedor;
-import ipp.aci.boleia.util.UtilitarioFormatacao;
 import org.hibernate.annotations.Formula;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -31,7 +29,6 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import org.hibernate.annotations.JoinFormula;
 
 
 /**
@@ -276,11 +273,8 @@ public class Preco implements IPersistente, IPertenceRevendedor, IPertenceFrota 
     }
 
     @Transient
-    public String getPrecoComAcordo(){
-        if(getDescontoSolicitado() != null){
-            return UtilitarioFormatacao.formatarDecimalComTresCasas(precoBase.getPreco().add(getDescontoSolicitado()));
-        }
-        return UtilitarioFormatacao.formatarDecimalComTresCasas(preco);
+    public BigDecimal getPrecoComAcordo(){
+        return getDescontoSolicitado() != null ? precoBase.getPreco().add(getDescontoSolicitado()) : preco;
     }
 
     public Date getDataAgendamento() {
