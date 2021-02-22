@@ -1320,12 +1320,12 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         }
 
         if(filtro.getNumeroNf() != null) {
-            parametros.add(new ParametroPesquisaIgual("numeroNf", "%" + filtro.getNumeroNf() + "%"));
+            parametros.add(new ParametroPesquisaIgual("numeroNf", "%" + filtro.getNumeroNf().toLowerCase() + "%"));
         } else {
             parametros.add(new ParametroPesquisaIgual("numeroNf", null));
         }
         if(filtro.getNumeroSerieNf() != null) {
-            parametros.add(new ParametroPesquisaIgual("serieNf", "%" + filtro.getNumeroSerieNf() + "%"));
+            parametros.add(new ParametroPesquisaIgual("serieNf", "%" + filtro.getNumeroSerieNf().toLowerCase() + "%"));
         } else {
             parametros.add(new ParametroPesquisaIgual("serieNf", null));
         }
