@@ -486,6 +486,7 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     @Formula(CHAVE_ORDENACAO_FINANCEIRO_FORMULA)
     private Integer chaveOrdenacaoFinanceiro;
 
+    @NotAudited
     @Column(name = "DT_ATUALIZACAO")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataAtualizacao;
