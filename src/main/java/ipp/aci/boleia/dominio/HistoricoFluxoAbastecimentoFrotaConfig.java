@@ -21,17 +21,17 @@ import java.util.Date;
 
 @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 @Entity
-@Table(name = "HIST_FLUXO_ABAS_GLOBAL")
+@Table(name = "HIST_FLUXO_ABAS_FROTA")
 public class HistoricoFluxoAbastecimentoFrotaConfig implements IPersistente {
 
     @Id
-    @Column(name = "CD_HIST_FLUXO_GLOBAL")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_HIST_FLUXO_ABAS_GLOBAL")
-    @SequenceGenerator(name = "SEQ_HIST_FLUXO_ABAS_GLOBAL", sequenceName = "SEQ_HIST_FLUXO_ABAS_GLOBAL", allocationSize = 1)
+    @Column(name = "CD_HIST_FLUXO_FROTA")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_HIST_FLUXO_ABAS_FROTA")
+    @SequenceGenerator(name = "SEQ_HIST_FLUXO_ABAS_FROTA", sequenceName = "SEQ_HIST_FLUXO_ABAS_FROTA", allocationSize = 1)
     private Long id;
 
     @ManyToOne(fetch= FetchType.LAZY)
-    @JoinColumn(name = "CD_FLUXO_GLOBAL")
+    @JoinColumn(name = "CD_FLUXO_FROTA")
     private FluxoAbastecimentoFrotaConfig fluxoAbastecimento;
 
     @Column(name="ID_TELA_HODO_HORI")

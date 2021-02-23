@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * Respositorio de entidades FluxoAbastecimentoGlobalConfig
+ * Respositorio de entidades FluxoAbastecimentoFrotaConfig
  */
 @Repository
 public class OracleFluxoAbastecimentoFrotaDados extends OracleRepositorioBoleiaDados<FluxoAbastecimentoFrotaConfig> implements IFluxoAbastecimentoFrotaDados {

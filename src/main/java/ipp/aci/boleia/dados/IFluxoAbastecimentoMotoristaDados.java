@@ -15,7 +15,7 @@ public interface IFluxoAbastecimentoMotoristaDados extends IRepositorioBoleiaDad
     /**
      * Obtem a configuração do fluxo de abastecimento do motorista
      * @param idMotorista id do motorista
-     * @return FluxoAbastecimentoGlobalConfig com a configuração do fluxo do motorista
+     * @return FluxoAbastecimentoFrotaConfig com a configuração do fluxo do motorista
      */
     FluxoAbastecimentoMotoristaConfig obterFluxoPorMotorista(Long idMotorista);
 

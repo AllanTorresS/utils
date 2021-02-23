@@ -25,9 +25,9 @@ import java.util.List;
 public class FluxoAbastecimentoFrotaConfig implements IPersistente, IPertenceFrota {
 
     @Id
-    @Column(name = "CD_FLUXO_GLOBAL")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_FLUXO_ABAS_GLOBAL")
-    @SequenceGenerator(name = "SEQ_FLUXO_ABAS_GLOBAL", sequenceName = "SEQ_FLUXO_ABAS_GLOBAL", allocationSize = 1)
+    @Column(name = "CD_FLUXO_FROTA")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_FLUXO_ABAS_FROTA")
+    @SequenceGenerator(name = "SEQ_FLUXO_ABAS_FROTA", sequenceName = "SEQ_FLUXO_ABAS_FROTA", allocationSize = 1)
     private Long id;
 
     @Column(name="ID_TELA_HODO_HORI")
