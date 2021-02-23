@@ -48,6 +48,7 @@ public class Cobranca implements IPersistente, IPertenceFrota {
     private static final String FORMULA_DATA_ULTIMO_AJUSTE_VALOR = "(SELECT AC.DT_AJUSTE FROM BOLEIA_SCHEMA.AJUSTE_COBRANCA AC WHERE AC.CD_COBRANCA = CD_COBRANCA AND AC.VR_TOTAL_AJUSTE <> 0 AND AC.DT_AJUSTE = (SELECT MAX(ACI.DT_AJUSTE) FROM BOLEIA_SCHEMA.AJUSTE_COBRANCA ACI WHERE ACI.CD_COBRANCA = CD_COBRANCA AND ACI.VR_TOTAL_AJUSTE <> 0))";
     private static final String FORMULA_USUARIO_ULTIMO_AJUSTE_VENCIMENTO = "(SELECT U.NM_USUARIO FROM BOLEIA_SCHEMA.AJUSTE_COBRANCA AC JOIN BOLEIA_SCHEMA.USUARIO U ON AC.CD_USUARIO = U.CD_USUARIO WHERE AC.CD_COBRANCA = CD_COBRANCA AND AC.DT_VENC_AJUSTE IS NOT NULL AND AC.DT_AJUSTE = (SELECT MAX(ACI.DT_AJUSTE) FROM BOLEIA_SCHEMA.AJUSTE_COBRANCA ACI WHERE ACI.CD_COBRANCA = CD_COBRANCA AND ACI.DT_VENC_AJUSTE IS NOT NULL))";
     private static final String FORMULA_DATA_ULTIMO_AJUSTE_VENCIMENTO = "(SELECT AC.DT_AJUSTE FROM BOLEIA_SCHEMA.AJUSTE_COBRANCA AC WHERE AC.CD_COBRANCA = CD_COBRANCA AND AC.DT_VENC_AJUSTE IS NOT NULL AND AC.DT_AJUSTE = (SELECT MAX(ACI.DT_AJUSTE) FROM BOLEIA_SCHEMA.AJUSTE_COBRANCA ACI WHERE ACI.CD_COBRANCA = CD_COBRANCA AND ACI.DT_VENC_AJUSTE IS NOT NULL))";
+    private static final String FORMULA_ULTIMA_JUSTIFICATIVA_AJUSTE = "(SELECT AC.DS_JUSTIFICATIVA FROM BOLEIA_SCHEMA.AJUSTE_COBRANCA AC WHERE AC.CD_COBRANCA = CD_COBRANCA AND AC.DT_VENC_AJUSTE IS NOT NULL AND AC.DT_AJUSTE = (SELECT MAX(ACI.DT_AJUSTE) FROM BOLEIA_SCHEMA.AJUSTE_COBRANCA ACI WHERE ACI.CD_COBRANCA = CD_COBRANCA AND ACI.DT_VENC_AJUSTE IS NOT NULL))";
 
     @Id
     @Column(name = "CD_COBRANCA")
@@ -143,6 +144,11 @@ public class Cobranca implements IPersistente, IPertenceFrota {
     @Basic(fetch = FetchType.LAZY)
     @Formula(FORMULA_DATA_ULTIMO_AJUSTE_VENCIMENTO)
     private Date dataUltimoAjusteVencimento;
+
+    @NotAudited
+    @Basic(fetch = FetchType.LAZY)
+    @Formula(FORMULA_ULTIMA_JUSTIFICATIVA_AJUSTE)
+    private String ultimaJustificativaAjuste;
 
     @Override
     public Long getId() {
@@ -362,6 +368,14 @@ public class Cobranca implements IPersistente, IPertenceFrota {
 
     public void setDataUltimoAjusteVencimento(Date dataUltimoAjusteVencimento) {
         this.dataUltimoAjusteVencimento = dataUltimoAjusteVencimento;
+    }
+
+    public String getUltimaJustificativaAjuste() {
+        return ultimaJustificativaAjuste;
+    }
+
+    public void setUltimaJustificativaAjuste(String ultimaJustificativaAjuste) {
+        this.ultimaJustificativaAjuste = ultimaJustificativaAjuste;
     }
 
     /**

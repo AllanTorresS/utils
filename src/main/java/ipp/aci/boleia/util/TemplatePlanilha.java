@@ -68,7 +68,8 @@ public enum TemplatePlanilha {
 	TEMPLATE_PESQUISAR_GERAL_FROTA("template-relatorio-geral-frota.xlsx"),
     TEMPLATE_RELATORIO_COTA_VEICULO_SOLUCAO("template-relatorio-cota-veiculo-interno.xlsx"),
     TEMPLATE_RELATORIO_COTA_VEICULO_FROTA("template-relatorio-cota-veiculo-frota.xlsx"),
-    TEMPLATE_RELATORIO_DETALHAMENTO_COBRANCA("template-relatorio-detalhamento-cobranca.xlsx");
+    TEMPLATE_RELATORIO_DETALHAMENTO_COBRANCA("template-relatorio-detalhamento-cobranca.xlsx"),
+    TEMPLATE_RELATORIO_DETALHAMENTO_COBRANCA_INTERNO("template-relatorio-detalhamento-cobranca-interno.xlsx");
 
     private static final String BASE_TEMPLATE = "/template-planilhas/";
 
