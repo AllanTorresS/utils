@@ -5,7 +5,7 @@ import ipp.aci.boleia.dominio.HistoricoFluxoAbastecimentoMotoristaConfig;
 import org.springframework.stereotype.Repository;
 
 /**
- * Respositorio de entidades FluxoAbastecimentoFrotaConfig
+ * Respositorio de entidades HistoricoFluxoAbastecimentoMotoristaConfig
  */
 @Repository
 public class OracleHistoricoFluxoAbastecimentoMotoristaDados extends OracleRepositorioBoleiaDados<HistoricoFluxoAbastecimentoMotoristaConfig> implements IHistoricoFluxoAbastecimentoMotoristaDados {
