@@ -2,6 +2,8 @@ package ipp.aci.boleia.dominio;
 
 import ipp.aci.boleia.dominio.interfaces.IExclusaoLogica;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
+import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
+import ipp.aci.boleia.dominio.interfaces.IPertenceMotorista;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.Column;
@@ -14,12 +16,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
+import java.util.Collections;
+import java.util.List;
 
 @Audited
 @Entity
 @Table(name = "FLUXO_ABAS_MOTORISTA")
-public class FluxoAbastecimentoMotoristaConfig implements IPersistente, IExclusaoLogica {
+public class FluxoAbastecimentoMotoristaConfig implements IPersistente, IPertenceFrota, IPertenceMotorista, IExclusaoLogica {
 
     @Id
     @Column(name = "CD_FLUXO_MOTORISTA")
@@ -56,6 +61,10 @@ public class FluxoAbastecimentoMotoristaConfig implements IPersistente, IExclusa
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_VEICULO")
     private Veiculo veiculo;
+
+    @Version
+    @Column(name = "NO_VERSAO")
+    private Long versao;
 
     @Override
     public Long getId() {
@@ -147,5 +156,18 @@ public class FluxoAbastecimentoMotoristaConfig implements IPersistente, IExclusa
     @Override
     public void setExcluido(Boolean excluido) {
         this.excluido = excluido;
+    }
+
+    public Long getVersao() {
+        return versao;
+    }
+
+    public void setVersao(Long versao) {
+        this.versao = versao;
+    }
+
+    @Override
+    public List<Frota> getFrotas() {
+        return Collections.singletonList(frota);
     }
 }

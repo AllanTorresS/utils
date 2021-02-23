@@ -65,9 +65,36 @@ public class HistoricoFluxoAbastecimentoMotoristaConfig implements IPersistente 
     private Veiculo veiculo;
 
     @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_USUARIO")
+    private Usuario usuario;
+
+    @NotNull
     @Column(name = "DT_ALTERACAO")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataAlteracao;
+
+    public HistoricoFluxoAbastecimentoMotoristaConfig() {}
+
+    public HistoricoFluxoAbastecimentoMotoristaConfig(FluxoAbastecimentoMotoristaConfig fluxo, Usuario usuario, Date dataAlteracao) {
+        this.fluxoAbastecimento = fluxo;
+        this.frota = fluxo.getFrota();
+        this.motorista = fluxo.getMotorista();
+        this.dataAlteracao = dataAlteracao;
+
+        if (fluxo.getVeiculo() != null) {
+            this.veiculo = fluxo.getVeiculo();
+        }
+
+        this.exigirTelaHodometroHorimetro = fluxo.getExigirTelaHodometroHorimetro();
+        this.exigirFotoHodometroHorimetro = fluxo.getExigirFotoHodometroHorimetro();
+        this.exigirLeituraAutoHodometroHorimetro = fluxo.getExigirLeituraAutoHodometroHorimetro();
+        this.exigirPosto = fluxo.getExigirPosto();
+        this.exigirCombustivel = fluxo.getExigirCombustivel();
+        this.exigirLitragem = fluxo.getExigirCombustivel();
+
+        this.usuario = usuario;
+    }
 
     @Override
     public Long getId() {
@@ -173,5 +200,13 @@ public class HistoricoFluxoAbastecimentoMotoristaConfig implements IPersistente 
 
     public void setDataAlteracao(Date dataAlteracao) {
         this.dataAlteracao = dataAlteracao;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 }

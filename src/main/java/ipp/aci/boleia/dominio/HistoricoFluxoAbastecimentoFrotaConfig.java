@@ -22,7 +22,7 @@ import java.util.Date;
 @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 @Entity
 @Table(name = "HIST_FLUXO_ABAS_GLOBAL")
-public class HistoricoFluxoAbastecimentoGlobalConfig  implements IPersistente {
+public class HistoricoFluxoAbastecimentoFrotaConfig implements IPersistente {
 
     @Id
     @Column(name = "CD_HIST_FLUXO_GLOBAL")
@@ -32,7 +32,7 @@ public class HistoricoFluxoAbastecimentoGlobalConfig  implements IPersistente {
 
     @ManyToOne(fetch= FetchType.LAZY)
     @JoinColumn(name = "CD_FLUXO_GLOBAL")
-    private FluxoAbastecimentoGlobalConfig fluxoAbastecimento;
+    private FluxoAbastecimentoFrotaConfig fluxoAbastecimento;
 
     @Column(name="ID_TELA_HODO_HORI")
     private Boolean exigirTelaHodometroHorimetro;
@@ -52,9 +52,31 @@ public class HistoricoFluxoAbastecimentoGlobalConfig  implements IPersistente {
     private Frota frota;
 
     @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_USUARIO")
+    private Usuario usuario;
+
+    @NotNull
     @Column(name = "DT_ALTERACAO")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataAlteracao;
+
+    public HistoricoFluxoAbastecimentoFrotaConfig() {}
+
+    public HistoricoFluxoAbastecimentoFrotaConfig(FluxoAbastecimentoFrotaConfig fluxo, Usuario usuario, Date dataAlteracao) {
+        this.fluxoAbastecimento = fluxo;
+        this.frota = fluxo.getFrota();
+        this.dataAlteracao = dataAlteracao;
+
+        this.exigirTelaHodometroHorimetro = fluxo.getExigirTelaHodometroHorimetro();
+        this.exigirFotoHodometroHorimetro = fluxo.getExigirFotoHodometroHorimetro();
+        this.exigirLeituraAutoHodometroHorimetro = fluxo.getExigirLeituraAutoHodometroHorimetro();
+        this.exigirPosto = fluxo.getExigirPosto();
+        this.exigirCombustivel = fluxo.getExigirCombustivel();
+        this.exigirLitragem = fluxo.getExigirCombustivel();
+
+        this.usuario = usuario;
+    }
 
     @Override
     public Long getId() {
@@ -122,12 +144,20 @@ public class HistoricoFluxoAbastecimentoGlobalConfig  implements IPersistente {
         this.frota = frota;
     }
 
-    public FluxoAbastecimentoGlobalConfig getFluxoAbastecimento() {
+    public FluxoAbastecimentoFrotaConfig getFluxoAbastecimento() {
         return fluxoAbastecimento;
     }
 
-    public void setFluxoAbastecimento(FluxoAbastecimentoGlobalConfig fluxoAbastecimento) {
+    public void setFluxoAbastecimento(FluxoAbastecimentoFrotaConfig fluxoAbastecimento) {
         this.fluxoAbastecimento = fluxoAbastecimento;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 
     public Date getDataAlteracao() {

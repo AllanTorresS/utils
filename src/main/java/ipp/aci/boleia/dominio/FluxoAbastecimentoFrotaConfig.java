@@ -1,6 +1,7 @@
 package ipp.aci.boleia.dominio;
 
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
+import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.Column;
@@ -13,12 +14,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
+import java.util.Collections;
+import java.util.List;
 
 @Audited
 @Entity
-@Table(name = "FLUXO_ABAS_GLOBAL")
-public class FluxoAbastecimentoGlobalConfig implements IPersistente  {
+@Table(name = "FLUXO_ABAS_FROTA")
+public class FluxoAbastecimentoFrotaConfig implements IPersistente, IPertenceFrota {
 
     @Id
     @Column(name = "CD_FLUXO_GLOBAL")
@@ -43,6 +47,10 @@ public class FluxoAbastecimentoGlobalConfig implements IPersistente  {
     @ManyToOne(fetch= FetchType.LAZY)
     @JoinColumn(name = "CD_FROTA")
     private Frota frota;
+
+    @Version
+    @Column(name = "NO_VERSAO")
+    private Long versao;
 
     @Override
     public Long getId() {
@@ -108,5 +116,18 @@ public class FluxoAbastecimentoGlobalConfig implements IPersistente  {
 
     public void setFrota(Frota frota) {
         this.frota = frota;
+    }
+
+    public Long getVersao() {
+        return versao;
+    }
+
+    public void setVersao(Long versao) {
+        this.versao = versao;
+    }
+
+    @Override
+    public List<Frota> getFrotas() {
+        return Collections.singletonList(frota);
     }
 }
