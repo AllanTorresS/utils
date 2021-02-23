@@ -211,7 +211,16 @@ public interface ITransacaoConsolidadaDados extends IRepositorioBoleiaDados<Tran
      * @param usuarioLogado usuario logado que solicita a pesquisa
      * @return lista de registros encontrados
      */
-    ResultadoPaginado<TransacaoConsolidada> pesquisarTransacoesFinanceiro(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado);
+    ResultadoPaginado<TransacaoConsolidada> pesquisarTransacoesReembolsoSolucao(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado);
+
+    /**
+     * Pesquisa uma lista de transações consolidadas baseado em um filtro de pesquisa
+     *
+     * @param filtro parâmetros utilizados na consulta
+     * @param usuarioLogado usuario logado que solicita a pesquisa
+     * @return lista de registros encontrados
+     */
+    ResultadoPaginado<TransacaoConsolidada> pesquisarTransacoesFinanceiroRevenda(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado);
 
     /** Obtém os pontos de datas e valores de pagamento de reembolsos previstos e pagos para o gráfico do financeiro.
      *

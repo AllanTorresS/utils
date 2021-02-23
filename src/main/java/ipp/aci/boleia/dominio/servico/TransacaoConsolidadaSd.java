@@ -29,6 +29,8 @@ import ipp.aci.boleia.dominio.enums.StatusNotaFiscal;
 import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
 import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
+import ipp.aci.boleia.dominio.vo.AgrupamentoTransacaoConsolidadaCobrancaVo;
+import ipp.aci.boleia.dominio.vo.EntidadeVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFinanceiroVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaTransacaoConsolidadaDetalheVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaTransacaoConsolidadaVo;
@@ -190,7 +192,7 @@ public class TransacaoConsolidadaSd {
         informacaoPaginacao.setTamanhoPagina(null);
         informacaoPaginacao.setPagina(null);
         filtro.setPaginacao(informacaoPaginacao);
-        return repositorio.pesquisarTransacoesFinanceiro(filtro, usuario);
+        return repositorio.pesquisarTransacoesFinanceiroRevenda(filtro, usuario);
     }
 
     /**
@@ -1242,6 +1244,18 @@ public class TransacaoConsolidadaSd {
     }
 
     /**
+     * Gera uma chave identificadora codificada com informações do ciclo
+     * @param consolidado O consolidado a ser usado
+     * @return A chave codificada
+     */
+    public String gerarChaveIdentificadoraCodificadaAgrupamentoCiclos(TransacaoConsolidada consolidado) {
+        String chave = consolidado.getDataInicioPeriodo().getTime() + "|" +
+                consolidado.getDataFimPeriodo().getTime() + "|" +
+                consolidado.getFrota().getId().toString();
+        return UtilitarioCriptografia.toBase64(chave.getBytes(StandardCharsets.UTF_8));
+    }
+
+    /**
      * Decodifica a chave identificadora de agrupamento de ciclos
      * @param chave A chave codificada
      * @return A chave decodificada
@@ -1271,6 +1285,26 @@ public class TransacaoConsolidadaSd {
         Date dataFimCiclo = obterCampoDataFimChaveIdentificadora(camposChave);
         Long idFrota = obterCampoIdFrotaChaveIdentificadora(camposChave);
         return repositorio.obterConsolidadosPorPeriodoEFrota(dataInicioCiclo, dataFimCiclo, idFrota);
+    }
+
+    /**
+     * Realiza a pesquisa de agrupamento de cobrança passando os filtros de inicio e fim do período e id da frota através de uma chave decodificada
+     * @param chave A chave decodificada
+     * @return O agrupamento encontrado
+     */
+    public AgrupamentoTransacaoConsolidadaCobrancaVo obterAgrupamentoCobrancaPorChaveIdentificadora(String chave){
+        String chaveDecodificada = decodificarChaveIdentificadoraAgrupamentoCiclos(chave);
+        String[] camposChave = dividirChaveIdentificadoraAgrupamentoCiclos(chaveDecodificada);
+
+        FiltroPesquisaFinanceiroVo filtro = new FiltroPesquisaFinanceiroVo();
+        filtro.setDe(obterCampoDataInicioChaveIdentificadora(camposChave));
+        filtro.setAte(obterCampoDataFimChaveIdentificadora(camposChave));
+        filtro.setFrota(new EntidadeVo(obterCampoIdFrotaChaveIdentificadora(camposChave)));
+        filtro.setPaginacao(new InformacaoPaginacao());
+
+        ResultadoPaginado<AgrupamentoTransacaoConsolidadaCobrancaVo> agrupamento = repositorio.pesquisarTransacoesPorCobranca(filtro, utilitarioAmbiente.getUsuarioLogado());
+
+        return agrupamento.getRegistros().stream().findFirst().orElse(null);
     }
 
     /**

@@ -32,7 +32,6 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaior;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMenor;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
-import ipp.aci.boleia.dominio.vo.EntidadeVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaAbastecimentoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheCobrancaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheReembolsoVo;
@@ -186,6 +185,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                     "LEFT JOIN A.notasFiscais NF " +
                     "LEFT JOIN A.transacaoConsolidada TC " +
                     "LEFT JOIN A.transacaoConsolidadaPostergada TCP " +
+                    "LEFT JOIN A.items I " +
                     " WHERE " +
                     " (:idConsolidado IS NULL OR A.transacaoConsolidada.id = :idConsolidado OR A.transacaoConsolidadaPostergada.id = :idConsolidado) " +
                     CLAUSULA_STATUS_AUTORIZACAO +
@@ -199,8 +199,8 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                     " AND (:idFrota IS NULL OR A.frota.id = :idFrota) " +
                     " AND (" +
                             "(:dataInicioPeriodo IS NULL AND :dataFimPeriodo IS NULL) " +
-                            " OR (:dataInicioPeriodo = CASE WHEN TCP IS NOT NULL THEN TO_CHAR(TCP.dataInicioPeriodo, 'DD/MM/YYYY') ELSE TO_CHAR(TC.dataInicioPeriodo, 'DD/MM/YYYY') END " +
-                                " AND :dataFimPeriodo = CASE WHEN TCP IS NOT NULL THEN TO_CHAR(TCP.dataFimPeriodo, 'DD/MM/YYYY') ELSE TO_CHAR(TC.dataFimPeriodo, 'DD/MM/YYYY') END " +
+                            " OR (:dataInicioPeriodo = TO_CHAR(TCP.dataInicioPeriodo, 'DD/MM/YYYY') OR :dataInicioPeriodo = TO_CHAR(TC.dataInicioPeriodo, 'DD/MM/YYYY') " +
+                                " AND :dataFimPeriodo = TO_CHAR(TCP.dataFimPeriodo, 'DD/MM/YYYY') OR :dataFimPeriodo = TO_CHAR(TC.dataFimPeriodo, 'DD/MM/YYYY') " +
                     "            ) " +
                     ")" +
                     " %s " +
@@ -1203,7 +1203,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     public ResultadoPaginado<AutorizacaoPagamento> pesquisaPaginadaDetalheCobranca(FiltroPesquisaDetalheCobrancaVo filtro) {
         List<ParametroPesquisa> parametros = montarParametrosPesquisaDetalheCobranca(filtro);
         String ordenacao = montarOrdenacaoDetalheCobranca(filtro);
-        String filtroOutrosServicos = montarFiltroOutroServicosDetalheCobranca(filtro);
+        String filtroOutrosServicos = montarFiltroOutroServicosDetalheCobranca(filtro, parametros);
 
         String consultaPesquisa = String.format(CONSULTA_ABASTECIMENTOS_COBRANCA, filtroOutrosServicos, ordenacao);
 
@@ -1245,7 +1245,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     public List<AutorizacaoPagamento> pesquisaDetalheCobrancaSemPaginacao(FiltroPesquisaDetalheCobrancaVo filtro) {
         List<ParametroPesquisa> parametros = montarParametrosPesquisaDetalheCobranca(filtro);
         String ordenacao = montarOrdenacaoDetalheCobranca(filtro);
-        String filtroOutrosServicos = montarFiltroOutroServicosDetalheCobranca(filtro);
+        String filtroOutrosServicos = montarFiltroOutroServicosDetalheCobranca(filtro, parametros);
 
         String consultaPesquisa = String.format(CONSULTA_ABASTECIMENTOS_COBRANCA, filtroOutrosServicos, ordenacao);
         return pesquisar(null, consultaPesquisa, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
@@ -1320,12 +1320,12 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         }
 
         if(filtro.getNumeroNf() != null) {
-            parametros.add(new ParametroPesquisaIgual("numeroNf", "%" + filtro.getNumeroNf() + "%"));
+            parametros.add(new ParametroPesquisaIgual("numeroNf", "%" + filtro.getNumeroNf().toLowerCase() + "%"));
         } else {
             parametros.add(new ParametroPesquisaIgual("numeroNf", null));
         }
         if(filtro.getNumeroSerieNf() != null) {
-            parametros.add(new ParametroPesquisaIgual("serieNf", "%" + filtro.getNumeroSerieNf() + "%"));
+            parametros.add(new ParametroPesquisaIgual("serieNf", "%" + filtro.getNumeroSerieNf().toLowerCase() + "%"));
         } else {
             parametros.add(new ParametroPesquisaIgual("serieNf", null));
         }
@@ -1354,16 +1354,15 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     /**
      * Monta parte do filtro relativa a outros serviços na consulta de detalhe de cobrança
      * @param filtro O filtro fornecido
+     * @param parametros Os parâmetros passados para a query
      * @return A string de filtro montada
      */
-    private String montarFiltroOutroServicosDetalheCobranca(FiltroPesquisaDetalheCobrancaVo filtro) {
+    private String montarFiltroOutroServicosDetalheCobranca(FiltroPesquisaDetalheCobrancaVo filtro, List<ParametroPesquisa> parametros) {
         String filtroOutrosServicos = " ";
         StringBuffer strBufferFiltroOutrosServicos = new StringBuffer(filtroOutrosServicos);
         if(filtro.getOutrosServicos() != null && !filtro.getOutrosServicos().isEmpty()) {
-            String listaProdutos = " (SELECT I.produto FROM ItemAutorizacaoPagamento I WHERE I.autorizacaoPagamento.id = A.id) ";
-            for(EntidadeVo servico : filtro.getOutrosServicos()) {
-                strBufferFiltroOutrosServicos.append(" AND " + servico.getId() + " IN " + listaProdutos );
-            }
+            strBufferFiltroOutrosServicos.append(" AND (I.produto.id IN :listaProdutos) ");
+            parametros.add(new ParametroPesquisaIn("listaProdutos", filtro.getOutrosServicos().stream().map(x -> x.getId()).collect(Collectors.toList())));
         }
         return strBufferFiltroOutrosServicos.toString();
     }
