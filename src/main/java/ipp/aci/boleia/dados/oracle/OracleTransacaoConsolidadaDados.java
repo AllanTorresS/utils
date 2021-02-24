@@ -71,6 +71,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         implements ITransacaoConsolidadaDados {
 
     private static final String CLAUSULA_FROTA = "( F.id = :frotaId ) AND ";
+    private static final String CLAUSULA_FROTA_TOTAL_COBRANCA = "AND (fpv.frota.id = :idFrota OR :idFrota is null) ";
     private static final String CLAUSULA_EMPRESA_AGREGADA = "( EA.id = :empresaAgregadaId ) AND ";
     private static final String CLAUSULA_UNIDADE = "( U.id = :unidadeId ) AND ";
     private static final String CLAUSULA_EXIGE_NOTA = "( TC.frotaExigeNF = true or TC.unidade is not null or TC.empresaAgregada is not null ) ";
@@ -318,7 +319,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "LEFT JOIN tc.frotaPtov fpv " +
                     "LEFT JOIN tc.cobranca c " +
                     "WHERE ((tc.dataInicioPeriodo >= :dataInicioPeriodo AND tc.dataFimPeriodo <= :dataFimPeriodo) OR (tc.dataFimPeriodo >= :dataInicioPeriodo AND tc.dataInicioPeriodo <= :dataFimPeriodo)) " +
-                    "AND (fpv.frota.id = :idFrota OR :idFrota is null) " +
+                    CLAUSULA_FROTA_TOTAL_COBRANCA +
                     "AND (tc.quantidadeAbastecimentos > 0) " +
                     "AND (tc.statusConsolidacao = :statusCiclo OR :statusCiclo is null) " +
                     "%s ";
@@ -417,7 +418,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                         "MIN(C.usuarioUltimoAjusteValor), " +
                         "MIN(C.dataUltimoAjusteValor), " +
                         "MIN(C.usuarioUltimoAjusteVencimento), " +
-                        "MIN(C.dataUltimoAjusteVencimento)" +
+                        "MIN(C.dataUltimoAjusteVencimento), " +
+                        "MIN(C.ultimaJustificativaAjuste)" +
                     ") " + FROM_CONSULTAR_CONSOLIDADOS_POR_COBRANCA;
 
     private static final String COUNT_CONSULTAR_CONSOLIDADOS_POR_COBRANCA = "SELECT SUM(MIN(1)) " + FROM_CONSULTAR_CONSOLIDADOS_POR_COBRANCA;
@@ -1394,12 +1396,14 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
     }
 
     @Override
-    public List<TransacaoConsolidada> obterDetalheDadosFinanceiroFrota(FiltroPesquisaFinanceiroVo filtro) {
+    public List<TransacaoConsolidada> obterDetalheDadosFinanceiro(FiltroPesquisaFinanceiroVo filtro) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
 
         parametros.add(new ParametroPesquisaDataEntre("dataInicioPeriodo", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe()), UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getDe())));
         parametros.add(new ParametroPesquisaDataEntre("dataFimPeriodo", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getAte()), UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte())));
-        parametros.add(new ParametroPesquisaIgual("frotaPtov.frota.id", filtro.getFrota().getId()));
+        if(filtro.getFrota() != null && filtro.getFrota().getId() != null){
+            parametros.add(new ParametroPesquisaIgual("frotaPtov.frota.id", filtro.getFrota().getId()));
+        }
         if(filtro.getStatusCiclo() != null) {
             parametros.add(new ParametroPesquisaIgual("statusConsolidacao", filtro.getStatusCiclo().getValue()));
         }
@@ -1645,6 +1649,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
 
     @Override
     public BigDecimal obterTotalCobrancaPeriodo(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado) {
+        String consulta = CONSULTA_TOTAL_COBRANCA_PERIODO;
+
         List<ParametroPesquisa> parametros = new ArrayList<>();
 
         parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataInicioPeriodo", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe())));
@@ -1654,7 +1660,10 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             parametros.add(new ParametroPesquisaIgual("idFrota", filtro.getFrota().getId()));
         } else if (usuarioLogado.isFrotista()){
             parametros.add(new ParametroPesquisaIgual("idFrota", usuarioLogado.getFrota().getId()));
+        }else {
+            consulta = consulta.replace(CLAUSULA_FROTA_TOTAL_COBRANCA, "");
         }
+
         if(filtro.getStatusCiclo() != null && filtro.getStatusCiclo().getValue() != null){
             parametros.add(new ParametroPesquisaIgual("statusCiclo", filtro.getStatusCiclo().getValue()));
         } else{
@@ -1667,7 +1676,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             List<Integer> listaStatus = filtro.getStatusPagamento().stream().map(x -> StatusPagamentoCobranca.valueOf(x.getName()).getValue()).collect(Collectors.toList());
             parametros.add(new ParametroPesquisaIn("statusPagamento", listaStatus));
         }
-        String consulta = String.format(CONSULTA_TOTAL_COBRANCA_PERIODO, filtroStatus);
+
+        consulta = String.format(consulta, filtroStatus);
 
         BigDecimal totalCobranca = pesquisarUnicoSemIsolamentoDados(consulta, parametros.toArray(new ParametroPesquisa[parametros.size()]));
         return totalCobranca != null ? totalCobranca : BigDecimal.ZERO;
