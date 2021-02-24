@@ -147,8 +147,6 @@ public enum TipoRelatorioMotorGerador implements IEnumComLabel<TipoRelatorioMoto
      */
     private static Map<TipoPerfilUsuario, TemplatePlanilha> obterMapaTemplatesCobranca() {
         Map<TipoPerfilUsuario, TemplatePlanilha> mapa = new HashMap<>();
-        mapa.put(TipoPerfilUsuario.FROTA, TemplatePlanilha.TEMPLATE_RELATORIO_COBRANCA_COM_DESCONTO);
-        mapa.put(TipoPerfilUsuario.REVENDA, TemplatePlanilha.TEMPLATE_RELATORIO_COBRANCA);
         mapa.put(TipoPerfilUsuario.INTERNO, TemplatePlanilha.TEMPLATE_RELATORIO_COBRANCA_INTERNO);
         return mapa;
     }
@@ -385,6 +383,7 @@ public enum TipoRelatorioMotorGerador implements IEnumComLabel<TipoRelatorioMoto
     private static Map<TipoPerfilUsuario, TemplatePlanilha> obterMapaTemplatesDetalhamentoCobranca() {
         Map<TipoPerfilUsuario, TemplatePlanilha> mapa = new HashMap<>();
         mapa.put(TipoPerfilUsuario.FROTA, TemplatePlanilha.TEMPLATE_RELATORIO_DETALHAMENTO_COBRANCA);
+        mapa.put(TipoPerfilUsuario.INTERNO, TemplatePlanilha.TEMPLATE_RELATORIO_DETALHAMENTO_COBRANCA_INTERNO);
         return mapa;
     }
 

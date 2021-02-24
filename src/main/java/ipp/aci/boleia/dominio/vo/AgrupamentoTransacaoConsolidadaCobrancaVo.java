@@ -40,6 +40,7 @@ public class AgrupamentoTransacaoConsolidadaCobrancaVo {
     private String usuarioUltimoAjusteVencimento;
     private Date dataUltimoAjusteVencimento;
     private Boolean totalmenteEmitida;
+    private String ultimaJustificativaAjuste;
 
     /**
      * Construtor default
@@ -75,6 +76,7 @@ public class AgrupamentoTransacaoConsolidadaCobrancaVo {
      * @param usuarioUltimoAjusteVencimento Nome do usuário que realizou o ultimo ajuste na data de vencimento da cobrança
      * @param dataUltimoAjusteVencimento Data do ultimo ajuste na data de vencimento da cobrança
      * @param totalmenteEmitida Indica se todos os ciclos do agrupamento foram totalmente emitidos
+     * @param ultimaJustificativaAjuste a Ultima justificativa do ajuste da cobrança
      */
     public AgrupamentoTransacaoConsolidadaCobrancaVo(Long idFrota, String nomeEmpresa, Long cnpjEmpresa, Date dataInicioPeriodo, Date dataFimPeriodo,
                                                      BigDecimal valorTotal, BigDecimal valorDesconto, BigDecimal valorCobrancaAjustado,
@@ -83,7 +85,7 @@ public class AgrupamentoTransacaoConsolidadaCobrancaVo {
                                                      Date dataLimiteEmissao, Integer statusIntegracao, String mensagemErroIntegracao,
                                                      Long idCobranca, Boolean ultimaCobrancaFrota, Long numeroDocumento,
                                                      Integer exigeNota, BigDecimal valorEmitidoNotaFiscal, BigDecimal valorTotalNotaFiscal,
-                                                     String usuarioUltimoAjusteValor, Date dataUltimoAjusteValor, String usuarioUltimoAjusteVencimento, Date dataUltimoAjusteVencimento, Integer totalmenteEmitida) {
+                                                     String usuarioUltimoAjusteValor, Date dataUltimoAjusteValor, String usuarioUltimoAjusteVencimento, Date dataUltimoAjusteVencimento, Integer totalmenteEmitida, String ultimaJustificativaAjuste) {
         this.idFrota = idFrota;
         this.nomeEmpresa = nomeEmpresa;
         this.cnpjEmpresa = cnpjEmpresa;
@@ -114,6 +116,7 @@ public class AgrupamentoTransacaoConsolidadaCobrancaVo {
         this.usuarioUltimoAjusteVencimento = usuarioUltimoAjusteVencimento;
         this.dataUltimoAjusteVencimento = dataUltimoAjusteVencimento;
         this.totalmenteEmitida = totalmenteEmitida == 1;
+        this.ultimaJustificativaAjuste = ultimaJustificativaAjuste;
     }
 
     public Long getIdFrota() {
@@ -338,6 +341,14 @@ public class AgrupamentoTransacaoConsolidadaCobrancaVo {
 
     public void setTotalmenteEmitida(Boolean totalmenteEmitida) {
         this.totalmenteEmitida = totalmenteEmitida;
+    }
+    
+    public String getUltimaJustificativaAjuste() {
+        return ultimaJustificativaAjuste;
+    }
+
+    public void setUltimaJustificativaAjuste(String ultimaJustificativaAjuste) {
+        this.ultimaJustificativaAjuste = ultimaJustificativaAjuste;
     }
 
     @Transient
