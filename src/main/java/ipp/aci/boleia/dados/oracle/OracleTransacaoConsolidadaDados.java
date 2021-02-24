@@ -419,6 +419,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                         "MIN(C.dataUltimoAjusteValor), " +
                         "MIN(C.usuarioUltimoAjusteVencimento), " +
                         "MIN(C.dataUltimoAjusteVencimento), " +
+                        "MIN(CASE WHEN TC.statusNotaFiscal = " + StatusNotaFiscal.EMITIDA.getValue() + " THEN 1 ELSE 0 END), " +
                         "MIN(C.ultimaJustificativaAjuste)" +
                     ") " + FROM_CONSULTAR_CONSOLIDADOS_POR_COBRANCA;
 
