@@ -5,6 +5,7 @@ import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.Preco;
 import ipp.aci.boleia.dominio.TipoCombustivel;
+import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.enums.StatusPreco;
 import ipp.aci.boleia.dominio.enums.StatusPrecoNegociacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
@@ -12,20 +13,21 @@ import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaAnd;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaior;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDiferente;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
-import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaior;
-import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDiferente;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaPrecoVo;
 import ipp.aci.boleia.util.Ordenacao;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 
+import ipp.aci.boleia.util.seguranca.UtilitarioIsolamentoInformacoes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -33,7 +35,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Respositorio de entidades
@@ -42,8 +43,8 @@ import java.util.stream.Collectors;
 @Repository
 public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implements IPrecoDados {
 
-    private static final String CONSULTA_NEGOCIACOES =
-    " SELECT p " +
+    private static final String CONSULTA_NEGOCIACOES_VIGENTES =
+            " SELECT p " +
             " FROM Preco p " +
             "     JOIN p.precoBase pb " +
             "     JOIN pb.precoMicromercado pm " +
@@ -56,11 +57,19 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
             "     AND pv.id = :idPontoVenda " +
             "     AND (f.id = :idFrota OR :idFrota IS NULL) " +
             "     AND p.status IN :statusValidos " +
-            "     AND (p.dataVigencia <= :dataAbastecimento OR (p.dataAtualizacao <= :dataAbastecimento AND p.dataVigencia IS NULL)) " +            
-            "     AND p.status IN :statusValidos  " +
-            "     ORDER BY  " +
-            "     (CASE WHEN p.dataVigencia IS NULL THEN 0 ELSE 1 END) DESC,  " +
-            "     p.dataVigencia DESC , p.dataAtualizacao DESC ";
+            "     AND NOT EXISTS ( " +
+            "         SELECT 1 FROM Preco p_" +
+            "         WHERE " +
+            "             p_.id <> p.id " +
+            "             AND p_.precoBase.id = p.precoBase.id " +
+            "             AND p_.frotaPtov.id = p.frotaPtov.id " +
+            "             AND p_.status IN :statusValidos " +
+            "             AND (CASE WHEN p_.dataVigencia IS NOT NULL THEN p_.dataVigencia ELSE p_.dataAtualizacao END) > (CASE WHEN p.dataVigencia IS NOT NULL THEN p.dataVigencia ELSE p.dataAtualizacao END) " +
+            "             AND (CASE WHEN p_.dataVigencia IS NOT NULL THEN p_.dataVigencia ELSE p_.dataAtualizacao END) <= :dataAbastecimento" +
+            "     )" +
+            "     AND (p.dataVigencia <= :dataAbastecimento OR (p.dataAtualizacao <= :dataAbastecimento AND p.dataVigencia IS NULL)) " +
+            " ORDER BY " +
+            "     p.dataVigencia DESC NULLS LAST, p.dataAtualizacao DESC";
 
     @Autowired
     private UtilitarioAmbiente ambiente;
@@ -74,8 +83,22 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
 
     @Override
     public ResultadoPaginado<Preco> pesquisaPrecoPaginada(FiltroPesquisaPrecoVo filtro, Boolean acordo, Integer... statusPossiveis) {
+
         List<ParametroPesquisa> parametros = montarParametroPesquisa(filtro, acordo, statusPossiveis);
+
         return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+    @Override
+    public ResultadoPaginado<Preco> pesquisaPrecoPaginadaValidacaoSegregacao(FiltroPesquisaPrecoVo filtro, Boolean acordo, Usuario usuarioLogado, Integer... statusPossiveis) {
+
+        List<ParametroPesquisa> parametros = montarParametroPesquisa(filtro, acordo, statusPossiveis);
+
+        if(UtilitarioIsolamentoInformacoes.isUsuarioInternoAssessorOuCoordenador(usuarioLogado)){
+            return pesquisarSemIsolamentoDados(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        }else {
+            return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        }
     }
 
     @Override
@@ -94,10 +117,10 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
         parametros.add(new ParametroPesquisaIgual("idCombustivel", idTipoCombustivel));
         parametros.add(new ParametroPesquisaIgual("idPontoVenda", idPontoVenda));
         parametros.add(new ParametroPesquisaIgual("idFrota", idFrota));
-        parametros.add(new ParametroPesquisaDataMenorOuIgual("dataAbastecimento", ambiente.buscarDataAmbiente()));
-        parametros.add(new ParametroPesquisaIn("statusValidos", statusValidos));
+        parametros.add(new ParametroPesquisaIgual("dataAbastecimento", ambiente.buscarDataAmbiente()));
+        parametros.add(new ParametroPesquisaIgual("statusValidos", statusValidos));
 
-        List<Preco> precosAcordo = pesquisar(paginacao, CONSULTA_NEGOCIACOES, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+        List<Preco> precosAcordo = pesquisar(paginacao, CONSULTA_NEGOCIACOES_VIGENTES, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
         return precosAcordo.stream().findFirst().orElse(null);
     }
 
@@ -115,10 +138,10 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
         parametros.add(new ParametroPesquisaIgual("idCombustivel", idTipoCombustivel));
         parametros.add(new ParametroPesquisaIgual("idPontoVenda", idPontoVenda));
         parametros.add(new ParametroPesquisaIgual("idFrota", idFrota));
-        parametros.add(new ParametroPesquisaDataMenorOuIgual("dataAbastecimento", dataAbastecimento));
-        parametros.add(new ParametroPesquisaIn("statusValidos", statusValidos));
+        parametros.add(new ParametroPesquisaIgual("dataAbastecimento", dataAbastecimento));
+        parametros.add(new ParametroPesquisaIgual("statusValidos", statusValidos));
 
-        List<Preco> precosAcordo = pesquisar(null, CONSULTA_NEGOCIACOES, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+        List<Preco> precosAcordo = pesquisar(null, CONSULTA_NEGOCIACOES_VIGENTES, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
         return precosAcordo.stream().findFirst().orElse(null);
     }
 
@@ -167,10 +190,10 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
         parametros.add(new ParametroPesquisaIgual("idCombustivel", idTipoCombustivel));
         parametros.add(new ParametroPesquisaIgual("idPontoVenda", idPontoVenda));
         parametros.add(new ParametroPesquisaIgual("idFrota", null));
-        parametros.add(new ParametroPesquisaDataMenorOuIgual("dataAbastecimento", ambiente.buscarDataAmbiente()));
-        parametros.add(new ParametroPesquisaIn("statusValidos", statusValidos));
+        parametros.add(new ParametroPesquisaIgual("dataAbastecimento", ambiente.buscarDataAmbiente()));
+        parametros.add(new ParametroPesquisaIgual("statusValidos", statusValidos));
 
-        return pesquisarSemIsolamentoDados(null, CONSULTA_NEGOCIACOES, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+        return pesquisarSemIsolamentoDados(null, CONSULTA_NEGOCIACOES_VIGENTES, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
 
 

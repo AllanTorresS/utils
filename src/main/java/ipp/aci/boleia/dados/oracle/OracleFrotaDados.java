@@ -37,6 +37,8 @@ import ipp.aci.boleia.dominio.vo.apco.ClienteProFrotaVo;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
+
+import ipp.aci.boleia.util.seguranca.UtilitarioIsolamentoInformacoes;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,7 +70,6 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
             " AND (trunc(tc.dataFimPeriodo + prz.prazoReembolso) >= :dataInicial AND trunc(tc.dataFimPeriodo + prz.prazoReembolso) <= :dataFinal)) " +
             " OR (f.modoPagamento = " + ModalidadePagamento.PRE_PAGO.getValue() +
             " AND (trunc(tc.dataFimPeriodo + 2) >= :dataInicial AND trunc(tc.dataFimPeriodo + 2) <= :dataFinal))) ";
-
 
     private static final String CONSULTA_DONO_FROTA_COM_ACUMULO =
             "SELECT DISTINCT fr" +
@@ -204,7 +205,72 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
         }
         
         povoarParametroApiToken(filtro, parametros);
+
         return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+
+    }
+
+    @Override
+    public ResultadoPaginado<Frota> pesquisarValidacaoSegregacao(FiltroPesquisaFrotaVo filtro, Usuario usuarioLogado) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+
+        povoarParametroIgual("id", filtro.getFrota() != null ? filtro.getFrota().getId() : null, parametros);
+        povoarParametroLike("municipio", filtro.getCidade(), parametros);
+        povoarParametroLike("unidadeFederativa", filtro.getUf() != null ? filtro.getUf().getName() : null, parametros);
+        povoarParametroIgual("usuarioAssessorResponsavel.id", filtro.getAssessor() != null ? filtro.getAssessor().getId() : null, parametros);
+
+        if (filtro.getCnpj() != null) {
+            parametros.add(new ParametroPesquisaIgual("cnpj", UtilitarioFormatacao.obterLongMascara(filtro.getCnpj())));
+        }
+
+        if (!StringUtils.isEmpty(filtro.getRazaoSocial())) {
+            parametros.add(new ParametroPesquisaOr(
+                    new ParametroPesquisaLike("nomeFantasia", filtro.getRazaoSocial()),
+                    new ParametroPesquisaLike("razaoSocial", filtro.getRazaoSocial())
+            ));
+        }
+
+        if (filtro.getStatusContrato() != null && filtro.getStatusContrato().getName() != null) {
+            parametros.add(new ParametroPesquisaIgual("statusContrato", StatusContrato.valueOf(filtro.getStatusContrato().getName()).getValue()));
+        }
+
+        if (filtro.getStatus() != null && filtro.getStatus().getName() != null) {
+            parametros.add(new ParametroPesquisaIgual("status", StatusFrota.valueOf(filtro.getStatus().getName()).getValue()));
+        }
+
+        if (filtro.getStatusConectcar() != null && filtro.getStatusConectcar().getName() != null) {
+
+            if (StatusFrotaConectcar.ATIVO.equals(StatusFrotaConectcar.valueOf(filtro.getStatusConectcar().getName()))) {
+                parametros.add(new ParametroPesquisaOr(
+                        new ParametroPesquisaNulo("situacaoConectCar"),
+                        new ParametroPesquisaIgual("situacaoConectCar.status", StatusFrota.ATIVO.getValue())
+                ));
+            } else {
+                parametros.add(new ParametroPesquisaIgual("situacaoConectCar.status", StatusFrota.INATIVO.getValue()));
+            }
+        }
+
+        if (filtro.getPossuiCondicaoComercialConectcar() != null && filtro.getPossuiCondicaoComercialConectcar()) {
+            parametros.add(new ParametroPesquisaNulo("condicoesComerciais", true));
+        }
+
+        if (filtro.getPaginacao() != null && CollectionUtils.isNotEmpty(filtro.getPaginacao().getParametrosOrdenacaoColuna())) {
+            ParametroOrdenacaoColuna parametro = filtro.getPaginacao().getParametrosOrdenacaoColuna().get(0);
+            String nomeOrdenacao = parametro.getNome();
+            if (nomeOrdenacao != null) {
+                if (nomeOrdenacao.contentEquals("statusConectcar")) {
+                    filtro.getPaginacao().getParametrosOrdenacaoColuna().remove(0);
+                    filtro.getPaginacao().getParametrosOrdenacaoColuna().add(0, new ParametroOrdenacaoColuna("situacaoConectCar.status", parametro.getSentidoOrdenacao()));
+                }
+            }
+        }
+
+        povoarParametroApiToken(filtro, parametros);
+        if(UtilitarioIsolamentoInformacoes.isUsuarioInternoAssessorOuCoordenador(usuarioLogado)) {
+            return pesquisarSemIsolamentoDados(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        } else {
+            return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        }
     }
 
     /**
@@ -269,7 +335,20 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
     public List<Frota> pesquisarPorCnpjRazaoSocial(FiltroPesquisaParcialFrotaVo filtro) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
         povoarParametrosParaAutocomplete(filtro, parametros);
+
         return pesquisar(new ParametroOrdenacaoColuna("razaoSocial"), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+    @Override
+    public List<Frota> pesquisarPorCnpjRazaoSocialValidacaoSegregacao(FiltroPesquisaParcialFrotaVo filtro, Usuario usuarioLogado) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        povoarParametrosParaAutocomplete(filtro, parametros);
+
+        if(UtilitarioIsolamentoInformacoes.isUsuarioInternoAssessorOuCoordenador(usuarioLogado)) {
+            return pesquisarSemIsolamentoDados(new ParametroOrdenacaoColuna("razaoSocial"), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        } else {
+            return pesquisar(new ParametroOrdenacaoColuna("razaoSocial"), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        }
     }
 
     @Override
