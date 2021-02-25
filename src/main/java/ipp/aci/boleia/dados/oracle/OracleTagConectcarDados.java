@@ -77,7 +77,7 @@ public class OracleTagConectcarDados extends OracleRepositorioBoleiaDados<TagCon
         }
         if (filtro.getStatus() != null && filtro.getStatus().getName() != null) {
         	if(filtro.getStatus().getName().equals(StatusAtivacao.ATIVO.name())) {
-        		parametros.add(new ParametroPesquisaNulo("dataAtivacao", true));
+        		parametros.add(new ParametroPesquisaNulo("dataBloqueio", false));
         	}else if(filtro.getStatus().getName().equals(StatusAtivacao.INATIVO.name())) {
         		parametros.add(new ParametroPesquisaNulo("dataBloqueio", true));
         	}
