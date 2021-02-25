@@ -90,7 +90,7 @@ public class OracleCobrancaConectcarDados extends OracleRepositorioBoleiaDados<C
 
 		parametros.add(new ParametroPesquisaMaior("valorTotal", BigDecimal.ZERO));
 
-        if (filtro.getIgnorarFrotaControle()) {
+        if (filtro.getIgnorarFrotaControle() != null && filtro.getIgnorarFrotaControle()) {
 			parametros.add(
 					new ParametroPesquisaDiferente(
 							"transacoesConsolidadas.frota.cnpj", cnpjFrotaControle
