@@ -3,6 +3,7 @@ package ipp.aci.boleia.dominio.servico;
 import ipp.aci.boleia.dados.IAutorizacaoPagamentoDados;
 import ipp.aci.boleia.dados.IFilaPostergacaoAbastecimentoDados;
 import ipp.aci.boleia.dados.IFrotaPontoVendaDados;
+import ipp.aci.boleia.dados.IHistoricoParametroNotaFiscalDados;
 import ipp.aci.boleia.dados.INegociacaoDados;
 import ipp.aci.boleia.dados.INotaFiscalDados;
 import ipp.aci.boleia.dados.IParametroCicloDados;
@@ -16,6 +17,7 @@ import ipp.aci.boleia.dominio.FrotaPontoVenda;
 import ipp.aci.boleia.dominio.Negociacao;
 import ipp.aci.boleia.dominio.NotaFiscal;
 import ipp.aci.boleia.dominio.ParametroCiclo;
+import ipp.aci.boleia.dominio.ParametroNotaFiscal;
 import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.PrazoGeracaoCobranca;
 import ipp.aci.boleia.dominio.TransacaoConsolidada;
@@ -27,6 +29,7 @@ import ipp.aci.boleia.dominio.enums.ModalidadePagamento;
 import ipp.aci.boleia.dominio.enums.MotivoEstorno;
 import ipp.aci.boleia.dominio.enums.StatusNotaFiscal;
 import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
+import ipp.aci.boleia.dominio.historico.HistoricoParametroNotaFiscal;
 import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFinanceiroVo;
@@ -101,6 +104,9 @@ public class TransacaoConsolidadaSd {
 
     @Autowired
     private IParametroCicloDados parametroCicloDados;
+
+    @Autowired
+    private IHistoricoParametroNotaFiscalDados historicoParametroNotaFiscalDados;
 
     @Autowired
     private INotaFiscalDados repositorioNF;
@@ -926,6 +932,7 @@ public class TransacaoConsolidadaSd {
 
         if (dataStatusFechado.compareTo(dataAtual) < 0) {
             transacaoConsolidada.setStatusConsolidacao(StatusTransacaoConsolidada.FECHADA.getValue());
+            incluirParametroNotaFiscalNaTransacaoConsolidada(transacaoConsolidada, dataFimPeriodo);
         } else if (prazos.getPossuiPrazoAjuste() && isPeriodoEncerrado) {
             transacaoConsolidada.setStatusConsolidacao(StatusTransacaoConsolidada.EM_AJUSTE.getValue());
         } else {
@@ -937,6 +944,19 @@ public class TransacaoConsolidadaSd {
         }
 
         repositorio.armazenar(transacaoConsolidada);
+    }
+
+    /**
+     * Inclui o parâmetro de nota fiscal na transação consolidada
+     * @param transacaoConsolidada A transação consolidada
+     * @param dataFimPeriodo A data final do periodo da transação
+     */
+    private void incluirParametroNotaFiscalNaTransacaoConsolidada(TransacaoConsolidada transacaoConsolidada, Date dataFimPeriodo) {
+        ParametroNotaFiscal parametroNotaFiscal = transacaoConsolidada.getFrota().getParametroNotaFiscal();
+        if(parametroNotaFiscal != null) {
+            HistoricoParametroNotaFiscal historicoParametroNotaFiscal = historicoParametroNotaFiscalDados.buscarUltimoParametroPorData(transacaoConsolidada.getFrota().getParametroNotaFiscal(), dataFimPeriodo);
+            transacaoConsolidada.setParametroNotaFiscal(historicoParametroNotaFiscal);
+        }
     }
 
     /**

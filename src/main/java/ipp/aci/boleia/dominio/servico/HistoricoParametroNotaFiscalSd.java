@@ -30,19 +30,16 @@ public class HistoricoParametroNotaFiscalSd {
      * @return O historico armazenado
      */
     public HistoricoParametroNotaFiscal armazenar(ParametroNotaFiscal parametroNotaFiscal) {
-        if(parametroNotaFiscal.getId() != null) {
-            ParametroNotaFiscal dadosAntigos = repositorio.obterPorId(parametroNotaFiscal.getId());
-            if(dadosAntigos != null) {
-                HistoricoParametroNotaFiscal historicoParametroNotaFiscal = new HistoricoParametroNotaFiscal();
-                historicoParametroNotaFiscal.setParametroNotaFiscal(dadosAntigos);
-                historicoParametroNotaFiscal.setDataHistorico(ambiente.buscarDataAmbiente());
-                historicoParametroNotaFiscal.setNfTipoAgrupamento(dadosAntigos.getNfTipoAgrupamento());
-                historicoParametroNotaFiscal.setLocalDestino(dadosAntigos.getLocalDestino());
-                historicoParametroNotaFiscal.setSepararPorCombustivelProdutoServico(dadosAntigos.getSepararPorCombustivelProdutoServico());
-                historicoParametroNotaFiscal.setDadosAdicionais(dadosAntigos.getDadosAdicionais());
-                historicoParametroNotaFiscal.setUnidadeLocalDestinoPadrao(parametroNotaFiscal.getUnidadeLocalDestinoPadrao());
-                return historicoParametroNotaFiscalDados.armazenar(historicoParametroNotaFiscal);
-            }
+        if(parametroNotaFiscal != null && parametroNotaFiscal.getId() != null) {
+            HistoricoParametroNotaFiscal historicoParametroNotaFiscal = new HistoricoParametroNotaFiscal();
+            historicoParametroNotaFiscal.setParametroNotaFiscal(parametroNotaFiscal);
+            historicoParametroNotaFiscal.setDataHistorico(ambiente.buscarDataAmbiente());
+            historicoParametroNotaFiscal.setNfTipoAgrupamento(parametroNotaFiscal.getNfTipoAgrupamento());
+            historicoParametroNotaFiscal.setLocalDestino(parametroNotaFiscal.getLocalDestino());
+            historicoParametroNotaFiscal.setSepararPorCombustivelProdutoServico(parametroNotaFiscal.getSepararPorCombustivelProdutoServico());
+            historicoParametroNotaFiscal.setDadosAdicionais(parametroNotaFiscal.getDadosAdicionais());
+            historicoParametroNotaFiscal.setUnidadeLocalDestinoPadrao(parametroNotaFiscal.getUnidadeLocalDestinoPadrao());
+            return historicoParametroNotaFiscalDados.armazenar(historicoParametroNotaFiscal);
         }
         return null;
     }
