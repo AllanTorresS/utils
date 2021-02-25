@@ -1348,17 +1348,21 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             parametros.add(new ParametroPesquisaIgual("idFrota", null));
         }
 
-        if (filtro.getEmpresaUnidade() != null && filtro.getEmpresaUnidade().getId() != null && filtro.getEmpresaUnidade().getTipo() != null && TipoEntidadeUnidadeEmpresaAgregada.UNIDADE.name().equals(filtro.getEmpresaUnidade().getTipo().getName())) {
-            parametros.add(new ParametroPesquisaIgual("idUnidade", filtro.getEmpresaUnidade().getIdUnidade()));
-        } else {
-            parametros.add(new ParametroPesquisaIgual("idUnidade", null));
+        Long idUnidade = null;
+        if (filtro.getUnidade() != null && filtro.getUnidade().getId() != null){
+            idUnidade = filtro.getUnidade().getId();
+        } else if (filtro.getEmpresaUnidade() != null && filtro.getEmpresaUnidade().getId() != null && filtro.getEmpresaUnidade().getTipo() != null && TipoEntidadeUnidadeEmpresaAgregada.UNIDADE.name().equals(filtro.getEmpresaUnidade().getTipo().getName())) {
+            idUnidade = filtro.getEmpresaUnidade().getIdUnidade();
         }
+        parametros.add(new ParametroPesquisaIgual("idUnidade", idUnidade));
 
-        if (filtro.getEmpresaUnidade() != null && filtro.getEmpresaUnidade().getId() != null && filtro.getEmpresaUnidade().getTipo() != null && TipoEntidadeUnidadeEmpresaAgregada.EMPRESA_AGREGADA.name().equals(filtro.getEmpresaUnidade().getTipo().getName())) {
-            parametros.add(new ParametroPesquisaIgual("idEmpresaAgregada", filtro.getEmpresaUnidade().getIdEmpresaAgregada()));
-        } else {
-            parametros.add(new ParametroPesquisaIgual("idEmpresaAgregada", null));
+        Long idEmpresaAgregada = null;
+        if(filtro.getEmpresaAgregada() != null && filtro.getEmpresaAgregada().getId() != null) {
+            idEmpresaAgregada = filtro.getEmpresaAgregada().getId();
+        }else if (filtro.getEmpresaUnidade() != null && filtro.getEmpresaUnidade().getId() != null && filtro.getEmpresaUnidade().getTipo() != null && TipoEntidadeUnidadeEmpresaAgregada.EMPRESA_AGREGADA.name().equals(filtro.getEmpresaUnidade().getTipo().getName())) {
+            idEmpresaAgregada = filtro.getEmpresaUnidade().getIdEmpresaAgregada();
         }
+        parametros.add(new ParametroPesquisaIgual("idEmpresaAgregada", idEmpresaAgregada));
 
         return parametros;
     }
