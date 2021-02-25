@@ -670,18 +670,14 @@ public class TransacaoConsolidadaSd {
         boolean possuiValorEmitido = valorEmitidoNotaFiscal.compareTo(BigDecimal.ZERO) > 0;
         boolean possuiValorASerEmitido = valorEmitidoNotaFiscal.compareTo(valorTotalNotaFiscal) < 0;
 
-        //Se o ciclo esta EM AJUSTE ou FECHADO, verifica se o consolidado atende as condicoes para ter statusNF EMITIDA
+        //Verifica se o consolidado atende as condicoes para ter statusNF EMITIDA
         //Caso atenda, seta o status como EMITIDA
         //Caso nao atenda, seta o status como PARCIALMENTE_EMITIDA ou PENDENTE
-        if(!transacaoConsolidada.esta(StatusTransacaoConsolidada.EM_ABERTO)) {
-            if ((valorNotasMaiorZero && todosAbastPossuemNotaEmitidaOuJustificativa) || !transacaoConsolidada.exigeEmissaoNF()) {
-                transacaoConsolidada.setStatusNotaFiscal(StatusNotaFiscal.EMITIDA.getValue());
-            } else if(transacaoConsolidada.esta(FECHADA) && possuiValorEmitido && possuiValorASerEmitido) {
-                transacaoConsolidada.setStatusNotaFiscal(StatusNotaFiscal.PARCIALMENTE_EMITIDA.getValue());
-            } else  {
-                transacaoConsolidada.setStatusNotaFiscal(StatusNotaFiscal.PENDENTE.getValue());
-            }
-        } else {
+        if ((valorNotasMaiorZero && todosAbastPossuemNotaEmitidaOuJustificativa) || !transacaoConsolidada.exigeEmissaoNF()) {
+            transacaoConsolidada.setStatusNotaFiscal(StatusNotaFiscal.EMITIDA.getValue());
+        } else if(transacaoConsolidada.esta(FECHADA) && possuiValorEmitido && possuiValorASerEmitido) {
+            transacaoConsolidada.setStatusNotaFiscal(StatusNotaFiscal.PARCIALMENTE_EMITIDA.getValue());
+        } else  {
             transacaoConsolidada.setStatusNotaFiscal(StatusNotaFiscal.PENDENTE.getValue());
         }
 
