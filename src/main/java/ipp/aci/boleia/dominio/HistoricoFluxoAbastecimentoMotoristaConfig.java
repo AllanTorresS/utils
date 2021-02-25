@@ -51,11 +51,6 @@ public class HistoricoFluxoAbastecimentoMotoristaConfig implements IPersistente 
     private Boolean excluido;
 
     @NotNull
-    @ManyToOne(fetch= FetchType.LAZY)
-    @JoinColumn(name = "CD_FROTA")
-    private Frota frota;
-
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_MOTORISTA")
     private Motorista motorista;
@@ -78,7 +73,6 @@ public class HistoricoFluxoAbastecimentoMotoristaConfig implements IPersistente 
 
     public HistoricoFluxoAbastecimentoMotoristaConfig(FluxoAbastecimentoMotoristaConfig fluxo, Usuario usuario, Date dataAlteracao) {
         this.fluxoAbastecimento = fluxo;
-        this.frota = fluxo.getFrota();
         this.motorista = fluxo.getMotorista();
         this.dataAlteracao = dataAlteracao;
 
@@ -168,14 +162,6 @@ public class HistoricoFluxoAbastecimentoMotoristaConfig implements IPersistente 
 
     public void setExcluido(Boolean excluido) {
         this.excluido = excluido;
-    }
-
-    public Frota getFrota() {
-        return frota;
-    }
-
-    public void setFrota(Frota frota) {
-        this.frota = frota;
     }
 
     public Motorista getMotorista() {

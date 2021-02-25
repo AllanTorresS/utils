@@ -2,7 +2,6 @@ package ipp.aci.boleia.dominio;
 
 import ipp.aci.boleia.dominio.interfaces.IExclusaoLogica;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
-import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
 import ipp.aci.boleia.dominio.interfaces.IPertenceMotorista;
 import org.hibernate.envers.Audited;
 
@@ -18,13 +17,11 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
-import java.util.Collections;
-import java.util.List;
 
 @Audited
 @Entity
 @Table(name = "FLUXO_ABAS_MOTORISTA")
-public class FluxoAbastecimentoMotoristaConfig implements IPersistente, IPertenceFrota, IPertenceMotorista, IExclusaoLogica {
+public class FluxoAbastecimentoMotoristaConfig implements IPersistente, IPertenceMotorista, IExclusaoLogica {
 
     @Id
     @Column(name = "CD_FLUXO_MOTORISTA")
@@ -47,11 +44,6 @@ public class FluxoAbastecimentoMotoristaConfig implements IPersistente, IPertenc
 
     @Column(name = "ID_EXCLUIDO")
     private Boolean excluido;
-
-    @NotNull
-    @ManyToOne(fetch= FetchType.LAZY)
-    @JoinColumn(name = "CD_FROTA")
-    private Frota frota;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
@@ -124,14 +116,6 @@ public class FluxoAbastecimentoMotoristaConfig implements IPersistente, IPertenc
         this.exigirLitragem = exigirLitragem;
     }
 
-    public Frota getFrota() {
-        return frota;
-    }
-
-    public void setFrota(Frota frota) {
-        this.frota = frota;
-    }
-
     public Motorista getMotorista() {
         return motorista;
     }
@@ -166,8 +150,4 @@ public class FluxoAbastecimentoMotoristaConfig implements IPersistente, IPertenc
         this.versao = versao;
     }
 
-    @Override
-    public List<Frota> getFrotas() {
-        return Collections.singletonList(frota);
-    }
 }
