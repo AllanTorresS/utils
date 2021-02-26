@@ -398,9 +398,8 @@ public class NotaFiscalSd {
      */
     private void validarCNPJDestinatario(Document documento, List<AutorizacaoPagamento> autorizacoesPagamento, List<Erro> errosEncontrados) throws ExcecaoValidacao {
         String destCnpjToString = notaFiscalParserSd.getString(documento, ConstantesNotaFiscalParser.DEST_CNPJ);
-        String destCnpjRaiz = ValidadorCnpj.isValidCNPJ(destCnpjToString) ? UtilitarioFormatacao.formatarCnpjRaizApresentacao(destCnpjToString)
-                : destCnpjToString.substring(0, 8);
-        Long cnpjDest = Long.parseLong(destCnpjRaiz);
+
+        Long cnpjDest = Long.parseLong(destCnpjToString);
 
         for(AutorizacaoPagamento abastecimento : autorizacoesPagamento) {
             Long cnpjASerValidado = null;
