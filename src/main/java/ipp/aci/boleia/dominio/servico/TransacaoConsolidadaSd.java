@@ -538,14 +538,12 @@ public class TransacaoConsolidadaSd {
      * @return A transacao consolidada
      */
     public TransacaoConsolidada criarTransacaoConsolidada(Date dataProcessamento, FrotaPontoVenda frotaPtov, EmpresaAgregada empresaAgregada, Unidade unidade, boolean prePago) {
-
         TransacaoConsolidada tc = new TransacaoConsolidada();
         // Nota: Consolidação de autorização de pagamento PRE-PAGO é diária.
         Date dataInicio = UtilitarioCalculoData.obterPrimeiroInstanteDia(dataProcessamento);
         Date dataFim = UtilitarioCalculoData.obterUltimoInstanteDia(dataProcessamento);
         Long idEmpresaAgregada = empresaAgregada != null ? empresaAgregada.getId() : null;
         Long idUnidade = unidade != null ? unidade.getId() : null;
-
         if(!prePago) {
             // Carrega os ciclos de pagamento, ex.: Ciclos de 7 em 7 dias, de 15 em 15 dias e etc.
             ParametroCiclo parametroCiclo = parametroCicloDados.obterParametroCicloDaFrota(frotaPtov.getFrota().getId());
@@ -555,7 +553,6 @@ public class TransacaoConsolidadaSd {
             // Calcula a data fim com relação à data de início e o parâmetro de ciclo. Porém, se o mês termina antes de terminar o ciclo, então a dataFinal será o fim do mês.
             dataFim = calcularDataFimPeriodo(dataInicio, parametroCiclo);
         }
-
         tc.setModalidadePagamento(prePago ? ModalidadePagamento.PRE_PAGO.getValue() : ModalidadePagamento.POS_PAGO.getValue());
         tc.setFrotaPtov(frotaPtov);
         if(empresaAgregada != null) {
@@ -566,6 +563,7 @@ public class TransacaoConsolidadaSd {
         tc.setDataInicioPeriodo(dataInicio);
         tc.setDataFimPeriodo(dataFim);
         tc.setStatusConsolidacao(StatusTransacaoConsolidada.EM_ABERTO.getValue());
+        incluirParametroNotaFiscalNaTransacaoConsolidada(tc);
         tc.setVersao(0L);
         tc.preencherChave();
         return tc;
@@ -932,11 +930,11 @@ public class TransacaoConsolidadaSd {
 
         if (dataStatusFechado.compareTo(dataAtual) < 0) {
             transacaoConsolidada.setStatusConsolidacao(StatusTransacaoConsolidada.FECHADA.getValue());
-            incluirParametroNotaFiscalNaTransacaoConsolidada(transacaoConsolidada, dataFimPeriodo);
         } else if (prazos.getPossuiPrazoAjuste() && isPeriodoEncerrado) {
             transacaoConsolidada.setStatusConsolidacao(StatusTransacaoConsolidada.EM_AJUSTE.getValue());
         } else {
             transacaoConsolidada.setStatusConsolidacao(StatusTransacaoConsolidada.EM_ABERTO.getValue());
+            incluirParametroNotaFiscalNaTransacaoConsolidada(transacaoConsolidada);
         }
 
         if (transacaoConsolidada.esta(FECHADA) && !transacaoConsolidada.exigeEmissaoNF()) {
@@ -949,12 +947,11 @@ public class TransacaoConsolidadaSd {
     /**
      * Inclui o parâmetro de nota fiscal na transação consolidada
      * @param transacaoConsolidada A transação consolidada
-     * @param dataFimPeriodo A data final do periodo da transação
      */
-    private void incluirParametroNotaFiscalNaTransacaoConsolidada(TransacaoConsolidada transacaoConsolidada, Date dataFimPeriodo) {
+    private void incluirParametroNotaFiscalNaTransacaoConsolidada(TransacaoConsolidada transacaoConsolidada) {
         ParametroNotaFiscal parametroNotaFiscal = transacaoConsolidada.getFrota().getParametroNotaFiscal();
         if(parametroNotaFiscal != null) {
-            HistoricoParametroNotaFiscal historicoParametroNotaFiscal = historicoParametroNotaFiscalDados.buscarUltimoParametroPorData(transacaoConsolidada.getFrota().getParametroNotaFiscal(), dataFimPeriodo);
+            HistoricoParametroNotaFiscal historicoParametroNotaFiscal = historicoParametroNotaFiscalDados.buscarUltimoParametroPorData(transacaoConsolidada.getFrota().getParametroNotaFiscal(), transacaoConsolidada.getDataInicioPeriodo());
             transacaoConsolidada.setParametroNotaFiscal(historicoParametroNotaFiscal);
         }
     }

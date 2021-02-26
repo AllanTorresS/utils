@@ -12,6 +12,7 @@ import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioFormatacaoData;
 import ipp.aci.boleia.util.seguranca.UtilitarioCriptografia;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.RelationTargetAuditMode;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -173,7 +174,7 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     @Column(name = "ID_PROCESSOU_POSTERGACAO")
     private boolean processouPostergacao;
 
-
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_HISTORICO_PARAM_NF")
     private HistoricoParametroNotaFiscal parametroNotaFiscal;
