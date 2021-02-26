@@ -15,7 +15,10 @@ public class VeiculoIntegracaoVo {
 
 	}
 
-	public VeiculoIntegracaoVo(String placa) {		
+	public VeiculoIntegracaoVo(String placa) {
+		if(placa != null && !placa.contains("-")) {
+			placa = placa.substring(0, 3) + "-" + placa.substring(3);
+		}
 		this.placa = placa;
 	}
 
