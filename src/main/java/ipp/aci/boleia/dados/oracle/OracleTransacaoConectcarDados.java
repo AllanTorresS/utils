@@ -255,11 +255,11 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
         }
         
         if(filtro.getDe() != null) {
-        	parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataTransacao", filtro.getDe()));
+        	parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataTransacao", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe())));
         }
         
         if(filtro.getAte() != null) {
-        	parametros.add(new ParametroPesquisaDataMenorOuIgual("dataTransacao", UtilitarioCalculoData.adicionarDiasData(filtro.getAte(), 1)));
+        	parametros.add(new ParametroPesquisaDataMenorOuIgual("dataTransacao", UtilitarioCalculoData.obterUltimoInstanteDia((filtro.getAte()))));
         }
         
         if (filtro.getTag() != null) {

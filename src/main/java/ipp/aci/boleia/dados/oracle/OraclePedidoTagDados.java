@@ -18,6 +18,7 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaPedidoTagVo;
 import ipp.aci.boleia.util.Ordenacao;
+import ipp.aci.boleia.util.UtilitarioCalculoData;
 
 /**
  * Repositório de entidades PedidoTag
@@ -42,11 +43,11 @@ public class OraclePedidoTagDados extends OracleRepositorioBoleiaDados<PedidoTag
         }
         
         if(filtro.getDe() != null) {
-        	parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataPedido", filtro.getDe()));
+        	parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataPedido", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe())));
         }
         
         if(filtro.getAte() != null) {
-        	parametros.add(new ParametroPesquisaDataMenorOuIgual("dataPedido", filtro.getAte()));
+        	parametros.add(new ParametroPesquisaDataMenorOuIgual("dataPedido", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte())));
         }
         
         if (filtro.getNumeroPedidoConectcar() != null) {

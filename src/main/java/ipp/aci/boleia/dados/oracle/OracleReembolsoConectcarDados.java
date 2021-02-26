@@ -25,6 +25,7 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMenor;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaReembolsoConectcarVo;
 import ipp.aci.boleia.util.Ordenacao;
+import ipp.aci.boleia.util.UtilitarioCalculoData;
 
 /**
  * Respositorio de entidades de Reembolso
@@ -99,11 +100,11 @@ public class OracleReembolsoConectcarDados extends OracleRepositorioBoleiaDados<
 		List<ParametroPesquisa> parametros = new ArrayList<>();
 
 		if(filtro.getDe() != null) {
-        	parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataPagamento", filtro.getDe()));
+        	parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataPagamento", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe())));
         }
 
         if(filtro.getAte() != null) {
-        	parametros.add(new ParametroPesquisaDataMenorOuIgual("dataPagamento", filtro.getAte()));
+        	parametros.add(new ParametroPesquisaDataMenorOuIgual("dataPagamento", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte())));
         }
 
         if (filtro.getStatusIntegracao() != null && filtro.getStatusIntegracao().getName() != null) {
