@@ -2,6 +2,8 @@ package ipp.aci.boleia.dados.oracle;
 
 import ipp.aci.boleia.dados.IFluxoAbastecimentoMotoristaDados;
 import ipp.aci.boleia.dominio.FluxoAbastecimentoMotoristaConfig;
+import ipp.aci.boleia.dominio.Motorista;
+import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
@@ -34,6 +36,28 @@ public class OracleFluxoAbastecimentoMotoristaDados extends OracleRepositorioBol
     }
 
     @Override
+    public FluxoAbastecimentoMotoristaConfig obterFluxoPorMotorista(Motorista motorista) {
+        List<FluxoAbastecimentoMotoristaConfig> result = pesquisar((ParametroOrdenacaoColuna) null, new ParametroPesquisaIgual("motorista.id", motorista.getId()));
+        return result.isEmpty() ? null : result.get(0);
+    }
+
+    @Override
+    public List<FluxoAbastecimentoMotoristaConfig> obterFluxosPorUsuario(Usuario usuario) {
+        return pesquisar((ParametroOrdenacaoColuna) null,
+                new ParametroPesquisaIgual("motorista.usuarioMotorista.usuario.id", usuario.getId()),
+                new ParametroPesquisaFetch("motorista"),
+                new ParametroPesquisaFetch("veiculo"));
+    }
+
+    @Override
+    public List<FluxoAbastecimentoMotoristaConfig> obterFluxosPorFrota(Long idFrota) {
+        return pesquisar(new ParametroOrdenacaoColuna("motorista.nome"),
+                new ParametroPesquisaIgual("motorista.frota.id", idFrota),
+                new ParametroPesquisaFetch("motorista"),
+                new ParametroPesquisaFetch("veiculo"));
+    }
+
+    @Override
     public ResultadoPaginado<FluxoAbastecimentoMotoristaConfig> pesquisarConfigMotorista(FiltroPesquisaMotoristaVo filtro) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
         if (filtro.getNome() != null) {
@@ -46,19 +70,5 @@ public class OracleFluxoAbastecimentoMotoristaDados extends OracleRepositorioBol
         parametros.add(new ParametroPesquisaFetch("veiculo"));
 
         return pesquisar(filtro.getPaginacao(),parametros.toArray(new ParametroPesquisa[0]));
-    }
-
-    @Override
-    public FluxoAbastecimentoMotoristaConfig obterFluxoPorMotorista(Long idMotorista) {
-        List<FluxoAbastecimentoMotoristaConfig> result = pesquisar((ParametroOrdenacaoColuna) null, new ParametroPesquisaIgual("motorista.id", idMotorista));
-        return result.isEmpty() ? null : result.get(0);
-    }
-
-    @Override
-    public List<FluxoAbastecimentoMotoristaConfig> pesquisarConfigMotoristaPorNome(String nomeMotorista) {
-        return pesquisar(new ParametroOrdenacaoColuna("motorista.nome"),
-                new ParametroPesquisaLike("motorista.nome", nomeMotorista.replaceAll("[-./]+", "")),
-                new ParametroPesquisaFetch("motorista"),
-                new ParametroPesquisaFetch("veiculo"));
     }
 }
