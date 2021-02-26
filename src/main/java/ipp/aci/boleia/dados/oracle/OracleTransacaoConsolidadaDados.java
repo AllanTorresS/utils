@@ -1618,12 +1618,40 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             List<Integer> listaStatus = filtro.getStatusPagamento().stream().map(x -> StatusPagamentoCobranca.valueOf(x.getName()).getValue()).collect(Collectors.toList());
             parametros.add(new ParametroPesquisaIn("statusPagamento", listaStatus));
         }
-
-        String ordenacao = criarParametroOrdenacaoFinanceiroFrota(filtro.getPaginacao().getParametrosOrdenacaoColuna());
+        String ordenacao;
+        if (usuarioLogado.isInterno()){
+            ordenacao = criarParametroOrdenacaoCobrancaSolucao(filtro.getPaginacao().getParametrosOrdenacaoColuna());
+        }else{
+            ordenacao = criarParametroOrdenacaoFinanceiroFrota(filtro.getPaginacao().getParametrosOrdenacaoColuna());
+        }
 
         String consultaPesquisaGridFinanceiro = String.format(CONSULTAR_CONSOLIDADOS_POR_COBRANCA, filtroStatus, ordenacao);
         String countPesquisaGridFinanceiro = String.format(COUNT_CONSULTAR_CONSOLIDADOS_POR_COBRANCA, filtroStatus, ordenacao);
         return pesquisar(filtro.getPaginacao(), consultaPesquisaGridFinanceiro, countPesquisaGridFinanceiro, AgrupamentoTransacaoConsolidadaCobrancaVo.class, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+    /**
+     * Cria parâmetro de ordenação em caso de manipulação de ordenação do grid
+     * @param parametrosOrdenacaoColunas O parâmetro de ordenação
+     * @return A cláusula de ordenação criada
+     */
+    private String criarParametroOrdenacaoCobrancaSolucao(List<ParametroOrdenacaoColuna> parametrosOrdenacaoColunas){
+        if(parametrosOrdenacaoColunas != null && parametrosOrdenacaoColunas.isEmpty()){
+            return "TC.dataInicioPeriodo, TC.dataFimPeriodo DESC ";
+        }else if(parametrosOrdenacaoColunas != null){
+            String ordenacaoPorStatus = "statusCiclo";
+            String ordenacaoPorPeriodo = "dataFimPeriodo";
+            String parametroOrdenacao = parametrosOrdenacaoColunas.get(0).getNome();
+            String direcaoOrdenacao = (parametrosOrdenacaoColunas.get(0).isDecrescente() ? "DESC" : "ASC");
+            if(parametroOrdenacao.equals(ordenacaoPorStatus)){
+                return "CASE WHEN TC.statusConsolidacao = " + StatusTransacaoConsolidada.EM_ABERTO.getValue() + " THEN 1 " +
+                        "WHEN TC.statusConsolidacao = " + StatusTransacaoConsolidada.EM_AJUSTE.getValue() + " THEN 2 " +
+                        "ELSE 3 END " + direcaoOrdenacao;
+            }else if(parametroOrdenacao.equals(ordenacaoPorPeriodo)){
+                return "TC.dataInicioPeriodo, TC.dataFimPeriodo " + direcaoOrdenacao;
+            }
+        }
+        return "TC.dataInicioPeriodo, TC.dataFimPeriodo DESC ";
     }
 
     /**
