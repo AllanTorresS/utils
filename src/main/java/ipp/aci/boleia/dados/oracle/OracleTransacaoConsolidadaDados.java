@@ -322,6 +322,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     CLAUSULA_FROTA_TOTAL_COBRANCA +
                     "AND (tc.quantidadeAbastecimentos > 0) " +
                     "AND (tc.statusConsolidacao = :statusCiclo OR :statusCiclo is null) " +
+                    "AND (c.statusIntegracaoJDE = :statusIntegracao OR :statusIntegracao is null) " +
+                    "AND (c.numeroDocumento = :numeroDocumento OR :numeroDocumento is null) " +
                     "%s ";
 
     private static final String CONSULTA_NUMERO_REEMBOLSOS_ATRASADOS =
@@ -1701,6 +1703,18 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             parametros.add(new ParametroPesquisaIgual("statusCiclo", filtro.getStatusCiclo().getValue()));
         } else{
             parametros.add(new ParametroPesquisaIgual("statusCiclo", null));
+        }
+
+        if(filtro.getNumeroDocumento() != null) {
+            parametros.add(new ParametroPesquisaIgual("numeroDocumento", filtro.getNumeroDocumento()));
+        } else {
+            parametros.add(new ParametroPesquisaIgual("numeroDocumento", null));
+        }
+
+        if(filtro.getStatusIntegracao() != null && filtro.getStatusIntegracao().getValue() != null) {
+            parametros.add(new ParametroPesquisaIgual("statusIntegracao", filtro.getStatusIntegracao().getValue()));
+        } else {
+            parametros.add(new ParametroPesquisaIgual("statusIntegracao", null));
         }
 
         String filtroStatus = " ";
