@@ -4,6 +4,7 @@ import ipp.aci.boleia.dominio.enums.ModalidadePagamento;
 import ipp.aci.boleia.dominio.enums.MotivoEstorno;
 import ipp.aci.boleia.dominio.enums.StatusNotaFiscal;
 import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
+import ipp.aci.boleia.dominio.historico.HistoricoParametroNotaFiscal;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
 import ipp.aci.boleia.dominio.interfaces.IPertenceRevendedor;
@@ -11,6 +12,7 @@ import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioFormatacaoData;
 import ipp.aci.boleia.util.seguranca.UtilitarioCriptografia;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.RelationTargetAuditMode;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -171,6 +173,11 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     @NotNull
     @Column(name = "ID_PROCESSOU_POSTERGACAO")
     private boolean processouPostergacao;
+
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_HISTORICO_PARAM_NF")
+    private HistoricoParametroNotaFiscal parametroNotaFiscal;
 
     @Override
     public Long getId() {
@@ -456,6 +463,22 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
         this.processouPostergacao = processouPostergacao;
     }
 
+    public Unidade getUnidade() {
+        return unidade;
+    }
+
+    public void setUnidade(Unidade unidade) {
+        this.unidade = unidade;
+    }
+
+    public HistoricoParametroNotaFiscal getParametroNotaFiscal() {
+        return parametroNotaFiscal;
+    }
+
+    public void setParametroNotaFiscal(HistoricoParametroNotaFiscal parametroNotaFiscal) {
+        this.parametroNotaFiscal = parametroNotaFiscal;
+    }
+
     /**
      * Gera uma chave unica para cada TransacaoConsolidada, tendo o objetivo de garantir que cada ciclo seja unico no banco de dados.
      * Existe uma constraint (UQ_CHAVE_TRANS_CONSOL) no banco que valida a unicidade da chave.
@@ -470,14 +493,6 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
             key = key + unidade.getId();
         }
         this.chave = UtilitarioCriptografia.calcularHashSHA256(key);
-    }
-
-    public Unidade getUnidade() {
-        return unidade;
-    }
-
-    public void setUnidade(Unidade unidade) {
-        this.unidade = unidade;
     }
 
     /**
@@ -617,5 +632,4 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
                 .allMatch(autorizacaoPagamento -> ((autorizacaoPagamento.estaCancelado() ||
                         (autorizacaoPagamento.getValorTotal().compareTo(BigDecimal.ZERO) < 0) && existeCancelado && existeEstornado)));
     }
-
 }
