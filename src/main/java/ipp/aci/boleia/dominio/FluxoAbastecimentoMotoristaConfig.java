@@ -2,6 +2,7 @@ package ipp.aci.boleia.dominio;
 
 import ipp.aci.boleia.dominio.interfaces.IExclusaoLogica;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
+import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
 import ipp.aci.boleia.dominio.interfaces.IPertenceMotorista;
 import org.hibernate.envers.Audited;
 
@@ -17,11 +18,13 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
+import java.util.Collections;
+import java.util.List;
 
 @Audited
 @Entity
 @Table(name = "FLUXO_ABAS_MOTORISTA")
-public class FluxoAbastecimentoMotoristaConfig implements IPersistente, IPertenceMotorista, IExclusaoLogica {
+public class FluxoAbastecimentoMotoristaConfig implements IPersistente, IPertenceFrota, IPertenceMotorista, IExclusaoLogica {
 
     @Id
     @Column(name = "CD_FLUXO_MOTORISTA")
@@ -66,6 +69,11 @@ public class FluxoAbastecimentoMotoristaConfig implements IPersistente, IPertenc
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    @Override
+    public List<Frota> getFrotas() {
+        return motorista != null ?  motorista.getFrotas() : Collections.emptyList();
     }
 
     public Boolean getExigirTelaHodometroHorimetro() {
@@ -149,5 +157,4 @@ public class FluxoAbastecimentoMotoristaConfig implements IPersistente, IPertenc
     public void setVersao(Long versao) {
         this.versao = versao;
     }
-
 }
