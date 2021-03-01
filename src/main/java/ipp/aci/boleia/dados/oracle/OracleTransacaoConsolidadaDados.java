@@ -1639,7 +1639,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
      */
     private String criarParametroOrdenacaoCobrancaSolucao(List<ParametroOrdenacaoColuna> parametrosOrdenacaoColunas){
         if(parametrosOrdenacaoColunas != null && parametrosOrdenacaoColunas.isEmpty()){
-            return "TC.dataInicioPeriodo, TC.dataFimPeriodo DESC ";
+            return "TC.dataInicioPeriodo, TC.dataFimPeriodo ASC ";
         }else if(parametrosOrdenacaoColunas != null){
             String ordenacaoPorStatus = "statusCiclo";
             String ordenacaoPorPeriodo = "dataFimPeriodo";
@@ -1653,7 +1653,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                 return "TC.dataInicioPeriodo, TC.dataFimPeriodo " + direcaoOrdenacao;
             }
         }
-        return "TC.dataInicioPeriodo, TC.dataFimPeriodo DESC ";
+        return "TC.dataInicioPeriodo, TC.dataFimPeriodo ASC ";
     }
 
     /**
