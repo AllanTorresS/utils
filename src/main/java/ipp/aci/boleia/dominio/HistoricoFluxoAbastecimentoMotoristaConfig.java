@@ -75,6 +75,7 @@ public class HistoricoFluxoAbastecimentoMotoristaConfig implements IPersistente 
         this.fluxoAbastecimento = fluxo;
         this.motorista = fluxo.getMotorista();
         this.dataAlteracao = dataAlteracao;
+        this.excluido = fluxo.getExcluido();
 
         if (fluxo.getVeiculo() != null) {
             this.veiculo = fluxo.getVeiculo();
