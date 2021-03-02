@@ -283,7 +283,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "     JOIN FETCH tc.prazos tp " +
                     "     JOIN FETCH tc.frotaPtov fpt " +
                     "     JOIN FETCH fpt.pontoVenda pv " +
-                    "     JOIN FETCH pv.rede r " +
+                    "     LEFT JOIN FETCH pv.rede r " +
                     " WHERE " +
                     "     (tc.dataFimPeriodo < :hoje " +
                     "     AND tc.statusConsolidacao = " + StatusTransacaoConsolidada.EM_ABERTO.getValue() +
