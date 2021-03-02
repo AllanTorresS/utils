@@ -509,11 +509,11 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
                 + UtilitarioFormatacaoData.formatarDataCurta(dataInicioPeriodo) + "|"
                 + UtilitarioFormatacaoData.formatarDataCurta(dataFimPeriodo) + "|";
         if (empresaAgregada != null && empresaAgregada.getId() != null) {
-            key += empresaAgregada.getId();
+            key += empresaAgregada.getId() + empresaAgregada.getCnpj();
         } else if(unidade != null && unidade.getId() != null) {
-            key += unidade.getId();
+            key += unidade.getId() + unidade.getCnpj();
         } else if (frotaExigeNF) {
-            key += frotaPtov.getFrota().getId();
+            key += frotaPtov.getFrota().getId() + frotaPtov.getFrota().getCnpj();
         }
         this.chave = UtilitarioCriptografia.calcularHashSHA256(key);
     }
