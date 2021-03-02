@@ -335,4 +335,12 @@ public interface ITransacaoConsolidadaDados extends IRepositorioBoleiaDados<Tran
      * @return Os consolidados encontrados
      */
     List<TransacaoConsolidada> obterConsolidadosPorPeriodoEFrota(Date dataInicioCiclo, Date dataFimCiclo, Long idFrota);
+
+        /**
+     * Obtém o valor total de reembolso em um período
+     * @param filtro O filtro fornecido
+     * @param usuarioLogado O usuário que solicitou a pesquisa
+     * @return O valor total
+     */
+    BigDecimal obterTotalReembolsoPeriodoSolucao(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado);
 }

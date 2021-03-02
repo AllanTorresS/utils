@@ -297,7 +297,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "     AND tc.statusConsolidacao = " + StatusTransacaoConsolidada.EM_AJUSTE.getValue() +
                     "     ) " ;
 
-    private static final String CONSULTA_TOTAL_REEMBOLSO_PERIODO =
+    private static final String CONSULTA_TOTAL_REEMBOLSO_PAGO_PERIODO =
             " SELECT SUM(CASE WHEN r.valorReembolso IS NULL THEN tc.valorReembolso "+
                     "ELSE r.valorReembolso END) " +
                     "FROM TransacaoConsolidada tc " +
@@ -586,24 +586,32 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
              StatusPagamentoReembolso.PREVISTO.getValue() + " in :statusPagamento) OR (r is not null AND (r.status in :statusPagamento OR " + 
              " (r.status = " + StatusPagamentoReembolso.EM_ABERTO.getValue() + " AND " + StatusPagamentoReembolso.PREVISTO.getValue() + " in :statusPagamento)))) ";
     
+    private static final String CONSULTA_COMUM_CONSOLIDADOS_GRID_REEMBOLSO = 
+            "FROM TransacaoConsolidada tc " +
+            "LEFT JOIN tc.frotaPtov fpv " +
+            "LEFT JOIN tc.reembolso r " +
+            "WHERE " +
+            "(tc.dataInicioPeriodo >= :dataInicioPeriodo AND tc.dataFimPeriodo <= :dataFimPeriodo) " +
+            "AND (fpv.pontoVenda.id  = :idPv OR :idPv is null) " +
+            "AND (fpv.frota.id = :idFrota OR :idFrota is null) " +
+            CLAUSULA_STATUS_PAGAMENTO_REEMBOLSO +
+            CLAUSULA_STATUS_INTEGRACAO_REEMBOLSO +
+            CLAUSULA_STATUS_NOTA_FISCAL +
+            "AND (tc.statusConsolidacao = :statusConsolidacao OR :statusConsolidacao is null) " +
+            "AND (r.numeroDocumento = :numeroDocumento  OR :numeroDocumento is null)" +
+            "AND (tc.valorFaturamento <> 0 OR tc.valorReembolso <> 0 OR tc.valorTotalNotaFiscal <> 0 OR tc.quantidadeAbastecimentos <> 0) " +
+            "AND (tc.unidade.id = :idUnidade OR :idUnidade is null) " +
+            "AND (tc.empresaAgregada.id = :idEmpresaAgregada OR :idEmpresaAgregada is null) ";
+
     private static final String CONSULTA_CONSOLIDADOS_GRID_REEMBOLSO_SOLUCAO =
             "SELECT tc " +
-                    "FROM TransacaoConsolidada tc " +
-                    "LEFT JOIN tc.frotaPtov fpv " +
-                    "LEFT JOIN tc.reembolso r " +
-                    "WHERE " +
-                    "(tc.dataInicioPeriodo >= :dataInicioPeriodo AND tc.dataFimPeriodo <= :dataFimPeriodo) " +
-                    "AND (fpv.pontoVenda.id  = :idPv OR :idPv is null) " +
-                    "AND (fpv.frota.id = :idFrota OR :idFrota is null) " +
-                    CLAUSULA_STATUS_PAGAMENTO_REEMBOLSO +
-                    CLAUSULA_STATUS_INTEGRACAO_REEMBOLSO +
-                    CLAUSULA_STATUS_NOTA_FISCAL +
-                    "AND (tc.statusConsolidacao = :statusConsolidacao OR :statusConsolidacao is null) " +
-                    "AND (r.numeroDocumento = :numeroDocumento  OR :numeroDocumento is null)" +
-                    "AND (tc.valorFaturamento <> 0 OR tc.valorReembolso <> 0 OR tc.valorTotalNotaFiscal <> 0 OR tc.quantidadeAbastecimentos <> 0) " +
-                    "AND (tc.unidade.id = :idUnidade OR :idUnidade is null) " +
-                    "AND (tc.empresaAgregada.id = :idEmpresaAgregada OR :idEmpresaAgregada is null) " +
+                    CONSULTA_COMUM_CONSOLIDADOS_GRID_REEMBOLSO +
                     "ORDER BY %s ";
+
+    private static final String CONSULTA_TOTAL_REEMBOLSO_PERIODO =
+            " SELECT SUM(CASE WHEN r.valorReembolso IS NULL THEN tc.valorReembolso "+
+                    "ELSE r.valorReembolso END) " +
+                    CONSULTA_COMUM_CONSOLIDADOS_GRID_REEMBOLSO;
 
     @Autowired
     private UtilitarioAmbiente ambiente;
@@ -1264,39 +1272,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
 
         String consulta = CONSULTA_CONSOLIDADOS_GRID_REEMBOLSO_SOLUCAO;
 
-        if (filtro.getStatusPagamento() != null && !filtro.getStatusPagamento().isEmpty()){
-            List<Integer> listaStatus = filtro.getStatusPagamento().stream().map(x -> StatusPagamentoReembolso.valueOf(x.getName()).getValue()).collect(Collectors.toList());
-            parametros.add(new ParametroPesquisaIn("statusPagamento", listaStatus));
-        }else{
-            consulta = consulta.replace(CLAUSULA_STATUS_PAGAMENTO_REEMBOLSO, "");
-        }
-
-        if (filtro.getListaStatusIntegracao() != null && !filtro.getListaStatusIntegracao().isEmpty()){
-            List<Integer> listaStatus = filtro.getListaStatusIntegracao().stream().map(x -> StatusIntegracaoReembolsoJde.valueOf(x.getName()).getValue()).collect(Collectors.toList());
-            parametros.add(new ParametroPesquisaIn("statusIntegracao", listaStatus));
-        }else{
-            consulta = consulta.replace(CLAUSULA_STATUS_INTEGRACAO_REEMBOLSO, "");
-        }
-
-        if(filtro.getStatusNotaFiscal() != null && !filtro.getStatusNotaFiscal().isEmpty()){
-            List<Integer> listaStatus = filtro.getStatusNotaFiscal().stream().map(x -> StatusNotaFiscal.valueOf(x.getName()).getValue()).collect(Collectors.toList());
-            parametros.add(new ParametroPesquisaIn("statusNf", listaStatus));
-        }else{
-            consulta = consulta.replace(CLAUSULA_STATUS_NOTA_FISCAL, "");
-        }
-
-        if(filtro.getNumeroDocumento() != null){
-            parametros.add(new ParametroPesquisaIgual("numeroDocumento", filtro.getNumeroDocumento()));
-        }else{
-            parametros.add(new ParametroPesquisaIgual("numeroDocumento", null));
-        }
-
-        if (filtro.getStatusCiclo() != null && filtro.getStatusCiclo().getValue() != null){
-            parametros.add(new ParametroPesquisaIgual("statusConsolidacao", filtro.getStatusCiclo().getValue()));
-        }else{
-            parametros.add(new ParametroPesquisaIgual("statusConsolidacao", null));
-        }
-
+        consulta = popularParametrosReembolsoSolucao(parametros, filtro, consulta);
 
         String ordenacao = " ";
         if(filtro.getPaginacao().getParametrosOrdenacaoColuna().isEmpty()) {
@@ -1366,7 +1342,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
     @Override
     public BigDecimal obterTotalReembolsoPeriodo(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
-        String consulta = CONSULTA_TOTAL_REEMBOLSO_PERIODO;
+        String consulta = CONSULTA_TOTAL_REEMBOLSO_PAGO_PERIODO;
 
         parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataInicioPeriodo", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe())));
         parametros.add(new ParametroPesquisaDataMenorOuIgual("dataFimPeriodo", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte())));
@@ -1727,6 +1703,54 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         parametros.add(new ParametroPesquisaDataEntre("dataFimPeriodo", UtilitarioCalculoData.obterPrimeiroInstanteDia(dataFimCiclo), UtilitarioCalculoData.obterUltimoInstanteDia(dataFimCiclo)));
         parametros.add(new ParametroPesquisaIgual("frotaPtov.frota.id", idFrota));
         return pesquisar((InformacaoPaginacao) null, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+    }
+
+    @Override
+    public BigDecimal obterTotalReembolsoPeriodoSolucao(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado) {
+        List<ParametroPesquisa> parametros = popularParametrosPesquisaTransacoesFinanceiro(filtro, usuarioLogado);
+        String consulta = CONSULTA_TOTAL_REEMBOLSO_PERIODO;
+        consulta = popularParametrosReembolsoSolucao(parametros, filtro, consulta);
+
+        BigDecimal totalCobranca = pesquisarUnicoSemIsolamentoDados(consulta, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        return totalCobranca != null ? totalCobranca : BigDecimal.ZERO;
+    }
+
+    private String popularParametrosReembolsoSolucao(List<ParametroPesquisa> parametros, FiltroPesquisaFinanceiroVo filtro, String consulta) {
+
+        if (filtro.getStatusPagamento() != null && !filtro.getStatusPagamento().isEmpty()){
+            List<Integer> listaStatus = filtro.getStatusPagamento().stream().map(x -> StatusPagamentoReembolso.valueOf(x.getName()).getValue()).collect(Collectors.toList());
+            parametros.add(new ParametroPesquisaIn("statusPagamento", listaStatus));
+        }else{
+            consulta = consulta.replace(CLAUSULA_STATUS_PAGAMENTO_REEMBOLSO, "");
+        }
+
+        if (filtro.getListaStatusIntegracao() != null && !filtro.getListaStatusIntegracao().isEmpty()){
+            List<Integer> listaStatus = filtro.getListaStatusIntegracao().stream().map(x -> StatusIntegracaoReembolsoJde.valueOf(x.getName()).getValue()).collect(Collectors.toList());
+            parametros.add(new ParametroPesquisaIn("statusIntegracao", listaStatus));
+        }else{
+            consulta = consulta.replace(CLAUSULA_STATUS_INTEGRACAO_REEMBOLSO, "");
+        }
+
+        if(filtro.getStatusNotaFiscal() != null && !filtro.getStatusNotaFiscal().isEmpty()){
+            List<Integer> listaStatus = filtro.getStatusNotaFiscal().stream().map(x -> StatusNotaFiscal.valueOf(x.getName()).getValue()).collect(Collectors.toList());
+            parametros.add(new ParametroPesquisaIn("statusNf", listaStatus));
+        }else{
+            consulta = consulta.replace(CLAUSULA_STATUS_NOTA_FISCAL, "");
+        }
+
+        if(filtro.getNumeroDocumento() != null){
+            parametros.add(new ParametroPesquisaIgual("numeroDocumento", filtro.getNumeroDocumento()));
+        }else{
+            parametros.add(new ParametroPesquisaIgual("numeroDocumento", null));
+        }
+
+        if (filtro.getStatusCiclo() != null && filtro.getStatusCiclo().getValue() != null){
+            parametros.add(new ParametroPesquisaIgual("statusConsolidacao", filtro.getStatusCiclo().getValue()));
+        }else{
+            parametros.add(new ParametroPesquisaIgual("statusConsolidacao", null));
+        }
+
+        return consulta;
     }
 
     /**
