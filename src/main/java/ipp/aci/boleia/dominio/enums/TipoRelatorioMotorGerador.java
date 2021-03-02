@@ -37,7 +37,9 @@ public enum TipoRelatorioMotorGerador implements IEnumComLabel<TipoRelatorioMoto
     RELATORIO_COBRANCA_CONECTCAR(22, obterMapaTemplatesCobrancaConectcar()),
     RELATORIO_COTA_VEICULO(23, obterMapaTemplatesCotaVeiculo()),
 	RELATORIO_FINANCEIRO_FROTA(24, obterMapaTemplatesFinanceiroFrota()),
-    RELATORIO_DETALHAMENTO_COBRANCA(25, obterMapaTemplatesDetalhamentoCobranca());
+    RELATORIO_DETALHAMENTO_COBRANCA(25, obterMapaTemplatesDetalhamentoCobranca()),
+    RELATORIO_REEMBOLSO(26, obterMapaTemplatesReembolso()),
+    RELATORIO_DETALHAMENTO_REEMBOLSO(27, obterMapaTemplatesDetalhamentoReembolso());
 
     private final Integer value;
     private final Map<TipoPerfilUsuario, TemplatePlanilha> templatePerfil;
@@ -384,6 +386,28 @@ public enum TipoRelatorioMotorGerador implements IEnumComLabel<TipoRelatorioMoto
         Map<TipoPerfilUsuario, TemplatePlanilha> mapa = new HashMap<>();
         mapa.put(TipoPerfilUsuario.FROTA, TemplatePlanilha.TEMPLATE_RELATORIO_DETALHAMENTO_COBRANCA);
         mapa.put(TipoPerfilUsuario.INTERNO, TemplatePlanilha.TEMPLATE_RELATORIO_DETALHAMENTO_COBRANCA_INTERNO);
+        return mapa;
+    }
+
+    /**
+     * Gera um mapa de templates por perfil para um tipo de relatório (reembolso)
+     *
+     * @return O mapa criado
+     */
+    private static Map<TipoPerfilUsuario, TemplatePlanilha> obterMapaTemplatesReembolso() {
+        Map<TipoPerfilUsuario, TemplatePlanilha> mapa = new HashMap<>();
+        mapa.put(TipoPerfilUsuario.INTERNO, TemplatePlanilha.TEMPLATE_RELATORIO_REEMBOLSO);
+        return mapa;
+    }
+
+    /**
+     * Gera um mapa de templates por perfil para um tipo de relatório (detalhamento reembolso)
+     *
+     * @return O mapa criado
+     */
+    private static Map<TipoPerfilUsuario, TemplatePlanilha> obterMapaTemplatesDetalhamentoReembolso() {
+        Map<TipoPerfilUsuario, TemplatePlanilha> mapa = new HashMap<>();
+        mapa.put(TipoPerfilUsuario.INTERNO, TemplatePlanilha.TEMPLATE_RELATORIO_DETALHAMENTO_REEMBOLSO);
         return mapa;
     }
 
