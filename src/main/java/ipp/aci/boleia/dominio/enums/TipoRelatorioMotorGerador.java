@@ -390,7 +390,7 @@ public enum TipoRelatorioMotorGerador implements IEnumComLabel<TipoRelatorioMoto
     }
 
     /**
-     * Gera um mapa de templates por perfil para um tipo de relatório (cobrança)
+     * Gera um mapa de templates por perfil para um tipo de relatório (reembolso)
      *
      * @return O mapa criado
      */
@@ -401,7 +401,7 @@ public enum TipoRelatorioMotorGerador implements IEnumComLabel<TipoRelatorioMoto
     }
 
     /**
-     * Gera um mapa de templates por perfil para um tipo de relatório (cobrança)
+     * Gera um mapa de templates por perfil para um tipo de relatório (detalhamento reembolso)
      *
      * @return O mapa criado
      */
