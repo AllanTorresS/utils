@@ -27,9 +27,9 @@ public interface IPedidoTagDados extends IRepositorioBoleiaDados<PedidoTag> {
     PedidoTag obterPorCobranca(Long idCobranca);
     
     /**
-     * Obtem a lista de pedidos sem dados de rastreio
-     * @return lista de pedidos sem dados de rastreio
+     * Obtem a lista de pedidos a serem atualizados
+     * @return lista de pedidos a serem atualizados
      */
-    List<PedidoTag> obterPedidosSemStatusRastreio();
+    List<PedidoTag> obterPedidosAtualizacaoRastreio();
 
 }
