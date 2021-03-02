@@ -16,7 +16,7 @@ public final class ConstantesJde {
     public static final String UNIDADE_NEGOCIO = "74";
     public static final String CODIGO_CATEGORIA_EMPRESA = "74";
     public static final String CLIENTE_REPASSE = "7059338";
-    public static final Long CODIGO_JDE_FORNECEDOR_CONECTCAR = 3940130L;
+    public static final Long CODIGO_JDE_FORNECEDOR_CONECTCAR = 5821127L;
 
     public static final Long VOUCHER_CENARIO_APROVADO_PAGAMENTO = 187L;
     public static final Long VOUCHER_CENARIO_SUSPENSO_PAGAMENTO = 141L;
