@@ -20,6 +20,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -181,6 +182,9 @@ public class Motorista implements IPersistente, IExclusaoLogica, IPertenceFrota,
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_USUARIO_MOTORISTA")
     private UsuarioMotorista usuarioMotorista;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "motorista")
+    private List<FluxoAbastecimentoMotoristaConfig> fluxoAbastecimentoMotoristaConfigs;
 
     @NotNull
     @Column(name = "ID_USA_APP")
@@ -524,6 +528,14 @@ public class Motorista implements IPersistente, IExclusaoLogica, IPertenceFrota,
     public UsuarioMotorista getUsuarioMotorista() { return usuarioMotorista; }
 
     public void setUsuarioMotorista(UsuarioMotorista usuarioMotorista) { this.usuarioMotorista = usuarioMotorista; }
+
+    public List<FluxoAbastecimentoMotoristaConfig> getFluxoAbastecimentoMotoristaConfigs() {
+        return fluxoAbastecimentoMotoristaConfigs;
+    }
+
+    public void setFluxoAbastecimentoMotoristaConfigs(List<FluxoAbastecimentoMotoristaConfig> fluxoAbastecimentoMotoristaConfigs) {
+        this.fluxoAbastecimentoMotoristaConfigs = fluxoAbastecimentoMotoristaConfigs;
+    }
 
     public Date getDataAtualizacao() {
         return dataAtualizacao;
