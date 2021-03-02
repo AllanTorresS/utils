@@ -1,8 +1,6 @@
 package ipp.aci.boleia.dados.oracle;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.NoResultException;
@@ -25,7 +23,6 @@ import ipp.aci.boleia.dominio.vo.FiltroPesquisaTagConectcarVo;
 /**
  * Repositório de entidades TagConectcar
  */
-
 @Repository
 public class OracleTagConectcarDados extends OracleRepositorioBoleiaDados<TagConectcar> implements ITagConectcarDados {
 
@@ -48,12 +45,6 @@ public class OracleTagConectcarDados extends OracleRepositorioBoleiaDados<TagCon
          " AND t.dataAtivacao IS NOT NULL" + 
          " ORDER BY t.id ASC";
 	
-	private static final String QUERY_HISTORICO_TAGS =
-		"select cd_tag_conectcar, dt_exclusao " +
-		"from BOLEIA_AUD.tag_conectcar_aud " +
-		"WHERE DS_PLACA = :placa " +
-		"AND DT_EXCLUSAO IS NOT NULL";
-
     /**
      * Instancia o repositório
      */
@@ -136,25 +127,4 @@ public class OracleTagConectcarDados extends OracleRepositorioBoleiaDados<TagCon
 			return null;
 		}	
 	}
-
-	@Override
-	public List<TagConectcar> obtemHistoricoTags(String placa) {
-		Query query = getGerenciadorDeEntidade().createNativeQuery(QUERY_HISTORICO_TAGS);		 
-		query.setParameter("placa", placa);	    
-		try {
-			List<TagConectcar> historico = new ArrayList();
-
-			List<Object[]> results = query.getResultList();
-			if (results != null && !results.isEmpty()) {
-				for(Object[] result : results)
-				historico.add(new TagConectcar(((BigDecimal)result[0]).longValue(), (Date)result[1]));
-			}
-
-			return historico;
-
-		} catch (NoResultException e) {
-			return null;
-		}	
-	}
-
 }
