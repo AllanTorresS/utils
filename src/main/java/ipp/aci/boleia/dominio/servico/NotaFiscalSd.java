@@ -12,12 +12,12 @@ import ipp.aci.boleia.dominio.Arquivo;
 import ipp.aci.boleia.dominio.AutorizacaoPagamento;
 import ipp.aci.boleia.dominio.NfeAnexosArmazem;
 import ipp.aci.boleia.dominio.NotaFiscal;
-import ipp.aci.boleia.dominio.ParametroNotaFiscal;
 import ipp.aci.boleia.dominio.TransacaoConsolidada;
 import ipp.aci.boleia.dominio.Unidade;
 import ipp.aci.boleia.dominio.Veiculo;
 import ipp.aci.boleia.dominio.enums.LocalDestinoPadroNfe;
 import ipp.aci.boleia.dominio.enums.TipoArquivo;
+import ipp.aci.boleia.dominio.historico.HistoricoParametroNotaFiscal;
 import ipp.aci.boleia.dominio.vo.DanfeVo;
 import ipp.aci.boleia.dominio.vo.ItemDanfeVo;
 import ipp.aci.boleia.dominio.vo.NotaFiscalVo;
@@ -405,8 +405,8 @@ public class NotaFiscalSd {
             Long cnpjASerValidado = null;
             Veiculo veiculo = abastecimento.getVeiculo();
             boolean veiculoPerenceUnidade = veiculo != null && veiculo.getUnidade() != null && veiculo.getUnidade().getExigeNotaFiscal() != null && veiculo.getUnidade().getExigeNotaFiscal();
-            if (abastecimento.getFrota() != null && abastecimento.getFrota().getParametroNotaFiscal() != null && abastecimento.getFrota().getParametroNotaFiscal() != null) {
-                ParametroNotaFiscal parametroNf = abastecimento.getFrota().getParametroNotaFiscal();
+            if (abastecimento.getTransacaoConsolidada() != null && abastecimento.getTransacaoConsolidada().getParametroNotaFiscal() != null) {
+                HistoricoParametroNotaFiscal parametroNf = abastecimento.getTransacaoConsolidada().getParametroNotaFiscal();
                 if (parametroNf != null && LocalDestinoPadroNfe.ABASTECIMENTO.getValue().equals(parametroNf.getLocalDestino()) && abastecimento.getUnidade() != null && abastecimento.getUnidade().getExigeNotaFiscal()) {
                     String uf = abastecimento.getUnidade() != null ? abastecimento.getUnidade().getUf() : abastecimento.getFrota().getUnidadeFederativa();
                     Unidade unidadeLocalDestinoPadrao = abastecimento.getFrota().getUnidades().stream()

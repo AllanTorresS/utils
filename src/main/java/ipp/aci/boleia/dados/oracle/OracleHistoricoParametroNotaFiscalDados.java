@@ -5,8 +5,10 @@ import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.ParametroNotaFiscal;
 import ipp.aci.boleia.dominio.enums.StatusAutorizacao;
 import ipp.aci.boleia.dominio.historico.HistoricoParametroNotaFiscal;
+import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
+import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.util.Ordenacao;
@@ -34,7 +36,9 @@ public class OracleHistoricoParametroNotaFiscalDados extends OracleRepositorioBo
         List<ParametroPesquisa> parametros = new ArrayList<>();
         parametros.add(new ParametroPesquisaIgual("parametroNotaFiscal.id", parametroNotaFiscal.getId()));
         parametros.add(new ParametroPesquisaDataMenorOuIgual("dataHistorico", dataLimite));
-        List<HistoricoParametroNotaFiscal> historicos = pesquisar(new ParametroOrdenacaoColuna("dataHistorico", Ordenacao.DECRESCENTE), parametros.toArray(new ParametroPesquisa[parametros.size()]));
-        return historicos != null ? historicos.stream().findFirst().orElse(null) : null;
+        final int pagina = 0;
+        final int tamanhoPagina = 1;
+        ResultadoPaginado<HistoricoParametroNotaFiscal> historicos = pesquisar(new InformacaoPaginacao(pagina, tamanhoPagina, new ParametroOrdenacaoColuna("dataHistorico", Ordenacao.DECRESCENTE)), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        return historicos != null ? historicos.getRegistros().stream().findFirst().orElse(null) : null;
     }
 }
