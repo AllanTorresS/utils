@@ -64,6 +64,14 @@ public interface IVeiculoDados extends IRepositorioBoleiaDados<Veiculo> {
 	List<Veiculo> buscarVeiculosPorPlaca(String placa);
 
 	/**
+	 * Encontra veiculos pela placa em qualquer frota cadastrada.
+	 *
+	 * @param placa A placa
+	 * @return lista com os veiculos localizados
+	 */
+	List<Veiculo> buscarVeiculosPorPlacaLike(String placa);
+
+	/**
 	 * Encontra veiculos com a mesma placa
 	 *
 	 * @param filtro o filtro utilizado
