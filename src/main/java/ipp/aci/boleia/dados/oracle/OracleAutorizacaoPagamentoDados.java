@@ -1223,7 +1223,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         }
         if(filtro.getOutrosServicos() != null && filtro.getOutrosServicos().size() > 0) {
             ParametroPesquisaOr parametrosOutrosServicos = new ParametroPesquisaOr();
-            filtro.getOutrosServicos().forEach(s -> parametrosOutrosServicos.addParametro(new ParametroPesquisaIgual("itens.produto.id", s.getId())));
+            filtro.getOutrosServicos().forEach(s -> parametrosOutrosServicos.addParametro(new ParametroPesquisaIgual("items.produto.id", s.getId())));
             parametros.add(parametrosOutrosServicos);
         }
         if(filtro.getNumeroNf() != null) {
