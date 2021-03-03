@@ -11,7 +11,7 @@ import java.util.List;
  *
  * @author pedro.silva
  */
-public class FiltroPesquisaDetalheReembolsoVo extends BaseFiltroPaginado {
+public class FiltroPesquisaDetalheReembolsoVo extends FiltroBasePeriodoPaginado {
     private Long idConsolidado;
     private Date dataAbastecimento;
     private String placaVeiculo;
