@@ -123,6 +123,12 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
     }
 
     @Override
+    public List<Veiculo> buscarVeiculosPorPlacaLike(String placa) {
+        return pesquisar((ParametroOrdenacaoColuna) null,
+                new ParametroPesquisaLike("placa", placa));
+    }
+
+    @Override
     public ResultadoPaginado<Veiculo> buscarVeiculoComMesmaPlaca(FiltroPesquisaVeiculoVo filtro) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
 
