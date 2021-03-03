@@ -5,6 +5,10 @@ import ipp.aci.boleia.dominio.PontoDeVenda;
 import java.math.BigDecimal;
 import java.util.Date;
 
+/**
+ * Representa as informações do volume de uma frota cliente.
+ *
+ */
 public class InformacoesVolumeVo {
 
 	private PontoDeVenda pontoDeVenda;

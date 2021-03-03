@@ -12,16 +12,20 @@ import ipp.aci.boleia.dominio.ReembolsoConectcar;
 import ipp.aci.boleia.dominio.enums.StatusIntegracaoReembolsoConectcarJde;
 import ipp.aci.boleia.dominio.enums.StatusIntegracaoReembolsoJde;
 import ipp.aci.boleia.dominio.enums.StatusLiberacaoReembolsoJde;
+import ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso;
 import ipp.aci.boleia.dominio.enums.StatusPagamentoReembolsoConectcar;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDiferente;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMenor;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaReembolsoConectcarVo;
 import ipp.aci.boleia.util.Ordenacao;
+import ipp.aci.boleia.util.UtilitarioCalculoData;
 
 /**
  * Respositorio de entidades de Reembolso
@@ -78,6 +82,13 @@ public class OracleReembolsoConectcarDados extends OracleRepositorioBoleiaDados<
         }
     }
 
+	@Override
+	public List<ReembolsoConectcar> buscarReembolsosParaConsultarAvisoCredito() {
+		return pesquisar(new ParametroOrdenacaoColuna("dataVencimentoPagto",Ordenacao.DECRESCENTE),
+				new ParametroPesquisaNulo("numeroDocumento", false),
+				new ParametroPesquisaDiferente("status", StatusPagamentoReembolso.PAGO.getValue()));
+	}
+
 	/**
 	 * Cria uma lista de parametros para a montagem da consulta de reembolso a ser exibida no grid
 	 *
@@ -89,11 +100,11 @@ public class OracleReembolsoConectcarDados extends OracleRepositorioBoleiaDados<
 		List<ParametroPesquisa> parametros = new ArrayList<>();
 
 		if(filtro.getDe() != null) {
-        	parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataPagamento", filtro.getDe()));
+        	parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataPagamento", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe())));
         }
 
         if(filtro.getAte() != null) {
-        	parametros.add(new ParametroPesquisaDataMenorOuIgual("dataPagamento", filtro.getAte()));
+        	parametros.add(new ParametroPesquisaDataMenorOuIgual("dataPagamento", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte())));
         }
 
         if (filtro.getStatusIntegracao() != null && filtro.getStatusIntegracao().getName() != null) {
