@@ -125,7 +125,6 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
     @Override
     public List<Veiculo> buscarVeiculosPorPlacaLike(String placa) {
         return pesquisar((ParametroOrdenacaoColuna) null,
-                new ParametroPesquisaIgual("frota.excluido", false),
                 new ParametroPesquisaLike("placa", placa));
     }
 
