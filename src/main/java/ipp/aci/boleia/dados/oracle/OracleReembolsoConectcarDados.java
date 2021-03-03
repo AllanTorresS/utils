@@ -85,7 +85,7 @@ public class OracleReembolsoConectcarDados extends OracleRepositorioBoleiaDados<
 	@Override
 	public List<ReembolsoConectcar> buscarReembolsosParaConsultarAvisoCredito() {
 		return pesquisar(new ParametroOrdenacaoColuna("dataVencimentoPagto",Ordenacao.DECRESCENTE),
-				new ParametroPesquisaNulo("numeroDocumento", false),
+				new ParametroPesquisaNulo("numeroDocumento", true),
 				new ParametroPesquisaDiferente("status", StatusPagamentoReembolso.PAGO.getValue()));
 	}
 
