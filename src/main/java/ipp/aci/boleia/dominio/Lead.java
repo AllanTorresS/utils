@@ -16,7 +16,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Version;
 import javax.validation.constraints.Digits;
-import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 
@@ -52,7 +51,6 @@ public class Lead implements IPersistente {
 	@Column(name = "QT_VEICULO_TAG")
     private Integer qtdadeVeiculoTag;
 	
-	@NotNull
     @Digits(integer = 12, fraction = 4)
     @Column(name = "VR_GASTO_MENSAL")
     private BigDecimal valorGastoMensal;

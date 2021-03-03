@@ -2,6 +2,8 @@ package ipp.aci.boleia.dominio.vo.conectcar;
 
 import java.math.BigDecimal;
 
+import ipp.aci.boleia.dominio.vo.agenciadorfrete.EnderecoVo;
+
 /**
  * Vo de retorno do serviço do sales force
  *
@@ -18,6 +20,9 @@ public class RespostaLeadSalesforceVo {
 	private BigDecimal valorMensalidade;
 	private BigDecimal creditoTotal;
 	private String linkContrato;
+	private Integer diaReembolso;
+	private Integer quantidadeTags;
+	private EnderecoVo endereco;
 
 	public String getCnpj() {
 		return cnpj;
@@ -97,6 +102,30 @@ public class RespostaLeadSalesforceVo {
 
 	public void setCreditoTotal(BigDecimal creditoTotal) {
 		this.creditoTotal = creditoTotal;
+	}
+
+	public Integer getQuantidadeTags() {
+		return quantidadeTags;
+	}
+
+	public void setQuantidadeTags(Integer quantidadeTags) {
+		this.quantidadeTags = quantidadeTags;
+	}
+
+	public EnderecoVo getEndereco() {
+		return endereco;
+	}
+
+	public void setEndereco(EnderecoVo endereco) {
+		this.endereco = endereco;
+	}
+
+	public Integer getDiaReembolso() {
+		return diaReembolso;
+	}
+
+	public void setDiaReembolso(Integer diaReembolso) {
+		this.diaReembolso = diaReembolso;
 	}
 
 }

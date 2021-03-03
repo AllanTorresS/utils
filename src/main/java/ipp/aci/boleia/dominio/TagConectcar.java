@@ -1,7 +1,7 @@
 package ipp.aci.boleia.dominio;
 
-import ipp.aci.boleia.dominio.interfaces.IPersistente;
-import org.hibernate.envers.Audited;
+import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,9 +9,15 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
-import java.util.Date;
+
+import org.hibernate.annotations.Where;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+
+import ipp.aci.boleia.dominio.interfaces.IPersistente;
 
 /**
  * Representa a tabela de AtivacaoTag
@@ -40,11 +46,28 @@ public class TagConectcar implements IPersistente {
 	
 	@Column(name = "DT_BLOQUEIO")
 	private Date dataBloqueio;
-	         
+
+	@Column(name = "DT_EXCLUSAO")
+	private Date dataExclusao;
+	
+	@NotAudited
+	@OneToMany(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DS_PLACA", insertable = false, updatable = false, referencedColumnName = "DS_PLACA")
+	@Where(clause = "ID_EXCLUIDO = 0 AND ID_STATUS = 1")
+	private List<Veiculo> veiculos;
+
 	/**
 	 * Construtor padrão da entidade.
 	 */
 	public TagConectcar() {}
+
+	/**
+	 * Construtor por ID e data de ativação
+	 */
+	public TagConectcar(Long id, Date dataExclusao) {
+		this.id = id;
+		this.dataExclusao = dataExclusao;
+	}
 
 	public Long getId() {
 		return id;
@@ -85,9 +108,25 @@ public class TagConectcar implements IPersistente {
 	public void setDataBloqueio(Date dataBloqueio) {
 		this.dataBloqueio = dataBloqueio;
 	}
-	
+
+	public Date getDataExclusao() {
+		return dataExclusao;
+	}
+
+	public void setDataExclusao(Date dataExclusao) {
+		this.dataExclusao = dataExclusao;
+	}
+
+	public List<Veiculo> getVeiculos() {
+		return veiculos;
+	}
+
+	public void setVeiculos(List<Veiculo> veiculos) {
+		this.veiculos = veiculos;
+	}
+
 	public boolean isAtivo(){
-		if(dataAtivacao != null) {
+		if(dataBloqueio == null) {
 			return true;
 		}
 		
@@ -135,5 +174,35 @@ public class TagConectcar implements IPersistente {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	public Veiculo getVeiculoMaisRecente() {
+
+		Veiculo veiculoMaisRecente = null;
+		Date dataMaisRecente = null;
+
+		if (veiculos != null && !veiculos.isEmpty()) {
+			for (Veiculo veiculo : veiculos) {
+				if (veiculoMaisRecente == null) {
+					veiculoMaisRecente = veiculo;
+					if (veiculo.getDataAtualizacao() != null && veiculo.getDataAtualizacao().after(veiculo.getDataCriacao())) {
+						dataMaisRecente = veiculo.getDataAtualizacao();
+					} else {
+						dataMaisRecente = veiculo.getDataCriacao();
+					}
+				} else {
+					if (veiculo.getDataCriacao().after(dataMaisRecente)) {
+						veiculoMaisRecente = veiculo;
+						dataMaisRecente = veiculo.getDataCriacao();
+					}
+					if (veiculo.getDataAtualizacao() != null && veiculo.getDataAtualizacao().after(dataMaisRecente)) {
+						veiculoMaisRecente = veiculo;
+						dataMaisRecente = veiculo.getDataAtualizacao();
+					}
+				}
+			}
+		}
+
+		return veiculoMaisRecente;
 	}
 }
