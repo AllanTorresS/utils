@@ -509,9 +509,6 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
             ));
         }
         if(filtro.getIdConsolidado() != null){
-            parametros.add(new ParametroPesquisaIgual("empresaAgregadaExigeNf", filtro.getEmpresaAgregada() != null));
-            parametros.add(new ParametroPesquisaIgual("unidadeExigeNf", filtro.getUnidade() != null));
-
             ParametroPesquisaIgual abastecimentoPostergadoParaCiclo = new ParametroPesquisaIgual("transacaoConsolidadaPostergada.id", filtro.getIdConsolidado());
             if(filtro.isConsiderarPostergados()) {
                 parametros.add(new ParametroPesquisaOr(new ParametroPesquisaIgual("transacaoConsolidada.id", filtro.getIdConsolidado()), abastecimentoPostergadoParaCiclo));
