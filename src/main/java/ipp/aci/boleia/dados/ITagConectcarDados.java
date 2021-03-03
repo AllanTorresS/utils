@@ -1,8 +1,5 @@
 package ipp.aci.boleia.dados;
 
-
-import java.util.List;
-
 import ipp.aci.boleia.dominio.TagConectcar;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaTagConectcarVo;
@@ -40,12 +37,4 @@ public interface ITagConectcarDados extends IRepositorioBoleiaDados<TagConectcar
      * @return tag encontrada
      */
     TagConectcar obtemPrimeiraTagAtivaPorFrota(Long idFrota);
-
-    /**
-     * Obtem o histórico de tags para uma placa 
-     * 
-     * param placa Placa a ser utilizada no histórico 
-     * @return lista de tags anteriores
-     */
-    List<TagConectcar> obtemHistoricoTags(String placa);
 }

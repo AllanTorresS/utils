@@ -23,13 +23,21 @@ public class TagDadosIntegracaoVo {
 
 	public TagDadosIntegracaoVo(String codigoInternoParceiro, String placa) {
 		this.codigoInternoParceiro = codigoInternoParceiro;
-		this.placa = placa;
+		if(placa != null && !placa.contains("-")) {
+			this.placa = placa.substring(0, 3) + "-" + placa.substring(3);
+		} else {
+			this.placa = placa;
+		}
 	}
 
 	public TagDadosIntegracaoVo(String codigoInternoParceiro, Long id, String placa) {
 		this.codigoInternoParceiro = codigoInternoParceiro;
 		this.id = id;
-		this.placa = placa;
+		if(placa != null && !placa.contains("-")) {
+			this.placa = placa.substring(0, 3) + "-" + placa.substring(3);
+		} else {
+			this.placa = placa;
+		}
 	}
 	
 	public String getCodigoInternoParceiro() {

@@ -89,8 +89,8 @@ public class OraclePedidoTagDados extends OracleRepositorioBoleiaDados<PedidoTag
 	}
 
 	@Override
-	public List<PedidoTag> obterPedidosSemStatusRastreio() {
-		return pesquisar(new ParametroOrdenacaoColuna("id", Ordenacao.CRESCENTE), new ParametroPesquisaNulo("statusRastreio", false), new ParametroPesquisaNulo("numeroPedidoConectcar", true));
+	public List<PedidoTag> obterPedidosAtualizacaoRastreio() {
+		return pesquisar(new ParametroOrdenacaoColuna("id", Ordenacao.CRESCENTE), new ParametroPesquisaNulo("numeroPedidoConectcar", true));
 	}
 
 }
