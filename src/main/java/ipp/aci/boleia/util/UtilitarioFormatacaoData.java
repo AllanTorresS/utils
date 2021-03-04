@@ -517,4 +517,15 @@ public final class UtilitarioFormatacaoData {
         SimpleDateFormat padraoDiaMes = new SimpleDateFormat(ConstantesFormatacao.FORMATO_DIA_MES);
         return padraoDia.format(dataInicio) + "-" + padraoDiaMes.format(dataFim);
     }
+
+    /**
+     * Formata um período na forma dd/mm/yyyy - dd/mm/yyyy
+     * @param dataInicio a data de inicio
+     * @param dataFim a data de fim
+     * @return a data formatada
+     */
+    public static String formatarDataPeriodoDataCurta(Date dataInicio, Date dataFim){
+        SimpleDateFormat sdf = new SimpleDateFormat(ConstantesFormatacao.FORMATO_DATA_CURTA);
+        return sdf.format(dataInicio) + " - " + sdf.format(dataFim);
+    }
 }
