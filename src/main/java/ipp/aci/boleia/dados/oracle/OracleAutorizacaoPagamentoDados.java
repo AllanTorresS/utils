@@ -612,6 +612,15 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     @Override
     public ResultadoPaginadoFrtVo<AutorizacaoPagamento> pesquisar(FiltroPesquisaAbastecimentoFrtVo filtro) {
         List<ParametroPesquisa> parametros = criarParametrosPesquisa(filtro);
+
+        if (filtro.getDataInicial() != null) {
+            parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataProcessamento", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDataInicial())));
+            parametros.add(new ParametroPesquisaDataMenorOuIgual("dataProcessamento", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getDataFinal())));
+        } else {
+            parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataProcessamento", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDataInicialAlteracao())));
+            parametros.add(new ParametroPesquisaDataMenorOuIgual("dataProcessamento", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getDataFinalAlteracao())));
+        }
+
         InformacaoPaginacaoFrtVo paginacao = new InformacaoPaginacaoFrtVo(
                 filtro.getPagina(),
                 new ParametroOrdenacaoColuna("dataRequisicao"),
@@ -738,10 +747,6 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         return new ParametrosPesquisaBuilder()
                 .adicionarParametros(
                         new ParametroPesquisaIgual("id", filtro.getIdentificador())
-                )
-                .adicionarParametros(
-                        new ParametroPesquisaDataMaiorOuIgual("dataProcessamento", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDataInicial())),
-                        new ParametroPesquisaDataMenorOuIgual("dataProcessamento", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getDataFinal()))
                 )
                 .adicionarParametros(
                         filtro.getCnpjRevenda(),
