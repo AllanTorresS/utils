@@ -36,9 +36,8 @@ public class OracleHistoricoParametroNotaFiscalDados extends OracleRepositorioBo
         List<ParametroPesquisa> parametros = new ArrayList<>();
         parametros.add(new ParametroPesquisaIgual("parametroNotaFiscal.id", parametroNotaFiscal.getId()));
         parametros.add(new ParametroPesquisaDataMenorOuIgual("dataHistorico", dataLimite));
-        final int pagina = 0;
-        final int tamanhoPagina = 1;
-        ResultadoPaginado<HistoricoParametroNotaFiscal> historicos = pesquisar(new InformacaoPaginacao(pagina, tamanhoPagina, new ParametroOrdenacaoColuna("dataHistorico", Ordenacao.DECRESCENTE)), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        InformacaoPaginacao paginacao = new InformacaoPaginacao(1, 1, new ParametroOrdenacaoColuna("dataHistorico", Ordenacao.DECRESCENTE));
+        ResultadoPaginado<HistoricoParametroNotaFiscal> historicos = pesquisar(paginacao, parametros.toArray(new ParametroPesquisa[parametros.size()]));
         return historicos != null ? historicos.getRegistros().stream().findFirst().orElse(null) : null;
     }
 }
