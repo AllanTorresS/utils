@@ -30,6 +30,14 @@ public interface IFluxoAbastecimentoMotoristaDados extends IRepositorioBoleiaDad
     List<FluxoAbastecimentoMotoristaConfig> obterFluxosPorUsuario(Usuario usuario);
 
     /**
+     * Obtém registros de configuração de fluxo abastecimento de motorista associados a determinado veículo
+     *
+     * @param idVeiculo identificador do veiculo
+     * @return registros de configuração de fluxo abastecimento de motorista
+     */
+    List<FluxoAbastecimentoMotoristaConfig> obterFluxosMotoristaPorVeiculo(Long idVeiculo);
+
+    /**
      * Obtem as configurações do fluxo de abastecimento dos motoristas de uma frota
      *
      * @param idFrota identificador da frota
