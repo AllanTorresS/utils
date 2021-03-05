@@ -50,6 +50,12 @@ public class OracleFluxoAbastecimentoMotoristaDados extends OracleRepositorioBol
     }
 
     @Override
+    public List<FluxoAbastecimentoMotoristaConfig> obterFluxosMotoristaPorVeiculo(Long idVeiculo) {
+        return pesquisar((ParametroOrdenacaoColuna) null,
+                new ParametroPesquisaIgual("veiculo.id", idVeiculo));
+    }
+
+    @Override
     public List<FluxoAbastecimentoMotoristaConfig> obterFluxosPorFrota(Long idFrota) {
         return pesquisar(new ParametroOrdenacaoColuna("motorista.nome"),
                 new ParametroPesquisaIgual("motorista.frota.id", idFrota),
