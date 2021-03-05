@@ -36,10 +36,12 @@ public enum TipoRelatorioMotorGerador implements IEnumComLabel<TipoRelatorioMoto
     RELATORIO_GERAL_FROTA(21, obterMapaTemplatesFrotaGeral()),
     RELATORIO_COBRANCA_CONECTCAR(22, obterMapaTemplatesCobrancaConectcar()),
     RELATORIO_COTA_VEICULO(23, obterMapaTemplatesCotaVeiculo()),
-	RELATORIO_FINANCEIRO_FROTA(24, obterMapaTemplatesFinanceiroFrota()),
-    RELATORIO_DETALHAMENTO_COBRANCA(25, obterMapaTemplatesDetalhamentoCobranca()),
-    RELATORIO_REEMBOLSO(26, obterMapaTemplatesReembolso()),
-    RELATORIO_DETALHAMENTO_REEMBOLSO(27, obterMapaTemplatesDetalhamentoReembolso());
+	RELATORIO_UTILIZACAO_TAG(24, obterMapaTemplatesUtilizacaoTag()),
+	RELATORIO_REEMBOLSO_CONECTCAR(25, obterMapaTemplatesReembolsoConectcar()),
+	RELATORIO_FINANCEIRO_FROTA(26, obterMapaTemplatesFinanceiroFrota()),
+    RELATORIO_DETALHAMENTO_COBRANCA(27, obterMapaTemplatesDetalhamentoCobranca()),
+    RELATORIO_REEMBOLSO(28, obterMapaTemplatesReembolso()),
+    RELATORIO_DETALHAMENTO_REEMBOLSO(29, obterMapaTemplatesDetalhamentoReembolso());
 
     private final Integer value;
     private final Map<TipoPerfilUsuario, TemplatePlanilha> templatePerfil;
@@ -374,6 +376,30 @@ public enum TipoRelatorioMotorGerador implements IEnumComLabel<TipoRelatorioMoto
         Map<TipoPerfilUsuario, TemplatePlanilha> mapa = new HashMap<>();
         mapa.put(TipoPerfilUsuario.INTERNO, TemplatePlanilha.TEMPLATE_RELATORIO_COTA_VEICULO_SOLUCAO);
         mapa.put(TipoPerfilUsuario.FROTA, TemplatePlanilha.TEMPLATE_RELATORIO_COTA_VEICULO_FROTA);
+        return mapa;
+    }
+
+    /**
+     * Gera um mapa de templates por perfil para um tipo de relatório (utilização tag)
+     *
+     * @return O mapa criado
+     */
+    private static Map<TipoPerfilUsuario, TemplatePlanilha> obterMapaTemplatesUtilizacaoTag() {
+        Map<TipoPerfilUsuario, TemplatePlanilha> mapa = new HashMap<>();
+        mapa.put(TipoPerfilUsuario.INTERNO, TemplatePlanilha.TEMPLATE_UTILIZACAO_TAG);
+        mapa.put(TipoPerfilUsuario.FROTA, TemplatePlanilha.TEMPLATE_UTILIZACAO_TAG);
+        return mapa;
+    }
+
+    /**
+     * Gera um mapa de templates por perfil para um tipo de relatório (reembolso Conectcar)
+     *
+     * @return O mapa criado
+     */
+    private static Map<TipoPerfilUsuario, TemplatePlanilha> obterMapaTemplatesReembolsoConectcar() {
+        Map<TipoPerfilUsuario, TemplatePlanilha> mapa = new HashMap<>();
+        mapa.put(TipoPerfilUsuario.INTERNO, TemplatePlanilha.TEMPLATE_RELATORIO_REEMBOLSO_CONECTCAR);
+        mapa.put(TipoPerfilUsuario.FROTA, TemplatePlanilha.TEMPLATE_RELATORIO_REEMBOLSO_CONECTCAR);
         return mapa;
     }
 

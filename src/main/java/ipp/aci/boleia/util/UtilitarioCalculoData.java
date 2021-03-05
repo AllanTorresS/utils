@@ -279,6 +279,23 @@ public final class UtilitarioCalculoData {
 	}
 
 	/**
+	 * Obtem o primeiro dia do mês seguinte
+	 *
+	 * @return o primeiro dia do mês seguinte
+	 */
+	public static Date obterPrimeiroDiaMesSeguinte(Date data) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(data);
+		c.set(Calendar.DAY_OF_MONTH, c.getActualMinimum(Calendar.DAY_OF_MONTH));
+		c.set(Calendar.HOUR_OF_DAY,c.getActualMinimum(Calendar.HOUR_OF_DAY));
+		c.set(Calendar.MINUTE,c.getActualMinimum(Calendar.MINUTE));
+		c.set(Calendar.SECOND,c.getActualMinimum(Calendar.SECOND));
+		c.set(Calendar.MILLISECOND,c.getActualMinimum(Calendar.MILLISECOND));
+		c.add(Calendar.MONTH, 1);
+		return c.getTime();
+	}
+
+	/**
 	 * Obtem o ultimo dia do mes da data parametrizada
 	 *
 	 * @param data data a obter o ultimo dia
@@ -482,4 +499,18 @@ public final class UtilitarioCalculoData {
 	public static Boolean isPosterior(Date dataAtual, Date data) {
     	return obterPrimeiroInstanteDia(data).after(obterPrimeiroInstanteDia(dataAtual));
 	}
+	
+	/**
+     * Diminui uma determinada quantidade de dias da data
+     * @param data
+     * @param qtdDias
+     * @return A data com descréssimo de dias com a quantidade de dias passada
+     */
+    public static Date diminuirDias(Date data, int qtdDias) {
+    	Calendar calendar = Calendar.getInstance();
+    	calendar.setTime(data);
+    	calendar.add(Calendar.DAY_OF_MONTH, -qtdDias);
+    	return calendar.getTime();
+    }
+    
 }

@@ -402,6 +402,9 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     
     @OneToOne(mappedBy = "frota")
     private SituacaoConectCar situacaoConectCar;
+    
+    @OneToOne(mappedBy = "frota")
+    private Lead lead;
   
     @NotAudited
     @Formula("(SELECT NVL(COUNT(0), 0) FROM BOLEIA_SCHEMA.TAG_CONECTCAR T WHERE T.CD_FROTA = CD_FROTA)")
@@ -1378,5 +1381,13 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
 
 	public void setTotalTagsAtivas(Integer totalTagsAtivas) {
 		this.totalTagsAtivas = totalTagsAtivas;
+	}
+
+	public Lead getLead() {
+		return lead;
+	}
+
+	public void setLead(Lead lead) {
+		this.lead = lead;
 	}    
 }

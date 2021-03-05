@@ -16,6 +16,7 @@ public class FiltroPesquisaUtilizacaoTagVo extends BaseFiltroPaginado {
 	private EnumVo statusTag;
 	private EnumVo tipo;
 	private EntidadeVo frota;
+	private EntidadeVo reembolso;
 
 	public Date getDe() {
 		return de;
@@ -71,6 +72,14 @@ public class FiltroPesquisaUtilizacaoTagVo extends BaseFiltroPaginado {
 
 	public void setFrota(EntidadeVo frota) {
 		this.frota = frota;
+	}
+
+	public EntidadeVo getReembolso() {
+		return reembolso;
+	}
+
+	public void setReembolso(EntidadeVo reembolso) {
+		this.reembolso = reembolso;
 	}
 
 }
