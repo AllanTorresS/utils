@@ -15,7 +15,6 @@ import ipp.aci.boleia.dominio.vo.TransacaoPendenteVo;
 import ipp.aci.boleia.dominio.vo.apco.InformacoesVolumeVo;
 import ipp.aci.boleia.dominio.vo.frotista.FiltroPesquisaAbastecimentoFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.ResultadoPaginadoFrtVo;
-import ipp.aci.boleia.dominio.vo.apco.VolumeVendasClienteProFrotaVo;
 
 import java.math.BigDecimal;
 import java.util.Date;
