@@ -73,7 +73,7 @@ public class HistoricoFluxoAbastecimentoFrotaConfig implements IPersistente {
         this.exigirLeituraAutoHodometroHorimetro = fluxo.getExigirLeituraAutoHodometroHorimetro();
         this.exigirPosto = fluxo.getExigirPosto();
         this.exigirCombustivel = fluxo.getExigirCombustivel();
-        this.exigirLitragem = fluxo.getExigirCombustivel();
+        this.exigirLitragem = fluxo.getExigirLitragem();
 
         this.usuario = usuario;
     }
