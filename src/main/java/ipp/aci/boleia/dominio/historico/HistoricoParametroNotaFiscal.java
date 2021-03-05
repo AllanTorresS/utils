@@ -1,6 +1,7 @@
 package ipp.aci.boleia.dominio.historico;
 
 import ipp.aci.boleia.dominio.ParametroNotaFiscal;
+import ipp.aci.boleia.dominio.enums.LocalDestinoPadroNfe;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 
 import javax.persistence.Column;
@@ -14,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
@@ -117,5 +119,15 @@ public class HistoricoParametroNotaFiscal implements IPersistente {
 
     public void setUnidadeLocalDestinoPadrao(Long unidadeLocalDestinoPadrao) {
         this.unidadeLocalDestinoPadrao = unidadeLocalDestinoPadrao;
+    }
+
+    /**
+     * O local destino configurado é no ato do abastecimento?
+     * @return true se positivo
+     */
+    @Transient
+    public boolean isDestinoNotaFiscalNoLocalDoAbastecimento(){
+        return LocalDestinoPadroNfe.ABASTECIMENTO.getValue()
+                .equals(this.getLocalDestino());
     }
 }

@@ -1343,6 +1343,35 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
         return semNotaFiscal == null || !semNotaFiscal;
     }
 
+    /**
+     * Existe uma frota ou unidade que exige nota fiscal?
+     * @return true se positivo
+     */
+    @Transient
+    public boolean isFrotaOuUmaDasUnidadesExigemNotaFiscal(){
+        return  this.exigeNotaFiscal()
+                || this.getUnidades() != null
+                && this.getUnidades()
+                .stream()
+                .anyMatch(u -> u.getExigeNotaFiscal() != null && u.getExigeNotaFiscal());
+    }
+
+    /**
+     * Obtem a unidade que está configurada para o local de destino padrão
+     * na UF passada como argumento
+     * @param uf UF do estado
+     * @return Unidade
+     */
+    @Transient
+    public Unidade getUnidadeQueReceberaNF(String uf){
+        return this.getUnidades() == null ? null :
+                this.getUnidades().stream()
+                .filter(u-> uf.equals(u.getUf())
+                        && u.getLocalDestinoPadraoNfeUf() != null && u.getLocalDestinoPadraoNfeUf()
+                        && u.getExigeNotaFiscal() != null && u.getExigeNotaFiscal())
+                .findAny()
+                .orElse(null);
+    }
 
     /**
      * Verifica se frota tem parametro de ciclo para atualizar

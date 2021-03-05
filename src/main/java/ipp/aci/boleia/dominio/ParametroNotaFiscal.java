@@ -1,5 +1,6 @@
 package ipp.aci.boleia.dominio;
 
+import ipp.aci.boleia.dominio.enums.LocalDestinoPadroNfe;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import org.hibernate.envers.Audited;
 
@@ -14,6 +15,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
+import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 /**
@@ -118,5 +120,15 @@ public class ParametroNotaFiscal implements IPersistente {
 
     public void setUnidadeLocalDestinoPadrao(Long unidadeLocalDestinoPadrao) {
         this.unidadeLocalDestinoPadrao = unidadeLocalDestinoPadrao;
+    }
+
+    /**
+     * O local destino configurado é no ato do abastecimento?
+     * @return true se positivo
+     */
+    @Transient
+    public boolean isDestinoNotaFiscalNoLocalDoAbastecimento(){
+        return LocalDestinoPadroNfe.ABASTECIMENTO.getValue()
+                .equals(this.getLocalDestino());
     }
 }

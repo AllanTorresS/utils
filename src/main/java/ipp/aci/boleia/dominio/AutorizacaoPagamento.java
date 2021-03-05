@@ -11,11 +11,13 @@ import ipp.aci.boleia.dominio.enums.TipoErroAutorizacaoPagamento;
 import ipp.aci.boleia.dominio.enums.TipoPreenchimentoLitragem;
 import ipp.aci.boleia.dominio.enums.TipoRealizacaoPedido;
 import ipp.aci.boleia.dominio.enums.TipoSenhaAutorizacao;
+import ipp.aci.boleia.dominio.enums.TipoItemAutorizacaoPagamento;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
 import ipp.aci.boleia.dominio.interfaces.IPertenceMotorista;
 import ipp.aci.boleia.dominio.interfaces.IPertenceRevendedor;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
+import ipp.aci.boleia.util.UtilitarioFormatacao;
 import org.hibernate.annotations.Formula;
 import org.hibernate.envers.AuditJoinTable;
 import org.hibernate.envers.Audited;
@@ -1757,5 +1759,49 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     @Transient
     public boolean unidadeExigeNf() {
         return getUnidadeExigeNf() != null && getUnidadeExigeNf();
+    }
+
+
+    /**
+     * Calcula e retorna o Valor Total do Produto Serviço
+     * @return valor calculado
+     */
+    @Transient
+    public String obtemValorTotalProdutoServico() {
+        if(this.getItems() != null
+                && this.getItems().stream()
+                .anyMatch(i -> TipoItemAutorizacaoPagamento.PRODUTO_SERVICO.getValue().equals(i.getTipoItem())
+                        && i.getValorTotal() != null)) {
+
+            return UtilitarioFormatacao.formatarDecimalMoedaReal(
+                    this.getItems().stream()
+                            .filter(i -> TipoItemAutorizacaoPagamento.PRODUTO_SERVICO.getValue().equals(i.getTipoItem())
+                                    && i.getValorTotal() != null)
+                            .map(ItemAutorizacaoPagamento::getValorTotal)
+                            .reduce(BigDecimal.ZERO, BigDecimal::add)
+            );
+        }
+        return null;
+    }
+
+    /**
+     * Calcula e retorna o Valor Total do abastecimento
+     * @return valor calculado
+     */
+    @Transient
+    public String obtemValorTotalAbastecimento() {
+        if(this.getItems() != null
+            && this.getItems().stream()
+                .anyMatch(i -> TipoItemAutorizacaoPagamento.ABASTECIMENTO.getValue().equals(i.getTipoItem())
+                        && i.getValorTotal() != null)) {
+            return UtilitarioFormatacao.formatarDecimalMoedaReal(
+                    this.getItems().stream()
+                            .filter(i -> TipoItemAutorizacaoPagamento.ABASTECIMENTO.getValue().equals(i.getTipoItem())
+                                    && i.getValorTotal() != null)
+                            .map(ItemAutorizacaoPagamento::getValorTotal)
+                            .reduce(BigDecimal.ZERO, BigDecimal::add)
+            );
+        }
+        return null;
     }
 }
