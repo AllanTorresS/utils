@@ -90,7 +90,7 @@ public class OracleCobrancaConectcarDados extends OracleRepositorioBoleiaDados<C
 
 		parametros.add(new ParametroPesquisaMaior("valorTotal", BigDecimal.ZERO));
 
-        if (filtro.getIgnorarFrotaControle()) {
+        if (filtro.getIgnorarFrotaControle() != null && filtro.getIgnorarFrotaControle()) {
 			parametros.add(
 					new ParametroPesquisaDiferente(
 							"transacoesConsolidadas.frota.cnpj", cnpjFrotaControle
@@ -111,6 +111,13 @@ public class OracleCobrancaConectcarDados extends OracleRepositorioBoleiaDados<C
 				new ParametroPesquisaNulo("tipoDocumento", true),
 				new ParametroPesquisaNulo("ciaDocumento", true),
 				new ParametroPesquisaDiferente("status", StatusPagamentoCobranca.PAGO.getValue()));
+	}
+
+	@Override
+	public List<CobrancaConectcar> buscarCobrancasParaConsultarNotaFiscal() {
+		return pesquisar(new ParametroOrdenacaoColuna("dataVencimentoPagto",Ordenacao.DECRESCENTE),
+				new ParametroPesquisaNulo("numeroPedido", true),
+				new ParametroPesquisaNulo("numeroNotaFiscal", false));
 	}
 
 	@Override

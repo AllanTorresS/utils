@@ -776,21 +776,6 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     }
 
     @Override
-    public BigDecimal obterLitragemDoAbastecimentoAnterior(Long idAbastecimento, Date dataAbastecimento, String placaVeiculo, Long cnpjFrota) {
-
-        List<BigDecimal> litragem = this.pesquisar(new InformacaoPaginacao(1,1),
-                QUERY_LITRAGEM_ULTIMO_ABASTECIMENTO,
-                BigDecimal.class,
-                new ParametroPesquisaIgual("idAbastecimento", idAbastecimento),
-                new ParametroPesquisaIgual("dataAbastecimento", dataAbastecimento),
-                new ParametroPesquisaIgual("placaVeiculo", placaVeiculo),
-                new ParametroPesquisaIgual("cnpjFrota", cnpjFrota)
-        ).getRegistros();
-
-        return litragem.isEmpty() ? null : litragem.get(0);
-    }
-
-    @Override
     public List<AutorizacaoPagamento> obterAbastecimentoPorNota(Long cnpjDest, Long cnpjEmit, Date dataEmissao, BigDecimal valorTotalNota) {
         final BigDecimal toleranciaDeValorNota = BigDecimal.valueOf(.05);
         List<ParametroPesquisa> parametros = new ArrayList<>();

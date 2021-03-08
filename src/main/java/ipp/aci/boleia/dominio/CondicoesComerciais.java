@@ -64,6 +64,9 @@ public class CondicoesComerciais implements IPersistente {
 
 	@Column(name = "QT_TEMPO_ISENCAO_MENSALIDADE")
 	private Integer mesesIsencao;
+	
+	@Column(name = "NO_DIA_REEMBOLSO")
+	private Integer diaReembolso;
 
 	@Column(name = "NO_VERSAO")
 	private Integer versao;
@@ -146,6 +149,14 @@ public class CondicoesComerciais implements IPersistente {
 
 	public void setMesesIsencao(Integer mesesIsencao) {
 		this.mesesIsencao = mesesIsencao;
+	}
+
+	public Integer getDiaReembolso() {
+		return diaReembolso;
+	}
+
+	public void setDiaReembolso(Integer diaReembolso) {
+		this.diaReembolso = diaReembolso;
 	}
 
 	public Integer getVersao() {

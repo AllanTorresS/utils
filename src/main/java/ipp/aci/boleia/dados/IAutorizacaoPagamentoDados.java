@@ -304,16 +304,6 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
     List<TransacaoPendenteVo> obterAbastecimentosAutorizadosPendentesDeConciliacao();
 
     /**
-     * Obtem a litragem do abastecimento anterior ao abastecimento parametrizado
-     * @param idAbastecimento O id do abastecimento de referência
-     * @param dataAbastecimento A data do abastecimento de referência
-     * @param placaVeiculo A placa do veiculo do abastecimento de referência
-     * @param cnpjFrota O cnpj da frota do veiculo
-     * @return litros do abastecimento anterior, caso não encontrado retorna null
-     */
-    BigDecimal obterLitragemDoAbastecimentoAnterior(Long idAbastecimento, Date dataAbastecimento, String placaVeiculo, Long cnpjFrota);
-
-    /**
      * Busca o estorno negativo associado a uma autorização de pagamento.
      * @param idAutorizacaoPagamento identificador da autorização de pagamento que deve ter o estorno localizado.
      * @return a autorização de pagamento referente a um estorno.
