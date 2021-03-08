@@ -120,18 +120,6 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                     "   ) " +
                     " ORDER BY a.dataRequisicao ASC ";
 
-    private static final String QUERY_LITRAGEM_ULTIMO_ABASTECIMENTO =
-            "SELECT a.totalLitrosAbastecimento " +
-                    "FROM " +
-                    "AutorizacaoPagamento a " +
-                    "WHERE a.status = " + StatusAutorizacao.AUTORIZADO.getValue() +
-                    " AND a.totalLitrosAbastecimento > 0 " +
-                    " AND a.veiculo.placa = :placaVeiculo " +
-                    " AND a.dataRequisicao <= :dataAbastecimento " +
-                    " AND a.cnpjFrota = :cnpjFrota " +
-                    " AND a.id <> :idAbastecimento " +
-                    " ORDER BY a.dataRequisicao DESC";
-
     private static final String QUERY_ABASTECIMENTOS_AUTORIZADOS_PENDENTES_CONFIRMACAO =
             "SELECT new ipp.aci.boleia.dominio.vo.TransacaoPendenteVo(" +
                     "abast.id, " +
