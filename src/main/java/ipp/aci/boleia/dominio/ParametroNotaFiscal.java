@@ -1,6 +1,7 @@
 package ipp.aci.boleia.dominio;
 
 import ipp.aci.boleia.dominio.enums.LocalDestinoPadroNfe;
+import ipp.aci.boleia.dominio.interfaces.IParametroNotaFiscal;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import java.util.List;
 import org.hibernate.envers.Audited;
@@ -27,7 +28,7 @@ import javax.validation.constraints.Size;
 @Audited
 @Entity
 @Table(name = "PARAMETRO_NF")
-public class ParametroNotaFiscal implements IPersistente {
+public class ParametroNotaFiscal implements IPersistente, IParametroNotaFiscal {
 
     @Id
     @Column(name = "CD_PARAMETRO_NF")

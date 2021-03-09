@@ -3,6 +3,7 @@ package ipp.aci.boleia.dominio.historico;
 import ipp.aci.boleia.dominio.ParametroNotaFiscal;
 import ipp.aci.boleia.dominio.Unidade;
 import ipp.aci.boleia.dominio.enums.LocalDestinoPadroNfe;
+import ipp.aci.boleia.dominio.interfaces.IParametroNotaFiscal;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 
 import javax.persistence.Column;
@@ -28,7 +29,7 @@ import javax.persistence.OneToMany;
  */
 @Entity
 @Table(name = "HISTORICO_PARAM_NF")
-public class HistoricoParametroNotaFiscal implements IPersistente {
+public class HistoricoParametroNotaFiscal implements IPersistente, IParametroNotaFiscal {
 
     @Id
     @Column(name = "CD_HISTORICO_PARAM_NF")
