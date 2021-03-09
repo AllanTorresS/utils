@@ -1,6 +1,6 @@
 package ipp.aci.boleia.dominio.interfaces;
 
-import ipp.aci.boleia.dominio.Frota;
+import ipp.aci.boleia.dominio.Unidade;
 
 public interface IParametroNotaFiscal {
 
@@ -24,9 +24,9 @@ public interface IParametroNotaFiscal {
 
     void setSepararPorCombustivelProdutoServico(Boolean separarPorCombustivelProdutoServico);
 
-    Long getUnidadeLocalDestinoPadrao();
+    Unidade getUnidadeLocalDestinoPadrao();
 
-    void setUnidadeLocalDestinoPadrao(Long unidadeLocalDestinoPadrao);
+    void setUnidadeLocalDestinoPadrao(Unidade unidadeLocalDestinoPadrao);
 
     /**
      * O local destino configurado é no ato do abastecimento?

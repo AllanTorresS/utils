@@ -82,26 +82,32 @@ public class ParametroNotaFiscal implements IPersistente, IParametroNotaFiscal {
         this.frota = frota;
     }
 
+    @Override
     public Integer getLocalDestino() {
         return localDestino;
     }
 
+    @Override
     public void setLocalDestino(Integer localDestino) {
         this.localDestino = localDestino;
     }
 
+    @Override
     public Integer getNfTipoAgrupamento() {
         return nfTipoAgrupamento;
     }
 
+    @Override
     public void setNfTipoAgrupamento(Integer nfTipoAgrupamento) {
         this.nfTipoAgrupamento = nfTipoAgrupamento;
     }
 
+    @Override
     public String getDadosAdicionais() {
         return dadosAdicionais;
     }
 
+    @Override
     public void setDadosAdicionais(String dadosAdicionais) {
         this.dadosAdicionais = dadosAdicionais;
     }
@@ -114,18 +120,22 @@ public class ParametroNotaFiscal implements IPersistente, IParametroNotaFiscal {
         this.versao = versao;
     }
 
+    @Override
     public Boolean getSepararPorCombustivelProdutoServico() {
         return separarPorCombustivelProdutoServico;
     }
 
+    @Override
     public void setSepararPorCombustivelProdutoServico(Boolean separarPorCombustivelProdutoServico) {
         this.separarPorCombustivelProdutoServico = separarPorCombustivelProdutoServico;
     }
 
+    @Override
     public Unidade getUnidadeLocalDestinoPadrao() {
         return unidadeLocalDestinoPadrao;
     }
 
+    @Override
     public void setUnidadeLocalDestinoPadrao(Unidade unidadeLocalDestinoPadrao) {
         this.unidadeLocalDestinoPadrao = unidadeLocalDestinoPadrao;
     }
@@ -138,11 +148,8 @@ public class ParametroNotaFiscal implements IPersistente, IParametroNotaFiscal {
         this.parametroNotaFiscalUf = parametroNotaFiscalUf;
     }
 
-    /**
-     * O local destino configurado é no ato do abastecimento?
-     * @return true se positivo
-     */
     @Transient
+    @Override
     public boolean isDestinoNotaFiscalNoLocalDoAbastecimento(){
         return LocalDestinoPadroNfe.ABASTECIMENTO.getValue()
                 .equals(this.getLocalDestino());

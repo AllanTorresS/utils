@@ -65,10 +65,12 @@ public class HistoricoParametroNotaFiscal implements IPersistente, IParametroNot
     @OneToMany(fetch = FetchType.LAZY, mappedBy= "unidadeLocalDestino", orphanRemoval = true)
     private List<HistoricoParametroNotaFiscalUf> parametroNotaFiscalUf;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
@@ -89,42 +91,52 @@ public class HistoricoParametroNotaFiscal implements IPersistente, IParametroNot
         this.parametroNotaFiscal = parametroNotaFiscal;
     }
 
+    @Override
     public Integer getLocalDestino() {
         return localDestino;
     }
 
+    @Override
     public void setLocalDestino(Integer localDestino) {
         this.localDestino = localDestino;
     }
 
+    @Override
     public Integer getNfTipoAgrupamento() {
         return nfTipoAgrupamento;
     }
 
+    @Override
     public void setNfTipoAgrupamento(Integer nfTipoAgrupamento) {
         this.nfTipoAgrupamento = nfTipoAgrupamento;
     }
 
+    @Override
     public String getDadosAdicionais() {
         return dadosAdicionais;
     }
 
+    @Override
     public void setDadosAdicionais(String dadosAdicionais) {
         this.dadosAdicionais = dadosAdicionais;
     }
 
+    @Override
     public Boolean getSepararPorCombustivelProdutoServico() {
         return separarPorCombustivelProdutoServico;
     }
 
+    @Override
     public void setSepararPorCombustivelProdutoServico(Boolean separarPorCombustivelProdutoServico) {
         this.separarPorCombustivelProdutoServico = separarPorCombustivelProdutoServico;
     }
 
+    @Override
     public Unidade getUnidadeLocalDestinoPadrao() {
         return unidadeLocalDestinoPadrao;
     }
 
+    @Override
     public void setUnidadeLocalDestinoPadrao(Unidade unidadeLocalDestinoPadrao) {
         this.unidadeLocalDestinoPadrao = unidadeLocalDestinoPadrao;
     }
@@ -137,11 +149,8 @@ public class HistoricoParametroNotaFiscal implements IPersistente, IParametroNot
         this.parametroNotaFiscalUf = parametroNotaFiscalUf;
     }
 
-    /**
-     * O local destino configurado é no ato do abastecimento?
-     * @return true se positivo
-     */
     @Transient
+    @Override
     public boolean isDestinoNotaFiscalNoLocalDoAbastecimento(){
         return LocalDestinoPadroNfe.ABASTECIMENTO.getValue()
                 .equals(this.getLocalDestino());
