@@ -368,9 +368,6 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @Column(name="ID_EXIBIR_DESCONTO_TOTAL")
     private Boolean exibirDesconto;
 
-    @Column(name = "ID_LOCAL_PADRAO_NFE_UF")
-    private Boolean localDestinoPadraoNfeUf;
-
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "frota")
     private List<EmpresaAgregada> empresasAgregadas;
 
@@ -1357,23 +1354,6 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     }
 
     /**
-     * Obtem a unidade que está configurada para o local de destino padrão
-     * na UF passada como argumento
-     * @param uf UF do estado
-     * @return Unidade
-     */
-    @Transient
-    public Unidade getUnidadeQueReceberaNF(String uf){
-        return this.getUnidades() == null ? null :
-                this.getUnidades().stream()
-                .filter(u-> uf.equals(u.getUf())
-                        && u.getLocalDestinoPadraoNfeUf() != null && u.getLocalDestinoPadraoNfeUf()
-                        && u.getExigeNotaFiscal() != null && u.getExigeNotaFiscal())
-                .findAny()
-                .orElse(null);
-    }
-
-    /**
      * Verifica se frota tem parametro de ciclo para atualizar
      * @return true caso tenha novo parâmetro de ciclo
      */
@@ -1425,14 +1405,6 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
 	public void setTotalTagsAtivas(Integer totalTagsAtivas) {
 		this.totalTagsAtivas = totalTagsAtivas;
 	}
-
-    public Boolean getLocalDestinoPadraoNfeUf() {
-        return localDestinoPadraoNfeUf;
-    }
-
-    public void setLocalDestinoPadraoNfeUf(Boolean localDestinoPadraoNfeUf) {
-        this.localDestinoPadraoNfeUf = localDestinoPadraoNfeUf;
-    }
 
     public Boolean getLembrarParametrizacaoNf() {
         return lembrarParametrizacaoNf;

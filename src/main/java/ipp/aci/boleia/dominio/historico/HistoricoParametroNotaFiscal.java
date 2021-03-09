@@ -1,6 +1,7 @@
 package ipp.aci.boleia.dominio.historico;
 
 import ipp.aci.boleia.dominio.ParametroNotaFiscal;
+import ipp.aci.boleia.dominio.Unidade;
 import ipp.aci.boleia.dominio.enums.LocalDestinoPadroNfe;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 
@@ -19,6 +20,8 @@ import javax.persistence.Transient;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
+import javax.persistence.OneToMany;
 
 /**
  * Entidade que mantém o histórico de {@link ParametroNotaFiscal}.
@@ -54,8 +57,12 @@ public class HistoricoParametroNotaFiscal implements IPersistente {
     @Column(name = "NM_DADOS")
     private String dadosAdicionais;
 
-    @Column(name= "CD_UNIDADE_LOCAL_DEST_PADRAO")
-    private Long unidadeLocalDestinoPadrao;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name= "CD_UNIDADE_LOCAL_DEST_PADRAO")
+    private Unidade unidadeLocalDestinoPadrao;
+    
+    @OneToMany(fetch = FetchType.LAZY, mappedBy= "unidadeLocalDestino", orphanRemoval = true)
+    private List<HistoricoParametroNotaFiscalUf> parametroNotaFiscalUf;
 
     public Long getId() {
         return id;
@@ -113,12 +120,20 @@ public class HistoricoParametroNotaFiscal implements IPersistente {
         this.separarPorCombustivelProdutoServico = separarPorCombustivelProdutoServico;
     }
 
-    public Long getUnidadeLocalDestinoPadrao() {
+    public Unidade getUnidadeLocalDestinoPadrao() {
         return unidadeLocalDestinoPadrao;
     }
 
-    public void setUnidadeLocalDestinoPadrao(Long unidadeLocalDestinoPadrao) {
+    public void setUnidadeLocalDestinoPadrao(Unidade unidadeLocalDestinoPadrao) {
         this.unidadeLocalDestinoPadrao = unidadeLocalDestinoPadrao;
+    }
+
+    public List<HistoricoParametroNotaFiscalUf> getParametroNotaFiscalUf() {
+        return parametroNotaFiscalUf;
+    }
+
+    public void setParametroNotaFiscalUf(List<HistoricoParametroNotaFiscalUf> parametroNotaFiscalUf) {
+        this.parametroNotaFiscalUf = parametroNotaFiscalUf;
     }
 
     /**

@@ -2,6 +2,7 @@ package ipp.aci.boleia.dominio;
 
 import ipp.aci.boleia.dominio.enums.LocalDestinoPadroNfe;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
+import java.util.List;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.Column;
@@ -11,6 +12,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -49,12 +52,16 @@ public class ParametroNotaFiscal implements IPersistente {
     @Column(name = "NM_DADOS")
     private String dadosAdicionais;
 
-    @Column(name = "NO_VERSAO")
     @Version
+    @Column(name = "NO_VERSAO")
     private Long versao;
 
-    @Column(name= "CD_UNIDADE_LOCAL_DEST_PADRAO")
-    private Long unidadeLocalDestinoPadrao;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name= "CD_UNIDADE_LOCAL_DEST_PADRAO")
+    private Unidade unidadeLocalDestinoPadrao;
+    
+    @OneToMany(fetch = FetchType.LAZY, mappedBy= "unidadeLocalDestino", orphanRemoval = true)
+    private List<ParametroNotaFiscalUf> parametroNotaFiscalUf;
 
     @Override
     public Long getId() {
@@ -114,12 +121,20 @@ public class ParametroNotaFiscal implements IPersistente {
         this.separarPorCombustivelProdutoServico = separarPorCombustivelProdutoServico;
     }
 
-    public Long getUnidadeLocalDestinoPadrao() {
+    public Unidade getUnidadeLocalDestinoPadrao() {
         return unidadeLocalDestinoPadrao;
     }
 
-    public void setUnidadeLocalDestinoPadrao(Long unidadeLocalDestinoPadrao) {
+    public void setUnidadeLocalDestinoPadrao(Unidade unidadeLocalDestinoPadrao) {
         this.unidadeLocalDestinoPadrao = unidadeLocalDestinoPadrao;
+    }
+
+    public List<ParametroNotaFiscalUf> getParametroNotaFiscalUf() {
+        return parametroNotaFiscalUf;
+    }
+
+    public void setParametroNotaFiscalUf(List<ParametroNotaFiscalUf> parametroNotaFiscalUf) {
+        this.parametroNotaFiscalUf = parametroNotaFiscalUf;
     }
 
     /**
