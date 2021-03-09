@@ -95,6 +95,9 @@ public class MotorGeracaoRelatorios implements IPersistente {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "motorGeracaoRelatorio", fetch = FetchType.EAGER, orphanRemoval = true)
     private List<AbaRelatorio> abasRelatorio;
 
+    @Column(name = "NO_ROTA_EM_PROCESSAMENTO")
+    private Integer rotaEmProcessamento;
+
     @Override
     public Long getId() {
         return id;
@@ -197,5 +200,13 @@ public class MotorGeracaoRelatorios implements IPersistente {
 
     public Boolean processouTodosRegistros(){
         return this.getRegistrosProcessados().compareTo(this.getTotalRegistros()) >= 0;
+    }
+
+    public Integer getRotaEmProcessamento() {
+        return rotaEmProcessamento;
+    }
+
+    public void setRotaEmProcessamento(Integer rotaEmProcessamento) {
+        this.rotaEmProcessamento = rotaEmProcessamento;
     }
 }

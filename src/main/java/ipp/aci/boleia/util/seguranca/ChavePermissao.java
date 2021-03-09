@@ -1,6 +1,6 @@
 package ipp.aci.boleia.util.seguranca;
 
-/**
+/**pedido
  * Enumera as chaves de permissao do sistema para concessao
  * de permissoes de acesso nas APIs REST
  */
@@ -186,11 +186,16 @@ public final class ChavePermissao {
 
     public static final String LEAD_DASHBOARD_CONECTCAR 					= SPRING_ROLE_PREFIX + "LEAD_DASHBOARD_CONECTCAR" + SPRING_ROLE_SUFFIX;
     public static final String PEDIDO_TAG 									= SPRING_ROLE_PREFIX + "PEDIDO_TAG" + SPRING_ROLE_SUFFIX;
+    public static final String RASTREAR_PEDIDO_TAG 							= SPRING_ROLE_PREFIX + "RASTREAR_PEDIDO_TAG" + SPRING_ROLE_SUFFIX;
     public static final String ATIVACAO_TAG 								= SPRING_ROLE_PREFIX + "ATIVACAO_TAG" + SPRING_ROLE_SUFFIX;
+    public static final String ATIVAR_INATIVAR_TAG						    = SPRING_ROLE_PREFIX + "ATIVAR_INATIVAR_TAG" + SPRING_ROLE_SUFFIX;
     public static final String UTILIZACAO_TAG  								= SPRING_ROLE_PREFIX + "UTILIZACAO_TAG" + SPRING_ROLE_SUFFIX;	
     public static final String CONSULTA_REEMBOLSO_CONECTCAR 				= SPRING_ROLE_PREFIX + "CONSULTA_REEMBOLSO_CONECTCAR" + SPRING_ROLE_SUFFIX;
     public static final String CONSULTA_FROTA_CONECTCAR 					= SPRING_ROLE_PREFIX + "CONSULTA_FROTA_CONECTCAR" + SPRING_ROLE_SUFFIX;
     public static final String CONSULTA_COBRANCA_CONECTCAR                  = SPRING_ROLE_PREFIX + "CONSULTA_COBRANCA_CONECTCAR" + SPRING_ROLE_SUFFIX;
+    public static final String REALIZAR_PEDIDO_TAG                          = SPRING_ROLE_PREFIX + "REALIZAR_PEDIDO_TAG" + SPRING_ROLE_SUFFIX;
+    public static final String ATIVAR_INATIVAR_FROTA_CONECTCAR              = SPRING_ROLE_PREFIX + "ATIVAR_INATIVAR_FROTA_CONECTCAR" + SPRING_ROLE_SUFFIX;
+    public static final String BAIXAR_CONTRATO_CONECTCAR                    = SPRING_ROLE_PREFIX + "BAIXAR_CONTRATO_CONECTCAR" + SPRING_ROLE_SUFFIX;
     public static final String CANCELAR_ABASTECIMENTO_PI                    = SPRING_ROLE_PREFIX + "CANCELAR_ABASTECIMENTO_PI" + SPRING_ROLE_SUFFIX;
 
     public static final String CAMPANHA_CONSULTAR_VISUALIZAR                = SPRING_ROLE_PREFIX + "CAMPANHA_CONSULTAR_VISUALIZAR" + SPRING_ROLE_SUFFIX;
@@ -212,10 +217,14 @@ public final class ChavePermissao {
     public static final String FINANCEIRO_EXPORTAR_XLS                      = SPRING_ROLE_PREFIX + "FINANCEIRO_EXPORTAR_XLS" + SPRING_ROLE_SUFFIX;
     public static final String FINANCEIRO_EXPORTAR_PDF                      = SPRING_ROLE_PREFIX + "FINANCEIRO_EXPORTAR_PDF" + SPRING_ROLE_SUFFIX;
 
+    public static final String DETALHAMENTO_COBRANCA                        = SPRING_ROLE_PREFIX + "DETALHAMENTO_COBRANCA" + SPRING_ROLE_SUFFIX;
+
     public static final String PRECO_FRETE_CONSULTAR = SPRING_ROLE_PREFIX + "PRECO_FRETE_CONSULTAR" + SPRING_ROLE_SUFFIX;
     public static final String PRECO_FRETE_INCLUIR   = SPRING_ROLE_PREFIX + "PRECO_FRETE_INCLUIR"   + SPRING_ROLE_SUFFIX;
     public static final String PRECO_FRETE_ALTERAR   = SPRING_ROLE_PREFIX + "PRECO_FRETE_ALTERAR"   + SPRING_ROLE_SUFFIX;
     public static final String PRECO_FRETE_EXCLUIR   = SPRING_ROLE_PREFIX + "PRECO_FRETE_EXCLUIR"   + SPRING_ROLE_SUFFIX;
+
+    public static final String DETALHAMENTO_REEMBOLSO                       = SPRING_ROLE_PREFIX + "DETALHAMENTO_REEMBOLSO" + SPRING_ROLE_SUFFIX;
 
     // Permissão da API de Frotistas.
     public static final String API_FROTISTA                                         = SPRING_ROLE_PREFIX + "API_FROTISTA" + SPRING_ROLE_SUFFIX;

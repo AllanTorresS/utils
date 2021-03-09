@@ -6,11 +6,12 @@ import ipp.aci.boleia.util.i18n.IEnumComLabel;
 /**
  * Indica o status do pagamento da cobranca de uma transacao consolidada
  */
-public enum StatusPagamentoCobranca implements IEnumComLabel<StatusPagamentoCobranca> {
+public enum StatusPagamentoCobranca implements IEnumComLabel<StatusPagamentoCobranca>, IEnumComValor {
 
     PAGO(1),
-    EM_ABERTO(0),
-    VENCIDO(2);
+    A_VENCER(0),
+    VENCIDO(2),
+    POSTERGADO(3);
 
     private final Integer value;
 

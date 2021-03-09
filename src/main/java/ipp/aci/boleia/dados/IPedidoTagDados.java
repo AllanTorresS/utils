@@ -1,6 +1,8 @@
 package ipp.aci.boleia.dados;
 
 
+import java.util.List;
+
 import ipp.aci.boleia.dominio.PedidoTag;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaPedidoTagVo;
@@ -23,5 +25,11 @@ public interface IPedidoTagDados extends IRepositorioBoleiaDados<PedidoTag> {
      * @return pedido referente à cobrança
      */
     PedidoTag obterPorCobranca(Long idCobranca);
+    
+    /**
+     * Obtem a lista de pedidos a serem atualizados
+     * @return lista de pedidos a serem atualizados
+     */
+    List<PedidoTag> obterPedidosAtualizacaoRastreio();
 
 }

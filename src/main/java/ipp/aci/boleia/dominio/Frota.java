@@ -133,7 +133,7 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
      */
     @Size(max=250)
     @Column(name = "NM_ASSESSOR_RESP")
-    @Deprecated   
+    @Deprecated
     private String assessorResponsavel;
 
     /**
@@ -146,17 +146,17 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @JsonIgnoreProperties("frotasAssessoradas")
     @Deprecated
     private Usuario usuarioAssessorResponsavel;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_USU_CONSULTOR_HUNTER")
     @JsonIgnoreProperties("frotasAssessoradas")
     private Usuario usuarioConsultorHunter;
-        
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_USU_CONSULTOR_FARMER_PESADO")
     @JsonIgnoreProperties("frotasAssessoradas")
     private Usuario usuarioConsultorFarmerPesado;
-            
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_USU_CONSULTOR_FARMER_LEVE")
     @JsonIgnoreProperties("frotasAssessoradas")
@@ -402,6 +402,9 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     
     @OneToOne(mappedBy = "frota")
     private SituacaoConectCar situacaoConectCar;
+
+    @OneToOne(mappedBy = "frota")
+    private Lead lead;
 
     @OneToOne(mappedBy = "frota")
     private ParametroNotaFiscal parametroNotaFiscal;
@@ -1404,6 +1407,14 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
 
 	public void setTotalTagsAtivas(Integer totalTagsAtivas) {
 		this.totalTagsAtivas = totalTagsAtivas;
+	}
+
+	public Lead getLead() {
+		return lead;
+	}
+
+	public void setLead(Lead lead) {
+		this.lead = lead;
 	}
 
     public Boolean getLembrarParametrizacaoNf() {
