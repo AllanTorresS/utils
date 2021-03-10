@@ -405,8 +405,8 @@ public class NotaFiscalSd {
             Long cnpjASerValidado = null;
             Veiculo veiculo = abastecimento.getVeiculo();
             boolean veiculoPerenceUnidade = veiculo != null && veiculo.getUnidade() != null && veiculo.getUnidade().getExigeNotaFiscal() != null && veiculo.getUnidade().getExigeNotaFiscal();
-            if (abastecimento.getTransacaoConsolidada() != null && abastecimento.getTransacaoConsolidada().getParametroNotaFiscal() != null) {
-                HistoricoParametroNotaFiscal parametroNf = abastecimento.getTransacaoConsolidada().getParametroNotaFiscal();
+            if (abastecimento.getParametroNotaFiscal() != null) {
+                HistoricoParametroNotaFiscal parametroNf = abastecimento.getParametroNotaFiscal();
                 if (parametroNf != null && LocalDestinoPadroNfe.ABASTECIMENTO.getValue().equals(parametroNf.getLocalDestino()) && abastecimento.getUnidade() != null && abastecimento.getUnidade().getExigeNotaFiscal()) {
                     String uf = abastecimento.getUnidade() != null ? abastecimento.getUnidade().getUf() : abastecimento.getFrota().getUnidadeFederativa();
                     Unidade unidadeLocalDestinoPadrao = parametroNf.getParametroNotaFiscalUf()

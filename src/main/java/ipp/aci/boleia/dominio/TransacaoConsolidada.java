@@ -4,7 +4,6 @@ import ipp.aci.boleia.dominio.enums.ModalidadePagamento;
 import ipp.aci.boleia.dominio.enums.MotivoEstorno;
 import ipp.aci.boleia.dominio.enums.StatusNotaFiscal;
 import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
-import ipp.aci.boleia.dominio.historico.HistoricoParametroNotaFiscal;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
 import ipp.aci.boleia.dominio.interfaces.IPertenceRevendedor;
@@ -14,7 +13,6 @@ import ipp.aci.boleia.util.seguranca.UtilitarioCriptografia;
 import org.hibernate.annotations.Formula;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
-import org.hibernate.envers.RelationTargetAuditMode;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -189,11 +187,6 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     @NotNull
     @Column(name = "ID_FROTA_EXIGE_NF")
     private boolean frotaExigeNF;
-
-    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CD_HISTORICO_PARAM_NF")
-    private HistoricoParametroNotaFiscal parametroNotaFiscal;
 
     @Override
     public Long getId() {
@@ -513,14 +506,6 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
 
     public void setUnidade(Unidade unidade) {
         this.unidade = unidade;
-    }
-
-    public HistoricoParametroNotaFiscal getParametroNotaFiscal() {
-        return parametroNotaFiscal;
-    }
-
-    public void setParametroNotaFiscal(HistoricoParametroNotaFiscal parametroNotaFiscal) {
-        this.parametroNotaFiscal = parametroNotaFiscal;
     }
 
     /**
