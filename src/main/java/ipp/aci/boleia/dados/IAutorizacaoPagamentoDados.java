@@ -12,7 +12,6 @@ import ipp.aci.boleia.dominio.vo.TransacaoPendenteVo;
 import ipp.aci.boleia.dominio.vo.apco.InformacoesVolumeVo;
 import ipp.aci.boleia.dominio.vo.frotista.FiltroPesquisaAbastecimentoFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.ResultadoPaginadoFrtVo;
-import ipp.aci.boleia.dominio.vo.apco.VolumeVendasClienteProFrotaVo;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -212,6 +211,13 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
      * @return AutorizacaoPagamento
      */
     AutorizacaoPagamento obterAutorizacaoPagamentoComMesmoAbastecimento(String uuidAbastecimento);
+
+    /**
+     * Busca UUIDs de Abastecimento a partir de uma lista de UUIDs
+     * @param uuidsAbastecimento UUIDs que devem ser buscados
+     * @return lista de UUIDs encontrados
+     */
+    List<String> obterUuidsExistentes(List<String> uuidsAbastecimento);
 
     /**
      * Método que implementa a pesquisa de autorização pagamento para o contexto da
