@@ -1278,13 +1278,12 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
 
         String ordenacao = " ";
         if(filtro.getPaginacao().getParametrosOrdenacaoColuna().isEmpty()) {
-            ordenacao = "CASE WHEN r.status = " + StatusPagamentoReembolso.NF_ATRASADA.getValue() + " THEN 0 " +
-                    "WHEN r.valorReembolso > 0 AND trunc(r.dataVencimentoPgto) < trunc(sysdate()) AND r.status <> " + StatusPagamentoReembolso.PAGO.getValue() + " THEN 1 " + //ATRASADO
-                    "ELSE 2 END, r.dataPagamento, r.dataVencimentoPgto ";
+            ordenacao = "tc.dataInicioPeriodo, tc.dataFimPeriodo, " +
+            "CASE WHEN tc.empresaAgregada IS NOT NULL THEN 0 WHEN tc.unidade IS NOT NULL THEN 1 ELSE 2 END ";
         } else {
-            String campoOrdenacao= "tc.dataFimPeriodo %s ";
+            String campoOrdenacao= "tc.dataInicioPeriodo %s , tc.dataFimPeriodo %s ";
             String direcaoOrdenacao = filtro.getPaginacao().getParametrosOrdenacaoColuna().get(0).isDecrescente() ? " DESC" : " ";
-            ordenacao = String.format(campoOrdenacao, direcaoOrdenacao);
+            ordenacao = String.format(campoOrdenacao, direcaoOrdenacao, direcaoOrdenacao);
         }
 
         //Monta a consulta completa da grid do reembolso
