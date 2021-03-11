@@ -71,7 +71,6 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         implements ITransacaoConsolidadaDados {
 
     private static final String CLAUSULA_FROTA = "( F.id = :frotaId ) AND ";
-    private static final String CLAUSULA_FROTA_TOTAL_COBRANCA = "AND (fpv.frota.id = :idFrota OR :idFrota is null) ";
     private static final String CLAUSULA_EMPRESA_AGREGADA = "( EA.id = :empresaAgregadaId ) AND ";
     private static final String CLAUSULA_UNIDADE = "( U.id = :unidadeId ) AND ";
     private static final String CLAUSULA_EXIGE_NOTA = "( TC.frotaExigeNF = true or TC.unidade is not null or TC.empresaAgregada is not null ) ";
@@ -318,8 +317,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "FROM TransacaoConsolidada tc " +
                     "LEFT JOIN tc.frotaPtov fpv " +
                     "LEFT JOIN tc.cobranca c " +
-                    "WHERE ((tc.dataInicioPeriodo >= :dataInicioPeriodo AND tc.dataFimPeriodo <= :dataFimPeriodo) OR (tc.dataFimPeriodo >= :dataInicioPeriodo AND tc.dataInicioPeriodo <= :dataFimPeriodo)) " +
-                    CLAUSULA_FROTA_TOTAL_COBRANCA +
+                    "WHERE %s " +
+                    "((tc.dataInicioPeriodo >= :dataInicioPeriodo AND tc.dataFimPeriodo <= :dataFimPeriodo) OR (tc.dataFimPeriodo >= :dataInicioPeriodo AND tc.dataInicioPeriodo <= :dataFimPeriodo)) " +
                     "AND (tc.quantidadeAbastecimentos > 0) " +
                     "AND (tc.statusConsolidacao = :statusCiclo OR :statusCiclo is null) " +
                     "AND (c.statusIntegracaoJDE = :statusIntegracao OR :statusIntegracao is null) " +
@@ -368,8 +367,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "LEFT JOIN TC.empresaAgregada EA " +
                     "LEFT JOIN TC.unidade U	" +
                     "JOIN TC.prazos TCP " +
-                    "WHERE (F.id = :idFrota OR :idFrota is null) " +
-                    "AND ((TC.dataInicioPeriodo >= :dataInicioPeriodo AND TC.dataFimPeriodo <= :dataFimPeriodo) OR (TC.dataFimPeriodo >= :dataInicioPeriodo AND TC.dataInicioPeriodo <= :dataFimPeriodo)) " +
+                    "WHERE %s " +
+                    "((TC.dataInicioPeriodo >= :dataInicioPeriodo AND TC.dataFimPeriodo <= :dataFimPeriodo) OR (TC.dataFimPeriodo >= :dataInicioPeriodo AND TC.dataInicioPeriodo <= :dataFimPeriodo)) " +
                     "AND (TC.statusConsolidacao = :statusConsolidacao OR :statusConsolidacao is null) " +
                     "AND (TC.quantidadeAbastecimentos > 0) " +
                     "AND (C.statusIntegracaoJDE = :statusIntegracao OR :statusIntegracao is null) " +
@@ -1556,6 +1555,24 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         return pesquisar((InformacaoPaginacao) null, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
 
+    /**
+     * Lista os ids das frotas associadas
+     *
+     * @return lista com os ids das frotas associadas
+     */
+    private List<Long> obterIdsFrotasAssociadas(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado){
+        List<Long> idsFrota = new ArrayList<>();
+        if(filtro.getFrota() != null && filtro.getFrota().getId() != null){
+            idsFrota.add(filtro.getFrota().getId());
+        } else if (usuarioLogado.isFrotista()){
+            idsFrota.add(usuarioLogado.getFrota().getId());
+        } else if (usuarioLogado.getTipoPerfil().isInterno() && usuarioLogado.possuiFrotasAssociadas()) {
+            idsFrota = usuarioLogado.listarIdsFrotasAssociadas();
+        }
+
+        return idsFrota;
+    }
+
     @Override
     public ResultadoPaginado<AgrupamentoTransacaoConsolidadaCobrancaVo> pesquisarTransacoesPorCobranca(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
@@ -1563,12 +1580,14 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataInicioPeriodo", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe())));
         parametros.add(new ParametroPesquisaDataMenorOuIgual("dataFimPeriodo", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte())));
 
-        if(filtro.getFrota() != null && filtro.getFrota().getId() != null){
-            parametros.add(new ParametroPesquisaIgual("idFrota", filtro.getFrota().getId()));
-        } else if (usuarioLogado.isFrotista()){
-            parametros.add(new ParametroPesquisaIgual("idFrota", usuarioLogado.getFrota().getId()));
-        } else {
-            parametros.add(new ParametroPesquisaIgual("idFrota", null));
+        String pesquisaFrotas = "";
+        StringBuffer strBufferFiltroFrotas = new StringBuffer(pesquisaFrotas);
+
+        List<Long> idsFrota = obterIdsFrotasAssociadas(filtro, usuarioLogado);
+
+        if(idsFrota.size() > 0){
+            strBufferFiltroFrotas.append("(F.id IN (:idsFrota)) AND");
+            parametros.add(new ParametroPesquisaIn("idsFrota", usuarioLogado.listarIdsFrotasAssociadas()));
         }
 
         if(filtro.getStatusCiclo() != null && filtro.getStatusCiclo().getValue() != null) {
@@ -1602,8 +1621,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             ordenacao = criarParametroOrdenacaoFinanceiroFrota(filtro.getPaginacao().getParametrosOrdenacaoColuna());
         }
 
-        String consultaPesquisaGridFinanceiro = String.format(CONSULTAR_CONSOLIDADOS_POR_COBRANCA, filtroStatus, ordenacao);
-        String countPesquisaGridFinanceiro = String.format(COUNT_CONSULTAR_CONSOLIDADOS_POR_COBRANCA, filtroStatus, ordenacao);
+        String consultaPesquisaGridFinanceiro = String.format(CONSULTAR_CONSOLIDADOS_POR_COBRANCA, strBufferFiltroFrotas, filtroStatus, ordenacao);
+        String countPesquisaGridFinanceiro = String.format(COUNT_CONSULTAR_CONSOLIDADOS_POR_COBRANCA, strBufferFiltroFrotas, filtroStatus, ordenacao);
         return pesquisar(filtro.getPaginacao(), consultaPesquisaGridFinanceiro, countPesquisaGridFinanceiro, AgrupamentoTransacaoConsolidadaCobrancaVo.class, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
@@ -1666,12 +1685,15 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataInicioPeriodo", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe())));
         parametros.add(new ParametroPesquisaDataMenorOuIgual("dataFimPeriodo", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte())));
 
-        if(filtro.getFrota() != null && filtro.getFrota().getId() != null) {
-            parametros.add(new ParametroPesquisaIgual("idFrota", filtro.getFrota().getId()));
-        } else if (usuarioLogado.isFrotista()){
-            parametros.add(new ParametroPesquisaIgual("idFrota", usuarioLogado.getFrota().getId()));
-        }else {
-            consulta = consulta.replace(CLAUSULA_FROTA_TOTAL_COBRANCA, "");
+
+        String pesquisaFrotas = "";
+        StringBuffer strBufferFiltroFrotas = new StringBuffer(pesquisaFrotas);
+
+        List<Long> idsFrota = obterIdsFrotasAssociadas(filtro, usuarioLogado);
+
+        if(idsFrota.size() > 0){
+            strBufferFiltroFrotas.append("(fpv.frota.id IN (:idsFrota)) AND");
+            parametros.add(new ParametroPesquisaIn("idsFrota", usuarioLogado.listarIdsFrotasAssociadas()));
         }
 
         if(filtro.getStatusCiclo() != null && filtro.getStatusCiclo().getValue() != null){
@@ -1699,7 +1721,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             parametros.add(new ParametroPesquisaIn("statusPagamento", listaStatus));
         }
 
-        consulta = String.format(consulta, filtroStatus);
+        consulta = String.format(consulta, strBufferFiltroFrotas, filtroStatus);
 
         BigDecimal totalCobranca = pesquisarUnicoSemIsolamentoDados(consulta, parametros.toArray(new ParametroPesquisa[parametros.size()]));
         return totalCobranca != null ? totalCobranca : BigDecimal.ZERO;
