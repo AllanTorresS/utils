@@ -138,7 +138,7 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
                 " FROM Veiculo v " +
                 " INNER JOIN v.frota f " +
                 " INNER JOIN f.parametrosSistema ps " +
-                " LEFT JOIN v.saldoVeiculo sv " +
+                " INNER JOIN v.saldoVeiculo sv " +
                 " LEFT JOIN v.subtipoVeiculo stv " +
                 " LEFT JOIN stv.tipoVeiculo tv " +
                 " LEFT JOIN v.empresaAgregada ep " +
@@ -149,6 +149,8 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
                 "   AND (:placa             IS NULL OR v.placa = :placa )" +
                 "   AND (:empresaAgregada   IS NULL OR ep.id = :empresaAgregada )" +
                 "   AND (:unidade           IS NULL OR u.id = :unidade )" +
+                "   AND ((ps.emLitros = 1 AND sv.cotaLitros > 0 AND NOT sv.cotaLitros IS NULL ) OR " +
+                    "    (ps.emLitros = 0 AND sv.cotaValor > 0 AND NOT sv.cotaValor IS NULL))" +
                 "   AND ps.ativo = 1 " +
                 "   AND ps.parametroSistema = 8 ";
 
