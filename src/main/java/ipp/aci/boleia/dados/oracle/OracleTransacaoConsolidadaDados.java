@@ -1792,8 +1792,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
 
         String consultaPesquisaTotalReembolso = String.format(consulta, strBufferFiltroFrotas.toString());
 
-        BigDecimal totalCobranca = pesquisarUnicoSemIsolamentoDados(consultaPesquisaTotalReembolso, parametros.toArray(new ParametroPesquisa[parametros.size()]));
-        return totalCobranca != null ? totalCobranca : BigDecimal.ZERO;
+        BigDecimal totalReembolso = pesquisarUnicoSemIsolamentoDados(consultaPesquisaTotalReembolso, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        return totalReembolso != null ? totalReembolso : BigDecimal.ZERO;
     }
 
     private String popularParametrosReembolsoSolucao(List<ParametroPesquisa> parametros, FiltroPesquisaFinanceiroVo filtro, String consulta) {
