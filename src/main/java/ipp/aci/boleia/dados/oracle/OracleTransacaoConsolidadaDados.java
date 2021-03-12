@@ -1250,6 +1250,12 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
 
         List<ParametroPesquisa> parametros = popularParametrosPesquisaTransacoesFinanceiro(filtro, usuarioLogado);
 
+        if(filtro.getFrota() != null && filtro.getFrota().getId() != null){
+            parametros.add(new ParametroPesquisaIgual("idFrota", filtro.getFrota().getId()));
+        }  else {
+            parametros.add(new ParametroPesquisaIgual("idFrota", null));
+        }
+
         String ordenacao = " ";
         if(filtro.getPaginacao().getParametrosOrdenacaoColuna().isEmpty()) {
             ordenacao = "CASE WHEN r.status = " + StatusPagamentoReembolso.NF_ATRASADA.getValue() + " THEN 0 " +
