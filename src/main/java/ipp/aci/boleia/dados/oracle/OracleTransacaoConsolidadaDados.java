@@ -594,7 +594,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             "WHERE " +
             "(tc.dataInicioPeriodo >= :dataInicioPeriodo AND tc.dataFimPeriodo <= :dataFimPeriodo) " +
             "AND (fpv.pontoVenda.id  = :idPv OR :idPv is null) " +
-            "AND (fpv.frota.id = :idFrota OR :idFrota is null) " +
+            "%s " +
             CLAUSULA_STATUS_PAGAMENTO_REEMBOLSO +
             CLAUSULA_STATUS_INTEGRACAO_REEMBOLSO +
             CLAUSULA_STATUS_NOTA_FISCAL +
@@ -1275,6 +1275,15 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
 
         consulta = popularParametrosReembolsoSolucao(parametros, filtro, consulta);
 
+        StringBuffer strBufferFiltroFrotas = new StringBuffer();
+
+        List<Long> idsFrota = obterIdsFrotasAssociadas(filtro, usuarioLogado);
+
+        if(idsFrota.size() > 0){
+            strBufferFiltroFrotas.append("AND (fpv.frota.id IN (:idsFrota)) ");
+            parametros.add(new ParametroPesquisaIn("idsFrota", idsFrota));
+        }
+
         String ordenacao = " ";
         if(filtro.getPaginacao().getParametrosOrdenacaoColuna().isEmpty()) {
             ordenacao = "tc.dataInicioPeriodo, tc.dataFimPeriodo, " +
@@ -1286,7 +1295,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         }
 
         //Monta a consulta completa da grid do reembolso
-        String consultaPesquisaReembolsoSolucao = String.format(consulta, ordenacao);
+        String consultaPesquisaReembolsoSolucao = String.format(consulta, strBufferFiltroFrotas.toString(), ordenacao);
 
         return pesquisar(filtro.getPaginacao(), consultaPesquisaReembolsoSolucao, parametros.toArray(new ParametroPesquisa[parametros.size()]));
 
@@ -1316,12 +1325,6 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             } else{
                 parametros.add(new ParametroPesquisaIgual("idPv", null));
             }
-        }
-
-        if(filtro.getFrota() != null && filtro.getFrota().getId() != null){
-            parametros.add(new ParametroPesquisaIgual("idFrota", filtro.getFrota().getId()));
-        }  else {
-            parametros.add(new ParametroPesquisaIgual("idFrota", null));
         }
 
         Long idUnidade = null;
@@ -1587,7 +1590,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
 
         if(idsFrota.size() > 0){
             strBufferFiltroFrotas.append("(F.id IN (:idsFrota)) AND");
-            parametros.add(new ParametroPesquisaIn("idsFrota", usuarioLogado.listarIdsFrotasAssociadas()));
+            parametros.add(new ParametroPesquisaIn("idsFrota", idsFrota));
         }
 
         if(filtro.getStatusCiclo() != null && filtro.getStatusCiclo().getValue() != null) {
@@ -1693,7 +1696,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
 
         if(idsFrota.size() > 0){
             strBufferFiltroFrotas.append("(fpv.frota.id IN (:idsFrota)) AND");
-            parametros.add(new ParametroPesquisaIn("idsFrota", usuarioLogado.listarIdsFrotasAssociadas()));
+            parametros.add(new ParametroPesquisaIn("idsFrota", idsFrota));
         }
 
         if(filtro.getStatusCiclo() != null && filtro.getStatusCiclo().getValue() != null){
@@ -1778,7 +1781,18 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         String consulta = CONSULTA_TOTAL_REEMBOLSO_PERIODO;
         consulta = popularParametrosReembolsoSolucao(parametros, filtro, consulta);
 
-        BigDecimal totalCobranca = pesquisarUnicoSemIsolamentoDados(consulta, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        StringBuffer strBufferFiltroFrotas = new StringBuffer();
+
+        List<Long> idsFrota = obterIdsFrotasAssociadas(filtro, usuarioLogado);
+
+        if(idsFrota.size() > 0){
+            strBufferFiltroFrotas.append("AND (fpv.frota.id IN (:idsFrota)) ");
+            parametros.add(new ParametroPesquisaIn("idsFrota", idsFrota));
+        }
+
+        String consultaPesquisaTotalReembolso = String.format(consulta, strBufferFiltroFrotas.toString());
+
+        BigDecimal totalCobranca = pesquisarUnicoSemIsolamentoDados(consultaPesquisaTotalReembolso, parametros.toArray(new ParametroPesquisa[parametros.size()]));
         return totalCobranca != null ? totalCobranca : BigDecimal.ZERO;
     }
 
