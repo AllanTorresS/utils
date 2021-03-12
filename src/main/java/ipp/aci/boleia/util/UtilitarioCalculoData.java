@@ -502,8 +502,8 @@ public final class UtilitarioCalculoData {
 	
 	/**
      * Diminui uma determinada quantidade de dias da data
-     * @param data
-     * @param qtdDias
+     * @param data A data a ser subtraída
+     * @param qtdDias A quantidade de dias a serem subtraídos
      * @return A data com descréssimo de dias com a quantidade de dias passada
      */
     public static Date diminuirDias(Date data, int qtdDias) {
