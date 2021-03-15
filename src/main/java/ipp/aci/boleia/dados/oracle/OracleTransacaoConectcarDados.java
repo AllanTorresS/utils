@@ -72,7 +72,9 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
    private static final String QUERY_VALOR_UTILIZADO =
     		 "SELECT NVL(SUM(tc.valorTotal),0) " +
              " FROM TransacaoConectcar tc " +
-             "WHERE tc.frota.id  = :idFrota ";
+             " LEFT JOIN tc.cobranca c " +
+             "WHERE tc.frota.id  = :idFrota " +
+             "  AND c.dataPagamento is null";
 
     private static final String QUERY_ULTIMA_TRANSACAO =
    		 "SELECT tc " +
@@ -253,11 +255,11 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
         }
         
         if(filtro.getDe() != null) {
-        	parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataTransacao", filtro.getDe()));
+        	parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataTransacao", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe())));
         }
         
         if(filtro.getAte() != null) {
-        	parametros.add(new ParametroPesquisaDataMenorOuIgual("dataTransacao", UtilitarioCalculoData.adicionarDiasData(filtro.getAte(), 1)));
+        	parametros.add(new ParametroPesquisaDataMenorOuIgual("dataTransacao", UtilitarioCalculoData.obterUltimoInstanteDia((filtro.getAte()))));
         }
         
         if (filtro.getTag() != null) {
@@ -271,7 +273,11 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
         if (filtro.getTipo() != null && filtro.getTipo().getName() != null) {            
             parametros.add(new ParametroPesquisaIgual("tipoTransacao", TipoTransacaoConectcar.valueOf(filtro.getTipo().getName()).getValue()));            
         }
-        
+
+        if (filtro.getReembolso() != null && filtro.getReembolso().getId() != null) {            
+            parametros.add(new ParametroPesquisaIgual("reembolso.id", filtro.getReembolso().getId()));            
+        }
+
         if (filtro.getStatusTag() != null && filtro.getStatusTag().getName() != null) {
         	if(filtro.getStatusTag().getName().equals(StatusAtivacao.ATIVO.name())) {
         		parametros.add(new ParametroPesquisaNulo("tag.dataAtivacao", true));

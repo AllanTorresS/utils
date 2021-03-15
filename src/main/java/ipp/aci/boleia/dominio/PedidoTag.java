@@ -104,6 +104,9 @@ public class PedidoTag implements IPersistente {
 
 	@Column(name = "SG_UF")
 	private String uf;
+	
+	@Column(name = "DS_STATUS_RASTREIO")
+	private String statusRastreio;
 
 	/**
 	 * Construtor padrão da entidade.
@@ -286,6 +289,14 @@ public class PedidoTag implements IPersistente {
 
 	public void setNumeroPedidoConectcar(Integer numeroPedidoConectcar) {
 		this.numeroPedidoConectcar = numeroPedidoConectcar;
+	}
+	
+	public String getStatusRastreio() {
+		return statusRastreio;
+	}
+
+	public void setStatusRastreio(String statusRastreio) {
+		this.statusRastreio = statusRastreio;
 	}
 
 	@Override

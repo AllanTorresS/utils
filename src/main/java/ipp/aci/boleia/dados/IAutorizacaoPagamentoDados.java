@@ -12,7 +12,6 @@ import ipp.aci.boleia.dominio.vo.TransacaoPendenteVo;
 import ipp.aci.boleia.dominio.vo.apco.InformacoesVolumeVo;
 import ipp.aci.boleia.dominio.vo.frotista.FiltroPesquisaAbastecimentoFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.ResultadoPaginadoFrtVo;
-import ipp.aci.boleia.dominio.vo.apco.VolumeVendasClienteProFrotaVo;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -214,6 +213,13 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
     AutorizacaoPagamento obterAutorizacaoPagamentoComMesmoAbastecimento(String uuidAbastecimento);
 
     /**
+     * Busca UUIDs de Abastecimento a partir de uma lista de UUIDs
+     * @param uuidsAbastecimento UUIDs que devem ser buscados
+     * @return lista de UUIDs encontrados
+     */
+    List<String> obterUuidsExistentes(List<String> uuidsAbastecimento);
+
+    /**
      * Método que implementa a pesquisa de autorização pagamento para o contexto da
      * API de frotista.
      *
@@ -300,16 +306,6 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
      * @return abastecimentos encontrados
      */
     List<TransacaoPendenteVo> obterAbastecimentosAutorizadosPendentesDeConciliacao();
-
-    /**
-     * Obtem a litragem do abastecimento anterior ao abastecimento parametrizado
-     * @param idAbastecimento O id do abastecimento de referência
-     * @param dataAbastecimento A data do abastecimento de referência
-     * @param placaVeiculo A placa do veiculo do abastecimento de referência
-     * @param cnpjFrota O cnpj da frota do veiculo
-     * @return litros do abastecimento anterior, caso não encontrado retorna null
-     */
-    BigDecimal obterLitragemDoAbastecimentoAnterior(Long idAbastecimento, Date dataAbastecimento, String placaVeiculo, Long cnpjFrota);
 
     /**
      * Busca o estorno negativo associado a uma autorização de pagamento.

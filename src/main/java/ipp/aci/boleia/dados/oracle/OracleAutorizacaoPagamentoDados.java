@@ -52,6 +52,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.lang.Math.min;
+
 /**
  * Respositorio de entidades AutorizacaoPagamento
  */
@@ -62,6 +64,8 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     private static final Integer LIMITE_INFERIOR_CONCILIACAO = -30;
 
     private static final Integer LIMITE_SUPERIOR_CONCILIACAO = -48;
+
+    private static final int LIMITE_CLAUSULA_IN = 1000;
 
     private static final String REMOVER_ACENTO = "TRANSLATE( %s, " +
             "'âãäåāăąÁÂÃÄÅĀĂĄèééêëēĕėęěĒĔĖĘĚìíîïìĩīĭÌÍÎÏÌĨĪĬóôõöōŏőÒÓÔÕÖŌŎŐùúûüũūŭůÙÚÛÜŨŪŬŮ'," +
@@ -195,6 +199,14 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
             " LEFT JOIN FETCH tcp.prazos tcp_p " +
             " WHERE " +
             "     ((tc.id IN (:idsTransacoesConsolidadas) AND tcp IS NULL) OR tcp.id IN (:idsTransacoesConsolidadas)) ";
+
+    private static final String CONSULTA_UUIDS_ABASTECIMENTO_EXISTENTES =
+            " SELECT a.uuidAbastecimento " +
+            " FROM AutorizacaoPagamento a " +
+            " WHERE " +
+            "     a.uuidAbastecimento IS NOT NULL " +
+            "     AND a.uuidAbastecimento IN :uuidsAbastecimento " +
+            "     AND a.status = " + StatusAutorizacao.AUTORIZADO.getValue();
 
     /**
      * Instancia o repositorio
@@ -605,7 +617,20 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     @Override
     public AutorizacaoPagamento obterAutorizacaoPagamentoComMesmoAbastecimento(String uuidAbastecimento) {
         return pesquisarUnico(new ParametroPesquisaIgual("uuidAbastecimento",uuidAbastecimento),
-                new ParametroPesquisaIgual("status", StatusAutorizacao.AUTORIZADO.getValue()));
+                        new ParametroPesquisaIgual("status", StatusAutorizacao.AUTORIZADO.getValue()));
+    }
+
+    @Override
+    public List<String> obterUuidsExistentes(List<String> uuidsAbastecimento) {
+        List<String> uuidsExistentes = new ArrayList<>();
+
+        for (int i = 0; i < uuidsAbastecimento.size(); i += LIMITE_CLAUSULA_IN) {
+            List<ParametroPesquisa> parametros = new ArrayList<>();
+            parametros.add(new ParametroPesquisaIgual("uuidsAbastecimento", uuidsAbastecimento.subList(i, min(uuidsAbastecimento.size(), i + LIMITE_CLAUSULA_IN))));
+            uuidsExistentes.addAll(pesquisar((InformacaoPaginacao) null, CONSULTA_UUIDS_ABASTECIMENTO_EXISTENTES, String.class, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros());
+        }
+
+        return uuidsExistentes;
     }
 
 
@@ -698,21 +723,6 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                 new ParametroPesquisaIgual("limiteInferiorData", limiteInferior),
                 new ParametroPesquisaIgual("limiteSuperiorData", limiteSuperior)
         ).getRegistros();
-    }
-
-    @Override
-    public BigDecimal obterLitragemDoAbastecimentoAnterior(Long idAbastecimento, Date dataAbastecimento, String placaVeiculo, Long cnpjFrota) {
-
-        List<BigDecimal> litragem = this.pesquisar(new InformacaoPaginacao(1,1),
-                QUERY_LITRAGEM_ULTIMO_ABASTECIMENTO,
-                BigDecimal.class,
-                new ParametroPesquisaIgual("idAbastecimento", idAbastecimento),
-                new ParametroPesquisaIgual("dataAbastecimento", dataAbastecimento),
-                new ParametroPesquisaIgual("placaVeiculo", placaVeiculo),
-                new ParametroPesquisaIgual("cnpjFrota", cnpjFrota)
-        ).getRegistros();
-
-        return litragem.isEmpty() ? null : litragem.get(0);
     }
 
     @Override

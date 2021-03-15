@@ -14,15 +14,32 @@ public class TagDadosIntegracaoVo {
 	@JsonProperty("Placa")
 	private String placa;
 
+	@JsonProperty("Id")
+	private Long id;
+	
 	public TagDadosIntegracaoVo() {
 
 	}
 
 	public TagDadosIntegracaoVo(String codigoInternoParceiro, String placa) {
 		this.codigoInternoParceiro = codigoInternoParceiro;
-		this.placa = placa;
+		if(placa != null && !placa.contains("-")) {
+			this.placa = placa.substring(0, 3) + "-" + placa.substring(3);
+		} else {
+			this.placa = placa;
+		}
 	}
 
+	public TagDadosIntegracaoVo(String codigoInternoParceiro, Long id, String placa) {
+		this.codigoInternoParceiro = codigoInternoParceiro;
+		this.id = id;
+		if(placa != null && !placa.contains("-")) {
+			this.placa = placa.substring(0, 3) + "-" + placa.substring(3);
+		} else {
+			this.placa = placa;
+		}
+	}
+	
 	public String getCodigoInternoParceiro() {
 		return codigoInternoParceiro;
 	}
@@ -39,4 +56,11 @@ public class TagDadosIntegracaoVo {
 		this.placa = placa;
 	}
 
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 }
