@@ -22,6 +22,7 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.OneToMany;
 
 /**
@@ -62,7 +63,7 @@ public class HistoricoParametroNotaFiscal implements IPersistente, IParametroNot
     @JoinColumn(name= "CD_UNIDADE_LOCAL_DEST_PADRAO")
     private Unidade unidadeLocalDestinoPadrao;
     
-    @OneToMany(fetch = FetchType.LAZY, mappedBy= "unidadeLocalDestino", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy= "parametroNotaFiscal", orphanRemoval = true)
     private List<HistoricoParametroNotaFiscalUf> parametroNotaFiscalUf;
 
     @Override

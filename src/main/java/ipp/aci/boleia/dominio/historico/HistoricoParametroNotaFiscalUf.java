@@ -22,7 +22,7 @@ import javax.validation.constraints.Size;
  * Entidade que mantém o histórico de {@link ParametroNotaFiscalUf}.
  */
 @Entity
-@Table(name = "HISTORICO_PARAM_NF")
+@Table(name = "HISTORICO_PARAM_NF_UF")
 public class HistoricoParametroNotaFiscalUf implements IPersistente{
     
     @Id

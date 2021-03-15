@@ -4,7 +4,10 @@ import ipp.aci.boleia.dados.IHistoricoParametroNotaFiscalDados;
 import ipp.aci.boleia.dados.IParametroNotaFiscalDados;
 import ipp.aci.boleia.dominio.ParametroNotaFiscal;
 import ipp.aci.boleia.dominio.historico.HistoricoParametroNotaFiscal;
+import ipp.aci.boleia.dominio.historico.HistoricoParametroNotaFiscalUf;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
+import java.util.Date;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -33,12 +36,25 @@ public class HistoricoParametroNotaFiscalSd {
         if(parametroNotaFiscal != null && parametroNotaFiscal.getId() != null) {
             HistoricoParametroNotaFiscal historicoParametroNotaFiscal = new HistoricoParametroNotaFiscal();
             historicoParametroNotaFiscal.setParametroNotaFiscal(parametroNotaFiscal);
-            historicoParametroNotaFiscal.setDataHistorico(ambiente.buscarDataAmbiente());
+            final Date dataAmbiente = ambiente.buscarDataAmbiente();
+            historicoParametroNotaFiscal.setDataHistorico(dataAmbiente);
             historicoParametroNotaFiscal.setNfTipoAgrupamento(parametroNotaFiscal.getNfTipoAgrupamento());
             historicoParametroNotaFiscal.setLocalDestino(parametroNotaFiscal.getLocalDestino());
             historicoParametroNotaFiscal.setSepararPorCombustivelProdutoServico(parametroNotaFiscal.getSepararPorCombustivelProdutoServico());
             historicoParametroNotaFiscal.setDadosAdicionais(parametroNotaFiscal.getDadosAdicionais());
             historicoParametroNotaFiscal.setUnidadeLocalDestinoPadrao(parametroNotaFiscal.getUnidadeLocalDestinoPadrao());
+            historicoParametroNotaFiscal.setParametroNotaFiscalUf(
+                    parametroNotaFiscal.getParametroNotaFiscalUfs()
+                            .stream()
+                            .map(uf -> {
+                                HistoricoParametroNotaFiscalUf historicoParametroNotaFiscalUf = new HistoricoParametroNotaFiscalUf();
+                                historicoParametroNotaFiscalUf.setDataHistorico(dataAmbiente);
+                                historicoParametroNotaFiscalUf.setParametroNotaFiscal(historicoParametroNotaFiscal);
+                                historicoParametroNotaFiscalUf.setUf(uf.getUf());
+                                historicoParametroNotaFiscalUf.setUnidadeLocalDestino(uf.getUnidadeLocalDestino());
+                                return historicoParametroNotaFiscalUf;
+                            }).collect(Collectors.toList())
+            );
             return historicoParametroNotaFiscalDados.armazenar(historicoParametroNotaFiscal);
         }
         return null;

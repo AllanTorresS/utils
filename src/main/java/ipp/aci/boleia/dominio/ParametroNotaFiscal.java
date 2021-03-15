@@ -3,7 +3,9 @@ package ipp.aci.boleia.dominio;
 import ipp.aci.boleia.dominio.enums.LocalDestinoPadroNfe;
 import ipp.aci.boleia.dominio.interfaces.IParametroNotaFiscal;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
+import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.Column;
@@ -61,8 +63,15 @@ public class ParametroNotaFiscal implements IPersistente, IParametroNotaFiscal {
     @JoinColumn(name= "CD_UNIDADE_LOCAL_DEST_PADRAO")
     private Unidade unidadeLocalDestinoPadrao;
     
-    @OneToMany(fetch = FetchType.LAZY, mappedBy= "unidadeLocalDestino", orphanRemoval = true)
-    private List<ParametroNotaFiscalUf> parametroNotaFiscalUf;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy= "parametroNotaFiscal", orphanRemoval = true)
+    private List<ParametroNotaFiscalUf> parametroNotaFiscalUfs;
+
+    /**
+     * Construtor padrão
+     */
+    public ParametroNotaFiscal() {
+        parametroNotaFiscalUfs = new ArrayList();
+    }
 
     @Override
     public Long getId() {
@@ -140,12 +149,12 @@ public class ParametroNotaFiscal implements IPersistente, IParametroNotaFiscal {
         this.unidadeLocalDestinoPadrao = unidadeLocalDestinoPadrao;
     }
 
-    public List<ParametroNotaFiscalUf> getParametroNotaFiscalUf() {
-        return parametroNotaFiscalUf;
+    public List<ParametroNotaFiscalUf> getParametroNotaFiscalUfs() {
+        return parametroNotaFiscalUfs;
     }
 
-    public void setParametroNotaFiscalUf(List<ParametroNotaFiscalUf> parametroNotaFiscalUf) {
-        this.parametroNotaFiscalUf = parametroNotaFiscalUf;
+    public void setParametroNotaFiscalUf(List<ParametroNotaFiscalUf> parametroNotaFiscalUfs) {
+        this.parametroNotaFiscalUfs = parametroNotaFiscalUfs;
     }
 
     @Transient
