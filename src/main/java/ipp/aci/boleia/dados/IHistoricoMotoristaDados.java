@@ -13,7 +13,7 @@ import java.util.Date;
 public interface IHistoricoMotoristaDados extends IRepositorioBoleiaDados<HistoricoMotorista> {
     
     /**
-     * Obtem o historico da relacao de frota com ponto de venda para uma data especifica.
+     * Obtem o historico de alterações de um derterminado motorista através da data.
      *
      * @param cdMotorista Identificador do {@link ipp.aci.boleia.dominio.Motorista} atrelado ao historico.
      * @param data Data a ser verificada.
