@@ -23,7 +23,6 @@ import ipp.aci.boleia.dominio.vo.FiltroPesquisaTagConectcarVo;
 /**
  * Repositório de entidades TagConectcar
  */
-
 @Repository
 public class OracleTagConectcarDados extends OracleRepositorioBoleiaDados<TagConectcar> implements ITagConectcarDados {
 
@@ -69,7 +68,7 @@ public class OracleTagConectcarDados extends OracleRepositorioBoleiaDados<TagCon
         }
         if (filtro.getStatus() != null && filtro.getStatus().getName() != null) {
         	if(filtro.getStatus().getName().equals(StatusAtivacao.ATIVO.name())) {
-        		parametros.add(new ParametroPesquisaNulo("dataAtivacao", true));
+        		parametros.add(new ParametroPesquisaNulo("dataBloqueio", false));
         	}else if(filtro.getStatus().getName().equals(StatusAtivacao.INATIVO.name())) {
         		parametros.add(new ParametroPesquisaNulo("dataBloqueio", true));
         	}
@@ -128,6 +127,4 @@ public class OracleTagConectcarDados extends OracleRepositorioBoleiaDados<TagCon
 			return null;
 		}	
 	}
-
-   
 }

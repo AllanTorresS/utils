@@ -187,6 +187,10 @@ public class Veiculo implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @Column(name = "VO_CAPACIDADE")
     private Integer capacidadeTanque;
 
+    @Column(name = "DT_CRIACAO")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataCriacao;
+
     @Column(name = "DT_ATUALIZACAO")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataAtualizacao;
@@ -529,4 +533,13 @@ public class Veiculo implements IPersistente, IExclusaoLogica, IPertenceFrota {
     public String getNomeApresentacao() {
         return getPlaca();
     }
+
+	public Date getDataCriacao() {
+		return dataCriacao;
+	}
+
+	public void setDataCriacao(Date dataCriacao) {
+		this.dataCriacao = dataCriacao;
+	}
+
 }

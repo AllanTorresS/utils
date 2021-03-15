@@ -86,8 +86,7 @@ public class PrecoNegociadoSd {
     public void validaDesconto(BigDecimal desconto, Boolean possuiDesconto) throws ExcecaoValidacao {
         if(desconto != null){
             int comparacaoDesconto = desconto.compareTo(BigDecimal.ZERO);
-
-            if((possuiDesconto && comparacaoDesconto > 0) || (!possuiDesconto && comparacaoDesconto < 0) || (comparacaoDesconto == 0)){
+            if((possuiDesconto && comparacaoDesconto > 0) || (!possuiDesconto && comparacaoDesconto < 0)){
                 throw new ExcecaoValidacao(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("precoNegociado.novoAcordo.validacao.desconto.invalido"));
             }
         }

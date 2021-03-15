@@ -28,6 +28,14 @@ public interface ICobrancaConectcarDados extends IRepositorioBoleiaDados<Cobranc
     List<CobrancaConectcar> buscarCobrancasParaConsultarAvisoDebito();
 
     /**
+     * Pesquisa os as cobranças candidatas a realizar consulta no JDE
+     * para consultar a nota fiscal
+     *
+     * @return As cobranças candidatas a consulta de nota fiscal.
+     */
+    List<CobrancaConectcar> buscarCobrancasParaConsultarNotaFiscal();
+    
+    /**
      * Obtem a última cobranca gerada para determinada frota
      * @param idFrota id da frota
      * @return Cobranca encontrada

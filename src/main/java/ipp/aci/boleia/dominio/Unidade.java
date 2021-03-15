@@ -122,9 +122,6 @@ public class Unidade implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @Column(name = "ID_EXIGE_NF")
     private Boolean exigeNotaFiscal;
 
-    @Column(name = "ID_LOCAL_PADRAO_NFE_UF")
-    private Boolean localDestinoPadraoNfeUf;
-
     @Column(name="DS_CONNECTCTA_TOKEN")
     private String connectCTAToken;
 
@@ -363,13 +360,5 @@ public class Unidade implements IPersistente, IExclusaoLogica, IPertenceFrota {
         String nome = getNome();
         cnpj += " - ";
         return cnpj + nome;
-    }
-
-    public Boolean getLocalDestinoPadraoNfeUf() {
-        return localDestinoPadraoNfeUf;
-    }
-
-    public void setLocalDestinoPadraoNfeUf(Boolean localDestinoPadraoNfeUf) {
-        this.localDestinoPadraoNfeUf = localDestinoPadraoNfeUf;
     }
 }

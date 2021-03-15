@@ -133,7 +133,7 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
      */
     @Size(max=250)
     @Column(name = "NM_ASSESSOR_RESP")
-    @Deprecated   
+    @Deprecated
     private String assessorResponsavel;
 
     /**
@@ -146,17 +146,17 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @JsonIgnoreProperties("frotasAssessoradas")
     @Deprecated
     private Usuario usuarioAssessorResponsavel;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_USU_CONSULTOR_HUNTER")
     @JsonIgnoreProperties("frotasAssessoradas")
     private Usuario usuarioConsultorHunter;
-        
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_USU_CONSULTOR_FARMER_PESADO")
     @JsonIgnoreProperties("frotasAssessoradas")
     private Usuario usuarioConsultorFarmerPesado;
-            
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_USU_CONSULTOR_FARMER_LEVE")
     @JsonIgnoreProperties("frotasAssessoradas")
@@ -368,9 +368,6 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @Column(name="ID_EXIBIR_DESCONTO_TOTAL")
     private Boolean exibirDesconto;
 
-    @Column(name = "ID_LOCAL_PADRAO_NFE_UF")
-    private Boolean localDestinoPadraoNfeUf;
-
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "frota")
     private List<EmpresaAgregada> empresasAgregadas;
 
@@ -405,6 +402,9 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     
     @OneToOne(mappedBy = "frota")
     private SituacaoConectCar situacaoConectCar;
+
+    @OneToOne(mappedBy = "frota")
+    private Lead lead;
 
     @OneToOne(mappedBy = "frota")
     private ParametroNotaFiscal parametroNotaFiscal;
@@ -1357,23 +1357,6 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     }
 
     /**
-     * Obtem a unidade que está configurada para o local de destino padrão
-     * na UF passada como argumento
-     * @param uf UF do estado
-     * @return Unidade
-     */
-    @Transient
-    public Unidade getUnidadeQueReceberaNF(String uf){
-        return this.getUnidades() == null ? null :
-                this.getUnidades().stream()
-                .filter(u-> uf.equals(u.getUf())
-                        && u.getLocalDestinoPadraoNfeUf() != null && u.getLocalDestinoPadraoNfeUf()
-                        && u.getExigeNotaFiscal() != null && u.getExigeNotaFiscal())
-                .findAny()
-                .orElse(null);
-    }
-
-    /**
      * Verifica se frota tem parametro de ciclo para atualizar
      * @return true caso tenha novo parâmetro de ciclo
      */
@@ -1426,13 +1409,13 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
 		this.totalTagsAtivas = totalTagsAtivas;
 	}
 
-    public Boolean getLocalDestinoPadraoNfeUf() {
-        return localDestinoPadraoNfeUf;
-    }
+	public Lead getLead() {
+		return lead;
+	}
 
-    public void setLocalDestinoPadraoNfeUf(Boolean localDestinoPadraoNfeUf) {
-        this.localDestinoPadraoNfeUf = localDestinoPadraoNfeUf;
-    }
+	public void setLead(Lead lead) {
+		this.lead = lead;
+	}
 
     public Boolean getLembrarParametrizacaoNf() {
         return lembrarParametrizacaoNf;

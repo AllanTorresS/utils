@@ -27,19 +27,6 @@ public class EmpresaAgregadaSd {
     @Autowired
     private IVeiculoDados veiculoDados;
 
-    @Autowired
-    private HistoricoEmpresaAgregadaSd empresaAgregadaSd;
-
-    /**
-     * Armazena os dados de uma empresa agregada
-     * @param empresaAgregada A empresa agregada  ser armazenada
-     * @return A empresa agregada armazenada
-     */
-    public EmpresaAgregada armazenar(EmpresaAgregada empresaAgregada) {
-        empresaAgregadaSd.armazenar(empresaAgregada);
-        return repositorio.armazenar(empresaAgregada);
-    }
-
     /**
      * Exclui uma lista de empresas agregadas.
      *

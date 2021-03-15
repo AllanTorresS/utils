@@ -1,6 +1,7 @@
 package ipp.aci.boleia.dominio.historico;
 
 import ipp.aci.boleia.dominio.ParametroNotaFiscal;
+import ipp.aci.boleia.dominio.Unidade;
 import ipp.aci.boleia.dominio.enums.LocalDestinoPadroNfe;
 import ipp.aci.boleia.dominio.interfaces.IParametroNotaFiscal;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
@@ -20,6 +21,9 @@ import javax.persistence.Transient;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.OneToMany;
 
 /**
  * Entidade que mantém o histórico de {@link ParametroNotaFiscal}.
@@ -55,13 +59,19 @@ public class HistoricoParametroNotaFiscal implements IPersistente, IParametroNot
     @Column(name = "NM_DADOS")
     private String dadosAdicionais;
 
-    @Column(name= "CD_UNIDADE_LOCAL_DEST_PADRAO")
-    private Long unidadeLocalDestinoPadrao;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name= "CD_UNIDADE_LOCAL_DEST_PADRAO")
+    private Unidade unidadeLocalDestinoPadrao;
+    
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy= "parametroNotaFiscal", orphanRemoval = true)
+    private List<HistoricoParametroNotaFiscalUf> parametroNotaFiscalUf;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
@@ -82,51 +92,66 @@ public class HistoricoParametroNotaFiscal implements IPersistente, IParametroNot
         this.parametroNotaFiscal = parametroNotaFiscal;
     }
 
+    @Override
     public Integer getLocalDestino() {
         return localDestino;
     }
 
+    @Override
     public void setLocalDestino(Integer localDestino) {
         this.localDestino = localDestino;
     }
 
+    @Override
     public Integer getNfTipoAgrupamento() {
         return nfTipoAgrupamento;
     }
 
+    @Override
     public void setNfTipoAgrupamento(Integer nfTipoAgrupamento) {
         this.nfTipoAgrupamento = nfTipoAgrupamento;
     }
 
+    @Override
     public String getDadosAdicionais() {
         return dadosAdicionais;
     }
 
+    @Override
     public void setDadosAdicionais(String dadosAdicionais) {
         this.dadosAdicionais = dadosAdicionais;
     }
 
+    @Override
     public Boolean getSepararPorCombustivelProdutoServico() {
         return separarPorCombustivelProdutoServico;
     }
 
+    @Override
     public void setSepararPorCombustivelProdutoServico(Boolean separarPorCombustivelProdutoServico) {
         this.separarPorCombustivelProdutoServico = separarPorCombustivelProdutoServico;
     }
 
-    public Long getUnidadeLocalDestinoPadrao() {
+    @Override
+    public Unidade getUnidadeLocalDestinoPadrao() {
         return unidadeLocalDestinoPadrao;
     }
 
-    public void setUnidadeLocalDestinoPadrao(Long unidadeLocalDestinoPadrao) {
+    @Override
+    public void setUnidadeLocalDestinoPadrao(Unidade unidadeLocalDestinoPadrao) {
         this.unidadeLocalDestinoPadrao = unidadeLocalDestinoPadrao;
     }
 
-    /**
-     * O local destino configurado é no ato do abastecimento?
-     * @return true se positivo
-     */
+    public List<HistoricoParametroNotaFiscalUf> getParametroNotaFiscalUf() {
+        return parametroNotaFiscalUf;
+    }
+
+    public void setParametroNotaFiscalUf(List<HistoricoParametroNotaFiscalUf> parametroNotaFiscalUf) {
+        this.parametroNotaFiscalUf = parametroNotaFiscalUf;
+    }
+
     @Transient
+    @Override
     public boolean isDestinoNotaFiscalNoLocalDoAbastecimento(){
         return LocalDestinoPadroNfe.ABASTECIMENTO.getValue()
                 .equals(this.getLocalDestino());

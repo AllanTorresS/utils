@@ -12,6 +12,7 @@ import ipp.aci.boleia.dominio.enums.TipoPreenchimentoLitragem;
 import ipp.aci.boleia.dominio.enums.TipoRealizacaoPedido;
 import ipp.aci.boleia.dominio.enums.TipoSenhaAutorizacao;
 import ipp.aci.boleia.dominio.enums.TipoItemAutorizacaoPagamento;
+import ipp.aci.boleia.dominio.historico.HistoricoParametroNotaFiscal;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
 import ipp.aci.boleia.dominio.interfaces.IPertenceMotorista;
@@ -54,6 +55,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.hibernate.envers.RelationTargetAuditMode;
 
 /**
  * Representa a tabela de Autorizacao Pagamento
@@ -77,8 +79,8 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
      * na tela de detalhamento de NF.
      */
     private static final String CHAVE_ORDENACAO_FINANCEIRO_FORMULA =
-                    "CASE WHEN CD_TRANS_CONSOL_POSTERGADA IS NOT NULL AND ID_STATUS = 1 THEN 0 " +
-                    "     WHEN CD_TRANS_CONSOL_POSTERGADA IS NOT NULL AND ID_STATUS <> 1 THEN 1 " +
+            "CASE WHEN CD_TRANS_CONSOL_POSTERGADA IS NOT NULL AND ID_STATUS_EDICAO = 0 AND ID_STATUS = 1 THEN 0 " +
+                    "     WHEN CD_TRANS_CONSOL_POSTERGADA IS NOT NULL AND (ID_STATUS_EDICAO = 1 OR ID_STATUS = -1) THEN 1 " +
                     "     WHEN CD_TRANS_CONSOL_POSTERGADA IS NULL AND (ID_STATUS_EDICAO = 1 OR ID_STATUS = -1) THEN 2 " +
                     "     ELSE 3 " +
                     "END";
@@ -419,6 +421,9 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     @Column(name="ID_UNIDADE_EXIGE_NF")
     private Boolean unidadeExigeNf;
 
+    @Column(name = "ID_FROTA_EXIGE_NF")
+    private boolean frotaExigeNF;
+
     @Max(99999999L)
     @Column(name = "CD_PTOV_ABADI")
     private Long numeroAbadiPv;
@@ -487,6 +492,11 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     @NotAudited
     @Formula(CHAVE_ORDENACAO_FINANCEIRO_FORMULA)
     private Integer chaveOrdenacaoFinanceiro;
+
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_HISTORICO_PARAM_NF")
+    private HistoricoParametroNotaFiscal parametroNotaFiscal;
 
     @Transient
     private TipoErroAutorizacaoPagamento tipoErroAutorizacaoPagamento;
@@ -1261,6 +1271,11 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
         return getNotasFiscais() != null ? getNotasFiscaisSemJustificativa().size() : 0;
     }
 
+    @Transient
+    public Integer getQuantidadeJustificativas() {
+        return getNotasFiscais() != null ? getNotasFiscaisComJustificativa().size() : 0;
+    }
+
     public String getUuidAbastecimento() {
         return uuidAbastecimento;
     }
@@ -1315,6 +1330,14 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
 
     public void setUnidadeExigeNf(Boolean unidadeExigeNf) {
         this.unidadeExigeNf = unidadeExigeNf;
+    }
+
+    public boolean isFrotaExigeNF() {
+        return frotaExigeNF;
+    }
+
+    public void setFrotaExigeNF(boolean frotaExigeNF) {
+        this.frotaExigeNF = frotaExigeNF;
     }
 
     public Long getNumeroAbadiPv() {
@@ -1639,6 +1662,14 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
         this.foiProcessadoPeloGeradorDeCampanhas = foiProcessadoPeloGeradorDeCampanhas;
     }
 
+    public HistoricoParametroNotaFiscal getParametroNotaFiscal() {
+        return parametroNotaFiscal;
+    }
+
+    public void setParametroNotaFiscal(HistoricoParametroNotaFiscal parametroNotaFiscal) {
+        this.parametroNotaFiscal = parametroNotaFiscal;
+    }
+
     /**
      * Verifica se a {@link AutorizacaoPagamento} deve ir para a fila de repasse
      * @return true se a autorizacao deve ir para a fila de repasse
@@ -1713,7 +1744,7 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
      */
     @Transient
     public boolean exigeEmissaoNF() {
-        return frota.exigeNotaFiscal() || unidadePossuiExigenciaNF() || empresaAgregadaPossuiExigenciaNF();
+        return isFrotaExigeNF() || unidadePossuiExigenciaNF() || empresaAgregadaPossuiExigenciaNF();
     }
 
     /**

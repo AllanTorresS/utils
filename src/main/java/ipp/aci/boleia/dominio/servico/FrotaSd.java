@@ -77,17 +77,12 @@ public class FrotaSd {
     @Autowired
 	private ILeadCredenciamentoDados repositorioLeadCredenciamento;
 
-    @Autowired
-    private HistoricoFrotaSd historicoFrotaSd;
-
-
     /**
      * Armazena os dados de uma frota
      * @param frota A frota  ser armazenada
      * @return A frota armazenada
      */
     public Frota armazenar(Frota frota) {
-        historicoFrotaSd.armazenar(frota);
         return repositorio.armazenar(frota);
     }
 
