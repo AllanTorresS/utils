@@ -3,7 +3,10 @@ package ipp.aci.boleia.dados.oracle;
 import ipp.aci.boleia.dados.INotaFiscalDados;
 import ipp.aci.boleia.dominio.NotaFiscal;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
+import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaDownloadNotaVo;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Repository;
 
@@ -28,6 +31,18 @@ public class OracleNotaFiscalDados extends OracleRepositorioBoleiaDados<NotaFisc
 	 */
 	public OracleNotaFiscalDados() {
 		super(NotaFiscal.class);
+	}
+
+	@Override
+	public List<NotaFiscal> pesquisarParaDownload(FiltroPesquisaDownloadNotaVo filtro) {
+		List<ParametroPesquisa> parametros = new ArrayList<>();
+		if(filtro.getIdsNotas() != null) {
+			parametros.add(new ParametroPesquisaIn("id", filtro.getIdsNotas()));
+		}
+		if(filtro.getIdAutorizacaoPagamento() != null) {
+			parametros.add(new ParametroPesquisaIgual("autorizacoesPagamento.id", filtro.getIdAutorizacaoPagamento()));
+		}
+		return pesquisar((ParametroOrdenacaoColuna) null, parametros.toArray(new ParametroPesquisa[parametros.size()]));
 	}
 
 	@Override
