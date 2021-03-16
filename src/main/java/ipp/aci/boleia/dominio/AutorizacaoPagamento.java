@@ -75,8 +75,8 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
      * na tela de detalhamento de NF.
      */
     private static final String CHAVE_ORDENACAO_FINANCEIRO_FORMULA =
-                    "CASE WHEN CD_TRANS_CONSOL_POSTERGADA IS NOT NULL AND ID_STATUS = 1 THEN 0 " +
-                    "     WHEN CD_TRANS_CONSOL_POSTERGADA IS NOT NULL AND ID_STATUS <> 1 THEN 1 " +
+            "CASE WHEN CD_TRANS_CONSOL_POSTERGADA IS NOT NULL AND ID_STATUS_EDICAO = 0 AND ID_STATUS = 1 THEN 0 " +
+                    "     WHEN CD_TRANS_CONSOL_POSTERGADA IS NOT NULL AND (ID_STATUS_EDICAO = 1 OR ID_STATUS = -1) THEN 1 " +
                     "     WHEN CD_TRANS_CONSOL_POSTERGADA IS NULL AND (ID_STATUS_EDICAO = 1 OR ID_STATUS = -1) THEN 2 " +
                     "     ELSE 3 " +
                     "END";
@@ -416,6 +416,9 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
 
     @Column(name="ID_UNIDADE_EXIGE_NF")
     private Boolean unidadeExigeNf;
+
+    @Column(name = "ID_FROTA_EXIGE_NF")
+    private boolean frotaExigeNF;
 
     @Max(99999999L)
     @Column(name = "CD_PTOV_ABADI")
@@ -1259,6 +1262,11 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
         return getNotasFiscais() != null ? getNotasFiscaisSemJustificativa().size() : 0;
     }
 
+    @Transient
+    public Integer getQuantidadeJustificativas() {
+        return getNotasFiscais() != null ? getNotasFiscaisComJustificativa().size() : 0;
+    }
+
     public String getUuidAbastecimento() {
         return uuidAbastecimento;
     }
@@ -1313,6 +1321,14 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
 
     public void setUnidadeExigeNf(Boolean unidadeExigeNf) {
         this.unidadeExigeNf = unidadeExigeNf;
+    }
+
+    public boolean isFrotaExigeNF() {
+        return frotaExigeNF;
+    }
+
+    public void setFrotaExigeNF(boolean frotaExigeNF) {
+        this.frotaExigeNF = frotaExigeNF;
     }
 
     public Long getNumeroAbadiPv() {
@@ -1711,7 +1727,7 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
      */
     @Transient
     public boolean exigeEmissaoNF() {
-        return frota.exigeNotaFiscal() || unidadePossuiExigenciaNF() || empresaAgregadaPossuiExigenciaNF();
+        return isFrotaExigeNF() || unidadePossuiExigenciaNF() || empresaAgregadaPossuiExigenciaNF();
     }
 
     /**

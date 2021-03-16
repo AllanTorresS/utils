@@ -133,7 +133,7 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
      */
     @Size(max=250)
     @Column(name = "NM_ASSESSOR_RESP")
-    @Deprecated   
+    @Deprecated
     private String assessorResponsavel;
 
     /**
@@ -146,17 +146,17 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @JsonIgnoreProperties("frotasAssessoradas")
     @Deprecated
     private Usuario usuarioAssessorResponsavel;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_USU_CONSULTOR_HUNTER")
     @JsonIgnoreProperties("frotasAssessoradas")
     private Usuario usuarioConsultorHunter;
-        
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_USU_CONSULTOR_FARMER_PESADO")
     @JsonIgnoreProperties("frotasAssessoradas")
     private Usuario usuarioConsultorFarmerPesado;
-            
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_USU_CONSULTOR_FARMER_LEVE")
     @JsonIgnoreProperties("frotasAssessoradas")

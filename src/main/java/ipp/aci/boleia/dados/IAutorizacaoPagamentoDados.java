@@ -7,6 +7,9 @@ import ipp.aci.boleia.dominio.TransacaoConsolidada;
 import ipp.aci.boleia.dominio.Unidade;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaAbastecimentoVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheCobrancaVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheReembolsoVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaQtdTransacoesFrotaVo;
 import ipp.aci.boleia.dominio.vo.QuantidadeAbastecidaVeiculoVo;
 import ipp.aci.boleia.dominio.vo.TransacaoPendenteVo;
 import ipp.aci.boleia.dominio.vo.apco.InformacoesVolumeVo;
@@ -402,4 +405,36 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
      * @return abastecimentos associados às transações consolidadas
      */
     List<AutorizacaoPagamento> obterPorTransacoesConsolidadas(List<Long> idsTransacoesConsolidadas);
+
+     /**
+     * Pesquisa AutorizacaoPagamento paginado a partir do filtro informado para a tela de Detalhe de Cobrança
+     *
+     * @param filtro O filtro da busca
+     * @return Uma lista de ResultadoPaginado localizadas
+     */
+    ResultadoPaginado<AutorizacaoPagamento> pesquisaPaginadaDetalheCobranca(FiltroPesquisaDetalheCobrancaVo filtro);
+
+    /**
+     * Pesquisa uma lista de autorizações de pagamento para o detalhe de reembolso.
+     *
+     * @param filtro O filtro da busca
+     * @return Uma lista de ResultadoPaginado localizadas
+     */
+    ResultadoPaginado<AutorizacaoPagamento> pesquisaPaginadaDetalheReembolso(FiltroPesquisaDetalheReembolsoVo filtro);
+
+    /**
+     * Obtem a quantidade de notas fiscais associadas a transações pertencentes a um ciclo
+     * ou agrupamento de ciclos
+     * @param filtro o filtro de pesquisa informado
+     * @return A quantidade de notas fiscais
+     */
+    Long obterQuantidadeNotasAgrupamento(FiltroPesquisaQtdTransacoesFrotaVo filtro);
+
+    /**
+     * Realiza pesquisa sem paginação para obtenção de todos os abastecimentos do ciclo
+     * filtrados de acordo com parâmetros de pesquisa
+     * @param filtro O filtro fornecido
+     * @return Os registros obtidos
+     */
+    List<AutorizacaoPagamento> pesquisaDetalheCobrancaSemPaginacao(FiltroPesquisaDetalheCobrancaVo filtro);
 }

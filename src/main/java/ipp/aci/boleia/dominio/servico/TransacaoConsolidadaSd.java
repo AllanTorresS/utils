@@ -29,10 +29,13 @@ import ipp.aci.boleia.dominio.enums.StatusNotaFiscal;
 import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
 import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
+import ipp.aci.boleia.dominio.vo.AgrupamentoTransacaoConsolidadaCobrancaVo;
+import ipp.aci.boleia.dominio.vo.EntidadeVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFinanceiroVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaTransacaoConsolidadaDetalheVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaTransacaoConsolidadaVo;
 import ipp.aci.boleia.dominio.vo.VolumeRealizadoVo;
+import ipp.aci.boleia.util.ConstantesFormatacao;
 import ipp.aci.boleia.util.UtilitarioCalculo;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
@@ -45,7 +48,9 @@ import ipp.aci.boleia.util.excecao.ExcecaoSemConteudo;
 import ipp.aci.boleia.util.excecao.ExcecaoValidacao;
 import ipp.aci.boleia.util.i18n.Mensagens;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
+import ipp.aci.boleia.util.seguranca.UtilitarioCriptografia;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +60,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -186,7 +192,7 @@ public class TransacaoConsolidadaSd {
         informacaoPaginacao.setTamanhoPagina(null);
         informacaoPaginacao.setPagina(null);
         filtro.setPaginacao(informacaoPaginacao);
-        return repositorio.pesquisarTransacoesFinanceiro(filtro, usuario);
+        return repositorio.pesquisarTransacoesFinanceiroRevenda(filtro, usuario);
     }
 
     /**
@@ -552,6 +558,7 @@ public class TransacaoConsolidadaSd {
 
         tc.setModalidadePagamento(prePago ? ModalidadePagamento.PRE_PAGO.getValue() : ModalidadePagamento.POS_PAGO.getValue());
         tc.setFrotaPtov(frotaPtov);
+        tc.setFrotaExigeNF(frotaPtov.getFrota().exigeNotaFiscal());
         if(empresaAgregada != null) {
             tc.setEmpresaAgregada(empresaAgregada);
         } else if(unidade != null) {
@@ -663,18 +670,14 @@ public class TransacaoConsolidadaSd {
         boolean possuiValorEmitido = valorEmitidoNotaFiscal.compareTo(BigDecimal.ZERO) > 0;
         boolean possuiValorASerEmitido = valorEmitidoNotaFiscal.compareTo(valorTotalNotaFiscal) < 0;
 
-        //Se o ciclo esta EM AJUSTE ou FECHADO, verifica se o consolidado atende as condicoes para ter statusNF EMITIDA
+        //Verifica se o consolidado atende as condicoes para ter statusNF EMITIDA
         //Caso atenda, seta o status como EMITIDA
         //Caso nao atenda, seta o status como PARCIALMENTE_EMITIDA ou PENDENTE
-        if(!transacaoConsolidada.esta(StatusTransacaoConsolidada.EM_ABERTO)) {
-            if ((valorNotasMaiorZero && todosAbastPossuemNotaEmitidaOuJustificativa) || !transacaoConsolidada.exigeEmissaoNF()) {
-                transacaoConsolidada.setStatusNotaFiscal(StatusNotaFiscal.EMITIDA.getValue());
-            } else if(transacaoConsolidada.esta(FECHADA) && possuiValorEmitido && possuiValorASerEmitido) {
-                transacaoConsolidada.setStatusNotaFiscal(StatusNotaFiscal.PARCIALMENTE_EMITIDA.getValue());
-            } else  {
-                transacaoConsolidada.setStatusNotaFiscal(StatusNotaFiscal.PENDENTE.getValue());
-            }
-        } else {
+        if ((valorNotasMaiorZero && todosAbastPossuemNotaEmitidaOuJustificativa) || !transacaoConsolidada.exigeEmissaoNF()) {
+            transacaoConsolidada.setStatusNotaFiscal(StatusNotaFiscal.EMITIDA.getValue());
+        } else if(transacaoConsolidada.esta(FECHADA) && possuiValorEmitido && possuiValorASerEmitido) {
+            transacaoConsolidada.setStatusNotaFiscal(StatusNotaFiscal.PARCIALMENTE_EMITIDA.getValue());
+        } else  {
             transacaoConsolidada.setStatusNotaFiscal(StatusNotaFiscal.PENDENTE.getValue());
         }
 
@@ -766,7 +769,7 @@ public class TransacaoConsolidadaSd {
                 AutorizacaoPagamento autorizacaoCancelada = repositorioAutorizacaoPgto.obterPorId(a.getIdAutorizacaoEstorno());
                 return autorizacaoPagamentoSd.valorDaTransacaoFoiContempladoEmReembolsoGerado(autorizacaoCancelada);
             } else {
-                return !a.isPendenteEmissaoNF(true);
+                return !transacaoConsolidada.exigeEmissaoNF() || !a.isPendenteEmissaoNF(true);
             }
         });
         return somarValoresAutorizacaoPagamento(
@@ -1220,5 +1223,110 @@ public class TransacaoConsolidadaSd {
         prazosConsolidado.setPossuiPrazoAjuste(possuiPrazoAjuste);
 
         return prazosConsolidado;
+    }
+
+    /**
+     * Gera uma chave identificadora codificada com informações do ciclo
+     * @param dataInicioPeriodo A data de início do ciclo
+     * @param dataFimPeriodo A data de fim do ciclo
+     * @param idFrota O identificador da frota
+     * @return A chave codificada
+     */
+    public String gerarChaveIdentificadoraCodificadaAgrupamentoCiclos(Date dataInicioPeriodo, Date dataFimPeriodo, Long idFrota) {
+        String chave = dataInicioPeriodo.getTime() + "|" +
+                       dataFimPeriodo.getTime() + "|" +
+                       idFrota.toString();
+        return UtilitarioCriptografia.toBase64(chave.getBytes(StandardCharsets.UTF_8));
+    }
+
+    /**
+     * Gera uma chave identificadora codificada com informações do ciclo
+     * @param consolidado O consolidado a ser usado
+     * @return A chave codificada
+     */
+    public String gerarChaveIdentificadoraCodificadaAgrupamentoCiclos(TransacaoConsolidada consolidado) {
+        String chave = consolidado.getDataInicioPeriodo().getTime() + "|" +
+                consolidado.getDataFimPeriodo().getTime() + "|" +
+                consolidado.getFrota().getId().toString();
+        return UtilitarioCriptografia.toBase64(chave.getBytes(StandardCharsets.UTF_8));
+    }
+
+    /**
+     * Decodifica a chave identificadora de agrupamento de ciclos
+     * @param chave A chave codificada
+     * @return A chave decodificada
+     */
+    public String decodificarChaveIdentificadoraAgrupamentoCiclos(String chave) {
+        return new String(UtilitarioCriptografia.fromBase64(chave));
+    }
+
+    /**
+     * Divide a chave nos campos utilizados para gerá-la originalmente
+     * @param chave A chave decodificada
+     * @return Os campos da chave divididos
+     */
+    public String[] dividirChaveIdentificadoraAgrupamentoCiclos(String chave) {
+        return StringUtils.split(chave, ConstantesFormatacao.SEPARADOR_CHAVE_IDENTIFICADORA_AGRUPAMENTO_CICLOS);
+    }
+
+    /**
+     * Obtém um consolidado pela chave identificadora com informações do ciclo
+     * @param chave A chave codificada
+     * @return O consolidado encontrado
+     */
+    public List<TransacaoConsolidada> obterConsolidadosPorChaveIdentificadora(String chave) {
+        String chaveDecodificada = decodificarChaveIdentificadoraAgrupamentoCiclos(chave);
+        String[] camposChave = dividirChaveIdentificadoraAgrupamentoCiclos(chaveDecodificada);
+        Date dataInicioCiclo = obterCampoDataInicioChaveIdentificadora(camposChave);
+        Date dataFimCiclo = obterCampoDataFimChaveIdentificadora(camposChave);
+        Long idFrota = obterCampoIdFrotaChaveIdentificadora(camposChave);
+        return repositorio.obterConsolidadosPorPeriodoEFrota(dataInicioCiclo, dataFimCiclo, idFrota);
+    }
+
+    /**
+     * Realiza a pesquisa de agrupamento de cobrança passando os filtros de inicio e fim do período e id da frota através de uma chave decodificada
+     * @param chave A chave decodificada
+     * @return O agrupamento encontrado
+     */
+    public AgrupamentoTransacaoConsolidadaCobrancaVo obterAgrupamentoCobrancaPorChaveIdentificadora(String chave){
+        String chaveDecodificada = decodificarChaveIdentificadoraAgrupamentoCiclos(chave);
+        String[] camposChave = dividirChaveIdentificadoraAgrupamentoCiclos(chaveDecodificada);
+
+        FiltroPesquisaFinanceiroVo filtro = new FiltroPesquisaFinanceiroVo();
+        filtro.setDe(obterCampoDataInicioChaveIdentificadora(camposChave));
+        filtro.setAte(obterCampoDataFimChaveIdentificadora(camposChave));
+        filtro.setFrota(new EntidadeVo(obterCampoIdFrotaChaveIdentificadora(camposChave)));
+        filtro.setPaginacao(new InformacaoPaginacao());
+
+        ResultadoPaginado<AgrupamentoTransacaoConsolidadaCobrancaVo> agrupamento = repositorio.pesquisarTransacoesPorCobranca(filtro, utilitarioAmbiente.getUsuarioLogado());
+
+        return agrupamento.getRegistros().stream().findFirst().orElse(null);
+    }
+
+    /**
+     * Obtém o campo data de início do ciclo a partir da chave
+     * @param chaveDividida A chave identificadora dividida em suas três partes
+     * @return A data de início do ciclo
+     */
+    public Date obterCampoDataInicioChaveIdentificadora(String[] chaveDividida) {
+        return new Date(Long.parseLong(chaveDividida[0]));
+    }
+
+    /**
+     * Obtém o campo data de fim do ciclo a partir da chave
+     * @param chaveDividida A chave identificadora dividida em suas três partes
+     * @return A data de fim do ciclo
+     */
+    public Date obterCampoDataFimChaveIdentificadora(String[] chaveDividida) {
+        return new Date(Long.parseLong(chaveDividida[1]));
+    }
+
+    /**
+     * Obtém o campo id da frota a partir da chave
+     * @param chaveDividida A chave identificadora dividida em suas três partes
+     * @return O identificador da frota do ciclo
+     */
+    public Long obterCampoIdFrotaChaveIdentificadora(String[] chaveDividida) {
+        return Long.parseLong(chaveDividida[2]);
     }
 }
