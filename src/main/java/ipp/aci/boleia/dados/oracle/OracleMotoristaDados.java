@@ -343,7 +343,7 @@ public class OracleMotoristaDados extends OracleRepositorioBoleiaDados<Motorista
     @Override
     public void excluirDadosPessoais(Integer diasDeArmazenamento) {
         Query query = getGerenciadorDeEntidade().createQuery(QUERY_EXCLUSAO_DADOS_MOTORISTA);
-        query.setParameter("diasDeArmazenamento", UtilitarioCalculoData.adicionarDiasData(utilitarioAmbiente.buscarDataAmbiente(), diasDeArmazenamento));
+        query.setParameter("dataProcessamento", UtilitarioCalculoData.adicionarDiasData(utilitarioAmbiente.buscarDataAmbiente(), diasDeArmazenamento));
         query.executeUpdate();
     }
 }
