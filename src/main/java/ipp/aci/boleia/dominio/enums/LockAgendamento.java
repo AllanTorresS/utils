@@ -46,7 +46,8 @@ public enum LockAgendamento {
 	COBRANCA_CONECTCAR                              (ConstantesDuracao.DUAS_HORAS, ConstantesDuracao.DUAS_HORAS),
 	REEMBOLSO_CONECTCAR                             (ConstantesDuracao.DUAS_HORAS, ConstantesDuracao.DUAS_HORAS),
 	AVISO_DE_DEBITO_CONECTCAR                       (ConstantesDuracao.UMA_HORA, ConstantesDuracao.UM_SEGUNDO),
-	AVISO_DE_CREDITO_CONECTCAR                      (ConstantesDuracao.UMA_HORA, ConstantesDuracao.UM_SEGUNDO);
+	AVISO_DE_CREDITO_CONECTCAR                      (ConstantesDuracao.UMA_HORA, ConstantesDuracao.UM_SEGUNDO),
+	EXCLUSAO_DADOS_PESSOAIS_MOTORISTAS              (ConstantesDuracao.CINCO_MINUTO, ConstantesDuracao.UM_SEGUNDO);
 
 	private final long duracao;
     private final long duracaoMinima;
