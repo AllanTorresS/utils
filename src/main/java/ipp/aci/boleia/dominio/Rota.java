@@ -92,6 +92,9 @@ public class Rota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @Transient
     private Long quantidadePostos;
 
+    @OneToMany(mappedBy = "rota", fetch = FetchType.LAZY)
+    private List<RotaParametroFrota> rotaParametrosFrotas;
+
     @Override
     public Long getId() {
         return id;
@@ -189,5 +192,13 @@ public class Rota implements IPersistente, IExclusaoLogica, IPertenceFrota {
 
     public void setTipoCombustivel(TipoCombustivel tipoCombustivel) {
         this.tipoCombustivel = tipoCombustivel;
+    }
+
+    public List<RotaParametroFrota> getRotaParametrosFrotas() {
+        return rotaParametrosFrotas;
+    }
+
+    public void setRotaParametrosFrotas(List<RotaParametroFrota> rotaParametrosFrotas) {
+        this.rotaParametrosFrotas = rotaParametrosFrotas;
     }
 }

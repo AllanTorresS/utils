@@ -13,6 +13,7 @@ import ipp.aci.boleia.dominio.parametros.LogicaParametroPrecoMaximo;
 import ipp.aci.boleia.dominio.parametros.LogicaParametroProdutoAbastecido;
 import ipp.aci.boleia.dominio.parametros.LogicaParametroProdutosAdicionais;
 import ipp.aci.boleia.dominio.parametros.LogicaParametroVolumeAbastecido;
+import ipp.aci.boleia.util.i18n.IEnumComLabel;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -22,7 +23,7 @@ import java.util.List;
 /**
  * Enumera os possiveis parametros de sistema
  */
-public enum ParametroSistema {
+public enum ParametroSistema implements IEnumComLabel, IEnumComValor{
 
     VOLUME_ABASTECIDO                (1,  TipoRestritividade.RESTRITIVA, true,  true, Collections.singletonList(TipoPerfilUsuario.FROTA), EstruturaParametroSistema.SIMPLES, "parametro.sistema.volume.abastecido.nome", "parametro.sistema.volume.abastecido.descricao", LogicaParametroVolumeAbastecido.class),
     PRODUTO_ABASTECIMENTO            (2,  TipoRestritividade.RESTRITIVA, true,  false, Collections.singletonList(TipoPerfilUsuario.FROTA), EstruturaParametroSistema.PRODUTO_ABASTECIMENTO, "parametro.sistema.produto.abastecido.nome", "parametro.sistema.produto.abastecido.descricao", LogicaParametroProdutoAbastecido.class),
@@ -117,5 +118,15 @@ public enum ParametroSistema {
             }
         }
         return null;
+    }
+
+    @Override
+    public Integer getValue() {
+        return codigo;
+    }
+
+    @Override
+    public String getLabel() {
+        return nome;
     }
 }
