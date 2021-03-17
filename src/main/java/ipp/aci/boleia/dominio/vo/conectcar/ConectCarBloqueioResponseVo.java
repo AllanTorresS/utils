@@ -25,7 +25,7 @@ public class ConectCarBloqueioResponseVo {
 			return null;			
 		
 		for (ConectCarDadosResponseVo vo : dados) {
-			if (vo.getPlaca() != null && vo.getPlaca().replaceAll("-", "").equals(placa.replaceAll("-", ""))) {
+			if (vo.getPlaca() != null && vo.getPlaca().replaceAll("-", "").equalsIgnoreCase(placa.replaceAll("-", ""))) {
 				return vo;
 			}
 		}
@@ -39,7 +39,7 @@ public class ConectCarBloqueioResponseVo {
 			return null;			
 		
 		for (ConectCarDadosResponseVo vo : dados) {
-			if (vo.getPlaca() != null && vo.getPlaca().replaceAll("-", "").equals(placa.replaceAll("-", "")) && vo.getErros() != null && vo.getErros().size() > 0) {
+			if (vo.getPlaca() != null && vo.getPlaca().replaceAll("-", "").equalsIgnoreCase(placa.replaceAll("-", "")) && vo.getErros() != null && vo.getErros().size() > 0) {
 				for (ConectCarErroResponseVo voErro : vo.getErros()) {
 					return voErro.getMensagem();
 				}
