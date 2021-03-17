@@ -2,41 +2,48 @@ package ipp.aci.boleia.dominio.vo;
 
 import ipp.aci.boleia.dominio.pesquisa.comum.FiltroBasePeriodoPaginado;
 
-import java.util.Date;
+import java.util.List;
 
 /**
  * Filtro para pesquisa de transação consolidada
  */
 public class FiltroPesquisaFinanceiroVo extends FiltroBasePeriodoPaginado {
-
-    private Date de;
-    private Date ate;
     private EntidadeVo frota;
     private String razaoSocialFrota;
     private String cnpjFrota;
+    private EntidadeVo unidade;
+    private EntidadeVo empresaAgregada;
     private EntidadeVo pontoDeVenda;
     private String nomePontoDeVenda;
     private String cnpjPontoDeVenda;
+    private EnumVo statusCiclo;
+    private List<EnumVo> statusPagamento;
     private EmpresaUnidadeVo empresaUnidade;
-
-    public Date getDe(){
-        return de;
-    }
-
-    public void setDe(Date de) {
-        this.de = de;
-    }
-
-    public Date getAte() {
-        return ate;
-    }
-
-    public void setAte(Date ate) {
-        this.ate = ate;
-    }
+    private Long idCobranca;
+    private EnumVo statusIntegracao;
+    private List<EnumVo> listaStatusIntegracao;
+    private Long numeroDocumento;
+    private List<EnumVo> statusNotaFiscal;
+    
 
     public EntidadeVo getFrota() {
         return frota;
+    }
+
+    public EntidadeVo getUnidade() {
+        return unidade;
+    }
+
+    public void setUnidade(EntidadeVo unidade) {
+        this.unidade = unidade;
+    }
+
+    public EntidadeVo getEmpresaAgregada() {
+        return empresaAgregada;
+    }
+
+    public void setEmpresaAgregada(EntidadeVo empresaAgregada) {
+        this.empresaAgregada = empresaAgregada;
     }
 
     public void setFrota(EntidadeVo frota) {
@@ -89,6 +96,62 @@ public class FiltroPesquisaFinanceiroVo extends FiltroBasePeriodoPaginado {
 
     public void setEmpresaUnidade(EmpresaUnidadeVo empresaUnidade) {
         this.empresaUnidade = empresaUnidade;
+    }
+
+    public EnumVo getStatusCiclo() {
+        return statusCiclo;
+    }
+
+    public void setStatusCiclo(EnumVo statusCiclo) {
+        this.statusCiclo = statusCiclo;
+    }
+
+    public List<EnumVo> getStatusPagamento() {
+        return statusPagamento;
+    }
+
+    public void setStatusPagamento(List<EnumVo> statusPagamento) {
+        this.statusPagamento = statusPagamento;
+    }
+
+    public Long getIdCobranca() {
+        return idCobranca;
+    }
+
+    public void setIdCobranca(Long idCobranca) {
+        this.idCobranca = idCobranca;
+    }
+
+    public EnumVo getStatusIntegracao() {
+        return statusIntegracao;
+    }
+
+    public void setStatusIntegracao(EnumVo statusIntegracao) {
+        this.statusIntegracao = statusIntegracao;
+    }
+
+    public List<EnumVo> getListaStatusIntegracao() {
+        return listaStatusIntegracao;
+    }
+
+    public void setListaStatusIntegracao(List<EnumVo> listaStatusIntegracao) {
+        this.listaStatusIntegracao = listaStatusIntegracao;
+    }
+
+    public Long getNumeroDocumento() {
+        return numeroDocumento;
+    }
+
+    public void setNumeroDocumento(Long numeroDocumento) {
+        this.numeroDocumento = numeroDocumento;
+    }
+
+    public List<EnumVo> getStatusNotaFiscal() {
+        return statusNotaFiscal;
+    }
+
+    public void setStatusNotaFiscal(List<EnumVo> statusNotaFiscal) {
+        this.statusNotaFiscal = statusNotaFiscal;
     }
 }
 

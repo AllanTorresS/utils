@@ -50,7 +50,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static ipp.aci.boleia.util.UtilitarioFormatacaoData.formatarDataJSON;
+import static ipp.aci.boleia.util.UtilitarioFormatacaoData.formatarDataCurtaHifen;
 
 /**
  * Oferece funcionalidades para o cadastro de Notificacoes de Usuario
@@ -335,7 +335,7 @@ public class NotificacaoUsuarioSd {
     public void enviarNotificacaoCiclosEncerrados(Date dataEncerramento) {
         List<Usuario> usuarios = repositorioUsuarios.obterPorTipoPerfilGestor(TipoPerfilUsuario.INTERNO, true);
         enviarNotificacao(TipoSubcategoriaNotificacao.CICLO_ENCERRADO, usuarios,
-                formatarDataJSON(dataEncerramento), formatarDataJSON(dataEncerramento));
+                formatarDataCurtaHifen(dataEncerramento), formatarDataCurtaHifen(dataEncerramento), StatusTransacaoConsolidada.FECHADA.name());
     }
 
     /**
