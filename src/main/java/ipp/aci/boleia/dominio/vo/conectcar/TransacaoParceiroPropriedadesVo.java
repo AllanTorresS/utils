@@ -34,6 +34,9 @@ public class TransacaoParceiroPropriedadesVo {
 	@JsonProperty("TransacaoOrigemId")
 	private Long transacaoOrigemId;
 
+	@JsonProperty("RazaoSocialConveniado")
+	private String razaoSocialConveniado;
+	
 	@JsonProperty("IdentificacaoPraca")
 	private String identificacaoPraca;
 
@@ -95,6 +98,14 @@ public class TransacaoParceiroPropriedadesVo {
 
 	public void setTransacaoOrigemId(Long transacaoOrigemId) {
 		this.transacaoOrigemId = transacaoOrigemId;
+	}
+
+	public String getRazaoSocialConveniado() {
+		return razaoSocialConveniado;
+	}
+
+	public void setRazaoSocialConveniado(String razaoSocialConveniado) {
+		this.razaoSocialConveniado = razaoSocialConveniado;
 	}
 
 	public String getIdentificacaoPraca() {
