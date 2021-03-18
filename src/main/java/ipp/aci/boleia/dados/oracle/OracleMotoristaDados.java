@@ -17,6 +17,7 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
+import ipp.aci.boleia.dominio.vo.EntidadeVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaMotoristaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialMotoristaVo;
 import ipp.aci.boleia.dominio.vo.externo.FiltroPesquisaMotoristaExtVo;
@@ -334,5 +335,15 @@ public class OracleMotoristaDados extends OracleRepositorioBoleiaDados<Motorista
         filtro.setCpf(identificador);
         ResultadoPaginado<Motorista> resultadoBusca = pesquisar(filtro);
         return resultadoBusca.getTotalItems() > 0 ? resultadoBusca.getRegistros().stream().findFirst().get() : null;
+    }
+
+    @Override
+    public List<Motorista> obterPorUnidade(Long unidadeId) {
+        FiltroPesquisaMotoristaVo filtro = new FiltroPesquisaMotoristaVo();
+        EntidadeVo unidadeVo = new EntidadeVo(unidadeId, null);
+
+        filtro.setUnidade(unidadeVo);
+        ResultadoPaginado<Motorista> resultadoBusca = pesquisar(filtro);
+        return resultadoBusca.getTotalItems() > 0 ? resultadoBusca.getRegistros(): null;
     }
 }
