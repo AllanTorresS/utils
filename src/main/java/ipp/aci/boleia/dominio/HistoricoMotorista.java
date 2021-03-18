@@ -150,16 +150,6 @@ public class HistoricoMotorista implements IPersistente, IPertenceFrota, IPerten
     @Column(name = "ID_EXCLUIDO")
     private Boolean excluido;
 
-    @Column(name = "DS_TOKEN")
-    private String tokenCriptografado;
-
-    @Column(name = "DS_TOKEN_SALT")
-    private String saltTokenCriptografado;
-
-    @Column(name = "DT_EXP_TOKEN")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date dataExpiracaoToken;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_USUARIO_MOTORISTA")
     private UsuarioMotorista usuarioMotorista;
@@ -452,14 +442,6 @@ public class HistoricoMotorista implements IPersistente, IPertenceFrota, IPerten
         this.saltSenhaCriptografada = null;
     }
 
-    /**
-     * Metodo para apagar o soft Token
-     */
-    public void apagarSoftToken() {
-        this.tokenCriptografado = null;
-        this.saltTokenCriptografado = null;
-    }
-
     @Override
     @Transient
     public Motorista getMotorista() {
@@ -471,31 +453,7 @@ public class HistoricoMotorista implements IPersistente, IPertenceFrota, IPerten
     public List<Frota> getFrotas() {
         return Collections.singletonList(frota);
     }
-
-    public String getTokenCriptografado() {
-        return tokenCriptografado;
-    }
-
-    public void setTokenCriptografado(String tokenCriptografado) {
-        this.tokenCriptografado = tokenCriptografado;
-    }
-
-    public String getSaltTokenCriptografado() {
-        return saltTokenCriptografado;
-    }
-
-    public void setSaltTokenCriptografado(String saltTokenCriptografado) {
-        this.saltTokenCriptografado = saltTokenCriptografado;
-    }
-
-    public Date getDataExpiracaoToken() {
-        return dataExpiracaoToken;
-    }
-
-    public void setDataExpiracaoToken(Date dataExpiracaoToken) {
-        this.dataExpiracaoToken = dataExpiracaoToken;
-    }
-
+    
     public UsuarioMotorista getUsuarioMotorista() { return usuarioMotorista; }
 
     public void setUsuarioMotorista(UsuarioMotorista usuarioMotorista) { this.usuarioMotorista = usuarioMotorista; }

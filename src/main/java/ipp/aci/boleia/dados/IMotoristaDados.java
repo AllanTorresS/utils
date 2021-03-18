@@ -118,4 +118,10 @@ public interface IMotoristaDados extends IRepositorioBoleiaDados<Motorista> {
      * @return os motoristas encontrados
      */
     List<Motorista> pesquisarPorCpfNome(FiltroPesquisaParcialMotoristaVo filtro);
+
+    /**
+     * Pesquisa motoristas pela unidade
+     * @param unidadeId o id da unidade em questão
+     */
+    List<Motorista>  obterPorUnidade(Long unidadeId);
 }

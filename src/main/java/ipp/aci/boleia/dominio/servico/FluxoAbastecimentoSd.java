@@ -6,6 +6,7 @@ import ipp.aci.boleia.dados.IHistoricoFluxoAbastecimentoMotoristaDados;
 import ipp.aci.boleia.dominio.FluxoAbastecimentoFrotaConfig;
 import ipp.aci.boleia.dominio.FluxoAbastecimentoMotoristaConfig;
 import ipp.aci.boleia.dominio.HistoricoFluxoAbastecimentoMotoristaConfig;
+import ipp.aci.boleia.dominio.Motorista;
 import ipp.aci.boleia.dominio.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,15 +29,20 @@ public class FluxoAbastecimentoSd {
     /**
      * Remove Configuração de fluxo de abastecimento de motorista e registra alteração em histórico
      *
-     * @param fluxoAbastecimentoMotoristaConfig configuração de fluxo de abastecimento de motorista
+     * @param motoristaEntidade motorista com  configuração de fluxo de abastecimento
      * @param usuarioLogado usuario logado que realizou a alteração
      * @param dataAmbiente data atual da alteração
      */
-    public void excluirFluxoAbastecimentoMotorsita(FluxoAbastecimentoMotoristaConfig fluxoAbastecimentoMotoristaConfig, Usuario usuarioLogado, Date dataAmbiente) {
-        fluxoAbastecimentoMotoristaConfig.setExcluido(true);
-        repositorioFluxoMotorista.excluir(fluxoAbastecimentoMotoristaConfig.getId());
-        repositorioHistoricoFluxoMotorista.armazenar(
-                new HistoricoFluxoAbastecimentoMotoristaConfig(fluxoAbastecimentoMotoristaConfig, usuarioLogado, dataAmbiente ));
+    public void excluirFluxoAbastecimentoMotorista(Motorista motoristaEntidade, Usuario usuarioLogado, Date dataAmbiente) {
+        FluxoAbastecimentoMotoristaConfig fluxoAbastecimentoMotoristaconfigEntidade
+                = repositorioFluxoMotorista.obterFluxoPorMotorista(motoristaEntidade);
+
+        if (fluxoAbastecimentoMotoristaconfigEntidade != null){
+            fluxoAbastecimentoMotoristaconfigEntidade.setExcluido(true);
+            repositorioFluxoMotorista.excluir(fluxoAbastecimentoMotoristaconfigEntidade.getId());
+            repositorioHistoricoFluxoMotorista.armazenar(
+                    new HistoricoFluxoAbastecimentoMotoristaConfig(fluxoAbastecimentoMotoristaconfigEntidade, usuarioLogado, dataAmbiente ));
+        }
     }
 
 
