@@ -18,7 +18,7 @@ public class OracleSaldoVeiculoDados extends OracleRepositorioBoleiaDados<SaldoV
             "   s.veiculo in ( " +
             "     select v from Veiculo v" +
             "       where v.excluido = 0 and " +
-            "             v.agregado = " + ClassificacaoAgregado.PROPRIO + " ) ";
+            "             v.agregado = " + ClassificacaoAgregado.PROPRIO.getValue() + " ) ";
 
     /**
      * Instancia o repositorio
