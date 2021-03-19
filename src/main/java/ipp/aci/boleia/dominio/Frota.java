@@ -352,6 +352,9 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @Column(name="ID_SEM_NOTA_FISCAL")
     private Boolean semNotaFiscal;
 
+    @Column(name="ID_GERENCIA_NF")
+    private Boolean gerenciaNf;
+
     @Column(name = "DT_ACEITE_TERMOS")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataAceiteTermos;
@@ -1338,7 +1341,7 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     }
 
 
-    /**
+     /**
      * Verifica se frota tem parametro de ciclo para atualizar
      * @return true caso tenha novo parâmetro de ciclo
      */
@@ -1389,5 +1392,13 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
 
 	public void setLead(Lead lead) {
 		this.lead = lead;
-	}    
+	}
+
+    public Boolean isGerenciaNf() {
+        return gerenciaNf;
+    }
+
+    public void setGerenciaNf(Boolean gerenciaNf) {
+        this.gerenciaNf = gerenciaNf;
+    }
 }
