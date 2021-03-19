@@ -3,19 +3,16 @@ package ipp.aci.boleia.dominio.vo;
 import ipp.aci.boleia.dominio.FrotaParametroSistema;
 import ipp.aci.boleia.dominio.enums.ParametroSistema;
 import ipp.aci.boleia.dominio.enums.StatusExecucaoParametroSistema;
-import ipp.aci.boleia.util.excecao.Erro;
 
 /**
  * Modela o resultade de execucao de um parametro dinamico do sistema
  * @param <D> O contexto de execucao
  */
-public class ResultadoExecucaoParametroSistemaVo<D> {
+public class ResultadoExecucaoParametroSistemaVo<D> extends ResultadoExecucaoParametroSistemaBaseVo {
 
     private D dados;
     private FrotaParametroSistema parametro;
     private StatusExecucaoParametroSistema statusResultado = StatusExecucaoParametroSistema.SUCESSO;
-    private Erro codigoErro;
-    private String mensagemErro;
 
     /**
      * Construtor default
@@ -38,22 +35,6 @@ public class ResultadoExecucaoParametroSistemaVo<D> {
 
     public void setStatusResultado(StatusExecucaoParametroSistema statusResultado) {
         this.statusResultado = statusResultado;
-    }
-
-    public Erro getCodigoErro() {
-        return codigoErro;
-    }
-
-    public void setCodigoErro(Erro codigoErro) {
-        this.codigoErro = codigoErro;
-    }
-
-    public String getMensagemErro() {
-        return mensagemErro;
-    }
-
-    public void setMensagemErro(String mensagemErro) {
-        this.mensagemErro = mensagemErro;
     }
 
     public D getDados() {

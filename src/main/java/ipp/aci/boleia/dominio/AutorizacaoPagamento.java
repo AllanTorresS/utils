@@ -1685,6 +1685,45 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     }
 
     /**
+     * Calcula o consumo usando essa autorizacao pagamento como base usando valores parametrizados para estimar consumo.
+     * Usado para obter consumo estimado com base em valores externos ao abastecimento.
+     *
+     * @param litragem total de litros
+     * @param hodometro valor do hodometro
+     * @param horimetro valor do horimetro
+     * @return consumo tendo a autorizacao pagamento como base, relativo as valores parametrizados
+     */
+    @JsonIgnore
+    public BigDecimal obterConsumo(BigDecimal litragem, Long hodometro, BigDecimal horimetro) {
+        final BigDecimal diferencaHodometroHorimetro = obterDiferencaHodometroHorimetro(hodometro, horimetro);
+        return diferencaHodometroHorimetro == null || litragem == null ? null :
+                diferencaHodometroHorimetro.divide(litragem, 3, BigDecimal.ROUND_HALF_UP);
+    }
+
+    /**
+     * Obtem a diferenca de hodometro ou horimetro da autorizacao de pagamento com valores parametrizados.
+     * Usado para obter consumo estimado com base em valores externos ao abastecimento.
+     *
+     * @param novoHodometro valor do hodometro
+     * @param novoHorimetro valor do horimetro
+     * @return a diferenca de hodometro ou horimetro da autorizacao de pagamento em relacao aos valores parametrizados
+     */
+    @JsonIgnore
+    private BigDecimal obterDiferencaHodometroHorimetro(Long novoHodometro,BigDecimal novoHorimetro) {
+        if (novoHodometro != null) {
+            if (this.hodometro != null && this.hodometro != BigDecimal.ZERO.longValue()) {
+                return new BigDecimal(novoHodometro - this.hodometro);
+            }
+        }
+        if (novoHorimetro != null) {
+            if (this.horimetro != null && !this.horimetro.equals(BigDecimal.ZERO)) {
+                return novoHorimetro.subtract(this.horimetro);
+            }
+        }
+        return null;
+    }
+
+    /**
      * Informa a autorização de pagamento possui exigencia de NF para a Unidade.
      *
      * @return true, caso possua
