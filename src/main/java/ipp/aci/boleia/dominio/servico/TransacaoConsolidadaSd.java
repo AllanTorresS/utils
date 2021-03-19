@@ -559,6 +559,7 @@ public class TransacaoConsolidadaSd {
         tc.setModalidadePagamento(prePago ? ModalidadePagamento.PRE_PAGO.getValue() : ModalidadePagamento.POS_PAGO.getValue());
         tc.setFrotaPtov(frotaPtov);
         tc.setFrotaExigeNF(frotaPtov.getFrota().exigeNotaFiscal());
+        tc.setFrotaGerenciaNf(frotaPtov.getFrota().isGerenciaNf());
         if(empresaAgregada != null) {
             tc.setEmpresaAgregada(empresaAgregada);
         } else if(unidade != null) {

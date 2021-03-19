@@ -188,6 +188,9 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     @Column(name = "ID_FROTA_EXIGE_NF")
     private boolean frotaExigeNF;
 
+    @Column(name="ID_FROTA_GERENCIA_NF")
+    private Boolean frotaGerenciaNf;
+
     @Override
     public Long getId() {
         return id;
@@ -498,6 +501,14 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
 
     public void setFrotaExigeNF(boolean frotaExigeNF) {
         this.frotaExigeNF = frotaExigeNF;
+    }
+
+    public Boolean getFrotaGerenciaNf() {
+        return frotaGerenciaNf;
+    }
+
+    public void setFrotaGerenciaNf(Boolean frotaGerenciaNf) {
+        this.frotaGerenciaNf = frotaGerenciaNf;
     }
 
     /**
