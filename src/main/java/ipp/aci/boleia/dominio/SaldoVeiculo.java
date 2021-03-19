@@ -268,7 +268,7 @@ public class SaldoVeiculo implements IPersistente, IPertenceFrota {
     }
 
     /**
-     * Verifica se o saldo do veiculo é suficiente para a pre autorizacao
+     * Verifica se o saldo do veiculo é suficiente para a pre autorizacao, onde o saldo deve ser maior que ZERO.
      *
      * @param emLitros True se o montante estiver em litros
      * @param mensal True se a cota do veiculo eh mensal

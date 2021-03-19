@@ -2,6 +2,7 @@ package ipp.aci.boleia.dominio.enums;
 
 import ipp.aci.boleia.dominio.parametros.ITratadorViolacoesParametros;
 import ipp.aci.boleia.dominio.parametros.TratadorViolacoesParametrosAbastecimento;
+import ipp.aci.boleia.dominio.parametros.TratadorViolacoesParametrosPreAutorizacao;
 
 /**
  * Enumera os possiveis grupos de execucao de parametros de sistema
@@ -30,7 +31,29 @@ public enum GrupoExecucaoParametroSistema {
         ParametroSistema.CONSUMO_ESTIMADO,
         ParametroSistema.HODOMETRO_HORIMETRO),
 
-    AUTORIZACAO_PAGAMENTO_MANUAL(TratadorViolacoesParametrosAbastecimento.class);
+    AUTORIZACAO_PAGAMENTO_MANUAL(TratadorViolacoesParametrosAbastecimento.class),
+
+    PRE_AUTORIZACAO_FROTA(
+        TratadorViolacoesParametrosPreAutorizacao.class,
+        ParametroSistema.POSTOS_AUTORIZADOS_ABASTECIMENTO),
+
+    PRE_AUTORIZACAO_PLACA(
+        TratadorViolacoesParametrosPreAutorizacao.class,
+        ParametroSistema.HORARIOS_ABASTECIMENTO,
+        ParametroSistema.INTERVALO_ABASTECIMENTO,
+        ParametroSistema.COTA_VEICULO,
+        ParametroSistema.CREDITO_VEICULO_AGREGADO),
+
+    PRE_AUTORIZACAO_HODOMETRO_HORIMETRO(
+        TratadorViolacoesParametrosPreAutorizacao.class,
+        ParametroSistema.HODOMETRO_HORIMETRO,
+        ParametroSistema.INTERVALO_ABASTECIMENTO),
+
+    PRE_AUTORIZACAO_LITRAGEM(
+        TratadorViolacoesParametrosPreAutorizacao.class,
+        ParametroSistema.CONSUMO_ESTIMADO,
+        ParametroSistema.VOLUME_ABASTECIDO);
+
 
     private final Class<ITratadorViolacoesParametros<?>> tratadorViolacoes;
     private final ParametroSistema[] parametros;

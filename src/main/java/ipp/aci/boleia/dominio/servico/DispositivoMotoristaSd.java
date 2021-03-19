@@ -412,17 +412,15 @@ public class DispositivoMotoristaSd {
      * estiver ativo, verifica se há algum posto permitido para abastecimento próximo à localização do pedido.
      *
      * @param frota Frota do motorista
-     * @param restricaoPosto O parametro de autorizacao de abastecimento
      * @param ponto A localizacao
      * @param precisao Precisão da Localização do GPS
+     * @return A lista dos pontos de venda próximos habilitados
      * @throws ExcecaoValidacao Caso nao exista nenhum posto autorizado proximo
      */
-    public void validarPostoAutorizado(Frota frota, FrotaParametroSistema restricaoPosto, CoordenadaGeograficaVo ponto, BigDecimal precisao) throws ExcecaoValidacao {
+    public List<PontoDeVenda>  validarPostoAutorizado(Frota frota, CoordenadaGeograficaVo ponto, BigDecimal precisao) throws ExcecaoValidacao {
         List<PontoDeVenda> postosHabilitados = temPostoHabilitadoProximo(ponto, precisao, frota);
         validarPostosBloqueados(frota, postosHabilitados);
-        if (restricaoPosto != null) {
-            temPostoPermitidoProximo(restricaoPosto, postosHabilitados);
-        }
+        return postosHabilitados;
     }
 
     /**
@@ -431,6 +429,7 @@ public class DispositivoMotoristaSd {
      * @param frota Frota do motorista
      * @param postosHabilitados Lista de postos habilitados próximos ao motorista
      * @throws ExcecaoValidacao Exceção lançada caso possua algum posto bloqueado na lista dos habilitados
+     *
      */
     private void validarPostosBloqueados(Frota frota, List<PontoDeVenda> postosHabilitados) throws ExcecaoValidacao {
         List<PontoDeVenda> pvsBloqueados = postosHabilitados.stream().filter(pv -> frotaPontoVendaSd.validarBloqueio(frota.getId(), pv.getId())).collect(Collectors.toList());
@@ -452,7 +451,7 @@ public class DispositivoMotoristaSd {
      * @throws ExcecaoValidacao Quando não há nenhum posto dentro do raio de proximidade, ou nenhum habilitado.
      */
     private List<PontoDeVenda> temPostoHabilitadoProximo(CoordenadaGeograficaVo ponto, BigDecimal precisao, Frota frota) throws ExcecaoValidacao {
-        Double distancia = precisao != null && precisao.doubleValue() <= 250 ? 0.5 : 1.0;
+        double distancia = precisao != null && precisao.doubleValue() <= 250 ? 0.5 : 1.0;
         List<PontoDeVenda> postosProximos;
         FiltroPesquisaLocalizacaoVo filtro;
         filtro = new FiltroPesquisaLocalizacaoVo(ponto, distancia);
