@@ -76,14 +76,6 @@ public class HistoricoMotorista implements IPersistente, IPertenceFrota, IPerten
     @Column(name = "ID_STATUS")
     private Integer status;
 
-    @NotAudited
-    @Formula(StatusAtivacao.DECODE_FORMULA)
-    private String statusConvertido;
-
-    @NotAudited
-    @Formula(ClassificacaoAgregado.DECODE_FORMULA)
-    private String agregadoConvertido;
-
     @NotNull
     @Column(name = "ID_AGREGADO")
     private Integer agregado;
@@ -264,14 +256,6 @@ public class HistoricoMotorista implements IPersistente, IPertenceFrota, IPerten
 
     public void setStatus(Integer status) {
         this.status = status;
-    }
-
-    public String getAgregadoConvertido() {
-        return agregadoConvertido;
-    }
-
-    public void setAgregadoConvertido(String agregadoConvertido) {
-        this.agregadoConvertido = agregadoConvertido;
     }
 
     public String getNome() {
