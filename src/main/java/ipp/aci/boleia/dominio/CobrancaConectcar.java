@@ -112,6 +112,9 @@ public class CobrancaConectcar implements IPersistente, IPertenceFrota {
 
 	@Column(name = "NO_NF")
 	private Long numeroNotaFiscal;
+	
+	@Column(name = "DS_COD_VERIFICACAO_NF")
+	private String codVerificacaoNF;
 
 	@Override
 	public Long getId() {
@@ -329,6 +332,14 @@ public class CobrancaConectcar implements IPersistente, IPertenceFrota {
 
 	public void setNumeroPedido(Long numeroPedido) {
 		this.numeroPedido = numeroPedido;
+	}
+
+	public String getCodVerificacaoNF() {
+		return codVerificacaoNF;
+	}
+
+	public void setCodVerificacaoNF(String codVerificacaoNF) {
+		this.codVerificacaoNF = codVerificacaoNF;
 	}
 
 }
