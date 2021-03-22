@@ -1,5 +1,6 @@
 package ipp.aci.boleia.dominio.enums;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import ipp.aci.boleia.dominio.AutorizacaoPagamento;
 import ipp.aci.boleia.dominio.parametros.ILogicaParametroSistema;
@@ -61,7 +62,7 @@ public enum ParametroSistema {
     INTERVALO_ABASTECIMENTO(9, TipoRestritividade.VERSATIL, false, false, Collections.singletonList(TipoPerfilUsuario.FROTA), EstruturaParametroSistema.INTERVALO_ABASTECIMENTO, "parametro.sistema.intervalo.abastecimento.nome", "parametro.sistema.intervalo.abastecimento.descricao",
             ImmutableMap.of(AutorizacaoPagamento.class, LogicaParametroIntervaloAbastecimento.class,
                     PreAutorizacaoPedidoVo.class, LogicaParametroIntervaloAbastecimentoPreAutorizacao.class)),
-    POSTOS_AUTORIZADOS_ABASTECIMENTO(10, TipoRestritividade.VERSATIL, true, false, Arrays.asList(TipoPerfilUsuario.FROTA, TipoPerfilUsuario.INTERNO), EstruturaParametroSistema.POSTOS_AUTORIZADOS_ABASTECIMENTO, "parametro.sistema.postos.permitidos.nome", "parametro.sistema.postos.permitidos.descricao",
+    POSTOS_AUTORIZADOS_ABASTECIMENTO(10, TipoRestritividade.VERSATIL, true, false,  ImmutableList.of(TipoPerfilUsuario.FROTA, TipoPerfilUsuario.INTERNO), EstruturaParametroSistema.POSTOS_AUTORIZADOS_ABASTECIMENTO, "parametro.sistema.postos.permitidos.nome", "parametro.sistema.postos.permitidos.descricao",
             ImmutableMap.of(AutorizacaoPagamento.class, LogicaParametroPostosAutorizadosAbastecimento.class,
                     PreAutorizacaoPedidoVo.class, LogicaParametroPostosAutorizadosAbastecimentoPreAutorizacao.class)),
     CREDITO_VEICULO_AGREGADO(11, TipoRestritividade.VERSATIL, true, false, Collections.singletonList(TipoPerfilUsuario.FROTA), EstruturaParametroSistema.CREDITO_VEICULO_AGREGADO, "parametro.sistema.credito.veiculo.agregado.nome", "parametro.sistema.credito.veiculo.agregado.descricao",
