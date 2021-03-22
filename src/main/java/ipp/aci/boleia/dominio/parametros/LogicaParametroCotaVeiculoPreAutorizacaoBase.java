@@ -7,13 +7,16 @@ import ipp.aci.boleia.dominio.vo.ContextoExecucaoParametroSistemaVo;
 import ipp.aci.boleia.dominio.vo.PreAutorizacaoPedidoVo;
 import ipp.aci.boleia.dominio.vo.ResultadoExecucaoParametroSistemaVo;
 import ipp.aci.boleia.util.excecao.Erro;
-import org.springframework.stereotype.Component;
+import ipp.aci.boleia.util.i18n.Mensagens;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Implementa a logica de verificaca das cotas de abastecimento dos veiculos para a pre-autorizacao.
  */
-@Component
-public class LogicaParametroCotaVeiculoPreAutorizacao extends LogicaParametroCotaVeiculoPreAutorizacaoBase {
+public abstract class LogicaParametroCotaVeiculoPreAutorizacaoBase implements ILogicaParametroSistema<PreAutorizacaoPedidoVo> {
+
+    @Autowired
+    protected Mensagens mensagens;
 
     @Override
     public ResultadoExecucaoParametroSistemaVo<PreAutorizacaoPedidoVo> executar(ContextoExecucaoParametroSistemaVo<PreAutorizacaoPedidoVo> contexto, FrotaParametroSistema frotaParam) {
@@ -22,7 +25,7 @@ public class LogicaParametroCotaVeiculoPreAutorizacao extends LogicaParametroCot
         ResultadoExecucaoParametroSistemaVo<PreAutorizacaoPedidoVo> resultado = new ResultadoExecucaoParametroSistemaVo<>(pedidoCota);
         Veiculo veiculo = pedidoCota.getVeiculo();
 
-        if (aplicarRegraAoVeiculo(veiculo) && frotaParam.getCotaVeiculoVisivelMotorista() &&  veiculo.getSaldoVeiculo() != null) {
+        if (aplicarRegraAoVeiculo(veiculo) && frotaParam.getCotaVeiculoVisivelMotorista() && veiculo.getSaldoVeiculo() != null) {
             boolean cotaMensal = frotaParam.getCotaVeiculoPorAbastecimento() == null || !frotaParam.getCotaVeiculoPorAbastecimento();
             boolean cotaEmLitros = frotaParam.getEmLitros() != null && frotaParam.getEmLitros();
             if (!veiculo.getSaldoVeiculo().isSaldoSuficienteParaPreAutorizar(cotaEmLitros, cotaMensal)) {
@@ -35,7 +38,5 @@ public class LogicaParametroCotaVeiculoPreAutorizacao extends LogicaParametroCot
         return resultado;
     }
 
-    protected boolean aplicarRegraAoVeiculo(Veiculo veiculo) {
-        return veiculo.isProprio();
-    }
+    protected abstract boolean aplicarRegraAoVeiculo(Veiculo veiculo);
 }
