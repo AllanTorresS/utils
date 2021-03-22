@@ -1798,7 +1798,7 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
      * @return valor calculado
      */
     @Transient
-    public String obtemValorTotalProdutoServico() {
+    public BigDecimal obtemValorTotalProdutoServico() {
         if(this.getItems() != null
                 && this.getItems().stream()
                 .anyMatch(i -> TipoItemAutorizacaoPagamento.PRODUTO_SERVICO.getValue().equals(i.getTipoItem())
@@ -1810,7 +1810,7 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
                     .map(ItemAutorizacaoPagamento::getValorTotal)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-            return UtilitarioFormatacao.formatarDecimalMoedaReal(valorTotal,2,4);
+            return valorTotal;
         }
         return null;
     }
@@ -1820,7 +1820,7 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
      * @return valor calculado
      */
     @Transient
-    public String obtemValorTotalAbastecimento() {
+    public BigDecimal obtemValorTotalAbastecimento() {
         if(this.getItems() != null
             && this.getItems().stream()
                 .anyMatch(i -> TipoItemAutorizacaoPagamento.ABASTECIMENTO.getValue().equals(i.getTipoItem())
@@ -1832,7 +1832,7 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
                     .map(ItemAutorizacaoPagamento::getValorTotal)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-            return UtilitarioFormatacao.formatarDecimalMoedaReal(valorTotal,2,4);
+            return valorTotal;
         }
         return null;
     }
