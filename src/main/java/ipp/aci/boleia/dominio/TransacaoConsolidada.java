@@ -611,6 +611,16 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     }
 
     /**
+     * Informa se é a transação consolidada é passível de emissão de nota fiscal.
+     *
+     * @return true, caso seja.
+     */
+    @Transient
+    public boolean isPassivelDeEmissao() {
+        return exigeEmissaoNF() || frotaGerenciaNf != null && frotaGerenciaNf;
+    }
+
+    /**
      * Retorna uma lista com todas as autorizações de pagamento associadas a transação consolidada.
      *
      * @return lista de autorizações de pagamento.
