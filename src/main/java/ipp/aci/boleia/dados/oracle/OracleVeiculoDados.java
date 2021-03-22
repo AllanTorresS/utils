@@ -85,7 +85,7 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
                 ") " +
         "       OR (ps.parametroSistema = " + ParametroSistema.CREDITO_VEICULO_AGREGADO.getCodigo() +
         "           and v.agregado = " + ClassificacaoAgregado.AGREGADO.getValue() + ")" +
-                "   (sv.cotaValor > 0 AND NOT sv.cotaValor IS NULL) ) ";
+                "   and (sv.cotaValor > 0 AND NOT sv.cotaValor IS NULL) ) ";
 
     /**
      * Instancia o repositorio
