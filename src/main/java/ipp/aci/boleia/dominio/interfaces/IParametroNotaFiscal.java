@@ -38,6 +38,6 @@ public interface IParametroNotaFiscal {
      * Verifica se todos os campos estão nulos
      * @return true se positivo
      */
-    boolean isTodosCamposNulos();
+    boolean isParametroDeFrotaUnidadesSemExigenciaNotaFiscal();
 
 }

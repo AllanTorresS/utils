@@ -159,7 +159,7 @@ public class HistoricoParametroNotaFiscal implements IPersistente, IParametroNot
 
     @Transient
     @Override
-    public boolean isTodosCamposNulos(){
+    public boolean isParametroDeFrotaUnidadesSemExigenciaNotaFiscal(){
         return this.localDestino == null && this.separarPorCombustivelProdutoServico == null
                 && nfTipoAgrupamento == null && this.dadosAdicionais == null && this.unidadeLocalDestinoPadrao == null;
     }
