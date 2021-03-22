@@ -617,7 +617,7 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
      */
     @Transient
     public boolean isPassivelDeEmissao() {
-        return exigeEmissaoNF() || frotaGerenciaNf;
+        return exigeEmissaoNF() || (frotaGerenciaNf != null && frotaGerenciaNf);
     }
     /**
      * Retorna uma lista com todas as autorizações de pagamento associadas a transação consolidada.
