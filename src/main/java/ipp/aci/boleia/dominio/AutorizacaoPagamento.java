@@ -18,7 +18,6 @@ import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
 import ipp.aci.boleia.dominio.interfaces.IPertenceMotorista;
 import ipp.aci.boleia.dominio.interfaces.IPertenceRevendedor;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
-import ipp.aci.boleia.util.UtilitarioFormatacao;
 import org.hibernate.annotations.Formula;
 import org.hibernate.envers.AuditJoinTable;
 import org.hibernate.envers.Audited;
