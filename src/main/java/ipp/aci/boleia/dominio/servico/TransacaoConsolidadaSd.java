@@ -674,7 +674,7 @@ public class TransacaoConsolidadaSd {
         //Verifica se o consolidado atende as condicoes para ter statusNF EMITIDA
         //Caso atenda, seta o status como EMITIDA
         //Caso nao atenda, seta o status como PARCIALMENTE_EMITIDA ou PENDENTE
-        if ((valorNotasMaiorZero && todosAbastPossuemNotaEmitidaOuJustificativa) || !transacaoConsolidada.exigeEmissaoNF()) {
+        if ((valorNotasMaiorZero && todosAbastPossuemNotaEmitidaOuJustificativa) || (!transacaoConsolidada.isPassivelDeEmissao())) {
             transacaoConsolidada.setStatusNotaFiscal(StatusNotaFiscal.EMITIDA.getValue());
         } else if(transacaoConsolidada.esta(FECHADA) && possuiValorEmitido && possuiValorASerEmitido) {
             transacaoConsolidada.setStatusNotaFiscal(StatusNotaFiscal.PARCIALMENTE_EMITIDA.getValue());
