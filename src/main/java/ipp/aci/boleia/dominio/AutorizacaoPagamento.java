@@ -1804,13 +1804,13 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
                 .anyMatch(i -> TipoItemAutorizacaoPagamento.PRODUTO_SERVICO.getValue().equals(i.getTipoItem())
                         && i.getValorTotal() != null)) {
 
-            return UtilitarioFormatacao.formatarDecimalMoedaReal(
-                    this.getItems().stream()
-                            .filter(i -> TipoItemAutorizacaoPagamento.PRODUTO_SERVICO.getValue().equals(i.getTipoItem())
-                                    && i.getValorTotal() != null)
-                            .map(ItemAutorizacaoPagamento::getValorTotal)
-                            .reduce(BigDecimal.ZERO, BigDecimal::add)
-            );
+            BigDecimal valorTotal = this.getItems().stream()
+                    .filter(i -> TipoItemAutorizacaoPagamento.PRODUTO_SERVICO.getValue().equals(i.getTipoItem())
+                            && i.getValorTotal() != null)
+                    .map(ItemAutorizacaoPagamento::getValorTotal)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            return UtilitarioFormatacao.formatarDecimalMoedaReal(valorTotal,2,4);
         }
         return null;
     }
@@ -1825,13 +1825,14 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
             && this.getItems().stream()
                 .anyMatch(i -> TipoItemAutorizacaoPagamento.ABASTECIMENTO.getValue().equals(i.getTipoItem())
                         && i.getValorTotal() != null)) {
-            return UtilitarioFormatacao.formatarDecimalMoedaReal(
-                    this.getItems().stream()
-                            .filter(i -> TipoItemAutorizacaoPagamento.ABASTECIMENTO.getValue().equals(i.getTipoItem())
-                                    && i.getValorTotal() != null)
-                            .map(ItemAutorizacaoPagamento::getValorTotal)
-                            .reduce(BigDecimal.ZERO, BigDecimal::add)
-            );
+
+            BigDecimal valorTotal = this.getItems().stream()
+                    .filter(i -> TipoItemAutorizacaoPagamento.ABASTECIMENTO.getValue().equals(i.getTipoItem())
+                            && i.getValorTotal() != null)
+                    .map(ItemAutorizacaoPagamento::getValorTotal)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            return UtilitarioFormatacao.formatarDecimalMoedaReal(valorTotal,2,4);
         }
         return null;
     }

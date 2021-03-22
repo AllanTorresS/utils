@@ -34,4 +34,10 @@ public interface IParametroNotaFiscal {
      */
     boolean isDestinoNotaFiscalNoLocalDoAbastecimento();
 
+    /**
+     * Verifica se todos os campos estão nulos
+     * @return true se positivo
+     */
+    boolean isTodosCamposNulos();
+
 }

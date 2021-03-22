@@ -156,4 +156,11 @@ public class HistoricoParametroNotaFiscal implements IPersistente, IParametroNot
         return LocalDestinoPadroNfe.ABASTECIMENTO.getValue()
                 .equals(this.getLocalDestino());
     }
+
+    @Transient
+    @Override
+    public boolean isTodosCamposNulos(){
+        return this.localDestino == null && this.separarPorCombustivelProdutoServico == null
+                && nfTipoAgrupamento == null && this.dadosAdicionais == null && this.unidadeLocalDestinoPadrao == null;
+    }
 }
