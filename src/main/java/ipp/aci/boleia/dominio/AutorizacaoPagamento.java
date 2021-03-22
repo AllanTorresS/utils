@@ -1677,8 +1677,14 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     @JsonIgnore
     public BigDecimal obterConsumo() {
         final BigDecimal diferencaHodometroHorimetro = obterDiferencaHodometroHorimetro();
-        return diferencaHodometroHorimetro == null || totalLitrosAbastecimento == null ? null :
-            diferencaHodometroHorimetro.divide(totalLitrosAbastecimento, 3, BigDecimal.ROUND_HALF_UP);
+        boolean usaHodometro = hodometro != null;
+        if (diferencaHodometroHorimetro != null && totalLitrosAbastecimento != null) {
+            return usaHodometro
+                    ? diferencaHodometroHorimetro.divide(totalLitrosAbastecimento, 3, BigDecimal.ROUND_HALF_UP)
+                    : totalLitrosAbastecimento.divide(diferencaHodometroHorimetro, 3, BigDecimal.ROUND_HALF_UP);
+        }
+
+        return null;
     }
 
     /**
