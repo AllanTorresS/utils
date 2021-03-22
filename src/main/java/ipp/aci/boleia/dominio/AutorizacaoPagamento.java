@@ -18,7 +18,6 @@ import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
 import ipp.aci.boleia.dominio.interfaces.IPertenceMotorista;
 import ipp.aci.boleia.dominio.interfaces.IPertenceRevendedor;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
-import ipp.aci.boleia.util.UtilitarioFormatacao;
 import org.hibernate.annotations.Formula;
 import org.hibernate.envers.AuditJoinTable;
 import org.hibernate.envers.Audited;
@@ -1798,19 +1797,19 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
      * @return valor calculado
      */
     @Transient
-    public String obtemValorTotalProdutoServico() {
+    public BigDecimal obtemValorTotalProdutoServico() {
         if(this.getItems() != null
                 && this.getItems().stream()
                 .anyMatch(i -> TipoItemAutorizacaoPagamento.PRODUTO_SERVICO.getValue().equals(i.getTipoItem())
                         && i.getValorTotal() != null)) {
 
-            return UtilitarioFormatacao.formatarDecimalMoedaReal(
-                    this.getItems().stream()
-                            .filter(i -> TipoItemAutorizacaoPagamento.PRODUTO_SERVICO.getValue().equals(i.getTipoItem())
-                                    && i.getValorTotal() != null)
-                            .map(ItemAutorizacaoPagamento::getValorTotal)
-                            .reduce(BigDecimal.ZERO, BigDecimal::add)
-            );
+            BigDecimal valorTotal = this.getItems().stream()
+                    .filter(i -> TipoItemAutorizacaoPagamento.PRODUTO_SERVICO.getValue().equals(i.getTipoItem())
+                            && i.getValorTotal() != null)
+                    .map(ItemAutorizacaoPagamento::getValorTotal)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            return valorTotal;
         }
         return null;
     }
@@ -1820,18 +1819,19 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
      * @return valor calculado
      */
     @Transient
-    public String obtemValorTotalAbastecimento() {
+    public BigDecimal obtemValorTotalAbastecimento() {
         if(this.getItems() != null
             && this.getItems().stream()
                 .anyMatch(i -> TipoItemAutorizacaoPagamento.ABASTECIMENTO.getValue().equals(i.getTipoItem())
                         && i.getValorTotal() != null)) {
-            return UtilitarioFormatacao.formatarDecimalMoedaReal(
-                    this.getItems().stream()
-                            .filter(i -> TipoItemAutorizacaoPagamento.ABASTECIMENTO.getValue().equals(i.getTipoItem())
-                                    && i.getValorTotal() != null)
-                            .map(ItemAutorizacaoPagamento::getValorTotal)
-                            .reduce(BigDecimal.ZERO, BigDecimal::add)
-            );
+
+            BigDecimal valorTotal = this.getItems().stream()
+                    .filter(i -> TipoItemAutorizacaoPagamento.ABASTECIMENTO.getValue().equals(i.getTipoItem())
+                            && i.getValorTotal() != null)
+                    .map(ItemAutorizacaoPagamento::getValorTotal)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            return valorTotal;
         }
         return null;
     }

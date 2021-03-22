@@ -163,4 +163,11 @@ public class ParametroNotaFiscal implements IPersistente, IParametroNotaFiscal {
         return LocalDestinoPadroNfe.ABASTECIMENTO.getValue()
                 .equals(this.getLocalDestino());
     }
+
+    @Transient
+    @Override
+    public boolean isParametroDeFrotaUnidadesSemExigenciaNotaFiscal(){
+        return this.localDestino == null && this.separarPorCombustivelProdutoServico == null
+                && nfTipoAgrupamento == null && this.dadosAdicionais == null && this.unidadeLocalDestinoPadrao == null;
+    }
 }
