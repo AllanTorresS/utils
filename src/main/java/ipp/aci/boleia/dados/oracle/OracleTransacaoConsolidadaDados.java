@@ -1061,7 +1061,14 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         parametros.add(parametroEmpresaAgregadaExigeNf);
         parametros.add(parametroUnidadeExigeNf);
         if(frotaExigeNF != null) {
-            parametros.add(new ParametroPesquisaIgual("frotaExigeNF", frotaExigeNF));
+            if(frota.isGerenciaNf() == null){
+                parametros.add(new ParametroPesquisaIgual("frotaExigeNF", frotaExigeNF));
+            }else if(frota.isGerenciaNf()){
+                parametros.add(new ParametroPesquisaAnd(
+                        new ParametroPesquisaIgual("frotaExigeNF", frotaExigeNF),
+                        new ParametroPesquisaIgual("frotaGerenciaNf", frota.isGerenciaNf())
+                ));
+            }
         }
         return pesquisarUnico(parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
