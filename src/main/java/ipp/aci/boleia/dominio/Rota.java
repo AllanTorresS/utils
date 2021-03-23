@@ -95,6 +95,12 @@ public class Rota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @OneToMany(mappedBy = "rota", fetch = FetchType.LAZY)
     private List<RotaParametroFrota> rotaParametrosFrotas;
 
+    @Column(name = "ID_POSTO_URBANO")
+    private Boolean postoUrbano;
+
+    @Column(name = "ID_IDA_VOLTA")
+    private Boolean idaVolta;
+
     @Override
     public Long getId() {
         return id;
@@ -200,5 +206,21 @@ public class Rota implements IPersistente, IExclusaoLogica, IPertenceFrota {
 
     public void setRotaParametrosFrotas(List<RotaParametroFrota> rotaParametrosFrotas) {
         this.rotaParametrosFrotas = rotaParametrosFrotas;
+    }
+
+    public Boolean getPostoUrbano() {
+        return postoUrbano;
+    }
+
+    public void setPostoUrbano(Boolean postoUrbano) {
+        this.postoUrbano = postoUrbano;
+    }
+
+    public Boolean getIdaVolta() {
+        return idaVolta;
+    }
+
+    public void setIdaVolta(Boolean idaVolta) {
+        this.idaVolta = idaVolta;
     }
 }
