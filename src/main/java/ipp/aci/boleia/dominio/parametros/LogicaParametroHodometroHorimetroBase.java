@@ -44,6 +44,7 @@ public abstract class LogicaParametroHodometroHorimetroBase  {
             Integer capacidade = veiculo.getCapacidadeTanque();
             BigDecimal consumoEstimado = veiculo.getConsumoEstimadoLitro();
             BigDecimal tolerancia = new BigDecimal(configs.buscarConfiguracoes(ChaveConfiguracaoSistema.TOLERANCIA_HODOMETRO_HORIMETRO).getParametro());
+            Erro codigoErro;
             if (isParamAtivoVeiculo(frotaParam, veiculo)) {
                 BigDecimal anterior;
                 BigDecimal atual;
@@ -53,17 +54,19 @@ public abstract class LogicaParametroHodometroHorimetroBase  {
                         anterior = new BigDecimal(veiculo.getHodometro() != null ? veiculo.getHodometro() : 0L);
                         atual = BigDecimal.valueOf(hodometro);
                         variacaoEsperada = BigDecimal.valueOf(capacidade.longValue()).multiply(consumoEstimado);
+                        codigoErro = Erro.ERRO_AUTORIZACAO_HODOMETRO_LIMITE;
                     } else {
                         anterior = veiculo.getHorimetro() != null ? veiculo.getHorimetro() : BigDecimal.ZERO;
                         atual = horimetro;
                         variacaoEsperada = BigDecimal.valueOf(capacidade.longValue()).divide(consumoEstimado, 3, BigDecimal.ROUND_HALF_UP);
+                        codigoErro = Erro.ERRO_AUTORIZACAO_HORIMETRO_LIMITE;
                     }
                     if (anterior.compareTo(BigDecimal.ZERO) != 0) {
                         variacaoEsperada = variacaoEsperada.add(variacaoEsperada.multiply(tolerancia));
                         BigDecimal maxEsperado = anterior.add(variacaoEsperada);
                         if (atual.compareTo(maxEsperado) > 0) {
                             resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
-                            resultado.setCodigoErro(Erro.ERRO_HODOMETRO_HORIMETRO_INVALIDO);
+                            resultado.setCodigoErro(codigoErro);
                             resultado.setMensagemErro(mensagens.obterMensagem("parametro.sistema.erro.abastecimento.limite.hodometro.horimetro", UtilitarioFormatacao.formatarPlacaVeiculo(veiculo.getPlaca())));
                         }
                     }

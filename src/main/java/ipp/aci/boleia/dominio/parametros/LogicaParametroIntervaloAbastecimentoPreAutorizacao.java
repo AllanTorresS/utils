@@ -22,4 +22,14 @@ public class LogicaParametroIntervaloAbastecimentoPreAutorizacao extends LogicaP
         this.executarValidacao(veiculo, pedidoHodometroHorimetro.getDataCriacao(), pedidoHodometroHorimetro.getHodometro(), frotaParam, resultado);
         return resultado;
     }
+
+    @Override
+    public String obterMensagemErro(String placa, long diferenca) {
+        return mensagens.obterMensagem("parametro.sistema.erro.abastecimento.intervalo.preautorizacao", diferenca);
+    }
+
+    @Override
+    public String obterMensagemErroKm(String placa, long diferenca) {
+        return mensagens.obterMensagem("parametro.sistema.erro.abastecimento.intervalo.preautorizacao", diferenca);
+    }
 }

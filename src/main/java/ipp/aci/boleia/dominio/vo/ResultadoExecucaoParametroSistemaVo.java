@@ -12,7 +12,6 @@ public class ResultadoExecucaoParametroSistemaVo<D> extends ResultadoExecucaoPar
 
     private D dados;
     private FrotaParametroSistema parametro;
-    private StatusExecucaoParametroSistema statusResultado = StatusExecucaoParametroSistema.SUCESSO;
 
     /**
      * Construtor default
@@ -27,14 +26,6 @@ public class ResultadoExecucaoParametroSistemaVo<D> extends ResultadoExecucaoPar
      */
     public ResultadoExecucaoParametroSistemaVo(D dados) {
         this.dados = dados;
-    }
-
-    public StatusExecucaoParametroSistema getStatusResultado() {
-        return statusResultado;
-    }
-
-    public void setStatusResultado(StatusExecucaoParametroSistema statusResultado) {
-        this.statusResultado = statusResultado;
     }
 
     public D getDados() {

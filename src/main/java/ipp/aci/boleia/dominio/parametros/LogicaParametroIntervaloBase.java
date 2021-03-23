@@ -20,7 +20,7 @@ import java.util.Date;
 public abstract class LogicaParametroIntervaloBase {
 
     @Autowired
-    private Mensagens mensagens;
+    protected Mensagens mensagens;
 
     @Autowired
     private IAutorizacaoPagamentoDados repositorioAutorizacao;
@@ -50,7 +50,8 @@ public abstract class LogicaParametroIntervaloBase {
                         if (decorrido < minimoMinutos) {
                             resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
                             resultado.setCodigoErro(Erro.ERRO_AUTORIZACAO_INTERVALO_PERMITIDO_HORAS);
-                            resultado.setMensagemErro(mensagens.obterMensagem("parametro.sistema.erro.abastecimento.intervalo", UtilitarioFormatacao.formatarPlacaVeiculo(veiculo.getPlaca())));
+                            String mensagemErro = obterMensagemErro(UtilitarioFormatacao.formatarPlacaVeiculo(veiculo.getPlaca()), decorrido);
+                            resultado.setMensagemErro(mensagemErro);
                         }
                     }
                     if(hodometro != null && hodometro > 0 && ((intervalo != null && intervalo.getQuilometrosIntervaloAbastecimento() != null && intervalo.getQuilometrosIntervaloAbastecimento() > 0) ||
@@ -61,13 +62,18 @@ public abstract class LogicaParametroIntervaloBase {
                         if (diferenca < minimoKm) {
                             resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
                             resultado.setCodigoErro(Erro.ERRO_AUTORIZACAO_INTERVALO_PERMITIDO_KM);
-                            resultado.setMensagemErro(mensagens.obterMensagem("parametro.sistema.erro.abastecimento.intervaloKm", UtilitarioFormatacao.formatarPlacaVeiculo(veiculo.getPlaca())));
+                            String mensagemErro = obterMensagemErroKm( UtilitarioFormatacao.formatarPlacaVeiculo(veiculo.getPlaca()), diferenca);
+                            resultado.setMensagemErro(mensagemErro);
                         }
                     }
                 }
             }
         }
     }
+
+    public abstract String obterMensagemErro(String placa, long diferenca);
+
+    public abstract String obterMensagemErroKm(String placa, long diferenca);
 
     /**
      * Obtem a configuracao para o veiculo em questao
