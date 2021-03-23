@@ -6,7 +6,7 @@
 
     <groupId>ipp.aci.boleia</groupId>
     <artifactId>boleia-dominioUtil</artifactId>
-    <version>4.10.3</version>
+    <version>4.10.3-0-roteirizador-SHAPSHOT</version>
 
     <properties>
         <main.basedir>${project.basedir}</main.basedir>
