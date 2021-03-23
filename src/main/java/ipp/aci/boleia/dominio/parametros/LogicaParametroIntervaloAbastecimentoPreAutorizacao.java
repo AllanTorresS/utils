@@ -24,12 +24,12 @@ public class LogicaParametroIntervaloAbastecimentoPreAutorizacao extends LogicaP
     }
 
     @Override
-    public String obterMensagemErro(String placa, long diferenca) {
-        return mensagens.obterMensagem("parametro.sistema.erro.abastecimento.intervalo.preautorizacao", diferenca);
+    public String obterMensagemErro(String placa, long restante) {
+        return mensagens.obterMensagem("parametro.sistema.erro.abastecimento.intervalo.preautorizacao", restante);
     }
 
     @Override
-    public String obterMensagemErroKm(String placa, long diferenca) {
-        return mensagens.obterMensagem("parametro.sistema.erro.abastecimento.intervalo.preautorizacao", diferenca);
+    public String obterMensagemErroKm(String placa, long restante) {
+        return mensagens.obterMensagem("parametro.sistema.erro.abastecimento.intervalo.preautorizacao", restante);
     }
 }

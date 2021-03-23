@@ -50,7 +50,7 @@ public abstract class LogicaParametroIntervaloBase {
                         if (decorrido < minimoMinutos) {
                             resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
                             resultado.setCodigoErro(Erro.ERRO_AUTORIZACAO_INTERVALO_PERMITIDO_HORAS);
-                            String mensagemErro = obterMensagemErro(UtilitarioFormatacao.formatarPlacaVeiculo(veiculo.getPlaca()), decorrido);
+                            String mensagemErro = obterMensagemErro(UtilitarioFormatacao.formatarPlacaVeiculo(veiculo.getPlaca()), minimoMinutos - decorrido);
                             resultado.setMensagemErro(mensagemErro);
                         }
                     }
@@ -62,7 +62,7 @@ public abstract class LogicaParametroIntervaloBase {
                         if (diferenca < minimoKm) {
                             resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
                             resultado.setCodigoErro(Erro.ERRO_AUTORIZACAO_INTERVALO_PERMITIDO_KM);
-                            String mensagemErro = obterMensagemErroKm( UtilitarioFormatacao.formatarPlacaVeiculo(veiculo.getPlaca()), diferenca);
+                            String mensagemErro = obterMensagemErroKm( UtilitarioFormatacao.formatarPlacaVeiculo(veiculo.getPlaca()), minimoKm - diferenca);
                             resultado.setMensagemErro(mensagemErro);
                         }
                     }
@@ -71,9 +71,9 @@ public abstract class LogicaParametroIntervaloBase {
         }
     }
 
-    public abstract String obterMensagemErro(String placa, long diferenca);
+    public abstract String obterMensagemErro(String placa, long restante);
 
-    public abstract String obterMensagemErroKm(String placa, long diferenca);
+    public abstract String obterMensagemErroKm(String placa, long restante);
 
     /**
      * Obtem a configuracao para o veiculo em questao
