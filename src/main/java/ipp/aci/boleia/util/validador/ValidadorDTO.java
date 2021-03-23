@@ -145,7 +145,6 @@ public class ValidadorDTO {
         if (mensagensErro.length() > 0) {
             throw new ExcecaoValidacao(Erro.ERRO_VALIDACAO, mensagensErro.toString());
         }
-
     }
 
     /**
