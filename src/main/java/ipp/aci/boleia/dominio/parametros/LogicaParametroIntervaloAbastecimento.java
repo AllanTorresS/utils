@@ -29,11 +29,11 @@ public class LogicaParametroIntervaloAbastecimento extends LogicaParametroInterv
 
     @Override
     public String obterMensagemErro(String placa, long diferenca) {
-        return mensagens.obterMensagem("parametro.sistema.erro.abastecimento.intervalo", placa, diferenca);
+        return mensagens.obterMensagem("parametro.sistema.erro.abastecimento.intervalo", placa);
     }
 
     @Override
     public String obterMensagemErroKm(String placa, long diferenca) {
-        return mensagens.obterMensagem("parametro.sistema.erro.abastecimento.intervaloKm", placa, diferenca);
+        return mensagens.obterMensagem("parametro.sistema.erro.abastecimento.intervaloKm", placa);
     }
 }
