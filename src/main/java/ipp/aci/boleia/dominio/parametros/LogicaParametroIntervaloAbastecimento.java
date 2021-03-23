@@ -6,7 +6,6 @@ import ipp.aci.boleia.dominio.FrotaParametroSistema;
 import ipp.aci.boleia.dominio.Veiculo;
 import ipp.aci.boleia.dominio.vo.ContextoExecucaoParametroSistemaVo;
 import ipp.aci.boleia.dominio.vo.ResultadoExecucaoParametroSistemaVo;
-import ipp.aci.boleia.util.i18n.Mensagens;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,9 +14,6 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class LogicaParametroIntervaloAbastecimento extends LogicaParametroIntervaloBase implements ILogicaParametroSistema<AutorizacaoPagamento> {
-
-    @Autowired
-    private Mensagens mensagens;
 
     @Autowired
     private IAutorizacaoPagamentoDados repositorioAutorizacao;
@@ -29,5 +25,15 @@ public class LogicaParametroIntervaloAbastecimento extends LogicaParametroInterv
         Veiculo veiculo = autorizacao.getVeiculo();
         this.executarValidacao(veiculo, autorizacao.getDataRequisicao(),autorizacao.getHodometro(), frotaParam, resultado);
         return resultado;
+    }
+
+    @Override
+    public String obterMensagemErro(String placa, long diferenca) {
+        return mensagens.obterMensagem("parametro.sistema.erro.abastecimento.intervalo", placa, diferenca);
+    }
+
+    @Override
+    public String obterMensagemErroKm(String placa, long diferenca) {
+        return mensagens.obterMensagem("parametro.sistema.erro.abastecimento.intervaloKm", placa, diferenca);
     }
 }

@@ -262,9 +262,10 @@ public class DispositivoMotoristaSd {
      *
      * @param idFrota a frota selecionada no app motorista
      * @param cpf o cpf do usuário do app
+     * @return retorna o motorista validado
      * @throws ExcecaoValidacao caso o motorista esteja inativo na frota
      */
-    public void validarFrotaMotorista(Long idFrota, Long cpf) throws ExcecaoValidacao {
+    public Motorista validarFrotaMotorista(Long idFrota, Long cpf) throws ExcecaoValidacao {
         Motorista motorista = repositorioMotorista.obterPorCpfFrotaSemIsolamento(cpf, idFrota);
         if (motorista == null) {
             throw new ExcecaoValidacao(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("dispositivo.servico.validacao.motorista.nao.encontrado"));
@@ -278,6 +279,7 @@ public class DispositivoMotoristaSd {
         if (motorista.getFrota().getStatus().equals(StatusAtivacao.INATIVO.getValue())) {
             throw new ExcecaoValidacao(Erro.ERRO_VALIDACAO_INATIVO, mensagens.obterMensagem("dispositivo.servico.validacao.frota.inativa"));
         }
+        return motorista;
     }
 
     /**

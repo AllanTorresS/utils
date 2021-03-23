@@ -30,6 +30,10 @@ public class LogicaParametroPostosAutorizadosAbastecimentoPreAutorizacao impleme
         List<PontoDeVenda> postosDisponiveis = pedido.getPostosDisponiveis();
         ResultadoExecucaoParametroSistemaVo<PreAutorizacaoPedidoVo> resultado = new ResultadoExecucaoParametroSistemaVo<>(pedido);
 
+        if (pedido.getLatitude() == null && pedido.getLongitude() == null) {
+            return resultado;
+        }
+
         if (postosDisponiveis != null) {
             for (PontoDeVenda pv : postosDisponiveis) {
                 for (FrotaParametroSistemaPostoAutorizadoAbastecimento pvs : frotaParam.getPostosAutorizadosAbastecimento()) {
