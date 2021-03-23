@@ -1,6 +1,7 @@
 package ipp.aci.boleia.dominio;
 
-import ipp.aci.boleia.dominio.enums.StatusLiberacaoReembolsoJde;
+import ipp.aci.boleia.util.UtilitarioLambda;
+import org.hibernate.envers.AuditJoinTable;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.Column;
@@ -9,10 +10,12 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.Version;
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -20,19 +23,19 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Representa a tabela de Reembolso
+ * Representa a tabela de Reembolso Antecipado
  */
 @Audited
 @Entity
-@Table(name = "REEMBOLSO")
-public class Reembolso extends ReembolsoBase {
+@Table(name = "REEMB_ANTECIP")
+public class ReembolsoAntecipado extends ReembolsoBase {
 
-    private static final long serialVersionUID = -5283245531897409405L;
+    private static final long serialVersionUID = 7429764711772518241L;
 
     @Id
-    @Column(name = "CD_REEMBOLSO")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_REEMBOLSO")
-    @SequenceGenerator(name = "SEQ_REEMBOLSO", sequenceName = "SEQ_REEMBOLSO", allocationSize = 1)
+    @Column(name = "CD_REEMB_ANTECIP")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_REEMB_ANTECIP")
+    @SequenceGenerator(name = "SEQ_REEMB_ANTECIP", sequenceName = "SEQ_REEMB_ANTECIP", allocationSize = 1)
     private Long id;
 
     @Column(name = "NO_DOC_JDE")
@@ -50,13 +53,13 @@ public class Reembolso extends ReembolsoBase {
     @Column(name = "DT_VENC_PGTO")
     private Date dataVencimentoPgto;
 
-    @Column(name = "VR_REEMB")
+    @Column(name = "VR_REEMB_ANTECIP")
     private BigDecimal valorReembolso;
 
-    @Column(name = "VR_DESC")
+    @Column(name = "VR_DESC_ANTECIP")
     private BigDecimal valorDesconto;
 
-    @Column(name = "VR_TOTAL")
+    @Column(name = "VR_TOTAL_ANTECIP")
     private BigDecimal valorTotal;
 
     @Column(name = "DT_PGTO")
@@ -71,27 +74,20 @@ public class Reembolso extends ReembolsoBase {
     @Column(name = "ID_STATUS_INT_JDE")
     private Integer statusIntegracao;
 
-    @Column(name = "DS_MSG_ERRO_LIB_JDE")
-    private String mensagemErroLiberacaoPagamento;
-
-    @Column(name = "ID_STATUS_LIB_JDE")
-    private Integer statusLiberacaoPagamento;
-
-    @Column(name = "VR_DESC_CRED")
-    private BigDecimal valorDescontoCredito;
-
-    @Column(name = "NO_TENTATIVAS_ENVIO")
-    private Integer numeroTentativasEnvio;
-
-    @Column(name = "VR_DESC_ANTECIP")
-    private BigDecimal descontoAntecipacao;
-
     @Version
     @Column(name = "NO_VERSAO")
     private Long versao;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "reembolso")
-    private List<TransacaoConsolidada> transacoesConsolidadas;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_TRANS_CONSOL")
+    private TransacaoConsolidada transacaoConsolidada;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @AuditJoinTable(name = "REEMB_ANTECIP_AUT_PAG_AUD")
+    @JoinTable(name = "REEMB_ANTECIP_AUT_PAG",
+            joinColumns = {@JoinColumn(name = "CD_REEMB_ANTECIP")},
+            inverseJoinColumns={@JoinColumn(name = "CD_AUTORIZACAO_PAGAMENTO")})
+    private List<AutorizacaoPagamento> autorizacoesPagamento;
 
     @Override
     public Long getId() {
@@ -103,7 +99,6 @@ public class Reembolso extends ReembolsoBase {
         this.id = id;
     }
 
-    @Override
     public Long getNumeroDocumento() {
         return numeroDocumento;
     }
@@ -112,7 +107,6 @@ public class Reembolso extends ReembolsoBase {
         this.numeroDocumento = numeroDocumento;
     }
 
-    @Override
     public String getTipoDocumento() {
         return tipoDocumento;
     }
@@ -121,12 +115,10 @@ public class Reembolso extends ReembolsoBase {
         this.tipoDocumento = tipoDocumento;
     }
 
-    @Override
     public String getCiaDocumento() {
         return ciaDocumento;
     }
 
-    @Override
     public void setCiaDocumento(String ciaDocumento) {
         this.ciaDocumento = ciaDocumento;
     }
@@ -139,7 +131,6 @@ public class Reembolso extends ReembolsoBase {
         this.quantidadeParcelas = quantidadeParcelas;
     }
 
-    @Override
     public Date getDataVencimentoPgto() {
         return dataVencimentoPgto;
     }
@@ -156,7 +147,7 @@ public class Reembolso extends ReembolsoBase {
         this.valorReembolso = valorReembolso;
     }
 
-    public BigDecimal getValorDescontoAntecipado() {
+    public BigDecimal getValorDesconto() {
         return valorDesconto;
     }
 
@@ -164,14 +155,16 @@ public class Reembolso extends ReembolsoBase {
         this.valorDesconto = valorDesconto;
     }
 
-    @Override
-    public BigDecimal getValorTotal() {
-        return valorTotal;
+    public TransacaoConsolidada getTransacaoConsolidada() {
+        return transacaoConsolidada;
     }
 
-    @Override
-    public BigDecimal getValorDesconto() {
-        return valorDesconto;
+    public void setTransacaoConsolidada(TransacaoConsolidada transacaoConsolidada) {
+        this.transacaoConsolidada = transacaoConsolidada;
+    }
+
+    public BigDecimal getValorTotal() {
+        return valorTotal;
     }
 
     public void setValorTotal(BigDecimal valorTotal) {
@@ -211,16 +204,16 @@ public class Reembolso extends ReembolsoBase {
     }
 
     public List<TransacaoConsolidada> getTransacoesConsolidadas() {
-        return transacoesConsolidadas;
+        return Collections.singletonList(this.transacaoConsolidada);
     }
 
     public void setTransacoesConsolidadas(List<TransacaoConsolidada> transacoesConsolidadas) {
-        this.transacoesConsolidadas = transacoesConsolidadas;
+        this.transacaoConsolidada = UtilitarioLambda.obterPrimeiroObjetoDaLista(transacoesConsolidadas);
     }
 
     @Override
     public List<PontoDeVenda> getPontosDeVenda() {
-        return transacoesConsolidadas != null ? transacoesConsolidadas.get(0).getPontosDeVenda() : Collections.emptyList();
+        return transacaoConsolidada != null ? transacaoConsolidada.getPontosDeVenda() : Collections.emptyList();
     }
 
     public Integer getStatusIntegracao() {
@@ -231,59 +224,11 @@ public class Reembolso extends ReembolsoBase {
         this.statusIntegracao = statusIntegracao;
     }
 
-    public String getMensagemErroLiberacaoPagamento() {
-        return mensagemErroLiberacaoPagamento;
+    public List<AutorizacaoPagamento> getAutorizacoesPagamento() {
+        return autorizacoesPagamento;
     }
 
-    public void setMensagemErroLiberacaoPagamento(String mensagemErroLiberacaoPagamento) {
-        this.mensagemErroLiberacaoPagamento = mensagemErroLiberacaoPagamento;
-    }
-
-    public Integer getStatusLiberacaoPagamento() {
-        return statusLiberacaoPagamento;
-    }
-
-    public void setStatusLiberacaoPagamento(Integer statusLiberacaoPagamento) {
-        this.statusLiberacaoPagamento = statusLiberacaoPagamento;
-    }
-
-    public BigDecimal getValorDescontoCredito() {
-        return valorDescontoCredito;
-    }
-
-    public void setValorDescontoCredito(BigDecimal valorDescontoCredito) {
-        this.valorDescontoCredito = valorDescontoCredito;
-    }
-
-    public Integer getNumeroTentativasEnvio() {
-        return numeroTentativasEnvio;
-    }
-
-    public void setNumeroTentativasEnvio(Integer numeroTentativasEnvio) {
-        this.numeroTentativasEnvio = numeroTentativasEnvio;
-    }
-
-    public BigDecimal getDescontoAntecipacao() {
-        return descontoAntecipacao;
-    }
-
-    public void setDescontoAntecipacao(BigDecimal descontoAntecipacao) {
-        this.descontoAntecipacao = descontoAntecipacao;
-    }
-
-    @Transient
-    public StatusLiberacaoReembolsoJde getStatusLiberacaoPagamentoEnum() {
-        return StatusLiberacaoReembolsoJde.obterPorValor(statusLiberacaoPagamento);
-    }
-
-    /**
-     * Informa se o reembolso possui alguma transação consolidada com
-     * pendência de emissão de nota fiscal.
-     *
-     * @return True, caso possua pendencia.
-     */
-    @Transient
-    public boolean possuiPendenciaNotaFiscal() {
-        return transacoesConsolidadas.stream().anyMatch(TransacaoConsolidada::pendenteNotaFiscal);
+    public void setAutorizacoesPagamento(List<AutorizacaoPagamento> autorizacoesPagamento) {
+        this.autorizacoesPagamento = autorizacoesPagamento;
     }
 }

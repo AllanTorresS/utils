@@ -2,6 +2,7 @@ package ipp.aci.boleia.dominio;
 
 import ipp.aci.boleia.dominio.enums.ModalidadePagamento;
 import ipp.aci.boleia.dominio.enums.MotivoEstorno;
+import ipp.aci.boleia.dominio.enums.StatusIntegracaoReembolsoJde;
 import ipp.aci.boleia.dominio.enums.StatusNotaFiscal;
 import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
@@ -187,6 +188,9 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     @NotNull
     @Column(name = "ID_FROTA_EXIGE_NF")
     private boolean frotaExigeNF;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "transacaoConsolidada")
+    private List<ReembolsoAntecipado> antecipacoes;
 
     @Override
     public Long getId() {
@@ -527,6 +531,14 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
         this.unidade = unidade;
     }
 
+    public List<ReembolsoAntecipado> getAntecipacoes() {
+        return antecipacoes;
+    }
+
+    public void setAntecipacoes(List<ReembolsoAntecipado> antecipacoes) {
+        this.antecipacoes = antecipacoes;
+    }
+
     /**
      * Verifica se a transação consolidada é pre-paga
      * @return se é pre paga ou não
@@ -687,5 +699,15 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
             return getValorEmitidoNotaFiscal().divide(getValorTotalNotaFiscal(), 2, BigDecimal.ROUND_HALF_DOWN).multiply(new BigDecimal(100));
         }
         return null;
+    }
+
+    @Transient
+    public ReembolsoAntecipado getAntecipacaoRealizada() {
+        return antecipacoes.stream().filter(antecipacao -> StatusIntegracaoReembolsoJde.REALIZADO.getValue().equals(antecipacao.getStatusIntegracao())).findFirst().orElse(null);
+    }
+
+    @Transient
+    public Boolean possuiAntecipacaoRealizada() {
+        return getAntecipacaoRealizada() != null;
     }
 }
