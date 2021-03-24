@@ -72,12 +72,13 @@ public class TransacaoFrotaSd {
      */
     public TransacaoFrota pagarProdutoOuServico(AutorizacaoPagamento autorizacaoPagamento, TipoAutorizacaoPagamento tipoPagamento) throws ExcecaoCreditoInsuficiente {
         TipoTransacao tipo = obterTipoTransacao(tipoPagamento, false);
-        SaldoVeiculo saldoVeiculo = transacaoVeiculoSd.registrarTransacaoAbastecimentoVeiculo(autorizacaoPagamento);
-        autorizacaoPagamento.getVeiculo().setSaldoVeiculo(saldoVeiculo);
-
         if(tipo.isDebito() && autorizacaoPagamento.getFrota().getSaldo().getSaldoCorrente().compareTo(autorizacaoPagamento.getValorTotal()) < 0) {
             throw new ExcecaoCreditoInsuficiente();
         }
+
+        SaldoVeiculo saldoVeiculo = transacaoVeiculoSd.registrarTransacaoAbastecimentoVeiculo(autorizacaoPagamento);
+        autorizacaoPagamento.getVeiculo().setSaldoVeiculo(saldoVeiculo);
+
         return registrarTransacaoSemVerificarSaldo( autorizacaoPagamento.getFrota(), autorizacaoPagamento.getValorTotal(), tipo, null, null);
 
     }

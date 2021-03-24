@@ -49,7 +49,7 @@ public class DocumentoAceiteSd {
     public DocumentoAceite registrarAceite(Documento documento, Usuario usuario, DocumentoAceiteVo aceite) {
         DocumentoAceite documentoAceite = Optional.ofNullable(repositorio.obterAceite(documento, usuario))
                 .orElse(new DocumentoAceite());
-        Usuario usuarioArmazenado = repositorioUsuario.obterPorId(usuario.getId());
+        Usuario usuarioArmazenado = repositorioUsuario.obterPorIdSemIsolamento(usuario.getId());
         documentoAceite.setUsuario(usuarioArmazenado);
         documentoAceite.setDocumento(documento);
         documentoAceite.setUsuarioAceitou(aceite.getHouveAceite());

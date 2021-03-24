@@ -3,6 +3,7 @@ package ipp.aci.boleia.dados.oracle;
 import ipp.aci.boleia.dados.IVeiculoDados;
 import ipp.aci.boleia.dominio.Veiculo;
 import ipp.aci.boleia.dominio.enums.ClassificacaoAgregado;
+import ipp.aci.boleia.dominio.enums.ParametroSistema;
 import ipp.aci.boleia.dominio.enums.StatusAtivacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
@@ -59,6 +60,32 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
     private static final String PARAM_DATA_ATUALIZACAO = "dataAtualizacao";
 
     private static final String ORDER_BY_CLAUSE = " ORDER BY %s %s ";
+
+    private static final String CONSULTA_COTA_VEICULO_HQL =
+        " SELECT v "+
+        " FROM Veiculo v " +
+        " INNER JOIN v.frota f " +
+        " INNER JOIN f.parametrosSistema ps " +
+        " INNER JOIN v.saldoVeiculo sv " +
+        " LEFT JOIN v.subtipoVeiculo stv " +
+        " LEFT JOIN stv.tipoVeiculo tv " +
+        " LEFT JOIN v.empresaAgregada ep " +
+        " LEFT JOIN v.unidade u " +
+        " WHERE (:idFrota           IS NULL OR v.frota.id IN (:idFrota)) " +
+        "   AND (:tipoVeiculo       IS NULL OR tv.id = :tipoVeiculo ) " +
+        "   AND (:classificacao     IS NULL OR v.agregado = :classificacao ) " +
+        "   AND (:placa             IS NULL OR v.placa = :placa ) " +
+        "   AND (:empresaAgregada   IS NULL OR ep.id = :empresaAgregada ) " +
+        "   AND (:unidade           IS NULL OR u.id = :unidade ) " +
+        "   AND ps.ativo = 1 " +
+        "   AND (  (ps.parametroSistema = " + ParametroSistema.COTA_VEICULO.getCodigo() +
+        "           and v.agregado = " + ClassificacaoAgregado.PROPRIO.getValue() +"" +
+                "   AND ((ps.emLitros = 1 AND sv.cotaLitros > 0 AND NOT sv.cotaLitros IS NULL ) OR " +
+                "        (ps.emLitros = 0 AND sv.cotaValor > 0 AND NOT sv.cotaValor IS NULL))" +
+                ") " +
+        "       OR (ps.parametroSistema = " + ParametroSistema.CREDITO_VEICULO_AGREGADO.getCodigo() +
+        "           and v.agregado = " + ClassificacaoAgregado.AGREGADO.getValue() + ")" +
+                "   and (sv.cotaValor > 0 AND NOT sv.cotaValor IS NULL) ) ";
 
     /**
      * Instancia o repositorio
@@ -131,28 +158,7 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
         return pesquisar(filtro.getPaginacao() ,
                 consulta.concat(ordenacao) ,
                 parametros.toArray(new ParametroPesquisa[parametros.size()]));
-        }
-
-    String CONSULTA_COTA_VEICULO_HQL =
-            " SELECT v "+
-                " FROM Veiculo v " +
-                " INNER JOIN v.frota f " +
-                " INNER JOIN f.parametrosSistema ps " +
-                " INNER JOIN v.saldoVeiculo sv " +
-                " LEFT JOIN v.subtipoVeiculo stv " +
-                " LEFT JOIN stv.tipoVeiculo tv " +
-                " LEFT JOIN v.empresaAgregada ep " +
-                " LEFT JOIN v.unidade u  " +
-                " WHERE (:idFrota           IS NULL OR v.frota.id IN (:idFrota)) " +
-                "   AND (:tipoVeiculo       IS NULL OR tv.id = :tipoVeiculo )" +
-                "   AND (:classificacao     IS NULL OR v.agregado = :classificacao )" +
-                "   AND (:placa             IS NULL OR v.placa = :placa )" +
-                "   AND (:empresaAgregada   IS NULL OR ep.id = :empresaAgregada )" +
-                "   AND (:unidade           IS NULL OR u.id = :unidade )" +
-                "   AND ((ps.emLitros = 1 AND sv.cotaLitros > 0 AND NOT sv.cotaLitros IS NULL ) OR " +
-                    "    (ps.emLitros = 0 AND sv.cotaValor > 0 AND NOT sv.cotaValor IS NULL))" +
-                "   AND ps.ativo = 1 " +
-                "   AND ps.parametroSistema = 8 ";
+    }
 
     @Override
     public ResultadoPaginadoFrtVo<Veiculo> pesquisar(FiltroPesquisaVeiculoExtVo filtro) {
