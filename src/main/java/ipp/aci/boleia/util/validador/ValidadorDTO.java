@@ -54,7 +54,7 @@ public class ValidadorDTO {
 
     /**
      * Valida um dto de api externa
-     * 
+     *
      * @param objeto O objeto a validar
      * @throws ExcecaoValidacao Caso o objeto esteja inválido.
      */
@@ -62,8 +62,8 @@ public class ValidadorDTO {
         Set<ConstraintViolation<Object>> constraints = validator.validate(objeto);
         if (CollectionUtils.isNotEmpty(constraints)) {
             List<String> msgList = constraints.stream()
-                .map(this::obterMensagemValidacao)
-                .collect(Collectors.toList());
+                    .map(this::obterMensagemValidacao)
+                    .collect(Collectors.toList());
             throw new ExcecaoValidacao(Erro.ERRO_VALIDACAO_SERVICOS_EXTERNOS, msgList);
         }
     }
