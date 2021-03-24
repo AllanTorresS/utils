@@ -82,6 +82,15 @@ public class MotorGeracaoRelatorioSd {
     }
 
     /**
+     * Obtém um registro de motor de relatórios a partir do seu id
+     * @param idMotor o id do registro de motor de relatórios
+     * @return o registro de motor relatório
+     */
+    public MotorGeracaoRelatorios obterPorId(Long idMotor) {
+        return repositorio.obterPorId(idMotor);
+    }
+
+    /**
      * Armazena um registro de motor de relatórios no banco de dados
      *
      * @param motor A entidade a ser persistida
@@ -135,6 +144,7 @@ public class MotorGeracaoRelatorioSd {
         motor.setMsgErro(null);
         motor.setUltimaPaginaProcessada(null);
         motor.setTotalDePaginas(null);
+        motor.setRotaEmProcessamento(null);
         motor.getAbasRelatorio().forEach(abaRelatorio -> {
             abaRelatorio.setRegistrosProcessados(null);
             abaRelatorio.setTotalRegistros(null);

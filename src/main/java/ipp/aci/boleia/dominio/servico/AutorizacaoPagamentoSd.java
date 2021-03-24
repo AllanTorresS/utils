@@ -339,4 +339,17 @@ public class AutorizacaoPagamentoSd {
         }
 
     }
+
+    /**
+     * Verifica se o UUID do abastecimento do integrador já foi utilizado em um abastecimento do Portal
+     * @param uuidAbastecimento O UUID do abastecimento
+     * @return true caso exista abastecimento do Portal com mesmo UUID, false caso contrário
+     */
+    public boolean verificarAbastecimentoIntegradorExistente(String uuidAbastecimento) {
+        if(uuidAbastecimento != null){
+            AutorizacaoPagamento autorizacaoPagamentoComMesmoAbastecimento = repositorioAutorizacaoPagamento.obterAutorizacaoPagamentoComMesmoAbastecimento(uuidAbastecimento);
+            return autorizacaoPagamentoComMesmoAbastecimento != null;
+        }
+        return false;
+    }
 }
