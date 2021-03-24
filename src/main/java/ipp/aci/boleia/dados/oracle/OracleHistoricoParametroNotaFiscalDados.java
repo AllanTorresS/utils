@@ -1,9 +1,7 @@
 package ipp.aci.boleia.dados.oracle;
 
 import ipp.aci.boleia.dados.IHistoricoParametroNotaFiscalDados;
-import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.ParametroNotaFiscal;
-import ipp.aci.boleia.dominio.enums.StatusAutorizacao;
 import ipp.aci.boleia.dominio.historico.HistoricoParametroNotaFiscal;
 import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
@@ -35,7 +33,7 @@ public class OracleHistoricoParametroNotaFiscalDados extends OracleRepositorioBo
     public HistoricoParametroNotaFiscal buscarUltimoParametroPorData(ParametroNotaFiscal parametroNotaFiscal, Date dataLimite) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
         parametros.add(new ParametroPesquisaIgual("parametroNotaFiscal.id", parametroNotaFiscal.getId()));
-        parametros.add(new ParametroPesquisaDataMenorOuIgual("dataHistorico", dataLimite));
+        parametros.add(new ParametroPesquisaDataMenorOuIgual("dataVigencia", dataLimite));
         InformacaoPaginacao paginacao = new InformacaoPaginacao(1, 1, new ParametroOrdenacaoColuna("dataHistorico", Ordenacao.DECRESCENTE));
         ResultadoPaginado<HistoricoParametroNotaFiscal> historicos = pesquisar(paginacao, parametros.toArray(new ParametroPesquisa[parametros.size()]));
         return historicos != null ? historicos.getRegistros().stream().findFirst().orElse(null) : null;

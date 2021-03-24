@@ -503,7 +503,7 @@ public class TransacaoConsolidadaSd {
      * @param parametroCiclo Os parametros de configuracao do ciclo
      * @return A data de encerramento do ciclo
      */
-    private Date calcularDataFimPeriodo(Date dataInicioPeriodo, ParametroCiclo parametroCiclo) {
+    public Date calcularDataFimPeriodo(Date dataInicioPeriodo, ParametroCiclo parametroCiclo) {
         Integer anoVigente = UtilitarioCalculoData.obterCampoData(dataInicioPeriodo, Calendar.YEAR);
         Integer mesVigente = UtilitarioCalculoData.obterCampoData(dataInicioPeriodo, Calendar.MONTH);
         Integer diaVigente = UtilitarioCalculoData.obterCampoData(dataInicioPeriodo, Calendar.DAY_OF_MONTH);

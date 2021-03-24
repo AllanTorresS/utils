@@ -37,12 +37,12 @@ public class HistoricoParametroNotaFiscal implements IPersistente, IParametroNot
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_HISTORICO_PARAM_NF")
     @SequenceGenerator(name = "SEQ_HISTORICO_PARAM_NF", sequenceName = "SEQ_HISTORICO_PARAM_NF", allocationSize = 1)
     private Long id;
-    
+
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_PARAMETRO_NF")
     private ParametroNotaFiscal parametroNotaFiscal;
-    
+
     @Column(name = "DT_HISTORICO")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataHistorico;
@@ -62,9 +62,13 @@ public class HistoricoParametroNotaFiscal implements IPersistente, IParametroNot
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name= "CD_UNIDADE_LOCAL_DEST_PADRAO")
     private Unidade unidadeLocalDestinoPadrao;
-    
+
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy= "parametroNotaFiscal", orphanRemoval = true)
     private List<HistoricoParametroNotaFiscalUf> parametroNotaFiscalUf;
+
+    @Column(name = "DT_VIGENCIA")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataVigencia;
 
     @Override
     public Long getId() {
@@ -162,5 +166,13 @@ public class HistoricoParametroNotaFiscal implements IPersistente, IParametroNot
     public boolean isParametroDeFrotaUnidadesSemExigenciaNotaFiscal(){
         return this.localDestino == null && this.separarPorCombustivelProdutoServico == null
                 && nfTipoAgrupamento == null && this.dadosAdicionais == null && this.unidadeLocalDestinoPadrao == null;
+    }
+
+    public Date getDataVigencia() {
+        return dataVigencia;
+    }
+
+    public void setDataVigencia(Date dataVigencia) {
+        this.dataVigencia = dataVigencia;
     }
 }

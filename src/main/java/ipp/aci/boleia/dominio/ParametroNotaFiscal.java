@@ -4,6 +4,7 @@ import ipp.aci.boleia.dominio.enums.LocalDestinoPadroNfe;
 import ipp.aci.boleia.dominio.interfaces.IParametroNotaFiscal;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
 import org.hibernate.envers.Audited;
@@ -20,6 +21,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Version;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
@@ -62,9 +65,13 @@ public class ParametroNotaFiscal implements IPersistente, IParametroNotaFiscal {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name= "CD_UNIDADE_LOCAL_DEST_PADRAO")
     private Unidade unidadeLocalDestinoPadrao;
-    
+
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy= "parametroNotaFiscal", orphanRemoval = true)
     private List<ParametroNotaFiscalUf> parametroNotaFiscalUfs;
+
+    @Column(name = "DT_VIGENCIA")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataVigencia;
 
     /**
      * Construtor padrão
@@ -155,6 +162,14 @@ public class ParametroNotaFiscal implements IPersistente, IParametroNotaFiscal {
 
     public void setParametroNotaFiscalUf(List<ParametroNotaFiscalUf> parametroNotaFiscalUfs) {
         this.parametroNotaFiscalUfs = parametroNotaFiscalUfs;
+    }
+
+    public Date getDataVigencia() {
+        return dataVigencia;
+    }
+
+    public void setDataVigencia(Date dataVigencia) {
+        this.dataVigencia = dataVigencia;
     }
 
     @Transient
