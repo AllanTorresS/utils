@@ -23,6 +23,12 @@ public class FiltroPesquisaAbastecimentoFrtVo extends BaseFiltroPesquisaFrtVo {
     @ApiModelProperty(required = true, value = "${docs.dominio.vo.frotista.FiltroPesquisaAbastecimentoFrtVo.dataFinal}")
     private Date dataFinal;
 
+    @ApiModelProperty(required = true, value = "${docs.dominio.vo.frotista.FiltroPesquisaAbastecimentoFrtVo.dataInicialAlteracao}")
+    private Date dataInicialAlteracao;
+
+    @ApiModelProperty(required = true, value = "${docs.dominio.vo.frotista.FiltroPesquisaAbastecimentoFrtVo.dataFinalAlteracao}")
+    private Date dataFinalAlteracao;
+
     @Min(0)
     @Max(value = 99999999999999L)
     @ApiModelProperty(value = "${docs.dominio.vo.frotista.FiltroPesquisaAbastecimentoFrtVo.cnpjRevenda}",
@@ -117,6 +123,34 @@ public class FiltroPesquisaAbastecimentoFrtVo extends BaseFiltroPesquisaFrtVo {
      */
     public void setDataFinal(Date dataFinal) {
         this.dataFinal = dataFinal;
+    }
+
+    /**
+     * @return the dataInicialAlteracao
+     */
+    public Date getDataInicialAlteracao() {
+        return dataInicialAlteracao;
+    }
+
+    /**
+     * @param dataInicialAlteracao the dataInicialAlteracao to set
+     */
+    public void setDataInicialAlteracao(Date dataInicialAlteracao) {
+        this.dataInicialAlteracao = dataInicialAlteracao;
+    }
+
+    /**
+     * @return the dataFinalAlteracao
+     */
+    public Date getDataFinalAlteracao() {
+        return dataFinalAlteracao;
+    }
+
+    /**
+     * @param dataFinalAlteracao the dataFinalAlteracao to set
+     */
+    public void setDataFinalAlteracao(Date dataFinalAlteracao) {
+        this.dataFinalAlteracao = dataFinalAlteracao;
     }
 
     /**

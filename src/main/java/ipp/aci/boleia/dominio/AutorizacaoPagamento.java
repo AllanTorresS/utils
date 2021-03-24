@@ -489,6 +489,11 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     @Formula(CHAVE_ORDENACAO_FINANCEIRO_FORMULA)
     private Integer chaveOrdenacaoFinanceiro;
 
+    @NotAudited
+    @Column(name = "DT_ATUALIZACAO")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataAtualizacao;
+
     @Transient
     private TipoErroAutorizacaoPagamento tipoErroAutorizacaoPagamento;
 
@@ -652,6 +657,14 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
 
     public void setDataRequisicao(Date dataRequisicao) {
         this.dataRequisicao = dataRequisicao;
+    }
+
+    public Date getDataAtualizacao() {
+        return dataAtualizacao;
+    }
+
+    public void setDataAtualizacao(Date dataAtualizacao) {
+        this.dataAtualizacao = dataAtualizacao;
     }
 
     public Long getCnpjFrota() {

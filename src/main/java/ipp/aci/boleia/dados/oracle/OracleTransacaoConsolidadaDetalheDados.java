@@ -66,14 +66,21 @@ public class OracleTransacaoConsolidadaDetalheDados extends OracleRepositorioBol
 		return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
 	}
 
-	@Override
-	public List<TransacaoConsolidadaDetalhe> obterDetalhesTransacaoPorFrotaPvCombustivel(Long idFrota, Long idPontoVenda, Long idTipoCombustivel, Date data) {
-		return pesquisar(null, CONSULTA_DETALHES_POR_FROTA_PV_DATA,
-				new ParametroPesquisaIgual("idFrota", idFrota),
-				new ParametroPesquisaIgual("idPontoVenda", idPontoVenda),
-				new ParametroPesquisaIgual("idTipoCombustivel", idTipoCombustivel.toString()),
-				new ParametroPesquisaIgual("data", data)
-		).getRegistros();
+	public List<TransacaoConsolidadaDetalhe> obterDetalhesTransacaoPorFrotaPvCombustivel(Long idFrota, Long idPontoVenda, Long idTipoCombustivel, Date data, boolean isolamento) {
+		if (isolamento) {
+			return pesquisar(null, CONSULTA_DETALHES_POR_FROTA_PV_DATA,
+					new ParametroPesquisaIgual("idFrota", idFrota),
+					new ParametroPesquisaIgual("idPontoVenda", idPontoVenda),
+					new ParametroPesquisaIgual("idTipoCombustivel", idTipoCombustivel.toString()),
+					new ParametroPesquisaIgual("data", data)
+			).getRegistros();
+		} else {
+			return pesquisarSemIsolamentoDados(null, CONSULTA_DETALHES_POR_FROTA_PV_DATA,
+					new ParametroPesquisaIgual("idFrota", idFrota),
+					new ParametroPesquisaIgual("idPontoVenda", idPontoVenda),
+					new ParametroPesquisaIgual("idTipoCombustivel", idTipoCombustivel.toString()),
+					new ParametroPesquisaIgual("data", data)
+			).getRegistros();
+		}
 	}
-
 }
