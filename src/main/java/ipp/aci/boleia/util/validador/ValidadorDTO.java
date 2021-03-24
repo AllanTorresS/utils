@@ -107,35 +107,64 @@ public class ValidadorDTO {
      * @param dto O dto recebido
      * @throws ExcecaoValidacao Em caso de falha da validação
      */
-    public void validarDtoServico(Object dto) throws ExcecaoValidacao {
-
+    private void validarDtoServicoInterno(Object dto, boolean excecaoNaValidacao) throws ExcecaoValidacao {
         List<String> tiposViolados = new ArrayList<>();
         List<String> tamanhosViolados = new ArrayList<>();
-
         Set<ConstraintViolation<Object>> restricoesVioladas = validator.validate(dto);
+        StringBuilder mensagensErro = new StringBuilder();
         if (restricoesVioladas != null) {
             for (ConstraintViolation<Object> restricaoViolada : restricoesVioladas) {
                 Annotation anotacao = restricaoViolada.getConstraintDescriptor().getAnnotation();
                 String mensagem = obterMensagemErro(dto, restricaoViolada, anotacao);
                 int prioridade = obterPrioridadeErro(anotacao);
                 if (prioridade == PRIORIDADE_OBRIGATORIEDADE) {
-                    throw new ExcecaoValidacao(Erro.ERRO_VALIDACAO_OBRIGATORIO, mensagem);
+                    if (excecaoNaValidacao) {
+                        throw new ExcecaoValidacao(Erro.ERRO_VALIDACAO_OBRIGATORIO, mensagem);
+                    }
                 }
-                if (prioridade == PRIORIDADE_TIPO) {
+                if (prioridade == PRIORIDADE_TIPO)
                     tiposViolados.add(mensagem);
-                } else {
-                    tamanhosViolados.add(mensagem);
-                }
+
+                tamanhosViolados.add(mensagem);
             }
         }
-
         if (!tiposViolados.isEmpty()) {
-            throw new ExcecaoValidacao(Erro.ERRO_VALIDACAO_SERVICO_TIPO, tiposViolados);
+            if (excecaoNaValidacao) {
+                throw new ExcecaoValidacao(Erro.ERRO_VALIDACAO_SERVICO_TIPO, tiposViolados);
+            } else {
+                mensagensErro.append(mensagens.obterMensagem("Erro.ERRO_VALIDACAO_SERVICO_TIPO", tiposViolados));
+            }
         }
-
         if (!tamanhosViolados.isEmpty()) {
-            throw new ExcecaoValidacao(Erro.ERRO_VALIDACAO_SERVICO_TAMANHO, tamanhosViolados);
+            if (excecaoNaValidacao) {
+                throw new ExcecaoValidacao(Erro.ERRO_VALIDACAO_SERVICO_TAMANHO, tamanhosViolados);
+            } else {
+                mensagensErro.append(mensagens.obterMensagem("Erro.ERRO_VALIDACAO_SERVICO_TAMANHO", tamanhosViolados));
+            }
         }
+        if (mensagensErro.length() > 0) {
+            throw new ExcecaoValidacao(Erro.ERRO_VALIDACAO, mensagensErro.toString());
+        }
+    }
+
+    /**
+     * Valida um DTO recebido por um servico atraves das propriedades anotadas
+     *
+     * @param dto O dto recebido
+     * @throws ExcecaoValidacao Em caso de falha da validação
+     */
+    public void validarDtoServicoCompleto(Object dto) throws ExcecaoValidacao {
+        this.validarDtoServicoInterno(dto, false);
+    }
+
+    /**
+     * Valida um DTO recebido por um servico atraves das propriedades anotadas
+     *
+     * @param dto O dto recebido
+     * @throws ExcecaoValidacao Em caso de falha da validação
+     */
+    public void validarDtoServico(Object dto) throws ExcecaoValidacao {
+        this.validarDtoServicoInterno(dto, true);
     }
 
     /**
