@@ -710,4 +710,9 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     public Boolean possuiAntecipacaoRealizada() {
         return getAntecipacaoRealizada() != null;
     }
+
+    @Transient
+    public Boolean possuiAntecipacaoComErro() {
+        return antecipacoes.stream().anyMatch(antecipacao -> StatusIntegracaoReembolsoJde.ERRO_ENVIO.getValue().equals(antecipacao.getStatusIntegracao()));
+    }
 }

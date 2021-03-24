@@ -74,6 +74,9 @@ public class ReembolsoAntecipado extends ReembolsoBase {
     @Column(name = "ID_STATUS_INT_JDE")
     private Integer statusIntegracao;
 
+    @Column(name = "NO_TENTATIVAS_ENVIO")
+    private Integer numeroTentativasEnvio;
+
     @Version
     @Column(name = "NO_VERSAO")
     private Long versao;
@@ -222,6 +225,16 @@ public class ReembolsoAntecipado extends ReembolsoBase {
 
     public void setStatusIntegracao(Integer statusIntegracao) {
         this.statusIntegracao = statusIntegracao;
+    }
+
+    @Override
+    public Integer getNumeroTentativasEnvio() {
+        return numeroTentativasEnvio;
+    }
+
+    @Override
+    public void setNumeroTentativasEnvio(Integer numeroTentativasEnvio) {
+        this.numeroTentativasEnvio = numeroTentativasEnvio;
     }
 
     public List<AutorizacaoPagamento> getAutorizacoesPagamento() {
