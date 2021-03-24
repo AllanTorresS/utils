@@ -55,6 +55,7 @@ public class HistoricoParametroNotaFiscalSd {
                                 return historicoParametroNotaFiscalUf;
                             }).collect(Collectors.toList())
             );
+            historicoParametroNotaFiscal.setDataVigencia(parametroNotaFiscal.getDataVigencia());
             return historicoParametroNotaFiscalDados.armazenar(historicoParametroNotaFiscal);
         }
         return null;
