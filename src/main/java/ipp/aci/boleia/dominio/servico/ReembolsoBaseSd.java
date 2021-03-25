@@ -22,7 +22,7 @@ import static ipp.aci.boleia.util.UtilitarioCalculoData.obterPrimeiroInstanteDia
  * Serviços base de domínio da entidade {@link ipp.aci.boleia.dominio.Reembolso}.
  */
 @Component
-public class ReembolsoBaseSd {
+public class ReembolsoBaseSd<T extends ReembolsoBase> {
 
     protected static final int QUANTIDADE_DIAS_A_MAIS_REEMBOLSO = 2;
 
@@ -41,10 +41,10 @@ public class ReembolsoBaseSd {
      * @param reembolso Os dados do reembolso para a criacao do voucher
      * @return O reembolso contendo o voucher.
      */
-    public ReembolsoBase gerarVoucher(ReembolsoBase reembolso) {
-        ReembolsoBase reembolsoComVoucher = repositorioVoucher.criar(reembolso);
+    public T gerarVoucher(T reembolso) {
+        T reembolsoComVoucher = repositorioVoucher.criar(reembolso);
         incrementarNumeroTentativasEnvio(reembolsoComVoucher);
-        return (ReembolsoBase) repositorioReembolsoBase.armazenar(reembolsoComVoucher);
+        return (T) repositorioReembolsoBase.armazenar(reembolsoComVoucher);
     }
 
     /**

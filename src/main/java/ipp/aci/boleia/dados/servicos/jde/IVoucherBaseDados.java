@@ -10,7 +10,7 @@ public interface IVoucherBaseDados {
      * @param reembolso Reembolso para qual será gerado o voucher.
      * @return Reembolso atualiado
      */
-    ReembolsoBase criar(ReembolsoBase reembolso);
+    <T extends ReembolsoBase> T criar(T reembolso);
 
     /**
      * Método que busca um voucher existente no JDE.
@@ -18,5 +18,5 @@ public interface IVoucherBaseDados {
      * @param reembolso Reembolso para qual foi gerado o voucher.
      * @return Reembolso atualiado
      */
-    ReembolsoBase consultar(ReembolsoBase reembolso);
+    <T extends ReembolsoBase> T consultar(T reembolso);
 }
