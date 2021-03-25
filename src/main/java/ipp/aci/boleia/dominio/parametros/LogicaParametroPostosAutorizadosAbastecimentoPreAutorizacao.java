@@ -48,7 +48,7 @@ public class LogicaParametroPostosAutorizadosAbastecimentoPreAutorizacao impleme
         }
 
         resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
-        resultado.setCodigoErro(Erro.SEM_PV_HABILITADO_PROXIMO);
+        resultado.setCodigoErro(Erro.SEM_PV_PERMITIDO_PROXIMO);
         resultado.setMensagemErro(mensagens.obterMensagem("parametro.sistema.erro.abastecimento.posto.nao.autorizado.preautorizacao"));
         return resultado;
     }

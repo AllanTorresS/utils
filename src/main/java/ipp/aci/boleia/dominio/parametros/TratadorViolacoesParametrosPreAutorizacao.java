@@ -27,13 +27,7 @@ public class TratadorViolacoesParametrosPreAutorizacao implements ITratadorViola
 
     @Override
     public ContextoExecucaoParametroSistemaVo<PreAutorizacaoPedidoVo> tratarViolacaoRegraVersatil(ContextoExecucaoParametroSistemaVo<PreAutorizacaoPedidoVo> contexto) throws ExcecaoViolacaoRegraVersatil {
-        ResultadoExecucaoParametroSistemaVo violacao = contexto.getViolacaoRestritiva();
-
-        Erro codigoErro = Erro.ERRO_VALIDACAO;
-        if(violacao.getCodigoErro() != null) {
-            codigoErro = violacao.getCodigoErro();
-        }
-        throw new ExcecaoViolacaoRegraVersatil(codigoErro, violacao.getMensagemErro());
+        return contexto;
     }
 
     @Override
