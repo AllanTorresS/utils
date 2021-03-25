@@ -16,6 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.hibernate.envers.Audited;
@@ -116,6 +117,9 @@ public class CobrancaConectcar implements IPersistente, IPertenceFrota {
 	@Column(name = "DS_COD_VERIFICACAO_NF")
 	private String codVerificacaoNF;
 
+	@Transient
+	private String urlNotaFiscal;
+	
 	@Override
 	public Long getId() {
 		return id;
@@ -340,6 +344,14 @@ public class CobrancaConectcar implements IPersistente, IPertenceFrota {
 
 	public void setCodVerificacaoNF(String codVerificacaoNF) {
 		this.codVerificacaoNF = codVerificacaoNF;
+	}
+
+	public String getUrlNotaFiscal() {
+		return urlNotaFiscal;
+	}
+
+	public void setUrlNotaFiscal(String urlNotaFiscal) {
+		this.urlNotaFiscal = urlNotaFiscal;
 	}
 
 }
