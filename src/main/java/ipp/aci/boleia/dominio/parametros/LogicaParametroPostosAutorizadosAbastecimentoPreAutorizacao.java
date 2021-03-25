@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Implementa a logica da restricao de intervalos de abastecimento na pre-autorizacao
@@ -35,9 +37,10 @@ public class LogicaParametroPostosAutorizadosAbastecimentoPreAutorizacao impleme
         }
 
         if (postosDisponiveis != null) {
-            for (PontoDeVenda pv : postosDisponiveis) {
-                for (FrotaParametroSistemaPostoAutorizadoAbastecimento pvs : frotaParam.getPostosAutorizadosAbastecimento()) {
-                    if (pvs.getPontoVenda().getId().equals(pv.getId())) {
+            for (PontoDeVenda pvProximo : postosDisponiveis) {
+                for (FrotaParametroSistemaPostoAutorizadoAbastecimento parametroPv : frotaParam.getPostosAutorizadosAbastecimento()
+                                                                                                .stream().filter(FrotaParametroSistemaPostoAutorizadoAbastecimento::getAutorizado).collect(Collectors.toList())) {
+                    if (parametroPv.isAutorizado() && Objects.equals(parametroPv.getPontoVenda().getId(), pvProximo.getId())) {
                         return resultado;
                     }
                 }
