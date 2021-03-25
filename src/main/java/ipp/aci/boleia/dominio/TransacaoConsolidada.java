@@ -703,7 +703,10 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
 
     @Transient
     public ReembolsoAntecipado getAntecipacaoRealizada() {
-        return antecipacoes.stream().filter(antecipacao -> StatusIntegracaoReembolsoJde.REALIZADO.getValue().equals(antecipacao.getStatusIntegracao())).findFirst().orElse(null);
+        if(antecipacoes != null) {
+            return antecipacoes.stream().filter(antecipacao -> StatusIntegracaoReembolsoJde.REALIZADO.getValue().equals(antecipacao.getStatusIntegracao())).findFirst().orElse(null);
+        }
+        return null;
     }
 
     @Transient
@@ -713,6 +716,9 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
 
     @Transient
     public Boolean possuiAntecipacaoComErro() {
-        return antecipacoes.stream().anyMatch(antecipacao -> StatusIntegracaoReembolsoJde.ERRO_ENVIO.getValue().equals(antecipacao.getStatusIntegracao()));
+        if(antecipacoes != null) {
+            return antecipacoes.stream().anyMatch(antecipacao -> StatusIntegracaoReembolsoJde.ERRO_ENVIO.getValue().equals(antecipacao.getStatusIntegracao()));
+        }
+        return false;
     }
 }
