@@ -96,4 +96,11 @@ public interface ITransacaoConectcarDados extends IRepositorioBoleiaDados<Transa
      */
     TransacaoConectcar obterUltimaTransacaoPorFrota(Long idFrota);
 
+    /**
+     * Obtém a primeira transação de uma frota
+     *
+     * @return primeira transação conectcar de uma frota
+     */
+    TransacaoConectcar obterPrimeiraTransacaoPorFrota(Long idFrota);
+
 }
