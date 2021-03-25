@@ -101,6 +101,9 @@ public class Rota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @Column(name = "ID_IDA_VOLTA")
     private Boolean idaVolta;
 
+    @OneToMany(mappedBy = "rota", fetch = FetchType.LAZY)
+    private List<RotaPostoDesconsiderado> rotaPostoDesconsiderados;
+
     @Override
     public Long getId() {
         return id;

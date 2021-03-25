@@ -9,7 +9,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
@@ -18,19 +17,19 @@ import javax.validation.constraints.NotNull;
 
 
 /**
- * Representa a ligacao entra a tabela de Rota e Parametros do Sistema
+ * Representa a ligacao entra a tabela de Rota e Postos
  */
 @Entity
 @Audited
-@Table(name = "ROTA_FROTA_PARAM_SIS")
-public class RotaParametroFrota implements IPersistente {
+@Table(name = "ROTA_PTOV_DESCON")
+public class RotaPostoDesconsiderado implements IPersistente {
 
-    private static final long serialVersionUID = -2992575318587803244L;
+    private static final long serialVersionUID = -2992523418587803244L;
 
     @Id
-    @Column(name = "CD_ROTA_FROTA_PARAM_SIS")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_ROTA_FROTA_PARAM_SIS")
-    @SequenceGenerator(name = "SEQ_ROTA_FROTA_PARAM_SIS", sequenceName = "SEQ_ROTA_FROTA_PARAM_SIS", allocationSize = 1)
+    @Column(name = "CD_ROTA_PTOV_DESCON")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_ROTA_PTOV_DESCON")
+    @SequenceGenerator(name = "SEQ_ROTA_PTOV_DESCON", sequenceName = "SEQ_ROTA_PTOV_DESCON", allocationSize = 1)
     private Long id;
 
     @NotNull
@@ -38,8 +37,9 @@ public class RotaParametroFrota implements IPersistente {
     private Long idRota;
 
     @NotNull
-    @Column(name = "ID_PARAMETRO")
-    private Integer idParametro;
+    @Column(name = "CD_PTOV")
+    private Integer idPtov;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_ROTA", insertable = false, updatable = false)
@@ -53,12 +53,12 @@ public class RotaParametroFrota implements IPersistente {
         this.idRota = idRota;
     }
 
-    public Integer getIdParametro() {
-        return idParametro;
+    public Integer getIdPtov() {
+        return idPtov;
     }
 
-    public void setIdParametro(Integer idParametro) {
-        this.idParametro = idParametro;
+    public void setIdPtov(Integer idPtov) {
+        this.idPtov = idPtov;
     }
 
     public Rota getRota() {
