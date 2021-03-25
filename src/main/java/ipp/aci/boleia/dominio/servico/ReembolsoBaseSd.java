@@ -20,6 +20,7 @@ import static ipp.aci.boleia.util.UtilitarioCalculoData.obterPrimeiroInstanteDia
 
 /**
  * Serviços base de domínio da entidade {@link ipp.aci.boleia.dominio.Reembolso}.
+ * @param <T> Tipo de reembolso
  */
 @Component
 public class ReembolsoBaseSd<T extends ReembolsoBase> {
