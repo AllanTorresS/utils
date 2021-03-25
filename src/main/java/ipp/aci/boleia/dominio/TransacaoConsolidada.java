@@ -189,6 +189,9 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     @Column(name = "ID_FROTA_EXIGE_NF")
     private boolean frotaExigeNF;
 
+    @Column(name="ID_FROTA_GERENCIA_NF")
+    private Boolean frotaGerenciaNf;
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "transacaoConsolidada")
     private List<ReembolsoAntecipado> antecipacoes;
 
@@ -504,6 +507,14 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
         this.frotaExigeNF = frotaExigeNF;
     }
 
+    public Boolean getFrotaGerenciaNf() {
+        return frotaGerenciaNf;
+    }
+
+    public void setFrotaGerenciaNf(Boolean frotaGerenciaNf) {
+        this.frotaGerenciaNf = frotaGerenciaNf;
+    }
+
     /**
      * Gera uma chave unica para cada TransacaoConsolidada, tendo o objetivo de garantir que cada ciclo seja unico no banco de dados.
      * Existe uma constraint (UQ_CHAVE_TRANS_CONSOL) no banco que valida a unicidade da chave.
@@ -609,6 +620,16 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     public boolean pendenteNotaFiscal() {
         return exigeEmissaoNF() && !isNFEmitida() &&
                 !this.getStatusNotaFiscal().equals(StatusNotaFiscal.SEM_EMISSAO.getValue());
+    }
+
+    /**
+     * Informa se é a transação consolidada é passível de emissão de nota fiscal.
+     *
+     * @return true, caso seja.
+     */
+    @Transient
+    public boolean isPassivelDeEmissao() {
+        return exigeEmissaoNF() || frotaGerenciaNf != null && frotaGerenciaNf;
     }
 
     /**

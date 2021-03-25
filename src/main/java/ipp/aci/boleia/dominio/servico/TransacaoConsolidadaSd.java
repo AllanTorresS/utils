@@ -559,6 +559,7 @@ public class TransacaoConsolidadaSd {
         tc.setModalidadePagamento(prePago ? ModalidadePagamento.PRE_PAGO.getValue() : ModalidadePagamento.POS_PAGO.getValue());
         tc.setFrotaPtov(frotaPtov);
         tc.setFrotaExigeNF(frotaPtov.getFrota().exigeNotaFiscal());
+        tc.setFrotaGerenciaNf(frotaPtov.getFrota().isGerenciaNf());
         if(empresaAgregada != null) {
             tc.setEmpresaAgregada(empresaAgregada);
         } else if(unidade != null) {
@@ -673,7 +674,7 @@ public class TransacaoConsolidadaSd {
         //Verifica se o consolidado atende as condicoes para ter statusNF EMITIDA
         //Caso atenda, seta o status como EMITIDA
         //Caso nao atenda, seta o status como PARCIALMENTE_EMITIDA ou PENDENTE
-        if ((valorNotasMaiorZero && todosAbastPossuemNotaEmitidaOuJustificativa) || !transacaoConsolidada.exigeEmissaoNF()) {
+        if ((valorNotasMaiorZero && todosAbastPossuemNotaEmitidaOuJustificativa) || (!transacaoConsolidada.isPassivelDeEmissao())) {
             transacaoConsolidada.setStatusNotaFiscal(StatusNotaFiscal.EMITIDA.getValue());
         } else if(transacaoConsolidada.esta(FECHADA) && possuiValorEmitido && possuiValorASerEmitido) {
             transacaoConsolidada.setStatusNotaFiscal(StatusNotaFiscal.PARCIALMENTE_EMITIDA.getValue());
