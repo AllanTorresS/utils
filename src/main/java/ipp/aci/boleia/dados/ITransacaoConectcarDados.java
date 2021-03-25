@@ -14,11 +14,11 @@ import java.util.List;
  * Contrato para implementacao de repositorios de consolidações de Transacao Conectcar Consolidada
  */
 public interface ITransacaoConectcarDados extends IRepositorioBoleiaDados<TransacaoConectcar> {
-    
+
     /**
      * Executa a consulta de registros baseado em um filtro de pesquisa
      *
-     * @param filtro parâmetros utilizados na consulta
+     * @param filtro        parâmetros utilizados na consulta
      * @param usuarioLogado usuario logado que solicita a pesquisa
      * @return lista de registros encontrados
      */
@@ -44,21 +44,21 @@ public interface ITransacaoConectcarDados extends IRepositorioBoleiaDados<Transa
      */
     List<TransacaoConectcar> obterConsolidacoesComCicloAbastecimentoEncerrado(Date dataIntervaloMin, Date dataIntervaloMax);
 
-	/**
-	 * Obtem uma transacao por um código de transação da conectcar
-	 * 
-	 * @param codigoTransacaoConectcar Código de transação da conectCar
-	 * @return Transação da ConnectCar
-	 */
-	TransacaoConectcar obterTransacoesPorIdConectcar(Long codigoTransacaoConectcar);
-	
-	/**
-	 * Obtem as transações de uma cobrança
-	 * 
-	 * @param idCobranca Identificador da cobrança para listar as transações
-	 * @return Lista das transações relacionadas à cobrança informada
-	 */
-	List<TransacaoConectcar> obterTransacoesPorCobranca(Long idCobranca);
+    /**
+     * Obtem uma transacao por um código de transação da conectcar
+     *
+     * @param codigoTransacaoConectcar Código de transação da conectCar
+     * @return Transação da ConnectCar
+     */
+    TransacaoConectcar obterTransacoesPorIdConectcar(Long codigoTransacaoConectcar);
+
+    /**
+     * Obtem as transações de uma cobrança
+     *
+     * @param idCobranca Identificador da cobrança para listar as transações
+     * @return Lista das transações relacionadas à cobrança informada
+     */
+    List<TransacaoConectcar> obterTransacoesPorCobranca(Long idCobranca);
 
     /**
      * Obtem as transações consolidadas com ciclo fechado que ainda não geraram cobrança
@@ -76,11 +76,12 @@ public interface ITransacaoConectcarDados extends IRepositorioBoleiaDados<Transa
 
     /**
      * Obtem somatorio do valor utilizado da frota no ciclo
+     *
      * @param idFrota código identificador da frota
      * @return valor total utilizado
      */
     BigDecimal obterValorUtilizadoCiclo(Long idFrota);
-    
+
     /**
      * Executa a consulta de registros baseado em um filtro de pesquisa
      *
@@ -90,8 +91,9 @@ public interface ITransacaoConectcarDados extends IRepositorioBoleiaDados<Transa
     ResultadoPaginado<TransacaoConectcar> pesquisarUtilizacaoTag(FiltroPesquisaUtilizacaoTagVo filtro);
 
     /**
-     * Obtem a última transação de uma frota para o calculo do ciclo
+     * Obtém a última transação de uma frota para o cálculo do ciclo
      *
+     * @param idFrota código identificador da frota
      * @return última transacao conectcar de uma frota
      */
     TransacaoConectcar obterUltimaTransacaoPorFrota(Long idFrota);
@@ -99,7 +101,8 @@ public interface ITransacaoConectcarDados extends IRepositorioBoleiaDados<Transa
     /**
      * Obtém a primeira transação de uma frota
      *
-     * @return primeira transação conectcar de uma frota
+     * @param idFrota código identificador da frota
+     * @return primeira transacao conectcar de uma frota
      */
     TransacaoConectcar obterPrimeiraTransacaoPorFrota(Long idFrota);
 
