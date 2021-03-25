@@ -1,6 +1,6 @@
 package ipp.aci.boleia.dominio;
 
-import ipp.aci.boleia.util.UtilitarioLambda;
+import ipp.aci.boleia.dominio.enums.StatusLiberacaoReembolsoJde;
 import org.hibernate.envers.AuditJoinTable;
 import org.hibernate.envers.Audited;
 
@@ -16,10 +16,10 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 import java.math.BigDecimal;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -38,21 +38,6 @@ public class ReembolsoAntecipado extends ReembolsoBase {
     @SequenceGenerator(name = "SEQ_REEMB_ANTECIP", sequenceName = "SEQ_REEMB_ANTECIP", allocationSize = 1)
     private Long id;
 
-    @Column(name = "NO_DOC_JDE")
-    private Long numeroDocumento;
-
-    @Column(name = "ID_TIPO_DOC")
-    private String tipoDocumento;
-
-    @Column(name = "NM_CIA_DOC")
-    private String ciaDocumento;
-
-    @Column(name = "QT_PARCELAS")
-    private Integer quantidadeParcelas;
-
-    @Column(name = "DT_VENC_PGTO")
-    private Date dataVencimentoPgto;
-
     @Column(name = "VR_REEMB_ANTECIP")
     private BigDecimal valorReembolso;
 
@@ -61,21 +46,6 @@ public class ReembolsoAntecipado extends ReembolsoBase {
 
     @Column(name = "VR_TOTAL_ANTECIP")
     private BigDecimal valorTotal;
-
-    @Column(name = "DT_PGTO")
-    private Date dataPagamento;
-
-    @Column(name = "ID_STATUS")
-    private Integer status;
-
-    @Column(name = "DS_MSG_ERRO")
-    private String mensagemErro;
-
-    @Column(name = "ID_STATUS_INT_JDE")
-    private Integer statusIntegracao;
-
-    @Column(name = "NO_TENTATIVAS_ENVIO")
-    private Integer numeroTentativasEnvio;
 
     @Version
     @Column(name = "NO_VERSAO")
@@ -102,60 +72,39 @@ public class ReembolsoAntecipado extends ReembolsoBase {
         this.id = id;
     }
 
-    public Long getNumeroDocumento() {
-        return numeroDocumento;
-    }
-
-    public void setNumeroDocumento(Long numeroDocumento) {
-        this.numeroDocumento = numeroDocumento;
-    }
-
-    public String getTipoDocumento() {
-        return tipoDocumento;
-    }
-
-    public void setTipoDocumento(String tipoDocumento) {
-        this.tipoDocumento = tipoDocumento;
-    }
-
-    public String getCiaDocumento() {
-        return ciaDocumento;
-    }
-
-    public void setCiaDocumento(String ciaDocumento) {
-        this.ciaDocumento = ciaDocumento;
-    }
-
-    public Integer getQuantidadeParcelas() {
-        return quantidadeParcelas;
-    }
-
-    public void setQuantidadeParcelas(Integer quantidadeParcelas) {
-        this.quantidadeParcelas = quantidadeParcelas;
-    }
-
-    public Date getDataVencimentoPgto() {
-        return dataVencimentoPgto;
-    }
-
-    public void setDataVencimentoPgto(Date dataVencimentoPgto) {
-        this.dataVencimentoPgto = dataVencimentoPgto;
-    }
-
+    @Override
     public BigDecimal getValorReembolso() {
         return valorReembolso;
     }
 
+    @Override
     public void setValorReembolso(BigDecimal valorReembolso) {
         this.valorReembolso = valorReembolso;
     }
 
+    @Override
     public BigDecimal getValorDesconto() {
         return valorDesconto;
     }
 
+    @Override
     public void setValorDesconto(BigDecimal valorDesconto) {
         this.valorDesconto = valorDesconto;
+    }
+
+    @Override
+    public BigDecimal getValorTotal() {
+        return valorTotal;
+    }
+
+    @Override
+    public void setValorTotal(BigDecimal valorTotal) {
+        this.valorTotal = valorTotal;
+    }
+
+    @Override
+    public BigDecimal getValorDescontoVoucher() {
+        return getValorDesconto();
     }
 
     public TransacaoConsolidada getTransacaoConsolidada() {
@@ -166,36 +115,9 @@ public class ReembolsoAntecipado extends ReembolsoBase {
         this.transacaoConsolidada = transacaoConsolidada;
     }
 
-    public BigDecimal getValorTotal() {
-        return valorTotal;
-    }
-
-    public void setValorTotal(BigDecimal valorTotal) {
-        this.valorTotal = valorTotal;
-    }
-
-    public Date getDataPagamento() {
-        return dataPagamento;
-    }
-
-    public void setDataPagamento(Date dataPagamento) {
-        this.dataPagamento = dataPagamento;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public String getMensagemErro() {
-        return mensagemErro;
-    }
-
-    public void setMensagemErro(String mensagemErro) {
-        this.mensagemErro = mensagemErro;
+    @Override
+    public List<TransacaoConsolidada> getTransacoesConsolidadas() {
+        return Collections.singletonList(this.transacaoConsolidada);
     }
 
     public Long getVersao() {
@@ -206,35 +128,9 @@ public class ReembolsoAntecipado extends ReembolsoBase {
         this.versao = versao;
     }
 
-    public List<TransacaoConsolidada> getTransacoesConsolidadas() {
-        return Collections.singletonList(this.transacaoConsolidada);
-    }
-
-    public void setTransacoesConsolidadas(List<TransacaoConsolidada> transacoesConsolidadas) {
-        this.transacaoConsolidada = UtilitarioLambda.obterPrimeiroObjetoDaLista(transacoesConsolidadas);
-    }
-
     @Override
     public List<PontoDeVenda> getPontosDeVenda() {
         return transacaoConsolidada != null ? transacaoConsolidada.getPontosDeVenda() : Collections.emptyList();
-    }
-
-    public Integer getStatusIntegracao() {
-        return statusIntegracao;
-    }
-
-    public void setStatusIntegracao(Integer statusIntegracao) {
-        this.statusIntegracao = statusIntegracao;
-    }
-
-    @Override
-    public Integer getNumeroTentativasEnvio() {
-        return numeroTentativasEnvio;
-    }
-
-    @Override
-    public void setNumeroTentativasEnvio(Integer numeroTentativasEnvio) {
-        this.numeroTentativasEnvio = numeroTentativasEnvio;
     }
 
     public List<AutorizacaoPagamento> getAutorizacoesPagamento() {
@@ -243,5 +139,16 @@ public class ReembolsoAntecipado extends ReembolsoBase {
 
     public void setAutorizacoesPagamento(List<AutorizacaoPagamento> autorizacoesPagamento) {
         this.autorizacoesPagamento = autorizacoesPagamento;
+    }
+
+    @Override
+    public Integer getStatusLiberacaoPagamento() {
+        return StatusLiberacaoReembolsoJde.APROVADO_PAGAMENTO.getValue();
+    }
+
+    @Override
+    @Transient
+    public boolean estaAprovadoParaPagamento() {
+        return true;
     }
 }

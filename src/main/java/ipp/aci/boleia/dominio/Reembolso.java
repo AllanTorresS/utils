@@ -35,21 +35,6 @@ public class Reembolso extends ReembolsoBase {
     @SequenceGenerator(name = "SEQ_REEMBOLSO", sequenceName = "SEQ_REEMBOLSO", allocationSize = 1)
     private Long id;
 
-    @Column(name = "NO_DOC_JDE")
-    private Long numeroDocumento;
-
-    @Column(name = "ID_TIPO_DOC")
-    private String tipoDocumento;
-
-    @Column(name = "NM_CIA_DOC")
-    private String ciaDocumento;
-
-    @Column(name = "QT_PARCELAS")
-    private Integer quantidadeParcelas;
-
-    @Column(name = "DT_VENC_PGTO")
-    private Date dataVencimentoPgto;
-
     @Column(name = "VR_REEMB")
     private BigDecimal valorReembolso;
 
@@ -58,18 +43,6 @@ public class Reembolso extends ReembolsoBase {
 
     @Column(name = "VR_TOTAL")
     private BigDecimal valorTotal;
-
-    @Column(name = "DT_PGTO")
-    private Date dataPagamento;
-
-    @Column(name = "ID_STATUS")
-    private Integer status;
-
-    @Column(name = "DS_MSG_ERRO")
-    private String mensagemErro;
-
-    @Column(name = "ID_STATUS_INT_JDE")
-    private Integer statusIntegracao;
 
     @Column(name = "DS_MSG_ERRO_LIB_JDE")
     private String mensagemErroLiberacaoPagamento;
@@ -80,11 +53,8 @@ public class Reembolso extends ReembolsoBase {
     @Column(name = "VR_DESC_CRED")
     private BigDecimal valorDescontoCredito;
 
-    @Column(name = "NO_TENTATIVAS_ENVIO")
-    private Integer numeroTentativasEnvio;
-
     @Column(name = "VR_DESC_ANTECIP")
-    private BigDecimal descontoAntecipacao;
+    private BigDecimal valorDescontoAntecipacao;
 
     @Version
     @Column(name = "NO_VERSAO")
@@ -104,64 +74,13 @@ public class Reembolso extends ReembolsoBase {
     }
 
     @Override
-    public Long getNumeroDocumento() {
-        return numeroDocumento;
-    }
-
-    public void setNumeroDocumento(Long numeroDocumento) {
-        this.numeroDocumento = numeroDocumento;
-    }
-
-    @Override
-    public String getTipoDocumento() {
-        return tipoDocumento;
-    }
-
-    public void setTipoDocumento(String tipoDocumento) {
-        this.tipoDocumento = tipoDocumento;
-    }
-
-    @Override
-    public String getCiaDocumento() {
-        return ciaDocumento;
-    }
-
-    @Override
-    public void setCiaDocumento(String ciaDocumento) {
-        this.ciaDocumento = ciaDocumento;
-    }
-
-    public Integer getQuantidadeParcelas() {
-        return quantidadeParcelas;
-    }
-
-    public void setQuantidadeParcelas(Integer quantidadeParcelas) {
-        this.quantidadeParcelas = quantidadeParcelas;
-    }
-
-    @Override
-    public Date getDataVencimentoPgto() {
-        return dataVencimentoPgto;
-    }
-
-    public void setDataVencimentoPgto(Date dataVencimentoPgto) {
-        this.dataVencimentoPgto = dataVencimentoPgto;
-    }
-
     public BigDecimal getValorReembolso() {
         return valorReembolso;
     }
 
+    @Override
     public void setValorReembolso(BigDecimal valorReembolso) {
         this.valorReembolso = valorReembolso;
-    }
-
-    public BigDecimal getValorDescontoAntecipado() {
-        return valorDesconto;
-    }
-
-    public void setValorDesconto(BigDecimal valorDesconto) {
-        this.valorDesconto = valorDesconto;
     }
 
     @Override
@@ -170,36 +89,27 @@ public class Reembolso extends ReembolsoBase {
     }
 
     @Override
-    public BigDecimal getValorDesconto() {
-        return valorDesconto;
-    }
-
     public void setValorTotal(BigDecimal valorTotal) {
         this.valorTotal = valorTotal;
     }
 
-    public Date getDataPagamento() {
-        return dataPagamento;
+    @Override
+    public BigDecimal getValorDesconto() {
+        return valorDesconto;
     }
 
-    public void setDataPagamento(Date dataPagamento) {
-        this.dataPagamento = dataPagamento;
+    @Override
+    public void setValorDesconto(BigDecimal valorDesconto) {
+        this.valorDesconto = valorDesconto;
     }
 
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public String getMensagemErro() {
-        return mensagemErro;
-    }
-
-    public void setMensagemErro(String mensagemErro) {
-        this.mensagemErro = mensagemErro;
+    @Override
+    public BigDecimal getValorDescontoVoucher() {
+        BigDecimal valorDesconto = getValorDesconto();
+        if(getValorDescontoAntecipacao() != null) {
+            valorDesconto = valorDesconto.add(getValorDescontoAntecipacao());
+        }
+        return valorDesconto;
     }
 
     public Long getVersao() {
@@ -210,6 +120,7 @@ public class Reembolso extends ReembolsoBase {
         this.versao = versao;
     }
 
+    @Override
     public List<TransacaoConsolidada> getTransacoesConsolidadas() {
         return transacoesConsolidadas;
     }
@@ -223,14 +134,6 @@ public class Reembolso extends ReembolsoBase {
         return transacoesConsolidadas != null ? transacoesConsolidadas.get(0).getPontosDeVenda() : Collections.emptyList();
     }
 
-    public Integer getStatusIntegracao() {
-        return statusIntegracao;
-    }
-
-    public void setStatusIntegracao(Integer statusIntegracao) {
-        this.statusIntegracao = statusIntegracao;
-    }
-
     public String getMensagemErroLiberacaoPagamento() {
         return mensagemErroLiberacaoPagamento;
     }
@@ -239,6 +142,7 @@ public class Reembolso extends ReembolsoBase {
         this.mensagemErroLiberacaoPagamento = mensagemErroLiberacaoPagamento;
     }
 
+    @Override
     public Integer getStatusLiberacaoPagamento() {
         return statusLiberacaoPagamento;
     }
@@ -255,20 +159,12 @@ public class Reembolso extends ReembolsoBase {
         this.valorDescontoCredito = valorDescontoCredito;
     }
 
-    public Integer getNumeroTentativasEnvio() {
-        return numeroTentativasEnvio;
+    public BigDecimal getValorDescontoAntecipacao() {
+        return valorDescontoAntecipacao;
     }
 
-    public void setNumeroTentativasEnvio(Integer numeroTentativasEnvio) {
-        this.numeroTentativasEnvio = numeroTentativasEnvio;
-    }
-
-    public BigDecimal getDescontoAntecipacao() {
-        return descontoAntecipacao;
-    }
-
-    public void setDescontoAntecipacao(BigDecimal descontoAntecipacao) {
-        this.descontoAntecipacao = descontoAntecipacao;
+    public void setValorDescontoAntecipacao(BigDecimal valorDescontoAntecipacao) {
+        this.valorDescontoAntecipacao = valorDescontoAntecipacao;
     }
 
     @Transient
@@ -285,5 +181,16 @@ public class Reembolso extends ReembolsoBase {
     @Transient
     public boolean possuiPendenciaNotaFiscal() {
         return transacoesConsolidadas.stream().anyMatch(TransacaoConsolidada::pendenteNotaFiscal);
+    }
+
+    /**
+     * Informa se o reembolso está liberado para a realização do seu pagamento.
+     *
+     * @return true, caso esteja liberado.
+     */
+    @Transient
+    @Override
+    public boolean estaAprovadoParaPagamento() {
+        return StatusLiberacaoReembolsoJde.APROVADO_PAGAMENTO.getValue() == statusLiberacaoPagamento;
     }
 }

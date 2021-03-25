@@ -5,6 +5,8 @@ import ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import ipp.aci.boleia.dominio.interfaces.IPertenceRevendedor;
 
+import javax.persistence.Column;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -13,67 +15,55 @@ import java.util.List;
 /**
  * Classe abstrata de generalização para o domínio de Reembolso
  */
+@MappedSuperclass
 public abstract class ReembolsoBase implements IPersistente, IPertenceRevendedor {
 
     private static final long serialVersionUID = 1574595991544792091L;
 
-    private Long id;
-    private List<PontoDeVenda> pontosDeVenda;
-    private BigDecimal valorTotal;
-    private BigDecimal valorDesconto;
-    private BigDecimal valorReembolso;
-    private Date dataVencimentoPgto;
-    private List<TransacaoConsolidada> transacoesConsolidadas;
+    @Column(name = "NO_DOC_JDE")
     private Long numeroDocumento;
+    @Column(name = "ID_TIPO_DOC")
     private String tipoDocumento;
+    @Column(name = "NM_CIA_DOC")
     private String ciaDocumento;
+    @Column(name = "QT_PARCELAS")
     private Integer quantidadeParcelas;
-    private Integer statusLiberacaoPagamento;
-    private String mensagemErro;
-    private Integer status;
-    private Integer statusIntegracao;
-    private Integer numeroTentativasEnvio;
+    @Column(name = "DT_VENC_PGTO")
+    private Date dataVencimentoPgto;
+    @Column(name = "DT_PGTO")
     private Date dataPagamento;
+    @Column(name = "ID_STATUS")
+    private Integer status;
+    @Column(name = "DS_MSG_ERRO")
+    private String mensagemErro;
+    @Column(name = "ID_STATUS_INT_JDE")
+    private Integer statusIntegracao;
+    @Column(name = "NO_TENTATIVAS_ENVIO")
+    private Integer numeroTentativasEnvio;
 
-    public BigDecimal getValorTotal() {
-        return valorTotal;
-    }
+    public abstract Long getId();
 
-    public void setValorTotal(BigDecimal valorTotal) {
-        this.valorTotal = valorTotal;
-    }
+    public abstract void setId(Long id);
 
-    public BigDecimal getValorDesconto() {
-        return valorDesconto;
-    }
+    public abstract BigDecimal getValorTotal();
 
-    public void setValorDesconto(BigDecimal valorDesconto) {
-        this.valorDesconto = valorDesconto;
-    }
+    public abstract void setValorTotal(BigDecimal valorTotal);
 
-    public BigDecimal getValorReembolso() {
-        return valorReembolso;
-    }
+    public abstract BigDecimal getValorDesconto();
 
-    public void setValorReembolso(BigDecimal valorReembolso) {
-        this.valorReembolso = valorReembolso;
-    }
+    public abstract void setValorDesconto(BigDecimal valorDesconto);
 
-    public Date getDataVencimentoPgto() {
-        return dataVencimentoPgto;
-    }
+    public abstract BigDecimal getValorReembolso();
 
-    public void setDataVencimentoPgto(Date dataVencimentoPgto) {
-        this.dataVencimentoPgto = dataVencimentoPgto;
-    }
+    public abstract void setValorReembolso(BigDecimal valorReembolso);
 
-    public List<TransacaoConsolidada> getTransacoesConsolidadas() {
-        return transacoesConsolidadas;
-    }
+    public abstract BigDecimal getValorDescontoVoucher();
 
-    public void setTransacoesConsolidadas(List<TransacaoConsolidada> transacoesConsolidadas) {
-        this.transacoesConsolidadas = transacoesConsolidadas;
-    }
+    public abstract List<PontoDeVenda> getPontosDeVenda();
+
+    public abstract Integer getStatusLiberacaoPagamento();
+
+    public abstract List<TransacaoConsolidada> getTransacoesConsolidadas();
 
     public Long getNumeroDocumento() {
         return numeroDocumento;
@@ -107,20 +97,20 @@ public abstract class ReembolsoBase implements IPersistente, IPertenceRevendedor
         this.quantidadeParcelas = quantidadeParcelas;
     }
 
-    public Integer getStatusLiberacaoPagamento() {
-        return statusLiberacaoPagamento;
+    public Date getDataVencimentoPgto() {
+        return dataVencimentoPgto;
     }
 
-    public void setStatusLiberacaoPagamento(Integer statusLiberacaoPagamento) {
-        this.statusLiberacaoPagamento = statusLiberacaoPagamento;
+    public void setDataVencimentoPgto(Date dataVencimentoPgto) {
+        this.dataVencimentoPgto = dataVencimentoPgto;
     }
 
-    public String getMensagemErro() {
-        return mensagemErro;
+    public Date getDataPagamento() {
+        return dataPagamento;
     }
 
-    public void setMensagemErro(String mensagemErro) {
-        this.mensagemErro = mensagemErro;
+    public void setDataPagamento(Date dataPagamento) {
+        this.dataPagamento = dataPagamento;
     }
 
     public Integer getStatus() {
@@ -131,20 +121,20 @@ public abstract class ReembolsoBase implements IPersistente, IPertenceRevendedor
         this.status = status;
     }
 
+    public String getMensagemErro() {
+        return mensagemErro;
+    }
+
+    public void setMensagemErro(String mensagemErro) {
+        this.mensagemErro = mensagemErro;
+    }
+
     public Integer getStatusIntegracao() {
         return statusIntegracao;
     }
 
     public void setStatusIntegracao(Integer statusIntegracao) {
         this.statusIntegracao = statusIntegracao;
-    }
-
-    public Date getDataPagamento() {
-        return dataPagamento;
-    }
-
-    public void setDataPagamento(Date dataPagamento) {
-        this.dataPagamento = dataPagamento;
     }
 
     public Integer getNumeroTentativasEnvio() {
@@ -160,10 +150,7 @@ public abstract class ReembolsoBase implements IPersistente, IPertenceRevendedor
      *
      * @return true, caso esteja liberado.
      */
-    @Transient
-    public boolean estaAprovadoParaPagamento() {
-        return StatusLiberacaoReembolsoJde.APROVADO_PAGAMENTO.getValue() == statusLiberacaoPagamento;
-    }
+    public abstract boolean estaAprovadoParaPagamento();
 
     /**
      * Informa se o reembolso já foi pago.
@@ -173,5 +160,10 @@ public abstract class ReembolsoBase implements IPersistente, IPertenceRevendedor
     @Transient
     public boolean isPago() {
         return StatusPagamentoReembolso.PAGO.getValue().equals(status);
+    }
+
+    @Transient
+    public BigDecimal getValorLiquidoVoucher() {
+        return getValorTotal().subtract(getValorDescontoVoucher());
     }
 }

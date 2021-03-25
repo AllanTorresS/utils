@@ -343,7 +343,7 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     }
 
     public Date getDataUltimaEmissaoNf() {
-       return dataUltimaEmissaoNf;
+        return dataUltimaEmissaoNf;
     }
 
     public void setDataUltimaEmissaoNf(Date dataUltimaEmissaoNf) {
@@ -629,8 +629,8 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     public boolean todasTransacoesSaoNegativas(){
         if (getQuantidadeAbastecimentos() == 0){
             return getAutorizacoesPagamentoAssociadas().stream()
-                .filter(AutorizacaoPagamento::estaAutorizadaOuCancelada)
-                .noneMatch(autorizacaoPagamento -> autorizacaoPagamento.getValorTotal().compareTo(BigDecimal.ZERO) >= 0);
+                    .filter(AutorizacaoPagamento::estaAutorizadaOuCancelada)
+                    .noneMatch(autorizacaoPagamento -> autorizacaoPagamento.getValorTotal().compareTo(BigDecimal.ZERO) >= 0);
         }
         return false;
     }
@@ -643,9 +643,9 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     public boolean todasTransacoesSaoCanceladas(){
         boolean existeCancelado = getAutorizacoesPagamentoAssociadas().stream().anyMatch(AutorizacaoPagamento::estaCancelado);
         return getAutorizacoesPagamentoAssociadas().stream()
-                .allMatch(autorizacaoPagamento -> (autorizacaoPagamento.estaCancelado() && 
-                    MotivoEstorno.obterPorValor(autorizacaoPagamento.getMotivoEstorno()).getSemAlteracao()) ||
-                    (autorizacaoPagamento.getValorTotal().compareTo(BigDecimal.ZERO) < 0 && existeCancelado));
+                .allMatch(autorizacaoPagamento -> (autorizacaoPagamento.estaCancelado() &&
+                        MotivoEstorno.obterPorValor(autorizacaoPagamento.getMotivoEstorno()).getSemAlteracao()) ||
+                        (autorizacaoPagamento.getValorTotal().compareTo(BigDecimal.ZERO) < 0 && existeCancelado));
     }
 
     /**
