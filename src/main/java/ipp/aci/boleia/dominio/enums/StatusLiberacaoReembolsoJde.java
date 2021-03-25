@@ -12,14 +12,14 @@ public enum StatusLiberacaoReembolsoJde {
     SUSPENSO_PAGAMENTO(0),
     APROVADO_PAGAMENTO(1);
 
-    private int value;
+    private Integer value;
 
     /**
      * Construtor privado do enum.
      *
      * @param value Valor do enum
      */
-    StatusLiberacaoReembolsoJde(int value) {
+    StatusLiberacaoReembolsoJde(Integer value) {
         this.value = value;
     }
 

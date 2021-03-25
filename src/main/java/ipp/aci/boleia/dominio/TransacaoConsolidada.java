@@ -2,6 +2,7 @@ package ipp.aci.boleia.dominio;
 
 import ipp.aci.boleia.dominio.enums.ModalidadePagamento;
 import ipp.aci.boleia.dominio.enums.MotivoEstorno;
+import ipp.aci.boleia.dominio.enums.StatusIntegracaoReembolsoJde;
 import ipp.aci.boleia.dominio.enums.StatusNotaFiscal;
 import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
@@ -191,6 +192,9 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     @Column(name="ID_FROTA_GERENCIA_NF")
     private Boolean frotaGerenciaNf;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "transacaoConsolidada")
+    private List<ReembolsoAntecipado> antecipacoes;
+
     @Override
     public Long getId() {
         return id;
@@ -342,7 +346,7 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     }
 
     public Date getDataUltimaEmissaoNf() {
-       return dataUltimaEmissaoNf;
+        return dataUltimaEmissaoNf;
     }
 
     public void setDataUltimaEmissaoNf(Date dataUltimaEmissaoNf) {
@@ -538,6 +542,14 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
         this.unidade = unidade;
     }
 
+    public List<ReembolsoAntecipado> getAntecipacoes() {
+        return antecipacoes;
+    }
+
+    public void setAntecipacoes(List<ReembolsoAntecipado> antecipacoes) {
+        this.antecipacoes = antecipacoes;
+    }
+
     /**
      * Verifica se a transação consolidada é pre-paga
      * @return se é pre paga ou não
@@ -638,8 +650,8 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     public boolean todasTransacoesSaoNegativas(){
         if (getQuantidadeAbastecimentos() == 0){
             return getAutorizacoesPagamentoAssociadas().stream()
-                .filter(AutorizacaoPagamento::estaAutorizadaOuCancelada)
-                .noneMatch(autorizacaoPagamento -> autorizacaoPagamento.getValorTotal().compareTo(BigDecimal.ZERO) >= 0);
+                    .filter(AutorizacaoPagamento::estaAutorizadaOuCancelada)
+                    .noneMatch(autorizacaoPagamento -> autorizacaoPagamento.getValorTotal().compareTo(BigDecimal.ZERO) >= 0);
         }
         return false;
     }
@@ -652,9 +664,9 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     public boolean todasTransacoesSaoCanceladas(){
         boolean existeCancelado = getAutorizacoesPagamentoAssociadas().stream().anyMatch(AutorizacaoPagamento::estaCancelado);
         return getAutorizacoesPagamentoAssociadas().stream()
-                .allMatch(autorizacaoPagamento -> (autorizacaoPagamento.estaCancelado() && 
-                    MotivoEstorno.obterPorValor(autorizacaoPagamento.getMotivoEstorno()).getSemAlteracao()) ||
-                    (autorizacaoPagamento.getValorTotal().compareTo(BigDecimal.ZERO) < 0 && existeCancelado));
+                .allMatch(autorizacaoPagamento -> (autorizacaoPagamento.estaCancelado() &&
+                        MotivoEstorno.obterPorValor(autorizacaoPagamento.getMotivoEstorno()).getSemAlteracao()) ||
+                        (autorizacaoPagamento.getValorTotal().compareTo(BigDecimal.ZERO) < 0 && existeCancelado));
     }
 
     /**
@@ -708,5 +720,26 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
             return getValorEmitidoNotaFiscal().divide(getValorTotalNotaFiscal(), 2, BigDecimal.ROUND_HALF_DOWN).multiply(new BigDecimal(100));
         }
         return null;
+    }
+
+    @Transient
+    public ReembolsoAntecipado getAntecipacaoRealizada() {
+        if(antecipacoes != null) {
+            return antecipacoes.stream().filter(antecipacao -> StatusIntegracaoReembolsoJde.REALIZADO.getValue().equals(antecipacao.getStatusIntegracao())).findFirst().orElse(null);
+        }
+        return null;
+    }
+
+    @Transient
+    public Boolean possuiAntecipacaoRealizada() {
+        return getAntecipacaoRealizada() != null;
+    }
+
+    @Transient
+    public Boolean possuiAntecipacaoComErro() {
+        if(antecipacoes != null) {
+            return antecipacoes.stream().anyMatch(antecipacao -> StatusIntegracaoReembolsoJde.ERRO_ENVIO.getValue().equals(antecipacao.getStatusIntegracao()));
+        }
+        return false;
     }
 }
