@@ -166,4 +166,16 @@ public abstract class ReembolsoBase implements IPersistente, IPertenceRevendedor
     public BigDecimal getValorLiquidoVoucher() {
         return getValorTotal().subtract(getValorDescontoVoucher());
     }
+
+    /**
+     * Incrementa o número de tentativas realizadas para a criação do voucher no JDE.
+     */
+    public void incrementarNumeroTentativasEnvio() {
+        Integer numeroTentativasEnvio = getNumeroTentativasEnvio();
+        if (numeroTentativasEnvio != null) {
+            setNumeroTentativasEnvio(numeroTentativasEnvio + 1);
+        } else {
+            setNumeroTentativasEnvio(1);
+        }
+    }
 }
