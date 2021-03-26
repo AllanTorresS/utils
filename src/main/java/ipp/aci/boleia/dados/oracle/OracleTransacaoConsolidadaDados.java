@@ -74,6 +74,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
     private static final String CLAUSULA_EMPRESA_AGREGADA = "( EA.id = :empresaAgregadaId ) AND ";
     private static final String CLAUSULA_UNIDADE = "( U.id = :unidadeId ) AND ";
     private static final String CLAUSULA_EXIGE_NOTA = "( TC.frotaExigeNF = true or TC.unidade is not null or TC.empresaAgregada is not null ) ";
+    private static final String CLAUSULA_FROTA_GERENCIA_NF = " ( TC.frotaGerenciaNf IS NOT NULL AND TC.frotaGerenciaNf = 1 ) ";
     private static final String CLAUSULA_ORDENACAO_GRID_DETALHAMENTO = "ORDER BY " +
             "CASE WHEN (" + CLAUSULA_EXIGE_NOTA + " AND TC.valorTotalNotaFiscal > 0) THEN (TC.valorEmitidoNotaFiscal / TC.valorTotalNotaFiscal) " +
             "WHEN (TC.frotaExigeNF = false AND TC.unidade IS NULL AND TC.empresaAgregada IS NULL) THEN 2 " +
@@ -414,7 +415,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                         "C.ultimaCobrancaFrota, " +
                         "MIN(C.numeroDocumento), " +
                         "MAX(CASE WHEN " + CLAUSULA_EXIGE_NOTA + " THEN 1 ELSE 0 END), " +
-                        "SUM(CASE WHEN " + CLAUSULA_EXIGE_NOTA + " THEN TC.valorEmitidoNotaFiscal ELSE TC.valorTotalNotaFiscal END), " +
+                        "SUM(CASE WHEN ( " + CLAUSULA_EXIGE_NOTA + " OR " + CLAUSULA_FROTA_GERENCIA_NF + " ) THEN TC.valorEmitidoNotaFiscal ELSE TC.valorTotalNotaFiscal END), " +
                         "SUM(TC.valorTotalNotaFiscal), " +
                         "MIN(C.usuarioUltimoAjusteValor), " +
                         "MIN(C.dataUltimoAjusteValor), " +
@@ -422,7 +423,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                         "MIN(C.dataUltimoAjusteVencimento), " +
                         "MIN(CASE WHEN TC.statusNotaFiscal = " + StatusNotaFiscal.EMITIDA.getValue() + " THEN 1 ELSE 0 END), " +
                         "MIN(C.ultimaJustificativaAjuste), " +
-                        "MAX(CASE WHEN " + CLAUSULA_EXIGE_NOTA + " THEN 1 WHEN (TC.frotaGerenciaNf IS NOT NULL AND TC.frotaGerenciaNf = 1) " +
+                        "MAX(CASE WHEN " + CLAUSULA_EXIGE_NOTA + " THEN 1 WHEN " +  CLAUSULA_FROTA_GERENCIA_NF +
                         "THEN 1 ELSE 0 END) " +
                     ") " + FROM_CONSULTAR_CONSOLIDADOS_POR_COBRANCA;
 
