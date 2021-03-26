@@ -20,10 +20,9 @@ import static ipp.aci.boleia.util.UtilitarioCalculoData.obterPrimeiroInstanteDia
 
 /**
  * Serviços base de domínio da entidade {@link ipp.aci.boleia.dominio.Reembolso}.
- * @param <T> Tipo de reembolso
  */
 @Component
-public class ReembolsoBaseSd<T extends ReembolsoBase> {
+public class ReembolsoBaseSd {
 
     protected static final int QUANTIDADE_DIAS_A_MAIS_REEMBOLSO = 2;
 
@@ -32,35 +31,6 @@ public class ReembolsoBaseSd<T extends ReembolsoBase> {
 
     @Autowired
     private UtilitarioAmbiente utilitarioAmbiente;
-
-    @Autowired
-    private IVoucherBaseDados repositorioVoucher;
-
-    /**
-     * Comunica com o JDE, solicitando a criacao de um voucher de reembolso.
-     *
-     * @param reembolso Os dados do reembolso para a criacao do voucher
-     * @return O reembolso contendo o voucher.
-     */
-    public T gerarVoucher(T reembolso) {
-        T reembolsoComVoucher = repositorioVoucher.criar(reembolso);
-        incrementarNumeroTentativasEnvio(reembolsoComVoucher);
-        return (T) repositorioReembolsoBase.armazenar(reembolsoComVoucher);
-    }
-
-    /**
-     * Incrementa o número de tentativas realizadas para a criação do voucher no JDE.
-     *
-     * @param reembolso Reembolso que terá o numero de tentativas incrementado.
-     */
-    private void incrementarNumeroTentativasEnvio(ReembolsoBase reembolso) {
-        Integer numeroTentativasEnvio = reembolso.getNumeroTentativasEnvio();
-        if (numeroTentativasEnvio != null) {
-            reembolso.setNumeroTentativasEnvio(numeroTentativasEnvio + 1);
-        } else {
-            reembolso.setNumeroTentativasEnvio(1);
-        }
-    }
 
     /**
      * Atualiza o status de um reembolso.
