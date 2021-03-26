@@ -2,6 +2,7 @@ package ipp.aci.boleia.dominio.vo;
 
 import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.PontoDeVenda;
+import ipp.aci.boleia.dominio.TipoCombustivel;
 import ipp.aci.boleia.dominio.Veiculo;
 
 import java.math.BigDecimal;
@@ -15,6 +16,7 @@ public class PreAutorizacaoPedidoVo extends PreAutorizacaoBasePedidoVo {
 
     private Frota frota;
     private Veiculo veiculo;
+    private TipoCombustivel combustivel;
     private List<PontoDeVenda> postosDisponiveis;
 
     public PreAutorizacaoPedidoVo() {}
@@ -30,11 +32,12 @@ public class PreAutorizacaoPedidoVo extends PreAutorizacaoBasePedidoVo {
         this.dataCriacao = dataCriacao;
     }
 
-    public PreAutorizacaoPedidoVo(Frota frota, Veiculo veiculo, BigDecimal litragem, Long hodometro, BigDecimal horimetro, Date dataCriacao) {
+    public PreAutorizacaoPedidoVo(Frota frota, Veiculo veiculo, BigDecimal litragem, Long hodometro, BigDecimal horimetro, TipoCombustivel combustivel, Date dataCriacao) {
         this(frota, veiculo, dataCriacao);
         this.litragem = litragem;
         this.hodometro = hodometro;
         this.horimetro = horimetro;
+        this.combustivel = combustivel;
     }
 
     public PreAutorizacaoPedidoVo(Frota frota, Veiculo veiculo, Long hodometro, BigDecimal horimetro, Date dataCriacao) {
@@ -74,5 +77,13 @@ public class PreAutorizacaoPedidoVo extends PreAutorizacaoBasePedidoVo {
 
     public void setPostosDisponiveis(List<PontoDeVenda> postosDisponiveis) {
         this.postosDisponiveis = postosDisponiveis;
+    }
+
+    public TipoCombustivel getCombustivel() {
+        return combustivel;
+    }
+
+    public void setCombustivel(TipoCombustivel combustivel) {
+        this.combustivel = combustivel;
     }
 }
