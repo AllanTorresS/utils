@@ -26,7 +26,8 @@ public class AgrupamentoTransacaoConsolidadaPvVo {
     private BigDecimal valorEmitidoNf;
     private Long quantidadeAbastecimentos;
     private Integer statusPagamentoReembolso;
-    private Boolean passivelDeEmissao; 
+    private BigDecimal valorTotalAntecipado;
+    private Boolean passivelDeEmissao;
 
     /**
      * Construtor default.
@@ -47,8 +48,12 @@ public class AgrupamentoTransacaoConsolidadaPvVo {
      * @param valorTotalNf Valor total da nota fiscal.
      * @param valorEmitidoNf Valoro total emitido da nota fiscal.
      * @param passivelDeEmissao indica se ao menos um ciclo do agrupamaneto é passível de emissão de NF
+     * @param quantidadeAbastecimentos Quantidade de abastecimentos presentes nas transações consolidadas.
+     * @param statusPagamentoReembolso Status de pagamento do reembolso.
+     * @param valorTotalAntecipado Valor total antecipado para a revenda.
+     * @param passivelDeEmissao indica se ao menos um ciclo do agrupamaneto é passível de emissão de NF
      */
-    public AgrupamentoTransacaoConsolidadaPvVo(Date dataInicioPeriodo, Date dataFimPeriodo, Date prazoEmissaoNotaFiscal, Integer statusConsolidacao, BigDecimal valorFaturamento, BigDecimal valorReembolso, BigDecimal valorDesconto, BigDecimal valorTotalNf, BigDecimal valorEmitidoNf, Long quantidadeAbastecimentos, Integer statusPagamentoReembolso, Integer passivelDeEmissao) {
+    public AgrupamentoTransacaoConsolidadaPvVo(Date dataInicioPeriodo, Date dataFimPeriodo, Date prazoEmissaoNotaFiscal, Integer statusConsolidacao, BigDecimal valorFaturamento, BigDecimal valorReembolso, BigDecimal valorDesconto, BigDecimal valorTotalNf, BigDecimal valorEmitidoNf, Long quantidadeAbastecimentos, Integer statusPagamentoReembolso, BigDecimal valorTotalAntecipado, Integer passivelDeEmissao) {
         this.dataInicioPeriodo = dataInicioPeriodo;
         this.dataFimPeriodo = dataFimPeriodo;
         this.prazoEmissaoNotaFiscal = prazoEmissaoNotaFiscal;
@@ -61,6 +66,7 @@ public class AgrupamentoTransacaoConsolidadaPvVo {
         this.valorEmitidoNf = valorEmitidoNf;
         this.quantidadeAbastecimentos = quantidadeAbastecimentos;
         this.statusPagamentoReembolso = statusPagamentoReembolso;
+        this.valorTotalAntecipado = valorTotalAntecipado;
         this.passivelDeEmissao = passivelDeEmissao == 1;
     }
 
@@ -169,6 +175,14 @@ public class AgrupamentoTransacaoConsolidadaPvVo {
         this.passivelDeEmissao = passivelDeEmissao;
     }
 
+
+    public BigDecimal getValorTotalAntecipado() {
+        return valorTotalAntecipado;
+    }
+
+    public void setValorTotalAntecipado(BigDecimal valorTotalAntecipado) {
+        this.valorTotalAntecipado = valorTotalAntecipado;
+    }
 
     /**
      * Indica se uma transação consolidada está em aberto.
