@@ -38,6 +38,7 @@ import ipp.aci.boleia.dominio.vo.FiltroPesquisaReembolsoGraficoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaReembolsoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaTransacaoConsolidadaVo;
 import ipp.aci.boleia.dominio.vo.PontosGraficoFinanceiroVo;
+import ipp.aci.boleia.dominio.vo.ReembolsoTotalPeriodoVo;
 import ipp.aci.boleia.dominio.vo.frotista.FiltroPesquisaNotaFiscalFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.InformacaoPaginacaoFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.ResultadoPaginadoFrtVo;
@@ -107,7 +108,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "SUM(CASE WHEN TC.empresaAgregada IS NOT NULL OR TC.unidade IS NOT NULL OR TC.frotaExigeNF = true THEN TC.valorTotalNotaFiscal ELSE 0 END), " +
                     "SUM(CASE WHEN TC.empresaAgregada IS NOT NULL OR TC.unidade IS NOT NULL OR TC.frotaExigeNF = true THEN TC.valorEmitidoNotaFiscal ELSE 0 END), " +
                     "SUM(TC.quantidadeAbastecimentos), " +
-                    "CASE WHEN TC.reembolso is NULL THEN " + StatusPagamentoReembolso.PREVISTO.getValue() + " ELSE RM.status END) ";
+                    "CASE WHEN TC.reembolso is NULL THEN " + StatusPagamentoReembolso.PREVISTO.getValue() + " ELSE RM.status END, " +
+                    "SUM(A.valorReembolso)) ";
 
     private static final String CLAUSULA_NOTA_ATRASADA =
             " TRUNC(TC.prazos.dataLimiteEmissaoNfe) <  TRUNC(SYSDATE) " +
@@ -296,22 +298,6 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "     OR (tp.dataLimiteEmissaoNfe < :hoje " +
                     "     AND tc.statusConsolidacao = " + StatusTransacaoConsolidada.EM_AJUSTE.getValue() +
                     "     ) " ;
-
-    private static final String CONSULTA_TOTAL_REEMBOLSO_PAGO_PERIODO =
-            " SELECT SUM(CASE WHEN r.valorReembolso IS NULL THEN tc.valorReembolso "+
-                    "ELSE r.valorReembolso END) " +
-                    "FROM TransacaoConsolidada tc " +
-                    "LEFT JOIN tc.frotaPtov fpv " +
-                    "LEFT JOIN tc.reembolso r " +
-                    "LEFT JOIN tc.empresaAgregada EA " +
-                    "LEFT JOIN tc.unidade U	" +
-                    "WHERE r.dataPagamento >= :dataInicioPeriodo AND r.dataPagamento <= :dataFimPeriodo " +
-                    "AND (fpv.pontoVenda.id IN :idsPvs) " +
-                    "AND (fpv.frota.id = :idFrota OR :idFrota is null) AND " +
-                    CLAUSULA_UNIDADE +
-                    CLAUSULA_EMPRESA_AGREGADA +
-                    "(tc.valorTotal <> 0 OR tc.valorTotalNotaFiscal <> 0) " +
-                    "AND r.status = " + StatusPagamentoReembolso.PAGO.getValue();
 
     private static final String CONSULTA_TOTAL_COBRANCA_PERIODO =
             " SELECT SUM(tc.valorTotal) - SUM(tc.valorDescontoAbastecimentos) " +
@@ -514,6 +500,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "LEFT JOIN TC.reembolso RM	" +
                     "LEFT JOIN TC.empresaAgregada EA " +
                     "LEFT JOIN TC.unidade U	" +
+                    "LEFT JOIN TC.antecipacoes A WITH A.statusIntegracao = " + StatusIntegracaoReembolsoJde.REALIZADO.getValue() + " " +
                     "WHERE FP.pontoVenda.id IN :idsPvs AND " +
                     "      TRUNC(TC.dataInicioPeriodo) >= TRUNC(:dataInicio) AND " +
                     "      TRUNC(TC.dataFimPeriodo) <= TRUNC(:dataFim) " +
@@ -537,6 +524,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "LEFT JOIN TC.reembolso RM	" +
                     "LEFT JOIN TC.empresaAgregada EA " +
                     "LEFT JOIN TC.unidade U	" +
+                    "LEFT JOIN TC.antecipacoes A WITH A.statusIntegracao = " + StatusIntegracaoReembolsoJde.REALIZADO.getValue() + " " +
                     "WHERE FP.pontoVenda.id IN :idsPvs AND " +
                     "      TRUNC(TC.dataInicioPeriodo) >= TRUNC(:dataInicio) AND " +
                     "      TRUNC(TC.dataFimPeriodo) <= TRUNC(:dataFim) AND " +
@@ -1354,36 +1342,30 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
     }
 
     @Override
-    public BigDecimal obterTotalReembolsoPeriodo(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado) {
+    public ReembolsoTotalPeriodoVo obterTotalReembolsoPeriodo(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
-        String consulta = CONSULTA_TOTAL_REEMBOLSO_PAGO_PERIODO;
-
-        parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataInicioPeriodo", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe())));
-        parametros.add(new ParametroPesquisaDataMenorOuIgual("dataFimPeriodo", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte())));
+        parametros.add(new ParametroPesquisaDataMaiorOuIgual("reembolso.dataPagamento", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe())));
+        parametros.add(new ParametroPesquisaDataMenorOuIgual("reembolso.dataPagamento", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte())));
 
         if(filtro.getPontoDeVenda() != null && filtro.getPontoDeVenda().getId() != null) {
-            parametros.add(new ParametroPesquisaIn("idsPvs", Collections.singletonList(filtro.getPontoDeVenda().getId())));
-        } else {
-            parametros.add(new ParametroPesquisaIn("idsPvs", usuarioLogado.getPontosDeVenda().stream().map(PontoDeVenda::getId).collect(Collectors.toList())));
+            parametros.add(new ParametroPesquisaIn("frotaPtov.pontoVenda.id", Collections.singletonList(filtro.getPontoDeVenda().getId())));
         }
         if(filtro.getFrota() != null && filtro.getFrota().getId() != null) {
-            parametros.add(new ParametroPesquisaIgual("idFrota", filtro.getFrota().getId()));
-        } else {
-            parametros.add(new ParametroPesquisaIgual("idFrota", null));
+            parametros.add(new ParametroPesquisaIgual("frotaPtov.frota.id", filtro.getFrota().getId()));
         }
         if (filtro.getEmpresaUnidade() != null && filtro.getEmpresaUnidade().getId() != null && filtro.getEmpresaUnidade().getTipo() != null && TipoEntidadeUnidadeEmpresaAgregada.UNIDADE.name().equals(filtro.getEmpresaUnidade().getTipo().getName())) {
-            parametros.add(new ParametroPesquisaIgual("unidadeId", filtro.getEmpresaUnidade().getIdUnidade()));
-        } else {
-            consulta = consulta.replace(CLAUSULA_UNIDADE, "");
+            parametros.add(new ParametroPesquisaIgual("unidade.id", filtro.getEmpresaUnidade().getIdUnidade()));
         }
         if (filtro.getEmpresaUnidade() != null && filtro.getEmpresaUnidade().getId() != null && filtro.getEmpresaUnidade().getTipo() != null && TipoEntidadeUnidadeEmpresaAgregada.EMPRESA_AGREGADA.name().equals(filtro.getEmpresaUnidade().getTipo().getName())) {
-            parametros.add(new ParametroPesquisaIgual("empresaAgregadaId", filtro.getEmpresaUnidade().getIdEmpresaAgregada()));
-        } else {
-            consulta = consulta.replace(CLAUSULA_EMPRESA_AGREGADA, "");
+            parametros.add(new ParametroPesquisaIgual("empresaAgregada.id", filtro.getEmpresaUnidade().getIdEmpresaAgregada()));
         }
 
-        BigDecimal totalReembolso = pesquisarUnicoSemIsolamentoDados(consulta, parametros.toArray(new ParametroPesquisa[parametros.size()]));
-        return totalReembolso != null ? totalReembolso : BigDecimal.ZERO;
+        List<TransacaoConsolidada> transacoesConsolidadas = pesquisar((ParametroOrdenacaoColuna) null, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        BigDecimal totalReembolso = transacoesConsolidadas.stream().map(tc -> tc.getReembolso() != null ? tc.getReembolso().getValorReembolso() : tc.getValorReembolso())
+                                                                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal totalAntecipado = transacoesConsolidadas.stream().map(tc -> tc.getAntecipacaoRealizada() != null ? tc.getAntecipacaoRealizada().getValorReembolso() : BigDecimal.ZERO)
+                                                                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+        return new ReembolsoTotalPeriodoVo(totalReembolso, totalAntecipado);
     }
 
     @Override
