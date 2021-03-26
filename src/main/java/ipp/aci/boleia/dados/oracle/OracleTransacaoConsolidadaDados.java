@@ -107,7 +107,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "SUM(CASE WHEN TC.empresaAgregada IS NOT NULL OR TC.unidade IS NOT NULL OR TC.frotaExigeNF = true THEN TC.valorTotalNotaFiscal ELSE 0 END), " +
                     "SUM(CASE WHEN TC.empresaAgregada IS NOT NULL OR TC.unidade IS NOT NULL OR TC.frotaExigeNF = true THEN TC.valorEmitidoNotaFiscal ELSE 0 END), " +
                     "SUM(TC.quantidadeAbastecimentos), " +
-                    "CASE WHEN TC.reembolso is NULL THEN " + StatusPagamentoReembolso.PREVISTO.getValue() + " ELSE RM.status END) ";
+                    "CASE WHEN TC.reembolso is NULL THEN " + StatusPagamentoReembolso.PREVISTO.getValue() + " ELSE RM.status END), " +
+                    "MAX(CASE WHEN " + CLAUSULA_EXIGE_NOTA + " THEN 1 WHEN (TC.frotaGerenciaNf IS NOT NULL AND TC.frotaGerenciaNf = 1) THEN 1 ELSE 0 END) ";
 
     private static final String CLAUSULA_NOTA_ATRASADA =
             " TRUNC(TC.prazos.dataLimiteEmissaoNfe) <  TRUNC(SYSDATE) " +
