@@ -27,7 +27,6 @@ import ipp.aci.boleia.dominio.parametros.LogicaParametroVolumeAbastecidoPreAutor
 import ipp.aci.boleia.dominio.vo.PreAutorizacaoPedidoVo;
 
 import java.lang.reflect.Type;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
