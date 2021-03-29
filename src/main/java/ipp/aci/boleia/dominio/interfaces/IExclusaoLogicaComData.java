@@ -7,23 +7,17 @@ import java.util.Date;
  */
 public interface IExclusaoLogicaComData {
 
-    String NOME_CAMPO="excluido";
+    String NOME_CAMPO="dataExclusao";
 
     /**
-     * Retorna true caso a entidade tenha sido exlcuida logicamente
-     * @return true caso a entidade tenha sido exlcuida logicamente
+     * Retorna true caso a entidade tenha sido excluida logicamente
+     * @return true caso a entidade tenha sido excluida logicamente
      */
     Boolean getExcluido();
 
     /**
-     * Determina se a entidade foi excluida logicamente
-     * @param excluido true caso a entidade tenha sido exlcuida logicamente
-     */
-    void setExcluido(Boolean excluido);
-
-    /**
-     * Retorna data de exclusão caso a entidade tenha sido exlcuida logicamente
-     * @return data de exclusão caso a entidade tenha sido exlcuida logicamente
+     * Retorna data de exclusão caso a entidade tenha sido excluida logicamente
+     * @return data de exclusão caso a entidade tenha sido excluida logicamente
      */
     Date getDataExclusao();
 

@@ -185,7 +185,7 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
                 ((IExclusaoLogica) t).setExcluido(false);
             }
             if (t instanceof IExclusaoLogicaComData) {
-                ((IExclusaoLogicaComData) t).setExcluido(false);
+                ((IExclusaoLogicaComData) t).setDataExclusao(null);
             }
             if (t != null && t.getId() != null && t.getId() > 0) {
                 t = getGerenciadorDeEntidade().merge(t);
@@ -209,7 +209,7 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
                     ((IExclusaoLogica) t).setExcluido(false);
                 }
                 if (t instanceof IExclusaoLogicaComData) {
-                    ((IExclusaoLogicaComData) t).setExcluido(false);
+                    ((IExclusaoLogicaComData) t).setDataExclusao(null);
                 }
                 if (t != null && t.getId() != null && t.getId() > 0) {
                     t = getGerenciadorDeEntidade().merge(t);
@@ -255,7 +255,6 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
                 ((IExclusaoLogica) t).setExcluido(true);
                 getGerenciadorDeEntidade().merge(t);
             } else if (t instanceof IExclusaoLogicaComData) {
-                ((IExclusaoLogicaComData) t).setExcluido(true);
                 ((IExclusaoLogicaComData) t).setDataExclusao(new Date());
                 getGerenciadorDeEntidade().merge(t);
             } else {
@@ -895,7 +894,7 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
             predicados.add(builder.equal(entityRoot.get(IExclusaoLogica.NOME_CAMPO), Boolean.FALSE));
         }
         if (IExclusaoLogicaComData.class.isAssignableFrom(getClassePersistente())) {
-            predicados.add(builder.equal(entityRoot.get(IExclusaoLogicaComData.NOME_CAMPO), Boolean.FALSE));
+            predicados.add(builder.isNull(entityRoot.get(IExclusaoLogicaComData.NOME_CAMPO)));
         }
 
         Usuario usuarioLogado = ambiente.getUsuarioLogado();
