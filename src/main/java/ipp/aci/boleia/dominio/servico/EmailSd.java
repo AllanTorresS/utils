@@ -39,6 +39,7 @@ import ipp.aci.boleia.dominio.AutorizacaoPagamento;
 import ipp.aci.boleia.dominio.AutorizacaoPagamentoEdicao;
 import ipp.aci.boleia.dominio.Cobranca;
 import ipp.aci.boleia.dominio.CobrancaConectcar;
+import ipp.aci.boleia.dominio.ErroIntegracaoTransacaoConectcar;
 import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.FrotaPontoVenda;
 import ipp.aci.boleia.dominio.GapPontoDeVenda;
@@ -65,6 +66,7 @@ import ipp.aci.boleia.util.UtilitarioFormatacao;
 import ipp.aci.boleia.util.UtilitarioFormatacaoData;
 import ipp.aci.boleia.util.i18n.Mensagens;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
+import ipp.aci.boleia.util.rotas.ExternoRotas;
 import ipp.aci.boleia.util.rotas.Paginas;
 
 /**
@@ -114,6 +116,9 @@ public class EmailSd {
 
     @Value("${email.avisos.integracao}")
     private String destinatarioIntegracao;
+    
+    @Value("${email.suporte}")
+    private String emailSuporte;
 
     private static final String APPLICATION_TYPE_PDF = "application/pdf";
 
@@ -786,5 +791,37 @@ public class EmailSd {
             emailDados.enviarEmail(assunto, corpo.toString(), Arrays.asList(destinatario));
         }
     }
+    
+    /**
+     * Envia um email quando ocorre um erro no processamento da transação enviada pela Conectcar.
+     * Destinatário configurado em na propriedade "email.suporte".
+     * 
+     * @param erroTransacaoConectcar representa o objeto ErroIntegracaoTransacaoConectcar contendo algumas informações para auxiliar no tratamento do erro
+     */
+    public void enviarEmailErroIntegracaoTransacaoConectcar(ErroIntegracaoTransacaoConectcar erroTransacaoConectcar) {
+    	if (emailSuporte != null){
+            String assunto = mensagens.obterMensagem("email.erro.integracao.transacao.conectcar.assunto");
+
+            String frotaCnpjRazaoSocial = null;
+            Frota frota = erroTransacaoConectcar.getFrota();
+            if(frota != null) {
+            	frotaCnpjRazaoSocial = formatarCnpjApresentacao(frota.getCnpj()) + " - " + frota.getRazaoSocial();
+            }
+            
+            StringBuilder corpo = new StringBuilder(mensagens.obterMensagem("email.erro.integracao.transacao.conectcar.corpo",
+            		ExternoRotas.TRANSACAO_CONECTCAR_API,
+            		frotaCnpjRazaoSocial,
+            		erroTransacaoConectcar.getVeiculoId(),
+            		erroTransacaoConectcar.getPlaca(),
+            		erroTransacaoConectcar.getTipoTransacao(),
+            		erroTransacaoConectcar.getCodigoTransacaoConectcar(),
+            		UtilitarioFormatacaoData.formatarDataHora(erroTransacaoConectcar.getDataProcessamento()),
+            		erroTransacaoConectcar.getErroProcessamento()));    
+            
+            corpo.append(mensagens.obterMensagem("email.erro.integracao.transacao.conectcar.rodape"));
+            
+            emailDados.enviarEmail(assunto, corpo.toString(), Collections.singletonList(emailSuporte));
+		}
+	}
 
 }
