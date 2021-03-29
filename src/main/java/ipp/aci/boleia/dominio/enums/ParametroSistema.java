@@ -20,6 +20,7 @@ import ipp.aci.boleia.dominio.parametros.LogicaParametroLocalizacaoAbastecimento
 import ipp.aci.boleia.dominio.parametros.LogicaParametroPostosAutorizadosAbastecimento;
 import ipp.aci.boleia.dominio.parametros.LogicaParametroPostosAutorizadosAbastecimentoPreAutorizacao;
 import ipp.aci.boleia.dominio.parametros.LogicaParametroPrecoMaximo;
+import ipp.aci.boleia.dominio.parametros.LogicaParametroPrecoMaximoPreAutorizacao;
 import ipp.aci.boleia.dominio.parametros.LogicaParametroProdutoAbastecido;
 import ipp.aci.boleia.dominio.parametros.LogicaParametroProdutosAdicionais;
 import ipp.aci.boleia.dominio.parametros.LogicaParametroVolumeAbastecido;
@@ -27,7 +28,6 @@ import ipp.aci.boleia.dominio.parametros.LogicaParametroVolumeAbastecidoPreAutor
 import ipp.aci.boleia.dominio.vo.PreAutorizacaoPedidoVo;
 
 import java.lang.reflect.Type;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +52,8 @@ public enum ParametroSistema {
             ImmutableMap.of(AutorizacaoPagamento.class, LogicaParametroConsumoEstimado.class,
                     PreAutorizacaoPedidoVo.class, LogicaParametroConsumoEstimadoPreAutorizacao.class)),
     PRECO_MAXIMO(6, TipoRestritividade.VERSATIL, true, false, Collections.singletonList(TipoPerfilUsuario.FROTA), EstruturaParametroSistema.PRECO_MAXIMO, "parametro.sistema.preco.maximo.nome", "parametro.sistema.preco.maximo.descricao",
-            ImmutableMap.of(AutorizacaoPagamento.class, LogicaParametroPrecoMaximo.class)),
+            ImmutableMap.of(AutorizacaoPagamento.class, LogicaParametroPrecoMaximo.class,
+                    PreAutorizacaoPedidoVo.class, LogicaParametroPrecoMaximoPreAutorizacao.class)),
     HODOMETRO_HORIMETRO(7, TipoRestritividade.RESTRITIVA, true, false, Collections.singletonList(TipoPerfilUsuario.FROTA), EstruturaParametroSistema.HODOMETRO_HORIMETRO, "parametro.sistema.hodometro.horimetro.nome", "parametro.sistema.hodometro.horimetro.descricao",
             ImmutableMap.of(AutorizacaoPagamento.class, LogicaParametroHodometroHorimetro.class,
                     PreAutorizacaoPedidoVo.class, LogicaParametroHodometroHorimetroPreAutorizacao.class)),

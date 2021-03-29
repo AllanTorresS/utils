@@ -51,8 +51,9 @@ public enum GrupoExecucaoParametroSistema {
 
     PRE_AUTORIZACAO_LITRAGEM(
         TratadorViolacoesParametrosPreAutorizacao.class,
+        ParametroSistema.VOLUME_ABASTECIDO,
         ParametroSistema.CONSUMO_ESTIMADO,
-        ParametroSistema.VOLUME_ABASTECIDO);
+        ParametroSistema.PRECO_MAXIMO);
 
 
     private final Class<ITratadorViolacoesParametros<?>> tratadorViolacoes;
