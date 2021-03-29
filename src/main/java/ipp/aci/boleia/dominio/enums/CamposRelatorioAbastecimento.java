@@ -26,14 +26,8 @@ public enum CamposRelatorioAbastecimento {
     RAZAO_SOCIAL_EMPRESA_AGREGADA(301, "enum.CamposRelatorioAbastecimento.RAZAO_SOCIAL_EMPRESA_AGREGADA.label", true, true, 3, 50, false),
     CIDADE_EMPRESA_AGREGADA(302, "enum.CamposRelatorioAbastecimento.CIDADE_EMPRESA_AGREGADA.label", true, true, 3, 30, false),
     UF_EMPRESA_AGREGADA(303, "enum.CamposRelatorioAbastecimento.UF_EMPRESA_AGREGADA.label", true, true, 3, 30, false),
-    CODIGO_GRUPO_OPERACIONAL(400, "enum.CamposRelatorioAbastecimento.CODIGO_GRUPO_OPERACIONAL.label", false, true, 4, 20, false),
-    NOME_GRUPO_OPERACIONAL(401, "enum.CamposRelatorioAbastecimento.NOME_GRUPO_OPERACIONAL.label", false, true, 4, 50, false),
-    CNPJ_ESTABELECIMENTO_CREDENCIADO(402, "enum.CamposRelatorioAbastecimento.CNPJ_ESTABELECIMENTO_CREDENCIADO.label", true, true, 4, 25, false),
-    RAZAO_SOCIAL_ESTABELECIMENTO_CREDENCIADO(403, "enum.CamposRelatorioAbastecimento.RAZAO_SOCIAL_ESTABELECIMENTO_CREDENCIADO.label", true, true, 4, 50, false),
-    NOME_FANTASIA_ESTABELECIMENTO_CREDENCIADO(404, "enum.CamposRelatorioAbastecimento.NOME_FANTASIA_ESTABELECIMENTO_CREDENCIADO.label", true, true, 4, 50, false),
-    ENDERECO_ESTABELECIMENTO_CREDECIADO(405, "enum.CamposRelatorioAbastecimento.ENDERECO_ESTABELECIMENTO_CREDECIADO.label", true, true, 4, 100, false),
-    CIDADE_ESTABELECIMENTO_CREDECIADO(406, "enum.CamposRelatorioAbastecimento.CIDADE_ESTABELECIMENTO_CREDECIADO.label", true, true, 4, 30, false),
-    UF_ESTABELECIMENTO_CREDENCIADO(407, "enum.CamposRelatorioAbastecimento.UF_ESTABELECIMENTO_CREDENCIADO.label", true, true, 4, 30, false),
+    CODIGO_CENTRO_DE_CUSTO(400, "enum.CamposRelatorioAbastecimento.CODIGO_CENTRO_DE_CUSTO.label", false, true, 4, 20, false),
+    NOME_CENTRO_DE_CUSTO(401, "enum.CamposRelatorioAbastecimento.NOME_CENTRO_DE_CUSTO.label", false, true, 4, 50, false),
     PLACA_VEICULO(500, "enum.CamposRelatorioAbastecimento.PLACA_VEICULO.label", true, true, 5, 25, false),
     CLASSIFICACAO_VEICULO(501, "enum.CamposRelatorioAbastecimento.CLASSIFICACAO_VEICULO.label", false, true, 5, 30, false),
     IDENTIFICADOR_INTERNO(502, "enum.CamposRelatorioAbastecimento.IDENTIFICADOR_INTERNO.label", false, true, 5, 30, false),
@@ -92,7 +86,13 @@ public enum CamposRelatorioAbastecimento {
     MOTIVO_CONTINGENCIA(735, "enum.CamposRelatorioAbastecimento.MOTIVO_CONTINGENCIA.label", true, true, 7, 30, false),
     VALOR_DESCONTO_FROTAS_LEVES(736, "enum.CamposRelatoriosAbastecimento.VALOR_DESCONTO_FROTAS_LEVES.label", false, true, 7, 30, true),
     VALOR_COM_DESCONTO_FROTAS_LEVES(737, "enum.CamposRelatorioAbastecimento.VALOR_TOTAL_DESCONTO_FROTAS_LEVES.label", false, true, 7, 30, true),
-    RESUMO_OPERACAO(738, "enum.CamposRelatorioAbastecimento.RESUMO_OPERACAO.label", true, true, 7, 100, false);
+    RESUMO_OPERACAO(738, "enum.CamposRelatorioAbastecimento.RESUMO_OPERACAO.label", true, true, 7, 100, false),
+    CNPJ_ESTABELECIMENTO_CREDENCIADO(800, "enum.CamposRelatorioAbastecimento.CNPJ_ESTABELECIMENTO_CREDENCIADO.label", true, true, 8, 25, false),
+    RAZAO_SOCIAL_ESTABELECIMENTO_CREDENCIADO(801, "enum.CamposRelatorioAbastecimento.RAZAO_SOCIAL_ESTABELECIMENTO_CREDENCIADO.label", true, true, 8, 50, false),
+    NOME_FANTASIA_ESTABELECIMENTO_CREDENCIADO(802, "enum.CamposRelatorioAbastecimento.NOME_FANTASIA_ESTABELECIMENTO_CREDENCIADO.label", true, true, 8, 50, false),
+    ENDERECO_ESTABELECIMENTO_CREDECIADO(803, "enum.CamposRelatorioAbastecimento.ENDERECO_ESTABELECIMENTO_CREDECIADO.label", true, true, 8, 100, false),
+    CIDADE_ESTABELECIMENTO_CREDECIADO(804, "enum.CamposRelatorioAbastecimento.CIDADE_ESTABELECIMENTO_CREDECIADO.label", true, true, 8, 30, false),
+    UF_ESTABELECIMENTO_CREDENCIADO(805, "enum.CamposRelatorioAbastecimento.UF_ESTABELECIMENTO_CREDENCIADO.label", true, true, 8, 30, false);
 
 
     private int codigo;
@@ -106,17 +106,19 @@ public enum CamposRelatorioAbastecimento {
     private static final int CAT_TRANSACAO = 1;
     private static final int CAT_UNIDADE = 2;
     private static final int CAT_EMPRESA_AGREGADA = 3;
-    private static final int CAT_GRUPO_OPERACIONAL = 4;
+    private static final int CAT_CENTRO_DE_CUSTO = 4;
     private static final int CAT_VEICULO = 5;
     private static final int CAT_MOTORISTA = 6;
     private static final int CAT_PEDIDO = 7;
+    private static final int CAT_ESTABELECIMENTO_CREDENCIADO = 8;
     private static final String CAT_TRANSACAO_LABEL = "enum.CamposRelatorioAbastecimento.categoria.TRANSACAO.label";
     private static final String CAT_UNIDADE_LABEL = "enum.CamposRelatorioAbastecimento.categoria.UNIDADE.label";
     private static final String CAT_EMPRESA_AGREGADA_LABEL = "enum.CamposRelatorioAbastecimento.categoria.EMPRESA_AGREGADA.label";
-    private static final String CAT_GRUPO_OPERACIONAL_LABEL = "enum.CamposRelatorioAbastecimento.categoria.GRUPO_OPERACIONAL.label";
+    private static final String CAT_CENTRO_DE_CUSTO_LABEL = "enum.CamposRelatorioAbastecimento.categoria.CENTRO_DE_CUSTO.label";
     private static final String CAT_VEICULO_LABEL = "enum.CamposRelatorioAbastecimento.categoria.VEICULO.label";
     private static final String CAT_MOTORISTA_LABEL = "enum.CamposRelatorioAbastecimento.categoria.MOTORISTA.label";
     private static final String CAT_PEDIDO_LABEL = "enum.CamposRelatorioAbastecimento.categoria.PEDIDO.label";
+    private static final String CAT_ESTABELECIMENTO_CREDENCIADO_LABEL = "enum.CamposRelatorioAbastecimento.categoria.ESTABELECIMENTO_CREDENCIADO.label";
 
 
     /**
@@ -158,10 +160,11 @@ public enum CamposRelatorioAbastecimento {
             case CAT_TRANSACAO: return CAT_TRANSACAO_LABEL;
             case CAT_UNIDADE: return CAT_UNIDADE_LABEL;
             case CAT_EMPRESA_AGREGADA: return CAT_EMPRESA_AGREGADA_LABEL;
-            case CAT_GRUPO_OPERACIONAL: return CAT_GRUPO_OPERACIONAL_LABEL;
+            case CAT_CENTRO_DE_CUSTO: return CAT_CENTRO_DE_CUSTO_LABEL;
             case CAT_VEICULO: return CAT_VEICULO_LABEL;
             case CAT_MOTORISTA: return CAT_MOTORISTA_LABEL;
             case CAT_PEDIDO: return CAT_PEDIDO_LABEL;
+            case CAT_ESTABELECIMENTO_CREDENCIADO: return CAT_ESTABELECIMENTO_CREDENCIADO_LABEL;
         }
 
         return "";
