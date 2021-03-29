@@ -1692,9 +1692,11 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
         final BigDecimal diferencaHodometroHorimetro = obterDiferencaHodometroHorimetro();
         boolean usaHodometro = hodometro != null;
         if (diferencaHodometroHorimetro != null && totalLitrosAbastecimento != null) {
-            return usaHodometro
-                    ? diferencaHodometroHorimetro.divide(totalLitrosAbastecimento, 3, BigDecimal.ROUND_HALF_UP)
-                    : totalLitrosAbastecimento.divide(diferencaHodometroHorimetro, 3, BigDecimal.ROUND_HALF_UP);
+            if (usaHodometro && totalLitrosAbastecimento.compareTo(BigDecimal.ZERO) > 0) {
+                return diferencaHodometroHorimetro.divide(totalLitrosAbastecimento, 3, BigDecimal.ROUND_HALF_UP);
+            } else if (!usaHodometro && diferencaHodometroHorimetro.compareTo(BigDecimal.ZERO) > 0) {
+                return totalLitrosAbastecimento.divide(diferencaHodometroHorimetro, 3, BigDecimal.ROUND_HALF_UP);
+            }
         }
 
         return null;
