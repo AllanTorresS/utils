@@ -24,8 +24,6 @@ import static ipp.aci.boleia.util.UtilitarioCalculoData.obterPrimeiroInstanteDia
 @Component
 public class ReembolsoBaseSd {
 
-    protected static final int QUANTIDADE_DIAS_A_MAIS_REEMBOLSO = 2;
-
     @Autowired
     private IReembolsoBaseDados repositorioReembolsoBase;
 
@@ -52,18 +50,5 @@ public class ReembolsoBaseSd {
         }
         reembolso.setStatus(statusReembolso.getValue());
         repositorioReembolsoBase.armazenar(reembolso);
-    }
-
-
-    /**
-     * Define a data de vencimento do pagamento de um reembolso.
-     *
-     * @param dataReferencia Data de referência.
-     * @return A data de vencimento do pagamento.
-     */
-    public Date definirDataVencimentoPagamento(Date dataReferencia) {
-        Date dataAtual = utilitarioAmbiente.buscarDataAmbiente();
-        Date dataVencimento = UtilitarioCalculoData.adicionarDiasData(dataReferencia, QUANTIDADE_DIAS_A_MAIS_REEMBOLSO);
-        return obterPrimeiroInstanteDia(dataVencimento);
     }
 }
