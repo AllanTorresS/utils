@@ -21,7 +21,7 @@ import java.util.Map;
 
 
 /**
- * Verifica se o produto do abastecimento condiz com o tipo de motor/combustivel do veciulo em questao
+ * Verifica se o produto do abastecimento está dentro dos limites de quantidade e preço registrados para a frota
  */
 @Component
 public class LogicaParametroPrecoMaximo implements ILogicaParametroSistema<AutorizacaoPagamento> {
