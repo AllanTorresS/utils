@@ -56,6 +56,10 @@ public class UnidadeSd {
     @Autowired
     private HistoricoMotoristaSd historicoMotoristaSd;
 
+    @Autowired
+    private FluxoAbastecimentoSd fluxoAbastecimentoSd;
+
+
     /**
      * Obtem a unidade matriz para a frota logada
      * @return Unidade matriz
@@ -151,6 +155,7 @@ public class UnidadeSd {
             empresaAgregadaDados.desvincularUnidades(id);
             if(motoristas != null){
                 historicoMotoristaSd.armazenarHistoricoMotoristaLista(motoristas,ambiente);
+                motoristas.forEach(m -> fluxoAbastecimentoSd.excluirFluxoAbastecimentoMotorista(m, ambiente.getUsuarioLogado(), ambiente.buscarDataAmbiente()));
             }
         }
     }

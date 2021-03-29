@@ -81,7 +81,7 @@ public class EnumVo {
     /**
      * Atribui o valor do enumerado (enum.valor)
      *
-     * @param valor O valor
+     * @param value O valor
      */
     public void setValue(Integer value) {
         this.value = value;
