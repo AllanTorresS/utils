@@ -47,7 +47,6 @@ public class AgrupamentoTransacaoConsolidadaPvVo {
      * @param valorDesconto Valor de desconto.
      * @param valorTotalNf Valor total da nota fiscal.
      * @param valorEmitidoNf Valoro total emitido da nota fiscal.
-     * @param passivelDeEmissao indica se ao menos um ciclo do agrupamaneto é passível de emissão de NF
      * @param quantidadeAbastecimentos Quantidade de abastecimentos presentes nas transações consolidadas.
      * @param statusPagamentoReembolso Status de pagamento do reembolso.
      * @param valorTotalAntecipado Valor total antecipado para a revenda.
