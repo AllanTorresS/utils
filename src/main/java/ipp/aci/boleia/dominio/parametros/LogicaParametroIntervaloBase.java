@@ -43,11 +43,15 @@ public abstract class LogicaParametroIntervaloBase {
                 if (ultimo != null) {
                     if(dataRequisicao != null && ((intervalo != null && intervalo.getMinutosIntervaloAbastecimento() != null && intervalo.getMinutosIntervaloAbastecimento() > 0) ||
                             (ativoParaTodos && frotaParam.getMinutosIntervaloAbastecimentoTodosVeiculos() != null && frotaParam.getMinutosIntervaloAbastecimentoTodosVeiculos() > 0))){
-
-                        int minimoMinutos = ativoParaTodos ? frotaParam.getMinutosIntervaloAbastecimentoTodosVeiculos() : intervalo.getMinutosIntervaloAbastecimento();
+                        int minimoMinutos = 0;
+                        if (ativoParaTodos && frotaParam.getMinutosIntervaloAbastecimentoTodosVeiculos() != null) {
+                            minimoMinutos = frotaParam.getMinutosIntervaloAbastecimentoTodosVeiculos();
+                        } else if (intervalo != null && intervalo.getMinutosIntervaloAbastecimento() != null) {
+                            minimoMinutos = intervalo.getMinutosIntervaloAbastecimento();
+                        }
                         Date dataUltimo = ultimo.getDataRequisicao();
                         long decorrido = (dataRequisicao.getTime() - dataUltimo.getTime()) / 1000 / 60;
-                        if (decorrido < minimoMinutos) {
+                        if (minimoMinutos > 0 && decorrido < minimoMinutos) {
                             resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
                             resultado.setCodigoErro(Erro.ERRO_AUTORIZACAO_INTERVALO_PERMITIDO_HORAS);
                             String mensagemErro = obterMensagemErro(UtilitarioFormatacao.formatarPlacaVeiculo(veiculo.getPlaca()), minimoMinutos - decorrido);
@@ -56,10 +60,15 @@ public abstract class LogicaParametroIntervaloBase {
                     }
                     if(hodometro != null && hodometro > 0 && ((intervalo != null && intervalo.getQuilometrosIntervaloAbastecimento() != null && intervalo.getQuilometrosIntervaloAbastecimento() > 0) ||
                             (ativoParaTodos && frotaParam.getQuilometrosIntervaloAbastecimentoTodosVeiculos() != null && frotaParam.getQuilometrosIntervaloAbastecimentoTodosVeiculos() > 0))){
-                        Long minimoKm = ativoParaTodos ? frotaParam.getQuilometrosIntervaloAbastecimentoTodosVeiculos() : intervalo.getQuilometrosIntervaloAbastecimento();
+                        long minimoKm = 0;
+                        if (ativoParaTodos && frotaParam.getQuilometrosIntervaloAbastecimentoTodosVeiculos() != null) {
+                            minimoKm = frotaParam.getQuilometrosIntervaloAbastecimentoTodosVeiculos();
+                        } else if (intervalo != null && intervalo.getQuilometrosIntervaloAbastecimento() != null) {
+                            minimoKm = intervalo.getQuilometrosIntervaloAbastecimento();
+                        }
                         Long ultimoHodometro = ultimo.getHodometro();
                         long diferenca = hodometro - ultimoHodometro;
-                        if (diferenca < minimoKm) {
+                        if (minimoKm > 0 && diferenca < minimoKm) {
                             resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
                             resultado.setCodigoErro(Erro.ERRO_AUTORIZACAO_INTERVALO_PERMITIDO_KM);
                             String mensagemErro = obterMensagemErroKm( UtilitarioFormatacao.formatarPlacaVeiculo(veiculo.getPlaca()), minimoKm - diferenca);
