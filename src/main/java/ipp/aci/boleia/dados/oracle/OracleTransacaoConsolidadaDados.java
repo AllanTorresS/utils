@@ -59,6 +59,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ipp.aci.boleia.dominio.enums.StatusIntegracaoReembolsoJde.ANTECIPADO;
 import static ipp.aci.boleia.dominio.enums.StatusPagamentoCobranca.A_VENCER;
 import static ipp.aci.boleia.util.UtilitarioCalculoData.adicionarMesesData;
 import static ipp.aci.boleia.util.UtilitarioCalculoData.obterPrimeiroDiaMes;
@@ -571,7 +572,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "%s " +
                     "ORDER BY TC.dataFimPeriodo";
 
-    private static final String CLAUSULA_STATUS_INTEGRACAO_REEMBOLSO = " AND (r.statusIntegracao in :statusIntegracao) ";
+    private static final String CLAUSULA_STATUS_INTEGRACAO_REEMBOLSO = " AND (r.statusIntegracao in :statusIntegracao OR (r.statusIntegracao IS NULL AND a.valorReembolso IS NOT NULL AND " + ANTECIPADO.getValue() + " in :statusIntegracao)) ";
 
     private static final String CLAUSULA_STATUS_NOTA_FISCAL = " AND (tc.statusNotaFiscal in :statusNf) ";
 
@@ -583,6 +584,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             "FROM TransacaoConsolidada tc " +
             "LEFT JOIN tc.frotaPtov fpv " +
             "LEFT JOIN tc.reembolso r " +
+            "LEFT JOIN tc.antecipacoes a WITH a.statusIntegracao = " + StatusIntegracaoReembolsoJde.REALIZADO.getValue() + " " +
             "WHERE " +
             "(tc.dataInicioPeriodo >= :dataInicioPeriodo AND tc.dataFimPeriodo <= :dataFimPeriodo) " +
             "AND (fpv.pontoVenda.id  = :idPv OR :idPv is null) " +
