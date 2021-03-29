@@ -107,11 +107,12 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "SUM(TC.valorFaturamento), " +
                     "SUM(CASE WHEN RM.valorReembolso IS NULL THEN TC.valorReembolso ELSE RM.valorReembolso END), " +
                     "SUM(CASE WHEN RM.valorDesconto IS NULL THEN TC.valorDesconto ELSE RM.valorDesconto END), " +
-                    "SUM(CASE WHEN TC.empresaAgregada IS NOT NULL OR TC.unidade IS NOT NULL OR TC.frotaExigeNF = true THEN TC.valorTotalNotaFiscal ELSE 0 END), " +
-                    "SUM(CASE WHEN TC.empresaAgregada IS NOT NULL OR TC.unidade IS NOT NULL OR TC.frotaExigeNF = true THEN TC.valorEmitidoNotaFiscal ELSE 0 END), " +
+                    "SUM(CASE WHEN ( " +  CLAUSULA_EXIGE_NOTA + " OR " + CLAUSULA_FROTA_GERENCIA_NF + " ) THEN TC.valorTotalNotaFiscal ELSE 0 END), " +
+                    "SUM(CASE WHEN ( " +  CLAUSULA_EXIGE_NOTA + " OR " + CLAUSULA_FROTA_GERENCIA_NF + " ) THEN TC.valorEmitidoNotaFiscal ELSE 0 END), " +
                     "SUM(TC.quantidadeAbastecimentos), " +
                     "CASE WHEN TC.reembolso is NULL THEN " + StatusPagamentoReembolso.PREVISTO.getValue() + " ELSE RM.status END, " +
-                    "SUM(A.valorReembolso)) ";
+                    "SUM(A.valorReembolso), " + 
+                    "MAX(CASE WHEN ( " +  CLAUSULA_EXIGE_NOTA + " OR " + CLAUSULA_FROTA_GERENCIA_NF + " ) THEN 1 ELSE 0 END)) ";
 
     private static final String CLAUSULA_NOTA_ATRASADA =
             " TRUNC(TC.prazos.dataLimiteEmissaoNfe) <  TRUNC(SYSDATE) " +
