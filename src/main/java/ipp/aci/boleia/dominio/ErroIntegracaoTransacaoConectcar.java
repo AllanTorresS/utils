@@ -20,7 +20,7 @@ import ipp.aci.boleia.dominio.interfaces.IPersistente;
  * Representa a tabela com os erros no processamento das Transações da Conectcar
  */
 @Entity
-@Table(name = "ERRO_INTEGRACAO_TRANSACAO_CONECTCAR")
+@Table(name = "ERRO_INTEGR_TRANSAC_CONECTCAR")
 public class ErroIntegracaoTransacaoConectcar implements IPersistente {
 
 	private static final long serialVersionUID = 8095939439819340567L;
