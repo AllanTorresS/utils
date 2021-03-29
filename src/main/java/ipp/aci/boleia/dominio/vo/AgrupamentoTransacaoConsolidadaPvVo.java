@@ -166,7 +166,6 @@ public class AgrupamentoTransacaoConsolidadaPvVo {
         this.statusPagamentoReembolso = statusPagamentoReembolso;
     }
 
-
     public Boolean getPassivelDeEmissao() { 
         return passivelDeEmissao; 
     }
@@ -174,7 +173,6 @@ public class AgrupamentoTransacaoConsolidadaPvVo {
     public void setPassivelDeEmissao(Boolean passivelDeEmissao) { 
         this.passivelDeEmissao = passivelDeEmissao;
     }
-
 
     public BigDecimal getValorTotalAntecipado() {
         return valorTotalAntecipado;
