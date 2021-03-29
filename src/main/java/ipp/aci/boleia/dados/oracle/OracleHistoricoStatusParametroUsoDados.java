@@ -1,9 +1,7 @@
 package ipp.aci.boleia.dados.oracle;
 
 
-
 import ipp.aci.boleia.dados.IHistoricoStatusParametroUsoDados;
-import ipp.aci.boleia.dominio.HistoricoParametroUso;
 import ipp.aci.boleia.dominio.HistoricoStatusParametroDeUso;
 import org.springframework.stereotype.Repository;
 

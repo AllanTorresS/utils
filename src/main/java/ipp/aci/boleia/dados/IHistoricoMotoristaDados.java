@@ -1,6 +1,5 @@
 package ipp.aci.boleia.dados;
 
-import ipp.aci.boleia.dominio.HistoricoFrotaPontoVenda;
 import ipp.aci.boleia.dominio.HistoricoMotorista;
 
 import java.util.Date;

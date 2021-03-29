@@ -1,9 +1,7 @@
 package ipp.aci.boleia.dados.oracle;
 
 
-import ipp.aci.boleia.dados.IHistoricoFrotaParametroSistemaPrecoMaximoAbastecimentoDados;
 import ipp.aci.boleia.dados.IHistoricoFrotaParametroSistemaPrecoMaximoProdutoDados;
-import ipp.aci.boleia.dominio.HistoricoFrotaParametroSistemaPrecoMaximoAbastecimento;
 import ipp.aci.boleia.dominio.HistoricoFrotaParametroSistemaPrecoMaximoProduto;
 import org.springframework.stereotype.Repository;
 

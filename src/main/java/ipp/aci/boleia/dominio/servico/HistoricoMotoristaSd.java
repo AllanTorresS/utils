@@ -2,23 +2,14 @@ package ipp.aci.boleia.dominio.servico;
 
 
 import ipp.aci.boleia.dados.IFluxoAbastecimentoMotoristaDados;
-import ipp.aci.boleia.dados.IHistoricoFluxoAbastecimentoMotoristaDados;
 import ipp.aci.boleia.dados.IHistoricoMotoristaDados;
-import ipp.aci.boleia.dominio.FluxoAbastecimentoFrotaConfig;
-import ipp.aci.boleia.dominio.FluxoAbastecimentoMotoristaConfig;
-import ipp.aci.boleia.dominio.HistoricoFluxoAbastecimentoMotoristaConfig;
 import ipp.aci.boleia.dominio.HistoricoMotorista;
-import ipp.aci.boleia.dominio.HistoricoParametroUso;
 import ipp.aci.boleia.dominio.Motorista;
-import ipp.aci.boleia.dominio.Usuario;
-import ipp.aci.boleia.dominio.enums.StatusAtivacao;
-import ipp.aci.boleia.dominio.enums.StatusAtivado;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
 import java.util.List;
 
 /**
