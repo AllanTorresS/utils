@@ -1,10 +1,11 @@
 package ipp.aci.boleia.dominio.vo;
 
-import java.math.RoundingMode;
-
 import ipp.aci.boleia.dominio.TransacaoConectcar;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
 import ipp.aci.boleia.util.UtilitarioFormatacaoData;
+import org.apache.commons.lang3.StringUtils;
+
+import java.math.RoundingMode;
 
 /**
  * Classe com informações referentes à um detalhe de transacoes ConectCar para o aviso de débito
@@ -34,14 +35,15 @@ public class DetalheTransacaoConectcarVo {
      * @param transacao A autorizacao de pagamento
      */
     public DetalheTransacaoConectcarVo(TransacaoConectcar transacao) {
-        this.setData(UtilitarioFormatacaoData.formatarDataCurta(transacao.getDataInicioPeriodo()));
-        this.setHora(UtilitarioFormatacaoData.formatarHoraMinutosSegundos(transacao.getDataInicioPeriodo()));
+        this.setData(UtilitarioFormatacaoData.formatarDataCurta(transacao.getDataTransacao()));
+        this.setHora(UtilitarioFormatacaoData.formatarHoraMinutosSegundos(transacao.getDataTransacao()));
         this.setFrota(transacao.getFrota().getNomeRazaoFrota());
         this.setCodigoTipo(transacao.getTipoTransacao());
         this.setPlaca(transacao.getPlaca());
         this.setTag(transacao.getTag().getId().toString());
         this.setPraca(transacao.getPraca());
         this.setValor(UtilitarioFormatacao.formatarDecimal(transacao.getValorTotal().setScale(2, RoundingMode.HALF_UP)));
+        this.setEstorno(StringUtils.EMPTY);
     }
 
 	public String getData() {
