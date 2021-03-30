@@ -60,6 +60,7 @@ import ipp.aci.boleia.dominio.enums.StatusIntegracaoJde;
 import ipp.aci.boleia.dominio.enums.TipoItemAutorizacaoPagamento;
 import ipp.aci.boleia.dominio.enums.TipoPerfilUsuario;
 import ipp.aci.boleia.dominio.enums.TipoToken;
+import ipp.aci.boleia.dominio.enums.TipoTransacaoConectcar;
 import ipp.aci.boleia.dominio.vo.EdicaoAbastecimentoVo;
 import ipp.aci.boleia.dominio.vo.TokenVo;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
@@ -802,20 +803,21 @@ public class EmailSd {
     	if (emailSuporte != null){
             String assunto = mensagens.obterMensagem("email.erro.integracao.transacao.conectcar.assunto");
 
-            String frotaCnpjRazaoSocial = null;
+            String frotaCnpjRazaoSocial = "";
             Frota frota = erroTransacaoConectcar.getFrota();
             if(frota != null) {
-            	frotaCnpjRazaoSocial = formatarCnpjApresentacao(frota.getCnpj()) + " - " + frota.getRazaoSocial();
+            	frotaCnpjRazaoSocial = StringUtils.defaultString(formatarCnpjApresentacao(frota.getCnpj())) + " - " + StringUtils.defaultString(frota.getRazaoSocial());
             }
             
             StringBuilder corpo = new StringBuilder(mensagens.obterMensagem("email.erro.integracao.transacao.conectcar.corpo",
             		ExternoRotas.TRANSACAO_CONECTCAR_API,
             		frotaCnpjRazaoSocial,
-            		erroTransacaoConectcar.getVeiculoId(),
-            		erroTransacaoConectcar.getPlaca(),
-            		erroTransacaoConectcar.getTipoTransacao(),
-            		erroTransacaoConectcar.getCodigoTransacaoConectcar(),
-            		UtilitarioFormatacaoData.formatarDataHora(erroTransacaoConectcar.getDataProcessamento()),
+            		erroTransacaoConectcar.getVeiculoId() != null ? erroTransacaoConectcar.getVeiculoId().toString() : "",
+            		StringUtils.defaultString(erroTransacaoConectcar.getPlaca()),
+            		erroTransacaoConectcar.getTipoTransacao() != null ? TipoTransacaoConectcar.obterPorValor(erroTransacaoConectcar.getTipoTransacao()) : "",
+            		StringUtils.defaultString(erroTransacaoConectcar.getNumeroTag()),
+            		erroTransacaoConectcar.getCodigoTransacaoConectcar() != null ? erroTransacaoConectcar.getCodigoTransacaoConectcar().toString() : "",
+            		UtilitarioFormatacaoData.formatarDataHoraMinutosSegundos(erroTransacaoConectcar.getDataProcessamento()),
             		erroTransacaoConectcar.getErroProcessamento()));    
             
             corpo.append(mensagens.obterMensagem("email.erro.integracao.transacao.conectcar.rodape"));
