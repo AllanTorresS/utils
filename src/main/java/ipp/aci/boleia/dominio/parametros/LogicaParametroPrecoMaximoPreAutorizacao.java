@@ -41,7 +41,7 @@ public class LogicaParametroPrecoMaximoPreAutorizacao implements ILogicaParametr
                 resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
                 resultado.setCodigoErro(Erro.ERRO_AUTORIZACAO_QUANTIDADE_MAX_PRODUTO);
                 resultado.setMensagemErro(mensagens.obterMensagem("parametro.sistema.erro.abastecimento.quantidade.maxima.produto.preAutorizacao",
-                        combustivel.getDescricao(), UtilitarioFormatacao.formatarInteiro(quantidadeMaximaPermitidaAbastecimento), UtilitarioFormatacao.formatarDecimal(pedido.getLitragem())));
+                        UtilitarioFormatacao.formatarInteiro(quantidadeMaximaPermitidaAbastecimento), combustivel.getDescricao()));
             }
         }
         return resultado;
