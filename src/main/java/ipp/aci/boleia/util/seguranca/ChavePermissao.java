@@ -319,6 +319,8 @@ public final class ChavePermissao {
     public static final String ROTA_INTELIGENTE_EXCLUIR                        = SPRING_ROLE_PREFIX + "ROTA_INTELIGENTE_EXCLUIR" + SPRING_ROLE_SUFFIX;
     public static final String ROTA_INTELIGENTE_INCLUIR                        = SPRING_ROLE_PREFIX + "ROTA_INTELIGENTE_INCLUIR" + SPRING_ROLE_SUFFIX;
 
+    public static final String RELATORIO_NOTA_FISCAL_EXPORTAR                  = SPRING_ROLE_PREFIX + "RELATORIO_NOTA_FISCAL_EXPORTAR" + SPRING_ROLE_SUFFIX;
+
     /**
      * Impede instanciacao e heranca
      */
