@@ -793,4 +793,15 @@ public class EmailSd {
         }
     }
 
+    /**
+     * Envia um email com todas as mensagens de falhas da sincronização com o SalesForce
+     * @param motivosFalhas motivos das falhas
+     */
+    public void enviarEmailsFalhasAtualizacaoExigenciaNfSalesForce(List<String> motivosFalhas, List<String> destinatariosIntegracaoParametroNf){
+        final String assunto = mensagens.obterMensagem("integracao.salesforce.assunto.email.erro.atualizasao.parametrizacao.nfe");
+        final String rodape = mensagens.obterMensagem("integracao.salesforce.rodape.email");
+        final String corpoMensagem = motivosFalhas.stream().filter(m -> !m.isEmpty()).reduce("", String::concat).concat(rodape);
+        emailDados.enviarEmail(assunto,corpoMensagem, destinatariosIntegracaoParametroNf);
+    }
+
 }

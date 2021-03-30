@@ -1,5 +1,5 @@
 package ipp.aci.boleia.dados;
 
 public interface ISalesForceParametroNotaFiscalDados {
-    void atualizarExigenciaNotaFiscal(String cnpj, boolean exigeNotaFiscal);
+    String atualizarExigenciaNotaFiscal(String cnpj, boolean exigeNotaFiscal);
 }
