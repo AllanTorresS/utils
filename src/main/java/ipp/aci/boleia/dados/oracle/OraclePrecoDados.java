@@ -54,6 +54,7 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
             "     AND pv.id = :idPontoVenda " +
             "     AND (f.id = :idFrota OR :idFrota IS NULL) " +
             "     AND p.status IN :statusValidos " +
+            "     AND (pb.invalido is null OR pb.invalido = false) " +
             "     AND NOT EXISTS ( " +
             "         SELECT 1 FROM Preco p_" +
             "         WHERE " +
@@ -202,6 +203,7 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
     private List<ParametroPesquisa> montarParametroPesquisa(FiltroPesquisaPrecoVo filtro, Boolean acordo, Integer... statusPossiveis) {
 
         List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaOr(new ParametroPesquisaNulo("precoBase.invalido"), new ParametroPesquisaIgual("precoBase.invalido", false)));
         if(filtro.getId() != null){
             parametros.add(new ParametroPesquisaIgual("id", filtro.getId()));
         } else {

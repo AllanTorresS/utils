@@ -104,7 +104,7 @@ public class VeiculoSd {
         if(idCombustivel != null && idPontoVenda != null) {
             preco = precoBaseDados.buscarPrecosPorData(idPontoVenda, idCombustivel,dataAbastecimento);
         }
-        return preco != null ? preco.getPreco(): null;
+        return preco != null && !preco.getInvalido() ? preco.getPreco(): null;
     }
 
     /**
@@ -147,10 +147,10 @@ public class VeiculoSd {
      * @return Preco negociado localizado ou nulo caso não encontre
      */
     public BigDecimal obterValorUnitarioAbastecimento(Long codigoFrota, Long codigoPV, Long codigoCombustivel, Date dataAbastecimento) {
-        BigDecimal precoNegociado = obterValorNegociadoAbastecimento(codigoFrota,codigoCombustivel,codigoPV, dataAbastecimento);
-        BigDecimal precoBase = null;
-        if(precoNegociado == null){
-            precoBase = obterValorBaseAbastecimento(codigoCombustivel,codigoPV,dataAbastecimento);
+        BigDecimal precoNegociado = null;
+        BigDecimal precoBase = obterValorBaseAbastecimento(codigoCombustivel,codigoPV,dataAbastecimento);
+        if(precoBase != null){
+            precoNegociado = obterValorNegociadoAbastecimento(codigoFrota,codigoCombustivel,codigoPV, dataAbastecimento);
         }
         return precoNegociado != null ? precoNegociado : precoBase;
     }
