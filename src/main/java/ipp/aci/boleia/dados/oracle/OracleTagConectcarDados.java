@@ -27,23 +27,25 @@ import ipp.aci.boleia.dominio.vo.FiltroPesquisaTagConectcarVo;
 public class OracleTagConectcarDados extends OracleRepositorioBoleiaDados<TagConectcar> implements ITagConectcarDados {
 
 	private static final String QUERY_QUANTIDADE_TOTAL_TAGS =
-            "SELECT COUNT(0) " +
-            "FROM TagConectcar t " +            
-            "WHERE t.frota.id  = :idFrota ";
+            " SELECT COUNT(0) " +
+            " FROM TagConectcar t " +
+            " WHERE t.frota.id  = :idFrota " +
+            " AND t.dataExclusao IS NULL ";
 	
 	private static final String QUERY_QUANTIDADE_TOTAL_TAGS_ATIVAS =
-			"SELECT COUNT(0) " +
-            "FROM TagConectcar t " +            
-            "WHERE t.frota.id  = :idFrota " +
-            "AND t.dataBloqueio IS NULL";
+			" SELECT COUNT(0) " +
+            " FROM TagConectcar t " +
+            " WHERE t.frota.id  = :idFrota " +
+            " AND t.dataBloqueio IS NULL AND t.dataExclusao IS NULL ";
 	
 	
 	private static final String QUERY_PRIMEIRA_TAG_ATIVA =
-   		 "SELECT t " +
+   		 " SELECT t " +
          " FROM TagConectcar t " +
          " WHERE t.frota.id  = :idFrota " +
-         " AND t.dataAtivacao IS NOT NULL" + 
-         " ORDER BY t.id ASC";
+         " AND t.dataAtivacao IS NOT NULL " +
+         " AND t.dataExclusao IS NULL " +
+         " ORDER BY t.id ASC ";
 	
     /**
      * Instancia o repositório
@@ -97,22 +99,18 @@ public class OracleTagConectcarDados extends OracleRepositorioBoleiaDados<TagCon
 
 	@Override
 	public long obterQuantidadeTotalTags(Long codigoFrota) {
-		StringBuilder query = new StringBuilder(QUERY_QUANTIDADE_TOTAL_TAGS);
-
         List<ParametroPesquisa> parametros = new ArrayList<>();
         parametros.add(new ParametroPesquisaIgual("idFrota", codigoFrota));
         
-        return pesquisarUnicoSemIsolamentoDados(query.toString(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        return pesquisarUnicoSemIsolamentoDados(QUERY_QUANTIDADE_TOTAL_TAGS, parametros.toArray(new ParametroPesquisa[parametros.size()]));
 	}
 
 	@Override
 	public long obterQuantidadeTotalTagsAtivas(Long codigoFrota) {
-		StringBuilder query = new StringBuilder(QUERY_QUANTIDADE_TOTAL_TAGS_ATIVAS);
-
-		List<ParametroPesquisa> parametros = new ArrayList<>();
+        List<ParametroPesquisa> parametros = new ArrayList<>();
         parametros.add(new ParametroPesquisaIgual("idFrota", codigoFrota));
         
-        return pesquisarUnicoSemIsolamentoDados(query.toString(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        return pesquisarUnicoSemIsolamentoDados(QUERY_QUANTIDADE_TOTAL_TAGS_ATIVAS, parametros.toArray(new ParametroPesquisa[parametros.size()]));
 	}
 
 	@Override

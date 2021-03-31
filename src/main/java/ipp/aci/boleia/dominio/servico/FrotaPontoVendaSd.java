@@ -203,6 +203,23 @@ public class FrotaPontoVendaSd {
     }
 
     /**
+     * Realiza validação se um {@link PontoDeVenda} deve estar vinculado com a {@link Frota}
+     *
+     * @param idFrota Identificador da frota
+     * @param pontoDeVenda o Ponto de venda
+     * @return true caso o posto esteja vinculado com a frota.
+     */
+    public boolean validarCerca(Long idFrota, PontoDeVenda pontoDeVenda) {
+        FrotaPontoVenda frotaPontoVenda = frotaPontoVendaDados.obterFrotaPontoVenda(idFrota, pontoDeVenda.getId());
+        if (frotaPontoVenda != null ) {
+            if (frotaPontoVenda.isVinculoAtivo()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Verifica se a relação FrotaPontoVenda estava bloqueada na data do abastecimento.
      *
      * @param idFrota Identificador da frota
