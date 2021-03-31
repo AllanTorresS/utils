@@ -1332,4 +1332,17 @@ public class TransacaoConsolidadaSd {
     public Long obterCampoIdFrotaChaveIdentificadora(String[] chaveDividida) {
         return Long.parseLong(chaveDividida[2]);
     }
+
+    /**
+     * Informa se uma transação consolidada pode realizar uma antecipação de reembolso.
+     *
+     * @param transacaoConsolidada Transação consolidada que será verificada.
+     * @return True, caso possa antecipar.
+     */
+    public boolean podeRealizarAntecipacaoReembolso(TransacaoConsolidada transacaoConsolidada) {
+        boolean possuiAutorizacaoPagamentoDisponivelParaAntecipar = transacaoConsolidada.getAutorizacoesPagamentoAssociadas().stream().anyMatch(a -> autorizacaoPagamentoSd.estaDisponivelParaAntecipacaoReembolso(a));
+        return !transacaoConsolidada.esta(FECHADA) &&
+                !transacaoConsolidada.possuiAntecipacaoRealizada() &&
+                possuiAutorizacaoPagamentoDisponivelParaAntecipar;
+    }
 }
