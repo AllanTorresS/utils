@@ -25,11 +25,14 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaior;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMenor;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaEntre;
+import ipp.aci.boleia.dominio.vo.CoordenadaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaAlteracaoPrecoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaLocalizacaoVo;
 import ipp.aci.boleia.util.Ordenacao;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioLambda;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
@@ -121,11 +124,39 @@ public class OraclePrecoBaseDados extends OracleOrdenacaoPrecosDados<PrecoBase> 
     public List<PrecoBase> listarPrecosPorFrotaLocalizacao(FiltroPesquisaLocalizacaoVo filtro){
 
         List<ParametroPesquisa> parametros = new ArrayList<>();
-        parametros.add(new ParametroPesquisaMaior("pontoVenda.latitude", new BigDecimal(filtro.getLatitudeInicial())));
-        parametros.add(new ParametroPesquisaMenor("pontoVenda.latitude", new BigDecimal(filtro.getLatitudeFinal())));
 
-        parametros.add(new ParametroPesquisaMaior("pontoVenda.longitude", new BigDecimal(filtro.getLongitudeInicial())));
-        parametros.add(new ParametroPesquisaMenor("pontoVenda.longitude", new BigDecimal(filtro.getLongitudeFinal())));
+        if(CollectionUtils.isNotEmpty(filtro.getFiltrosCoordenadas())) {
+            ParametroPesquisaOr condicoesOr = new ParametroPesquisaOr();
+            BigDecimal margem = filtro.getMargemGrausFiltroCoordenadas() != null ? filtro.getMargemGrausFiltroCoordenadas() : BigDecimal.valueOf(0);
+
+            for (List<CoordenadaVo> listaCoordenadas: filtro.getFiltrosCoordenadas()) {
+                for (int i = 0; i < listaCoordenadas.size() - 1; i++) {
+                    CoordenadaVo ca = listaCoordenadas.get(i);
+                    BigDecimal caLat = ca.getLatitude();
+                    BigDecimal caLong = ca.getLongitude();
+                    CoordenadaVo cb = listaCoordenadas.get(i+1);
+                    BigDecimal cbLat = cb.getLatitude();
+                    BigDecimal cbLong = cb.getLongitude();
+                    BigDecimal xa = (cbLat.compareTo(caLat) > 0 ? caLat : cbLat).subtract(margem);
+                    BigDecimal xb = (cbLat.compareTo(caLat) > 0 ? cbLat : caLat).add(margem);
+                    BigDecimal ya = (cbLong.compareTo(caLong) > 0 ? caLong : cbLong).subtract(margem);
+                    BigDecimal yb = (cbLong.compareTo(caLong) > 0 ? cbLong : caLong).add(margem);
+
+                    condicoesOr.addParametro(new ParametroPesquisaAnd(
+                            new ParametroPesquisaEntre("pontoVenda.latitude", xa, xb),
+                            new ParametroPesquisaEntre("pontoVenda.longitude", ya, yb)
+                    ));
+                }
+            }
+
+            parametros.add(condicoesOr);
+        } else {
+            parametros.add(new ParametroPesquisaMaior("pontoVenda.latitude", new BigDecimal(filtro.getLatitudeInicial())));
+            parametros.add(new ParametroPesquisaMenor("pontoVenda.latitude", new BigDecimal(filtro.getLatitudeFinal())));
+
+            parametros.add(new ParametroPesquisaMaior("pontoVenda.longitude", new BigDecimal(filtro.getLongitudeInicial())));
+            parametros.add(new ParametroPesquisaMenor("pontoVenda.longitude", new BigDecimal(filtro.getLongitudeFinal())));
+        }
 
         parametros.add(new ParametroPesquisaIgual("pontoVenda.status", StatusAtivacao.ATIVO.getValue()));
 
