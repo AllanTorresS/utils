@@ -194,13 +194,4 @@ public class Reembolso extends ReembolsoBase {
         return StatusLiberacaoReembolsoJde.APROVADO_PAGAMENTO.getValue() == statusLiberacaoPagamento;
     }
 
-    /**
-     * Informa se o reembolso foi antecipado.
-     *
-     * @return true, caso o reembolso seja a antecipado
-     */
-    @Transient
-    public boolean isReembolsoAntecipado(){
-        return this.getValorDescontoAntecipacao() != null && this.getValorDescontoAntecipacao().compareTo(BigDecimal.ZERO) > 0;
-    }
 }
