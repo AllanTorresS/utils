@@ -1181,8 +1181,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         params.add(new ParametroPesquisaIgual("idAutorizacaoEstorno", transacaoEstornada.getId()));
         params.add(new ParametroPesquisaMenor("valorTotal", BigDecimal.ZERO));
 
-        return pesquisarUnicoSemIsolamentoDados(params.toArray(new ParametroPesquisa[params.size()]));
-
+        return pesquisarSemIsolamentoDados((ParametroOrdenacaoColuna) null, params.toArray(new ParametroPesquisa[params.size()])).stream().findFirst().orElse(null);
     }
 
     @Override
