@@ -176,6 +176,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "     JOIN FETCH t.frotaPtov fpv " +
                     "     JOIN fpv.pontoVenda pv  " +
                     "     JOIN fpv.frota fr " +
+                    "     LEFT JOIN FETCH t.antecipacoes a " +
                     " WHERE " +
                     "     t.reembolso IS NULL " +
                     "     AND t.valorReembolso IS NOT NULL " +
