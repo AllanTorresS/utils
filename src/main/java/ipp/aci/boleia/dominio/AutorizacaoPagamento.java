@@ -8,10 +8,10 @@ import ipp.aci.boleia.dominio.enums.StatusEdicao;
 import ipp.aci.boleia.dominio.enums.StatusNotaFiscalAbastecimento;
 import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
 import ipp.aci.boleia.dominio.enums.TipoErroAutorizacaoPagamento;
+import ipp.aci.boleia.dominio.enums.TipoItemAutorizacaoPagamento;
 import ipp.aci.boleia.dominio.enums.TipoPreenchimentoLitragem;
 import ipp.aci.boleia.dominio.enums.TipoRealizacaoPedido;
 import ipp.aci.boleia.dominio.enums.TipoSenhaAutorizacao;
-import ipp.aci.boleia.dominio.enums.TipoItemAutorizacaoPagamento;
 import ipp.aci.boleia.dominio.historico.HistoricoParametroNotaFiscal;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
@@ -22,6 +22,7 @@ import org.hibernate.annotations.Formula;
 import org.hibernate.envers.AuditJoinTable;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -54,7 +55,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.hibernate.envers.RelationTargetAuditMode;
 
 /**
  * Representa a tabela de Autorizacao Pagamento
@@ -1611,6 +1611,14 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
      */
     public List<ItemAutorizacaoPagamento> obterItensServico(){
         return this.getItems().stream().filter(i -> !i.isAbastecimento()).collect(Collectors.toList());
+    }
+
+    /**
+     * Obtém a lista de valores unitários dos produtos de uma autorização de pagamento
+     * @return A lista de valores unitários
+     */
+    public List<BigDecimal> getValoresUnitariosServicos() {
+        return this.obterItensServico().stream().map(ItemAutorizacaoPagamento::getValorUnitario).collect(Collectors.toList());
     }
 
     public Long getCodigoAbastecimentoCTA() {
