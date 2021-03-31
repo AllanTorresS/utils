@@ -1,6 +1,6 @@
 package ipp.aci.boleia.dominio;
 
-import ipp.aci.boleia.dominio.enums.StatusLiberacaoReembolsoJde;
+import ipp.aci.boleia.dominio.enums.StatusIntegracaoReembolsoJde;
 import ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import ipp.aci.boleia.dominio.interfaces.IPertenceRevendedor;
@@ -165,6 +165,11 @@ public abstract class ReembolsoBase implements IPersistente, IPertenceRevendedor
     @Transient
     public BigDecimal getValorLiquidoVoucher() {
         return getValorTotal().subtract(getValorDescontoVoucher());
+    }
+
+    @Transient
+    public boolean isIntegracaoRealizada() {
+        return StatusIntegracaoReembolsoJde.REALIZADO.getValue().equals(statusIntegracao);
     }
 
     /**

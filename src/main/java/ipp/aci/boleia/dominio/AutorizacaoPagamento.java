@@ -494,6 +494,9 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataAtualizacao;
 
+    @ManyToMany(mappedBy = "autorizacoesPagamento", fetch = FetchType.LAZY)
+    private List<ReembolsoAntecipado> antecipacoesReembolso;
+
     @Transient
     private TipoErroAutorizacaoPagamento tipoErroAutorizacaoPagamento;
 
@@ -1666,6 +1669,14 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
         this.foiProcessadoPeloGeradorDeCampanhas = foiProcessadoPeloGeradorDeCampanhas;
     }
 
+    public List<ReembolsoAntecipado> getAntecipacoesReembolso() {
+        return antecipacoesReembolso;
+    }
+
+    public void setAntecipacoesReembolso(List<ReembolsoAntecipado> antecipacoesReembolso) {
+        this.antecipacoesReembolso = antecipacoesReembolso;
+    }
+
     /**
      * Verifica se a {@link AutorizacaoPagamento} deve ir para a fila de repasse
      * @return true se a autorizacao deve ir para a fila de repasse
@@ -1792,5 +1803,10 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     @Transient
     public boolean unidadeExigeNf() {
         return getUnidadeExigeNf() != null && getUnidadeExigeNf();
+    }
+
+    @Transient
+    public boolean possuiAntecipacaoReembolsoRealizada() {
+        return antecipacoesReembolso != null && antecipacoesReembolso.stream().anyMatch(ReembolsoAntecipado::isIntegracaoRealizada);
     }
 }
