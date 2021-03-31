@@ -225,6 +225,8 @@ public final class ChavePermissao {
 
     public static final String DETALHAMENTO_REEMBOLSO                       = SPRING_ROLE_PREFIX + "DETALHAMENTO_REEMBOLSO" + SPRING_ROLE_SUFFIX;
 
+    public static final String DETALHAMENTO_COBRANCA_EXPORTAR               = FINANCEIRO_EXPORTAR_XLS + " or " +  COBRANCA_EXPORTAR;
+
     // Permissão da API de Frotistas.
     public static final String API_FROTISTA                                         = SPRING_ROLE_PREFIX + "API_FROTISTA" + SPRING_ROLE_SUFFIX;
     public static final String API_FROTISTA_PREFIX                                  = API_FROTISTA + " or " + SPRING_ROLE_PREFIX;
