@@ -7,7 +7,7 @@ import ipp.aci.boleia.util.i18n.IEnumComLabel;
  */
 public enum TipoConsumo implements IEnumComLabel<TipoConsumo> {
 
-    HL(0),
+    LH(0),
     KML(1);
 
     private final Integer value;

@@ -16,7 +16,7 @@ public final class ConstantesJde {
     public static final String UNIDADE_NEGOCIO = "74";
     public static final String CODIGO_CATEGORIA_EMPRESA = "74";
     public static final String CLIENTE_REPASSE = "7059338";
-    public static final Long CODIGO_JDE_FORNECEDOR_CONECTCAR = 3940130L;
+    public static final Long CODIGO_JDE_FORNECEDOR_CONECTCAR = 5821127L;
 
     public static final Long VOUCHER_CENARIO_APROVADO_PAGAMENTO = 187L;
     public static final Long VOUCHER_CENARIO_SUSPENSO_PAGAMENTO = 141L;
@@ -96,6 +96,11 @@ public final class ConstantesJde {
     public static final BigDecimal ACRECIMO_PRORROGAR_VENCIMENTO = new BigDecimal(0);
     public static final String ALTERACAO_PRORROGAR_VENCIMENTO = "03";
 
+    public static final String PEDIDO_VENDA_CENARIO = "752";
+    public static final String PEDIDO_VENDA_ITEM_CODIGO_PRODUTO = "791039";
+    public static final String PEDIDO_VENDA_PRIMEIRO_ITEM_LISTA_KEY = "1";
+    public static final String CONSULTA_NF_TIPO_DOCUMENTO = "VK";
+    
     /**
      * Impede instanciacao e heranca
      */

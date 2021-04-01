@@ -20,6 +20,14 @@ public interface IReembolsoConectcarDados extends IRepositorioBoleiaDados<Reembo
     ResultadoPaginado<ReembolsoConectcar> pesquisar(FiltroPesquisaReembolsoConectcarVo filtro);
   
     /**
+     * Pesquisa os reembolsos candidatos a realizar consulta no JDE
+     * para consultar o status do aviso de crédito
+     *
+     * @return Os reembolsos candidatos a consulta de aviso de crédito.
+     */
+    List<ReembolsoConectcar> buscarReembolsosParaConsultarAvisoCredito();
+
+    /**
      * Obtém uma lista de reembolsos com status Suspenso para Pagamento.
      *
      * @return Lista de reembolsos elegíveis para liberação de pagamento.

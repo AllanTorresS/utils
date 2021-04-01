@@ -42,7 +42,7 @@ public enum CamposRelatorioAbastecimento {
     HODOMETRO_HORIMETRO(608, "enum.CamposRelatorioAbastecimento.HODOMETRO_HORIMETRO.label", true, true, 6, 40, false),
     HODOMETRO_HORIMETRO_ANTERIOR(609, "enum.CamposRelatorioAbastecimento.HODOMETRO_HORIMETRO_ANTERIOR.label", false, true, 6, 40, false),
     HODOMETRO_HORIMETRO_PERCORRIDO(610, "enum.CamposRelatorioAbastecimento.HODOMETRO_HORIMETRO_PERCORRIDO.label", false, true, 6, 40, false),
-    MEDIA_KML_HL(611, "enum.CamposRelatorioAbastecimento.MEDIA_KML_HL.label", false, true, 6, 30, false),
+    MEDIA_KML_LH(611, "enum.CamposRelatorioAbastecimento.MEDIA_KML_LH.label", false, true, 6, 30, false),
     FOTO_HOD_HOR(612, "enum.CamposRelatorioAbastecimento.FOTO_HOD_HOR.label", false, true, 6, 30, false),
     JUSTIFICATIVA_FOTO_HOD_HOR(613, "enum.CamposRelatorioAbastecimento.JUSTIFICATIVA_FOTO_HOD_HOR.label", false, true, 6, 50, false),
     MODO(614, "enum.CamposRelatorioAbastecimento.MODO.label", true, true, 6, 15, false),

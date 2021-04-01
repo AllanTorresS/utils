@@ -10,6 +10,7 @@ import ipp.aci.boleia.dominio.Unidade;
 import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.enums.ModalidadePagamento;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
+import ipp.aci.boleia.dominio.vo.AgrupamentoTransacaoConsolidadaCobrancaVo;
 import ipp.aci.boleia.dominio.vo.AgrupamentoTransacaoConsolidadaPvVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheCicloVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFinanceiroVo;
@@ -134,6 +135,20 @@ public interface ITransacaoConsolidadaDados extends IRepositorioBoleiaDados<Tran
     TransacaoConsolidada obterConsolidado(Frota frota, PontoDeVenda pv, ModalidadePagamento modalidadePagamento, EmpresaAgregada empresaAgregada, Unidade unidade, Date dataReferencia);
 
     /**
+     * Busca um consolidado que atenda um conjunto de características.
+     *
+     * @param frotaExigeNF Informa se deverá considerar ciclos com exigencia de NF da frota.
+     * @param frota Frota da transação consolidada.
+     * @param pv Ponto de venda da transação consolidada.
+     * @param modalidadePagamento Modalidade de pagamento.
+     * @param empresaAgregada Empresa agregada vinculada a transação consolidada.
+     * @param unidade Unidade vinculada a transação consolidada.
+     * @param dataReferencia Data de referência da transação consolidada.
+     * @return A transação consolidada encontrada.
+     */
+    TransacaoConsolidada obterConsolidado(Boolean frotaExigeNF, Frota frota, PontoDeVenda pv, ModalidadePagamento modalidadePagamento, EmpresaAgregada empresaAgregada, Unidade unidade, Date dataReferencia);
+
+    /**
      * Método que realiza a pesquisa de transações consolidadas para Notas Fiscais no contexto da API
      * do Frotista.
      * 
@@ -196,7 +211,16 @@ public interface ITransacaoConsolidadaDados extends IRepositorioBoleiaDados<Tran
      * @param usuarioLogado usuario logado que solicita a pesquisa
      * @return lista de registros encontrados
      */
-    ResultadoPaginado<TransacaoConsolidada> pesquisarTransacoesFinanceiro(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado);
+    ResultadoPaginado<TransacaoConsolidada> pesquisarTransacoesReembolsoSolucao(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado);
+
+    /**
+     * Pesquisa uma lista de transações consolidadas baseado em um filtro de pesquisa
+     *
+     * @param filtro parâmetros utilizados na consulta
+     * @param usuarioLogado usuario logado que solicita a pesquisa
+     * @return lista de registros encontrados
+     */
+    ResultadoPaginado<TransacaoConsolidada> pesquisarTransacoesFinanceiroRevenda(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado);
 
     /** Obtém os pontos de datas e valores de pagamento de reembolsos previstos e pagos para o gráfico do financeiro.
      *
@@ -264,4 +288,59 @@ public interface ITransacaoConsolidadaDados extends IRepositorioBoleiaDados<Tran
      * @return Lista de transações encontrada.
      */
     ResultadoPaginado<TransacaoConsolidada> pesquisarTransacoesDetalhamentoDeCiclo(FiltroPesquisaDetalheCicloVo filtro);
+
+    /**
+     * Pesquisa as cobranças ou estimativas de cobrança
+     * @param filtro O filtro fornecido
+     * @param usuarioLogado O usuário que solicitou a pesquisa
+     * @return A lista de transações consolidadas
+     */
+    ResultadoPaginado<AgrupamentoTransacaoConsolidadaCobrancaVo> pesquisarTransacoesPorCobranca(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado);
+
+    /**
+     * Obtém o total cobrado de uma frota em um período
+     * @param filtro O filtro fornecido
+     * @param usuarioLogado O usuário que solicitou a pesquisa
+     * @return O valor cobrado
+     */
+    BigDecimal obterTotalCobrancaPeriodo(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado);
+
+    /**
+     * Pesquisa os consolidados de uma frota
+     * @param filtro o filtro com as informações que devem ser consideradas na busca.
+     * @param usuarioLogado o usuario logado
+     * @return Uma lista com as transações consolidadas.
+     */
+    List<TransacaoConsolidada> pesquisarConsolidadoFrota(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado);
+
+    /**
+     * Obtém os detalhes de transações realizadas em um período
+     * @param filtro O filtro fornecido
+     * @return Os dados encontrados
+     */
+    List<TransacaoConsolidada> obterDetalheDadosFinanceiro(FiltroPesquisaFinanceiroVo filtro);
+
+    /**
+     * Obtém os detalhes de transações realizadas por uma frota em um período para exportação
+     * @param filtro O filtro fornecido
+     * @return Os dados encontrados
+     */
+    ResultadoPaginado<TransacaoConsolidada> obterDetalhesDadosFinanceiroFrotaParaExportacao(FiltroPesquisaFinanceiroVo filtro);
+
+    /**
+     * Obtém os consolidados correspondentes ao período e frota fornecidos
+     * @param dataInicioCiclo A data de início do ciclo
+     * @param dataFimCiclo A data de fim do ciclo
+     * @param idFrota O identificador da frota
+     * @return Os consolidados encontrados
+     */
+    List<TransacaoConsolidada> obterConsolidadosPorPeriodoEFrota(Date dataInicioCiclo, Date dataFimCiclo, Long idFrota);
+
+        /**
+     * Obtém o valor total de reembolso em um período
+     * @param filtro O filtro fornecido
+     * @param usuarioLogado O usuário que solicitou a pesquisa
+     * @return O valor total
+     */
+    BigDecimal obterTotalReembolsoPeriodoSolucao(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado);
 }
