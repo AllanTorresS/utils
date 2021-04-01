@@ -1617,6 +1617,7 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
      * Obtém a lista de valores unitários dos produtos de uma autorização de pagamento
      * @return A lista de valores unitários
      */
+    @Transient
     public List<BigDecimal> getValoresUnitariosServicos() {
         return this.obterItensServico().stream().map(ItemAutorizacaoPagamento::getValorUnitario).collect(Collectors.toList());
     }
