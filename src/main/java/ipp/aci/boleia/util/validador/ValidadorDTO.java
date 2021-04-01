@@ -74,7 +74,7 @@ public class ValidadorDTO {
      * @param constraint As violacoes de validacao detectadas
      * @return Uma mensagem amigavel
      */
-    private String obterMensagemValidacao(ConstraintViolation<Object> constraint) {
+    public String obterMensagemValidacao(ConstraintViolation<Object> constraint) {
         String field = constraint.getPropertyPath().toString().replaceAll("(\\[[\\d+]\\])", "");
         Annotation annotation = constraint.getConstraintDescriptor().getAnnotation();
         if (annotation instanceof Min) {
