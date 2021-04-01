@@ -15,18 +15,19 @@ import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaAnd;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataEntre;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaior;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenor;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDiferente;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaEmpty;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaEntre;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaFetch;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgualIgnoreCase;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
-import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaEntre;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaior;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaiorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMenor;
@@ -184,7 +185,7 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
                 ((IExclusaoLogica) t).setExcluido(false);
             }
             if (t instanceof IExclusaoLogicaComData) {
-                ((IExclusaoLogicaComData) t).setExcluido(false);
+                ((IExclusaoLogicaComData) t).setDataExclusao(null);
             }
             if (t != null && t.getId() != null && t.getId() > 0) {
                 t = getGerenciadorDeEntidade().merge(t);
@@ -208,7 +209,7 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
                     ((IExclusaoLogica) t).setExcluido(false);
                 }
                 if (t instanceof IExclusaoLogicaComData) {
-                    ((IExclusaoLogicaComData) t).setExcluido(false);
+                    ((IExclusaoLogicaComData) t).setDataExclusao(null);
                 }
                 if (t != null && t.getId() != null && t.getId() > 0) {
                     t = getGerenciadorDeEntidade().merge(t);
@@ -254,7 +255,6 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
                 ((IExclusaoLogica) t).setExcluido(true);
                 getGerenciadorDeEntidade().merge(t);
             } else if (t instanceof IExclusaoLogicaComData) {
-                ((IExclusaoLogicaComData) t).setExcluido(true);
                 ((IExclusaoLogicaComData) t).setDataExclusao(new Date());
                 getGerenciadorDeEntidade().merge(t);
             } else {
@@ -402,6 +402,21 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
     }
 
     /**
+     * Realiza uma pesquisa com paginação de uma servicos a partir de uma queryString
+     *
+     * @param paginacao   Os dados da paginacao
+     * @param queryString A consulta em HQL
+     * @param countQueryString A consulta HQL com o count usado na paginação
+     * @param tipoResultado A classe do tipo do objeto de retorno
+     * @param parametros  Os parametros da busca
+     * @param <K> O tipo do objeto de retorno
+     * @return O resultado da consulta, contendo os dados de paginacao
+     */
+    protected <K> ResultadoPaginado<K> pesquisar(InformacaoPaginacao paginacao, String queryString, String countQueryString, Class<K> tipoResultado, ParametroPesquisa... parametros) {
+        return pesquisar(paginacao, queryString, countQueryString, true, false, tipoResultado, parametros);
+    }
+
+    /**
      * Aplica paginação em uma lista de registros obtidos no banco.
      *
      * @param paginacao Informação de paginação
@@ -535,18 +550,45 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
      * @return O resultado da consulta
      */
     private <K> ResultadoPaginado<K> pesquisar(InformacaoPaginacao paginacao, String queryString, boolean isolamento, boolean considerarExcluidos, Class<K> tipoRetorno, ParametroPesquisa... parametros) {
+        return pesquisar(paginacao, queryString, null, isolamento, considerarExcluidos, tipoRetorno, parametros);
+    }
+
+    /**
+     * Executa uma pesquisa com ou sem isolamento de dados a partir dos parametros informados
+     *
+     * @param paginacao   A paginacao  desejada
+     * @param queryString A consulta a ser executada
+     * @param countQueryString A consulta de count a ser executada
+     * @param isolamento  True caso se deseje isolamento de dados
+     * @param tipoRetorno O tipo de retorno da consulta
+     * @param parametros  Os parametros da consulta
+     * @return O resultado da consulta
+     */
+    private <K> ResultadoPaginado<K> pesquisar(InformacaoPaginacao paginacao, String queryString, String countQueryString, boolean isolamento, boolean considerarExcluidos, Class<K> tipoRetorno, ParametroPesquisa... parametros) {
         ResultadoPaginado<K> resultado = new ResultadoPaginado<>();
         if (paginacao != null) {
             Query query = criarConsultaComParametros(queryString, parametros);
+            Query countQuery = null;
+            if(countQueryString != null) {
+                query.setFirstResult((paginacao.getPagina() - 1) * paginacao.getTamanhoPagina());
+                query.setMaxResults(paginacao.getTamanhoPagina());
+                countQuery = criarConsultaComParametros(countQueryString, parametros);
+            }
 
             List<K> totalRegistros = query.getResultList();
             if(!considerarExcluidos) {
                 totalRegistros = removerRegistrosExcluidos(totalRegistros, tipoRetorno);
             }
 
-            List<K> registrosPaginados = aplicarPaginacaoListaRegistros(paginacao, totalRegistros);
-            resultado.setRegistros(registrosPaginados);
-            resultado.setTotalItems(totalRegistros.size());
+            if(countQuery != null) {
+                Long quantidadeTotalRegistros = countQuery.getSingleResult() != null ? (Long) countQuery.getSingleResult() : 0L;
+                resultado.setTotalItems(quantidadeTotalRegistros.intValue());
+                resultado.setRegistros(totalRegistros);
+            } else {
+                List<K> registrosPaginados = aplicarPaginacaoListaRegistros(paginacao, totalRegistros);
+                resultado.setRegistros(registrosPaginados);
+                resultado.setTotalItems(totalRegistros.size());
+            }
         } else {
             List<K> registros = criarConsultaComParametros(queryString, parametros).getResultList();
             if(!considerarExcluidos) {
@@ -852,7 +894,7 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
             predicados.add(builder.equal(entityRoot.get(IExclusaoLogica.NOME_CAMPO), Boolean.FALSE));
         }
         if (IExclusaoLogicaComData.class.isAssignableFrom(getClassePersistente())) {
-            predicados.add(builder.equal(entityRoot.get(IExclusaoLogicaComData.NOME_CAMPO), Boolean.FALSE));
+            predicados.add(builder.isNull(entityRoot.get(IExclusaoLogicaComData.NOME_CAMPO)));
         }
 
         Usuario usuarioLogado = ambiente.getUsuarioLogado();
@@ -1238,6 +1280,10 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
             Path<Date> navegacaoCampo = obterAtributoEntidade(campo, entityRoot, usarLeftJoins, false, cachePaths);
             Predicate greaterThanOrEqualTo = builder.greaterThanOrEqualTo(navegacaoCampo, (Date) valor);
             predicates.add(greaterThanOrEqualTo);
+        } else if (param instanceof ParametroPesquisaDataEntre) {
+            Path<Date> navegacaoCampo = obterAtributoEntidade(campo, entityRoot, usarLeftJoins, false, cachePaths);
+            Predicate between = builder.between(navegacaoCampo, (Date)valor, ((ParametroPesquisaDataEntre) param).getValorSecundario());
+            predicates.add(between);
         }
     }
 

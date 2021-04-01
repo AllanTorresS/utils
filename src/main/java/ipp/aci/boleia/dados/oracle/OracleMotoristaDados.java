@@ -53,11 +53,26 @@ public class OracleMotoristaDados extends OracleRepositorioBoleiaDados<Motorista
     @Autowired
     private UtilitarioAmbiente utilitarioAmbiente;
 
+    private static final String LISTAR_MOTORISTAS_POR_CONSOLIDADO =
+            "SELECT DISTINCT m " +
+            "FROM Motorista m " +
+            "JOIN m.autorizacoesPagamento ap " +
+            "WHERE (ap.transacaoConsolidadaPostergada.id = :idConsolidado OR ap.transacaoConsolidada.id = :idConsolidado) AND " +
+            "       upper(m.nome) LIKE :nome AND " +
+            "       m.excluido = false";
+
     /**
      * Instancia o repositorio
      */
     public OracleMotoristaDados() {
         super(Motorista.class);
+    }
+
+    @Override
+    public List<Motorista> listarMotoristasPorTermoEConsolidado(String termo, Long idConsolidado) {
+        ParametroPesquisaIgual parametroConsolidado = new ParametroPesquisaIgual("idConsolidado", idConsolidado);
+        ParametroPesquisaIgual parametroTermo = new ParametroPesquisaIgual("nome", "%" + termo.toUpperCase() + "%");
+        return pesquisar(null, LISTAR_MOTORISTAS_POR_CONSOLIDADO, parametroConsolidado, parametroTermo).getRegistros();
     }
 
     @Override

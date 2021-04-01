@@ -20,6 +20,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -194,6 +195,9 @@ public class Motorista implements IPersistente, IExclusaoLogica, IPertenceFrota,
 
     @Column(name="ID_FRENTISTA_CTA")
     private Boolean frentistaCTA;
+
+    @OneToMany(mappedBy = "motorista", fetch = FetchType.LAZY)
+    private List<AutorizacaoPagamento> autorizacoesPagamento;
 
     /**
      * Construtor padrão da entidade.
@@ -563,6 +567,14 @@ public class Motorista implements IPersistente, IExclusaoLogica, IPertenceFrota,
 
     public void setFrentistaCTA(Boolean frentistaCTA) {
         this.frentistaCTA = frentistaCTA;
+    }
+
+    public List<AutorizacaoPagamento> getAutorizacoesPagamento() {
+        return autorizacoesPagamento;
+    }
+
+    public void setAutorizacoesPagamento(List<AutorizacaoPagamento> autorizacoesPagamento) {
+        this.autorizacoesPagamento = autorizacoesPagamento;
     }
 
     /**
