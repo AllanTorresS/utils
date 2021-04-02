@@ -796,6 +796,23 @@ public class EmailSd {
     }
 
     /**
+     * Envia email com as críticas da recolha automática
+     * @param mensagensDeCriticas mensagens De Criticas
+     * @param destinatario destinatario
+     * @param cnpj cnpj
+     */
+    public void enviarEmailDeCriticasRecolhaAutomatica(List<String> mensagensDeCriticas, String destinatario, String cnpj){
+        Date date = utilitarioAmbiente.buscarDataAmbiente();
+        String assunto = this.mensagens.obterMensagem("assunto.email.erro.recolha.automatica");
+        String motivoRecusa = mensagensDeCriticas.stream().map(msg -> "&emsp;<p>" + msg + "</p><br>").collect(Collectors.joining());
+        String data = UtilitarioFormatacaoData.formatarDataCurta(date);
+        String hora = UtilitarioFormatacaoData.formatarHoraMinutosSegundos(date);
+        cnpj = UtilitarioFormatacao.formatarCnpjApresentacao(cnpj);
+        String corpo = this.mensagens.obterMensagem("assunto.email.erro.recolha.automatica", data, hora, cnpj, motivoRecusa);
+        emailDados.enviarEmail(assunto, corpo, Arrays.asList(destinatario));
+    }
+
+    /**
      * Envia um email com todas as mensagens de falhas da sincronização com o SalesForce
      * @param motivosFalhas motivos das falhas
      */
