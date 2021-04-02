@@ -51,6 +51,29 @@ public class PrecoNegociadoSd {
     }
 
     /**
+     * Cria um novo acordo zerado vigente
+     * e com desconto vigente nulo
+     * @param precoAtual preco que sera alterado
+     * @return Preco novo a partir do base
+     */
+    public Preco criarApartirDaExclusaoDePrecoBase(Preco precoAtual){
+        Date dataAtualizacao = ambiente.buscarDataAmbiente();
+
+        Preco novoPreco = new Preco();
+        novoPreco.setFrotaPtov(precoAtual.getFrotaPtov());
+        novoPreco.setStatus(StatusPreco.VIGENTE.getValue());
+        novoPreco.setPreco(precoAtual.getPrecoBase().getPreco());
+        novoPreco.setPrecoBase(precoAtual.getPrecoBase());
+        novoPreco.setDescontoVigente(null);
+        novoPreco.setDataAtualizacao(dataAtualizacao);
+        novoPreco.setDataVigencia(dataAtualizacao);
+        repositorioPreco.armazenar(novoPreco);
+        return novoPreco;
+    }
+
+
+
+    /**
      * Aplica novo preco vigente ou já em aceite, conforme o novo acordo recém aceitado
      * e gera registro de histórico do preço vigente anterior ao aceite.
      *
