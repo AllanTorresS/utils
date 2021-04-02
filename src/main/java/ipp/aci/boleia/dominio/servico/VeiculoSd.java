@@ -147,12 +147,11 @@ public class VeiculoSd {
      * @return Preco negociado localizado ou nulo caso não encontre
      */
     public BigDecimal obterValorUnitarioAbastecimento(Long codigoFrota, Long codigoPV, Long codigoCombustivel, Date dataAbastecimento) {
-        BigDecimal precoNegociado = null;
-        BigDecimal precoBase = obterValorBaseAbastecimento(codigoCombustivel,codigoPV,dataAbastecimento);
-        if(precoBase != null){
-            precoNegociado = obterValorNegociadoAbastecimento(codigoFrota,codigoCombustivel,codigoPV, dataAbastecimento);
+        BigDecimal precoNegociado = obterValorNegociadoAbastecimento(codigoFrota,codigoCombustivel,codigoPV, dataAbastecimento);
+        if(precoNegociado == null){
+           return obterValorBaseAbastecimento(codigoCombustivel,codigoPV,dataAbastecimento);
         }
-        return precoNegociado != null ? precoNegociado : precoBase;
+        return precoNegociado;
     }
 
     /**
