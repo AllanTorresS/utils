@@ -430,4 +430,24 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
      * @return Os registros obtidos
      */
     List<AutorizacaoPagamento> pesquisaDetalheCobrancaSemPaginacao(FiltroPesquisaDetalheCobrancaVo filtro);
+
+    /**
+     * Busca abastecimentos pelo valor de combustível da Autorização de Pagamento
+     * @param cnpjDest CNPJ do destinatário da nota a ser conciliada
+     * @param cnpjEmit CNPJ do emitente da nota a ser conciliada
+     * @param dataEmissao Data de emissão da nota a ser conciliada
+     * @param valorTotalNota O valor total de combustível
+     * @return Os abastecimentos encontrados
+     */
+    List<AutorizacaoPagamento> obterAbastecimentoParaConciliacaoPorValorDeCombustivel(Long cnpjDest, Long cnpjEmit, Date dataEmissao, BigDecimal valorTotalNota);
+
+    /**
+     * Busca abastecimentos pelo valor de produtos da Autorização de Pagamento
+     * @param cnpjDest CNPJ do destinatário da nota a ser conciliada
+     * @param cnpjEmit CNPJ do emitente da nota a ser conciliada
+     * @param dataEmissao Data de emissão da nota a ser conciliada
+     * @param valorCombustivel O valor total de produtos
+     * @return Os abastecimentos encontrados
+     */
+    List<AutorizacaoPagamento> obterAbastecimentoParaConciliacaoPorValorDeProduto(Long cnpjDest, Long cnpjEmit, Date dataEmissao, BigDecimal valorProduto);
 }
