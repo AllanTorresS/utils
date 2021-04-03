@@ -3,6 +3,7 @@ package ipp.aci.boleia.dominio.servico;
 import ipp.aci.boleia.dados.IParametroCicloDados;
 import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.ParametroCiclo;
+import ipp.aci.boleia.dominio.interfaces.IParametroNotaFiscal;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import java.util.Calendar;
@@ -25,6 +26,8 @@ public class ParametroDeNotaFiscalSd {
     @Autowired
     private TransacaoConsolidadaSd transacaoConsolidadaSd;
 
+    private static final int QUANTIDADE_DIAS_PARA_EXIBIR_ALERTA_NOVO_PARAMETRO = 3;
+
     /**
      * Calcula a data de vigência do parametro de nota fiscal de uma frota.
      * O valor deve ser a data inicial do próximo cíclo da frota;
@@ -41,5 +44,13 @@ public class ParametroDeNotaFiscalSd {
         Date dataFimCiclo = transacaoConsolidadaSd.calcularDataFimPeriodo(dataInicioCiclo, parametroCiclo);
         Date dataInicioCicloAtual = UtilitarioCalculoData.adicionarDiasData(UtilitarioCalculoData.obterPrimeiroInstanteDia(dataFimCiclo),1);
         return dataInicioCicloAtual;
+    }
+
+    public Boolean deveAlertarNovoParametroNfe(IParametroNotaFiscal notaFiscal){
+        Calendar dataLimite = Calendar.getInstance();
+        dataLimite.setTime(ambiente.buscarDataAmbiente());
+        dataLimite.add(Calendar.DATE,QUANTIDADE_DIAS_PARA_EXIBIR_ALERTA_NOVO_PARAMETRO);
+        Date prazo = dataLimite.getTime();
+       return notaFiscal.getDataVigencia().before(prazo) || notaFiscal.getDataVigencia().equals(prazo);
     }
 }
