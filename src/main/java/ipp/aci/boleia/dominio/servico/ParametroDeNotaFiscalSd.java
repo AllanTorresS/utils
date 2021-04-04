@@ -6,6 +6,9 @@ import ipp.aci.boleia.dominio.ParametroCiclo;
 import ipp.aci.boleia.dominio.interfaces.IParametroNotaFiscal;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
+
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +29,7 @@ public class ParametroDeNotaFiscalSd {
     @Autowired
     private TransacaoConsolidadaSd transacaoConsolidadaSd;
 
-    private static final int QUANTIDADE_DIAS_PARA_EXIBIR_ALERTA_NOVO_PARAMETRO = 3;
+    private static final int QUANTIDADE_DIAS_PARA_EXIBIR_ALERTA_NOVO_PARAMETRO = -3;
 
     /**
      * Calcula a data de vigência do parametro de nota fiscal de uma frota.
@@ -46,11 +49,17 @@ public class ParametroDeNotaFiscalSd {
         return dataInicioCicloAtual;
     }
 
+    /**
+     * Verifica se a parametrização está dentro do prazo para alertar que é uma nova parametrização
+     * @param notaFiscal Parâmetro da NF
+     * @return true se positivo
+     */
     public Boolean deveAlertarNovoParametroNfe(IParametroNotaFiscal notaFiscal){
         Calendar dataLimite = Calendar.getInstance();
         dataLimite.setTime(ambiente.buscarDataAmbiente());
         dataLimite.add(Calendar.DATE,QUANTIDADE_DIAS_PARA_EXIBIR_ALERTA_NOVO_PARAMETRO);
-        Date prazo = dataLimite.getTime();
-       return notaFiscal.getDataVigencia().before(prazo) || notaFiscal.getDataVigencia().equals(prazo);
+        final LocalDate prazo = dataLimite.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        final LocalDate vigenciaNF = notaFiscal.getDataVigencia().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        return vigenciaNF.isEqual(prazo) || vigenciaNF.isAfter(prazo);
     }
 }
