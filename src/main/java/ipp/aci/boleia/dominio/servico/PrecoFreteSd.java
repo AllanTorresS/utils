@@ -53,11 +53,4 @@ public class PrecoFreteSd {
         precoFrete.setStatus(StatusPreco.HISTORICO.getValue());
         repositorioFrete.armazenar(precoFrete);
     }
-
-
-
-
-
-
-
 }
