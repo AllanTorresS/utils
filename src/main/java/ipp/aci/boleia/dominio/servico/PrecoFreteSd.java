@@ -1,17 +1,17 @@
 package ipp.aci.boleia.dominio.servico;
 
-import ipp.aci.boleia.dados.*;
-import ipp.aci.boleia.dominio.*;
-import ipp.aci.boleia.dominio.agenciadorfrete.*;
-import ipp.aci.boleia.dominio.enums.*;
-import ipp.aci.boleia.util.excecao.*;
-import ipp.aci.boleia.util.i18n.*;
-import ipp.aci.boleia.util.negocio.*;
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.stereotype.*;
+import ipp.aci.boleia.dados.IPrecoBaseDados;
+import ipp.aci.boleia.dados.IPrecoDados;
+import ipp.aci.boleia.dominio.PrecoBase;
+import ipp.aci.boleia.dados.IPrecoFreteDados;
+import ipp.aci.boleia.dominio.agenciadorfrete.PrecoFrete;
+import ipp.aci.boleia.dominio.enums.StatusPreco;
+import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import java.math.*;
-import java.util.*;
+import java.util.Date;
+
 
 /**
  * Encapsula as regras de negocio que envolvem a manipulacao de PrecosBase
