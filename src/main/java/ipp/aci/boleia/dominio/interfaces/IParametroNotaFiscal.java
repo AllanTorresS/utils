@@ -2,6 +2,8 @@ package ipp.aci.boleia.dominio.interfaces;
 
 import ipp.aci.boleia.dominio.Unidade;
 
+import java.util.Date;
+
 public interface IParametroNotaFiscal {
 
     Long getId();
@@ -27,6 +29,8 @@ public interface IParametroNotaFiscal {
     Unidade getUnidadeLocalDestinoPadrao();
 
     void setUnidadeLocalDestinoPadrao(Unidade unidadeLocalDestinoPadrao);
+
+    Date getDataVigencia();
 
     /**
      * O local destino configurado é no ato do abastecimento?
