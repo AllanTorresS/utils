@@ -573,7 +573,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "%s " +
                     "ORDER BY TC.dataFimPeriodo";
 
-    private static final String CLAUSULA_STATUS_INTEGRACAO_REEMBOLSO = " AND (r.statusIntegracao in :statusIntegracao OR (r.statusIntegracao IS NULL AND a.valorReembolso IS NOT NULL AND " + ANTECIPADO.getValue() + " in :statusIntegracao)) ";
+    private static final String CLAUSULA_STATUS_INTEGRACAO_REEMBOLSO = " AND (r.statusIntegracao in :statusIntegracao OR (r.statusIntegracao IS NULL AND a.valorReembolso IS NOT NULL AND " + ANTECIPADO.getValue() + " in :statusIntegracao) OR (r.statusIntegracao IS NULL AND " + StatusIntegracaoReembolsoJde.PREVISTO.getValue() +" in :statusIntegracao)) ";
 
     private static final String CLAUSULA_STATUS_NOTA_FISCAL = " AND (tc.statusNotaFiscal in :statusNf) ";
 
