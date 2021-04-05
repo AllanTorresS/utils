@@ -5,7 +5,7 @@ import ipp.aci.boleia.dados.IPrecoDados;
 import ipp.aci.boleia.dominio.PrecoBase;
 import ipp.aci.boleia.dados.IPrecoFreteDados;
 import ipp.aci.boleia.dominio.agenciadorfrete.PrecoFrete;
-import ipp.aci.boleia.dominio.enums.StatusPreco;
+import ipp.aci.boleia.dominio.enums.StatusPrecoFrete;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -50,7 +50,7 @@ public class PrecoFreteSd {
      */
     public void excluir(PrecoFrete precoFrete){
         Date dataAtualizacao = utilitarioAmbiente.buscarDataAmbiente();
-        precoFrete.setStatus(StatusPreco.HISTORICO.getValue());
+        precoFrete.setStatus(StatusPrecoFrete.HISTORICO.getValue());
         repositorioFrete.armazenar(precoFrete);
     }
 }
