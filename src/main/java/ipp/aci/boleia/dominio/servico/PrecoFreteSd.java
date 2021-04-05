@@ -5,7 +5,7 @@ import ipp.aci.boleia.dados.IPrecoDados;
 import ipp.aci.boleia.dominio.PrecoBase;
 import ipp.aci.boleia.dados.IPrecoFreteDados;
 import ipp.aci.boleia.dominio.agenciadorfrete.PrecoFrete;
-import ipp.aci.boleia.dominio.enums.*;
+import ipp.aci.boleia.dominio.enums.StatusPrecoFrete;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
