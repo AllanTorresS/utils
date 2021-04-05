@@ -446,8 +446,8 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
      * @param cnpjDest CNPJ do destinatário da nota a ser conciliada
      * @param cnpjEmit CNPJ do emitente da nota a ser conciliada
      * @param dataEmissao Data de emissão da nota a ser conciliada
-     * @param valorCombustivel O valor total de produtos
+     * @param valorTotalNota O valor total da nota
      * @return Os abastecimentos encontrados
      */
-    List<AutorizacaoPagamento> obterAbastecimentoParaConciliacaoPorValorDeProduto(Long cnpjDest, Long cnpjEmit, Date dataEmissao, BigDecimal valorProduto);
+    List<AutorizacaoPagamento> obterAbastecimentoParaConciliacaoPorValorDeProduto(Long cnpjDest, Long cnpjEmit, Date dataEmissao, BigDecimal valorTotalNota);
 }

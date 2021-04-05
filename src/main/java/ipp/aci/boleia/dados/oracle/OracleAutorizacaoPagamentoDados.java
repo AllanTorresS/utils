@@ -1417,12 +1417,21 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         parametros.add(new ParametroPesquisaIgual("limiteSuperiorValorNf", valorTotalNota.add(toleranciaDeValorNota)));
         parametros.add(new ParametroPesquisaIgual("limiteInferiorValorNf", valorTotalNota.subtract(toleranciaDeValorNota)));
 
-        return pesquisar((InformacaoPaginacao) null, CONSULTA_ABASTECIMENTOS_POR_NFE, AutorizacaoPagamento.class,
+        return pesquisar((InformacaoPaginacao) null, CONSULTA_ABASTECIMENTOS_SEM_EMISSAO_COMB_POR_NFE, AutorizacaoPagamento.class,
                 parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
 
     @Override
-    public List<AutorizacaoPagamento> obterAbastecimentoParaConciliacaoPorValorDeProduto(Long cnpjDest, Long cnpjEmit, Date dataEmissao, BigDecimal valorProduto) {
-        return null;
+    public List<AutorizacaoPagamento> obterAbastecimentoParaConciliacaoPorValorDeProduto(Long cnpjDest, Long cnpjEmit, Date dataEmissao, BigDecimal valorTotalNota) {
+        final BigDecimal toleranciaDeValorNota = BigDecimal.valueOf(.05);
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaIgual("dataEmissao", obterUltimoInstanteDia(dataEmissao)));
+        parametros.add(new ParametroPesquisaIgual("cnpjEmit", cnpjEmit));
+        parametros.add(new ParametroPesquisaIgual("cnpjDest", cnpjDest));
+        parametros.add(new ParametroPesquisaIgual("limiteSuperiorValorNf", valorTotalNota.add(toleranciaDeValorNota)));
+        parametros.add(new ParametroPesquisaIgual("limiteInferiorValorNf", valorTotalNota.subtract(toleranciaDeValorNota)));
+
+        return pesquisar((InformacaoPaginacao) null, CONSULTA_ABASTECIMENTOS_SEM_EMISSAO_PROD_POR_NFE, AutorizacaoPagamento.class,
+                parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
 }
