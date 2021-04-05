@@ -19,6 +19,7 @@ import ipp.aci.boleia.dominio.GapServico;
 import ipp.aci.boleia.dominio.HistoricoPontoVenda;
 import ipp.aci.boleia.dominio.ItemAutorizacaoPagamento;
 import ipp.aci.boleia.dominio.Motorista;
+import ipp.aci.boleia.dominio.NfeAnexosArmazem;
 import ipp.aci.boleia.dominio.ParametroCiclo;
 import ipp.aci.boleia.dominio.PedidoCreditoFrota;
 import ipp.aci.boleia.dominio.PontoDeVenda;
@@ -796,20 +797,21 @@ public class EmailSd {
     }
 
     /**
-     * Envia email com as críticas da recolha automática
-     * @param mensagensDeCriticas mensagens De Criticas
-     * @param destinatario destinatario
-     * @param cnpj cnpj
+     * Envia email com as críticas da recolha automática de notas fiscais
+     * @param anexosNaoConciliados Todas as notas não conciliadas de uma revenda em um dia
+     * @param emailsDestinatarios E-mails dos gestores da revenda
+     * @param cnpj O CNPJ
      */
-    public void enviarEmailDeCriticasRecolhaAutomatica(List<String> mensagensDeCriticas, String destinatario, String cnpj){
+    public void enviarEmailDeCriticasRecolhaAutomatica(List<NfeAnexosArmazem> anexosNaoConciliados, List<String> emailsDestinatarios) {
         Date date = utilitarioAmbiente.buscarDataAmbiente();
         String assunto = this.mensagens.obterMensagem("assunto.email.erro.recolha.automatica");
-        String motivoRecusa = mensagensDeCriticas.stream().map(msg -> "&emsp;<p>" + msg + "</p><br>").collect(Collectors.joining());
+        String motivoRecusa = anexosNaoConciliados.stream().map(anexo -> "&emsp;<p>" + anexo.getNumeroCompletoNf() + ": " + anexo.getMotivoFalhaImportacao() + "</p><br>").collect(Collectors.joining());
         String data = UtilitarioFormatacaoData.formatarDataCurta(date);
         String hora = UtilitarioFormatacaoData.formatarHoraMinutosSegundos(date);
-        cnpj = UtilitarioFormatacao.formatarCnpjApresentacao(cnpj);
-        String corpo = this.mensagens.obterMensagem("assunto.email.erro.recolha.automatica", data, hora, cnpj, motivoRecusa);
-        emailDados.enviarEmail(assunto, corpo, Arrays.asList(destinatario));
+        Long cnpj = anexosNaoConciliados.stream().map(NfeAnexosArmazem::getCnpjPtov).findFirst().orElse(null);
+        String cnpjFormatado = UtilitarioFormatacao.formatarCnpjApresentacao(cnpj);
+        String corpo = this.mensagens.obterMensagem("recolha.recusa.email", data, hora, cnpjFormatado, motivoRecusa);
+        emailDados.enviarEmail(assunto, corpo, emailsDestinatarios);
     }
 
     /**

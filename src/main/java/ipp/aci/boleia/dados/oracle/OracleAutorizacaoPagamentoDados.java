@@ -194,14 +194,23 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                     " %s " +
                     " ORDER BY %s ";
 
+    /**
+     * Fetches utilizados para otimizar acesso a campos com lazy load sempre utilizados
+     */
     private static final String CONSULTA_ABASTECIMENTOS_POR_NFE =
             " SELECT a" +
             " FROM AutorizacaoPagamento a" +
+            " LEFT JOIN a.notasFiscais nfs" +
+            " LEFT JOIN FETCH a.parametroNotaFiscal pnf" +
+            " LEFT JOIN FETCH pnf.parametroNotaFiscalUfs pnfu" +
+            " LEFT JOIN FETCH pnf.unidadeLocalDestinoPadrao uldp" +
+            " LEFT JOIN FETCH pnfu.unidadeLocalDestino uld" +
             " WHERE a.status = " + StatusAutorizacao.AUTORIZADO.getValue() +
             "     AND a.statusNotaFiscal = " + PENDENTE.getValue() +
             "     AND a.dataProcessamento <= :dataEmissao" +
             "     AND a.valorTotal <= :limiteSuperiorTotalNf" +
             "     AND a.valorTotal >= :limiteInferiorTotalNf" +
+            "     AND nfs IS NULL" +
             "     AND EXISTS (" +
             "         SELECT 1" +
             "         FROM AutorizacaoPagamento AS a1" +
@@ -209,14 +218,61 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
             "         INNER JOIN pv.componentes AS c" +
             "         WHERE c.codigoPessoa = :cnpjEmit" +
             "             AND a1.id = a.id" +
-            "     ) AND EXISTS (" +
-            "         SELECT 1" +
-            "         FROM AutorizacaoPagamento AS a2" +
-            "         INNER JOIN a2.frota AS f" +
-            "         LEFT JOIN f.unidades AS u" +
-            "         LEFT JOIN f.empresasAgregadas AS eag" +
-            "         WHERE (f.cnpj = :cnpjDest OR u.cnpj = :cnpjDest OR eag.cnpj = :cnpjDest)" +
-            "             AND a.id = a2.id)";
+            "     )" +
+            " ORDER BY a.dataProcessamento ASC";
+
+    /**
+     * Fetches utilizados para otimizar acesso a campos com lazy load sempre utilizados
+     */
+    private static final String CONSULTA_ABASTECIMENTOS_SEM_EMISSAO_COMB_POR_NFE =
+            " SELECT a" +
+                    " FROM AutorizacaoPagamento a" +
+                    " LEFT JOIN a.notasFiscais nfs" +
+                    " LEFT JOIN FETCH a.parametroNotaFiscal pnf" +
+                    " LEFT JOIN FETCH pnf.parametroNotaFiscalUfs pnfu" +
+                    " LEFT JOIN FETCH pnf.unidadeLocalDestinoPadrao uldp" +
+                    " LEFT JOIN FETCH pnfu.unidadeLocalDestino uld" +
+                    " WHERE a.status = " + StatusAutorizacao.AUTORIZADO.getValue() +
+                    "     AND a.statusNotaFiscal = " + PENDENTE.getValue() +
+                    "     AND a.dataProcessamento <= :dataEmissao" +
+                    "     AND a.precoCombustivelTotal <= :limiteSuperiorTotalNf" +
+                    "     AND a.precoCombustivelTotal >= :limiteInferiorTotalNf" +
+                    "     AND nfs IS NULL OR nfs.valorCombustivel IS NULL" +
+                    "     AND EXISTS (" +
+                    "         SELECT 1" +
+                    "         FROM AutorizacaoPagamento AS a1" +
+                    "         INNER JOIN a1.pontoVenda AS pv" +
+                    "         INNER JOIN pv.componentes AS c" +
+                    "         WHERE c.codigoPessoa = :cnpjEmit" +
+                    "             AND a1.id = a.id" +
+                    "     )" +
+                    " ORDER BY a.dataProcessamento ASC";
+    /**
+     * Fetches utilizados para otimizar acesso a campos com lazy load sempre utilizados
+     */
+    private static final String CONSULTA_ABASTECIMENTOS_SEM_EMISSAO_PROD_POR_NFE =
+            " SELECT a" +
+                    " FROM AutorizacaoPagamento a" +
+                    " LEFT JOIN a.notasFiscais nfs" +
+                    " LEFT JOIN FETCH a.parametroNotaFiscal pnf" +
+                    " LEFT JOIN FETCH pnf.parametroNotaFiscalUfs pnfu" +
+                    " LEFT JOIN FETCH pnf.unidadeLocalDestinoPadrao uldp" +
+                    " LEFT JOIN FETCH pnfu.unidadeLocalDestino uld" +
+                    " WHERE a.status = " + StatusAutorizacao.AUTORIZADO.getValue() +
+                    "     AND a.statusNotaFiscal = " + PENDENTE.getValue() +
+                    "     AND a.dataProcessamento <= :dataEmissao" +
+                    "     AND a.valorTotal - a.precoCombustivelTotal <= :limiteSuperiorTotalNf" +
+                    "     AND a.valorTotal - a.precoCombustivelTotal >= :limiteInferiorTotalNf" +
+                    "     AND nfs IS NULL OR nfs.valorProdutosServicos IS NULL" +
+                    "     AND EXISTS (" +
+                    "         SELECT 1" +
+                    "         FROM AutorizacaoPagamento AS a1" +
+                    "         INNER JOIN a1.pontoVenda AS pv" +
+                    "         INNER JOIN pv.componentes AS c" +
+                    "         WHERE c.codigoPessoa = :cnpjEmit" +
+                    "             AND a1.id = a.id" +
+                    "     )" +
+                    " ORDER BY a.dataProcessamento ASC";
 
     private static final String CONSULTA_VIGENTES_POR_CICLOS =
             " SELECT a FROM AutorizacaoPagamento a " +
@@ -764,17 +820,20 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     }
 
     @Override
-    public List<AutorizacaoPagamento> obterAbastecimentoPorNota(Long cnpjDest, Long cnpjEmit, Date dataEmissao, BigDecimal valorTotalNota) {
+    public List<AutorizacaoPagamento> obterAbastecimentoPorNota(Long cnpjEmit, Date dataEmissao, BigDecimal valorTotalNota) {
+        List<ParametroPesquisa> parametros = montarParametrosPesquisaConciliacaoNota(cnpjEmit, dataEmissao, valorTotalNota);
+        return pesquisar((InformacaoPaginacao) null, CONSULTA_ABASTECIMENTOS_POR_NFE, AutorizacaoPagamento.class,
+                parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+    }
+
+    private List<ParametroPesquisa> montarParametrosPesquisaConciliacaoNota(Long cnpjEmit, Date dataEmissao, BigDecimal valorTotalNota) {
         final BigDecimal toleranciaDeValorNota = BigDecimal.valueOf(.05);
         List<ParametroPesquisa> parametros = new ArrayList<>();
         parametros.add(new ParametroPesquisaIgual("dataEmissao", obterUltimoInstanteDia(dataEmissao)));
         parametros.add(new ParametroPesquisaIgual("cnpjEmit", cnpjEmit));
-        parametros.add(new ParametroPesquisaIgual("cnpjDest", cnpjDest));
         parametros.add(new ParametroPesquisaIgual("limiteSuperiorTotalNf", valorTotalNota.add(toleranciaDeValorNota)));
         parametros.add(new ParametroPesquisaIgual("limiteInferiorTotalNf", valorTotalNota.subtract(toleranciaDeValorNota)));
-
-        return pesquisar((InformacaoPaginacao) null, CONSULTA_ABASTECIMENTOS_POR_NFE, AutorizacaoPagamento.class,
-                parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+        return parametros;
     }
 
     /**
@@ -1352,4 +1411,19 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         return pesquisarUnicoSemIsolamentoDados(CONSULTA_QUANTIDADE_NOTAS, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
+    @Override
+    public List<AutorizacaoPagamento> obterAbastecimentoParaConciliacaoPorValorDeCombustivel(Long cnpjEmit, Date dataEmissao, BigDecimal valorTotalNota) {
+        final BigDecimal toleranciaDeValorNota = BigDecimal.valueOf(.05);
+        List<ParametroPesquisa> parametros = montarParametrosPesquisaConciliacaoNota(cnpjEmit, dataEmissao, valorTotalNota);
+        return pesquisar((InformacaoPaginacao) null, CONSULTA_ABASTECIMENTOS_SEM_EMISSAO_COMB_POR_NFE, AutorizacaoPagamento.class,
+                parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+    }
+
+    @Override
+    public List<AutorizacaoPagamento> obterAbastecimentoParaConciliacaoPorValorDeProduto(Long cnpjEmit, Date dataEmissao, BigDecimal valorTotalNota) {
+        final BigDecimal toleranciaDeValorNota = BigDecimal.valueOf(.05);
+        List<ParametroPesquisa> parametros = montarParametrosPesquisaConciliacaoNota(cnpjEmit, dataEmissao, valorTotalNota);
+        return pesquisar((InformacaoPaginacao) null, CONSULTA_ABASTECIMENTOS_SEM_EMISSAO_PROD_POR_NFE, AutorizacaoPagamento.class,
+                parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+    }
 }

@@ -14,6 +14,7 @@ import ipp.aci.boleia.dominio.AutorizacaoPagamento;
 import ipp.aci.boleia.dominio.NfeAnexosArmazem;
 import ipp.aci.boleia.dominio.NotaFiscal;
 import ipp.aci.boleia.dominio.TipoCombustivel;
+import ipp.aci.boleia.dominio.TipoCombustivelNcm;
 import ipp.aci.boleia.dominio.TransacaoConsolidada;
 import ipp.aci.boleia.dominio.Veiculo;
 import ipp.aci.boleia.dominio.enums.LocalDestinoPadroNfe;
@@ -31,6 +32,7 @@ import ipp.aci.boleia.util.UtilitarioFormatacaoData;
 import ipp.aci.boleia.util.UtilitarioInputStream;
 import ipp.aci.boleia.util.UtilitarioJson;
 import ipp.aci.boleia.util.UtilitarioLambda;
+import ipp.aci.boleia.util.UtilitarioParse;
 import ipp.aci.boleia.util.UtilitarioStreams;
 import ipp.aci.boleia.util.UtilitarioXml;
 import ipp.aci.boleia.util.excecao.Erro;
@@ -59,6 +61,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -298,6 +302,53 @@ public class NotaFiscalSd {
     }
 
     /**
+     * Obtém o valor dos combustíveis de uma nota fiscal
+     * @param itensNota Lista de itens da nota
+     * @return O valor de combustíveis
+     */
+    public BigDecimal obterValorTotalCombustivelNota(List<ItemDanfeVo> itensNota) {
+        List<Long> ncms = obterCodigosNcmCombustivel();
+        return UtilitarioCalculo.somarValoresLista(itensNota.stream().filter(obterFuncaoFilterCalculoValorTotal(true, ncms)), obterFuncaoMapeadoraValorLiquido());
+    }
+
+    /**
+     * Obtém o valor dos produtos de uma nota fiscal
+     * @param itensNota Lista de itens da nota
+     * @return O valor de produtos
+     */
+    public BigDecimal obterValorTotalProdutosNota(List<ItemDanfeVo> itensNota) {
+        List<Long> ncms = obterCodigosNcmCombustivel();
+        return UtilitarioCalculo.somarValoresLista(itensNota.stream().filter(obterFuncaoFilterCalculoValorTotal(false, ncms)), obterFuncaoMapeadoraValorLiquido());
+    }
+
+    /**
+     * Obtém função mapeadora para totalizar valores de nota fiscal
+     * @return A função mapeadora
+     */
+    private Function<ItemDanfeVo, BigDecimal> obterFuncaoMapeadoraValorLiquido() {
+        return item -> new BigDecimal(item.getValorLiquido());
+    }
+
+    /**
+     * Obtém códigos NCM relativos a combustíveis
+     * @return A lista de códigos NCM
+     */
+    private List<Long> obterCodigosNcmCombustivel() {
+        List<TipoCombustivel> tiposCombustivel = tipoCombustivelDados.obterTodos(null);
+        return tiposCombustivel.stream().map(tipoCombustivel -> tipoCombustivel.getCodigosNcm().stream().map(TipoCombustivelNcm::getCodigoNcm).collect(Collectors.toList())).flatMap(List::stream).collect(Collectors.toList());
+    }
+
+    /**
+     * Monta predicado para função de filter para determinar itens de combustível ou produto de uma nota
+     * @param isCombustivel Se o filtro deve ser feito para itens de combustível
+     * @param ncms Lista de NCMs que representam combustíveis
+     * @return A função mapeadora
+     */
+    private Predicate<ItemDanfeVo> obterFuncaoFilterCalculoValorTotal(Boolean isCombustivel, List<Long> ncms) {
+        return isCombustivel ? item -> ncms.contains(UtilitarioParse.tryParseLong(item.getNcmsh())) : item -> !ncms.contains(UtilitarioParse.tryParseLong(item.getNcmsh()));
+    }
+
+    /**
      * Obtém os valores unitários dos combustíveis de uma nota fiscal
      * @param nota A nota fiscal
      * @return O valor de combustíveis
@@ -478,7 +529,10 @@ public class NotaFiscalSd {
      * @return O valor total calculado
      */
     private BigDecimal obterValorTotalCombustivelAutorizacoesPagamentoSelecionadas(List<AutorizacaoPagamento> autorizacoesPagamento) {
-        List<AutorizacaoPagamento> abastecimentosComCombustivel = autorizacoesPagamento.stream().filter(autorizacaoPagamento -> autorizacaoPagamento.obtemValorTotalAbastecimento() != null).collect(Collectors.toList());
+        List<AutorizacaoPagamento> abastecimentosComCombustivel = autorizacoesPagamento
+                .stream()
+                .filter(autorizacaoPagamento -> autorizacaoPagamento.obtemValorTotalAbastecimento() != null)
+                .collect(Collectors.toList());
         return UtilitarioCalculo.somarValoresLista(abastecimentosComCombustivel, AutorizacaoPagamento::obtemValorTotalAbastecimento);
     }
 
@@ -488,7 +542,10 @@ public class NotaFiscalSd {
      * @return O valor total calculado
      */
     private BigDecimal obterValorTotalProdutosAutorizacoesPagamentoSelecionadas(List<AutorizacaoPagamento> autorizacoesPagamento) {
-        List<AutorizacaoPagamento> abastecimentosComProduto = autorizacoesPagamento.stream().filter(autorizacaoPagamento -> autorizacaoPagamento.obtemValorTotalProdutoServico() != null).collect(Collectors.toList());
+        List<AutorizacaoPagamento> abastecimentosComProduto = autorizacoesPagamento
+                .stream()
+                .filter(autorizacaoPagamento -> autorizacaoPagamento.obtemValorTotalProdutoServico() != null)
+                .collect(Collectors.toList());
         return UtilitarioCalculo.somarValoresLista(abastecimentosComProduto, AutorizacaoPagamento::obtemValorTotalProdutoServico);
     }
 
@@ -614,29 +671,7 @@ public class NotaFiscalSd {
      */
     private void validarCNPJDestinatario(List<Document> documentos, List<AutorizacaoPagamento> autorizacoesPagamento, List<Erro> errosEncontrados) throws ExcecaoValidacao {
         for(AutorizacaoPagamento abastecimento : autorizacoesPagamento) {
-            Long cnpjDestino = null;
-            Veiculo veiculo = abastecimento.getVeiculo();
-            boolean veiculoPertenceUnidade = veiculo != null && veiculo.getUnidade() != null && veiculo.getUnidade().getExigeNotaFiscal() != null && veiculo.getUnidade().getExigeNotaFiscal();
-            if (abastecimento.getParametroNotaFiscal() != null) {
-                HistoricoParametroNotaFiscal parametroNf = abastecimento.getParametroNotaFiscal();
-                if (parametroNf != null && LocalDestinoPadroNfe.ABASTECIMENTO.getValue().equals(parametroNf.getLocalDestino()) && abastecimento.getUnidade() != null && abastecimento.unidadeExigeNf()) {
-                    String uf = abastecimento.getPontoVenda().getUf();
-                    Optional<Long> cnpjUnidadeLocalDestinoPadrao = parametroNf.getParametroNotaFiscalUf()
-                            .stream()
-                            .filter(p -> p.getUf().equals(uf))
-                            .map(p -> p.getUnidadeLocalDestino() != null ? p.getUnidadeLocalDestino().getCnpj() : abastecimento.getCnpjFrota())
-                            .findFirst();
-                    cnpjDestino = cnpjUnidadeLocalDestinoPadrao.isPresent() ? cnpjUnidadeLocalDestinoPadrao.get() : parametroNf.getUnidadeLocalDestinoPadrao() != null ? parametroNf.getUnidadeLocalDestinoPadrao().getCnpj() : abastecimento.getCnpjFrota();
-                } else if (parametroNf != null && LocalDestinoPadroNfe.VEICULO.getValue().equals(parametroNf.getLocalDestino()) && veiculoPertenceUnidade) {
-                    cnpjDestino = veiculo.getUnidade().getCnpj();
-                } else {
-                    cnpjDestino = abastecimento.getFrota().getCnpj();
-                }
-            } else {
-                cnpjDestino = getFrotaResponsavelAbastecimentos(autorizacoesPagamento);
-            }
-
-            final Long cnpjValidacao = cnpjDestino;
+            final Long cnpjValidacao = obterCnpjDestino(abastecimento);
             Boolean todasAsNotasCnpjCorreto = documentos.stream().allMatch(nota -> {
                 Long destCnpj = notaFiscalParserSd.getLong(nota, ConstantesNotaFiscalParser.DEST_CNPJ);
                 return cnpjValidacao != null && cnpjValidacao.equals(destCnpj);
@@ -646,6 +681,53 @@ public class NotaFiscalSd {
                 errosEncontrados.add(Erro.NOTA_FISCAL_UPLOAD_CNPJ_DESTINATARIO_INVALIDO);
             }
         }
+    }
+
+    /**
+     * Validar o local de destino da nota fiscal segundo a parametrização da frota
+     * @param abastecimento O abastecimento que contém os dados a serem validados
+     * @param cnpjDest O cnpj do local de destino oriundo da nota
+     * @throws ExcecaoValidacao Caso a validação falhe
+     */
+    public void validarLocalDestino(AutorizacaoPagamento abastecimento, Long cnpjDest) throws ExcecaoValidacao {
+        Long cnpjDestino = obterCnpjDestino(abastecimento);
+        if(!cnpjDestino.equals(cnpjDest)){
+            throw new ExcecaoValidacao(mensagens.obterMensagem("nota.fiscal.validacao.local.destino", cnpjDestino));
+        }
+    }
+
+    /**
+     * Obtém o CNPJ correto de destino para emissão de um abastecimento
+     * @param abastecimento O abastecimento a ser emitido
+     * @return O CNPJ de destino correto
+     */
+    public Long obterCnpjDestino(AutorizacaoPagamento abastecimento) {
+        Long cnpjDestino = null;
+        Veiculo veiculo = abastecimento.getVeiculo();
+        boolean veiculoPertenceUnidade = veiculo != null && veiculo.getUnidade() != null && veiculo.getUnidade().getExigeNotaFiscal() != null && veiculo.getUnidade().getExigeNotaFiscal();
+        if (abastecimento.getParametroNotaFiscal() != null) {
+            HistoricoParametroNotaFiscal parametroNf = abastecimento.getParametroNotaFiscal();
+            if (parametroNf != null && LocalDestinoPadroNfe.ABASTECIMENTO.getValue().equals(parametroNf.getLocalDestino()) && abastecimento.getUnidade() != null && abastecimento.unidadeExigeNf()) {
+                String uf = abastecimento.getPontoVenda().getUf();
+                Optional<Long> cnpjUnidadeLocalDestinoPadrao = parametroNf.getParametroNotaFiscalUf()
+                        .stream()
+                        .filter(p -> p.getUf().equals(uf))
+                        .map(p -> p.getUnidadeLocalDestino() != null ? p.getUnidadeLocalDestino().getCnpj() : abastecimento.getCnpjFrota())
+                        .findFirst();
+                cnpjDestino = cnpjUnidadeLocalDestinoPadrao.isPresent() ?
+                        cnpjUnidadeLocalDestinoPadrao.get()
+                        : parametroNf.getUnidadeLocalDestinoPadrao() != null
+                                ? parametroNf.getUnidadeLocalDestinoPadrao().getCnpj()
+                                : abastecimento.getCnpjFrota();
+            } else if (parametroNf != null && LocalDestinoPadroNfe.VEICULO.getValue().equals(parametroNf.getLocalDestino()) && veiculoPertenceUnidade) {
+                cnpjDestino = veiculo.getUnidade().getCnpj();
+            } else {
+                cnpjDestino = abastecimento.getFrota().getCnpj();
+            }
+        } else {
+            cnpjDestino = getFrotaResponsavelAbastecimentos(Collections.singletonList(abastecimento));
+        }
+        return cnpjDestino;
     }
 
     /**
