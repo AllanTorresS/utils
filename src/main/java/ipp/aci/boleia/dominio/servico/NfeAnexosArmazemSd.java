@@ -78,7 +78,7 @@ public class NfeAnexosArmazemSd {
             BigDecimal valorCombustivel = notaFiscalSd.obterValorTotalCombustivelNota(itensNota);
             BigDecimal valorProdServ = notaFiscalSd.obterValorTotalProdutosNota(itensNota);
             anexoArmazem.setValorCombustivel(valorCombustivel.compareTo(BigDecimal.ZERO) > 0 ? valorCombustivel : null);
-            anexoArmazem.setValorProdutosServicos(valorProdServ.compareTo(BigDecimal.ZERO) > 0 ? valorCombustivel : null);
+            anexoArmazem.setValorProdutosServicos(valorProdServ.compareTo(BigDecimal.ZERO) > 0 ? valorProdServ : null);
         }
 
         anexoArmazem.setEmail(dadoArmazem);

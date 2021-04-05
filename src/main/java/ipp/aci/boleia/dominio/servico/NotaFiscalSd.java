@@ -653,7 +653,7 @@ public class NotaFiscalSd {
     /**
      * Validar o local de destino da nota fiscal segundo a parametrização da frota
      * @param abastecimento O abastecimento que contém os dados a serem validados
-     * @param cnpjDest O cnpj do local de destino
+     * @param cnpjDest O cnpj do local de destino oriundo da nota
      * @throws ExcecaoValidacao Caso a validação falhe
      */
     public void validarLocalDestino(AutorizacaoPagamento abastecimento, Long cnpjDest) throws ExcecaoValidacao {
@@ -668,7 +668,7 @@ public class NotaFiscalSd {
      * @param abastecimento O abastecimento a ser emitido
      * @return O CNPJ de destino correto
      */
-    private Long obterCnpjDestino(AutorizacaoPagamento abastecimento) {
+    public Long obterCnpjDestino(AutorizacaoPagamento abastecimento) {
         Long cnpjDestino = null;
         Veiculo veiculo = abastecimento.getVeiculo();
         boolean veiculoPertenceUnidade = veiculo != null && veiculo.getUnidade() != null && veiculo.getUnidade().getExigeNotaFiscal() != null && veiculo.getUnidade().getExigeNotaFiscal();

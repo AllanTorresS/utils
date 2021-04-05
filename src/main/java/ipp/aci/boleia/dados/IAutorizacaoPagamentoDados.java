@@ -314,12 +314,11 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
      * Obtém abastecimentos com o qual a nota pode ser consolidada
      *
      * @param cnpjDest CPNJ do destinatário da nota
-     * @param cnpjEmit CNPJ do emitente da nota
      * @param dataEmissao Data de emissão da nota
      * @param valorTotalNota O valor total da nota
      * @return Os abastecimentos encontrados
      */
-    List<AutorizacaoPagamento> obterAbastecimentoPorNota(Long cnpjDest, Long cnpjEmit, Date dataEmissao, BigDecimal valorTotalNota);
+    List<AutorizacaoPagamento> obterAbastecimentoPorNota(Long cnpjEmit, Date dataEmissao, BigDecimal valorTotalNota);
 
     /**
      * Busca os objetos que representam as informações necessárias para obter
@@ -433,21 +432,19 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
 
     /**
      * Busca abastecimentos pelo valor de combustível da Autorização de Pagamento
-     * @param cnpjDest CNPJ do destinatário da nota a ser conciliada
      * @param cnpjEmit CNPJ do emitente da nota a ser conciliada
      * @param dataEmissao Data de emissão da nota a ser conciliada
      * @param valorTotalNota O valor total de combustível
      * @return Os abastecimentos encontrados
      */
-    List<AutorizacaoPagamento> obterAbastecimentoParaConciliacaoPorValorDeCombustivel(Long cnpjDest, Long cnpjEmit, Date dataEmissao, BigDecimal valorTotalNota);
+    List<AutorizacaoPagamento> obterAbastecimentoParaConciliacaoPorValorDeCombustivel(Long cnpjEmit, Date dataEmissao, BigDecimal valorTotalNota);
 
     /**
      * Busca abastecimentos pelo valor de produtos da Autorização de Pagamento
-     * @param cnpjDest CNPJ do destinatário da nota a ser conciliada
      * @param cnpjEmit CNPJ do emitente da nota a ser conciliada
      * @param dataEmissao Data de emissão da nota a ser conciliada
      * @param valorTotalNota O valor total da nota
      * @return Os abastecimentos encontrados
      */
-    List<AutorizacaoPagamento> obterAbastecimentoParaConciliacaoPorValorDeProduto(Long cnpjDest, Long cnpjEmit, Date dataEmissao, BigDecimal valorTotalNota);
+    List<AutorizacaoPagamento> obterAbastecimentoParaConciliacaoPorValorDeProduto(Long cnpjEmit, Date dataEmissao, BigDecimal valorTotalNota);
 }
