@@ -61,6 +61,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -305,9 +307,8 @@ public class NotaFiscalSd {
      * @return O valor de combustíveis
      */
     public BigDecimal obterValorTotalCombustivelNota(List<ItemDanfeVo> itensNota) {
-        List<TipoCombustivel> tiposCombustivel = tipoCombustivelDados.obterTodos(null);
-        List<Long> ncms = tiposCombustivel.stream().map(tipoCombustivel -> tipoCombustivel.getCodigosNcm().stream().map(TipoCombustivelNcm::getCodigoNcm).collect(Collectors.toList())).flatMap(List::stream).collect(Collectors.toList());
-        return itensNota.stream().filter(item -> ncms.contains(UtilitarioParse.tryParseLong(item.getNcmsh()))).map(item -> new BigDecimal(item.getValorLiquido())).reduce(BigDecimal.ZERO, BigDecimal::add);
+        List<Long> ncms = obterCodigosNcmCombustivel();
+        return UtilitarioCalculo.somarValoresLista(itensNota.stream().filter(obterFuncaoFilterCalculoValorTotal(true, ncms)), obterFuncaoMapeadoraValorLiquido());
     }
 
     /**
@@ -316,9 +317,35 @@ public class NotaFiscalSd {
      * @return O valor de produtos
      */
     public BigDecimal obterValorTotalProdutosNota(List<ItemDanfeVo> itensNota) {
+        List<Long> ncms = obterCodigosNcmCombustivel();
+        return UtilitarioCalculo.somarValoresLista(itensNota.stream().filter(obterFuncaoFilterCalculoValorTotal(false, ncms)), obterFuncaoMapeadoraValorLiquido());
+    }
+
+    /**
+     * Obtém função mapeadora para totalizar valores de nota fiscal
+     * @return A função mapeadora
+     */
+    private Function<ItemDanfeVo, BigDecimal> obterFuncaoMapeadoraValorLiquido() {
+        return item -> new BigDecimal(item.getValorLiquido());
+    }
+
+    /**
+     * Obtém códigos NCM relativos a combustíveis
+     * @return A lista de códigos NCM
+     */
+    private List<Long> obterCodigosNcmCombustivel() {
         List<TipoCombustivel> tiposCombustivel = tipoCombustivelDados.obterTodos(null);
-        List<Long> ncms = tiposCombustivel.stream().map(tipoCombustivel -> tipoCombustivel.getCodigosNcm().stream().map(TipoCombustivelNcm::getCodigoNcm).collect(Collectors.toList())).flatMap(List::stream).collect(Collectors.toList());
-        return itensNota.stream().filter(item -> !ncms.contains(UtilitarioParse.tryParseLong(item.getNcmsh()))).map(item -> new BigDecimal(item.getValorLiquido())).reduce(BigDecimal.ZERO, BigDecimal::add);
+        return tiposCombustivel.stream().map(tipoCombustivel -> tipoCombustivel.getCodigosNcm().stream().map(TipoCombustivelNcm::getCodigoNcm).collect(Collectors.toList())).flatMap(List::stream).collect(Collectors.toList());
+    }
+
+    /**
+     * Monta predicado para função de filter para determinar itens de combustível ou produto de uma nota
+     * @param isCombustivel Se o filtro deve ser feito para itens de combustível
+     * @param ncms Lista de NCMs que representam combustíveis
+     * @return A função mapeadora
+     */
+    private Predicate<ItemDanfeVo> obterFuncaoFilterCalculoValorTotal(Boolean isCombustivel, List<Long> ncms) {
+        return isCombustivel ? item -> ncms.contains(UtilitarioParse.tryParseLong(item.getNcmsh())) : item -> !ncms.contains(UtilitarioParse.tryParseLong(item.getNcmsh()));
     }
 
     /**
@@ -502,7 +529,10 @@ public class NotaFiscalSd {
      * @return O valor total calculado
      */
     private BigDecimal obterValorTotalCombustivelAutorizacoesPagamentoSelecionadas(List<AutorizacaoPagamento> autorizacoesPagamento) {
-        List<AutorizacaoPagamento> abastecimentosComCombustivel = autorizacoesPagamento.stream().filter(autorizacaoPagamento -> autorizacaoPagamento.obtemValorTotalAbastecimento() != null).collect(Collectors.toList());
+        List<AutorizacaoPagamento> abastecimentosComCombustivel = autorizacoesPagamento
+                .stream()
+                .filter(autorizacaoPagamento -> autorizacaoPagamento.obtemValorTotalAbastecimento() != null)
+                .collect(Collectors.toList());
         return UtilitarioCalculo.somarValoresLista(abastecimentosComCombustivel, AutorizacaoPagamento::obtemValorTotalAbastecimento);
     }
 
@@ -512,7 +542,10 @@ public class NotaFiscalSd {
      * @return O valor total calculado
      */
     private BigDecimal obterValorTotalProdutosAutorizacoesPagamentoSelecionadas(List<AutorizacaoPagamento> autorizacoesPagamento) {
-        List<AutorizacaoPagamento> abastecimentosComProduto = autorizacoesPagamento.stream().filter(autorizacaoPagamento -> autorizacaoPagamento.obtemValorTotalProdutoServico() != null).collect(Collectors.toList());
+        List<AutorizacaoPagamento> abastecimentosComProduto = autorizacoesPagamento
+                .stream()
+                .filter(autorizacaoPagamento -> autorizacaoPagamento.obtemValorTotalProdutoServico() != null)
+                .collect(Collectors.toList());
         return UtilitarioCalculo.somarValoresLista(abastecimentosComProduto, AutorizacaoPagamento::obtemValorTotalProdutoServico);
     }
 
@@ -681,7 +714,11 @@ public class NotaFiscalSd {
                         .filter(p -> p.getUf().equals(uf))
                         .map(p -> p.getUnidadeLocalDestino() != null ? p.getUnidadeLocalDestino().getCnpj() : abastecimento.getCnpjFrota())
                         .findFirst();
-                cnpjDestino = cnpjUnidadeLocalDestinoPadrao.isPresent() ? cnpjUnidadeLocalDestinoPadrao.get() : parametroNf.getUnidadeLocalDestinoPadrao() != null ? parametroNf.getUnidadeLocalDestinoPadrao().getCnpj() : abastecimento.getCnpjFrota();
+                cnpjDestino = cnpjUnidadeLocalDestinoPadrao.isPresent() ?
+                        cnpjUnidadeLocalDestinoPadrao.get()
+                        : parametroNf.getUnidadeLocalDestinoPadrao() != null
+                                ? parametroNf.getUnidadeLocalDestinoPadrao().getCnpj()
+                                : abastecimento.getCnpjFrota();
             } else if (parametroNf != null && LocalDestinoPadroNfe.VEICULO.getValue().equals(parametroNf.getLocalDestino()) && veiculoPertenceUnidade) {
                 cnpjDestino = veiculo.getUnidade().getCnpj();
             } else {
