@@ -38,12 +38,16 @@ public class RotaPostoDesconsiderado implements IPersistente {
 
     @NotNull
     @Column(name = "CD_PTOV")
-    private Integer idPtov;
+    private Long idPtov;
 
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_ROTA", insertable = false, updatable = false)
     private Rota rota;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_PTOV", insertable = false, updatable = false)
+    private PontoDeVenda pontoDeVenda;
 
     public Long getIdRota() {
         return idRota;
@@ -53,11 +57,11 @@ public class RotaPostoDesconsiderado implements IPersistente {
         this.idRota = idRota;
     }
 
-    public Integer getIdPtov() {
+    public Long getIdPtov() {
         return idPtov;
     }
 
-    public void setIdPtov(Integer idPtov) {
+    public void setIdPtov(Long idPtov) {
         this.idPtov = idPtov;
     }
 
@@ -68,6 +72,14 @@ public class RotaPostoDesconsiderado implements IPersistente {
     public void setRota(Rota rota) {
         this.idRota = rota.getId();
         this.rota = rota;
+    }
+
+    public PontoDeVenda getPontoDeVenda() {
+        return pontoDeVenda;
+    }
+
+    public void setPontoDeVenda(PontoDeVenda pontoDeVenda) {
+        this.pontoDeVenda = pontoDeVenda;
     }
 
     @Override
