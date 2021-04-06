@@ -160,7 +160,7 @@ public class ParametroNotaFiscal implements IPersistente, IParametroNotaFiscal {
         return parametroNotaFiscalUfs;
     }
 
-    public void setParametroNotaFiscalUf(List<ParametroNotaFiscalUf> parametroNotaFiscalUfs) {
+    public void setParametroNotaFiscalUfs(List<ParametroNotaFiscalUf> parametroNotaFiscalUfs) {
         this.parametroNotaFiscalUfs = parametroNotaFiscalUfs;
     }
 

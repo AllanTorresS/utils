@@ -34,7 +34,7 @@ import ipp.aci.boleia.dominio.enums.TipoItemAutorizacaoPagamento;
 import ipp.aci.boleia.dominio.enums.TipoPerfilUsuario;
 import ipp.aci.boleia.dominio.enums.TipoToken;
 import ipp.aci.boleia.dominio.vo.EdicaoAbastecimentoVo;
-import ipp.aci.boleia.dominio.vo.IncluirExigenciaNfeRespostaVo;
+import ipp.aci.boleia.dominio.vo.AtualizarExigenciaNfeErroVo;
 import ipp.aci.boleia.dominio.vo.TokenVo;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
 import ipp.aci.boleia.util.UtilitarioFormatacaoData;
@@ -818,14 +818,14 @@ public class EmailSd {
      * Envia um email com todas as mensagens de falhas da sincronização com o SalesForce
      * @param motivosFalhas motivos das falhas
      */
-    public void enviarEmailsFalhasAtualizacaoExigenciaNfSalesForce(List<IncluirExigenciaNfeRespostaVo> motivosFalhas, List<String> destinatariosIntegracaoParametroNf){
+    public void enviarEmailsFalhasAtualizacaoExigenciaNfSalesForce(List<AtualizarExigenciaNfeErroVo> motivosFalhas, List<String> destinatariosIntegracaoParametroNf){
         final String assunto = mensagens.obterMensagem("integracao.salesforce.assunto.email.erro.atualizasao.parametrizacao.nfe");
         final String rodape = mensagens.obterMensagem("integracao.salesforce.rodape.email");
 
         final String corpoMensagem = motivosFalhas.stream().filter(m -> m != null).map(m -> {
             final String exigenciaNf = m.getExigeNotaFiscal() ? mensagens.obterMensagem("texto.comum.sim") : mensagens.obterMensagem("texto.comum.nao");
-            final String data = UtilitarioFormatacaoData.formatarDataCurta(m.getDataAtual());
-            final String hora = UtilitarioFormatacaoData.formatarHoraMinutosSegundos(m.getDataAtual());
+            final String data = UtilitarioFormatacaoData.formatarDataCurta(m.getData());
+            final String hora = UtilitarioFormatacaoData.formatarHoraMinutosSegundos(m.getData());
             final String cnpj = UtilitarioFormatacao.formatarCpfCnpjApresentacao(m.getCnpj());
             final String motivo = m.getStatusCode() == HttpStatus.NOT_FOUND.value() ? mensagens.obterMensagem("integracao.salesforce.cnpj.nao.encontrado", cnpj) : "";
             final String motivoDaRecusa = mensagens.obterMensagem("integracao.salesforce.motivo.recusa.atualizasao.parametrizacao.nfe", motivo);

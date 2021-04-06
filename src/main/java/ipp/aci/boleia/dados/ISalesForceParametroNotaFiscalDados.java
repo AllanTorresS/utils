@@ -1,6 +1,6 @@
 package ipp.aci.boleia.dados;
 
-import ipp.aci.boleia.dominio.vo.IncluirExigenciaNfeRespostaVo;
+import ipp.aci.boleia.dominio.vo.AtualizarExigenciaNfeErroVo;
 
 
 public interface ISalesForceParametroNotaFiscalDados {
@@ -10,5 +10,5 @@ public interface ISalesForceParametroNotaFiscalDados {
      * @param exigeNotaFiscal exigencia de nota fiscal
      * @return  resposta do sales force
      */
-    IncluirExigenciaNfeRespostaVo atualizarExigenciaNotaFiscal(String cnpj, boolean exigeNotaFiscal);
+    AtualizarExigenciaNfeErroVo atualizarExigenciaNotaFiscal(String cnpj, boolean exigeNotaFiscal);
 }
