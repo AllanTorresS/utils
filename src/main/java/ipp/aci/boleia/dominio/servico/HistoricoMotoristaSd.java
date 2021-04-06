@@ -21,9 +21,6 @@ import java.util.List;
 public class HistoricoMotoristaSd {
 
     @Autowired
-    private IFluxoAbastecimentoMotoristaDados repositorioFluxoMotorista;
-
-    @Autowired
     private IHistoricoMotoristaDados repositorioHistoricoMotoristaDados;
 
     /**
