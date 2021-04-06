@@ -40,6 +40,8 @@ import java.util.List;
 
 /**
  * Representa a tabela de Historico do Veiculo
+ *
+ * @author allan.santos
  */
 @Entity
 @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
