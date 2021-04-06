@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Serviços de domínio da entidade {@link HistoricoMotorista}.
  *
- * @author pedro.silva
+ * @author allan.santos
  */
 @Component
 public class HistoricoMotoristaSd {
