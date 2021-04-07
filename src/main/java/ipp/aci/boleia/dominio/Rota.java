@@ -226,4 +226,12 @@ public class Rota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     public void setIdaVolta(Boolean idaVolta) {
         this.idaVolta = idaVolta;
     }
+
+    public List<RotaPostoDesconsiderado> getRotaPostoDesconsiderados() {
+        return rotaPostoDesconsiderados;
+    }
+
+    public void setRotaPostoDesconsiderados(List<RotaPostoDesconsiderado> rotaPostoDesconsiderados) {
+        this.rotaPostoDesconsiderados = rotaPostoDesconsiderados;
+    }
 }
