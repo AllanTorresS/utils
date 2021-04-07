@@ -30,6 +30,9 @@ public class EmpresaAgregadaSd {
     private FluxoAbastecimentoSd fluxoAbastecimentoSd;
 
     @Autowired
+    private HistoricoVeiculoSd historicoVeiculoSd;
+
+    @Autowired
     private UtilitarioAmbiente utilitarioAmbiente;
 
     /**
@@ -80,7 +83,10 @@ public class EmpresaAgregadaSd {
                 historicoMotoristaSd.armazenarHistoricoMotorista(n, utilitarioAmbiente);
                 fluxoAbastecimentoSd.excluirFluxoAbastecimentoMotorista(n,utilitarioAmbiente.getUsuarioLogado(),utilitarioAmbiente.buscarDataAmbiente());
             });
-            empresaAgregada.getVeiculos().forEach(n -> veiculoDados.excluir(n.getId()));
+            empresaAgregada.getVeiculos().forEach(n -> {
+                veiculoDados.excluir(n.getId());
+                historicoVeiculoSd.armazenarHistoricoVeiculo(n,utilitarioAmbiente);
+            });
         }
     }
 }

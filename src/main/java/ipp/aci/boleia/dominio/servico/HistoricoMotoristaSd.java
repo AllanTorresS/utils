@@ -15,13 +15,10 @@ import java.util.List;
 /**
  * Serviços de domínio da entidade {@link HistoricoMotorista}.
  *
- * @author pedro.silva
+ * @author allan.santos
  */
 @Component
 public class HistoricoMotoristaSd {
-
-    @Autowired
-    private IFluxoAbastecimentoMotoristaDados repositorioFluxoMotorista;
 
     @Autowired
     private IHistoricoMotoristaDados repositorioHistoricoMotoristaDados;
@@ -46,12 +43,12 @@ public class HistoricoMotoristaSd {
 
 
     /**
-     * Cria o historico para varios motoristas
+     * Salva o historico do motorista quando a empresa agregada aqual ele pertecence é excluida
      *
      * @param motoristaEntidadeLista lista com as entidades que devem ter seu historico gravado
      * @param ambiente               contem as informações do usuario logado que realizou a alteração e data atual da alteração
      */
-    public void armazenarHistoricoMotoristaLista(List<Motorista> motoristaEntidadeLista, UtilitarioAmbiente ambiente) {
+    public void armazenarHistoricoMotoristaAoExcluirEmpresaAgregada(List<Motorista> motoristaEntidadeLista, UtilitarioAmbiente ambiente) {
 
         for (Motorista motorista : motoristaEntidadeLista) {
             motorista.setUnidade(null);
