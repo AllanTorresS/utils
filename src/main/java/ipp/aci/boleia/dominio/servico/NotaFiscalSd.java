@@ -599,20 +599,20 @@ public class NotaFiscalSd {
         }
         final String mensagem = mensagens.obterMensagem(erro.getChaveMensagem());
         final String finalNumeroNfe = numeroNfe;
-        ValidacaoUploadNotaFiscalVo validacaoNF = validacoesNotas.stream().filter(v -> finalNumeroNfe.equals(v.getNumero())).findFirst().orElse(null);
+        Optional<ValidacaoUploadNotaFiscalVo> validacaoNFOptional = validacoesNotas.stream().filter(v -> finalNumeroNfe.equals(v.getNumero())).findFirst();
 
-        if(validacaoNF == null){
-            validacaoNF = new ValidacaoUploadNotaFiscalVo();
+        if(validacaoNFOptional.isPresent()){
+            if(!validacaoNFOptional.get().getMensagens().contains(mensagem)){
+                validacaoNFOptional.get().getMensagens().add(mensagem);
+            }
+        }else{
+            ValidacaoUploadNotaFiscalVo validacaoNF = new ValidacaoUploadNotaFiscalVo();
             ArrayList<String> listaMensagens = new ArrayList<>();
             listaMensagens.add(mensagem);
             validacaoNF.setNumero(finalNumeroNfe);
             validacaoNF.setMensagens(listaMensagens);
             validacaoNF.setValorTotal(valorTotal);
             validacoesNotas.add(validacaoNF);
-        }else{
-            if(!validacaoNF.getMensagens().contains(mensagem)){
-                validacaoNF.getMensagens().add(mensagem);
-            }
         }
     }
 
@@ -625,7 +625,7 @@ public class NotaFiscalSd {
     private void validarNotaRepetida(List<Document> documentos, List<ValidacaoUploadNotaFiscalVo> validacoesNotas) {
         for (Document documento : documentos) {
             List<NotaFiscal> notasFiscais = repositorio.obterNotaPorNumero(ConstantesNotaFiscal.NOTA_FISCAL_PREFIX + notaFiscalParserSd.getString(documento, ConstantesNotaFiscalParser.NUMERO));
-            if (notasFiscais != null && !notasFiscais.isEmpty()) {
+            if (notasFiscais != null) {
                 Optional<NotaFiscal> notaFiscal = notasFiscais.stream()
                         .filter(nf -> possuiSerieCnpjEmitenteIguais(nf, documento))
                         .findFirst();
