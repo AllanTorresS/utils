@@ -127,7 +127,7 @@ public class NotaFiscalSd {
         }
 
         BigDecimal valorTotalAbastecimento = autorizacaoPagamento.getValorTotal().setScale(2, BigDecimal.ROUND_HALF_UP);
-        BigDecimal valorEmitido = notasFiscais.stream().map(NotaFiscal::getValorTotal).reduce(BigDecimal::add).get();//TODO: Tratar caso de NoSuchElementException
+        BigDecimal valorEmitido = notasFiscais.stream().map(NotaFiscal::getValorTotal).reduce(BigDecimal::add).get();
         BigDecimal diferenca = valorTotalAbastecimento.subtract(valorEmitido);
         BigDecimal zero = BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_UP);
         return diferenca.compareTo(zero) == 0 || diferenca.abs().compareTo(obterValorMargemTotal(1)) <= 0;
@@ -463,7 +463,7 @@ public class NotaFiscalSd {
         BigDecimal valorTotalProdutoNota = documentos.stream().map(this::obterValorTotalProdutosNota).filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, BigDecimal.ROUND_HALF_UP);
 
         AutorizacaoPagamento autorizacaoPagamento = UtilitarioLambda.obterPrimeiroObjetoDaLista(autorizacoesPagamento);
-        HistoricoParametroNotaFiscal parametroNf = autorizacaoPagamento.getParametroNotaFiscal(); //TODO: Tratar caso de null pointer
+        HistoricoParametroNotaFiscal parametroNf = autorizacaoPagamento != null ? autorizacaoPagamento.getParametroNotaFiscal() : null;
 
         if (parametroNf != null && parametroNf.getSepararPorCombustivelProdutoServico() != null && parametroNf.getSepararPorCombustivelProdutoServico()) {
             if(valorTotalCombustivelNota.compareTo(BigDecimal.ZERO) > 0 && valorTotalProdutoNota.compareTo(BigDecimal.ZERO) > 0) {
@@ -502,7 +502,7 @@ public class NotaFiscalSd {
      */
     private void validarValoresUnitariosCombustivelProdutos(List<Document> documentos, List<AutorizacaoPagamento> autorizacoesPagamento, List<Erro> errosEncontrados, List<ValidacaoUploadNotaFiscalVo> validacoesNotas) {
         AutorizacaoPagamento autorizacaoPagamento = UtilitarioLambda.obterPrimeiroObjetoDaLista(autorizacoesPagamento);
-        HistoricoParametroNotaFiscal parametroNf = autorizacaoPagamento.getParametroNotaFiscal();//TODO: Tratar caso de null pointer
+        HistoricoParametroNotaFiscal parametroNf = autorizacaoPagamento != null ? autorizacaoPagamento.getParametroNotaFiscal() : null;
         if (parametroNf != null && parametroNf.getSepararPorCombustivelProdutoServico() != null && parametroNf.getSepararPorCombustivelProdutoServico()) {
             List<BigDecimal> valoresUnitariosCombustivelNotas = documentos.stream().map(this::obterValorUnitarioCombustivelNota).flatMap(List::stream).sorted().collect(Collectors.toList());
             List<BigDecimal> valoresUnitariosProdutosNotas = documentos.stream().map(this::obterValorUnitarioProdutosNota).flatMap(List::stream).sorted().collect(Collectors.toList());
@@ -1033,8 +1033,10 @@ public class NotaFiscalSd {
         danfe.setTranspInscricaoEstadual(UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.TRANSP_INSCRICAO_ESTADUAL));
 
         NodeList itens = UtilitarioXml.getItens(documento);
-        for (int i = 0; i < itens.getLength(); i++) { //TODO: Tratar caso de null pointer
-            danfe.getDadosDanfe().add(getItemDanfeVo(documento, itens, i));
+        if(itens != null){
+            for (int i = 0; i < itens.getLength(); i++) {
+                danfe.getDadosDanfe().add(getItemDanfeVo(documento, itens, i));
+            }
         }
         danfe.setInfCpl(UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.INFOMACOES_COMPLEMENTARES));
         danfe.setInfAdFisco(UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.INFOMACOES_ADICIONAL_FISCO));
@@ -1104,11 +1106,7 @@ public class NotaFiscalSd {
             if(validacoesNotas.isEmpty()){
                 return true;
             }else{
-                validacoesNotas.forEach(m -> {
-                    m.getMensagens().forEach(msg -> {
-                        LOG.error(mensagens.obterMensagem("recolhanf.erro.unicidade"), msg);
-                    });
-                });
+                validacoesNotas.forEach(m -> m.getMensagens().forEach(msg -> LOG.error(mensagens.obterMensagem("recolhanf.erro.unicidade"), msg)));
                 return false;
             }
     }
