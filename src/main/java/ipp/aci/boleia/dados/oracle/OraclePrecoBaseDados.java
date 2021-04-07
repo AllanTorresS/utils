@@ -17,6 +17,7 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaior;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDiferente;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaEntre;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaFetch;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
@@ -25,16 +26,19 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaior;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMenor;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
+import ipp.aci.boleia.dominio.vo.CoordenadaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaAlteracaoPrecoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaLocalizacaoVo;
 import ipp.aci.boleia.util.Ordenacao;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioLambda;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -121,16 +125,38 @@ public class OraclePrecoBaseDados extends OracleOrdenacaoPrecosDados<PrecoBase> 
     public List<PrecoBase> listarPrecosPorFrotaLocalizacao(FiltroPesquisaLocalizacaoVo filtro){
 
         List<ParametroPesquisa> parametros = new ArrayList<>();
-        parametros.add(new ParametroPesquisaMaior("pontoVenda.latitude", new BigDecimal(filtro.getLatitudeInicial())));
-        parametros.add(new ParametroPesquisaMenor("pontoVenda.latitude", new BigDecimal(filtro.getLatitudeFinal())));
 
-        parametros.add(new ParametroPesquisaMaior("pontoVenda.longitude", new BigDecimal(filtro.getLongitudeInicial())));
-        parametros.add(new ParametroPesquisaMenor("pontoVenda.longitude", new BigDecimal(filtro.getLongitudeFinal())));
+        if(CollectionUtils.isNotEmpty(filtro.getFiltrosCoordenadas())) {
+            ParametroPesquisaOr condicoesOr = new ParametroPesquisaOr();
+            BigDecimal margem = filtro.getMargemGrausFiltroCoordenadas() != null ? filtro.getMargemGrausFiltroCoordenadas() : BigDecimal.valueOf(0);
+
+            for (List<CoordenadaVo> listaCoordenadas: filtro.getFiltrosCoordenadas()) {
+                for (int i = 0; i < listaCoordenadas.size() - 1; i++) {
+                    CoordenadaVo ca = listaCoordenadas.get(i);
+                    BigDecimal caLat = ca.getLatitude();
+                    BigDecimal caLong = ca.getLongitude();
+                    CoordenadaVo cb = listaCoordenadas.get(i+1);
+                    BigDecimal cbLat = cb.getLatitude();
+                    BigDecimal cbLong = cb.getLongitude();
+                    BigDecimal xa = (cbLat.compareTo(caLat) > 0 ? caLat : cbLat).subtract(margem);
+                    BigDecimal xb = (cbLat.compareTo(caLat) > 0 ? cbLat : caLat).add(margem);
+                    BigDecimal ya = (cbLong.compareTo(caLong) > 0 ? caLong : cbLong).subtract(margem);
+                    BigDecimal yb = (cbLong.compareTo(caLong) > 0 ? cbLong : caLong).add(margem);
+
+                    condicoesOr.addParametro(new ParametroPesquisaAnd(
+                            new ParametroPesquisaEntre("pontoVenda.latitude", xa, xb),
+                            new ParametroPesquisaEntre("pontoVenda.longitude", ya, yb)
+                    ));
+                }
+            }
+
+            parametros.add(condicoesOr);
+        } else {
+            incluirParametrosDeLatLong(filtro, parametros);
+        }
 
         parametros.add(new ParametroPesquisaIgual("pontoVenda.status", StatusAtivacao.ATIVO.getValue()));
-
         parametros.add(new ParametroPesquisaIgual("pontoVenda.statusHabilitacao", StatusHabilitacaoPontoVenda.HABILITADO.getValue()));
-
         parametros.add(new ParametroPesquisaIn("status", Arrays.asList(StatusAlteracaoPrecoPosto.VIGENTE.getValue(),
                 StatusAlteracaoPrecoPosto.ACEITO.getValue(),
                 StatusAlteracaoPrecoPosto.ACEITE_PENDENTE_REVENDA.getValue(),
@@ -189,7 +215,7 @@ public class OraclePrecoBaseDados extends OracleOrdenacaoPrecosDados<PrecoBase> 
 
     @Override
     public List<PrecoBase> buscarPendentes(List<Long> idsPv) {
-        return pesquisar((ParametroOrdenacaoColuna) null, new ParametroPesquisaIn("pontoVenda.id",idsPv), new ParametroPesquisaIn("status", Arrays.asList(StatusAlteracaoPrecoPosto.ACEITE_PENDENTE_REVENDA.getValue())));
+        return pesquisar((ParametroOrdenacaoColuna) null, new ParametroPesquisaIn("pontoVenda.id",idsPv), new ParametroPesquisaIn("status", Collections.singletonList(StatusAlteracaoPrecoPosto.ACEITE_PENDENTE_REVENDA.getValue())));
     }
 
     @Override
@@ -263,11 +289,7 @@ public class OraclePrecoBaseDados extends OracleOrdenacaoPrecosDados<PrecoBase> 
     public List<PrecoBase> buscarPrecosPorFrotaLocalizacaoCombustivel(FiltroPesquisaLocalizacaoVo filtro, List<Long> idsTipoCombustivel ){
 
         List<ParametroPesquisa> parametros = new ArrayList<>();
-        parametros.add(new ParametroPesquisaMaior("pontoVenda.latitude", BigDecimal.valueOf(filtro.getLatitudeInicial())));
-        parametros.add(new ParametroPesquisaMenor("pontoVenda.latitude", BigDecimal.valueOf(filtro.getLatitudeFinal())));
-
-        parametros.add(new ParametroPesquisaMaior("pontoVenda.longitude", BigDecimal.valueOf(filtro.getLongitudeInicial())));
-        parametros.add(new ParametroPesquisaMenor("pontoVenda.longitude", BigDecimal.valueOf(filtro.getLongitudeFinal())));
+        incluirParametrosDeLatLong(filtro, parametros);
 
         parametros.add(new ParametroPesquisaIgual("pontoVenda.status", StatusAtivacao.ATIVO.getValue()));
 
@@ -287,11 +309,7 @@ public class OraclePrecoBaseDados extends OracleOrdenacaoPrecosDados<PrecoBase> 
     @Override
     public ResultadoPaginado<PrecoBase> buscarPrecosPorFrotaLocalizacaoCombustivel(FiltroPesquisaLocalizacaoVo filtro, Long idCombustivel, Integer pagina, Integer tamanho){
         List<ParametroPesquisa> parametros = new ArrayList<>();
-        parametros.add(new ParametroPesquisaMaior("pontoVenda.latitude", BigDecimal.valueOf(filtro.getLatitudeInicial())));
-        parametros.add(new ParametroPesquisaMenor("pontoVenda.latitude", BigDecimal.valueOf(filtro.getLatitudeFinal())));
-
-        parametros.add(new ParametroPesquisaMaior("pontoVenda.longitude", BigDecimal.valueOf(filtro.getLongitudeInicial())));
-        parametros.add(new ParametroPesquisaMenor("pontoVenda.longitude", BigDecimal.valueOf(filtro.getLongitudeFinal())));
+        incluirParametrosDeLatLong(filtro, parametros);
 
         parametros.add(new ParametroPesquisaIgual("pontoVenda.status", StatusAtivacao.ATIVO.getValue()));
 
@@ -333,6 +351,19 @@ public class OraclePrecoBaseDados extends OracleOrdenacaoPrecosDados<PrecoBase> 
     @Override
     protected String getPrefixoCampoPrecoBase() {
         return null;
+    }
+
+    /**
+     * Inclui informações de latitude e longitude na lista de parametros
+     *
+     * @param filtro dados com informações de Latitude e longitude
+     * @param parametros onde os dados serão incluidos
+     */
+    private void incluirParametrosDeLatLong(FiltroPesquisaLocalizacaoVo filtro, List<ParametroPesquisa> parametros) {
+        parametros.add(new ParametroPesquisaMaior("pontoVenda.latitude", BigDecimal.valueOf(filtro.getLatitudeInicial())));
+        parametros.add(new ParametroPesquisaMenor("pontoVenda.latitude", BigDecimal.valueOf(filtro.getLatitudeFinal())));
+        parametros.add(new ParametroPesquisaMaior("pontoVenda.longitude", BigDecimal.valueOf(filtro.getLongitudeInicial())));
+        parametros.add(new ParametroPesquisaMenor("pontoVenda.longitude", BigDecimal.valueOf(filtro.getLongitudeFinal())));
     }
 
 }
