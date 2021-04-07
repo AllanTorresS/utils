@@ -17,6 +17,7 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaior;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDiferente;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaEntre;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaFetch;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
@@ -25,7 +26,6 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaior;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMenor;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
-import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaEntre;
 import ipp.aci.boleia.dominio.vo.CoordenadaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaAlteracaoPrecoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaLocalizacaoVo;
@@ -38,6 +38,7 @@ import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -151,11 +152,11 @@ public class OraclePrecoBaseDados extends OracleOrdenacaoPrecosDados<PrecoBase> 
 
             parametros.add(condicoesOr);
         } else {
-            parametros.add(new ParametroPesquisaMaior("pontoVenda.latitude", new BigDecimal(filtro.getLatitudeInicial())));
-            parametros.add(new ParametroPesquisaMenor("pontoVenda.latitude", new BigDecimal(filtro.getLatitudeFinal())));
+            parametros.add(new ParametroPesquisaMaior("pontoVenda.latitude", BigDecimal.valueOf(filtro.getLatitudeInicial())));
+            parametros.add(new ParametroPesquisaMenor("pontoVenda.latitude", BigDecimal.valueOf(filtro.getLatitudeFinal())));
 
-            parametros.add(new ParametroPesquisaMaior("pontoVenda.longitude", new BigDecimal(filtro.getLongitudeInicial())));
-            parametros.add(new ParametroPesquisaMenor("pontoVenda.longitude", new BigDecimal(filtro.getLongitudeFinal())));
+            parametros.add(new ParametroPesquisaMaior("pontoVenda.longitude", BigDecimal.valueOf(filtro.getLongitudeInicial())));
+            parametros.add(new ParametroPesquisaMenor("pontoVenda.longitude", BigDecimal.valueOf(filtro.getLongitudeFinal())));
         }
 
         parametros.add(new ParametroPesquisaIgual("pontoVenda.status", StatusAtivacao.ATIVO.getValue()));
@@ -220,7 +221,7 @@ public class OraclePrecoBaseDados extends OracleOrdenacaoPrecosDados<PrecoBase> 
 
     @Override
     public List<PrecoBase> buscarPendentes(List<Long> idsPv) {
-        return pesquisar((ParametroOrdenacaoColuna) null, new ParametroPesquisaIn("pontoVenda.id",idsPv), new ParametroPesquisaIn("status", Arrays.asList(StatusAlteracaoPrecoPosto.ACEITE_PENDENTE_REVENDA.getValue())));
+        return pesquisar((ParametroOrdenacaoColuna) null, new ParametroPesquisaIn("pontoVenda.id",idsPv), new ParametroPesquisaIn("status", Collections.singletonList(StatusAlteracaoPrecoPosto.ACEITE_PENDENTE_REVENDA.getValue())));
     }
 
     @Override
