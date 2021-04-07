@@ -7,11 +7,14 @@ import ipp.aci.boleia.dominio.TransacaoConsolidada;
 import ipp.aci.boleia.dominio.Unidade;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaAbastecimentoVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheCobrancaVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheReembolsoVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaQtdTransacoesFrotaVo;
 import ipp.aci.boleia.dominio.vo.QuantidadeAbastecidaVeiculoVo;
 import ipp.aci.boleia.dominio.vo.TransacaoPendenteVo;
+import ipp.aci.boleia.dominio.vo.apco.InformacoesVolumeVo;
 import ipp.aci.boleia.dominio.vo.frotista.FiltroPesquisaAbastecimentoFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.ResultadoPaginadoFrtVo;
-import ipp.aci.boleia.dominio.vo.apco.VolumeVendasClienteProFrotaVo;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -213,6 +216,13 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
     AutorizacaoPagamento obterAutorizacaoPagamentoComMesmoAbastecimento(String uuidAbastecimento);
 
     /**
+     * Busca UUIDs de Abastecimento a partir de uma lista de UUIDs
+     * @param uuidsAbastecimento UUIDs que devem ser buscados
+     * @return lista de UUIDs encontrados
+     */
+    List<String> obterUuidsExistentes(List<String> uuidsAbastecimento);
+
+    /**
      * Método que implementa a pesquisa de autorização pagamento para o contexto da
      * API de frotista.
      *
@@ -288,27 +298,17 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
     AutorizacaoPagamento buscaPorCdCTA(Long cdCTA);
 
     /**
-     * Obtem um abastecimento pelo numero do pedido
+     * Obtém um abastecimento POS pelo número do pedido
      * @param idPedido id do pedido
-     * @return abastecimento pertencente ao pedido fornecido
+     * @return abastecimento POS associado ao pedido fornecido
      */
-	AutorizacaoPagamento obterAbastecimentoPorCdPedido(Long idPedido);
+	AutorizacaoPagamento obterAbastecimentoPosPorPedido(Long idPedido);
 
     /**
      * Obtem uma lista de abastecimentos que estao autorizados porem com transacao pendente de confirmacao
      * @return abastecimentos encontrados
      */
     List<TransacaoPendenteVo> obterAbastecimentosAutorizadosPendentesDeConciliacao();
-
-    /**
-     * Obtem a litragem do abastecimento anterior ao abastecimento parametrizado
-     * @param idAbastecimento O id do abastecimento de referência
-     * @param dataAbastecimento A data do abastecimento de referência
-     * @param placaVeiculo A placa do veiculo do abastecimento de referência
-     * @param cnpjFrota O cnpj da frota do veiculo
-     * @return litros do abastecimento anterior, caso não encontrado retorna null
-     */
-    BigDecimal obterLitragemDoAbastecimentoAnterior(Long idAbastecimento, Date dataAbastecimento, String placaVeiculo, Long cnpjFrota);
 
     /**
      * Busca o estorno negativo associado a uma autorização de pagamento.
@@ -329,14 +329,15 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
     List<AutorizacaoPagamento> obterAbastecimentoPorNota(Long cnpjDest, Long cnpjEmit, Date dataEmissao, BigDecimal valorTotalNota);
 
     /**
-     * Busca os objetos que representam as vendas consolidadas de combustiveis dentro de
-     * um período de integração entre Profrotas e APCO e realiza o DE-PARA entre os combustiveis.
+     * Busca os objetos que representam as informações necessárias para obter
+     * vendas consolidadas de combustiveis dentro de um período de integração entre Profrotas e APCO,
+     * realizando o DE-PARA entre os combustiveis.
      *
      * @param dataInicial data inicial do período de exportação.
      * @param  dataFinal data final do período de exportação
-     * @return a lista de abastecimentos agrupados do período.
+     * @return a lista de informações de volumes agrupados do período.
      */
-    List<VolumeVendasClienteProFrotaVo> obterVendasProfrotasAPCO(Date dataInicial, Date dataFinal);
+     List<InformacoesVolumeVo> obterInformacoesVendasProfrotasAPCO(Date dataInicial, Date dataFinal);
 
     /**
      * Retorna uma lista com os abastecimentos de um ciclo que tem justificativa associada
@@ -397,4 +398,43 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
      * @return Uma lista de AutorizacaoPagamento
      */
     List<AutorizacaoPagamento> obterAutorizacoesDoCiclo(FiltroPesquisaAbastecimentoVo filtro);
+
+    /**
+     * Retorna os abastecimentos associados às transações consolidadas
+     * @param idsTransacoesConsolidadas IDs das transações consolidadas
+     * @return abastecimentos associados às transações consolidadas
+     */
+    List<AutorizacaoPagamento> obterPorTransacoesConsolidadas(List<Long> idsTransacoesConsolidadas);
+
+     /**
+     * Pesquisa AutorizacaoPagamento paginado a partir do filtro informado para a tela de Detalhe de Cobrança
+     *
+     * @param filtro O filtro da busca
+     * @return Uma lista de ResultadoPaginado localizadas
+     */
+    ResultadoPaginado<AutorizacaoPagamento> pesquisaPaginadaDetalheCobranca(FiltroPesquisaDetalheCobrancaVo filtro);
+
+    /**
+     * Pesquisa uma lista de autorizações de pagamento para o detalhe de reembolso.
+     *
+     * @param filtro O filtro da busca
+     * @return Uma lista de ResultadoPaginado localizadas
+     */
+    ResultadoPaginado<AutorizacaoPagamento> pesquisaPaginadaDetalheReembolso(FiltroPesquisaDetalheReembolsoVo filtro);
+
+    /**
+     * Obtem a quantidade de notas fiscais associadas a transações pertencentes a um ciclo
+     * ou agrupamento de ciclos
+     * @param filtro o filtro de pesquisa informado
+     * @return A quantidade de notas fiscais
+     */
+    Long obterQuantidadeNotasAgrupamento(FiltroPesquisaQtdTransacoesFrotaVo filtro);
+
+    /**
+     * Realiza pesquisa sem paginação para obtenção de todos os abastecimentos do ciclo
+     * filtrados de acordo com parâmetros de pesquisa
+     * @param filtro O filtro fornecido
+     * @return Os registros obtidos
+     */
+    List<AutorizacaoPagamento> pesquisaDetalheCobrancaSemPaginacao(FiltroPesquisaDetalheCobrancaVo filtro);
 }

@@ -1,6 +1,5 @@
 package ipp.aci.boleia.dominio;
 
-
 import ipp.aci.boleia.dominio.enums.ClassificacaoAgregado;
 import ipp.aci.boleia.dominio.enums.ParametroSistema;
 import ipp.aci.boleia.dominio.enums.StatusAtivacao;
@@ -8,6 +7,7 @@ import ipp.aci.boleia.dominio.interfaces.IExclusaoLogica;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
 import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.JoinFormula;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 
@@ -47,11 +47,29 @@ public class Veiculo implements IPersistente, IExclusaoLogica, IPertenceFrota {
 
     private static final long serialVersionUID = -4123733181377658160L;
 
+    /**
+     * Query que busca o motorista mais recente do abastecimento realizado por veículo e frota.
+     */
+    private static final String MOTORISTA_FORMULA = " (SELECT * FROM" +
+            " 	(" +
+            " 	select a.cd_motorista from BOLEIA_SCHEMA.AUTORIZACAO_PAGAMENTO a"+
+            "              where cd_frota = a.cd_frota and cd_veiculo = a.cd_veiculo " +
+            " 	ORDER BY" +
+            " 		a.DT_REQUISICAO," +
+            " 		a.CD_AUTORIZACAO_PAGAMENTO" +
+            " 	)" +
+            " 	WHERE rownum = 1)";
+
     @Id
     @Column(name = "CD_VEICULO")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_VEICULO")
     @SequenceGenerator(name = "SEQ_VEICULO", sequenceName = "SEQ_VEICULO", allocationSize = 1)
     private Long id;
+
+    @NotAudited
+    @JoinFormula(MOTORISTA_FORMULA)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Motorista motorista;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_FROTA")
@@ -168,6 +186,10 @@ public class Veiculo implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @Max(9999)
     @Column(name = "VO_CAPACIDADE")
     private Integer capacidadeTanque;
+
+    @Column(name = "DT_CRIACAO")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataCriacao;
 
     @Column(name = "DT_ATUALIZACAO")
     @Temporal(TemporalType.TIMESTAMP)
@@ -453,6 +475,14 @@ public class Veiculo implements IPersistente, IExclusaoLogica, IPertenceFrota {
         this.identificadorInterno = identificadorInterno;
     }
 
+    public Motorista getMotorista() {
+        return motorista;
+    }
+
+    public void setMotorista(Motorista motorista) {
+        this.motorista = motorista;
+    }
+
     @Transient
     @Override
     public List<Frota> getFrotas() {
@@ -503,4 +533,13 @@ public class Veiculo implements IPersistente, IExclusaoLogica, IPertenceFrota {
     public String getNomeApresentacao() {
         return getPlaca();
     }
+
+	public Date getDataCriacao() {
+		return dataCriacao;
+	}
+
+	public void setDataCriacao(Date dataCriacao) {
+		this.dataCriacao = dataCriacao;
+	}
+
 }

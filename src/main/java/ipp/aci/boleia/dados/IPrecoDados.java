@@ -27,9 +27,19 @@ public interface IPrecoDados extends IRepositorioBoleiaDados<Preco> {
      * @param filtro Filtro de pesquisa do preço negociado
      * @param acordo Define se deve obter apenas precos em solicitacao de acordo
      * @param statusPossiveis status permitidos na consulta
+     * @param isolamento indica se deve ocorrer isolamento de dados
+     * @return Uma lista de negociações.
+     */
+    ResultadoPaginado<Preco> pesquisaPrecoPaginada(FiltroPesquisaPrecoVo filtro, Boolean acordo, List<Integer> statusPossiveis, boolean isolamento);
+
+    /** Busca as negociações realizadas de acordo com o perfil do usuário
+     * @param filtro Filtro de pesquisa do preço negociado
+     * @param acordo Define se deve obter apenas precos em solicitacao de acordo
+     * @param statusPossiveis status permitidos na consulta
      * @return Uma lista de negociações.
      */
     ResultadoPaginado<Preco> pesquisaPrecoPaginada(FiltroPesquisaPrecoVo filtro, Boolean acordo, Integer... statusPossiveis );
+
 
     /**
      * Busca o preco atual para um determinado PontoVenda,Frota e tipo combustivel

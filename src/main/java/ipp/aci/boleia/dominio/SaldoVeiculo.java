@@ -87,6 +87,9 @@ public class SaldoVeiculo implements IPersistente, IPertenceFrota {
     @Column(name = "NO_VERSAO")
     private Long versao;
 
+    @Column(name = "ID_AUTO_RENOVAR_COTA_AGREGADO")
+    private Boolean renovarCotaVeiculoAgregadoAutomaticamente;
+    
     @Override
     public Long getId() {
         return id;
@@ -223,6 +226,14 @@ public class SaldoVeiculo implements IPersistente, IPertenceFrota {
 
     public void setCotaAbastecimentoLitrosSugeridoMaximo(BigDecimal cotaAbastecimentoLitrosSugeridoMaximo) {
         this.cotaAbastecimentoLitrosSugeridoMaximo = cotaAbastecimentoLitrosSugeridoMaximo;
+    }
+
+    public Boolean getRenovarCotaVeiculoAgregadoAutomaticamente() {
+        return renovarCotaVeiculoAgregadoAutomaticamente;
+    }
+
+    public void setRenovarCotaVeiculoAgregadoAutomaticamente(Boolean renovarCotaVeiculoAgregadoAutomaticamente) {
+        this.renovarCotaVeiculoAgregadoAutomaticamente = renovarCotaVeiculoAgregadoAutomaticamente;
     }
 
     @Transient

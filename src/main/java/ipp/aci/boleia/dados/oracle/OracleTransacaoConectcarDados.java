@@ -69,16 +69,24 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
                     " ORDER BY " +
                     "   TC.dataFimPeriodo";
 
-   private static final String QUERY_VALOR_UTILIZADO =
-    		 "SELECT NVL(SUM(tc.valorTotal),0) " +
-             " FROM TransacaoConectcar tc " +
-             "WHERE tc.frota.id  = :idFrota ";
+    private static final String QUERY_VALOR_UTILIZADO =
+            "SELECT NVL(SUM(tc.valorTotal),0) " +
+                    " FROM TransacaoConectcar tc " +
+                    " LEFT JOIN tc.cobranca c " +
+                    "WHERE tc.frota.id  = :idFrota " +
+                    "  AND c.dataPagamento is null";
 
     private static final String QUERY_ULTIMA_TRANSACAO =
-   		 "SELECT tc " +
-            " FROM TransacaoConectcar tc " +
-            "WHERE tc.frota.id  = :idFrota " + 
-            " ORDER BY tc.id DESC";
+            "SELECT tc " +
+                    " FROM TransacaoConectcar tc " +
+                    "WHERE tc.frota.id  = :idFrota " +
+                    " ORDER BY tc.id DESC";
+
+    private static final String QUERY_PRIMEIRA_TRANSACAO =
+            "SELECT tc " +
+                    " FROM TransacaoConectcar tc " +
+                    " WHERE tc.frota.id = :idFrota " +
+                    " ORDER BY tc.dataTransacao ASC";
 
     @Autowired
     private UtilitarioAmbiente ambiente;
@@ -100,8 +108,8 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
 
     /**
      * Realiza a pesquisa de Transacoes Consolidadas através de um filtor
-     * 
-     * @param filtro parâmetros utilizados na consulta
+     *
+     * @param filtro        parâmetros utilizados na consulta
      * @param usuarioLogado usuário que está realizando a consulta
      * @return retorna o resultado paginado da consulta
      */
@@ -109,7 +117,7 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
     public ResultadoPaginado<TransacaoConectcar> pesquisar(FiltroPesquisaTransacaoConsolidadaVo filtro, Usuario usuarioLogado) {
         List<ParametroPesquisa> parametros = criarParametrosPesquisaGrid(filtro, usuarioLogado);
         String filtroFrotaControle = "";
-        if (usuarioLogado.getFrota() == null || !usuarioLogado.getFrota().getCnpj().equals(cnpjFrotaControle)){
+        if (usuarioLogado.getFrota() == null || !usuarioLogado.getFrota().getCnpj().equals(cnpjFrotaControle)) {
             filtroFrotaControle = "AND FR.frota.cnpj != " + cnpjFrotaControle + " ";
         }
 
@@ -119,7 +127,8 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
 
     /**
      * Cria uma lista de parametros para a montagem da consulta de transacoes a ser exibida no grid
-     * @param filtro O filtro informado pelo usuario
+     *
+     * @param filtro        O filtro informado pelo usuario
      * @param usuarioLogado usuário que está realizando a consulta
      * @return Uma lista de parametros
      */
@@ -141,11 +150,11 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
             parametroAte = new ParametroPesquisaIgual("dataFimPeriodo", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte()));
         }
 
-        if(filtro.getEmpresaAgregada() != null && filtro.getEmpresaAgregada().getId() != null){
+        if (filtro.getEmpresaAgregada() != null && filtro.getEmpresaAgregada().getId() != null) {
             parametroEmpresaAgregada = new ParametroPesquisaIgual("idEmpresaAgregada", filtro.getEmpresaAgregada().getId());
         }
 
-        if(filtro.getUnidade() != null && filtro.getUnidade().getId() != null) {
+        if (filtro.getUnidade() != null && filtro.getUnidade().getId() != null) {
             parametroUnidade = new ParametroPesquisaIgual("idUnidade", filtro.getUnidade().getId());
         }
 
@@ -156,11 +165,11 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
         parametros.add(parametroEmpresaAgregada);
         parametros.add(parametroUnidade);
 
-        if(filtro.getNotaFiscal() != null && filtro.getNotaFiscal().trim().length() > 0) {
+        if (filtro.getNotaFiscal() != null && filtro.getNotaFiscal().trim().length() > 0) {
             povoarParametroIgual("notaFiscal", filtro.getNotaFiscal().toLowerCase(), parametros);
 
             ParametroPesquisaIgual parametroNumeroSerie = new ParametroPesquisaIgual("numeroSerie", null);
-            if(filtro.getNumeroSerie() != null && filtro.getNumeroSerie().trim().length() > 0) {
+            if (filtro.getNumeroSerie() != null && filtro.getNumeroSerie().trim().length() > 0) {
                 parametroNumeroSerie = new ParametroPesquisaIgual("numeroSerie", filtro.getNumeroSerie().toLowerCase());
             }
             parametros.add(parametroNumeroSerie);
@@ -171,6 +180,7 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
 
     /**
      * Cria um parametro para comparacao de frota a ser injetado na consulta
+     *
      * @param filtro O filtro de pesquisa
      * @return O parametro para a consulta
      */
@@ -187,8 +197,8 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
     @Override
     public List<TransacaoConectcar> obterConsolidacoesSemNotaFiscalEntreDatas(
             Date dataIntervaloMin, Date dataIntervaloMax) {
-        ParametroPesquisa[] parametros = new ParametroPesquisa[] {
-                new ParametroPesquisaIgual("statusNotaFiscal",StatusNotaFiscal.PENDENTE.getValue()),
+        ParametroPesquisa[] parametros = new ParametroPesquisa[]{
+                new ParametroPesquisaIgual("statusNotaFiscal", StatusNotaFiscal.PENDENTE.getValue()),
                 new ParametroPesquisaDataMaiorOuIgual("dataPrazoEmissaoNfe", dataIntervaloMin),
                 new ParametroPesquisaDataMenorOuIgual("dataPrazoEmissaoNfe", dataIntervaloMax)
         };
@@ -198,7 +208,7 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
     @Override
     public List<TransacaoConectcar> obterConsolidacoesComCicloAbastecimentoEncerrado(
             Date dataIntervaloMin, Date dataIntervaloMax) {
-        ParametroPesquisa[] parametros = new ParametroPesquisa[] {
+        ParametroPesquisa[] parametros = new ParametroPesquisa[]{
                 new ParametroPesquisaDataMaiorOuIgual("dataFimPeriodo", dataIntervaloMin),
                 new ParametroPesquisaDataMenorOuIgual("dataFimPeriodo", dataIntervaloMax)
         };
@@ -206,8 +216,8 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
     }
 
     @Override
-    public List<TransacaoConectcar> obterTransacoesSemCobranca(){
-        return pesquisarSemIsolamentoDados(null,CONSULTA_CONSOLIDADO_SEM_COBRANCA, new ParametroPesquisaIgual("hoje", obterDataHoje())).getRegistros();
+    public List<TransacaoConectcar> obterTransacoesSemCobranca() {
+        return pesquisarSemIsolamentoDados(null, CONSULTA_CONSOLIDADO_SEM_COBRANCA, new ParametroPesquisaIgual("hoje", obterDataHoje())).getRegistros();
     }
 
     @Override
@@ -224,93 +234,110 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
         return UtilitarioCalculoData.obterPrimeiroInstanteDia(ambiente.buscarDataAmbiente());
     }
 
-	@Override
-	public TransacaoConectcar obterTransacoesPorIdConectcar(Long codigoTransacaoConectcar) {
-		ParametroPesquisa[] parametros = new ParametroPesquisa[] {
+    @Override
+    public TransacaoConectcar obterTransacoesPorIdConectcar(Long codigoTransacaoConectcar) {
+        ParametroPesquisa[] parametros = new ParametroPesquisa[]{
                 new ParametroPesquisaIgual("codigoTransacaoConectcar", codigoTransacaoConectcar)
         };
         return pesquisarUnico(parametros);
-	}
+    }
 
-	@Override
-	public BigDecimal obterValorUtilizadoCiclo(Long idFrota) {
-		StringBuilder query = new StringBuilder(QUERY_VALOR_UTILIZADO);
+    @Override
+    public BigDecimal obterValorUtilizadoCiclo(Long idFrota) {
+        StringBuilder query = new StringBuilder(QUERY_VALOR_UTILIZADO);
 
-		List<ParametroPesquisa> parametros = new ArrayList<>();
+        List<ParametroPesquisa> parametros = new ArrayList<>();
         parametros.add(new ParametroPesquisaIgual("idFrota", idFrota));
-        
-        return pesquisarUnicoSemIsolamentoDados(query.toString(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
-	}
 
-	@Override
-	public ResultadoPaginado<TransacaoConectcar> pesquisarUtilizacaoTag(
-			FiltroPesquisaUtilizacaoTagVo filtro) {
+        return pesquisarUnicoSemIsolamentoDados(query.toString(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+    @Override
+    public ResultadoPaginado<TransacaoConectcar> pesquisarUtilizacaoTag(
+            FiltroPesquisaUtilizacaoTagVo filtro) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
 
-		
-	    if(filtro.getFrota() != null) {
-	        	parametros.add(new ParametroPesquisaIgual("frota.id", filtro.getFrota().getId()));
+
+        if (filtro.getFrota() != null) {
+            parametros.add(new ParametroPesquisaIgual("frota.id", filtro.getFrota().getId()));
         }
-        
-        if(filtro.getDe() != null) {
-        	parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataTransacao", filtro.getDe()));
+
+        if (filtro.getDe() != null) {
+            parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataTransacao", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe())));
         }
-        
-        if(filtro.getAte() != null) {
-        	parametros.add(new ParametroPesquisaDataMenorOuIgual("dataTransacao", UtilitarioCalculoData.adicionarDiasData(filtro.getAte(), 1)));
+
+        if (filtro.getAte() != null) {
+            parametros.add(new ParametroPesquisaDataMenorOuIgual("dataTransacao", UtilitarioCalculoData.obterUltimoInstanteDia((filtro.getAte()))));
         }
-        
+
         if (filtro.getTag() != null) {
             parametros.add(new ParametroPesquisaIgual("tag.id", filtro.getTag()));
         }
-        
+
         if (filtro.getPlaca() != null && !"".equals(filtro.getPlaca())) {
             parametros.add(new ParametroPesquisaIgual("placa", filtro.getPlaca()));
         }
-        
-        if (filtro.getTipo() != null && filtro.getTipo().getName() != null) {            
-            parametros.add(new ParametroPesquisaIgual("tipoTransacao", TipoTransacaoConectcar.valueOf(filtro.getTipo().getName()).getValue()));            
+
+        if (filtro.getTipo() != null && filtro.getTipo().getName() != null) {
+            parametros.add(new ParametroPesquisaIgual("tipoTransacao", TipoTransacaoConectcar.valueOf(filtro.getTipo().getName()).getValue()));
         }
-        
+
+        if (filtro.getReembolso() != null && filtro.getReembolso().getId() != null) {
+            parametros.add(new ParametroPesquisaIgual("reembolso.id", filtro.getReembolso().getId()));
+        }
+
         if (filtro.getStatusTag() != null && filtro.getStatusTag().getName() != null) {
-        	if(filtro.getStatusTag().getName().equals(StatusAtivacao.ATIVO.name())) {
-        		parametros.add(new ParametroPesquisaNulo("tag.dataAtivacao", true));
-        	}else if(filtro.getStatusTag().getName().equals(StatusAtivacao.INATIVO.name())) {
-        		parametros.add(new ParametroPesquisaNulo("tag.dataBloqueio", true));
-        	}
+            if (filtro.getStatusTag().getName().equals(StatusAtivacao.ATIVO.name())) {
+                parametros.add(new ParametroPesquisaNulo("tag.dataAtivacao", true));
+            } else if (filtro.getStatusTag().getName().equals(StatusAtivacao.INATIVO.name())) {
+                parametros.add(new ParametroPesquisaNulo("tag.dataBloqueio", true));
+            }
         }
-	
+
         if (filtro.getPaginacao() != null && CollectionUtils.isNotEmpty(filtro.getPaginacao().getParametrosOrdenacaoColuna())) {
             ParametroOrdenacaoColuna parametro = filtro.getPaginacao().getParametrosOrdenacaoColuna().get(0);
             String nomeOrdenacao = parametro.getNome();
             if (nomeOrdenacao != null) {
-            	if (nomeOrdenacao.contentEquals("tag")) {
-            		filtro.getPaginacao().getParametrosOrdenacaoColuna().remove(0);
+                if (nomeOrdenacao.contentEquals("tag")) {
+                    filtro.getPaginacao().getParametrosOrdenacaoColuna().remove(0);
                     filtro.getPaginacao().getParametrosOrdenacaoColuna().add(0, new ParametroOrdenacaoColuna("tag.id", parametro.getSentidoOrdenacao()));
-            	} else if (nomeOrdenacao.contentEquals("statusTag")) {
-            		filtro.getPaginacao().getParametrosOrdenacaoColuna().remove(0);
-                    filtro.getPaginacao().getParametrosOrdenacaoColuna().add(0, new ParametroOrdenacaoColuna("tag.dataBloqueio", parametro.getSentidoOrdenacao()));                    
+                } else if (nomeOrdenacao.contentEquals("statusTag")) {
+                    filtro.getPaginacao().getParametrosOrdenacaoColuna().remove(0);
+                    filtro.getPaginacao().getParametrosOrdenacaoColuna().add(0, new ParametroOrdenacaoColuna("tag.dataBloqueio", parametro.getSentidoOrdenacao()));
                 } else if (nomeOrdenacao.contentEquals("tipo")) {
-                	filtro.getPaginacao().getParametrosOrdenacaoColuna().remove(0);
-                    filtro.getPaginacao().getParametrosOrdenacaoColuna().add(0, new ParametroOrdenacaoColuna("tipoTransacao", parametro.getSentidoOrdenacao()));                    
+                    filtro.getPaginacao().getParametrosOrdenacaoColuna().remove(0);
+                    filtro.getPaginacao().getParametrosOrdenacaoColuna().add(0, new ParametroOrdenacaoColuna("tipoTransacao", parametro.getSentidoOrdenacao()));
                 }
             }
-        }      
+        }
         return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
-	}
+    }
 
-	@Override
-	public TransacaoConectcar obterUltimaTransacaoPorFrota(Long idFrota) {
-		
-		Query query = getGerenciadorDeEntidade().createQuery(QUERY_ULTIMA_TRANSACAO);		 
-		query.setParameter("idFrota", idFrota);	    
-		query.setMaxResults(1);
-		
-		try {
-			return (TransacaoConectcar) query.getResultList().get(0);
-		} catch (NoResultException | IndexOutOfBoundsException e) {
-			return null;
-		}				
-	}
+    @Override
+    public TransacaoConectcar obterUltimaTransacaoPorFrota(Long idFrota) {
+
+        Query query = getGerenciadorDeEntidade().createQuery(QUERY_ULTIMA_TRANSACAO);
+        query.setParameter("idFrota", idFrota);
+        query.setMaxResults(1);
+
+        try {
+            return (TransacaoConectcar) query.getResultList().get(0);
+        } catch (NoResultException | IndexOutOfBoundsException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public TransacaoConectcar obterPrimeiraTransacaoPorFrota(Long idFrota) {
+        Query query = getGerenciadorDeEntidade().createQuery(QUERY_PRIMEIRA_TRANSACAO);
+        query.setParameter("idFrota", idFrota);
+        query.setMaxResults(1);
+
+        try {
+            return (TransacaoConectcar) query.getResultList().get(0);
+        } catch (NoResultException | IndexOutOfBoundsException e) {
+            return null;
+        }
+    }
 
 }

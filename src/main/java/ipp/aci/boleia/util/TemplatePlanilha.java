@@ -61,10 +61,20 @@ public enum TemplatePlanilha {
     TEMPLATE_RELATORIO_ABASTECIMENTOS_ESTORNADOS("template-relatorio-abastecimentos-estornados.xlsx"),
     TEMPLATE_RELATORIO_ABASTECIMENTOS_AJUSTADOS("template-relatorio-abastecimentos-ajustados.xlsx"),
     TEMPLATE_RELATORIO_FINANCEIRO_REVENDA("template-relatorio-financeiro-revenda.xlsx"),
+    TEMPLATE_RELATORIO_FINANCEIRO_FROTA("template-relatorio-financeiro-frota.xlsx"),
     TEMPLATE_RELATORIO_ABASTECIMENTOS_NO_PERIODO("template-relatorio-abastecimento-no-periodo.xlsx"),
     TEMPLATE_ATIVACAO_TAG("template-ativacao-tag.xlsx"),
 	TEMPLATE_RELATORIO_ATIVACAO_TAG("template-relatorio-ativacao-tag.xlsx"),
-	TEMPLATE_PESQUISAR_GERAL_FROTA("template-relatorio-geral-frota.xlsx");
+	TEMPLATE_PESQUISAR_GERAL_FROTA("template-relatorio-geral-frota.xlsx"),
+	TEMPLATE_RELATORIO_COTA_VEICULO_SOLUCAO("template-relatorio-cota-veiculo-interno.xlsx"),
+    TEMPLATE_RELATORIO_COTA_VEICULO_FROTA("template-relatorio-cota-veiculo-frota.xlsx"),
+	TEMPLATE_UTILIZACAO_TAG("template-utilizacao-tag.xlsx"),
+	TEMPLATE_RELATORIO_REEMBOLSO_CONECTCAR("template-relatorio-reembolso-conectcar.xlsx"),
+    TEMPLATE_RELATORIO_DETALHAMENTO_COBRANCA("template-relatorio-detalhamento-cobranca.xlsx"),
+    TEMPLATE_RELATORIO_DETALHAMENTO_COBRANCA_INTERNO("template-relatorio-detalhamento-cobranca-interno.xlsx"),
+    TEMPLATE_RELATORIO_REEMBOLSO("template-relatorio-reembolso.xlsx"),
+    TEMPLATE_RELATORIO_DETALHAMENTO_REEMBOLSO("template-relatorio-detalhamento-reembolso.xlsx");
+
 
     private static final String BASE_TEMPLATE = "/template-planilhas/";
 

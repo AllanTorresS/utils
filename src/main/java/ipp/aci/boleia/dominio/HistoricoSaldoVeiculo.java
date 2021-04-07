@@ -101,6 +101,9 @@ public class HistoricoSaldoVeiculo implements IPersistente, IPertenceFrota {
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataAlteracao;
 
+    @Column(name = "ID_AUTO_RENOVAR_COTA_AGREGADO")
+    private Boolean renovarCotaVeiculoAgregadoAutomaticamente;
+
     @Override
     public Long getId() {
         return id;
@@ -253,6 +256,14 @@ public class HistoricoSaldoVeiculo implements IPersistente, IPertenceFrota {
 
     public void setDataAlteracao(Date dataAlteracao) {
         this.dataAlteracao = dataAlteracao;
+    }
+
+    public Boolean getRenovarCotaVeiculoAgregadoAutomaticamente() {
+        return renovarCotaVeiculoAgregadoAutomaticamente;
+    }
+
+    public void setRenovarCotaVeiculoAgregadoAutomaticamente(Boolean renovarCotaVeiculoAgregadoAutomaticamente) {
+        this.renovarCotaVeiculoAgregadoAutomaticamente = renovarCotaVeiculoAgregadoAutomaticamente;
     }
 
     @Transient

@@ -222,6 +222,21 @@ public final class UtilitarioFormatacao {
     }
 
     /**
+     * Formata um decimal para apresentação na tela sem prefixo do Real (R$).
+     * Se a quantidade de casas decimais do valor fornecido estiver abaixo de 2,
+     * modificamos para 2.
+     *
+     * @param decimal valor decimal
+     * @return valor formatado
+     */
+    public static String formatarDecimalMoedaRealSemPrefixo(BigDecimal decimal) {
+        if (decimal != null && decimal.scale() < 2) {
+            decimal = decimal.setScale(2, BigDecimal.ROUND_HALF_UP);
+        }
+        return formatarDecimal(decimal, ConstantesFormatacao.FORMATO_MOEDA_REAL_SEM_PREFIXO);
+    }
+
+    /**
      * Formata um decimal para apresentação na tela com prefixo do Real (R$) considerando
      * o sinal de positivo ou negativo.
      * Se a quantidade de casas decimais do valor fornecido estiver abaixo de 2,
