@@ -21,17 +21,13 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaFetch;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
-import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaior;
-import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMenor;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
-import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaEntre;
 import ipp.aci.boleia.dominio.vo.EntidadeVo;
-import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialPtovVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaLocalizacaoVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialPtovVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaPontoDeVendaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaRotaPontoVendaServicosVo;
-import ipp.aci.boleia.dominio.vo.CoordenadaVo;
 import ipp.aci.boleia.util.Ordenacao;
 import ipp.aci.boleia.util.UtilitarioLambda;
 import ipp.aci.boleia.util.UtilitarioParse;
@@ -40,7 +36,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -258,29 +253,7 @@ public class OraclePontoDeVendaDados extends OracleRepositorioBoleiaDados<PontoD
         }
 
         if(CollectionUtils.isNotEmpty(filtro.getFiltrosCoordenadas())) {
-            ParametroPesquisaOr condicoesOr = new ParametroPesquisaOr();
-            BigDecimal margem = filtro.getMargemGrausFiltroCoordenadas() != null ? filtro.getMargemGrausFiltroCoordenadas() : BigDecimal.valueOf(0);
-
-            for (List<CoordenadaVo> listaCoordenadas: filtro.getFiltrosCoordenadas()) {
-                for (int i = 0; i < listaCoordenadas.size() - 1; i++) {
-                    CoordenadaVo ca = listaCoordenadas.get(i);
-                    BigDecimal caLat = ca.getLatitude();
-                    BigDecimal caLong = ca.getLongitude();
-                    CoordenadaVo cb = listaCoordenadas.get(i+1);
-                    BigDecimal cbLat = cb.getLatitude();
-                    BigDecimal cbLong = cb.getLongitude();
-                    BigDecimal xa = (cbLat.compareTo(caLat) > 0 ? caLat : cbLat).subtract(margem);
-                    BigDecimal xb = (cbLat.compareTo(caLat) > 0 ? cbLat : caLat).add(margem);
-                    BigDecimal ya = (cbLong.compareTo(caLong) > 0 ? caLong : cbLong).subtract(margem);
-                    BigDecimal yb = (cbLong.compareTo(caLong) > 0 ? cbLong : caLong).add(margem);
-
-                    condicoesOr.addParametro(new ParametroPesquisaAnd(
-                            new ParametroPesquisaEntre("latitude", xa, xb),
-                            new ParametroPesquisaEntre("longitude", ya, yb)
-                    ));
-                }
-            }
-
+            ParametroPesquisaOr condicoesOr = povoarParametroLatLongEntreCoordenadas("latitude", "longitude", filtro.getFiltrosCoordenadas(), filtro.getMargemGrausFiltroCoordenadas());
             params.add(condicoesOr);
         }
 
@@ -361,44 +334,12 @@ public class OraclePontoDeVendaDados extends OracleRepositorioBoleiaDados<PontoD
                 );
 
         if(CollectionUtils.isNotEmpty(filtro.getFiltrosCoordenadas())) {
-            ParametroPesquisaOr condicoesOr = new ParametroPesquisaOr();
-            BigDecimal margem = filtro.getMargemGrausFiltroCoordenadas() != null ? filtro.getMargemGrausFiltroCoordenadas() : BigDecimal.valueOf(0);
-
-            for (List<CoordenadaVo> listaCoordenadas: filtro.getFiltrosCoordenadas()) {
-                for (int i = 0; i < listaCoordenadas.size() - 1; i++) {
-                    CoordenadaVo ca = listaCoordenadas.get(i);
-                    BigDecimal caLat = ca.getLatitude();
-                    BigDecimal caLong = ca.getLongitude();
-                    CoordenadaVo cb = listaCoordenadas.get(i+1);
-                    BigDecimal cbLat = cb.getLatitude();
-                    BigDecimal cbLong = cb.getLongitude();
-                    BigDecimal xa = (cbLat.compareTo(caLat) > 0 ? caLat : cbLat).subtract(margem);
-                    BigDecimal xb = (cbLat.compareTo(caLat) > 0 ? cbLat : caLat).add(margem);
-                    BigDecimal ya = (cbLong.compareTo(caLong) > 0 ? caLong : cbLong).subtract(margem);
-                    BigDecimal yb = (cbLong.compareTo(caLong) > 0 ? cbLong : caLong).add(margem);
-
-                    condicoesOr.addParametro(new ParametroPesquisaAnd(
-                            new ParametroPesquisaEntre("latitude", xa, xb),
-                            new ParametroPesquisaEntre("longitude", ya, yb)
-                    ));
-                }
-            }
-
+            ParametroPesquisaOr condicoesOr = povoarParametroLatLongEntreCoordenadas("latitude", "longitude", filtro.getFiltrosCoordenadas(), filtro.getMargemGrausFiltroCoordenadas());
             parametros.adicionarParametros(condicoesOr);
         } else {
-            parametros.adicionarParametros(
-                    new ParametroPesquisaMaior("latitude", new BigDecimal(filtro.getLatitudeInicial())),
-                    new ParametroPesquisaMenor("latitude", new BigDecimal(filtro.getLatitudeFinal()))
-            )
-            .adicionarParametros(
-                    new ParametroPesquisaMaior("longitude", new BigDecimal(filtro.getLongitudeInicial())),
-                    new ParametroPesquisaMenor("longitude", new BigDecimal(filtro.getLongitudeFinal()))
-            );
+            parametros.adicionarParametros(povoarParametroLatLongEntreIntervalo("latitude", "longitude", filtro));
         }
-
-
         ParametroOrdenacaoColuna ordenacao = new ParametroOrdenacaoColuna("nome");
-
         return pesquisar(ordenacao, parametros.buildArray());
     }
 
