@@ -152,17 +152,11 @@ public class OraclePrecoBaseDados extends OracleOrdenacaoPrecosDados<PrecoBase> 
 
             parametros.add(condicoesOr);
         } else {
-            parametros.add(new ParametroPesquisaMaior("pontoVenda.latitude", BigDecimal.valueOf(filtro.getLatitudeInicial())));
-            parametros.add(new ParametroPesquisaMenor("pontoVenda.latitude", BigDecimal.valueOf(filtro.getLatitudeFinal())));
-
-            parametros.add(new ParametroPesquisaMaior("pontoVenda.longitude", BigDecimal.valueOf(filtro.getLongitudeInicial())));
-            parametros.add(new ParametroPesquisaMenor("pontoVenda.longitude", BigDecimal.valueOf(filtro.getLongitudeFinal())));
+            incluirParametrosDeLatLong(filtro, parametros);
         }
 
         parametros.add(new ParametroPesquisaIgual("pontoVenda.status", StatusAtivacao.ATIVO.getValue()));
-
         parametros.add(new ParametroPesquisaIgual("pontoVenda.statusHabilitacao", StatusHabilitacaoPontoVenda.HABILITADO.getValue()));
-
         parametros.add(new ParametroPesquisaIn("status", Arrays.asList(StatusAlteracaoPrecoPosto.VIGENTE.getValue(),
                 StatusAlteracaoPrecoPosto.ACEITO.getValue(),
                 StatusAlteracaoPrecoPosto.ACEITE_PENDENTE_REVENDA.getValue(),
@@ -295,11 +289,7 @@ public class OraclePrecoBaseDados extends OracleOrdenacaoPrecosDados<PrecoBase> 
     public List<PrecoBase> buscarPrecosPorFrotaLocalizacaoCombustivel(FiltroPesquisaLocalizacaoVo filtro, List<Long> idsTipoCombustivel ){
 
         List<ParametroPesquisa> parametros = new ArrayList<>();
-        parametros.add(new ParametroPesquisaMaior("pontoVenda.latitude", BigDecimal.valueOf(filtro.getLatitudeInicial())));
-        parametros.add(new ParametroPesquisaMenor("pontoVenda.latitude", BigDecimal.valueOf(filtro.getLatitudeFinal())));
-
-        parametros.add(new ParametroPesquisaMaior("pontoVenda.longitude", BigDecimal.valueOf(filtro.getLongitudeInicial())));
-        parametros.add(new ParametroPesquisaMenor("pontoVenda.longitude", BigDecimal.valueOf(filtro.getLongitudeFinal())));
+        incluirParametrosDeLatLong(filtro, parametros);
 
         parametros.add(new ParametroPesquisaIgual("pontoVenda.status", StatusAtivacao.ATIVO.getValue()));
 
@@ -319,11 +309,7 @@ public class OraclePrecoBaseDados extends OracleOrdenacaoPrecosDados<PrecoBase> 
     @Override
     public ResultadoPaginado<PrecoBase> buscarPrecosPorFrotaLocalizacaoCombustivel(FiltroPesquisaLocalizacaoVo filtro, Long idCombustivel, Integer pagina, Integer tamanho){
         List<ParametroPesquisa> parametros = new ArrayList<>();
-        parametros.add(new ParametroPesquisaMaior("pontoVenda.latitude", BigDecimal.valueOf(filtro.getLatitudeInicial())));
-        parametros.add(new ParametroPesquisaMenor("pontoVenda.latitude", BigDecimal.valueOf(filtro.getLatitudeFinal())));
-
-        parametros.add(new ParametroPesquisaMaior("pontoVenda.longitude", BigDecimal.valueOf(filtro.getLongitudeInicial())));
-        parametros.add(new ParametroPesquisaMenor("pontoVenda.longitude", BigDecimal.valueOf(filtro.getLongitudeFinal())));
+        incluirParametrosDeLatLong(filtro, parametros);
 
         parametros.add(new ParametroPesquisaIgual("pontoVenda.status", StatusAtivacao.ATIVO.getValue()));
 
@@ -365,6 +351,19 @@ public class OraclePrecoBaseDados extends OracleOrdenacaoPrecosDados<PrecoBase> 
     @Override
     protected String getPrefixoCampoPrecoBase() {
         return null;
+    }
+
+    /**
+     * Inclui informações de latitude e longitude na lista de parametros
+     *
+     * @param filtro dados com informações de Latitude e longitude
+     * @param parametros onde os dados serão incluidos
+     */
+    private void incluirParametrosDeLatLong(FiltroPesquisaLocalizacaoVo filtro, List<ParametroPesquisa> parametros) {
+        parametros.add(new ParametroPesquisaMaior("pontoVenda.latitude", BigDecimal.valueOf(filtro.getLatitudeInicial())));
+        parametros.add(new ParametroPesquisaMenor("pontoVenda.latitude", BigDecimal.valueOf(filtro.getLatitudeFinal())));
+        parametros.add(new ParametroPesquisaMaior("pontoVenda.longitude", BigDecimal.valueOf(filtro.getLongitudeInicial())));
+        parametros.add(new ParametroPesquisaMenor("pontoVenda.longitude", BigDecimal.valueOf(filtro.getLongitudeFinal())));
     }
 
 }
