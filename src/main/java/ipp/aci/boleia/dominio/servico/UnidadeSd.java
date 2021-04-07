@@ -154,7 +154,7 @@ public class UnidadeSd {
             usuarioDados.desvincularUnidades(id);
             empresaAgregadaDados.desvincularUnidades(id);
             if(motoristas != null){
-                historicoMotoristaSd.armazenarHistoricoMotoristaLista(motoristas,ambiente);
+                historicoMotoristaSd.armazenarHistoricoMotoristaAoExcluirEmpresaAgregada(motoristas,ambiente);
                 motoristas.forEach(m -> fluxoAbastecimentoSd.excluirFluxoAbastecimentoMotorista(m, ambiente.getUsuarioLogado(), ambiente.buscarDataAmbiente()));
             }
         }
