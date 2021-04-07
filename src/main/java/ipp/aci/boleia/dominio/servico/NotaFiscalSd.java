@@ -212,15 +212,13 @@ public class NotaFiscalSd {
      *
      * @param documentos lista de documentos que representam os Xmls das notas parseadas
      * @param autorizacoesPagamento a lista de abastecimentos referentes à nota fiscal.
-     * @throws ExcecaoValidacao Caso a nota seja inválida
      * @return lista de mensagens das validacoes de erro
      */
     public List<ValidacaoUploadNotaFiscalVo> validarDadosNovaNotaFiscal(List<Document> documentos, List<AutorizacaoPagamento> autorizacoesPagamento) {
-        List<Erro> errosEncontrados = new ArrayList<>();
         List<ValidacaoUploadNotaFiscalVo> validacoesNotas = new ArrayList<>();
-        validarVersaoNota(documentos, errosEncontrados, validacoesNotas);
-        validarNumeroSerieNota(documentos, errosEncontrados, validacoesNotas);
-        validarNumeroNota(documentos, errosEncontrados, validacoesNotas);
+        validarVersaoNota(documentos, validacoesNotas);
+        validarNumeroSerieNota(documentos, validacoesNotas);
+        validarNumeroNota(documentos, validacoesNotas);
         validarNotaRepetida(documentos, validacoesNotas);
         validarDadosNota(documentos, autorizacoesPagamento, validacoesNotas);
         return validacoesNotas;
@@ -229,15 +227,13 @@ public class NotaFiscalSd {
     /**
      * Verifica se o documento contém o número da nota preenchido
      * @param documentos Documento quem contém os dados da nota fiscal
-     * @param errosEncontrados Lista de erros encontrados
      * @param validacoesNotas Lista de erros das validacoes
      */
-    private void validarNumeroNota(List<Document> documentos, List<Erro> errosEncontrados, List<ValidacaoUploadNotaFiscalVo> validacoesNotas) {
+    private void validarNumeroNota(List<Document> documentos, List<ValidacaoUploadNotaFiscalVo> validacoesNotas) {
         for(Document documento : documentos) {
             String nNfe = notaFiscalParserSd.getString(documento, ConstantesNotaFiscalParser.NUMERO);
             if (nNfe == null || nNfe.isEmpty()) {
                 this.addErroValidacao(validacoesNotas, documento, Erro.NOTA_FISCAL_UPLOAD_NUMERO_OBRIGATORIO);
-                errosEncontrados.add(Erro.NOTA_FISCAL_UPLOAD_NUMERO_OBRIGATORIO);
             }
         }
     }
@@ -245,10 +241,9 @@ public class NotaFiscalSd {
     /**
      * Verifica se o documento contém o número de serie preenchido
      * @param documentos Documento quem contém os dados da nota fiscal
-     * @param errosEncontrados Lista de erros encontrados
      * @param validacoesNotas Lista de erros das validacoes
      */
-    private void validarNumeroSerieNota(List<Document> documentos, List<Erro> errosEncontrados, List<ValidacaoUploadNotaFiscalVo> validacoesNotas) {
+    private void validarNumeroSerieNota(List<Document> documentos, List<ValidacaoUploadNotaFiscalVo> validacoesNotas) {
         for (Document documento : documentos) {
             String nfSerie = notaFiscalParserSd.getString(documento, ConstantesNotaFiscalParser.SERIE);
             Erro erro = null;
@@ -260,7 +255,6 @@ public class NotaFiscalSd {
 
             if(erro != null){
                 this.addErroValidacao(validacoesNotas, documento, erro);
-                errosEncontrados.add(erro);
             }
         }
     }
@@ -584,15 +578,13 @@ public class NotaFiscalSd {
      * Verifica as versões das notas fiscais
      *
      * @param documentos documentos que representam os Xmls das notas parseadas
-     * @param errosEncontrados lista de erros encontrados na validacao
      * @param validacoesNotas Lista de erros das validacoes
      */
-    private void validarVersaoNota(List<Document> documentos, List<Erro> errosEncontrados, List<ValidacaoUploadNotaFiscalVo> validacoesNotas) {
+    private void validarVersaoNota(List<Document> documentos, List<ValidacaoUploadNotaFiscalVo> validacoesNotas) {
         for (Document documento : documentos) {
             if (notaFiscalParserSd.isHomologacao(documento) || !ValidadorCnpj.isValidCNPJ(notaFiscalParserSd.getString(documento, ConstantesNotaFiscalParser.DEST_CNPJ))
                     || !ValidadorCnpj.isValidCNPJ(notaFiscalParserSd.getString(documento, ConstantesNotaFiscalParser.EMIT_CNPJ))) {
                 this.addErroValidacao(validacoesNotas, documento, Erro.NOTA_FISCAL_UPLOAD_VERSAO_INVALIDA);
-                errosEncontrados.add(Erro.NOTA_FISCAL_UPLOAD_VERSAO_INVALIDA);
             }
         }
     }
@@ -752,7 +744,7 @@ public class NotaFiscalSd {
      * @return O CNPJ de destino correto
      */
     public Long obterCnpjDestino(AutorizacaoPagamento abastecimento) {
-        Long cnpjDestino = null;
+        Long cnpjDestino;
         Veiculo veiculo = abastecimento.getVeiculo();
         boolean veiculoPertenceUnidade = veiculo != null && veiculo.getUnidade() != null && veiculo.getUnidade().getExigeNotaFiscal() != null && veiculo.getUnidade().getExigeNotaFiscal();
         if (abastecimento.getParametroNotaFiscal() != null) {
@@ -948,9 +940,9 @@ public class NotaFiscalSd {
      * @return true caso seja válida, e false caso contrário
      */
     public Boolean verificaNotaValida(List<Document> documentos) {
-        List<Erro> errosEncontrados = new ArrayList<>();
-        validarVersaoNota(documentos, errosEncontrados, null);
-        return errosEncontrados.isEmpty();
+        List<ValidacaoUploadNotaFiscalVo> validacoesNotas = new ArrayList<>();
+        validarVersaoNota(documentos, validacoesNotas);
+        return validacoesNotas.isEmpty();
     }
 
     /**
@@ -1107,13 +1099,18 @@ public class NotaFiscalSd {
      * @return true caso a nota seja única, e false caso contrário
      */
     public Boolean validarUnicidadeNota(Document nota) {
-        try {
-            validarNotaRepetida(Collections.singletonList(nota), null);
-            return true;
-        } catch(Exception e) {
-            LOG.error(mensagens.obterMensagem("recolhanf.erro.unicidade"), e);
-            return false;
-        }
+            List<ValidacaoUploadNotaFiscalVo> validacoesNotas = new ArrayList<>();
+            validarNotaRepetida(Collections.singletonList(nota), validacoesNotas);
+            if(validacoesNotas.isEmpty()){
+                return true;
+            }else{
+                validacoesNotas.forEach(m -> {
+                    m.getMensagens().forEach(msg -> {
+                        LOG.error(mensagens.obterMensagem("recolhanf.erro.unicidade"), msg);
+                    });
+                });
+                return false;
+            }
     }
 
     /**
