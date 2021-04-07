@@ -847,9 +847,7 @@ public class NotaFiscalSd {
             valorTotalNota = valorTotalNota.setScale(2, BigDecimal.ROUND_HALF_UP);
             BigDecimal diferenca = obterValorRestanteParaSubirNota(autorizacoesPagamento, valorTotalNota, Boolean.TRUE);
             final Erro erro = validarValorRestanteParaSubir(autorizacoesPagamento, diferenca);
-            if(erro != null){
-                this.addErroValidacao(validacoesNotas, documento, erro);
-            }
+            this.addErroValidacao(validacoesNotas, documento, erro);
         } else {
             this.addErroValidacao(validacoesNotas, documento, Erro.NOTA_FISCAL_NAO_POSSUI_VALOR_TOTAL);
         }
