@@ -16,6 +16,8 @@ import java.util.Date;
 import static ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso.ATRASADO;
 import static ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso.A_DESCONTAR;
 import static ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso.EM_ABERTO;
+import static ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso.PAGO;
+import static ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso.SEM_REEMBOLSO;
 import static ipp.aci.boleia.util.UtilitarioCalculoData.obterPrimeiroInstanteDia;
 
 /**
@@ -40,14 +42,19 @@ public class ReembolsoBaseSd {
         Date dataHoraCorrente = utilitarioAmbiente.buscarDataAmbiente();
 
         if(!reembolso.isPago()) {
-            if(reembolso.getValorReembolso().compareTo(BigDecimal.ZERO) < 0) {
+            if(reembolso.getValorDescontoAntecipacao() != null && reembolso.getValorDescontoAntecipacao().equals(reembolso.getValorTotal())) {
+                statusReembolso = PAGO;
+            } else if(reembolso.getValorReembolso().compareTo(BigDecimal.ZERO) < 0) {
                 statusReembolso = A_DESCONTAR;
+            } else if (reembolso.getValorReembolso().compareTo(BigDecimal.ZERO) == 0) {
+                statusReembolso = SEM_REEMBOLSO;
             } else if(obterPrimeiroInstanteDia(reembolso.getDataVencimentoPgto()).before(obterPrimeiroInstanteDia(dataHoraCorrente))) {
                 statusReembolso = ATRASADO;
             } else {
                 statusReembolso = EM_ABERTO;
             }
         }
+
         reembolso.setStatus(statusReembolso.getValue());
         repositorioReembolsoBase.armazenar(reembolso);
     }
