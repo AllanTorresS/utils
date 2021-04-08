@@ -349,54 +349,6 @@ public class NotaFiscalSd {
     }
 
     /**
-     * Obtém os valores unitários dos combustíveis de uma nota fiscal
-     * @param nota A nota fiscal
-     * @return O valor de combustíveis
-     */
-    public List<BigDecimal> obterValorUnitarioCombustivelNota(Document nota) {
-        return calcularValoresUnitariosNota(nota).getLeft();
-    }
-
-    /**
-     * Obtém os valores unitários dos produtos de uma nota fiscal
-     * @param nota A nota fiscal
-     * @return O valor de produtos
-     */
-    public List<BigDecimal> obterValorUnitarioProdutosNota(Document nota) {
-        return calcularValoresUnitariosNota(nota).getRight();
-    }
-
-    /**
-     * Calcula os valores de combustível e produtos
-     * @param nota A nota fiscal
-     * @return Os valores calculados em formato de par (esquerda - valor de combustível / direita - valor de produtos)
-     */
-    private Pair<List<BigDecimal>, List<BigDecimal>> calcularValoresUnitariosNota(Document nota) {
-        NodeList itensNota = notaFiscalParserSd.getItens(nota);
-        List<BigDecimal> valoresCombustivel = new ArrayList<>();
-        List<BigDecimal> valoresProdutos = new ArrayList<>();
-        List<TipoCombustivel> combustiveis = tipoCombustivelDados.obterTodos(null);
-        for(int i = 0; i < itensNota.getLength(); i++) {
-            Node item = itensNota.item(i);
-            Long ncmItem = notaFiscalParserSd.getLong(nota, ConstantesNotaFiscalParser.ITEM_NCM, item);
-            BigDecimal valorUnitario = notaFiscalParserSd.getBigDecimal(nota, ConstantesNotaFiscalParser.ITEM_VALOR_UNITARIO, item).setScale(2, BigDecimal.ROUND_HALF_UP);
-            Boolean isCombustivel = combustiveis
-                    .stream()
-                    .anyMatch(
-                            comb -> comb.getCodigosNcm()
-                                    .stream()
-                                    .anyMatch(ncm -> ncm.getCodigoNcm().equals(ncmItem))
-                    );
-            if (isCombustivel) {
-                valoresCombustivel.add(valorUnitario);
-            } else {
-                valoresProdutos.add(valorUnitario);
-            }
-        }
-        return Pair.of(valoresCombustivel, valoresProdutos);
-    }
-
-    /**
      * Calcula os valores unitários de combustível e produtos
      * @param nota A nota fiscal
      * @return Os valores calculados em formato de par (esquerda - valor de combustível / direita - valor de produtos)
@@ -441,9 +393,7 @@ public class NotaFiscalSd {
     private void validarDadosNota(List<Document> documentos, List<AutorizacaoPagamento> autorizacoesPagamento, List<ValidacaoUploadNotaFiscalVo> validacoesNotas) {
         validarCNPJDestinatario(documentos, autorizacoesPagamento, validacoesNotas);
         validarCNPJEmitente(documentos, autorizacoesPagamento, validacoesNotas);
-        validarValorTotal(documentos, autorizacoesPagamento, validacoesNotas);
         validarValoresTotaisCombustivelProdutos(documentos, autorizacoesPagamento, validacoesNotas);
-        validarValoresUnitariosCombustivelProdutos(documentos, autorizacoesPagamento, validacoesNotas);
     }
 
     /**
@@ -453,97 +403,76 @@ public class NotaFiscalSd {
      * @param validacoesNotas Lista de erros das validacoes
      */
     private void validarValoresTotaisCombustivelProdutos(List<Document> documentos, List<AutorizacaoPagamento> autorizacoesPagamento, List<ValidacaoUploadNotaFiscalVo> validacoesNotas) {
-        BigDecimal valorTotalCombustivel = obterValorTotalCombustivelAutorizacoesPagamentoSelecionadas(autorizacoesPagamento).setScale(2, BigDecimal.ROUND_HALF_UP);
-        BigDecimal valorTotalProdutos = obterValorTotalProdutosAutorizacoesPagamentoSelecionadas(autorizacoesPagamento).setScale(2, BigDecimal.ROUND_HALF_UP);
+        AutorizacaoPagamento autorizacaoPagamento = UtilitarioLambda.obterPrimeiroObjetoDaLista(autorizacoesPagamento);
+        HistoricoParametroNotaFiscal parametroNf = autorizacaoPagamento.getParametroNotaFiscal();
+        BigDecimal valorCombustivelRestante = obterValorTotalCombustivelRestanteEmissaoAutorizacoesPagamentoSelecionadas(autorizacoesPagamento).setScale(2, BigDecimal.ROUND_HALF_UP);
+        BigDecimal valorProdutosRestante = obterValorTotalProdutosRestanteEmissaoAutorizacoesPagamentoSelecionadas(autorizacoesPagamento).setScale(2, BigDecimal.ROUND_HALF_UP);
         BigDecimal margemAbastecimentos = obterValorMargemTotal(autorizacoesPagamento.size()).setScale(2, BigDecimal.ROUND_HALF_UP);
 
         BigDecimal valorTotalCombustivelNota = documentos.stream().map(this::obterValorTotalCombustivelNota).filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, BigDecimal.ROUND_HALF_UP);
         BigDecimal valorTotalProdutoNota = documentos.stream().map(this::obterValorTotalProdutosNota).filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, BigDecimal.ROUND_HALF_UP);
 
-        AutorizacaoPagamento autorizacaoPagamento = UtilitarioLambda.obterPrimeiroObjetoDaLista(autorizacoesPagamento);
-        HistoricoParametroNotaFiscal parametroNf = autorizacaoPagamento != null ? autorizacaoPagamento.getParametroNotaFiscal() : null;
-
         if (parametroNf != null && parametroNf.getSepararPorCombustivelProdutoServico() != null && parametroNf.getSepararPorCombustivelProdutoServico()) {
-            if(valorTotalCombustivelNota.compareTo(BigDecimal.ZERO) > 0 && valorTotalProdutoNota.compareTo(BigDecimal.ZERO) > 0) {
-                this.addErroValidacao(validacoesNotas,null,Erro.NOTAS_FISCAIS_SEPARADAS_NAO_ENCONTRADAS);
+            Boolean algumaNotaNaoSeparada = documentos.stream().anyMatch(nota -> obterValorTotalCombustivelNota(nota) != null && obterValorTotalProdutosNota(nota) != null);
+            if (algumaNotaNaoSeparada) {
+                this.addErroValidacao(validacoesNotas, null, Erro.NOTAS_FISCAIS_SEPARADAS_NAO_ENCONTRADAS);
             }
-            if(
-                    (valorTotalCombustivel.compareTo(BigDecimal.ZERO) > 0 && valorTotalCombustivelNota.compareTo(BigDecimal.ZERO) == 0)
-                    || (valorTotalProdutos.compareTo(BigDecimal.ZERO) > 0 && valorTotalProdutoNota.compareTo(BigDecimal.ZERO) == 0)
+            if (
+                    (valorCombustivelRestante.compareTo(BigDecimal.ZERO) > 0 && valorTotalCombustivelNota.compareTo(BigDecimal.ZERO) == 0)
+                    || (valorProdutosRestante.compareTo(BigDecimal.ZERO) > 0 && valorTotalProdutoNota.compareTo(BigDecimal.ZERO) == 0)
             ) {
-                this.addErroValidacao(validacoesNotas,null,Erro.NOTA_FISCAL_COMB_OU_PROD_AUSENTE);
-            }
-
-            BigDecimal diferencaCombustivel = valorTotalCombustivelNota.subtract(valorTotalCombustivel).abs().setScale(2, BigDecimal.ROUND_HALF_UP);
-            BigDecimal diferencaProdutos = valorTotalProdutoNota.subtract(valorTotalProdutos).abs().setScale(2, BigDecimal.ROUND_HALF_UP);
-            if (diferencaCombustivel.compareTo(margemAbastecimentos) > 0 || diferencaProdutos.compareTo(margemAbastecimentos) > 0) {
-                this.addErroValidacao(validacoesNotas,null,Erro.NOTA_FISCAL_VALOR_TOTAL_DIVERGENTE);
-            }
-        } else {
-            BigDecimal diferencaAglomerada = valorTotalCombustivelNota.add(valorTotalProdutoNota).subtract(valorTotalCombustivel.add(valorTotalProdutos)).abs().setScale(2, BigDecimal.ROUND_HALF_UP);
-            if(diferencaAglomerada.compareTo(margemAbastecimentos) > 0) {
-                this.addErroValidacao(validacoesNotas,null,Erro.NOTA_FISCAL_VALOR_TOTAL_DIVERGENTE);
-            }
-        }
-    }
-
-    /**
-     * Valida os valores unitários das notas fiscais
-     * @param documentos As notas fiscais
-     * @param autorizacoesPagamento A lista de transações
-     * @param validacoesNotas Lista de erros das validacoes
-     */
-    private void validarValoresUnitariosCombustivelProdutos(List<Document> documentos, List<AutorizacaoPagamento> autorizacoesPagamento, List<ValidacaoUploadNotaFiscalVo> validacoesNotas) {
-        AutorizacaoPagamento autorizacaoPagamento = UtilitarioLambda.obterPrimeiroObjetoDaLista(autorizacoesPagamento);
-        HistoricoParametroNotaFiscal parametroNf = autorizacaoPagamento != null ? autorizacaoPagamento.getParametroNotaFiscal() : null;
-        if (parametroNf != null && parametroNf.getSepararPorCombustivelProdutoServico() != null && parametroNf.getSepararPorCombustivelProdutoServico()) {
-            List<BigDecimal> valoresUnitariosCombustivelNotas = documentos.stream().map(this::obterValorUnitarioCombustivelNota).flatMap(List::stream).sorted().collect(Collectors.toList());
-            List<BigDecimal> valoresUnitariosProdutosNotas = documentos.stream().map(this::obterValorUnitarioProdutosNota).flatMap(List::stream).sorted().collect(Collectors.toList());
-
-            List<BigDecimal> valoresUnitariosCombustivelAbastecimento = autorizacoesPagamento.stream().map(AutorizacaoPagamento::getValorUnitarioAbastecimento).sorted().collect(Collectors.toList());
-            List<BigDecimal> valoresUnitariosProdutosAbastecimento = autorizacoesPagamento.stream().map(AutorizacaoPagamento::getValoresUnitariosServicos).flatMap(List::stream).sorted().collect(Collectors.toList());
-
-            if(valoresUnitariosCombustivelNotas.size() != valoresUnitariosCombustivelAbastecimento.size() || valoresUnitariosProdutosAbastecimento.size() != valoresUnitariosProdutosNotas.size()) {
                 this.addErroValidacao(validacoesNotas, null, Erro.NOTA_FISCAL_COMB_OU_PROD_AUSENTE);
+            }
+        }
+
+        BigDecimal diferencaCombustivel = valorTotalCombustivelNota.subtract(valorCombustivelRestante).abs().setScale(2, BigDecimal.ROUND_HALF_UP);
+        BigDecimal diferencaProdutos = valorTotalProdutoNota.subtract(valorProdutosRestante).abs().setScale(2, BigDecimal.ROUND_HALF_UP);
+        if ((diferencaCombustivel.compareTo(margemAbastecimentos) > 0)) {
+            if (valorTotalCombustivelNota.compareTo(valorCombustivelRestante) > 0) {
+                this.addErroValidacao(validacoesNotas, null, Erro.NOTA_FISCAL_VALOR_COMB_EXCEDENTE);
             } else {
-                for (int i = 0; i < valoresUnitariosCombustivelAbastecimento.size(); i++) {
-                    if(valoresUnitariosCombustivelAbastecimento.get(i).compareTo(valoresUnitariosCombustivelNotas.get(i)) != 0) {
-                        this.addErroValidacao(validacoesNotas, null, Erro.NOTA_FISCAL_VALOR_UNIT_DIVERGENTE);
-                    }
-                }
-                for (int i = 0; i < valoresUnitariosProdutosAbastecimento.size(); i++) {
-                    if(valoresUnitariosProdutosAbastecimento.get(i).compareTo(valoresUnitariosProdutosNotas.get(i)) != 0) {
-                        this.addErroValidacao(validacoesNotas, null, Erro.NOTA_FISCAL_VALOR_UNIT_DIVERGENTE);
-                    }
-                }
+                BigDecimal valorFaltante = valorCombustivelRestante.subtract(valorTotalCombustivelNota);
+                this.addErroValidacao(validacoesNotas, null, Erro.NOTA_FISCAL_VALOR_COMB_FALTANTE, valorFaltante);
+            }
+        }
+        if ((diferencaProdutos.compareTo(margemAbastecimentos) > 0)) {
+            if (valorTotalProdutoNota.compareTo(valorProdutosRestante) > 0) {
+                this.addErroValidacao(validacoesNotas,null,Erro.NOTA_FISCAL_VALOR_PROD_EXCEDENTE);
+            } else {
+                BigDecimal valorFaltante = valorProdutosRestante.subtract(valorTotalProdutoNota);
+                this.addErroValidacao(validacoesNotas,null,Erro.NOTA_FISCAL_VALOR_PROD_FALTANTE, valorFaltante);
             }
         }
     }
 
     /**
-     * Calcula o valor total em combustível nos abastecimentos selecionados
+     * Calcula o valor restante para emissão em combustível nos abastecimentos selecionados
      * @param autorizacoesPagamento Os abastecimentos selecionados
-     * @return O valor total calculado
+     * @return O valor restante calculado
      */
-    private BigDecimal obterValorTotalCombustivelAutorizacoesPagamentoSelecionadas(List<AutorizacaoPagamento> autorizacoesPagamento) {
+    private BigDecimal obterValorTotalCombustivelRestanteEmissaoAutorizacoesPagamentoSelecionadas(List<AutorizacaoPagamento> autorizacoesPagamento) {
         List<AutorizacaoPagamento> abastecimentosComCombustivel = autorizacoesPagamento
                 .stream()
                 .filter(autorizacaoPagamento -> autorizacaoPagamento.obtemValorTotalAbastecimento() != null)
                 .collect(Collectors.toList());
-        return UtilitarioCalculo.somarValoresLista(abastecimentosComCombustivel, AutorizacaoPagamento::obtemValorTotalAbastecimento);
+        BigDecimal valorTotalCombustivel = UtilitarioCalculo.somarValoresLista(abastecimentosComCombustivel, AutorizacaoPagamento::obtemValorTotalAbastecimento);
+        BigDecimal valorEmitidoCombustivel = UtilitarioCalculo.somarValoresLista(abastecimentosComCombustivel, AutorizacaoPagamento::obtemValorEmitidoCombustivel);
+        return valorTotalCombustivel.subtract(valorEmitidoCombustivel);
     }
 
     /**
-     * Calcula o valor total em produtos/serviços nos abastecimentos selecionados
+     * Calcula o valor restante para emissão em produtos/serviços nos abastecimentos selecionados
      * @param autorizacoesPagamento Os abastecimentos selecionados
-     * @return O valor total calculado
+     * @return O valor restante calculado
      */
-    private BigDecimal obterValorTotalProdutosAutorizacoesPagamentoSelecionadas(List<AutorizacaoPagamento> autorizacoesPagamento) {
+    private BigDecimal obterValorTotalProdutosRestanteEmissaoAutorizacoesPagamentoSelecionadas(List<AutorizacaoPagamento> autorizacoesPagamento) {
         List<AutorizacaoPagamento> abastecimentosComProduto = autorizacoesPagamento
                 .stream()
                 .filter(autorizacaoPagamento -> autorizacaoPagamento.obtemValorTotalProdutoServico() != null)
                 .collect(Collectors.toList());
-        return UtilitarioCalculo.somarValoresLista(abastecimentosComProduto, AutorizacaoPagamento::obtemValorTotalProdutoServico);
+        BigDecimal valorTotalProduto = UtilitarioCalculo.somarValoresLista(abastecimentosComProduto, AutorizacaoPagamento::obtemValorTotalProdutoServico);
+        BigDecimal valorEmitidoProduto = UtilitarioCalculo.somarValoresLista(abastecimentosComProduto, AutorizacaoPagamento::obtemValorEmitidoProdutoServico);
+        return valorTotalProduto.subtract(valorEmitidoProduto);
     }
 
     /**
@@ -580,29 +509,49 @@ public class NotaFiscalSd {
         }
     }
 
+
     /**
      * Adiciona o erro da validacao na lista de validacoes
      * @param validacoesNotas lista de validacoes
      * @param documento nota.xml
      * @param erro erro da validacao
+     * @param valorFaltanteNota O valor que falta para emissão completa de combustível ou produto
      */
-    private void addErroValidacao(List<ValidacaoUploadNotaFiscalVo> validacoesNotas, Document documento, Erro erro){
+    private void addErroValidacao(List<ValidacaoUploadNotaFiscalVo> validacoesNotas, Document documento, Erro erro) {
+        addErroValidacao(validacoesNotas, documento, erro, null);
+    }
+
+
+    /**
+     * Adiciona o erro da validacao na lista de validacoes
+     * @param validacoesNotas lista de validacoes
+     * @param documento nota.xml
+     * @param erro erro da validacao
+     * @param valorFaltanteNota O valor que falta para emissão completa de combustível ou produto
+     */
+    private void addErroValidacao(List<ValidacaoUploadNotaFiscalVo> validacoesNotas, Document documento, Erro erro, BigDecimal valorFaltanteEmissao){
         if(validacoesNotas == null || erro == null){
             return;
         }
 
         String numeroNfe = "";
         String valorTotal = "";
+        String mensagem = "";
         if(documento != null){
-            numeroNfe = ConstantesNotaFiscal.NOTA_FISCAL_PREFIX + notaFiscalParserSd.getString(documento, ConstantesNotaFiscalParser.NUMERO);
+            numeroNfe = ConstantesNotaFiscal.NOTA_FISCAL_PREFIX + notaFiscalParserSd.getString(documento, ConstantesNotaFiscalParser.NUMERO) + "-" + notaFiscalParserSd.getString(documento, ConstantesNotaFiscalParser.SERIE);
             valorTotal = UtilitarioFormatacao.formatarDecimalMoedaReal(notaFiscalParserSd.getBigDecimal(documento, ConstantesNotaFiscalParser.VALOR_TOTAL));
         }
-        final String mensagem = mensagens.obterMensagem(erro.getChaveMensagem());
+        if(valorFaltanteEmissao != null) {
+            mensagem = mensagens.obterMensagem(erro.getChaveMensagem(), UtilitarioFormatacao.formatarDecimalMoedaReal(valorFaltanteEmissao));
+        } else {
+            mensagem = mensagens.obterMensagem(erro.getChaveMensagem());
+        }
         final String finalNumeroNfe = numeroNfe;
         Optional<ValidacaoUploadNotaFiscalVo> validacaoNFOptional = validacoesNotas.stream().filter(v -> finalNumeroNfe.equals(v.getNumero())).findFirst();
 
         if(validacaoNFOptional.isPresent()){
             if(!validacaoNFOptional.get().getMensagens().contains(mensagem)){
+                validacaoNFOptional.get().setErroValidacao(erro);
                 validacaoNFOptional.get().getMensagens().add(mensagem);
             }
         }else{
@@ -612,6 +561,7 @@ public class NotaFiscalSd {
             validacaoNF.setNumero(finalNumeroNfe);
             validacaoNF.setMensagens(listaMensagens);
             validacaoNF.setValorTotal(valorTotal);
+            validacaoNF.setErroValidacao(erro);
             validacoesNotas.add(validacaoNF);
         }
     }
