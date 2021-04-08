@@ -35,7 +35,9 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMenorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMultiJoin;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
+import ipp.aci.boleia.dominio.vo.CoordenadaVo;
 import ipp.aci.boleia.dominio.vo.EntidadeVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaLocalizacaoVo;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
@@ -1681,6 +1683,59 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
             parametros.add(new ParametroPesquisaNulo(nomeCampo, notNull));
         }
     }
+
+    /**
+     * Cria parametro para pesquisa entre intevalo de latitute e longitude em relação a varias coordenadas/pontos
+     *
+     * @param momeCampoLat nome da propriedade que representa latitude
+     * @param nomeCampoLong nome da propriedade que representa longitude
+     * @param conjutoDeCordenadas conjunto de coordenada/pontos
+     * @param margemGrausFiltroCoordenadas margem de tolerancia em graus do raio de interseção
+     * @return parametro representando a busca entre as coordedandas parametrizadas
+     */
+    protected ParametroPesquisaOr povoarParametroLatLongEntreCoordenadas(String momeCampoLat, String nomeCampoLong, List<List<CoordenadaVo>> conjutoDeCordenadas, BigDecimal margemGrausFiltroCoordenadas) {
+        ParametroPesquisaOr condicoesOr = new ParametroPesquisaOr();
+        BigDecimal margem = margemGrausFiltroCoordenadas != null ? margemGrausFiltroCoordenadas : BigDecimal.ZERO;
+        for (List<CoordenadaVo> listaCoordenadas : conjutoDeCordenadas) {
+            for (int i = 0; i < listaCoordenadas.size() - 1; i++) {
+                CoordenadaVo ca = listaCoordenadas.get(i);
+                BigDecimal caLat = ca.getLatitude();
+                BigDecimal caLong = ca.getLongitude();
+                CoordenadaVo cb = listaCoordenadas.get(i + 1);
+                BigDecimal cbLat = cb.getLatitude();
+                BigDecimal cbLong = cb.getLongitude();
+                BigDecimal xa = (cbLat.compareTo(caLat) > 0 ? caLat : cbLat).subtract(margem);
+                BigDecimal xb = (cbLat.compareTo(caLat) > 0 ? cbLat : caLat).add(margem);
+                BigDecimal ya = (cbLong.compareTo(caLong) > 0 ? caLong : cbLong).subtract(margem);
+                BigDecimal yb = (cbLong.compareTo(caLong) > 0 ? cbLong : caLong).add(margem);
+
+                condicoesOr.addParametro(new ParametroPesquisaAnd(
+                        new ParametroPesquisaEntre(momeCampoLat, xa, xb),
+                        new ParametroPesquisaEntre(nomeCampoLong, ya, yb)
+                ));
+            }
+        }
+        return condicoesOr;
+    }
+
+
+    /**
+     * Cria parametros para pesquisa entre intevalo de latitute e longitude
+     *
+     * @param momeCampoLat nome da propriedade que representa latitude
+     * @param nomeCampoLong nome da propriedade que representa longitude
+     * @param filtro com dados de lat long parametrizados
+     * @return conjunto dos parametros repesentando a busca
+     */
+    protected ParametroPesquisa[] povoarParametroLatLongEntreIntervalo(String momeCampoLat, String nomeCampoLong, FiltroPesquisaLocalizacaoVo filtro) {
+        return new ParametroPesquisa[] {
+            new ParametroPesquisaMaior(momeCampoLat, BigDecimal.valueOf(filtro.getLatitudeInicial())),
+            new ParametroPesquisaMenor(momeCampoLat, BigDecimal.valueOf(filtro.getLatitudeFinal())),
+            new ParametroPesquisaMaior(nomeCampoLong, BigDecimal.valueOf(filtro.getLongitudeInicial())),
+            new ParametroPesquisaMenor(nomeCampoLong, BigDecimal.valueOf(filtro.getLongitudeFinal()))
+        };
+    }
+
 
     /**
      * Extrai o id de uma entidade contida em um filtro de pesquisa
