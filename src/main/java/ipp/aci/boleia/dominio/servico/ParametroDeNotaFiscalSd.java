@@ -60,6 +60,6 @@ public class ParametroDeNotaFiscalSd {
         dataLimite.add(Calendar.DATE,QUANTIDADE_DIAS_PARA_EXIBIR_ALERTA_NOVO_PARAMETRO);
         final LocalDate prazo = dataLimite.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         final LocalDate vigenciaNF = notaFiscal.getDataVigencia().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        return vigenciaNF.isEqual(prazo) || vigenciaNF.isAfter(prazo);
+        return vigenciaNF.isAfter(prazo);
     }
 }
