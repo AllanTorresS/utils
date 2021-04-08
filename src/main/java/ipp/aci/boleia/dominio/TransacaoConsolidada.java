@@ -40,6 +40,7 @@ import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -741,5 +742,13 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
             return antecipacoes.stream().anyMatch(antecipacao -> StatusIntegracaoReembolsoJde.ERRO_ENVIO.getValue().equals(antecipacao.getStatusIntegracao()));
         }
         return false;
+    }
+
+    @Transient
+    public ReembolsoAntecipado getUltimaAntecipacao() {
+        if(antecipacoes != null) {
+            return antecipacoes.stream().sorted(Comparator.comparing(ReembolsoAntecipado::getDataAntecipacao).reversed()).findFirst().orElse(null);
+        }
+        return null;
     }
 }

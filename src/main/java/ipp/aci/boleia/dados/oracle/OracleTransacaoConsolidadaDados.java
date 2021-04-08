@@ -573,7 +573,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "%s " +
                     "ORDER BY TC.dataFimPeriodo";
 
-    private static final String CLAUSULA_STATUS_INTEGRACAO_REEMBOLSO = " AND (r.statusIntegracao in :statusIntegracao OR (r.statusIntegracao IS NULL AND a.valorReembolso IS NOT NULL AND " + ANTECIPADO.getValue() + " in :statusIntegracao)) ";
+    private static final String CLAUSULA_STATUS_INTEGRACAO_REEMBOLSO = " AND (r.statusIntegracao in :statusIntegracao OR (r.statusIntegracao IS NULL AND a.valorReembolso IS NOT NULL AND " + ANTECIPADO.getValue() + " in :statusIntegracao) " +
+                " OR (r.statusIntegracao IS NULL AND a.valorReembolso IS NULL AND at.valorReembolso IS NOT NULL AND " + StatusIntegracaoReembolsoJde.ERRO_ENVIO.getValue() + " in :statusIntegracao)) "  ;
 
     private static final String CLAUSULA_STATUS_NOTA_FISCAL = " AND (tc.statusNotaFiscal in :statusNf) ";
 
@@ -586,6 +587,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             "LEFT JOIN tc.frotaPtov fpv " +
             "LEFT JOIN tc.reembolso r " +
             "LEFT JOIN tc.antecipacoes a WITH a.statusIntegracao = " + StatusIntegracaoReembolsoJde.REALIZADO.getValue() + " " +
+            "LEFT JOIN tc.antecipacoes at " +
             "WHERE " +
             "(tc.dataInicioPeriodo >= :dataInicioPeriodo AND tc.dataFimPeriodo <= :dataFimPeriodo) " +
             "AND (fpv.pontoVenda.id  = :idPv OR :idPv is null) " +
@@ -600,7 +602,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             "AND (tc.empresaAgregada.id = :idEmpresaAgregada OR :idEmpresaAgregada is null) ";
 
     private static final String CONSULTA_CONSOLIDADOS_GRID_REEMBOLSO_SOLUCAO =
-            "SELECT tc " +
+            "SELECT DISTINCT tc " +
                     CONSULTA_COMUM_CONSOLIDADOS_GRID_REEMBOLSO +
                     "ORDER BY %s ";
 
