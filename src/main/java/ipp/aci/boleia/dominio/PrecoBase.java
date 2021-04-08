@@ -96,6 +96,9 @@ public class PrecoBase implements IPersistente, IPertenceRevendedor {
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataFimVigencia;
 
+    @Column(name = "ID_INVALIDO")
+    private Boolean invalido;
+
     @Override
     public Long getId() {
         return id;
@@ -164,13 +167,22 @@ public class PrecoBase implements IPersistente, IPertenceRevendedor {
         this.preco = preco;
     }
 
-    public Date getDataAgendamento() { return dataAgendamento; }
+    public Date     getDataAgendamento() { return dataAgendamento; }
 
     public void setDataAgendamento(Date dataAgendamento) { this.dataAgendamento = dataAgendamento; }
 
     public Date getDataFimVigencia() { return dataFimVigencia; }
 
     public void setDataFimVigencia(Date dataFimVigencia) { this.dataFimVigencia = dataFimVigencia; }
+
+    public Boolean getInvalido() {
+        return invalido != null ? invalido : false;
+    }
+
+    public void setInvalido(Boolean invalido) {
+        this.invalido = invalido;
+    }
+
 
     /**
      * Metodo para tirar o preco de vigencia

@@ -98,6 +98,7 @@ public final class ChavePermissao {
     public static final String PRECO_BASE_EXPORTAR                          = SPRING_ROLE_PREFIX + "PRECO_BASE_EXPORTAR" + SPRING_ROLE_SUFFIX;
     public static final String PRECO_BASE_INCLUIR                           = SPRING_ROLE_PREFIX + "PRECO_BASE_INCLUIR" + SPRING_ROLE_SUFFIX;
     public static final String PRECO_BASE_INCLUIR_EM_LOTES                  = SPRING_ROLE_PREFIX + "PRECO_BASE_INCLUIR_EM_LOTES" + SPRING_ROLE_SUFFIX;
+    public static final String PRECO_BASE_EXCLUIR                           = SPRING_ROLE_PREFIX + "PRECO_BASE_EXCLUIR" + SPRING_ROLE_SUFFIX;
     public static final String ABASTECIMENTO_CONSULTAR_E_VISUALIZAR         = SPRING_ROLE_PREFIX + "ABASTECIMENTO_CONSULTAR_E_VISUALIZAR" + SPRING_ROLE_SUFFIX;
     public static final String ABASTECIMENTO_AUTORIZAR                      = SPRING_ROLE_PREFIX + "ABASTECIMENTO_AUTORIZAR" + SPRING_ROLE_SUFFIX;
     public static final String ABASTECIMENTO_APROVAR_REPROVAR               = SPRING_ROLE_PREFIX + "ABASTECIMENTO_APROVAR_REPROVAR" + SPRING_ROLE_SUFFIX;
