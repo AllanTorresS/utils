@@ -1824,6 +1824,31 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     }
 
     /**
+     * Calcula e retorna o Valor Emitido de combustível
+     * @return valor calculado
+     */
+    @Transient
+    public BigDecimal obtemValorEmitidoCombustivel() {
+        return this.getNotasFiscais().stream()
+                .filter(nota -> nota.getValorCombustivel() != null)
+                .map(NotaFiscal::getValorCombustivel)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    /**
+     * Calcula e retorna o Valor Emitido do Produto Serviço
+     * @return valor calculado
+     */
+    @Transient
+    public BigDecimal obtemValorEmitidoProdutoServico() {
+        return this.getNotasFiscais().stream()
+                .filter(nota -> nota.getValorProdutosServicos() != null)
+                .map(NotaFiscal::getValorProdutosServicos)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+
+    /**
      * Calcula e retorna o Valor Total do abastecimento
      * @return valor calculado
      */
@@ -1843,5 +1868,23 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
             return valorTotal;
         }
         return null;
+    }
+
+    /**
+     * Verifica se um abastecimento possui emissão de combustível
+     * @return True caso possua emissão, false caso contrário
+     */
+    @Transient
+    public Boolean possuiEmissaoCombustivel() {
+        return this.notasFiscais.stream().anyMatch(nota -> nota.getValorCombustivel() != null);
+    }
+
+    /**
+     * Verifica se um abastecimento possui emissão de produtos
+     * @return True caso possua emissão, false caso contrário
+     */
+    @Transient
+    public Boolean possuiEmissaoProdutos() {
+        return this.notasFiscais.stream().anyMatch(nota -> nota.getValorProdutosServicos() != null);
     }
 }
