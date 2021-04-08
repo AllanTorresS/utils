@@ -57,8 +57,6 @@ public abstract class ReembolsoBase implements IPersistente, IPertenceRevendedor
 
     public abstract void setValorReembolso(BigDecimal valorReembolso);
 
-    public abstract BigDecimal getValorDescontoVoucher();
-
     public abstract List<PontoDeVenda> getPontosDeVenda();
 
     public abstract Integer getStatusLiberacaoPagamento();
@@ -153,6 +151,13 @@ public abstract class ReembolsoBase implements IPersistente, IPertenceRevendedor
     public abstract boolean estaAprovadoParaPagamento();
 
     /**
+     * Retorna o valor bruto total utilizado na criação do voucher.
+     *
+     * @return valor bruto do voucher.
+     */
+    public abstract BigDecimal getValorBrutoVoucher();
+
+    /**
      * Informa se o reembolso já foi pago.
      *
      * @return True, caso esteja pago.
@@ -160,11 +165,6 @@ public abstract class ReembolsoBase implements IPersistente, IPertenceRevendedor
     @Transient
     public boolean isPago() {
         return StatusPagamentoReembolso.PAGO.getValue().equals(status);
-    }
-
-    @Transient
-    public BigDecimal getValorLiquidoVoucher() {
-        return getValorTotal().subtract(getValorDescontoVoucher());
     }
 
     @Transient

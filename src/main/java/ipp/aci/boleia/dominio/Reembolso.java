@@ -103,15 +103,6 @@ public class Reembolso extends ReembolsoBase {
         this.valorDesconto = valorDesconto;
     }
 
-    @Override
-    public BigDecimal getValorDescontoVoucher() {
-        BigDecimal valorDesconto = getValorDesconto();
-        if(getValorDescontoAntecipacao() != null) {
-            valorDesconto = valorDesconto.add(getValorDescontoAntecipacao());
-        }
-        return valorDesconto;
-    }
-
     public Long getVersao() {
         return versao;
     }
@@ -194,4 +185,12 @@ public class Reembolso extends ReembolsoBase {
         return StatusLiberacaoReembolsoJde.APROVADO_PAGAMENTO.getValue() == statusLiberacaoPagamento;
     }
 
+    @Transient
+    @Override
+    public BigDecimal getValorBrutoVoucher() {
+        if(getValorDescontoAntecipacao() != null) {
+            return getValorTotal().subtract(getValorDescontoAntecipacao());
+        }
+        return getValorTotal();
+    }
 }

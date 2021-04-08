@@ -114,11 +114,6 @@ public class ReembolsoAntecipado extends ReembolsoBase {
         this.dataAntecipacao = dataAntecipacao;
     }
 
-    @Override
-    public BigDecimal getValorDescontoVoucher() {
-        return getValorDesconto();
-    }
-
     public TransacaoConsolidada getTransacaoConsolidada() {
         return transacaoConsolidada;
     }
@@ -162,5 +157,10 @@ public class ReembolsoAntecipado extends ReembolsoBase {
     @Transient
     public boolean estaAprovadoParaPagamento() {
         return true;
+    }
+
+    @Override
+    public BigDecimal getValorBrutoVoucher() {
+        return getValorTotal();
     }
 }
