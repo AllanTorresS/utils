@@ -1,5 +1,6 @@
 package ipp.aci.boleia.dominio;
 
+import ipp.aci.boleia.dominio.interfaces.IParametroNotaFiscalUf;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -24,7 +25,7 @@ import org.hibernate.envers.Audited;
 @Audited
 @Entity
 @Table(name = "PARAMETRO_NF_UF", uniqueConstraints={@UniqueConstraint(columnNames = {"CD_PARAMETRO_NF" , "SG_UF"})})
-public class ParametroNotaFiscalUf implements IPersistente {
+public class ParametroNotaFiscalUf implements IPersistente, IParametroNotaFiscalUf {
     
     @Id
     @Column(name = "CD_PARAMETRO_NF_UF")
@@ -68,6 +69,7 @@ public class ParametroNotaFiscalUf implements IPersistente {
         this.parametroNotaFiscal = parametroNotaFiscal;
     }
 
+    @Override
     public String getUf() {
         return uf;
     }

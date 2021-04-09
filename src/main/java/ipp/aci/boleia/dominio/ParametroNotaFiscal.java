@@ -164,6 +164,7 @@ public class ParametroNotaFiscal implements IPersistente, IParametroNotaFiscal {
         this.parametroNotaFiscalUfs = parametroNotaFiscalUfs;
     }
 
+    @Override
     public Date getDataVigencia() {
         return dataVigencia;
     }

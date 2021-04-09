@@ -202,7 +202,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
             " FROM AutorizacaoPagamento a" +
             " LEFT JOIN a.notasFiscais nfs" +
             " LEFT JOIN FETCH a.parametroNotaFiscal pnf" +
-            " LEFT JOIN FETCH pnf.parametroNotaFiscalUf pnfu" +
+            " LEFT JOIN FETCH pnf.parametroNotaFiscalUfs pnfu" +
             " LEFT JOIN FETCH pnf.unidadeLocalDestinoPadrao uldp" +
             " LEFT JOIN FETCH pnfu.unidadeLocalDestino uld" +
             " WHERE a.status = " + StatusAutorizacao.AUTORIZADO.getValue() +
@@ -229,7 +229,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                     " FROM AutorizacaoPagamento a" +
                     " LEFT JOIN a.notasFiscais nfs" +
                     " LEFT JOIN FETCH a.parametroNotaFiscal pnf" +
-                    " LEFT JOIN FETCH pnf.parametroNotaFiscalUf pnfu" +
+                    " LEFT JOIN FETCH pnf.parametroNotaFiscalUfs pnfu" +
                     " LEFT JOIN FETCH pnf.unidadeLocalDestinoPadrao uldp" +
                     " LEFT JOIN FETCH pnfu.unidadeLocalDestino uld" +
                     " WHERE a.status = " + StatusAutorizacao.AUTORIZADO.getValue() +
@@ -255,7 +255,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                     " FROM AutorizacaoPagamento a" +
                     " LEFT JOIN a.notasFiscais nfs" +
                     " LEFT JOIN FETCH a.parametroNotaFiscal pnf" +
-                    " LEFT JOIN FETCH pnf.parametroNotaFiscalUf pnfu" +
+                    " LEFT JOIN FETCH pnf.parametroNotaFiscalUfs pnfu" +
                     " LEFT JOIN FETCH pnf.unidadeLocalDestinoPadrao uldp" +
                     " LEFT JOIN FETCH pnfu.unidadeLocalDestino uld" +
                     " WHERE a.status = " + StatusAutorizacao.AUTORIZADO.getValue() +

@@ -64,7 +64,7 @@ public class HistoricoParametroNotaFiscal implements IPersistente, IParametroNot
     private Unidade unidadeLocalDestinoPadrao;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy= "parametroNotaFiscal", orphanRemoval = true)
-    private List<HistoricoParametroNotaFiscalUf> parametroNotaFiscalUf;
+    private List<HistoricoParametroNotaFiscalUf> parametroNotaFiscalUfs;
 
     @Column(name = "DT_VIGENCIA")
     @Temporal(TemporalType.TIMESTAMP)
@@ -146,12 +146,12 @@ public class HistoricoParametroNotaFiscal implements IPersistente, IParametroNot
         this.unidadeLocalDestinoPadrao = unidadeLocalDestinoPadrao;
     }
 
-    public List<HistoricoParametroNotaFiscalUf> getParametroNotaFiscalUf() {
-        return parametroNotaFiscalUf;
+    public List<HistoricoParametroNotaFiscalUf> getParametroNotaFiscalUfs() {
+        return parametroNotaFiscalUfs;
     }
 
-    public void setParametroNotaFiscalUf(List<HistoricoParametroNotaFiscalUf> parametroNotaFiscalUf) {
-        this.parametroNotaFiscalUf = parametroNotaFiscalUf;
+    public void setParametroNotaFiscalUfs(List<HistoricoParametroNotaFiscalUf> parametroNotaFiscalUfs) {
+        this.parametroNotaFiscalUfs = parametroNotaFiscalUfs;
     }
 
     @Transient
@@ -168,6 +168,7 @@ public class HistoricoParametroNotaFiscal implements IPersistente, IParametroNot
                 && nfTipoAgrupamento == null && this.dadosAdicionais == null && this.unidadeLocalDestinoPadrao == null;
     }
 
+    @Override
     public Date getDataVigencia() {
         return dataVigencia;
     }
