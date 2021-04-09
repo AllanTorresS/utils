@@ -497,6 +497,11 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     @JoinColumn(name = "CD_HISTORICO_PARAM_NF")
     private HistoricoParametroNotaFiscal parametroNotaFiscal;
 
+    @NotAudited
+    @Column(name = "DT_ATUALIZACAO")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataAtualizacao;
+
     @Transient
     private TipoErroAutorizacaoPagamento tipoErroAutorizacaoPagamento;
 
@@ -660,6 +665,14 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
 
     public void setDataRequisicao(Date dataRequisicao) {
         this.dataRequisicao = dataRequisicao;
+    }
+
+    public Date getDataAtualizacao() {
+        return dataAtualizacao;
+    }
+
+    public void setDataAtualizacao(Date dataAtualizacao) {
+        this.dataAtualizacao = dataAtualizacao;
     }
 
     public Long getCnpjFrota() {
@@ -1702,8 +1715,16 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     @JsonIgnore
     public BigDecimal obterConsumo() {
         final BigDecimal diferencaHodometroHorimetro = obterDiferencaHodometroHorimetro();
-        return diferencaHodometroHorimetro == null || totalLitrosAbastecimento == null ? null :
-            diferencaHodometroHorimetro.divide(totalLitrosAbastecimento, 3, BigDecimal.ROUND_HALF_UP);
+        boolean usaHodometro = hodometro != null;
+        if (diferencaHodometroHorimetro != null && totalLitrosAbastecimento != null) {
+            if (usaHodometro && totalLitrosAbastecimento.compareTo(BigDecimal.ZERO) > 0) {
+                return diferencaHodometroHorimetro.divide(totalLitrosAbastecimento, 3, BigDecimal.ROUND_HALF_UP);
+            } else if (!usaHodometro && diferencaHodometroHorimetro.compareTo(BigDecimal.ZERO) > 0) {
+                return totalLitrosAbastecimento.divide(diferencaHodometroHorimetro, 3, BigDecimal.ROUND_HALF_UP);
+            }
+        }
+
+        return null;
     }
 
     /**

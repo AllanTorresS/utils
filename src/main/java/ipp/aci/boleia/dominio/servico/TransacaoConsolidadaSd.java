@@ -49,6 +49,7 @@ import ipp.aci.boleia.util.excecao.ExcecaoValidacao;
 import ipp.aci.boleia.util.i18n.Mensagens;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import ipp.aci.boleia.util.seguranca.UtilitarioCriptografia;
+import ipp.aci.boleia.util.seguranca.UtilitarioIsolamentoInformacoes;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -433,8 +434,9 @@ public class TransacaoConsolidadaSd {
         VolumeRealizadoVo vo = new VolumeRealizadoVo();
         BigDecimal volume = BigDecimal.ZERO;
         Set<TransacaoConsolidada> consolidados = new HashSet<>();
+        boolean isolamento = !UtilitarioIsolamentoInformacoes.isUsuarioInternoAssessorOuCoordenador(utilitarioAmbiente.getUsuarioLogado());
 
-        List<TransacaoConsolidadaDetalhe> detalhes = repositorioDetalhe.obterDetalhesTransacaoPorFrotaPvCombustivel(idFrota, idPv, idTipoCombustivel, utilitarioAmbiente.buscarDataAmbiente());
+        List<TransacaoConsolidadaDetalhe> detalhes = repositorioDetalhe.obterDetalhesTransacaoPorFrotaPvCombustivel(idFrota, idPv, idTipoCombustivel, utilitarioAmbiente.buscarDataAmbiente(), isolamento);
         if (!detalhes.isEmpty()) {
             for (TransacaoConsolidadaDetalhe detalhe : detalhes) {
                 volume = volume.add(detalhe.getQuantidade());
