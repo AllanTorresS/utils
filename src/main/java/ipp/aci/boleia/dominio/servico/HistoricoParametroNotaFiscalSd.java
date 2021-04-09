@@ -43,7 +43,7 @@ public class HistoricoParametroNotaFiscalSd {
             historicoParametroNotaFiscal.setSepararPorCombustivelProdutoServico(parametroNotaFiscal.getSepararPorCombustivelProdutoServico());
             historicoParametroNotaFiscal.setDadosAdicionais(parametroNotaFiscal.getDadosAdicionais());
             historicoParametroNotaFiscal.setUnidadeLocalDestinoPadrao(parametroNotaFiscal.getUnidadeLocalDestinoPadrao());
-            historicoParametroNotaFiscal.setParametroNotaFiscalUf(
+            historicoParametroNotaFiscal.setParametroNotaFiscalUfs(
                     parametroNotaFiscal.getParametroNotaFiscalUfs()
                             .stream()
                             .map(uf -> {

@@ -3,6 +3,7 @@ package ipp.aci.boleia.dominio.interfaces;
 import ipp.aci.boleia.dominio.Unidade;
 
 import java.util.Date;
+import java.util.List;
 
 public interface IParametroNotaFiscal {
 
@@ -30,6 +31,8 @@ public interface IParametroNotaFiscal {
 
     void setUnidadeLocalDestinoPadrao(Unidade unidadeLocalDestinoPadrao);
 
+    List<? extends IParametroNotaFiscalUf> getParametroNotaFiscalUfs();
+
     Date getDataVigencia();
 
     /**
@@ -43,5 +46,4 @@ public interface IParametroNotaFiscal {
      * @return true se positivo
      */
     boolean isParametroDeFrotaUnidadesSemExigenciaNotaFiscal();
-
 }

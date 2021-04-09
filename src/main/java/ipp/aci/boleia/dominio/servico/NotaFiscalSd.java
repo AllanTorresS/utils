@@ -686,7 +686,7 @@ public class NotaFiscalSd {
             HistoricoParametroNotaFiscal parametroNf = abastecimento.getParametroNotaFiscal();
             if (parametroNf != null && LocalDestinoPadroNfe.ABASTECIMENTO.getValue().equals(parametroNf.getLocalDestino()) && abastecimento.getUnidade() != null && abastecimento.unidadeExigeNf()) {
                 String uf = abastecimento.getPontoVenda().getUf();
-                Optional<Long> cnpjUnidadeLocalDestinoPadrao = parametroNf.getParametroNotaFiscalUf()
+                Optional<Long> cnpjUnidadeLocalDestinoPadrao = parametroNf.getParametroNotaFiscalUfs()
                         .stream()
                         .filter(p -> p.getUf().equals(uf))
                         .map(p -> p.getUnidadeLocalDestino() != null ? p.getUnidadeLocalDestino().getCnpj() : abastecimento.getCnpjFrota())

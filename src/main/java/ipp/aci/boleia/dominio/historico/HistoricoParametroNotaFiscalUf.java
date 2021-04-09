@@ -1,6 +1,7 @@
 package ipp.aci.boleia.dominio.historico;
 
 import ipp.aci.boleia.dominio.Unidade;
+import ipp.aci.boleia.dominio.interfaces.IParametroNotaFiscalUf;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import java.util.Date;
 import javax.persistence.Column;
@@ -23,7 +24,7 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "HISTORICO_PARAM_NF_UF")
-public class HistoricoParametroNotaFiscalUf implements IPersistente{
+public class HistoricoParametroNotaFiscalUf implements IPersistente, IParametroNotaFiscalUf{
     
     @Id
     @Column(name = "CD_HISTORICO_PARAM_NF_UF")
@@ -75,6 +76,7 @@ public class HistoricoParametroNotaFiscalUf implements IPersistente{
         this.parametroNotaFiscal = parametroNotaFiscal;
     }
 
+    @Override
     public String getUf() {
         return uf;
     }
@@ -83,6 +85,7 @@ public class HistoricoParametroNotaFiscalUf implements IPersistente{
         this.uf = uf;
     }
 
+    @Override
     public Unidade getUnidadeLocalDestino() {
         return unidadeLocalDestino;
     }
