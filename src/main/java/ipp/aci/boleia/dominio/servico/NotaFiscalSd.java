@@ -526,6 +526,7 @@ public class NotaFiscalSd {
      * @param validacoesNotas lista de validacoes
      * @param documento nota.xml
      * @param erro erro da validacao
+     * @param valorFaltanteEmissao valor Faltante Emissao
      */
     private void addErroValidacao(List<ValidacaoUploadNotaFiscalVo> validacoesNotas, Document documento, Erro erro, BigDecimal valorFaltanteEmissao){
         if(validacoesNotas == null || erro == null){
