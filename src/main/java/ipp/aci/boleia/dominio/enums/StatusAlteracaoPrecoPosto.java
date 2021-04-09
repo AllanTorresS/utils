@@ -7,6 +7,7 @@ import ipp.aci.boleia.util.i18n.IEnumComLabel;
  */
 public enum StatusAlteracaoPrecoPosto implements IEnumComLabel<StatusAlteracaoPrecoPosto> {
 
+    EXCLUIDO(0),
     ACEITE_PENDENTE_REVENDA(1),
     ACEITE_PENDENTE_INTERNO(2),
     VIGENTE(3),

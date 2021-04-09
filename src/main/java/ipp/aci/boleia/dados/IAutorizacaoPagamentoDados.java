@@ -216,6 +216,13 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
     AutorizacaoPagamento obterAutorizacaoPagamentoComMesmoAbastecimento(String uuidAbastecimento);
 
     /**
+     * Busca UUIDs de Abastecimento a partir de uma lista de UUIDs
+     * @param uuidsAbastecimento UUIDs que devem ser buscados
+     * @return lista de UUIDs encontrados
+     */
+    List<String> obterUuidsExistentes(List<String> uuidsAbastecimento);
+
+    /**
      * Método que implementa a pesquisa de autorização pagamento para o contexto da
      * API de frotista.
      *

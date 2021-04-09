@@ -62,6 +62,7 @@ import static ipp.aci.boleia.dominio.enums.StatusNotaFiscalAbastecimento.EMITIDA
 import static ipp.aci.boleia.dominio.enums.StatusNotaFiscalAbastecimento.PENDENTE;
 import static ipp.aci.boleia.util.UtilitarioCalculoData.obterPrimeiroInstanteDia;
 import static ipp.aci.boleia.util.UtilitarioCalculoData.obterUltimoInstanteDia;
+import static java.lang.Math.min;
 
 /**
  * Respositorio de entidades AutorizacaoPagamento
@@ -73,6 +74,8 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     private static final Integer LIMITE_INFERIOR_CONCILIACAO = -30;
 
     private static final Integer LIMITE_SUPERIOR_CONCILIACAO = -48;
+
+    private static final int LIMITE_CLAUSULA_IN = 1000;
 
     private static final String REMOVER_ACENTO = "TRANSLATE( %s, " +
             "'âãäåāăąÁÂÃÄÅĀĂĄèééêëēĕėęěĒĔĖĘĚìíîïìĩīĭÌÍÎÏÌĨĪĬóôõöōŏőÒÓÔÕÖŌŎŐùúûüũūŭůÙÚÛÜŨŪŬŮ'," +
@@ -282,6 +285,14 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
             " LEFT JOIN FETCH tcp.prazos tcp_p " +
             " WHERE " +
             "     ((tc.id IN (:idsTransacoesConsolidadas) AND tcp IS NULL) OR tcp.id IN (:idsTransacoesConsolidadas)) ";
+
+    private static final String CONSULTA_UUIDS_ABASTECIMENTO_EXISTENTES =
+            " SELECT a.uuidAbastecimento " +
+            " FROM AutorizacaoPagamento a " +
+            " WHERE " +
+            "     a.uuidAbastecimento IS NOT NULL " +
+            "     AND a.uuidAbastecimento IN :uuidsAbastecimento " +
+            "     AND a.status = " + StatusAutorizacao.AUTORIZADO.getValue();
 
     private static final String CLAUSULA_DATA_LIMITE_EMISSAO = "CASE " +
             "WHEN %s.possuiPrazoAjuste = 1 THEN trunc(%s.dataLimiteEmissaoNfe) " +
@@ -724,13 +735,35 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     @Override
     public AutorizacaoPagamento obterAutorizacaoPagamentoComMesmoAbastecimento(String uuidAbastecimento) {
         return pesquisarUnico(new ParametroPesquisaIgual("uuidAbastecimento",uuidAbastecimento),
-                new ParametroPesquisaIgual("status", StatusAutorizacao.AUTORIZADO.getValue()));
+                        new ParametroPesquisaIgual("status", StatusAutorizacao.AUTORIZADO.getValue()));
+    }
+
+    @Override
+    public List<String> obterUuidsExistentes(List<String> uuidsAbastecimento) {
+        List<String> uuidsExistentes = new ArrayList<>();
+
+        for (int i = 0; i < uuidsAbastecimento.size(); i += LIMITE_CLAUSULA_IN) {
+            List<ParametroPesquisa> parametros = new ArrayList<>();
+            parametros.add(new ParametroPesquisaIgual("uuidsAbastecimento", uuidsAbastecimento.subList(i, min(uuidsAbastecimento.size(), i + LIMITE_CLAUSULA_IN))));
+            uuidsExistentes.addAll(pesquisar((InformacaoPaginacao) null, CONSULTA_UUIDS_ABASTECIMENTO_EXISTENTES, String.class, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros());
+        }
+
+        return uuidsExistentes;
     }
 
 
     @Override
     public ResultadoPaginadoFrtVo<AutorizacaoPagamento> pesquisar(FiltroPesquisaAbastecimentoFrtVo filtro) {
         List<ParametroPesquisa> parametros = criarParametrosPesquisa(filtro);
+
+        if (filtro.getDataInicial() != null) {
+            parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataProcessamento", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDataInicial())));
+            parametros.add(new ParametroPesquisaDataMenorOuIgual("dataProcessamento", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getDataFinal())));
+        } else {
+            parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataAtualizacao", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDataInicialAlteracao())));
+            parametros.add(new ParametroPesquisaDataMenorOuIgual("dataAtualizacao", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getDataFinalAlteracao())));
+        }
+
         InformacaoPaginacaoFrtVo paginacao = new InformacaoPaginacaoFrtVo(
                 filtro.getPagina(),
                 new ParametroOrdenacaoColuna("dataRequisicao"),
@@ -845,10 +878,6 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         return new ParametrosPesquisaBuilder()
                 .adicionarParametros(
                         new ParametroPesquisaIgual("id", filtro.getIdentificador())
-                )
-                .adicionarParametros(
-                        new ParametroPesquisaDataMaiorOuIgual("dataProcessamento", obterPrimeiroInstanteDia(filtro.getDataInicial())),
-                        new ParametroPesquisaDataMenorOuIgual("dataProcessamento", obterUltimoInstanteDia(filtro.getDataFinal()))
                 )
                 .adicionarParametros(
                         filtro.getCnpjRevenda(),
