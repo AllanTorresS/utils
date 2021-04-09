@@ -515,7 +515,6 @@ public class NotaFiscalSd {
      * @param validacoesNotas lista de validacoes
      * @param documento nota.xml
      * @param erro erro da validacao
-     * @param valorFaltanteNota O valor que falta para emissão completa de combustível ou produto
      */
     private void addErroValidacao(List<ValidacaoUploadNotaFiscalVo> validacoesNotas, Document documento, Erro erro) {
         addErroValidacao(validacoesNotas, documento, erro, null);
@@ -527,7 +526,7 @@ public class NotaFiscalSd {
      * @param validacoesNotas lista de validacoes
      * @param documento nota.xml
      * @param erro erro da validacao
-     * @param valorFaltanteNota O valor que falta para emissão completa de combustível ou produto
+     * @param valorFaltanteEmissao O valor que falta para emissão completa de combustível ou produto
      */
     private void addErroValidacao(List<ValidacaoUploadNotaFiscalVo> validacoesNotas, Document documento, Erro erro, BigDecimal valorFaltanteEmissao){
         if(validacoesNotas == null || erro == null){
@@ -681,22 +680,22 @@ public class NotaFiscalSd {
     public Long obterCnpjDestino(AutorizacaoPagamento abastecimento) {
         Long cnpjDestino;
         Veiculo veiculo = abastecimento.getVeiculo();
-        boolean veiculoPertenceUnidade = veiculo != null && veiculo.getUnidade() != null && veiculo.getUnidade().getExigeNotaFiscal() != null && veiculo.getUnidade().getExigeNotaFiscal();
+        boolean veiculoTemUnidade = veiculo != null && veiculo.getUnidade() != null && veiculo.getUnidade().getCnpj() != null;
         if (abastecimento.getParametroNotaFiscal() != null) {
             HistoricoParametroNotaFiscal parametroNf = abastecimento.getParametroNotaFiscal();
-            if (parametroNf != null && LocalDestinoPadroNfe.ABASTECIMENTO.getValue().equals(parametroNf.getLocalDestino()) && abastecimento.getUnidade() != null && abastecimento.unidadeExigeNf()) {
+            if (parametroNf != null && LocalDestinoPadroNfe.ABASTECIMENTO.getValue().equals(parametroNf.getLocalDestino())) {
                 String uf = abastecimento.getPontoVenda().getUf();
                 Optional<Long> cnpjUnidadeLocalDestinoPadrao = parametroNf.getParametroNotaFiscalUfs()
                         .stream()
                         .filter(p -> p.getUf().equals(uf))
-                        .map(p -> p.getUnidadeLocalDestino() != null ? p.getUnidadeLocalDestino().getCnpj() : abastecimento.getCnpjFrota())
+                        .map(p ->  p.getUnidadeLocalDestino() != null ? p.getUnidadeLocalDestino().getCnpj() : abastecimento.getCnpjFrota())
                         .findFirst();
-                cnpjDestino = cnpjUnidadeLocalDestinoPadrao.isPresent() ?
-                        cnpjUnidadeLocalDestinoPadrao.get()
-                        : parametroNf.getUnidadeLocalDestinoPadrao() != null
-                                ? parametroNf.getUnidadeLocalDestinoPadrao().getCnpj()
-                                : abastecimento.getCnpjFrota();
-            } else if (parametroNf != null && LocalDestinoPadroNfe.VEICULO.getValue().equals(parametroNf.getLocalDestino()) && veiculoPertenceUnidade) {
+                cnpjDestino = cnpjUnidadeLocalDestinoPadrao.orElseGet(
+                        () -> parametroNf.getUnidadeLocalDestinoPadrao() != null
+                        ? parametroNf.getUnidadeLocalDestinoPadrao().getCnpj()
+                        : abastecimento.getCnpjFrota()
+                );
+            } else if (parametroNf != null && LocalDestinoPadroNfe.VEICULO.getValue().equals(parametroNf.getLocalDestino()) && veiculoTemUnidade) {
                 cnpjDestino = veiculo.getUnidade().getCnpj();
             } else {
                 cnpjDestino = abastecimento.getFrota().getCnpj();
