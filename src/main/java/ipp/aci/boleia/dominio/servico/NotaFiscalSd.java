@@ -686,8 +686,8 @@ public class NotaFiscalSd {
                 String uf = abastecimento.getPontoVenda().getUf();
                 Optional<Long> cnpjUnidadeLocalDestinoPadrao = parametroNf.getParametroNotaFiscalUfs()
                         .stream()
-                        .filter(p -> p.getUf().equals(uf) && p.getUnidadeLocalDestino() != null)
-                        .map(p -> p.getUnidadeLocalDestino().getCnpj())
+                        .filter(p -> p.getUf().equals(uf))
+                        .map(p ->  p.getUnidadeLocalDestino() != null ? p.getUnidadeLocalDestino().getCnpj() : abastecimento.getCnpjFrota())
                         .findFirst();
                 cnpjDestino = cnpjUnidadeLocalDestinoPadrao.orElseGet(
                         () -> parametroNf.getUnidadeLocalDestinoPadrao() != null
