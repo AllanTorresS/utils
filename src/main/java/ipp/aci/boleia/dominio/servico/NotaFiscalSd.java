@@ -393,6 +393,7 @@ public class NotaFiscalSd {
     private void validarDadosNota(List<Document> documentos, List<AutorizacaoPagamento> autorizacoesPagamento, List<ValidacaoUploadNotaFiscalVo> validacoesNotas) {
         validarCNPJDestinatario(documentos, autorizacoesPagamento, validacoesNotas);
         validarCNPJEmitente(documentos, autorizacoesPagamento, validacoesNotas);
+        validarValorTotal(documentos, autorizacoesPagamento, validacoesNotas);
         validarValoresTotaisCombustivelProdutos(documentos, autorizacoesPagamento, validacoesNotas);
     }
 
@@ -707,6 +708,19 @@ public class NotaFiscalSd {
     }
 
     /**
+     * Calcula o valor total da nota baseado nos somatórios de suas partes
+     * @param nota A nota fiscal
+     * @return O valor total calculado
+     */
+    public BigDecimal obterValorTotalNota(Document nota) {
+        BigDecimal valorCombustivel = obterValorTotalCombustivelNota(nota);
+        BigDecimal valorProdutos = obterValorTotalProdutosNota(nota);
+        valorCombustivel = valorCombustivel != null ? valorCombustivel : BigDecimal.ZERO;
+        valorProdutos = valorProdutos != null ? valorProdutos : BigDecimal.ZERO;
+        return valorCombustivel.add(valorProdutos).setScale(2, BigDecimal.ROUND_HALF_UP);
+    }
+
+    /**
      * Verifica o cnpj do emitente
      *
      * @param documentos documentos que representão os Xmls das notas parseadas
@@ -771,14 +785,22 @@ public class NotaFiscalSd {
      */
     private void validarValorTotal(List<Document> documentos, List<AutorizacaoPagamento> autorizacoesPagamento, List<ValidacaoUploadNotaFiscalVo> validacoesNotas) {
         documentos.forEach(documento -> {
+            BigDecimal valorCombustivel = obterValorTotalCombustivelNota(documento);
+            BigDecimal valorTotalCombustivel = valorCombustivel != null ? valorCombustivel.setScale(2, BigDecimal.ROUND_HALF_UP) : BigDecimal.ZERO;
+
+            BigDecimal valorProdutos = obterValorTotalProdutosNota(documento);
+            BigDecimal valorTotalProduto = valorProdutos != null ? valorProdutos.setScale(2, BigDecimal.ROUND_HALF_UP) : BigDecimal.ZERO;
+
+            BigDecimal valorTotalItensNota = valorTotalProduto.add(valorTotalCombustivel);
             BigDecimal valorTotalNota = notaFiscalParserSd.getBigDecimal(documento, ConstantesNotaFiscalParser.VALOR_TOTAL);
+
             if (valorTotalNota != null) {
                 valorTotalNota = valorTotalNota.setScale(2, BigDecimal.ROUND_HALF_UP);
-                BigDecimal diferenca = obterValorRestanteParaSubirNota(autorizacoesPagamento, valorTotalNota, Boolean.FALSE);
-                final Erro erro = validarValorRestanteParaSubir(autorizacoesPagamento, diferenca);
-                this.addErroValidacao(validacoesNotas, documento, erro);
-            }else{
-                this.addErroValidacao(validacoesNotas, documento, Erro.NOTA_FISCAL_NAO_POSSUI_VALOR_TOTAL);
+                if(valorTotalItensNota.compareTo(valorTotalNota) != 0) {
+                    addErroValidacao(validacoesNotas, documento, Erro.NOTA_FISCAL_UPLOAD_VERSAO_INVALIDA);
+                }
+            } else{
+                addErroValidacao(validacoesNotas, documento, Erro.NOTA_FISCAL_NAO_POSSUI_VALOR_TOTAL);
             }
         });
     }
@@ -791,7 +813,7 @@ public class NotaFiscalSd {
      * @param validacoesNotas  validacoes dos erros encontrados.
      */
     private void validarValorTotalEdicaoAbastecimento(Document documento, List<AutorizacaoPagamento> autorizacoesPagamento, List<ValidacaoUploadNotaFiscalVo> validacoesNotas) {
-        BigDecimal valorTotalNota = notaFiscalParserSd.getBigDecimal(documento, ConstantesNotaFiscalParser.VALOR_TOTAL);
+        BigDecimal valorTotalNota = notaFiscalParserSd.getBigDecimal(documento, ConstantesNotaFiscalParser.VALOR_TOTAL).setScale(2, BigDecimal.ROUND_HALF_UP);
         if (valorTotalNota != null){
             valorTotalNota = valorTotalNota.setScale(2, BigDecimal.ROUND_HALF_UP);
             BigDecimal diferenca = obterValorRestanteParaSubirNota(autorizacoesPagamento, valorTotalNota, Boolean.TRUE);
