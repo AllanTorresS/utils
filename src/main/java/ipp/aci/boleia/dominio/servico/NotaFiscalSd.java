@@ -681,7 +681,8 @@ public class NotaFiscalSd {
     public Long obterCnpjDestino(AutorizacaoPagamento abastecimento) {
         Long cnpjDestino;
         Veiculo veiculo = abastecimento.getVeiculo();
-        boolean veiculoTemUnidade = veiculo != null && veiculo.getUnidade() != null && veiculo.getUnidade().getCnpj() != null;
+        boolean veiculoTemUnidade = veiculo != null && veiculo.getUnidade() != null;
+        boolean veiculoTemEmpresaAgregada = veiculo != null && veiculo.getEmpresaAgregada() != null;
         if (abastecimento.getParametroNotaFiscal() != null) {
             HistoricoParametroNotaFiscal parametroNf = abastecimento.getParametroNotaFiscal();
             if (parametroNf != null && LocalDestinoPadroNfe.ABASTECIMENTO.getValue().equals(parametroNf.getLocalDestino())) {
@@ -698,6 +699,8 @@ public class NotaFiscalSd {
                 );
             } else if (parametroNf != null && LocalDestinoPadroNfe.VEICULO.getValue().equals(parametroNf.getLocalDestino()) && veiculoTemUnidade) {
                 cnpjDestino = veiculo.getUnidade().getCnpj();
+            } else if (parametroNf != null && LocalDestinoPadroNfe.VEICULO.getValue().equals(parametroNf.getLocalDestino()) && veiculoTemEmpresaAgregada) {
+                cnpjDestino = veiculo.getEmpresaAgregada().getCnpj();
             } else {
                 cnpjDestino = abastecimento.getFrota().getCnpj();
             }
