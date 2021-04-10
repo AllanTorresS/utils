@@ -805,7 +805,7 @@ public class EmailSd {
     public void enviarEmailDeCriticasRecolhaAutomatica(List<NfeAnexosArmazem> anexosNaoConciliados, List<String> emailsDestinatarios) {
         Date date = utilitarioAmbiente.buscarDataAmbiente();
         String assunto = this.mensagens.obterMensagem("assunto.email.erro.recolha.automatica");
-        String motivoRecusa = anexosNaoConciliados.stream().map(anexo -> "&emsp;<p>" + anexo.getNumeroCompletoNf() + ": " + anexo.getMotivoFalhaImportacao() + "</p><br>").collect(Collectors.joining());
+        String motivoRecusa = anexosNaoConciliados.stream().map(anexo -> "&emsp;<p>" + anexo.getNumeroCompletoNf() + ": " + anexo.getNotaFiscal() != null && anexo.getNotaFiscal().getMotivoFalhaConciliacao() != null ? anexo.getNotaFiscal().getMotivoFalhaConciliacao() : anexo.getMotivoFalhaImportacao() + "</p><br>").collect(Collectors.joining());
         String data = UtilitarioFormatacaoData.formatarDataCurta(date);
         String hora = UtilitarioFormatacaoData.formatarHoraMinutosSegundos(date);
         Long cnpj = anexosNaoConciliados.stream().map(NfeAnexosArmazem::getCnpjPtov).findFirst().orElse(null);
