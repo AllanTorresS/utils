@@ -1,14 +1,13 @@
 package ipp.aci.boleia.dominio.vo;
 
-import ipp.aci.boleia.util.excecao.Erro;
-
 import java.util.List;
 
 public class ValidacaoUploadNotaFiscalVo {
     private String numero;
     private String valorTotal;
-    private Erro erroValidacao;
-    private List<String> mensagens;
+    private List<ErroMessageVo> mensagensErro;
+    private NotaFiscalVo notaFiscalVo;
+    private Boolean isNotaFiscalDuplicada;
 
     public String getNumero() {
         return numero;
@@ -18,12 +17,12 @@ public class ValidacaoUploadNotaFiscalVo {
         this.numero = numero;
     }
 
-    public List<String> getMensagens() {
-        return mensagens;
+    public List<ErroMessageVo> getMensagensErro() {
+        return mensagensErro;
     }
 
-    public void setMensagens(List<String> mensagens) {
-        this.mensagens = mensagens;
+    public void setMensagensErro(List<ErroMessageVo> mensagensErro) {
+        this.mensagensErro = mensagensErro;
     }
 
     public String getValorTotal() {
@@ -34,11 +33,19 @@ public class ValidacaoUploadNotaFiscalVo {
         this.valorTotal = valorTotal;
     }
 
-    public Erro getErroValidacao() {
-        return erroValidacao;
+    public NotaFiscalVo getNotaFiscalVo() {
+        return notaFiscalVo;
     }
 
-    public void setErroValidacao(Erro erroValidacao) {
-        this.erroValidacao = erroValidacao;
+    public void setNotaFiscalVo(NotaFiscalVo notaFiscalVo) {
+        this.notaFiscalVo = notaFiscalVo;
+    }
+
+    public Boolean getNotaFiscalDuplicada() {
+        return isNotaFiscalDuplicada;
+    }
+
+    public void setNotaFiscalDuplicada(Boolean notaFiscalDuplicada) {
+        isNotaFiscalDuplicada = notaFiscalDuplicada;
     }
 }

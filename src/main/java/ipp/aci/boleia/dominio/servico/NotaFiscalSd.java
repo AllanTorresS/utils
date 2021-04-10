@@ -15,12 +15,15 @@ import ipp.aci.boleia.dominio.NfeAnexosArmazem;
 import ipp.aci.boleia.dominio.NotaFiscal;
 import ipp.aci.boleia.dominio.TipoCombustivel;
 import ipp.aci.boleia.dominio.TipoCombustivelNcm;
+import ipp.aci.boleia.dominio.TransacaoConsolidada;
 import ipp.aci.boleia.dominio.Veiculo;
 import ipp.aci.boleia.dominio.enums.LocalDestinoPadroNfe;
 import ipp.aci.boleia.dominio.enums.TipoArquivo;
 import ipp.aci.boleia.dominio.historico.HistoricoParametroNotaFiscal;
 import ipp.aci.boleia.dominio.vo.DanfeVo;
+import ipp.aci.boleia.dominio.vo.ErroMessageVo;
 import ipp.aci.boleia.dominio.vo.ItemDanfeVo;
+import ipp.aci.boleia.dominio.vo.NotaFiscalVo;
 import ipp.aci.boleia.dominio.vo.ValidacaoUploadNotaFiscalVo;
 import ipp.aci.boleia.util.ConstantesFormatacao;
 import ipp.aci.boleia.util.ConstantesNotaFiscal;
@@ -490,7 +493,8 @@ public class NotaFiscalSd {
         validarValorTotalEdicaoAbastecimento(documento, autorizacoesPagamento, validacoesNotas);
 
         if (!validacoesNotas.isEmpty()) {
-            List<String> mensagens = validacoesNotas.stream().map(ValidacaoUploadNotaFiscalVo::getMensagens).collect(ArrayList::new, List::addAll, List::addAll);
+            final ArrayList<ErroMessageVo> erros = validacoesNotas.stream().map(ValidacaoUploadNotaFiscalVo::getMensagensErro).collect(ArrayList::new, List::addAll, List::addAll);
+            final List<String> mensagens = erros.stream().map(ErroMessageVo::getMensagem).collect(Collectors.toList());
             throw new ExcecaoValidacao(Erro.ERRO_VALIDACAO_NOTA_FISCAL, mensagens);
         }
     }
@@ -529,9 +533,9 @@ public class NotaFiscalSd {
      * @param erro erro da validacao
      * @param valorFaltanteEmissao O valor que falta para emissão completa de combustível ou produto
      */
-    private void addErroValidacao(List<ValidacaoUploadNotaFiscalVo> validacoesNotas, Document documento, Erro erro, BigDecimal valorFaltanteEmissao){
+    private ValidacaoUploadNotaFiscalVo addErroValidacao(List<ValidacaoUploadNotaFiscalVo> validacoesNotas, Document documento, Erro erro, BigDecimal valorFaltanteEmissao){
         if(validacoesNotas == null || erro == null){
-            return;
+            return null;
         }
 
         String numeroNfe = "";
@@ -550,20 +554,24 @@ public class NotaFiscalSd {
         Optional<ValidacaoUploadNotaFiscalVo> validacaoNFOptional = validacoesNotas.stream().filter(v -> finalNumeroNfe.equals(v.getNumero())).findFirst();
 
         if(validacaoNFOptional.isPresent()){
-            if(!validacaoNFOptional.get().getMensagens().contains(mensagem)){
-                validacaoNFOptional.get().setErroValidacao(erro);
-                validacaoNFOptional.get().getMensagens().add(mensagem);
+            if(validacaoNFOptional.get().getMensagensErro().stream().noneMatch(e -> erro.equals(e.getErro()))){
+                ErroMessageVo erroVo = new ErroMessageVo(erro, mensagem);
+                validacaoNFOptional.get().getMensagensErro().add(erroVo);
+                return validacaoNFOptional.get();
             }
         }else{
             ValidacaoUploadNotaFiscalVo validacaoNF = new ValidacaoUploadNotaFiscalVo();
-            ArrayList<String> listaMensagens = new ArrayList<>();
-            listaMensagens.add(mensagem);
+            ErroMessageVo erroVo = new ErroMessageVo(erro, mensagem);
+            ArrayList<ErroMessageVo> errosVo = new ArrayList<>();
+            errosVo.add(erroVo);
             validacaoNF.setNumero(finalNumeroNfe);
-            validacaoNF.setMensagens(listaMensagens);
+            validacaoNF.setMensagensErro(errosVo);
             validacaoNF.setValorTotal(valorTotal);
-            validacaoNF.setErroValidacao(erro);
             validacoesNotas.add(validacaoNF);
+            return validacaoNF;
         }
+
+        return null;
     }
 
     /**
@@ -581,7 +589,16 @@ public class NotaFiscalSd {
                         .findFirst();
 
                 if (notaFiscal.isPresent()) {
-                    this.addErroValidacao(validacoesNotas, documento, Erro.NOTA_FISCAL_UPLOAD_NOTA_REPETIDA);
+                    NotaFiscal notaFiscalRepetida = notaFiscal.get();
+                    final Optional<AutorizacaoPagamento> autorizacaoPagamentoOptional = notaFiscalRepetida.getAutorizacoesPagamento().stream()
+                            .findFirst();
+                    if(autorizacaoPagamentoOptional.isPresent()){
+                        final TransacaoConsolidada consolidada = transacaoConsolidadaDados.obterConsolidadoParaAbastecimento(autorizacaoPagamentoOptional.get().getId());
+                        final NotaFiscalVo nota = new NotaFiscalVo(notaFiscalRepetida, consolidada, autorizacaoPagamentoOptional.get());
+                        final ValidacaoUploadNotaFiscalVo validacaoUploadNotaFiscalVo = this.addErroValidacao(validacoesNotas, documento, Erro.NOTA_FISCAL_UPLOAD_NOTA_REPETIDA, null);
+                        validacaoUploadNotaFiscalVo.setNotaFiscalDuplicada(true);
+                        validacaoUploadNotaFiscalVo.setNotaFiscalVo(nota);
+                    }
                 }
             }
         }
@@ -1051,7 +1068,7 @@ public class NotaFiscalSd {
             if(validacoesNotas.isEmpty()){
                 return true;
             }else{
-                validacoesNotas.forEach(m -> m.getMensagens().forEach(msg -> LOG.error(mensagens.obterMensagem("recolhanf.erro.unicidade"), msg)));
+                validacoesNotas.forEach(m -> m.getMensagensErro().forEach(msg -> LOG.error(mensagens.obterMensagem("recolhanf.erro.unicidade"), msg.getErro())));
                 return false;
             }
     }

@@ -21,6 +21,7 @@ public class NotaFiscalVo {
     private Date dataEmissao;
     private Long idConsolidado;
     private Date dataAbastecimento;
+    private String numeroCompleto;
 
     /**
      * Construtor default de Nota Fiscal.
@@ -38,6 +39,7 @@ public class NotaFiscalVo {
         this.dataEmissao = nota.getDataEmissao();
         this.idConsolidado = consolidada != null ? consolidada.getId() : null;
         this.dataAbastecimento = autorizacaoPagamento.getDataRequisicao();
+        this.numeroCompleto = this.numero+"-"+this.numeroSerie;
     }
 
     /**
@@ -112,5 +114,13 @@ public class NotaFiscalVo {
 
     public void setDataAbastecimento(Date dataAbastecimento) {
         this.dataAbastecimento = dataAbastecimento;
+    }
+
+    public String getNumeroCompleto() {
+        return numeroCompleto;
+    }
+
+    public void setNumeroCompleto(String numeroCompleto) {
+        this.numeroCompleto = numeroCompleto;
     }
 }
