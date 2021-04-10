@@ -220,9 +220,6 @@ public class NotaFiscalSd {
     public List<ValidacaoUploadNotaFiscalVo> validarDadosNovaNotaFiscal(List<Document> documentos, List<AutorizacaoPagamento> autorizacoesPagamento) {
         List<ValidacaoUploadNotaFiscalVo> validacoesNotas = new ArrayList<>();
         validarVersaoNota(documentos, validacoesNotas);
-        if(!validacoesNotas.isEmpty()){
-            return validacoesNotas;
-        }
         validarNumeroSerieNota(documentos, validacoesNotas);
         validarNumeroNota(documentos, validacoesNotas);
         validarNotaRepetida(documentos, validacoesNotas);
