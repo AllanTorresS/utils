@@ -210,7 +210,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
             " LEFT JOIN FETCH pnfu.unidadeLocalDestino uld" +
             " WHERE a.status = " + StatusAutorizacao.AUTORIZADO.getValue() +
             "     AND a.statusNotaFiscal = " + PENDENTE.getValue() +
-            "     AND a.dataProcessamento <= :dataEmissao" +
+            "     AND a.dataRequisicao <= :dataEmissao" +
             "     AND a.valorTotal <= :limiteSuperiorTotalNf" +
             "     AND a.valorTotal >= :limiteInferiorTotalNf" +
             "     AND nfs IS NULL" +
@@ -237,10 +237,10 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                     " LEFT JOIN FETCH pnfu.unidadeLocalDestino uld" +
                     " WHERE a.status = " + StatusAutorizacao.AUTORIZADO.getValue() +
                     "     AND a.statusNotaFiscal = " + PENDENTE.getValue() +
-                    "     AND a.dataProcessamento <= :dataEmissao" +
+                    "     AND a.dataRequisicao <= :dataEmissao" +
                     "     AND a.precoCombustivelTotal <= :limiteSuperiorTotalNf" +
                     "     AND a.precoCombustivelTotal >= :limiteInferiorTotalNf" +
-                    "     AND nfs IS NULL OR nfs.valorCombustivel IS NULL" +
+                    "     AND (nfs IS NULL OR nfs.valorCombustivel IS NULL)" +
                     "     AND EXISTS (" +
                     "         SELECT 1" +
                     "         FROM AutorizacaoPagamento AS a1" +
@@ -263,10 +263,10 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                     " LEFT JOIN FETCH pnfu.unidadeLocalDestino uld" +
                     " WHERE a.status = " + StatusAutorizacao.AUTORIZADO.getValue() +
                     "     AND a.statusNotaFiscal = " + PENDENTE.getValue() +
-                    "     AND a.dataProcessamento <= :dataEmissao" +
+                    "     AND a.dataRequisicao <= :dataEmissao" +
                     "     AND a.valorTotal - a.precoCombustivelTotal <= :limiteSuperiorTotalNf" +
                     "     AND a.valorTotal - a.precoCombustivelTotal >= :limiteInferiorTotalNf" +
-                    "     AND nfs IS NULL OR nfs.valorProdutosServicos IS NULL" +
+                    "     AND (nfs IS NULL OR nfs.valorProdutosServicos IS NULL)" +
                     "     AND EXISTS (" +
                     "         SELECT 1" +
                     "         FROM AutorizacaoPagamento AS a1" +
