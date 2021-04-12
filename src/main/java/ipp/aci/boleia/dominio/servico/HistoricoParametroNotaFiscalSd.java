@@ -1,15 +1,15 @@
 package ipp.aci.boleia.dominio.servico;
 
 import ipp.aci.boleia.dados.IHistoricoParametroNotaFiscalDados;
-import ipp.aci.boleia.dados.IParametroNotaFiscalDados;
 import ipp.aci.boleia.dominio.ParametroNotaFiscal;
 import ipp.aci.boleia.dominio.historico.HistoricoParametroNotaFiscal;
 import ipp.aci.boleia.dominio.historico.HistoricoParametroNotaFiscalUf;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
-import java.util.Date;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Date;
+import java.util.stream.Collectors;
 
 /**
  * Serviços de domínio da entidade HistoricoUnidade.
@@ -17,12 +17,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class HistoricoParametroNotaFiscalSd {
 
-
     @Autowired
     private UtilitarioAmbiente ambiente;
-
-    @Autowired
-    private IParametroNotaFiscalDados repositorio;
 
     @Autowired
     private IHistoricoParametroNotaFiscalDados historicoParametroNotaFiscalDados;

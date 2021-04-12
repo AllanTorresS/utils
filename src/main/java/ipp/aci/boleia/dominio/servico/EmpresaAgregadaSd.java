@@ -4,7 +4,6 @@ import ipp.aci.boleia.dados.IEmpresaAgregadaDados;
 import ipp.aci.boleia.dados.IMotoristaDados;
 import ipp.aci.boleia.dados.IVeiculoDados;
 import ipp.aci.boleia.dominio.EmpresaAgregada;
-import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,10 +12,6 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class EmpresaAgregadaSd {
-
-
-    @Autowired
-    private UtilitarioAmbiente ambiente;
 
     @Autowired
     private IEmpresaAgregadaDados repositorio;
