@@ -1,13 +1,26 @@
 package ipp.aci.boleia.dominio.vo;
 
+import ipp.aci.boleia.util.excecao.Erro;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Classe que representa um erro de validação no upload da nota fiscal.
+ */
 public class ValidacaoUploadNotaFiscalVo {
     private String numero;
-    private String valorTotal;
-    private List<ErroMessageVo> mensagensErro;
-    private NotaFiscalVo notaFiscalVo;
-    private Boolean isNotaFiscalDuplicada;
+    private BigDecimal valorTotal;
+    private Erro erro;
+    private String mensagem;
+    private List<Object> argumentos;
+
+    /**
+     * Construtor padrao
+     */
+    public ValidacaoUploadNotaFiscalVo() {
+        argumentos = new ArrayList<>();
+    }
 
     public String getNumero() {
         return numero;
@@ -17,35 +30,35 @@ public class ValidacaoUploadNotaFiscalVo {
         this.numero = numero;
     }
 
-    public List<ErroMessageVo> getMensagensErro() {
-        return mensagensErro;
-    }
-
-    public void setMensagensErro(List<ErroMessageVo> mensagensErro) {
-        this.mensagensErro = mensagensErro;
-    }
-
-    public String getValorTotal() {
+    public BigDecimal getValorTotal() {
         return valorTotal;
     }
 
-    public void setValorTotal(String valorTotal) {
+    public void setValorTotal(BigDecimal valorTotal) {
         this.valorTotal = valorTotal;
     }
 
-    public NotaFiscalVo getNotaFiscalVo() {
-        return notaFiscalVo;
+    public Erro getErro() {
+        return erro;
     }
 
-    public void setNotaFiscalVo(NotaFiscalVo notaFiscalVo) {
-        this.notaFiscalVo = notaFiscalVo;
+    public void setErro(Erro erro) {
+        this.erro = erro;
     }
 
-    public Boolean getNotaFiscalDuplicada() {
-        return isNotaFiscalDuplicada;
+    public String getMensagem() {
+        return mensagem;
     }
 
-    public void setNotaFiscalDuplicada(Boolean notaFiscalDuplicada) {
-        isNotaFiscalDuplicada = notaFiscalDuplicada;
+    public void setMensagem(String mensagem) {
+        this.mensagem = mensagem;
+    }
+
+    public List<Object> getArgumentos() {
+        return argumentos;
+    }
+
+    public void setArgumentos(List<Object> argumentos) {
+        this.argumentos = argumentos;
     }
 }
