@@ -108,6 +108,14 @@ public class NotaFiscal implements IPersistente, IPertenceRevendedor, IPertenceF
     @Size(min = 44, max = 44)
     private String chaveAcesso;
 
+    @Column(name = "VR_COMB")
+    @Digits(integer = 12, fraction = 4)
+    private BigDecimal valorCombustivel;
+
+    @Column(name = "VR_PROD_SERV")
+    @Digits(integer = 12, fraction = 4)
+    private BigDecimal valorProdutosServicos;
+
     @Override
     public Long getId() {
         return id;
@@ -246,6 +254,22 @@ public class NotaFiscal implements IPersistente, IPertenceRevendedor, IPertenceF
 
     public void setChaveAcesso(String chaveAcesso) {
         this.chaveAcesso = chaveAcesso;
+    }
+
+    public BigDecimal getValorCombustivel() {
+        return valorCombustivel;
+    }
+
+    public void setValorCombustivel(BigDecimal valorCombustivel) {
+        this.valorCombustivel = valorCombustivel;
+    }
+
+    public BigDecimal getValorProdutosServicos() {
+        return valorProdutosServicos;
+    }
+
+    public void setValorProdutosServicos(BigDecimal valorProdutosServicos) {
+        this.valorProdutosServicos = valorProdutosServicos;
     }
 
     /**
