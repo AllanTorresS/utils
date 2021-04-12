@@ -182,7 +182,9 @@ public final class ChavePermissao {
     public static final String DOCUMENTO_CONSULTAR_E_VISUALIZAR             = SPRING_ROLE_PREFIX + "DOCUMENTO_CONSULTAR_E_VISUALIZAR" + SPRING_ROLE_SUFFIX;
     public static final String DOCUMENTO_INCLUIR                            = SPRING_ROLE_PREFIX + "DOCUMENTO_INCLUIR" + SPRING_ROLE_SUFFIX;
     public static final String DOCUMENTO_EXCLUIR                            = SPRING_ROLE_PREFIX + "DOCUMENTO_EXCLUIR" + SPRING_ROLE_SUFFIX;
-    
+    public static final String PARAMETRO_NF_CONSULTAR_E_VISUALIZAR          = SPRING_ROLE_PREFIX + "PARAMETRO_NF_CONSULTAR_E_VISUALIZAR" + SPRING_ROLE_SUFFIX;
+    public static final String PARAMETRO_NF_INCLUIR                         = SPRING_ROLE_PREFIX + "PARAMETRO_NF_INCLUIR" + SPRING_ROLE_SUFFIX;
+
     public static final String LEAD_DASHBOARD_CONECTCAR 					= SPRING_ROLE_PREFIX + "LEAD_DASHBOARD_CONECTCAR" + SPRING_ROLE_SUFFIX;
     public static final String PEDIDO_TAG 									= SPRING_ROLE_PREFIX + "PEDIDO_TAG" + SPRING_ROLE_SUFFIX;
     public static final String RASTREAR_PEDIDO_TAG 							= SPRING_ROLE_PREFIX + "RASTREAR_PEDIDO_TAG" + SPRING_ROLE_SUFFIX;

@@ -62,6 +62,8 @@ public class TipoCombustivel implements IPersistente {
 	@Column(name = "CD_COMB_CORP")
 	private Long codigoCombustivelCorporativo;
 
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "tipoCombustivel")
+	private List<TipoCombustivelNcm> codigosNcm;
 
 	@Override
 	public Long getId() {
@@ -135,5 +137,13 @@ public class TipoCombustivel implements IPersistente {
 
 	public void setCodigoCombustivelCorporativo(Long codigoCombustivelCorporativo) {
 		this.codigoCombustivelCorporativo = codigoCombustivelCorporativo;
+	}
+
+	public List<TipoCombustivelNcm> getCodigosNcm() {
+		return codigosNcm;
+	}
+
+	public void setCodigosNcm(List<TipoCombustivelNcm> codigosNcm) {
+		this.codigosNcm = codigosNcm;
 	}
 }
