@@ -242,31 +242,27 @@ public class FrotaSd {
      * Ativa uma frota temporariamente apos uma inativacao devido a vencimento de debito
      *
      * @param frota A frota
-     * @param dataInicioAtivacao A data de inicio de ativacao
      * @param dataFimAtivacao A data de fim da ativacao
      * @param descricaoMotivo A descricao do motivo
      * @throws ExcecaoValidacao em caso de erros de validacao negociais
      */
-    public void ativarFrotaTemporariamente(Frota frota, Date dataInicioAtivacao, Date dataFimAtivacao, String descricaoMotivo) throws ExcecaoValidacao {
+    public void ativarFrotaTemporariamente(Frota frota,Date dataFimAtivacao, String descricaoMotivo) throws ExcecaoValidacao {
 
         Date dataAtual = ambiente.buscarDataAmbiente();
         MotivoInativacaoFrota motivo = repositorioMotivo.buscarMotivoInativacaoAtualFrota(frota.getId());
-        if (motivo == null || !motivo.getTipoMotivo().equals(ClassificacaoStatusFrota.DEBITO_VENCIDO.getValue())) {
+        if (motivo == null) {
             throw new ExcecaoValidacao(mensagens.obterMensagem("frota.servico.ativar.temporario.status.invalido"));
         }
 
-        if(dataFimAtivacao.before(dataAtual) || dataInicioAtivacao.before(dataAtual)) {
+        if(dataFimAtivacao.before(dataAtual)) {
             throw new ExcecaoValidacao(mensagens.obterMensagem("frota.servico.ativar.temporario.periodo.invalido"));
         }
-
         descricaoMotivo = descricaoMotivo != null ? descricaoMotivo : mensagens.obterMensagem("cobranca.servico.descricao.reativacao.temporaria");
-        frota.setInicioAtivacaoTemporaria(dataInicioAtivacao);
+        frota.setInicioAtivacaoTemporaria(dataAtual);
         frota.setFimAtivacaoTemporaria(dataFimAtivacao);
         frota = repositorio.armazenar(frota);
-        if (dataInicioAtivacao.before(dataAtual) || UtilitarioCalculoData.isHoje(dataAtual, dataInicioAtivacao)) {
-            motivo = alterarStatusAtivacaoFrota(frota.getId(), true, null, descricaoMotivo);
-            notificarAlteracaoFrota(motivo);
-        }
+        motivo = alterarStatusAtivacaoFrota(frota.getId(), true, null, descricaoMotivo);
+        notificarAlteracaoFrota(motivo);
     }
 
     /**
