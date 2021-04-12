@@ -20,9 +20,6 @@ import java.util.Date;
 public class PrecoFreteSd {
 
     @Autowired
-    private PrecoNegociadoSd precoNegociadoSd;
-
-    @Autowired
     private IPrecoBaseDados repositorioPrecoBase;
 
     @Autowired
@@ -49,7 +46,6 @@ public class PrecoFreteSd {
      * @param precoFrete preço a ser excluido
      */
     public void excluir(PrecoFrete precoFrete){
-        Date dataAtualizacao = utilitarioAmbiente.buscarDataAmbiente();
         precoFrete.setStatus(StatusPrecoFrete.HISTORICO.getValue());
         repositorioFrete.armazenar(precoFrete);
     }
