@@ -1,10 +1,7 @@
 package ipp.aci.boleia.dados.oracle;
 
-import ipp.aci.boleia.dados.IAgenciadorFreteDados;
 import ipp.aci.boleia.dados.IParametroNotaFiscalDados;
 import ipp.aci.boleia.dominio.ParametroNotaFiscal;
-import ipp.aci.boleia.dominio.SistemaExterno;
-import ipp.aci.boleia.dominio.agenciadorfrete.AgenciadorFrete;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import org.springframework.stereotype.Repository;
 

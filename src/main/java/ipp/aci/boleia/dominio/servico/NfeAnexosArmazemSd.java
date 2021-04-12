@@ -1,7 +1,6 @@
 package ipp.aci.boleia.dominio.servico;
 
 import ipp.aci.boleia.dados.INfeAnexosArmazemDados;
-import ipp.aci.boleia.dados.ITipoCombustivelDados;
 import ipp.aci.boleia.dominio.NfeAnexosArmazem;
 import ipp.aci.boleia.dominio.NfeArmazem;
 import ipp.aci.boleia.dominio.vo.DanfeVo;
@@ -25,9 +24,6 @@ public class NfeAnexosArmazemSd {
 
     @Autowired
     private INfeAnexosArmazemDados repositorio;
-
-    @Autowired
-    private ITipoCombustivelDados tipoCombustivelDados;
 
     @Autowired
     private NotaFiscalSd notaFiscalSd;

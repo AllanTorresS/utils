@@ -5,6 +5,9 @@ import ipp.aci.boleia.dominio.Unidade;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Contrato de implementação para parâmetros de nota fiscal
+ */
 public interface IParametroNotaFiscal {
 
     Long getId();

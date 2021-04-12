@@ -400,7 +400,7 @@ public class NotaFiscalSd {
     private void validarDadosNota(List<Document> documentos, List<AutorizacaoPagamento> autorizacoesPagamento, List<ValidacaoUploadNotaFiscalVo> validacoesNotas) {
         validarCNPJDestinatario(documentos, autorizacoesPagamento, validacoesNotas);
         validarCNPJEmitente(documentos, autorizacoesPagamento, validacoesNotas);
-        validarValorTotal(documentos, autorizacoesPagamento, validacoesNotas);
+        validarValorTotal(documentos, validacoesNotas);
         validarValoresTotaisCombustivelProdutos(documentos, autorizacoesPagamento, validacoesNotas);
     }
 
@@ -785,10 +785,9 @@ public class NotaFiscalSd {
      * Verifica a consistencia do valor total da nota fiscal
      *
      * @param documentos documentos que representão os Xmls das notas parseadas
-     * @param autorizacoesPagamento a transacao consolidada correpondente
      * @param validacoesNotas Lista de erros das validacoes
      */
-    private void validarValorTotal(List<Document> documentos, List<AutorizacaoPagamento> autorizacoesPagamento, List<ValidacaoUploadNotaFiscalVo> validacoesNotas) {
+    private void validarValorTotal(List<Document> documentos, List<ValidacaoUploadNotaFiscalVo> validacoesNotas) {
         documentos.forEach(documento -> {
             BigDecimal valorCombustivel = obterValorTotalCombustivelNota(documento);
             BigDecimal valorTotalCombustivel = valorCombustivel != null ? valorCombustivel.setScale(2, BigDecimal.ROUND_HALF_UP) : BigDecimal.ZERO;
