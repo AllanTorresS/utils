@@ -1,5 +1,6 @@
 package ipp.aci.boleia.dominio.servico;
 
+import com.google.common.collect.ImmutableList;
 import ipp.aci.boleia.dados.IArquivoDados;
 import ipp.aci.boleia.dados.IComponenteDados;
 import ipp.aci.boleia.dados.IEmpresaAgregadaDados;
@@ -15,12 +16,14 @@ import ipp.aci.boleia.dominio.NfeAnexosArmazem;
 import ipp.aci.boleia.dominio.NotaFiscal;
 import ipp.aci.boleia.dominio.TipoCombustivel;
 import ipp.aci.boleia.dominio.TipoCombustivelNcm;
+import ipp.aci.boleia.dominio.TransacaoConsolidada;
 import ipp.aci.boleia.dominio.Veiculo;
 import ipp.aci.boleia.dominio.enums.LocalDestinoPadroNfe;
 import ipp.aci.boleia.dominio.enums.TipoArquivo;
 import ipp.aci.boleia.dominio.historico.HistoricoParametroNotaFiscal;
 import ipp.aci.boleia.dominio.vo.DanfeVo;
 import ipp.aci.boleia.dominio.vo.ItemDanfeVo;
+import ipp.aci.boleia.dominio.vo.NotaFiscalVo;
 import ipp.aci.boleia.dominio.vo.ValidacaoUploadNotaFiscalVo;
 import ipp.aci.boleia.util.ConstantesFormatacao;
 import ipp.aci.boleia.util.ConstantesNotaFiscal;
@@ -55,6 +58,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -71,6 +75,7 @@ public class NotaFiscalSd {
 
     private static final Logger LOG = LoggerFactory.getLogger(NotaFiscalSd.class);
     private static final int LIMITE_NO_SERIE = 10;
+    private static final List<Erro> ERROS_BLOQUEANTES = ImmutableList.of(Erro.NOTA_FISCAL_UPLOAD_VERSAO_INVALIDA, Erro.NOTA_FISCAL_UPLOAD_NOTA_REPETIDA);
 
     @Autowired
     private ArmazenamentoArquivosSd armazenamentoArquivosSd;
@@ -217,10 +222,12 @@ public class NotaFiscalSd {
     public List<ValidacaoUploadNotaFiscalVo> validarDadosNovaNotaFiscal(List<Document> documentos, List<AutorizacaoPagamento> autorizacoesPagamento) {
         List<ValidacaoUploadNotaFiscalVo> validacoesNotas = new ArrayList<>();
         validarVersaoNota(documentos, validacoesNotas);
-        validarNumeroSerieNota(documentos, validacoesNotas);
-        validarNumeroNota(documentos, validacoesNotas);
-        validarNotaRepetida(documentos, validacoesNotas);
-        validarDadosNota(documentos, autorizacoesPagamento, validacoesNotas);
+        if (validacoesNotas.isEmpty()){
+            validarNumeroSerieNota(documentos, validacoesNotas);
+            validarNumeroNota(documentos, validacoesNotas);
+            validarNotaRepetida(documentos, validacoesNotas);
+            validarDadosNota(documentos, autorizacoesPagamento, validacoesNotas);
+        }
         return validacoesNotas;
     }
 
@@ -405,6 +412,7 @@ public class NotaFiscalSd {
      */
     private void validarValoresTotaisCombustivelProdutos(List<Document> documentos, List<AutorizacaoPagamento> autorizacoesPagamento, List<ValidacaoUploadNotaFiscalVo> validacoesNotas) {
         AutorizacaoPagamento autorizacaoPagamento = UtilitarioLambda.obterPrimeiroObjetoDaLista(autorizacoesPagamento);
+        Document documento = documentos.size() == 1 ? documentos.get(0) : null;
         HistoricoParametroNotaFiscal parametroNf = autorizacaoPagamento.getParametroNotaFiscal();
         BigDecimal valorCombustivelRestante = obterValorTotalCombustivelRestanteEmissaoAutorizacoesPagamentoSelecionadas(autorizacoesPagamento).setScale(2, BigDecimal.ROUND_HALF_UP);
         BigDecimal valorProdutosRestante = obterValorTotalProdutosRestanteEmissaoAutorizacoesPagamentoSelecionadas(autorizacoesPagamento).setScale(2, BigDecimal.ROUND_HALF_UP);
@@ -416,13 +424,13 @@ public class NotaFiscalSd {
         if (parametroNf != null && parametroNf.getSepararPorCombustivelProdutoServico() != null && parametroNf.getSepararPorCombustivelProdutoServico()) {
             Boolean algumaNotaNaoSeparada = documentos.stream().anyMatch(nota -> obterValorTotalCombustivelNota(nota) != null && obterValorTotalProdutosNota(nota) != null);
             if (algumaNotaNaoSeparada) {
-                this.addErroValidacao(validacoesNotas, null, Erro.NOTAS_FISCAIS_SEPARADAS_NAO_ENCONTRADAS);
+                this.addErroValidacao(validacoesNotas, documento, Erro.NOTAS_FISCAIS_SEPARADAS_NAO_ENCONTRADAS);
             }
             if (
                     (valorCombustivelRestante.compareTo(BigDecimal.ZERO) > 0 && valorTotalCombustivelNota.compareTo(BigDecimal.ZERO) == 0)
                     || (valorProdutosRestante.compareTo(BigDecimal.ZERO) > 0 && valorTotalProdutoNota.compareTo(BigDecimal.ZERO) == 0)
             ) {
-                this.addErroValidacao(validacoesNotas, null, Erro.NOTA_FISCAL_COMB_OU_PROD_AUSENTE);
+                this.addErroValidacao(validacoesNotas, documento, Erro.NOTA_FISCAL_COMB_OU_PROD_AUSENTE);
             }
         }
 
@@ -433,15 +441,15 @@ public class NotaFiscalSd {
                 this.addErroValidacao(validacoesNotas, null, Erro.NOTA_FISCAL_VALOR_COMB_EXCEDENTE);
             } else {
                 BigDecimal valorFaltante = valorCombustivelRestante.subtract(valorTotalCombustivelNota);
-                this.addErroValidacao(validacoesNotas, null, Erro.NOTA_FISCAL_VALOR_COMB_FALTANTE, valorFaltante);
+                this.addErroValidacao(validacoesNotas, documento, Erro.NOTA_FISCAL_VALOR_COMB_FALTANTE, valorFaltante);
             }
         }
         if ((diferencaProdutos.compareTo(margemAbastecimentos) > 0)) {
             if (valorTotalProdutoNota.compareTo(valorProdutosRestante) > 0) {
-                this.addErroValidacao(validacoesNotas,null,Erro.NOTA_FISCAL_VALOR_PROD_EXCEDENTE);
+                this.addErroValidacao(validacoesNotas, documento, Erro.NOTA_FISCAL_VALOR_PROD_EXCEDENTE);
             } else {
                 BigDecimal valorFaltante = valorProdutosRestante.subtract(valorTotalProdutoNota);
-                this.addErroValidacao(validacoesNotas,null,Erro.NOTA_FISCAL_VALOR_PROD_FALTANTE, valorFaltante);
+                this.addErroValidacao(validacoesNotas, documento, Erro.NOTA_FISCAL_VALOR_PROD_FALTANTE, valorFaltante);
             }
         }
     }
@@ -490,7 +498,7 @@ public class NotaFiscalSd {
         validarValorTotalEdicaoAbastecimento(documento, autorizacoesPagamento, validacoesNotas);
 
         if (!validacoesNotas.isEmpty()) {
-            List<String> mensagens = validacoesNotas.stream().map(ValidacaoUploadNotaFiscalVo::getMensagens).collect(ArrayList::new, List::addAll, List::addAll);
+            List<String> mensagens = validacoesNotas.stream().map(m-> m.getNumero() + " " + m.getErro()).collect(Collectors.toList());
             throw new ExcecaoValidacao(Erro.ERRO_VALIDACAO_NOTA_FISCAL, mensagens);
         }
     }
@@ -510,18 +518,6 @@ public class NotaFiscalSd {
         }
     }
 
-
-    /**
-     * Adiciona o erro da validacao na lista de validacoes
-     * @param validacoesNotas lista de validacoes
-     * @param documento nota.xml
-     * @param erro erro da validacao
-     */
-    private void addErroValidacao(List<ValidacaoUploadNotaFiscalVo> validacoesNotas, Document documento, Erro erro) {
-        addErroValidacao(validacoesNotas, documento, erro, null);
-    }
-
-
     /**
      * Adiciona o erro da validacao na lista de validacoes
      * @param validacoesNotas lista de validacoes
@@ -529,41 +525,40 @@ public class NotaFiscalSd {
      * @param erro erro da validacao
      * @param valorFaltanteEmissao O valor que falta para emissão completa de combustível ou produto
      */
-    private void addErroValidacao(List<ValidacaoUploadNotaFiscalVo> validacoesNotas, Document documento, Erro erro, BigDecimal valorFaltanteEmissao){
+    private void addErroValidacao(List<ValidacaoUploadNotaFiscalVo> validacoesNotas, Document documento, Erro erro, Object ... argumentos){
         if(validacoesNotas == null || erro == null){
             return;
         }
 
-        String numeroNfe = "";
-        String valorTotal = "";
-        String mensagem = "";
-        if(documento != null){
-            numeroNfe = ConstantesNotaFiscal.NOTA_FISCAL_PREFIX + notaFiscalParserSd.getString(documento, ConstantesNotaFiscalParser.NUMERO) + "-" + notaFiscalParserSd.getString(documento, ConstantesNotaFiscalParser.SERIE);
-            valorTotal = UtilitarioFormatacao.formatarDecimalMoedaReal(notaFiscalParserSd.getBigDecimal(documento, ConstantesNotaFiscalParser.VALOR_TOTAL));
+        final String numeroNfe = documento != null ? ConstantesNotaFiscal.NOTA_FISCAL_PREFIX + notaFiscalParserSd.getString(documento, ConstantesNotaFiscalParser.NUMERO) + "-" + notaFiscalParserSd.getString(documento, ConstantesNotaFiscalParser.SERIE) : "";
+        if (validacoesNotas.stream().anyMatch(v-> numeroNfe.equals(v.getNumero()) && ERROS_BLOQUEANTES.contains(v.getErro()))){
+            return;
         }
-        if(valorFaltanteEmissao != null) {
-            mensagem = mensagens.obterMensagem(erro.getChaveMensagem(), UtilitarioFormatacao.formatarDecimalMoedaReal(valorFaltanteEmissao));
-        } else {
-            mensagem = mensagens.obterMensagem(erro.getChaveMensagem());
-        }
-        final String finalNumeroNfe = numeroNfe;
-        Optional<ValidacaoUploadNotaFiscalVo> validacaoNFOptional = validacoesNotas.stream().filter(v -> finalNumeroNfe.equals(v.getNumero())).findFirst();
 
-        if(validacaoNFOptional.isPresent()){
-            if(!validacaoNFOptional.get().getMensagens().contains(mensagem)){
-                validacaoNFOptional.get().setErroValidacao(erro);
-                validacaoNFOptional.get().getMensagens().add(mensagem);
-            }
-        }else{
-            ValidacaoUploadNotaFiscalVo validacaoNF = new ValidacaoUploadNotaFiscalVo();
-            ArrayList<String> listaMensagens = new ArrayList<>();
-            listaMensagens.add(mensagem);
-            validacaoNF.setNumero(finalNumeroNfe);
-            validacaoNF.setMensagens(listaMensagens);
-            validacaoNF.setValorTotal(valorTotal);
-            validacaoNF.setErroValidacao(erro);
-            validacoesNotas.add(validacaoNF);
+        final BigDecimal valorTotal = documento != null ? notaFiscalParserSd.getBigDecimal(documento, ConstantesNotaFiscalParser.VALOR_TOTAL) : null;
+
+        String mensagem;
+        switch(erro){
+            case NOTA_FISCAL_VALOR_PROD_FALTANTE:
+            case NOTA_FISCAL_VALOR_COMB_FALTANTE:
+                mensagem = mensagens.obterMensagem(erro.getChaveMensagem(), UtilitarioFormatacao.formatarDecimalMoedaReal((BigDecimal)argumentos[0]));
+                break;
+            default:
+                mensagem = mensagens.obterMensagem(erro.getChaveMensagem());
         }
+
+        ValidacaoUploadNotaFiscalVo validacaoNF = new ValidacaoUploadNotaFiscalVo();
+        validacaoNF.setNumero(numeroNfe);
+        validacaoNF.setErro(erro);
+        validacaoNF.setMensagem(mensagem);
+        validacaoNF.setValorTotal(valorTotal);
+        validacaoNF.getArgumentos().addAll(Arrays.asList(argumentos));
+
+        if (ERROS_BLOQUEANTES.contains(erro)){
+            validacoesNotas.removeIf(v-> numeroNfe.equals(v.getNumero()));
+        }
+
+        validacoesNotas.add(validacaoNF);
     }
 
     /**
@@ -581,7 +576,14 @@ public class NotaFiscalSd {
                         .findFirst();
 
                 if (notaFiscal.isPresent()) {
-                    this.addErroValidacao(validacoesNotas, documento, Erro.NOTA_FISCAL_UPLOAD_NOTA_REPETIDA);
+                    NotaFiscal notaFiscalRepetida = notaFiscal.get();
+                    final Optional<AutorizacaoPagamento> autorizacaoPagamentoOptional = notaFiscalRepetida.getAutorizacoesPagamento().stream()
+                            .findFirst();
+                    if(autorizacaoPagamentoOptional.isPresent()){
+                        final TransacaoConsolidada consolidada = transacaoConsolidadaDados.obterConsolidadoParaAbastecimento(autorizacaoPagamentoOptional.get().getId());
+                        final NotaFiscalVo nota = new NotaFiscalVo(notaFiscalRepetida, consolidada, autorizacaoPagamentoOptional.get());
+                        this.addErroValidacao(validacoesNotas, documento, Erro.NOTA_FISCAL_UPLOAD_NOTA_REPETIDA, nota);
+                    }
                 }
             }
         }
@@ -690,7 +692,7 @@ public class NotaFiscalSd {
                 Optional<Long> cnpjUnidadeLocalDestinoPadrao = parametroNf.getParametroNotaFiscalUfs()
                         .stream()
                         .filter(p -> p.getUf().equals(uf))
-                        .map(p ->  p.getUnidadeLocalDestino() != null ? p.getUnidadeLocalDestino().getCnpj() : abastecimento.getCnpjFrota())
+                        .map(p -> p.getUnidadeLocalDestino() != null ? p.getUnidadeLocalDestino().getCnpj() : abastecimento.getCnpjFrota())
                         .findFirst();
                 cnpjDestino = cnpjUnidadeLocalDestinoPadrao.orElseGet(
                         () -> parametroNf.getUnidadeLocalDestinoPadrao() != null
@@ -813,7 +815,7 @@ public class NotaFiscalSd {
      * Verifica a consistência do valor total da nota fiscal para edição.
      * @param documento documento que representa o Xml da nota parseada.
      * @param autorizacoesPagamento a transacao consolidada correpondente.
-     * @param validacoesNotas  validacoes dos erros encontrados.
+     * @param validacoesNotas validacoes dos erros encontrados.
      */
     private void validarValorTotalEdicaoAbastecimento(Document documento, List<AutorizacaoPagamento> autorizacoesPagamento, List<ValidacaoUploadNotaFiscalVo> validacoesNotas) {
         BigDecimal valorTotalNota = notaFiscalParserSd.getBigDecimal(documento, ConstantesNotaFiscalParser.VALOR_TOTAL).setScale(2, BigDecimal.ROUND_HALF_UP);
@@ -1051,7 +1053,7 @@ public class NotaFiscalSd {
             if(validacoesNotas.isEmpty()){
                 return true;
             }else{
-                validacoesNotas.forEach(m -> m.getMensagens().forEach(msg -> LOG.error(mensagens.obterMensagem("recolhanf.erro.unicidade"), msg)));
+                validacoesNotas.forEach(m -> LOG.error(mensagens.obterMensagem("recolhanf.erro.unicidade"), m.getErro()));
                 return false;
             }
     }
