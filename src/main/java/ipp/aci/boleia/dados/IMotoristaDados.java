@@ -132,4 +132,16 @@ public interface IMotoristaDados extends IRepositorioBoleiaDados<Motorista> {
      * @param diasDeArmazenamento quantidade de dias nos quais os dados permaneceram armazenados na base de dados
      */
     void excluirDadosPessoais(Integer diasDeArmazenamento);
+
+    /**
+     * Obtem motoristas que não realizaram abastecimentos até o momento
+     * @param diasDeVerificacao quantidade de dias que os motoristas estão cadastrados
+     * @return os motoristas encontrados
+     */
+    List<Motorista> obterMotoristasSemAbastecimento(Integer diasDeVerificacao);
+
+    /**
+     * Exclui os dados pessoais dos motoristas que não realizaram abastecimentos em até 180 dias
+     */
+    void excluirDadosMotoristasSemAbastecimento();
 }

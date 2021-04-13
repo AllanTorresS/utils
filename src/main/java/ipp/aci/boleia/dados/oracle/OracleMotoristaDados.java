@@ -361,4 +361,15 @@ public class OracleMotoristaDados extends OracleRepositorioBoleiaDados<Motorista
         query.setParameter("dataProcessamento", UtilitarioCalculoData.adicionarDiasData(utilitarioAmbiente.buscarDataAmbiente(), diasDeArmazenamento));
         query.executeUpdate();
     }
+
+    @Override
+    public List<Motorista> obterMotoristasSemAbastecimento(Integer diasDeVerificacao) {
+        //TODO: implementar metodo
+        return null;
+    }
+
+    @Override
+    public void excluirDadosMotoristasSemAbastecimento() {
+        //TODO: implementar metodo
+    }
 }
