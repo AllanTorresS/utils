@@ -505,7 +505,7 @@ public class TransacaoConsolidadaSd {
      * @param parametroCiclo Os parametros de configuracao do ciclo
      * @return A data de encerramento do ciclo
      */
-    private Date calcularDataFimPeriodo(Date dataInicioPeriodo, ParametroCiclo parametroCiclo) {
+    public Date calcularDataFimPeriodo(Date dataInicioPeriodo, ParametroCiclo parametroCiclo) {
         Integer anoVigente = UtilitarioCalculoData.obterCampoData(dataInicioPeriodo, Calendar.YEAR);
         Integer mesVigente = UtilitarioCalculoData.obterCampoData(dataInicioPeriodo, Calendar.MONTH);
         Integer diaVigente = UtilitarioCalculoData.obterCampoData(dataInicioPeriodo, Calendar.DAY_OF_MONTH);
@@ -540,14 +540,12 @@ public class TransacaoConsolidadaSd {
      * @return A transacao consolidada
      */
     public TransacaoConsolidada criarTransacaoConsolidada(Date dataProcessamento, FrotaPontoVenda frotaPtov, EmpresaAgregada empresaAgregada, Unidade unidade, boolean prePago) {
-
         TransacaoConsolidada tc = new TransacaoConsolidada();
         // Nota: Consolidação de autorização de pagamento PRE-PAGO é diária.
         Date dataInicio = UtilitarioCalculoData.obterPrimeiroInstanteDia(dataProcessamento);
         Date dataFim = UtilitarioCalculoData.obterUltimoInstanteDia(dataProcessamento);
         Long idEmpresaAgregada = empresaAgregada != null ? empresaAgregada.getId() : null;
         Long idUnidade = unidade != null ? unidade.getId() : null;
-
         if(!prePago) {
             // Carrega os ciclos de pagamento, ex.: Ciclos de 7 em 7 dias, de 15 em 15 dias e etc.
             ParametroCiclo parametroCiclo = parametroCicloDados.obterParametroCicloDaFrota(frotaPtov.getFrota().getId());
@@ -557,7 +555,6 @@ public class TransacaoConsolidadaSd {
             // Calcula a data fim com relação à data de início e o parâmetro de ciclo. Porém, se o mês termina antes de terminar o ciclo, então a dataFinal será o fim do mês.
             dataFim = calcularDataFimPeriodo(dataInicio, parametroCiclo);
         }
-
         tc.setModalidadePagamento(prePago ? ModalidadePagamento.PRE_PAGO.getValue() : ModalidadePagamento.POS_PAGO.getValue());
         tc.setFrotaPtov(frotaPtov);
         tc.setFrotaExigeNF(frotaPtov.getFrota().exigeNotaFiscal());

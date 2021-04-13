@@ -98,6 +98,7 @@ public final class ChavePermissao {
     public static final String PRECO_BASE_EXPORTAR                          = SPRING_ROLE_PREFIX + "PRECO_BASE_EXPORTAR" + SPRING_ROLE_SUFFIX;
     public static final String PRECO_BASE_INCLUIR                           = SPRING_ROLE_PREFIX + "PRECO_BASE_INCLUIR" + SPRING_ROLE_SUFFIX;
     public static final String PRECO_BASE_INCLUIR_EM_LOTES                  = SPRING_ROLE_PREFIX + "PRECO_BASE_INCLUIR_EM_LOTES" + SPRING_ROLE_SUFFIX;
+    public static final String PRECO_BASE_EXCLUIR                           = SPRING_ROLE_PREFIX + "PRECO_BASE_EXCLUIR" + SPRING_ROLE_SUFFIX;
     public static final String ABASTECIMENTO_CONSULTAR_E_VISUALIZAR         = SPRING_ROLE_PREFIX + "ABASTECIMENTO_CONSULTAR_E_VISUALIZAR" + SPRING_ROLE_SUFFIX;
     public static final String ABASTECIMENTO_AUTORIZAR                      = SPRING_ROLE_PREFIX + "ABASTECIMENTO_AUTORIZAR" + SPRING_ROLE_SUFFIX;
     public static final String ABASTECIMENTO_APROVAR_REPROVAR               = SPRING_ROLE_PREFIX + "ABASTECIMENTO_APROVAR_REPROVAR" + SPRING_ROLE_SUFFIX;
@@ -182,7 +183,9 @@ public final class ChavePermissao {
     public static final String DOCUMENTO_CONSULTAR_E_VISUALIZAR             = SPRING_ROLE_PREFIX + "DOCUMENTO_CONSULTAR_E_VISUALIZAR" + SPRING_ROLE_SUFFIX;
     public static final String DOCUMENTO_INCLUIR                            = SPRING_ROLE_PREFIX + "DOCUMENTO_INCLUIR" + SPRING_ROLE_SUFFIX;
     public static final String DOCUMENTO_EXCLUIR                            = SPRING_ROLE_PREFIX + "DOCUMENTO_EXCLUIR" + SPRING_ROLE_SUFFIX;
-    
+    public static final String PARAMETRO_NF_CONSULTAR_E_VISUALIZAR          = SPRING_ROLE_PREFIX + "PARAMETRO_NF_CONSULTAR_E_VISUALIZAR" + SPRING_ROLE_SUFFIX;
+    public static final String PARAMETRO_NF_INCLUIR                         = SPRING_ROLE_PREFIX + "PARAMETRO_NF_INCLUIR" + SPRING_ROLE_SUFFIX;
+
     public static final String LEAD_DASHBOARD_CONECTCAR 					= SPRING_ROLE_PREFIX + "LEAD_DASHBOARD_CONECTCAR" + SPRING_ROLE_SUFFIX;
     public static final String PEDIDO_TAG 									= SPRING_ROLE_PREFIX + "PEDIDO_TAG" + SPRING_ROLE_SUFFIX;
     public static final String RASTREAR_PEDIDO_TAG 							= SPRING_ROLE_PREFIX + "RASTREAR_PEDIDO_TAG" + SPRING_ROLE_SUFFIX;
