@@ -131,6 +131,9 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
     private static final String CLAUSULA_NOTA_SEM_EMISSAO =
             " TC.statusNotaFiscal = " + StatusNotaFiscal.SEM_EMISSAO.getValue() + " ";
 
+    private static final String CLAUSULA_NOTA_PARCIALMENTE_EMITIDA =
+            " TC.statusNotaFiscal = " + StatusNotaFiscal.PARCIALMENTE_EMITIDA.getValue() + " ";
+
     private static final String CLAUSULA_REEMBOLSO_ATRASADO = "(trunc(r.dataVencimentoPgto) < trunc(SYSDATE) AND r.valorReembolso > 0 AND r.status <> " + StatusPagamentoReembolso.PAGO.getValue() + ")";
 
     private static final String CONSULTA_CONSOLIDADO_POR_FROTA_PV_DATA =
@@ -644,7 +647,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             boolean pendente = filtro.getStatusEmissaoNF().stream().anyMatch(x -> StatusNotaFiscal.valueOf(x.getName()).equals(StatusNotaFiscal.PENDENTE));
             boolean emitida = filtro.getStatusEmissaoNF().stream().anyMatch(x -> StatusNotaFiscal.valueOf(x.getName()).equals(StatusNotaFiscal.EMITIDA));
             boolean semEmissao = filtro.getStatusEmissaoNF().stream().anyMatch(x -> StatusNotaFiscal.valueOf(x.getName()).equals(StatusNotaFiscal.SEM_EMISSAO));
-            filtroStatus = montarFiltroStatus(atrasada, pendente, emitida, semEmissao);
+            boolean parcialmenteEmitida = filtro.getStatusEmissaoNF().stream().anyMatch(x -> StatusNotaFiscal.valueOf(x.getName()).equals(StatusNotaFiscal.PARCIALMENTE_EMITIDA));
+            filtroStatus = montarFiltroStatus(atrasada, pendente, emitida, semEmissao, parcialmenteEmitida);
         }
         String filtroNotaFiscal = "";
         if(filtro.getNotaFiscal() != null && filtro.getNotaFiscal().trim().length() > 0){
@@ -754,7 +758,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
      * @param semEmissao Se necessario exibir as sem emissão
      * @return Ums string contendo as clausulas de filtro por status
      */
-    private String montarFiltroStatus(boolean atrasada, boolean pendente, boolean emitida, boolean semEmissao) {
+    private String montarFiltroStatus(boolean atrasada, boolean pendente, boolean emitida, boolean semEmissao, boolean parcialmenteEmitida) {
         StringBuilder filtro = new StringBuilder();
         filtro.append(" AND (");
         List<String> clausulas = new ArrayList<>();
@@ -773,6 +777,10 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
 
         if (semEmissao) {
             clausulas.add(CLAUSULA_NOTA_SEM_EMISSAO);
+        }
+
+        if(parcialmenteEmitida) {
+            clausulas.add(CLAUSULA_NOTA_PARCIALMENTE_EMITIDA);
         }
 
         if(clausulas.isEmpty()) {
@@ -1093,7 +1101,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             boolean pendente = StatusNotaFiscal.PENDENTE.getValue().equals(filtro.getStatusEmissaoNotaFiscal());
             boolean emitida = StatusNotaFiscal.EMITIDA.getValue().equals(filtro.getStatusEmissaoNotaFiscal());
             boolean semEmissao = StatusNotaFiscal.SEM_EMISSAO.getValue().equals(filtro.getStatusEmissaoNotaFiscal());
-            filtroStatus = montarFiltroStatus(atrasada, pendente, emitida, semEmissao);
+            boolean parcialmenteEmitida = StatusNotaFiscal.PARCIALMENTE_EMITIDA.getValue().equals(filtro.getStatusEmissaoNotaFiscal());
+            filtroStatus = montarFiltroStatus(atrasada, pendente, emitida, semEmissao, parcialmenteEmitida);
         }
 
         InformacaoPaginacaoFrtVo paginacao =
