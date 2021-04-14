@@ -554,7 +554,7 @@ public class NotaFiscalSd {
                 mensagem = mensagens.obterMensagem(erro.getChaveMensagem(), UtilitarioFormatacao.formatarDecimalMoedaReal((BigDecimal)argumentos[0]));
                 break;
             case NOTA_FISCAL_UPLOAD_CNPJ_DESTINATARIO_INVALIDO :
-                mensagem =  mensagens.obterMensagem(erro.getChaveMensagem(), UtilitarioFormatacao.formatarCnpjApresentacao(UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.DEST_CNPJ)) );
+                mensagem =  mensagens.obterMensagem(erro.getChaveMensagem(), UtilitarioFormatacao.formatarCnpjApresentacao((String)argumentos[0]));
                 break;
             case NOTAS_FISCAIS_REPETIDAS_NO_UPLOAD:
                 mensagem = mensagens.obterMensagem(erro.getChaveMensagem(), numeroNfe, UtilitarioFormatacao.formatarCnpjApresentacao(UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.EMIT_CNPJ)) );
@@ -678,7 +678,7 @@ public class NotaFiscalSd {
                 Long destCnpj = notaFiscalParserSd.getLong(nota, ConstantesNotaFiscalParser.DEST_CNPJ);
                 boolean destinoConfiguradoIgualDestinoNFe = cnpjValidacao != null && cnpjValidacao.equals(destCnpj);
                 if(!destinoConfiguradoIgualDestinoNFe){
-                    this.addErroValidacao(validacoesNotas, nota, Erro.NOTA_FISCAL_UPLOAD_CNPJ_DESTINATARIO_INVALIDO);
+                    this.addErroValidacao(validacoesNotas, nota, Erro.NOTA_FISCAL_UPLOAD_CNPJ_DESTINATARIO_INVALIDO, cnpjValidacao.toString());
                 }
             });
         }
