@@ -535,6 +535,10 @@ public class NotaFiscalSd {
             return;
         }
 
+        if(validacoesNotas.stream().anyMatch(v -> numeroNfe.equals(v.getNumero()) && erro.equals(v.getErro()))) {
+            return;
+        }
+
         final BigDecimal valorTotal = documento != null ? notaFiscalParserSd.getBigDecimal(documento, ConstantesNotaFiscalParser.VALOR_TOTAL) : null;
 
         ValidacaoUploadNotaFiscalVo validacaoNF = new ValidacaoUploadNotaFiscalVo();
