@@ -676,6 +676,7 @@ public class NotaFiscalSd {
                 boolean destinoConfiguradoIgualDestinoNFe = cnpjValidacao != null && cnpjValidacao.equals(destCnpj);
                 if(!destinoConfiguradoIgualDestinoNFe){
                     this.addErroValidacao(validacoesNotas, nota, Erro.NOTA_FISCAL_UPLOAD_CNPJ_DESTINATARIO_INVALIDO);
+                    return;
                 }
             });
         }
