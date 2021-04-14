@@ -537,22 +537,27 @@ public class NotaFiscalSd {
 
         final BigDecimal valorTotal = documento != null ? notaFiscalParserSd.getBigDecimal(documento, ConstantesNotaFiscalParser.VALOR_TOTAL) : null;
 
+        ValidacaoUploadNotaFiscalVo validacaoNF = new ValidacaoUploadNotaFiscalVo();
+        validacaoNF.setNumero(numeroNfe);
+        validacaoNF.setErro(erro);
+        validacaoNF.setValorTotal(valorTotal);
+        validacaoNF.getArgumentos().addAll(Arrays.asList(argumentos));
+
         String mensagem;
         switch(erro){
             case NOTA_FISCAL_VALOR_PROD_FALTANTE:
             case NOTA_FISCAL_VALOR_COMB_FALTANTE:
                 mensagem = mensagens.obterMensagem(erro.getChaveMensagem(), UtilitarioFormatacao.formatarDecimalMoedaReal((BigDecimal)argumentos[0]));
                 break;
+            case NOTAS_FISCAIS_REPETIDAS_NO_UPLOAD:
+                mensagem = mensagens.obterMensagem(erro.getChaveMensagem(), numeroNfe, UtilitarioFormatacao.formatarCnpjApresentacao(UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.EMIT_CNPJ)) );
+                validacaoNF.setNumero("");
+                validacaoNF.setValorTotal(null);
+                break;
             default:
                 mensagem = mensagens.obterMensagem(erro.getChaveMensagem());
         }
-
-        ValidacaoUploadNotaFiscalVo validacaoNF = new ValidacaoUploadNotaFiscalVo();
-        validacaoNF.setNumero(numeroNfe);
-        validacaoNF.setErro(erro);
         validacaoNF.setMensagem(mensagem);
-        validacaoNF.setValorTotal(valorTotal);
-        validacaoNF.getArgumentos().addAll(Arrays.asList(argumentos));
 
         if (ERROS_BLOQUEANTES.contains(erro)){
             validacoesNotas.removeIf(v-> numeroNfe.equals(v.getNumero()));
@@ -568,6 +573,16 @@ public class NotaFiscalSd {
      * @param validacoesNotas Lista de erros das validacoes
      */
     private void validarNotaRepetida(List<Document> documentos, List<ValidacaoUploadNotaFiscalVo> validacoesNotas) {
+        documentos.stream()
+                .collect(Collectors.groupingBy(d-> UtilitarioXml.getString(d, ConstantesNotaFiscalParser.NUMERO)
+                    + "," + UtilitarioXml.getString(d, ConstantesNotaFiscalParser.SERIE)
+                    + "," + UtilitarioXml.getString(d, ConstantesNotaFiscalParser.EMIT_CNPJ)))
+                .forEach((k,v)->{
+                    if (v.size() > 1){
+                        this.addErroValidacao(validacoesNotas, v.get(0), Erro.NOTAS_FISCAIS_REPETIDAS_NO_UPLOAD);
+                    }
+                });
+
         for (Document documento : documentos) {
             List<NotaFiscal> notasFiscais = repositorio.obterNotaPorNumero(ConstantesNotaFiscal.NOTA_FISCAL_PREFIX + notaFiscalParserSd.getString(documento, ConstantesNotaFiscalParser.NUMERO));
             if (notasFiscais != null) {
