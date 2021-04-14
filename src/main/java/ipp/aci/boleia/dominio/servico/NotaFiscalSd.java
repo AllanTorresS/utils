@@ -555,7 +555,7 @@ public class NotaFiscalSd {
                 break;
             case NOTA_FISCAL_UPLOAD_CNPJ_DESTINATARIO_INVALIDO :
                 mensagem =  mensagens.obterMensagem(erro.getChaveMensagem(), UtilitarioFormatacao.formatarCnpjApresentacao(UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.DEST_CNPJ)) );
-            break;
+                break;
             case NOTAS_FISCAIS_REPETIDAS_NO_UPLOAD:
                 mensagem = mensagens.obterMensagem(erro.getChaveMensagem(), numeroNfe, UtilitarioFormatacao.formatarCnpjApresentacao(UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.EMIT_CNPJ)) );
                 validacaoNF.setNumero("");
