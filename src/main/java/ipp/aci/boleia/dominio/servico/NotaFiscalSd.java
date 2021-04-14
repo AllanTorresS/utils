@@ -535,6 +535,10 @@ public class NotaFiscalSd {
             return;
         }
 
+        if(validacoesNotas.stream().anyMatch(v -> numeroNfe.equals(v.getNumero()) && erro.equals(v.getErro()))) {
+            return;
+        }
+
         final BigDecimal valorTotal = documento != null ? notaFiscalParserSd.getBigDecimal(documento, ConstantesNotaFiscalParser.VALOR_TOTAL) : null;
 
         ValidacaoUploadNotaFiscalVo validacaoNF = new ValidacaoUploadNotaFiscalVo();
@@ -672,6 +676,7 @@ public class NotaFiscalSd {
                 boolean destinoConfiguradoIgualDestinoNFe = cnpjValidacao != null && cnpjValidacao.equals(destCnpj);
                 if(!destinoConfiguradoIgualDestinoNFe){
                     this.addErroValidacao(validacoesNotas, nota, Erro.NOTA_FISCAL_UPLOAD_CNPJ_DESTINATARIO_INVALIDO);
+                    return;
                 }
             });
         }
