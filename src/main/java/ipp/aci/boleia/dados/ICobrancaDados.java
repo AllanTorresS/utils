@@ -2,6 +2,7 @@ package ipp.aci.boleia.dados;
 
 
 import ipp.aci.boleia.dominio.Cobranca;
+import ipp.aci.boleia.dominio.enums.PeriodoCalculoImpontualidadeFrota;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaCobrancaVo;
 import ipp.aci.boleia.dominio.vo.frotista.FiltroPesquisaCobrancaFrtVo;
@@ -105,5 +106,21 @@ public interface ICobrancaDados extends IRepositorioBoleiaDados<Cobranca> {
      * @return a cobrança desanexada
      */
     Cobranca desanexar(Cobranca cobranca);
+
+    /**
+     * Obtém a quantidade de cobranças pagas em atraso por uma frota
+     * @param idFrota O identificador da frota
+     * @param periodoCalculo O tipo de cálculo a ser feito (trimestral ou anual)
+     * @return A quantidade de cobranças pagas em atraso
+     */
+    Long obterQuantidadeCobrancaPagasEmAtraso(Long idFrota, PeriodoCalculoImpontualidadeFrota periodoCalculo);
+
+    /**
+     * Obtém a quantidade total de cobranças emitidas para uma frota em um período
+     * @param idFrota O identificador da frota
+     * @param periodoCalculo O período do cálculo (trimestral ou anual)
+     * @return A quantidade total de cobranças
+     */
+    Long obterQuantidadeTotalCobrancas(Long idFrota, PeriodoCalculoImpontualidadeFrota periodoCalculo);
 
 }

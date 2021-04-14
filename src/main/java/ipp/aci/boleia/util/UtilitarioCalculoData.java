@@ -512,4 +512,51 @@ public final class UtilitarioCalculoData {
         calendar.add(Calendar.DAY_OF_MONTH, -qtdDias);
         return calendar.getTime();
     }
+
+    /**
+     * Diminui uma quantidade de meses da data
+     * @param data A data a ser subtraída
+     * @param qtdMeses A quantidade de meses a serem subtraídos
+     * @return A data subtraída do número de meses
+     */
+    public static Date diminuirMeses(Date data, int qtdMeses) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(data);
+        calendar.add(Calendar.MONTH, -qtdMeses);
+        return calendar.getTime();
+    }
+
+    /**
+     * Obtém o primeiro dia do mês anterior
+     * @param data A data base
+     * @return O primeiro dia do mês anterior à data
+     */
+    public static Date obterPrimeiroDiaMesAnterior(Date data) {
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.DAY_OF_MONTH, c.getActualMinimum(Calendar.DAY_OF_MONTH));
+        c.set(Calendar.HOUR_OF_DAY,c.getActualMinimum(Calendar.HOUR_OF_DAY));
+        c.set(Calendar.MINUTE,c.getActualMinimum(Calendar.MINUTE));
+        c.set(Calendar.SECOND,c.getActualMinimum(Calendar.SECOND));
+        c.set(Calendar.MILLISECOND,c.getActualMinimum(Calendar.MILLISECOND));
+        c.add(Calendar.MONTH, -1);
+        return c.getTime();
+    }
+
+    /**
+     * Obtém o último dia do mês anterior
+     * @param data A data base
+     * @return O último dia do mês anterior à data
+     */
+    public static Date obterUltimoDiaMesAnterior(Date data) {
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
+        c.set(Calendar.HOUR_OF_DAY,c.getActualMaximum(Calendar.HOUR_OF_DAY));
+        c.set(Calendar.MINUTE,c.getActualMaximum(Calendar.MINUTE));
+        c.set(Calendar.SECOND,c.getActualMaximum(Calendar.SECOND));
+        c.set(Calendar.MILLISECOND,c.getActualMaximum(Calendar.MILLISECOND));
+        c.add(Calendar.MONTH, -1);
+        return c.getTime();
+    }
+
+
 }
