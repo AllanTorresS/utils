@@ -50,8 +50,21 @@ public class OracleMotoristaDados extends OracleRepositorioBoleiaDados<Motorista
     private static final String QUERY_EXCLUSAO_DADOS_MOTORISTA = "DELETE FROM AbastecimentoCta ac " +
             "WHERE ac.dataProcessamento <= :dataProcessamento";
 
-    @Autowired
-    private UtilitarioAmbiente utilitarioAmbiente;
+    //TODO: ajustar query
+    private static final String QUERY_EXCLUSAO_MOTORISTAS_SEM_ABASTECIMENTO = "DELETE FROM Motorista m " +
+            "WHERE ac.dataProcessamento <= :dataProcessamento";
+
+    private static final String LISTAR_MOTORISTAS_SEM_ABASTECIMENTO =
+            "SELECT m " +
+            "FROM Motorista m " +
+            "WHERE m.dataCriacao < :diasDeVerificacao and " +
+            "NOT EXISTS (" +
+            " 	SELECT 1 " +
+            " 	FROM AbastecimentoCta ac " +
+            " 	JOIN ac.autorizacaoPagamentoImportada ap " +
+            " 	WHERE ap.motorista.id = m.id " +
+            ") " +
+            "ORDER BY m.frota, m.dataCriacao ";
 
     private static final String LISTAR_MOTORISTAS_POR_CONSOLIDADO =
             "SELECT DISTINCT m " +
@@ -60,6 +73,9 @@ public class OracleMotoristaDados extends OracleRepositorioBoleiaDados<Motorista
             "WHERE (ap.transacaoConsolidadaPostergada.id = :idConsolidado OR ap.transacaoConsolidada.id = :idConsolidado) AND " +
             "       upper(m.nome) LIKE :nome AND " +
             "       m.excluido = false";
+
+    @Autowired
+    private UtilitarioAmbiente utilitarioAmbiente;
 
     /**
      * Instancia o repositorio
@@ -364,12 +380,14 @@ public class OracleMotoristaDados extends OracleRepositorioBoleiaDados<Motorista
 
     @Override
     public List<Motorista> obterMotoristasSemAbastecimento(Integer diasDeVerificacao) {
-        //TODO: implementar metodo
-        return null;
+        ParametroPesquisaIgual parametroDiasDeVerificacao = new ParametroPesquisaIgual("diasDeVerificacao", UtilitarioCalculoData.adicionarDiasData(utilitarioAmbiente.buscarDataAmbiente(), -diasDeVerificacao));
+        return pesquisar(null, LISTAR_MOTORISTAS_SEM_ABASTECIMENTO, parametroDiasDeVerificacao).getRegistros();
     }
 
     @Override
     public void excluirDadosMotoristasSemAbastecimento() {
-        //TODO: implementar metodo
+        Query query = getGerenciadorDeEntidade().createQuery(QUERY_EXCLUSAO_MOTORISTAS_SEM_ABASTECIMENTO);
+        //query.setParameter("dataProcessamento", UtilitarioCalculoData.adicionarDiasData(utilitarioAmbiente.buscarDataAmbiente(), diasDeArmazenamento));
+        query.executeUpdate();
     }
 }
