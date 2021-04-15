@@ -14,7 +14,7 @@ public class TransacaoParceiroPropriedadesVo {
 	private String codigoInternoParceiro;
 
 	@JsonProperty("DataDePassagem")
-	private Date dataDePassagem;
+	private String dataDePassagem;
 
 	@JsonProperty("NumeroSerieTag")
 	private String numeroSerieTag;
@@ -57,11 +57,11 @@ public class TransacaoParceiroPropriedadesVo {
 		this.codigoInternoParceiro = codigoInternoParceiro;
 	}
 
-	public Date getDataDePassagem() {
+	public String getDataDePassagem() {
 		return dataDePassagem;
 	}
 
-	public void setDataDePassagem(Date dataDePassagem) {
+	public void setDataDePassagem(String dataDePassagem) {
 		this.dataDePassagem = dataDePassagem;
 	}
 
