@@ -117,6 +117,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
     private static final String CLAUSULA_NOTA_ATRASADA =
             " TRUNC(TC.prazos.dataLimiteEmissaoNfe) <  TRUNC(SYSDATE) " +
                     " AND TC.statusNotaFiscal <> " + StatusNotaFiscal.EMITIDA.getValue() +
+                    " AND TC.statusNotaFiscal <> " + StatusNotaFiscal.PARCIALMENTE_EMITIDA.getValue() +
                     " AND TC.statusNotaFiscal <> " + StatusNotaFiscal.SEM_EMISSAO.getValue() + " ";
 
 
