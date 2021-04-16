@@ -384,10 +384,4 @@ public class OracleMotoristaDados extends OracleRepositorioBoleiaDados<Motorista
         return pesquisar(null, LISTAR_MOTORISTAS_SEM_ABASTECIMENTO, parametroDiasDeVerificacao).getRegistros();
     }
 
-    @Override
-    public void excluirDadosMotoristasSemAbastecimento() {
-        Query query = getGerenciadorDeEntidade().createQuery(QUERY_EXCLUSAO_MOTORISTAS_SEM_ABASTECIMENTO);
-        //query.setParameter("dataProcessamento", UtilitarioCalculoData.adicionarDiasData(utilitarioAmbiente.buscarDataAmbiente(), diasDeArmazenamento));
-        query.executeUpdate();
-    }
 }
