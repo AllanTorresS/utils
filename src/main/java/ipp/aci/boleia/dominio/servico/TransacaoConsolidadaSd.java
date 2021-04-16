@@ -1192,7 +1192,7 @@ public class TransacaoConsolidadaSd {
         TransacaoConsolidadaPrazos prazosConsolidado = new TransacaoConsolidadaPrazos();
         Long prazoPagamento = 0L;
         Long prazoReembolso = 2L;
-        Date dataLimiteEmissaoNfe = UtilitarioCalculoData.adicionarDiasData(transacaoConsolidada.getDataFimPeriodo(), 5);
+        Date dataLimiteEmissaoNfe = transacaoConsolidada.getDataFimPeriodo();
         Boolean possuiPrazoAjuste = Boolean.FALSE;
 
         if(!transacaoConsolidada.getFrota().isPrePaga()){
@@ -1202,7 +1202,6 @@ public class TransacaoConsolidadaSd {
             //Nota: Se o prazo de geração de cobrança for zero, não há prazo de ajuste e as notas só poderão ser emitidas durante o ciclo,
             // com a cobrança sendo gerada após o fechamento deste.
             Date dataGeracaoCobranca = UtilitarioCalculoData.adicionarDiasData(transacaoConsolidada.getDataFimPeriodo(), 1);
-            dataLimiteEmissaoNfe = transacaoConsolidada.getDataFimPeriodo();
 
             //Nota: Ciclos de frotas pré-pagas não terão informações de cobrança, uma vez que elas não geram cobrança.
             Date dataVencimentoCobranca = UtilitarioCalculoData.adicionarDiasData(transacaoConsolidada.getDataFimPeriodo(), prazoPagamento.intValue());
