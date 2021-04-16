@@ -9,6 +9,7 @@ import ipp.aci.boleia.dominio.enums.StatusAcumuloKmv;
 import ipp.aci.boleia.dominio.enums.StatusApiToken;
 import ipp.aci.boleia.dominio.enums.StatusContrato;
 import ipp.aci.boleia.dominio.enums.StatusFrota;
+import ipp.aci.boleia.dominio.enums.ClassificacaoStatusFrota;
 import ipp.aci.boleia.dominio.enums.StatusFrotaConectcar;
 import ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso;
 import ipp.aci.boleia.dominio.enums.TipoAcumuloKmv;
@@ -202,6 +203,10 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
                     filtro.getPaginacao().getParametrosOrdenacaoColuna().add(0, new ParametroOrdenacaoColuna("situacaoConectCar.status", parametro.getSentidoOrdenacao()));
                 }
             }
+        }
+
+        if (filtro.getClassificacaoStatusFrota() != null) {
+            parametros.add(new ParametroPesquisaIgual("classificacaoStatusFrota", ClassificacaoStatusFrota.valueOf(filtro.getClassificacaoStatusFrota().getName()).getValue()));
         }
         
         povoarParametroApiToken(filtro, parametros);
