@@ -218,6 +218,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "           TC.frotaExigeNF = true " +
                     "           OR TC.empresaAgregada.id IS NOT NULL " +
                     "           OR TC.unidade.id IS NOT NULL" +
+                    "           OR TC.frotaGerenciaNf = true " +
                     "       ) " +
                     "   AND (TC.empresaAgregada.id = :idEmpresaAgregada OR :idEmpresaAgregada is null) " +
                     "   AND (TC.unidade.id = :idUnidade OR :idUnidade is null) " +
