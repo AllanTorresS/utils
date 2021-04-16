@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Where;
@@ -55,6 +56,10 @@ public class TagConectcar implements IPersistente {
 	@JoinColumn(name = "DS_PLACA", insertable = false, updatable = false, referencedColumnName = "DS_PLACA")
 	@Where(clause = "ID_EXCLUIDO = 0 AND ID_STATUS = 1")
 	private List<Veiculo> veiculos;
+	
+	@NotNull
+    @Column(name = "ID_TIPO_UTILIZACAO")
+    private Integer tipoUtilizacao;
 
 	/**
 	 * Construtor padrão da entidade.
@@ -174,6 +179,14 @@ public class TagConectcar implements IPersistente {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	public Integer getTipoUtilizacao() {
+		return tipoUtilizacao;
+	}
+
+	public void setTipoUtilizacao(Integer tipoUtilizacao) {
+		this.tipoUtilizacao = tipoUtilizacao;
 	}
 
 }
