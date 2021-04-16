@@ -51,7 +51,8 @@ public class AgrupamentoTransacaoConsolidadaPvVo {
      * @param quantidadeAbastecimentos Quantidade de abastecimentos presentes nas transações consolidadas.
      * @param statusPagamentoReembolso Status de pagamento do reembolso.
      * @param valorTotalAntecipado Valor total antecipado para a revenda.
-     * @param passivelDeEmissao indica se ao menos um ciclo do agrupamaneto é passível de emissão de NF
+     * @param passivelDeEmissao indica se ao menos um ciclo do agrupamento é passível de emissão de NF
+     * @param possuiExigenciaDeNf indica se ao menos um ciclo do agrupamento possui exigência de NF
      */
     public AgrupamentoTransacaoConsolidadaPvVo(Date dataInicioPeriodo, Date dataFimPeriodo, Date prazoEmissaoNotaFiscal, Integer statusConsolidacao, BigDecimal valorFaturamento, BigDecimal valorReembolso, BigDecimal valorDesconto, BigDecimal valorTotalNf, BigDecimal valorEmitidoNf, Long quantidadeAbastecimentos, Integer statusPagamentoReembolso, BigDecimal valorTotalAntecipado, Integer passivelDeEmissao, Integer possuiExigenciaDeNf) {
         this.dataInicioPeriodo = dataInicioPeriodo;
