@@ -11,6 +11,9 @@ public class AdesivosIntegracaoVo {
 
 	@JsonProperty("Bloquear")
 	private Boolean bloquear;
+	
+	@JsonProperty("ServicosBloqueio")
+	private String[] servicosBloqueio;
 
 	@JsonProperty("NumeroSerieTag")
 	private Long numeroSerieTag;
@@ -22,9 +25,10 @@ public class AdesivosIntegracaoVo {
 
 	}
 
-	public AdesivosIntegracaoVo(Boolean bloquear, Long numeroSerieTag, VeiculoIntegracaoVo veiculo) {
+	public AdesivosIntegracaoVo(Boolean bloquear, String[] servicosBloqueio, Long numeroSerieTag, VeiculoIntegracaoVo veiculo) {
 		super();
 		this.bloquear = bloquear;
+		this.servicosBloqueio = servicosBloqueio;
 		this.numeroSerieTag = numeroSerieTag;
 		this.veiculo = veiculo;
 	}
@@ -35,6 +39,14 @@ public class AdesivosIntegracaoVo {
 
 	public void setBloquear(Boolean bloquear) {
 		this.bloquear = bloquear;
+	}
+
+	public String[] getServicosBloqueio() {
+		return servicosBloqueio;
+	}
+
+	public void setServicosBloqueio(String[] servicosBloqueio) {
+		this.servicosBloqueio = servicosBloqueio;
 	}
 
 	public Long getNumeroSerieTag() {
