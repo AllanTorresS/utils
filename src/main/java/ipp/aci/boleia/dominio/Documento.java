@@ -133,9 +133,9 @@ public class Documento implements IPersistente, IExclusaoLogicaComData {
         return excluido;
     }
 
-    @Override
+    @Deprecated
     public void setExcluido(Boolean excluido) {
-        this.excluido=excluido;
+        this.excluido = excluido;
     }
 
     @Override
@@ -145,7 +145,8 @@ public class Documento implements IPersistente, IExclusaoLogicaComData {
 
     @Override
     public void setDataExclusao(Date dataExclusao) {
-        this.dataExclusao=dataExclusao;
+        this.excluido = dataExclusao != null;
+        this.dataExclusao = dataExclusao;
     }
 
     public String getVersaoDocumento() {

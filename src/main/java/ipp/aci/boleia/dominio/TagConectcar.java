@@ -1,7 +1,10 @@
 package ipp.aci.boleia.dominio;
 
-import java.util.Date;
-import java.util.List;
+import ipp.aci.boleia.dominio.interfaces.IExclusaoLogicaComData;
+import ipp.aci.boleia.dominio.interfaces.IPersistente;
+import org.hibernate.annotations.Where;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,12 +15,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
-
-import org.hibernate.annotations.Where;
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
-
-import ipp.aci.boleia.dominio.interfaces.IPersistente;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Representa a tabela de AtivacaoTag
@@ -25,7 +24,7 @@ import ipp.aci.boleia.dominio.interfaces.IPersistente;
 @Entity
 @Audited
 @Table(name = "TAG_CONECTCAR")
-public class TagConectcar implements IPersistente {
+public class TagConectcar implements IPersistente, IExclusaoLogicaComData{
 
 	private static final long serialVersionUID = -8043835722308868542L;
 
@@ -109,6 +108,11 @@ public class TagConectcar implements IPersistente {
 		this.dataBloqueio = dataBloqueio;
 	}
 
+	@Override
+	public Boolean getExcluido() {
+		return this.dataExclusao != null;
+	}
+
 	public Date getDataExclusao() {
 		return dataExclusao;
 	}
@@ -126,19 +130,11 @@ public class TagConectcar implements IPersistente {
 	}
 
 	public boolean isAtivo(){
-		if(dataBloqueio == null) {
-			return true;
-		}
-		
-		return false;
+		return dataBloqueio == null;
 	}
 	
 	public boolean isBloqueado(){
-		if(dataBloqueio != null) {
-			return true;
-		}
-		
-		return false;
+		return dataBloqueio != null;
 	}
 	
 	public Integer getStatus() {
@@ -169,11 +165,10 @@ public class TagConectcar implements IPersistente {
 			return false;
 		TagConectcar other = (TagConectcar) obj;
 		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		return true;
+			return other.id == null;
+		} else {
+			return id.equals(other.id);
+		}
 	}
 
 }

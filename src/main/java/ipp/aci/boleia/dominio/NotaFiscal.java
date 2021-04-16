@@ -108,6 +108,14 @@ public class NotaFiscal implements IPersistente, IPertenceRevendedor, IPertenceF
     @Size(min = 44, max = 44)
     private String chaveAcesso;
 
+    @Column(name = "VR_COMB")
+    @Digits(integer = 12, fraction = 4)
+    private BigDecimal valorCombustivel;
+
+    @Column(name = "VR_PROD_SERV")
+    @Digits(integer = 12, fraction = 4)
+    private BigDecimal valorProdutosServicos;
+
     @Override
     public Long getId() {
         return id;
@@ -248,6 +256,22 @@ public class NotaFiscal implements IPersistente, IPertenceRevendedor, IPertenceF
         this.chaveAcesso = chaveAcesso;
     }
 
+    public BigDecimal getValorCombustivel() {
+        return valorCombustivel;
+    }
+
+    public void setValorCombustivel(BigDecimal valorCombustivel) {
+        this.valorCombustivel = valorCombustivel;
+    }
+
+    public BigDecimal getValorProdutosServicos() {
+        return valorProdutosServicos;
+    }
+
+    public void setValorProdutosServicos(BigDecimal valorProdutosServicos) {
+        this.valorProdutosServicos = valorProdutosServicos;
+    }
+
     /**
      * Verifica se a nota foi emitida no mes atual
      *
@@ -268,6 +292,10 @@ public class NotaFiscal implements IPersistente, IPertenceRevendedor, IPertenceF
      */
     @Transient
     public String getNomeArquivoSemExtensao() {
-        return getNumero();
+        String nomeArquivoSemExtensao = getNumero();
+        if(getNumeroSerie() != null) {
+            nomeArquivoSemExtensao = nomeArquivoSemExtensao.concat("_").concat(getNumeroSerie());
+        }
+        return nomeArquivoSemExtensao;
     }
 }

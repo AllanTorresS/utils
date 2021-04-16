@@ -179,7 +179,7 @@ public class OracleCobrancaConectcarDados extends OracleRepositorioBoleiaDados<C
 				if(statusPagamento.getName() != null) {
 					if (StatusPagamentoCobranca.valueOf(statusPagamento.getName()).getValue().equals(StatusPagamentoCobranca.VENCIDO.getValue())){
 						parametrosStatusOr.addParametro(new ParametroPesquisaAnd(
-							new ParametroPesquisaOr(new ParametroPesquisaIgual("status", StatusPagamentoCobranca.EM_ABERTO.getValue()),new ParametroPesquisaIgual("status", StatusPagamentoCobranca.VENCIDO.getValue())),
+							new ParametroPesquisaOr(new ParametroPesquisaIgual("status", StatusPagamentoCobranca.A_VENCER.getValue()),new ParametroPesquisaIgual("status", StatusPagamentoCobranca.VENCIDO.getValue())),
 							new ParametroPesquisaDataMenor("dataVencimentoPagto", UtilitarioCalculoData.obterPrimeiroInstanteDia(ambiente.buscarDataAmbiente()))
 						));
 					} else {
@@ -187,7 +187,7 @@ public class OracleCobrancaConectcarDados extends OracleRepositorioBoleiaDados<C
 
 						parametrosPesquisaAnd.addParametro(new ParametroPesquisaIgual("status", StatusPagamentoCobranca.valueOf(statusPagamento.getName()).getValue()));
 
-						if (StatusPagamentoCobranca.valueOf(statusPagamento.getName()).getValue().equals(StatusPagamentoCobranca.EM_ABERTO.getValue())){
+						if (StatusPagamentoCobranca.valueOf(statusPagamento.getName()).getValue().equals(StatusPagamentoCobranca.A_VENCER.getValue())){
 							parametrosPesquisaAnd.addParametro(new ParametroPesquisaOr(
 								new ParametroPesquisaDataMaiorOuIgual("dataVencimentoPagto", ambiente.buscarDataAmbiente()),
 								new ParametroPesquisaNulo("dataVencimentoPagto"))

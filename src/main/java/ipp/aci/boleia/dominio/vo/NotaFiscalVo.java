@@ -113,4 +113,8 @@ public class NotaFiscalVo {
     public void setDataAbastecimento(Date dataAbastecimento) {
         this.dataAbastecimento = dataAbastecimento;
     }
+
+    public String getNumeroCompleto() {
+        return this.numero+"-"+this.numeroSerie;
+    }
 }

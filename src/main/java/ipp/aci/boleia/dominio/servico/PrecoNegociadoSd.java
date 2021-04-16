@@ -51,6 +51,29 @@ public class PrecoNegociadoSd {
     }
 
     /**
+     * Cria um novo acordo zerado vigente
+     * e com desconto vigente nulo
+     * @param precoAtual preco que sera alterado
+     * @return Preco novo a partir do base
+     */
+    public Preco criarApartirDaExclusaoDePrecoBase(Preco precoAtual){
+        Date dataAtualizacao = ambiente.buscarDataAmbiente();
+
+        Preco novoPreco = new Preco();
+        novoPreco.setFrotaPtov(precoAtual.getFrotaPtov());
+        novoPreco.setStatus(StatusPreco.VIGENTE.getValue());
+        novoPreco.setPreco(precoAtual.getPrecoBase().getPreco());
+        novoPreco.setPrecoBase(precoAtual.getPrecoBase());
+        novoPreco.setDescontoVigente(null);
+        novoPreco.setDataAtualizacao(dataAtualizacao);
+        novoPreco.setDataVigencia(dataAtualizacao);
+        repositorioPreco.armazenar(novoPreco);
+        return novoPreco;
+    }
+
+
+
+    /**
      * Aplica novo preco vigente ou já em aceite, conforme o novo acordo recém aceitado
      * e gera registro de histórico do preço vigente anterior ao aceite.
      *
@@ -86,8 +109,7 @@ public class PrecoNegociadoSd {
     public void validaDesconto(BigDecimal desconto, Boolean possuiDesconto) throws ExcecaoValidacao {
         if(desconto != null){
             int comparacaoDesconto = desconto.compareTo(BigDecimal.ZERO);
-
-            if((possuiDesconto && comparacaoDesconto > 0) || (!possuiDesconto && comparacaoDesconto < 0) || (comparacaoDesconto == 0)){
+            if((possuiDesconto && comparacaoDesconto > 0) || (!possuiDesconto && comparacaoDesconto < 0)){
                 throw new ExcecaoValidacao(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("precoNegociado.novoAcordo.validacao.desconto.invalido"));
             }
         }

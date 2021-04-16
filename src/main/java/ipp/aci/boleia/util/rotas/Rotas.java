@@ -87,6 +87,7 @@ public final  class Rotas {
     public static final  String TRANS_CONSOL_REVENDA_API             = BASE_API + "/transacaoConsolidadaRevenda";
     public static final  String TRANS_CONSOL_SOLUCAO_API             = BASE_API + "/transacaoConsolidadaSolucao";
     public static final  String FINANCEIRO_REVENDA                   = BASE_API + "/financeiroRevenda";
+    public static final  String FINANCEIRO_FROTA                     = BASE_API + "/financeiroFrota";
     public static final  String PRECO_API                            = BASE_API + "/preco";
     public static final  String PRECO_BASE_API                       = BASE_API + "/precoBase";
     public static final  String PRECO_MICROMERCADO_API               = BASE_API + "/precoMicromercado";
@@ -128,6 +129,7 @@ public final  class Rotas {
     public static final  String CREDENCIAMENTO_POSTO_API             = BASE_API + "/credenciamentoPosto";
     public static final  String POSTO_CREDENCIADO_API                = BASE_API + "/postoCredenciado";
     public static final  String DOCUMENTO_API                        = BASE_API + "/documento";
+    public static final  String PARAMETRO_NF_API                     = BASE_API + "/parametro-nf";
     public static final  String CREDENCIAMENTO_FROTA_API             = BASE_API + "/credenciamentoFrota";
     public static final  String DASHBOARD_CONECTCAR_API              = BASE_API + "/dashboardConectcar";
     public static final  String PEDIDO_TAG_API                       = BASE_API + "/pedidoTag";
@@ -146,6 +148,8 @@ public final  class Rotas {
     public static final String PRECO_FRETE_API                       = BASE_API + "/precofrete";
     public static final String DETALHAMENTO_CICLO_REVENDA_API        = BASE_API + "/detalhamentoCicloRevenda";
     public static final String VEICULO_COTA_RELATORIO_API            = BASE_API + "/veiculo/cota";
+    public static final String DETALHE_COBRANCA_API                  = BASE_API + "/detalheCobranca";
+    public static final String DETALHE_REEMBOLSO_API                 = BASE_API + "/detalheReembolso";
 
     /**
      * Construtor privado, impede instanciacao e heranca

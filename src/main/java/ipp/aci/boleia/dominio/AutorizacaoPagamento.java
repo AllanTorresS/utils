@@ -8,9 +8,11 @@ import ipp.aci.boleia.dominio.enums.StatusEdicao;
 import ipp.aci.boleia.dominio.enums.StatusNotaFiscalAbastecimento;
 import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
 import ipp.aci.boleia.dominio.enums.TipoErroAutorizacaoPagamento;
+import ipp.aci.boleia.dominio.enums.TipoItemAutorizacaoPagamento;
 import ipp.aci.boleia.dominio.enums.TipoPreenchimentoLitragem;
 import ipp.aci.boleia.dominio.enums.TipoRealizacaoPedido;
 import ipp.aci.boleia.dominio.enums.TipoSenhaAutorizacao;
+import ipp.aci.boleia.dominio.historico.HistoricoParametroNotaFiscal;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
 import ipp.aci.boleia.dominio.interfaces.IPertenceMotorista;
@@ -20,6 +22,7 @@ import org.hibernate.annotations.Formula;
 import org.hibernate.envers.AuditJoinTable;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -75,8 +78,8 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
      * na tela de detalhamento de NF.
      */
     private static final String CHAVE_ORDENACAO_FINANCEIRO_FORMULA =
-                    "CASE WHEN CD_TRANS_CONSOL_POSTERGADA IS NOT NULL AND ID_STATUS = 1 THEN 0 " +
-                    "     WHEN CD_TRANS_CONSOL_POSTERGADA IS NOT NULL AND ID_STATUS <> 1 THEN 1 " +
+            "CASE WHEN CD_TRANS_CONSOL_POSTERGADA IS NOT NULL AND ID_STATUS_EDICAO = 0 AND ID_STATUS = 1 THEN 0 " +
+                    "     WHEN CD_TRANS_CONSOL_POSTERGADA IS NOT NULL AND (ID_STATUS_EDICAO = 1 OR ID_STATUS = -1) THEN 1 " +
                     "     WHEN CD_TRANS_CONSOL_POSTERGADA IS NULL AND (ID_STATUS_EDICAO = 1 OR ID_STATUS = -1) THEN 2 " +
                     "     ELSE 3 " +
                     "END";
@@ -417,6 +420,9 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     @Column(name="ID_UNIDADE_EXIGE_NF")
     private Boolean unidadeExigeNf;
 
+    @Column(name = "ID_FROTA_EXIGE_NF")
+    private boolean frotaExigeNF;
+
     @Max(99999999L)
     @Column(name = "CD_PTOV_ABADI")
     private Long numeroAbadiPv;
@@ -485,6 +491,16 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     @NotAudited
     @Formula(CHAVE_ORDENACAO_FINANCEIRO_FORMULA)
     private Integer chaveOrdenacaoFinanceiro;
+
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_HISTORICO_PARAM_NF")
+    private HistoricoParametroNotaFiscal parametroNotaFiscal;
+
+    @NotAudited
+    @Column(name = "DT_ATUALIZACAO")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataAtualizacao;
 
     @Transient
     private TipoErroAutorizacaoPagamento tipoErroAutorizacaoPagamento;
@@ -649,6 +665,14 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
 
     public void setDataRequisicao(Date dataRequisicao) {
         this.dataRequisicao = dataRequisicao;
+    }
+
+    public Date getDataAtualizacao() {
+        return dataAtualizacao;
+    }
+
+    public void setDataAtualizacao(Date dataAtualizacao) {
+        this.dataAtualizacao = dataAtualizacao;
     }
 
     public Long getCnpjFrota() {
@@ -1259,6 +1283,11 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
         return getNotasFiscais() != null ? getNotasFiscaisSemJustificativa().size() : 0;
     }
 
+    @Transient
+    public Integer getQuantidadeJustificativas() {
+        return getNotasFiscais() != null ? getNotasFiscaisComJustificativa().size() : 0;
+    }
+
     public String getUuidAbastecimento() {
         return uuidAbastecimento;
     }
@@ -1313,6 +1342,14 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
 
     public void setUnidadeExigeNf(Boolean unidadeExigeNf) {
         this.unidadeExigeNf = unidadeExigeNf;
+    }
+
+    public boolean isFrotaExigeNF() {
+        return frotaExigeNF;
+    }
+
+    public void setFrotaExigeNF(boolean frotaExigeNF) {
+        this.frotaExigeNF = frotaExigeNF;
     }
 
     public Long getNumeroAbadiPv() {
@@ -1589,6 +1626,15 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
         return this.getItems().stream().filter(i -> !i.isAbastecimento()).collect(Collectors.toList());
     }
 
+    /**
+     * Obtém a lista de valores unitários dos produtos de uma autorização de pagamento
+     * @return A lista de valores unitários
+     */
+    @Transient
+    public List<BigDecimal> getValoresUnitariosServicos() {
+        return this.obterItensServico().stream().map(ItemAutorizacaoPagamento::getValorUnitario).collect(Collectors.toList());
+    }
+
     public Long getCodigoAbastecimentoCTA() {
         return codigoAbastecimentoCTA;
     }
@@ -1637,6 +1683,14 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
         this.foiProcessadoPeloGeradorDeCampanhas = foiProcessadoPeloGeradorDeCampanhas;
     }
 
+    public HistoricoParametroNotaFiscal getParametroNotaFiscal() {
+        return parametroNotaFiscal;
+    }
+
+    public void setParametroNotaFiscal(HistoricoParametroNotaFiscal parametroNotaFiscal) {
+        this.parametroNotaFiscal = parametroNotaFiscal;
+    }
+
     /**
      * Verifica se a {@link AutorizacaoPagamento} deve ir para a fila de repasse
      * @return true se a autorizacao deve ir para a fila de repasse
@@ -1661,8 +1715,16 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     @JsonIgnore
     public BigDecimal obterConsumo() {
         final BigDecimal diferencaHodometroHorimetro = obterDiferencaHodometroHorimetro();
-        return diferencaHodometroHorimetro == null || totalLitrosAbastecimento == null ? null :
-            diferencaHodometroHorimetro.divide(totalLitrosAbastecimento, 3, BigDecimal.ROUND_HALF_UP);
+        boolean usaHodometro = hodometro != null;
+        if (diferencaHodometroHorimetro != null && totalLitrosAbastecimento != null) {
+            if (usaHodometro && totalLitrosAbastecimento.compareTo(BigDecimal.ZERO) > 0) {
+                return diferencaHodometroHorimetro.divide(totalLitrosAbastecimento, 3, BigDecimal.ROUND_HALF_UP);
+            } else if (!usaHodometro && diferencaHodometroHorimetro.compareTo(BigDecimal.ZERO) > 0) {
+                return totalLitrosAbastecimento.divide(diferencaHodometroHorimetro, 3, BigDecimal.ROUND_HALF_UP);
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -1711,7 +1773,7 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
      */
     @Transient
     public boolean exigeEmissaoNF() {
-        return frota.exigeNotaFiscal() || unidadePossuiExigenciaNF() || empresaAgregadaPossuiExigenciaNF();
+        return isFrotaExigeNF() || unidadePossuiExigenciaNF() || empresaAgregadaPossuiExigenciaNF();
     }
 
     /**
@@ -1757,5 +1819,93 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     @Transient
     public boolean unidadeExigeNf() {
         return getUnidadeExigeNf() != null && getUnidadeExigeNf();
+    }
+
+
+    /**
+     * Calcula e retorna o Valor Total do Produto Serviço
+     * @return valor calculado
+     */
+    @Transient
+    public BigDecimal obtemValorTotalProdutoServico() {
+        if(this.getItems() != null
+                && this.getItems().stream()
+                .anyMatch(i -> TipoItemAutorizacaoPagamento.PRODUTO_SERVICO.getValue().equals(i.getTipoItem())
+                        && i.getValorTotal() != null)) {
+
+            BigDecimal valorTotal = this.getItems().stream()
+                    .filter(i -> TipoItemAutorizacaoPagamento.PRODUTO_SERVICO.getValue().equals(i.getTipoItem())
+                            && i.getValorTotal() != null)
+                    .map(ItemAutorizacaoPagamento::getValorTotal)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            return valorTotal;
+        }
+        return null;
+    }
+
+    /**
+     * Calcula e retorna o Valor Emitido de combustível
+     * @return valor calculado
+     */
+    @Transient
+    public BigDecimal obtemValorEmitidoCombustivel() {
+        return this.getNotasFiscais().stream()
+                .filter(nota -> nota.getValorCombustivel() != null)
+                .map(NotaFiscal::getValorCombustivel)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    /**
+     * Calcula e retorna o Valor Emitido do Produto Serviço
+     * @return valor calculado
+     */
+    @Transient
+    public BigDecimal obtemValorEmitidoProdutoServico() {
+        return this.getNotasFiscais().stream()
+                .filter(nota -> nota.getValorProdutosServicos() != null)
+                .map(NotaFiscal::getValorProdutosServicos)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+
+    /**
+     * Calcula e retorna o Valor Total do abastecimento
+     * @return valor calculado
+     */
+    @Transient
+    public BigDecimal obtemValorTotalAbastecimento() {
+        if(this.getItems() != null
+            && this.getItems().stream()
+                .anyMatch(i -> TipoItemAutorizacaoPagamento.ABASTECIMENTO.getValue().equals(i.getTipoItem())
+                        && i.getValorTotal() != null)) {
+
+            BigDecimal valorTotal = this.getItems().stream()
+                    .filter(i -> TipoItemAutorizacaoPagamento.ABASTECIMENTO.getValue().equals(i.getTipoItem())
+                            && i.getValorTotal() != null)
+                    .map(ItemAutorizacaoPagamento::getValorTotal)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            return valorTotal;
+        }
+        return null;
+    }
+
+    /**
+     * Verifica se um abastecimento possui emissão de combustível
+     * @return True caso possua emissão, false caso contrário
+     */
+    @Transient
+    public Boolean possuiEmissaoCombustivel() {
+        return this.notasFiscais.stream().anyMatch(nota -> nota.getValorCombustivel() != null);
+    }
+
+    /**
+     * Verifica se um abastecimento possui emissão de produtos
+     * @return True caso possua emissão, false caso contrário
+     */
+    @Transient
+    public Boolean possuiEmissaoProdutos() {
+        return this.notasFiscais.stream().anyMatch(nota -> nota.getValorProdutosServicos() != null);
     }
 }

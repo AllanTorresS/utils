@@ -7,12 +7,14 @@ import ipp.aci.boleia.dominio.TransacaoConsolidada;
 import ipp.aci.boleia.dominio.Unidade;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaAbastecimentoVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheCobrancaVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheReembolsoVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaQtdTransacoesFrotaVo;
 import ipp.aci.boleia.dominio.vo.QuantidadeAbastecidaVeiculoVo;
 import ipp.aci.boleia.dominio.vo.TransacaoPendenteVo;
 import ipp.aci.boleia.dominio.vo.apco.InformacoesVolumeVo;
 import ipp.aci.boleia.dominio.vo.frotista.FiltroPesquisaAbastecimentoFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.ResultadoPaginadoFrtVo;
-import ipp.aci.boleia.dominio.vo.apco.VolumeVendasClienteProFrotaVo;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -214,6 +216,13 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
     AutorizacaoPagamento obterAutorizacaoPagamentoComMesmoAbastecimento(String uuidAbastecimento);
 
     /**
+     * Busca UUIDs de Abastecimento a partir de uma lista de UUIDs
+     * @param uuidsAbastecimento UUIDs que devem ser buscados
+     * @return lista de UUIDs encontrados
+     */
+    List<String> obterUuidsExistentes(List<String> uuidsAbastecimento);
+
+    /**
      * Método que implementa a pesquisa de autorização pagamento para o contexto da
      * API de frotista.
      *
@@ -302,16 +311,6 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
     List<TransacaoPendenteVo> obterAbastecimentosAutorizadosPendentesDeConciliacao();
 
     /**
-     * Obtem a litragem do abastecimento anterior ao abastecimento parametrizado
-     * @param idAbastecimento O id do abastecimento de referência
-     * @param dataAbastecimento A data do abastecimento de referência
-     * @param placaVeiculo A placa do veiculo do abastecimento de referência
-     * @param cnpjFrota O cnpj da frota do veiculo
-     * @return litros do abastecimento anterior, caso não encontrado retorna null
-     */
-    BigDecimal obterLitragemDoAbastecimentoAnterior(Long idAbastecimento, Date dataAbastecimento, String placaVeiculo, Long cnpjFrota);
-
-    /**
      * Busca o estorno negativo associado a uma autorização de pagamento.
      * @param idAutorizacaoPagamento identificador da autorização de pagamento que deve ter o estorno localizado.
      * @return a autorização de pagamento referente a um estorno.
@@ -322,12 +321,11 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
      * Obtém abastecimentos com o qual a nota pode ser consolidada
      *
      * @param cnpjDest CPNJ do destinatário da nota
-     * @param cnpjEmit CNPJ do emitente da nota
      * @param dataEmissao Data de emissão da nota
      * @param valorTotalNota O valor total da nota
      * @return Os abastecimentos encontrados
      */
-    List<AutorizacaoPagamento> obterAbastecimentoPorNota(Long cnpjDest, Long cnpjEmit, Date dataEmissao, BigDecimal valorTotalNota);
+    List<AutorizacaoPagamento> obterAbastecimentoPorNota(Long cnpjEmit, Date dataEmissao, BigDecimal valorTotalNota);
 
     /**
      * Busca os objetos que representam as informações necessárias para obter
@@ -406,4 +404,54 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
      * @return abastecimentos associados às transações consolidadas
      */
     List<AutorizacaoPagamento> obterPorTransacoesConsolidadas(List<Long> idsTransacoesConsolidadas);
+
+     /**
+     * Pesquisa AutorizacaoPagamento paginado a partir do filtro informado para a tela de Detalhe de Cobrança
+     *
+     * @param filtro O filtro da busca
+     * @return Uma lista de ResultadoPaginado localizadas
+     */
+    ResultadoPaginado<AutorizacaoPagamento> pesquisaPaginadaDetalheCobranca(FiltroPesquisaDetalheCobrancaVo filtro);
+
+    /**
+     * Pesquisa uma lista de autorizações de pagamento para o detalhe de reembolso.
+     *
+     * @param filtro O filtro da busca
+     * @return Uma lista de ResultadoPaginado localizadas
+     */
+    ResultadoPaginado<AutorizacaoPagamento> pesquisaPaginadaDetalheReembolso(FiltroPesquisaDetalheReembolsoVo filtro);
+
+    /**
+     * Obtem a quantidade de notas fiscais associadas a transações pertencentes a um ciclo
+     * ou agrupamento de ciclos
+     * @param filtro o filtro de pesquisa informado
+     * @return A quantidade de notas fiscais
+     */
+    Long obterQuantidadeNotasAgrupamento(FiltroPesquisaQtdTransacoesFrotaVo filtro);
+
+    /**
+     * Realiza pesquisa sem paginação para obtenção de todos os abastecimentos do ciclo
+     * filtrados de acordo com parâmetros de pesquisa
+     * @param filtro O filtro fornecido
+     * @return Os registros obtidos
+     */
+    List<AutorizacaoPagamento> pesquisaDetalheCobrancaSemPaginacao(FiltroPesquisaDetalheCobrancaVo filtro);
+
+    /**
+     * Busca abastecimentos pelo valor de combustível da Autorização de Pagamento
+     * @param cnpjEmit CNPJ do emitente da nota a ser conciliada
+     * @param dataEmissao Data de emissão da nota a ser conciliada
+     * @param valorTotalNota O valor total da nota
+     * @return Os abastecimentos encontrados
+     */
+    List<AutorizacaoPagamento> obterAbastecimentoParaConciliacaoPorValorDeCombustivel(Long cnpjEmit, Date dataEmissao, BigDecimal valorTotalNota);
+
+    /**
+     * Busca abastecimentos pelo valor de produtos da Autorização de Pagamento
+     * @param cnpjEmit CNPJ do emitente da nota a ser conciliada
+     * @param dataEmissao Data de emissão da nota a ser conciliada
+     * @param valorTotalNota O valor total da nota
+     * @return Os abastecimentos encontrados
+     */
+    List<AutorizacaoPagamento> obterAbastecimentoParaConciliacaoPorValorDeProduto(Long cnpjEmit, Date dataEmissao, BigDecimal valorTotalNota);
 }

@@ -10,8 +10,11 @@ import ipp.aci.boleia.dominio.interfaces.IPertenceRevendedor;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioFormatacaoData;
 import ipp.aci.boleia.util.seguranca.UtilitarioCriptografia;
+import org.hibernate.annotations.Formula;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -40,6 +43,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static ipp.aci.boleia.util.UtilitarioLambda.verificarTodosNaoNulos;
+
 /**
  * Representa a tabela de Transacao Consolidada
  */
@@ -49,6 +54,8 @@ import java.util.stream.Stream;
 public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPertenceRevendedor {
 
     private static final long serialVersionUID = 8095939439819340567L;
+
+    private static final String QT_COMPLETA_ABASTECIMENTO_FORMULA = "(SELECT Q.QT_COMPLETA_ABASTECIMENTOS FROM BOLEIA_SCHEMA.V_T_CONSOL_QT_ABASTECIMENTO Q WHERE Q.CD_TRANS_CONSOL = CD_TRANS_CONSOL)";
 
     @Id
     @Column(name = "CD_TRANS_CONSOL")
@@ -88,6 +95,11 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
 
     @Column(name = "QT_ABASTECIMENTOS")
     private Long quantidadeAbastecimentos;
+
+    @NotAudited
+    @Formula(QT_COMPLETA_ABASTECIMENTO_FORMULA)
+    @Basic(fetch = FetchType.LAZY)
+    private Long quantidadeCompletaAbastecimentos;
 
     @Column(name = "ID_STATUS_NF")
     private Integer statusNotaFiscal;
@@ -172,6 +184,10 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     @Column(name = "ID_PROCESSOU_POSTERGACAO")
     private boolean processouPostergacao;
 
+    @NotNull
+    @Column(name = "ID_FROTA_EXIGE_NF")
+    private boolean frotaExigeNF;
+
     @Override
     public Long getId() {
         return id;
@@ -238,12 +254,32 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
         this.reembolso = reembolso;
     }
 
+    /**
+     * Retorna a quantidade de abastecimentos da transação consolidada.
+     * OBS.: Não considera os abastecimentos com valor negativo.
+     *
+     * @return A quantidade de abastecimentos.
+     */
     public Long getQuantidadeAbastecimentos() {
         return quantidadeAbastecimentos;
     }
 
     public void setQuantidadeAbastecimentos(Long quantidadeAbastecimentos) {
         this.quantidadeAbastecimentos = quantidadeAbastecimentos;
+    }
+
+    /**
+     * Retorna a quantidade completa de abastecimentos da transação consolidada.
+     * OBS.: Considera os abastecimentos com valor negativo.
+     *
+     * @return A quantidade completa de abastecimentos.
+     */
+    public Long getQuantidadeCompletaAbastecimentos() {
+        return quantidadeCompletaAbastecimentos;
+    }
+
+    public void setQuantidadeCompletaAbastecimentos(Long quantidadeCompletaAbastecimentos) {
+        this.quantidadeCompletaAbastecimentos = quantidadeCompletaAbastecimentos;
     }
 
     public List<AutorizacaoPagamento> getAutorizacaoPagamentos() {
@@ -456,20 +492,12 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
         this.processouPostergacao = processouPostergacao;
     }
 
-    /**
-     * Gera uma chave unica para cada TransacaoConsolidada, tendo o objetivo de garantir que cada ciclo seja unico no banco de dados.
-     * Existe uma constraint (UQ_CHAVE_TRANS_CONSOL) no banco que valida a unicidade da chave.
-     */
-    public void preencherChave() {
-        String key = frotaPtov.getId().toString() + "|"
-                + UtilitarioFormatacaoData.formatarDataCurta(dataInicioPeriodo) + "|"
-                + UtilitarioFormatacaoData.formatarDataCurta(dataFimPeriodo) + "|";
-        if (empresaAgregada != null && empresaAgregada.getId() != null) {
-            key = key + empresaAgregada.getId();
-        } else if(unidade != null && unidade.getId() != null) {
-            key = key + unidade.getId();
-        }
-        this.chave = UtilitarioCriptografia.calcularHashSHA256(key);
+    public boolean isFrotaExigeNF() {
+        return frotaExigeNF;
+    }
+
+    public void setFrotaExigeNF(boolean frotaExigeNF) {
+        this.frotaExigeNF = frotaExigeNF;
     }
 
     public Unidade getUnidade() {
@@ -478,6 +506,25 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
 
     public void setUnidade(Unidade unidade) {
         this.unidade = unidade;
+    }
+
+    /**
+     * Gera uma chave unica para cada TransacaoConsolidada, tendo o objetivo de garantir que cada ciclo seja unico no banco de dados.
+     * Existe uma constraint (UQ_CHAVE_TRANS_CONSOL) no banco que valida a unicidade da chave.
+     */
+    public void preencherChave() {
+        String key = frotaPtov.getId().toString() + "|"
+                + UtilitarioFormatacaoData.formatarDataCurta(dataInicioPeriodo) + "|"
+                + UtilitarioFormatacaoData.formatarDataCurta(dataFimPeriodo) + "|";
+        StringBuilder keyBuilder = new StringBuilder(key);
+        if (empresaAgregada != null && empresaAgregada.getId() != null) {
+            keyBuilder.append(empresaAgregada.getId() + empresaAgregada.getCnpj());
+        } else if(unidade != null && unidade.getId() != null) {
+            keyBuilder.append(unidade.getId() + unidade.getCnpj());
+        } else if (frotaExigeNF) {
+            keyBuilder.append(frotaPtov.getFrota().getId() + frotaPtov.getFrota().getCnpj());
+        }
+        this.chave = UtilitarioCriptografia.calcularHashSHA256(keyBuilder.toString());
     }
 
     /**
@@ -538,7 +585,7 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
      */
     @Transient
     public boolean exigeEmissaoNF() {
-        return frotaPtov.getFrota().exigeNotaFiscal() || unidade != null || empresaAgregada != null;
+        return frotaExigeNF || unidade != null || empresaAgregada != null;
     }
 
     /**
@@ -617,5 +664,27 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
                 .allMatch(autorizacaoPagamento -> ((autorizacaoPagamento.estaCancelado() ||
                         (autorizacaoPagamento.getValorTotal().compareTo(BigDecimal.ZERO) < 0) && existeCancelado && existeEstornado)));
     }
+    /**
+     * Verifica se todos os abastecimentos do consolidado possuem pendência de nota fiscal
+     * @return True caso todas estejam com pendência, false caso contrário
+     */
+    @Transient
+    public boolean todasTransacoesPossuemPendenciaNF() {
+        return getAutorizacoesPagamentoAssociadas().stream().allMatch(autorizacaoPagamento -> autorizacaoPagamento.isPendenteEmissaoNF(false));
+    }
 
+    /**
+     * Retorna o percentual de emissão da transação consolidada.
+     *
+     * @return Porcentagem informando o quanto o ciclo já foi emitido.
+     */
+    @Transient
+    public BigDecimal getPercentualEmissao() {
+        if(StatusNotaFiscal.EMITIDA.getValue().equals(getStatusNotaFiscal())) {
+            return BigDecimal.valueOf(100);
+        } else if(verificarTodosNaoNulos(getValorTotalNotaFiscal(), getValorEmitidoNotaFiscal()) && getValorTotalNotaFiscal().compareTo(BigDecimal.ZERO) != 0) {
+            return getValorEmitidoNotaFiscal().divide(getValorTotalNotaFiscal(), 2, BigDecimal.ROUND_HALF_DOWN).multiply(new BigDecimal(100));
+        }
+        return null;
+    }
 }
