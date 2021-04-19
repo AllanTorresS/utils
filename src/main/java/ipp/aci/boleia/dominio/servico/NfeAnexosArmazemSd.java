@@ -1,9 +1,11 @@
 package ipp.aci.boleia.dominio.servico;
 
 import ipp.aci.boleia.dados.INfeAnexosArmazemDados;
+import ipp.aci.boleia.dados.ITipoCombustivelDados;
 import ipp.aci.boleia.dominio.NfeAnexosArmazem;
 import ipp.aci.boleia.dominio.NfeArmazem;
 import ipp.aci.boleia.dominio.vo.DanfeVo;
+import ipp.aci.boleia.dominio.vo.ItemDanfeVo;
 import ipp.aci.boleia.util.ConstantesNotaFiscal;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
 import ipp.aci.boleia.util.UtilitarioFormatacaoData;
@@ -11,6 +13,9 @@ import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.i18n.Mensagens;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * Implementa regras de negócio relativas ao armazém de anexos (notas fiscais) da recolha automática
@@ -20,6 +25,12 @@ public class NfeAnexosArmazemSd {
 
     @Autowired
     private INfeAnexosArmazemDados repositorio;
+
+    @Autowired
+    private ITipoCombustivelDados tipoCombustivelDados;
+
+    @Autowired
+    private NotaFiscalSd notaFiscalSd;
 
     @Autowired
     private Mensagens mensagens;
@@ -61,6 +72,13 @@ public class NfeAnexosArmazemSd {
             anexoArmazem.setChaveAcesso(chaveAcesso.length() > ConstantesNotaFiscal.TAMANHO_CHAVE_ACESSO
                     ? chaveAcesso.substring(0, ConstantesNotaFiscal.TAMANHO_CHAVE_ACESSO)
                     : chaveAcesso);
+        }
+        if(nota.getDadosDanfe() != null && !nota.getDadosDanfe().isEmpty()) {
+            List<ItemDanfeVo> itensNota = nota.getDadosDanfe();
+            BigDecimal valorCombustivel = notaFiscalSd.obterValorTotalCombustivelNota(itensNota);
+            BigDecimal valorProdServ = notaFiscalSd.obterValorTotalProdutosNota(itensNota);
+            anexoArmazem.setValorCombustivel(valorCombustivel.compareTo(BigDecimal.ZERO) > 0 ? valorCombustivel : null);
+            anexoArmazem.setValorProdutosServicos(valorProdServ.compareTo(BigDecimal.ZERO) > 0 ? valorProdServ : null);
         }
 
         anexoArmazem.setEmail(dadoArmazem);

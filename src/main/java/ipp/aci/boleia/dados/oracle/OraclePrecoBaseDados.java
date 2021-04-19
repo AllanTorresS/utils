@@ -64,7 +64,7 @@ public class OraclePrecoBaseDados extends OracleOrdenacaoPrecosDados<PrecoBase> 
     private List<ParametroPesquisa> montarParametroPesquisa(FiltroPesquisaAlteracaoPrecoVo filtro, Usuario usuario, Integer... statusPossiveis) {
 
         List<ParametroPesquisa> parametros = new ArrayList<>();
-
+        parametros.add(new ParametroPesquisaOr(new ParametroPesquisaNulo("invalido"), new ParametroPesquisaIgual("invalido", false)));
         if (filtro.getDataVigencia() != null) {
             parametros.add(new ParametroPesquisaAnd(new ParametroPesquisaDataMenorOuIgual("dataAtualizacao", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getDataVigencia())),
                     new ParametroPesquisaOr(

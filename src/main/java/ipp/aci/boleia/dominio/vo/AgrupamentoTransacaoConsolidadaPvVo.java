@@ -28,6 +28,7 @@ public class AgrupamentoTransacaoConsolidadaPvVo {
     private Integer statusPagamentoReembolso;
     private BigDecimal valorTotalAntecipado;
     private Boolean passivelDeEmissao;
+    private Boolean possuiExigenciaDeNf;
 
     /**
      * Construtor default.
@@ -50,9 +51,10 @@ public class AgrupamentoTransacaoConsolidadaPvVo {
      * @param quantidadeAbastecimentos Quantidade de abastecimentos presentes nas transações consolidadas.
      * @param statusPagamentoReembolso Status de pagamento do reembolso.
      * @param valorTotalAntecipado Valor total antecipado para a revenda.
-     * @param passivelDeEmissao indica se ao menos um ciclo do agrupamaneto é passível de emissão de NF
+     * @param passivelDeEmissao indica se ao menos um ciclo do agrupamento é passível de emissão de NF
+     * @param possuiExigenciaDeNf indica se ao menos um ciclo do agrupamento possui exigência de NF
      */
-    public AgrupamentoTransacaoConsolidadaPvVo(Date dataInicioPeriodo, Date dataFimPeriodo, Date prazoEmissaoNotaFiscal, Integer statusConsolidacao, BigDecimal valorFaturamento, BigDecimal valorReembolso, BigDecimal valorDesconto, BigDecimal valorTotalNf, BigDecimal valorEmitidoNf, Long quantidadeAbastecimentos, Integer statusPagamentoReembolso, BigDecimal valorTotalAntecipado, Integer passivelDeEmissao) {
+    public AgrupamentoTransacaoConsolidadaPvVo(Date dataInicioPeriodo, Date dataFimPeriodo, Date prazoEmissaoNotaFiscal, Integer statusConsolidacao, BigDecimal valorFaturamento, BigDecimal valorReembolso, BigDecimal valorDesconto, BigDecimal valorTotalNf, BigDecimal valorEmitidoNf, Long quantidadeAbastecimentos, Integer statusPagamentoReembolso, BigDecimal valorTotalAntecipado, Integer passivelDeEmissao, Integer possuiExigenciaDeNf) {
         this.dataInicioPeriodo = dataInicioPeriodo;
         this.dataFimPeriodo = dataFimPeriodo;
         this.prazoEmissaoNotaFiscal = prazoEmissaoNotaFiscal;
@@ -67,6 +69,7 @@ public class AgrupamentoTransacaoConsolidadaPvVo {
         this.statusPagamentoReembolso = statusPagamentoReembolso;
         this.valorTotalAntecipado = valorTotalAntecipado;
         this.passivelDeEmissao = passivelDeEmissao == 1;
+        this.possuiExigenciaDeNf = possuiExigenciaDeNf == 1;
     }
 
     public Date getDataInicioPeriodo() {
@@ -179,6 +182,14 @@ public class AgrupamentoTransacaoConsolidadaPvVo {
 
     public void setValorTotalAntecipado(BigDecimal valorTotalAntecipado) {
         this.valorTotalAntecipado = valorTotalAntecipado;
+    }
+
+    public Boolean getPossuiExigenciaDeNf() {
+        return possuiExigenciaDeNf;
+    }
+
+    public void setPossuiExigenciaDeNf(Boolean possuiExigenciaDeNf) {
+        this.possuiExigenciaDeNf = possuiExigenciaDeNf;
     }
 
     /**

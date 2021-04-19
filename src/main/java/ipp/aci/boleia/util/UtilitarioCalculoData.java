@@ -190,7 +190,7 @@ public final class UtilitarioCalculoData {
      * @param unidadeTempo A unidade de tempo desejada
      * @return A data resultante da operacao
      */
-    private static Date definirTempoData(Date data, int valorCampoData, int unidadeTempo) {
+    public static Date definirTempoData(Date data, int valorCampoData, int unidadeTempo) {
         if (data == null) {
             return null;
         }

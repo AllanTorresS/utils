@@ -113,11 +113,13 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "SUM(TC.quantidadeAbastecimentos), " +
                     "CASE WHEN TC.reembolso is NULL THEN " + StatusPagamentoReembolso.PREVISTO.getValue() + " ELSE RM.status END, " +
                     "SUM(A.valorReembolso), " + 
-                    "MAX(CASE WHEN ( " +  CLAUSULA_EXIGE_NOTA + " OR " + CLAUSULA_FROTA_GERENCIA_NF + " ) THEN 1 ELSE 0 END)) ";
+                    "MAX(CASE WHEN ( " +  CLAUSULA_EXIGE_NOTA + " OR " + CLAUSULA_FROTA_GERENCIA_NF + " ) THEN 1 ELSE 0 END), " +
+                    "MAX(CASE WHEN ( " + CLAUSULA_EXIGE_NOTA + " ) THEN 1 ELSE 0 END ))";
 
     private static final String CLAUSULA_NOTA_ATRASADA =
             " TRUNC(TC.prazos.dataLimiteEmissaoNfe) <  TRUNC(SYSDATE) " +
                     " AND TC.statusNotaFiscal <> " + StatusNotaFiscal.EMITIDA.getValue() +
+                    " AND TC.statusNotaFiscal <> " + StatusNotaFiscal.PARCIALMENTE_EMITIDA.getValue() +
                     " AND TC.statusNotaFiscal <> " + StatusNotaFiscal.SEM_EMISSAO.getValue() + " ";
 
 
@@ -131,6 +133,9 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
 
     private static final String CLAUSULA_NOTA_SEM_EMISSAO =
             " TC.statusNotaFiscal = " + StatusNotaFiscal.SEM_EMISSAO.getValue() + " ";
+
+    private static final String CLAUSULA_NOTA_PARCIALMENTE_EMITIDA =
+            " TC.statusNotaFiscal = " + StatusNotaFiscal.PARCIALMENTE_EMITIDA.getValue() + " ";
 
     private static final String CLAUSULA_REEMBOLSO_ATRASADO = "(trunc(r.dataVencimentoPgto) < trunc(SYSDATE) AND r.valorReembolso > 0 AND r.status <> " + StatusPagamentoReembolso.PAGO.getValue() + ")";
 
@@ -216,6 +221,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "           TC.frotaExigeNF = true " +
                     "           OR TC.empresaAgregada.id IS NOT NULL " +
                     "           OR TC.unidade.id IS NOT NULL" +
+                    "           OR TC.frotaGerenciaNf = true " +
                     "       ) " +
                     "   AND (TC.empresaAgregada.id = :idEmpresaAgregada OR :idEmpresaAgregada is null) " +
                     "   AND (TC.unidade.id = :idUnidade OR :idUnidade is null) " +
@@ -574,7 +580,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "%s " +
                     "ORDER BY TC.dataFimPeriodo";
 
-    private static final String CLAUSULA_STATUS_INTEGRACAO_REEMBOLSO = " AND (r.statusIntegracao in :statusIntegracao OR (r.statusIntegracao IS NULL AND a.valorReembolso IS NOT NULL AND " + ANTECIPADO.getValue() + " in :statusIntegracao) OR (r.statusIntegracao IS NULL AND " + StatusIntegracaoReembolsoJde.PREVISTO.getValue() +" in :statusIntegracao)) ";
+    private static final String CLAUSULA_STATUS_INTEGRACAO_REEMBOLSO = " AND (r.statusIntegracao in :statusIntegracao OR (r.statusIntegracao IS NULL AND a.valorReembolso IS NOT NULL AND " + ANTECIPADO.getValue() + " in :statusIntegracao) OR (r.statusIntegracao IS NULL AND " + StatusIntegracaoReembolsoJde.PREVISTO.getValue() + " in :statusIntegracao) " +
+                " OR (r.statusIntegracao IS NULL AND a.valorReembolso IS NULL AND at.valorReembolso IS NOT NULL AND " + StatusIntegracaoReembolsoJde.ERRO_ENVIO.getValue() + " in :statusIntegracao)) "  ;
 
     private static final String CLAUSULA_STATUS_NOTA_FISCAL = " AND (tc.statusNotaFiscal in :statusNf) ";
 
@@ -587,6 +594,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             "LEFT JOIN tc.frotaPtov fpv " +
             "LEFT JOIN tc.reembolso r " +
             "LEFT JOIN tc.antecipacoes a WITH a.statusIntegracao = " + StatusIntegracaoReembolsoJde.REALIZADO.getValue() + " " +
+            "LEFT JOIN tc.antecipacoes at " +
             "WHERE " +
             "(tc.dataInicioPeriodo >= :dataInicioPeriodo AND tc.dataFimPeriodo <= :dataFimPeriodo) " +
             "AND (fpv.pontoVenda.id  = :idPv OR :idPv is null) " +
@@ -601,7 +609,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             "AND (tc.empresaAgregada.id = :idEmpresaAgregada OR :idEmpresaAgregada is null) ";
 
     private static final String CONSULTA_CONSOLIDADOS_GRID_REEMBOLSO_SOLUCAO =
-            "SELECT tc " +
+            "SELECT DISTINCT tc " +
                     CONSULTA_COMUM_CONSOLIDADOS_GRID_REEMBOLSO +
                     "ORDER BY %s ";
 
@@ -643,7 +651,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             boolean pendente = filtro.getStatusEmissaoNF().stream().anyMatch(x -> StatusNotaFiscal.valueOf(x.getName()).equals(StatusNotaFiscal.PENDENTE));
             boolean emitida = filtro.getStatusEmissaoNF().stream().anyMatch(x -> StatusNotaFiscal.valueOf(x.getName()).equals(StatusNotaFiscal.EMITIDA));
             boolean semEmissao = filtro.getStatusEmissaoNF().stream().anyMatch(x -> StatusNotaFiscal.valueOf(x.getName()).equals(StatusNotaFiscal.SEM_EMISSAO));
-            filtroStatus = montarFiltroStatus(atrasada, pendente, emitida, semEmissao);
+            boolean parcialmenteEmitida = filtro.getStatusEmissaoNF().stream().anyMatch(x -> StatusNotaFiscal.valueOf(x.getName()).equals(StatusNotaFiscal.PARCIALMENTE_EMITIDA));
+            filtroStatus = montarFiltroStatus(atrasada, pendente, emitida, semEmissao, parcialmenteEmitida);
         }
         String filtroNotaFiscal = "";
         if(filtro.getNotaFiscal() != null && filtro.getNotaFiscal().trim().length() > 0){
@@ -753,7 +762,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
      * @param semEmissao Se necessario exibir as sem emissão
      * @return Ums string contendo as clausulas de filtro por status
      */
-    private String montarFiltroStatus(boolean atrasada, boolean pendente, boolean emitida, boolean semEmissao) {
+    private String montarFiltroStatus(boolean atrasada, boolean pendente, boolean emitida, boolean semEmissao, boolean parcialmenteEmitida) {
         StringBuilder filtro = new StringBuilder();
         filtro.append(" AND (");
         List<String> clausulas = new ArrayList<>();
@@ -772,6 +781,10 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
 
         if (semEmissao) {
             clausulas.add(CLAUSULA_NOTA_SEM_EMISSAO);
+        }
+
+        if(parcialmenteEmitida) {
+            clausulas.add(CLAUSULA_NOTA_PARCIALMENTE_EMITIDA);
         }
 
         if(clausulas.isEmpty()) {
@@ -1057,7 +1070,14 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         parametros.add(parametroEmpresaAgregadaExigeNf);
         parametros.add(parametroUnidadeExigeNf);
         if(frotaExigeNF != null) {
-            parametros.add(new ParametroPesquisaIgual("frotaExigeNF", frotaExigeNF));
+            if(frota.isGerenciaNf() == null){
+                parametros.add(new ParametroPesquisaIgual("frotaExigeNF", frotaExigeNF));
+            }else if(frota.isGerenciaNf()){
+                parametros.add(new ParametroPesquisaAnd(
+                        new ParametroPesquisaIgual("frotaExigeNF", frotaExigeNF),
+                        new ParametroPesquisaIgual("frotaGerenciaNf", frota.isGerenciaNf())
+                ));
+            }
         }
         return pesquisarUnico(parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
@@ -1085,7 +1105,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             boolean pendente = StatusNotaFiscal.PENDENTE.getValue().equals(filtro.getStatusEmissaoNotaFiscal());
             boolean emitida = StatusNotaFiscal.EMITIDA.getValue().equals(filtro.getStatusEmissaoNotaFiscal());
             boolean semEmissao = StatusNotaFiscal.SEM_EMISSAO.getValue().equals(filtro.getStatusEmissaoNotaFiscal());
-            filtroStatus = montarFiltroStatus(atrasada, pendente, emitida, semEmissao);
+            boolean parcialmenteEmitida = StatusNotaFiscal.PARCIALMENTE_EMITIDA.getValue().equals(filtro.getStatusEmissaoNotaFiscal());
+            filtroStatus = montarFiltroStatus(atrasada, pendente, emitida, semEmissao, parcialmenteEmitida);
         }
 
         InformacaoPaginacaoFrtVo paginacao =

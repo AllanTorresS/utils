@@ -20,6 +20,7 @@ import javax.persistence.Transient;
 import javax.persistence.Version;
 import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -46,6 +47,9 @@ public class ReembolsoAntecipado extends ReembolsoBase {
 
     @Column(name = "VR_TOTAL_ANTECIP")
     private BigDecimal valorTotal;
+
+    @Column(name = "DT_ANTECIPACAO")
+    private Date dataAntecipacao;
 
     @Version
     @Column(name = "NO_VERSAO")
@@ -102,9 +106,12 @@ public class ReembolsoAntecipado extends ReembolsoBase {
         this.valorTotal = valorTotal;
     }
 
-    @Override
-    public BigDecimal getValorDescontoVoucher() {
-        return getValorDesconto();
+    public Date getDataAntecipacao() {
+        return dataAntecipacao;
+    }
+
+    public void setDataAntecipacao(Date dataAntecipacao) {
+        this.dataAntecipacao = dataAntecipacao;
     }
 
     public TransacaoConsolidada getTransacaoConsolidada() {
@@ -150,5 +157,10 @@ public class ReembolsoAntecipado extends ReembolsoBase {
     @Transient
     public boolean estaAprovadoParaPagamento() {
         return true;
+    }
+
+    @Override
+    public BigDecimal getValorBrutoVoucher() {
+        return getValorTotal();
     }
 }
