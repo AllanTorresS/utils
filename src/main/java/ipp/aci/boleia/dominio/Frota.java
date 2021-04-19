@@ -38,6 +38,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.StringJoiner;
@@ -421,6 +422,9 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
                 "join BOLEIA_SCHEMA.frota fr on mi.cd_frota = fr.cd_frota " +
                 "where fr.cd_frota = f.cd_frota )) ")
     private Integer classificacaoStatusFrota;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "frota")
+    private List<MotivoInativacaoFrota> motivosInativacao;
 
     @NotAudited
     @Formula("(SELECT NVL(COUNT(0), 0) FROM BOLEIA_SCHEMA.TAG_CONECTCAR T WHERE T.CD_FROTA = CD_FROTA)")
@@ -1389,6 +1393,15 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
         }
     }
 
+    /**
+     * Obtém o motivo da última inativação da frota
+     * @return O motivo de inativação
+     */
+    @Transient
+    public MotivoInativacaoFrota getUltimaInativacaoFrota() {
+        return this.motivosInativacao.stream().max(Comparator.comparing(MotivoInativacaoFrota::getDataInativacao)).orElse(null);
+    }
+
 	public SituacaoConectCar getSituacaoConectCar() {
 		return situacaoConectCar;
 	}
@@ -1443,5 +1456,13 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
 
     public void setClassificacaoStatusFrota(Integer classificacaoStatusFrota) {
         this.classificacaoStatusFrota = classificacaoStatusFrota;
+    }
+
+    public List<MotivoInativacaoFrota> getMotivosInativacao() {
+        return motivosInativacao;
+    }
+
+    public void setMotivosInativacao(List<MotivoInativacaoFrota> motivosInativacao) {
+        this.motivosInativacao = motivosInativacao;
     }
 }
