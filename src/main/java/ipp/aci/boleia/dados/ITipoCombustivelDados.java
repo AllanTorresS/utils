@@ -39,4 +39,11 @@ public interface ITipoCombustivelDados extends IRepositorioBoleiaDados<TipoCombu
      * @return Tipo de combustivel
      */
     TipoCombustivel buscarPorTipoCombustivelConnect(Long tipoCombustivelConnect);
+
+    /**
+     * Busca tipos de combustível por código NCM
+     * @param codigoNcm O código NCM a ser buscado
+     * @return A lista de tipos de combustível encontrados
+     */
+    List<TipoCombustivel> buscarPorCodigoNcm(Long codigoNcm);
 }
