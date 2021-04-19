@@ -50,10 +50,6 @@ public class OracleMotoristaDados extends OracleRepositorioBoleiaDados<Motorista
     private static final String QUERY_EXCLUSAO_DADOS_MOTORISTA = "DELETE FROM AbastecimentoCta ac " +
             "WHERE ac.dataProcessamento <= :dataProcessamento";
 
-    //TODO: ajustar query
-    private static final String QUERY_EXCLUSAO_MOTORISTAS_SEM_ABASTECIMENTO = "DELETE FROM Motorista m " +
-            "WHERE ac.dataProcessamento <= :dataProcessamento";
-
     private static final String LISTAR_MOTORISTAS_SEM_ABASTECIMENTO =
             "SELECT m " +
             "FROM Motorista m " +
