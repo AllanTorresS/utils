@@ -1424,4 +1424,32 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     public void setLembrarParametrizacaoNf(Boolean lembrarParametrizacaoNf) {
         this.lembrarParametrizacaoNf = lembrarParametrizacaoNf;
     }
+
+    /**
+     * Obtem o endereço completo
+     * @return endereço completo
+     */
+    @Transient
+    public String obterEnderecoCompleto(){
+        StringBuffer buffer = new StringBuffer();
+        if(this.logradouro != null){
+            buffer.append(this.logradouro).append(", ");
+        }
+        if(this.numero != null){
+            buffer.append(this.numero).append(", ");
+        }
+        if(this.complemento != null){
+            buffer .append(this.complemento).append(", ");
+        }
+        if(this.bairro != null){
+            buffer.append(this.bairro).append(", ");
+        }
+        if(this.unidadeFederativa != null){
+            buffer.append(this.unidadeFederativa).append(", ");
+        }
+        if(this.cep != null){
+            buffer.append("( ").append(UtilitarioFormatacao.formatarCepApresentacao(this.cep)).append(" )");
+        }
+        return buffer.toString();
+    }
 }
