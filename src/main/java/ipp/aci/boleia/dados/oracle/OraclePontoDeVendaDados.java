@@ -327,11 +327,14 @@ public class OraclePontoDeVendaDados extends OracleRepositorioBoleiaDados<PontoD
 
     @Override
     public List<PontoDeVenda> obterPontoDeVendaPorLimitesLocalizacao(FiltroPesquisaLocalizacaoVo filtro) {
-
         ParametrosPesquisaBuilder parametros = new ParametrosPesquisaBuilder()
                 .adicionarParametros(
                         new ParametroPesquisaIgual("status", StatusAtivacao.ATIVO.getValue())
                 );
+
+        if(filtro.getPerfilPontoDeVenda() != null) {
+            parametros.adicionarParametros(new ParametroPesquisaLike("perfilVenda", filtro.getPerfilPontoDeVenda().name()));
+        }
 
         if(CollectionUtils.isNotEmpty(filtro.getFiltrosCoordenadas())) {
             ParametroPesquisaOr condicoesOr = povoarParametroLatLongEntreCoordenadas("latitude", "longitude", filtro.getFiltrosCoordenadas(), filtro.getMargemGrausFiltroCoordenadas());

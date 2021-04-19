@@ -118,8 +118,11 @@ public class OraclePrecoBaseDados extends OracleOrdenacaoPrecosDados<PrecoBase> 
 
     @Override
     public List<PrecoBase> listarPrecosPorFrotaLocalizacao(FiltroPesquisaLocalizacaoVo filtro){
-
         List<ParametroPesquisa> parametros = new ArrayList<>();
+
+        if(filtro.getPerfilPontoDeVenda() != null) {
+            parametros.add(new ParametroPesquisaLike("pontoVenda.perfilVenda", filtro.getPerfilPontoDeVenda().name()));
+        }
 
         if(CollectionUtils.isNotEmpty(filtro.getFiltrosCoordenadas())) {
             ParametroPesquisaOr condicoesOr = povoarParametroLatLongEntreCoordenadas("pontoVenda.latitude", "pontoVenda.longitude", filtro.getFiltrosCoordenadas(), filtro.getMargemGrausFiltroCoordenadas());
@@ -263,6 +266,10 @@ public class OraclePrecoBaseDados extends OracleOrdenacaoPrecosDados<PrecoBase> 
 
         List<ParametroPesquisa> parametros = new ArrayList<>(Arrays.asList(povoarParametroLatLongEntreIntervalo("pontoVenda.latitude", "pontoVenda.longitude", filtro)));
 
+        if(filtro.getPerfilPontoDeVenda() != null) {
+            parametros.add(new ParametroPesquisaLike("pontoVenda.perfilVenda", filtro.getPerfilPontoDeVenda().name()));
+        }
+
         parametros.add(new ParametroPesquisaIgual("pontoVenda.status", StatusAtivacao.ATIVO.getValue()));
 
         parametros.add(new ParametroPesquisaIgual("pontoVenda.statusHabilitacao", StatusHabilitacaoPontoVenda.HABILITADO.getValue()));
@@ -281,6 +288,10 @@ public class OraclePrecoBaseDados extends OracleOrdenacaoPrecosDados<PrecoBase> 
     @Override
     public ResultadoPaginado<PrecoBase> buscarPrecosPorFrotaLocalizacaoCombustivel(FiltroPesquisaLocalizacaoVo filtro, Long idCombustivel, Integer pagina, Integer tamanho){
         List<ParametroPesquisa> parametros = new ArrayList<>(Arrays.asList(povoarParametroLatLongEntreIntervalo("pontoVenda.latitude", "pontoVenda.longitude", filtro)));
+
+        if(filtro.getPerfilPontoDeVenda() != null) {
+            parametros.add(new ParametroPesquisaLike("pontoVenda.perfilVenda", filtro.getPerfilPontoDeVenda().name()));
+        }
 
         parametros.add(new ParametroPesquisaIgual("pontoVenda.status", StatusAtivacao.ATIVO.getValue()));
 
