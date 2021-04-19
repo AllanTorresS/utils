@@ -273,6 +273,33 @@ public class FrotaSd {
     }
 
     /**
+     * Ativa uma frota temporariamente apos uma inativacao devido a vencimento de debito
+     *
+     * @param frota A frota
+     * @param dataFimAtivacao A data de fim da ativacao
+     * @param descricaoMotivo A descricao do motivo
+     * @throws ExcecaoValidacao em caso de erros de validacao negociais
+     */
+    public void inativarFrotaTemporariamente(Frota frota,Date dataFimAtivacao, String descricaoMotivo) throws ExcecaoValidacao {
+
+        Date dataAtual = ambiente.buscarDataAmbiente();
+        MotivoInativacaoFrota motivo = repositorioMotivo.buscarMotivoInativacaoAtualFrota(frota.getId());
+        if (motivo == null) {
+            throw new ExcecaoValidacao(mensagens.obterMensagem("frota.servico.ativar.temporario.status.invalido"));
+        }
+
+        if(dataFimAtivacao.before(dataAtual)) {
+            throw new ExcecaoValidacao(mensagens.obterMensagem("frota.servico.ativar.temporario.periodo.invalido"));
+        }
+        descricaoMotivo = descricaoMotivo != null ? descricaoMotivo : mensagens.obterMensagem("cobranca.servico.descricao.reativacao.temporaria");
+        frota.setInicioAtivacaoTemporaria(dataAtual);
+        frota.setFimAtivacaoTemporaria(dataFimAtivacao);
+        frota = repositorio.armazenar(frota);
+        motivo = alterarStatusAtivacaoFrota(frota.getId(), true, null, descricaoMotivo);
+        notificarAlteracaoFrota(motivo);
+    }
+
+    /**
      * Dispara emails e notificações informando sobre a alteração de status de uma frota.
      *
      * @param motivo o motivo da alteração de status
