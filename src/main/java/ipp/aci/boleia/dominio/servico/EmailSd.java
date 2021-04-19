@@ -803,6 +803,45 @@ public class EmailSd {
     }
 
     /**
+     * Envia email com as crÃ­ticas da recolha automÃ¡tica de notas fiscais
+     * @param anexosNaoConciliados Todas as notas nÃ£o conciliadas de uma revenda em um dia
+     * @param emailsDestinatarios E-mails dos gestores da revenda
+     * @param cnpj O CNPJ
+     */
+    public void enviarEmailDeCriticasRecolhaAutomatica(List<NfeAnexosArmazem> anexosNaoConciliados, List<String> emailsDestinatarios) {
+        Date date = utilitarioAmbiente.buscarDataAmbiente();
+        String assunto = this.mensagens.obterMensagem("assunto.email.erro.recolha.automatica");
+        String motivoRecusa = anexosNaoConciliados.stream().map(anexo -> "&emsp;<p>" + anexo.getNumeroCompletoNf() + ": " + anexo.getNotaFiscal() != null && anexo.getNotaFiscal().getMotivoFalhaConciliacao() != null ? anexo.getNotaFiscal().getMotivoFalhaConciliacao() : anexo.getMotivoFalhaImportacao() + "</p><br>").collect(Collectors.joining());
+        String data = UtilitarioFormatacaoData.formatarDataCurta(date);
+        String hora = UtilitarioFormatacaoData.formatarHoraMinutosSegundos(date);
+        Long cnpj = anexosNaoConciliados.stream().map(NfeAnexosArmazem::getCnpjPtov).findFirst().orElse(null);
+        String cnpjFormatado = UtilitarioFormatacao.formatarCnpjApresentacao(cnpj);
+        String corpo = this.mensagens.obterMensagem("recolha.recusa.email", data, hora, cnpjFormatado, motivoRecusa);
+        emailDados.enviarEmail(assunto, corpo, emailsDestinatarios);
+    }
+
+    /**
+     * Envia um email com todas as mensagens de falhas da sincronizaÃ§Ã£o com o SalesForce
+     * @param motivosFalhas motivos das falhas
+     */
+    public void enviarEmailsFalhasAtualizacaoExigenciaNfSalesForce(List<AtualizarExigenciaNfeErroVo> motivosFalhas, List<String> destinatariosIntegracaoParametroNf){
+        final String assunto = mensagens.obterMensagem("integracao.salesforce.assunto.email.erro.atualizasao.parametrizacao.nfe");
+        final String rodape = mensagens.obterMensagem("integracao.salesforce.rodape.email");
+
+        final String corpoMensagem = motivosFalhas.stream().filter(m -> m != null).map(m -> {
+            final String exigenciaNf = m.getExigeNotaFiscal() ? mensagens.obterMensagem("texto.comum.sim") : mensagens.obterMensagem("texto.comum.nao");
+            final String data = UtilitarioFormatacaoData.formatarDataCurta(m.getData());
+            final String hora = UtilitarioFormatacaoData.formatarHoraMinutosSegundos(m.getData());
+            final String cnpj = UtilitarioFormatacao.formatarCpfCnpjApresentacao(m.getCnpj());
+            final String motivo = m.getStatusCode() == HttpStatus.NOT_FOUND.value() ? mensagens.obterMensagem("integracao.salesforce.cnpj.nao.encontrado", cnpj) : "";
+            final String motivoDaRecusa = mensagens.obterMensagem("integracao.salesforce.motivo.recusa.atualizasao.parametrizacao.nfe", motivo);
+            return mensagens.obterMensagem("integracao.salesforce.corpo.email.erro.atualizasao.parametrizacao.nfe", data, hora, cnpj, exigenciaNf, motivoDaRecusa);
+        }).reduce("", String::concat).concat(rodape);
+
+        emailDados.enviarEmail(assunto,corpoMensagem, destinatariosIntegracaoParametroNf);
+    }
+    
+    /**
      * Envia um email quando ocorre um erro no processamento da transação enviada pela Conectcar.
      * Destinatário configurado em na propriedade "email.suporte".
      * 
