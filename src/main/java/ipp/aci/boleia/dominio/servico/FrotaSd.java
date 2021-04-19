@@ -273,7 +273,7 @@ public class FrotaSd {
     }
 
     /**
-     * Ativa uma frota temporariamente apos uma inativacao devido a vencimento de debito
+     * Inativa uma frota temporariamente
      *
      * @param frota A frota
      * @param dataFimAtivacao A data de fim da ativacao
