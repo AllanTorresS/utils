@@ -14,7 +14,7 @@ public class TransacaoParceiroPropriedadesVo {
 	private String codigoInternoParceiro;
 
 	@JsonProperty("DataDePassagem")
-	private Date dataDePassagem;
+	private String dataDePassagem;
 
 	@JsonProperty("NumeroSerieTag")
 	private String numeroSerieTag;
@@ -34,9 +34,6 @@ public class TransacaoParceiroPropriedadesVo {
 	@JsonProperty("TransacaoOrigemId")
 	private Long transacaoOrigemId;
 
-	@JsonProperty("RazaoSocialConveniado")
-	private String razaoSocialConveniado;
-	
 	@JsonProperty("IdentificacaoPraca")
 	private String identificacaoPraca;
 
@@ -60,11 +57,11 @@ public class TransacaoParceiroPropriedadesVo {
 		this.codigoInternoParceiro = codigoInternoParceiro;
 	}
 
-	public Date getDataDePassagem() {
+	public String getDataDePassagem() {
 		return dataDePassagem;
 	}
 
-	public void setDataDePassagem(Date dataDePassagem) {
+	public void setDataDePassagem(String dataDePassagem) {
 		this.dataDePassagem = dataDePassagem;
 	}
 
@@ -98,14 +95,6 @@ public class TransacaoParceiroPropriedadesVo {
 
 	public void setTransacaoOrigemId(Long transacaoOrigemId) {
 		this.transacaoOrigemId = transacaoOrigemId;
-	}
-
-	public String getRazaoSocialConveniado() {
-		return razaoSocialConveniado;
-	}
-
-	public void setRazaoSocialConveniado(String razaoSocialConveniado) {
-		this.razaoSocialConveniado = razaoSocialConveniado;
 	}
 
 	public String getIdentificacaoPraca() {

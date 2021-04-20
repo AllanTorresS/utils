@@ -138,12 +138,12 @@ public class OracleCobrancaConectcarDados extends OracleRepositorioBoleiaDados<C
 	@Override
 	public CobrancaConectcar obterUltimaCobrancaCiclo(Long idFrota) {
 		List<ParametroPesquisa> parametros = new ArrayList<>();
-		parametros.add(new ParametroPesquisaIgual("transacoesConsolidadas.frota.id", idFrota));
-		parametros.add(new ParametroPesquisaIgual("transacoesConsolidadas.tipo", 2));
+		parametros.add(new ParametroPesquisaIgual("frota.id", idFrota));
+		parametros.add(new ParametroPesquisaIgual("tipo", 2));
 		InformacaoPaginacao paginacao = new InformacaoPaginacao();
 		paginacao.setPagina(1);
 		paginacao.setTamanhoPagina(1);
-		paginacao.getParametrosOrdenacaoColuna().add(new ParametroOrdenacaoColuna("id",Ordenacao.DECRESCENTE));
+		paginacao.getParametrosOrdenacaoColuna().add(new ParametroOrdenacaoColuna("dataFimPeriodo",Ordenacao.DECRESCENTE));
 		List<CobrancaConectcar> cobrancas = pesquisar(paginacao, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
 		if(cobrancas != null && !cobrancas.isEmpty()){
 			return cobrancas.get(0);
