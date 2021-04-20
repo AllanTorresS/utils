@@ -2,7 +2,7 @@ package ipp.aci.boleia.util.excecao;
 
 /**
  * Erros de negócio lançados pela aplicação
- * Atenção: codigos de erros são utilizados diretamente na exibição das messagem de erro nos aplicativos mobile.
+ * Atenção: Cuidado ao alterar a ordem dos codigos de erros, são utilizados diretamente na exibição das messagens nos aplicativos mobile.
  */
 public enum Erro {
 
@@ -173,7 +173,8 @@ public enum Erro {
     ERRO_AUTORIZACAO_HODOMETRO_LIMITE(172),
     ERRO_AUTORIZACAO_HORIMETRO_LIMITE(173),
     ERRO_AUTORIZACAO_CONSUMO_ESTIMADO_MIN(174),
-    ERRO_AUTORIZACAO_QUANTIDADE_MAX_PRODUTO(175);
+    ERRO_AUTORIZACAO_QUANTIDADE_MAX_PRODUTO(175),
+    ERRO_AUTORIZACAO_FLUXO_PLACA_DIVERGENTE(176);
 
     private final Integer codigo;
 
