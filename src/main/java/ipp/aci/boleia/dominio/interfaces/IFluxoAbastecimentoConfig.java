@@ -66,9 +66,11 @@ public interface IFluxoAbastecimentoConfig {
      */
     default Veiculo getVeiculo() { return null; }
 
+
     /**
      * Verifica se a configuração de fluxo tem a mesma placa do veículo parametrizado.
      *
+     * @param veiculo parametrizado
      * @return true se a cofiguração não tem veiculo associado ou tem a mesma placa que o veículo parametrizado.
      */
     default boolean possuiMesmaPlacaDoFluxo(Veiculo veiculo) {
