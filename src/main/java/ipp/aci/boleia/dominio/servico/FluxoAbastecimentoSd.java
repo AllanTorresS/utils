@@ -2,12 +2,17 @@ package ipp.aci.boleia.dominio.servico;
 
 
 import ipp.aci.boleia.dados.IFluxoAbastecimentoMotoristaDados;
+import ipp.aci.boleia.dados.IHistoricoFluxoAbastecimentoFrotaDados;
 import ipp.aci.boleia.dados.IHistoricoFluxoAbastecimentoMotoristaDados;
+import ipp.aci.boleia.dominio.AutorizacaoPagamento;
 import ipp.aci.boleia.dominio.FluxoAbastecimentoFrotaConfig;
 import ipp.aci.boleia.dominio.FluxoAbastecimentoMotoristaConfig;
+import ipp.aci.boleia.dominio.Frota;
+import ipp.aci.boleia.dominio.HistoricoFluxoAbastecimentoFrotaConfig;
 import ipp.aci.boleia.dominio.HistoricoFluxoAbastecimentoMotoristaConfig;
 import ipp.aci.boleia.dominio.Motorista;
 import ipp.aci.boleia.dominio.Usuario;
+import ipp.aci.boleia.dominio.interfaces.IFluxoAbastecimentoConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +31,9 @@ public class FluxoAbastecimentoSd {
     @Autowired
     private IHistoricoFluxoAbastecimentoMotoristaDados repositorioHistoricoFluxoMotorista;
 
+    @Autowired
+    private IHistoricoFluxoAbastecimentoFrotaDados repositorioHistoricoFluxoFrota;
+
     /**
      * Remove Configuração de fluxo de abastecimento de motorista e registra alteração em histórico
      *
@@ -43,6 +51,33 @@ public class FluxoAbastecimentoSd {
             repositorioHistoricoFluxoMotorista.armazenar(
                     new HistoricoFluxoAbastecimentoMotoristaConfig(fluxoAbastecimentoMotoristaconfigEntidade, usuarioLogado, dataAmbiente ));
         }
+    }
+
+    /**
+     * Obtém configuração de fluxo de abastecimento conforme abastecimento.
+     *
+     * @param autorizacaoPagamento do abastecimento
+     * @return configuração de fluxo utilizada no abastecimento
+     */
+    public IFluxoAbastecimentoConfig obterParaAbastecimento(AutorizacaoPagamento autorizacaoPagamento) {
+        return this.obterParaAbastecimento(autorizacaoPagamento.getFrota(), autorizacaoPagamento.getMotorista(), autorizacaoPagamento.getDataRequisicao());
+    }
+
+    /**
+     * Obtém configuração de fluxo de abastecimento para frota, motorista e data parametrizados.
+     *
+     * @param frota da configuração de fluxo
+     * @param motorista da configuração de fluxo
+     * @param data no historico da configuração de fluxo
+     * @return configuração de fluxo para contexto parametrizado
+     */
+    public IFluxoAbastecimentoConfig obterParaAbastecimento(Frota frota, Motorista motorista, Date data) {
+        HistoricoFluxoAbastecimentoMotoristaConfig fluxoMotorista = repositorioHistoricoFluxoMotorista.obterFluxoPorData(motorista,data);
+        if (fluxoMotorista != null) {
+            return fluxoMotorista;
+        }
+        HistoricoFluxoAbastecimentoFrotaConfig fluxoFrotaConfig = repositorioHistoricoFluxoFrota.obterFluxoPorData(frota, data);
+        return fluxoFrotaConfig != null ? fluxoFrotaConfig : this.obterFluxoAbastecimentoPadrao();
     }
 
 

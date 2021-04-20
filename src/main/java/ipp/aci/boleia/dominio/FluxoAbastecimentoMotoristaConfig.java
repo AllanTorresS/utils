@@ -1,6 +1,7 @@
 package ipp.aci.boleia.dominio;
 
 import ipp.aci.boleia.dominio.interfaces.IExclusaoLogica;
+import ipp.aci.boleia.dominio.interfaces.IFluxoAbastecimentoConfig;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
 import ipp.aci.boleia.dominio.interfaces.IPertenceMotorista;
@@ -24,7 +25,7 @@ import java.util.List;
 @Audited
 @Entity
 @Table(name = "FLUXO_ABAS_MOTORISTA")
-public class FluxoAbastecimentoMotoristaConfig implements IPersistente, IPertenceFrota, IPertenceMotorista, IExclusaoLogica {
+public class FluxoAbastecimentoMotoristaConfig implements IPersistente, IPertenceFrota, IPertenceMotorista, IExclusaoLogica, IFluxoAbastecimentoConfig {
 
     @Id
     @Column(name = "CD_FLUXO_MOTORISTA")
@@ -76,6 +77,7 @@ public class FluxoAbastecimentoMotoristaConfig implements IPersistente, IPertenc
         return motorista != null ?  motorista.getFrotas() : Collections.emptyList();
     }
 
+    @Override
     public Boolean getExigirTelaHodometroHorimetro() {
         return exigirTelaHodometroHorimetro;
     }
@@ -84,6 +86,7 @@ public class FluxoAbastecimentoMotoristaConfig implements IPersistente, IPertenc
         this.exigirTelaHodometroHorimetro = exigirTelaHodometroHorimetro;
     }
 
+    @Override
     public Boolean getExigirFotoHodometroHorimetro() {
         return exigirFotoHodometroHorimetro;
     }
@@ -92,6 +95,7 @@ public class FluxoAbastecimentoMotoristaConfig implements IPersistente, IPertenc
         this.exigirFotoHodometroHorimetro = exigirFotoHodometroHorimetro;
     }
 
+    @Override
     public Boolean getExigirLeituraAutoHodometroHorimetro() {
         return exigirLeituraAutoHodometroHorimetro;
     }
@@ -100,6 +104,7 @@ public class FluxoAbastecimentoMotoristaConfig implements IPersistente, IPertenc
         this.exigirLeituraAutoHodometroHorimetro = exigirLeituraAutoHodometroHorimetro;
     }
 
+    @Override
     public Boolean getExigirPosto() {
         return exigirPosto;
     }
@@ -108,6 +113,7 @@ public class FluxoAbastecimentoMotoristaConfig implements IPersistente, IPertenc
         this.exigirPosto = exigirPosto;
     }
 
+    @Override
     public Boolean getExigirCombustivel() {
         return exigirCombustivel;
     }
@@ -116,6 +122,7 @@ public class FluxoAbastecimentoMotoristaConfig implements IPersistente, IPertenc
         this.exigirCombustivel = exigirCombustivel;
     }
 
+    @Override
     public Boolean getExigirLitragem() {
         return exigirLitragem;
     }
@@ -124,6 +131,7 @@ public class FluxoAbastecimentoMotoristaConfig implements IPersistente, IPertenc
         this.exigirLitragem = exigirLitragem;
     }
 
+    @Override
     public Motorista getMotorista() {
         return motorista;
     }
@@ -132,6 +140,7 @@ public class FluxoAbastecimentoMotoristaConfig implements IPersistente, IPertenc
         this.motorista = motorista;
     }
 
+    @Override
     public Veiculo getVeiculo() {
         return veiculo;
     }

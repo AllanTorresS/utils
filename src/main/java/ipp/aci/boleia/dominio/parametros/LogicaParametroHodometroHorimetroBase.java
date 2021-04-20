@@ -40,7 +40,7 @@ public abstract class LogicaParametroHodometroHorimetroBase  {
      * @param resultado que será preenchido com a validação
      */
     public void executarValidacao(Veiculo veiculo, Long hodometro, BigDecimal horimetro, boolean notificaGestorVeiculoSemValorConsumoCadastrado, FrotaParametroSistema frotaParam, ResultadoExecucaoParametroSistemaVo<?> resultado){
-        if(veiculo.isProprio() || veiculo.isAgregado()) {
+        if((veiculo.isProprio() || veiculo.isAgregado()) && (hodometro != null || horimetro != null)) {
             Integer capacidade = veiculo.getCapacidadeTanque();
             BigDecimal consumoEstimado = veiculo.getConsumoEstimadoLitro();
             BigDecimal tolerancia = new BigDecimal(configs.buscarConfiguracoes(ChaveConfiguracaoSistema.TOLERANCIA_HODOMETRO_HORIMETRO).getParametro());

@@ -1,5 +1,6 @@
 package ipp.aci.boleia.dominio;
 
+import ipp.aci.boleia.dominio.interfaces.IFluxoAbastecimentoConfig;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
 import org.hibernate.envers.Audited;
@@ -22,7 +23,7 @@ import java.util.List;
 @Audited
 @Entity
 @Table(name = "FLUXO_ABAS_FROTA")
-public class FluxoAbastecimentoFrotaConfig implements IPersistente, IPertenceFrota {
+public class FluxoAbastecimentoFrotaConfig implements IPersistente, IPertenceFrota, IFluxoAbastecimentoConfig {
 
     @Id
     @Column(name = "CD_FLUXO_FROTA")

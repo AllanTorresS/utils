@@ -1684,6 +1684,27 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     }
 
     /**
+     * Informa se abastecimento tem hodometro ou horimetro definido.
+     * @return true se tem hodometro ou horimetro definido.
+     */
+    @JsonIgnore
+    @Transient
+    public boolean temHodometroOuHorimetro() {
+        return this.hodometro != null || this.horimetro != null;
+    }
+
+    /**
+     * Informa se abastecimento tem hodometro anterior ou horimetro anterior definido.
+     * @return true se tem hodometro ou horimetro definido.
+     */
+    @JsonIgnore
+    @Transient
+    public boolean temHodometroOuHorimetroAnterior() {
+        return this.hodometroAnterior != null || this.horimetroAnterior != null;
+    }
+
+
+    /**
      * Calcula o consumo relativo a autorizacao de pagamento.
      * @return consumo relativo a autorizacao de pagamento.
      */

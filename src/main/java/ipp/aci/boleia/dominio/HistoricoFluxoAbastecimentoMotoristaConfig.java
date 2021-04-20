@@ -1,5 +1,6 @@
 package ipp.aci.boleia.dominio;
 
+import ipp.aci.boleia.dominio.interfaces.IFluxoAbastecimentoConfig;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
@@ -22,7 +23,7 @@ import java.util.Date;
 @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 @Entity
 @Table(name = "HIST_FLUXO_ABAS_MOTORISTA")
-public class HistoricoFluxoAbastecimentoMotoristaConfig implements IPersistente {
+public class HistoricoFluxoAbastecimentoMotoristaConfig implements IPersistente, IFluxoAbastecimentoConfig {
 
     @Id
     @Column(name = "CD_HIST_FLUXO_MOTORISTA")
