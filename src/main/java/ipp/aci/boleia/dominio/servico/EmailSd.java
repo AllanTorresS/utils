@@ -855,6 +855,8 @@ public class EmailSd {
             Frota frota = erroTransacaoConectcar.getFrota();
             if(frota != null) {
             	frotaCnpjRazaoSocial = StringUtils.defaultString(formatarCnpjApresentacao(frota.getCnpj())) + " - " + StringUtils.defaultString(frota.getRazaoSocial());
+            } else {
+            	frotaCnpjRazaoSocial = mensagens.obterMensagem("Erro.ERRO_FROTA_NAO_ENCONTRADA");
             }
             
             StringBuilder corpo = new StringBuilder(mensagens.obterMensagem("email.erro.integracao.transacao.conectcar.corpo",
@@ -863,7 +865,7 @@ public class EmailSd {
             		erroTransacaoConectcar.getVeiculoId() != null ? erroTransacaoConectcar.getVeiculoId().toString() : "",
             		StringUtils.defaultString(erroTransacaoConectcar.getPlaca()),
             		erroTransacaoConectcar.getTipoTransacao() != null ? TipoTransacaoConectcar.obterPorValor(erroTransacaoConectcar.getTipoTransacao()) : "",
-            		StringUtils.defaultString(erroTransacaoConectcar.getNumeroTag()),
+            		erroTransacaoConectcar.getNumeroTag() != null ? erroTransacaoConectcar.getNumeroTag() : "",
             		erroTransacaoConectcar.getCodigoTransacaoConectcar() != null ? erroTransacaoConectcar.getCodigoTransacaoConectcar().toString() : "",
             		UtilitarioFormatacaoData.formatarDataHoraMinutosSegundos(erroTransacaoConectcar.getDataProcessamento()),
             		erroTransacaoConectcar.getErroProcessamento()));    

@@ -48,7 +48,7 @@ public class ErroIntegracaoTransacaoConectcar implements IPersistente {
 	private String placa;
 
 	@Column(name = "CD_TAG_CONECTCAR")
-	private String numeroTag;
+	private Long numeroTag;
 	
 	/**
 	 * Código da transação originada da Conectcar
@@ -111,11 +111,11 @@ public class ErroIntegracaoTransacaoConectcar implements IPersistente {
 		this.placa = placa;
 	}
 
-	public String getNumeroTag() {
+	public Long getNumeroTag() {
 		return numeroTag;
 	}
 
-	public void setNumeroTag(String numeroTag) {
+	public void setNumeroTag(Long numeroTag) {
 		this.numeroTag = numeroTag;
 	}
 
