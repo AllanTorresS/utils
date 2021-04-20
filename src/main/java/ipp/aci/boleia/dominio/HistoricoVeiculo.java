@@ -153,6 +153,10 @@ public class HistoricoVeiculo implements IPersistente , IPertenceFrota {
     @Column(name = "VO_CAPACIDADE")
     private Integer capacidadeTanque;
 
+    @Column(name = "DT_CRIACAO")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataCriacao;
+
     @Column(name = "DS_PLACA_ANTERIOR")
     private String placaAnterior;
 
@@ -377,6 +381,14 @@ public class HistoricoVeiculo implements IPersistente , IPertenceFrota {
 
     public void setCapacidadeTanque(Integer capacidadeTanque) {
         this.capacidadeTanque = capacidadeTanque;
+    }
+
+    public Date getDataCriacao() {
+        return dataCriacao;
+    }
+
+    public void setDataCriacao(Date dataCriacao) {
+        this.dataCriacao = dataCriacao;
     }
 
     public Date getDataAtualizacaoHodometroHorimetro() {
