@@ -500,6 +500,14 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
         this.frotaExigeNF = frotaExigeNF;
     }
 
+    public Unidade getUnidade() {
+        return unidade;
+    }
+
+    public void setUnidade(Unidade unidade) {
+        this.unidade = unidade;
+    }
+
     /**
      * Gera uma chave unica para cada TransacaoConsolidada, tendo o objetivo de garantir que cada ciclo seja unico no banco de dados.
      * Existe uma constraint (UQ_CHAVE_TRANS_CONSOL) no banco que valida a unicidade da chave.
@@ -517,14 +525,6 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
             keyBuilder.append(frotaPtov.getFrota().getId() + frotaPtov.getFrota().getCnpj());
         }
         this.chave = UtilitarioCriptografia.calcularHashSHA256(keyBuilder.toString());
-    }
-
-    public Unidade getUnidade() {
-        return unidade;
-    }
-
-    public void setUnidade(Unidade unidade) {
-        this.unidade = unidade;
     }
 
     /**
@@ -664,7 +664,6 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
                 .allMatch(autorizacaoPagamento -> ((autorizacaoPagamento.estaCancelado() ||
                         (autorizacaoPagamento.getValorTotal().compareTo(BigDecimal.ZERO) < 0) && existeCancelado && existeEstornado)));
     }
-
     /**
      * Verifica se todos os abastecimentos do consolidado possuem pendência de nota fiscal
      * @return True caso todas estejam com pendência, false caso contrário

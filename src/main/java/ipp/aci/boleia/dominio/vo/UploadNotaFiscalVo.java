@@ -9,7 +9,8 @@ public class UploadNotaFiscalVo {
 
     private List<Long> idsAutorizacoes;
     private FiltroPesquisaAbastecimentoVo filtroPesquisa;
-    private String xmlNotaBase64;
+    private List<String> xmlNotasBase64;
+    private Long indiceArquivo;
 
     public UploadNotaFiscalVo() {
         // serializacao json
@@ -31,11 +32,19 @@ public class UploadNotaFiscalVo {
         this.filtroPesquisa = filtroPesquisa;
     }
 
-    public String getXmlNotaBase64() {
-        return xmlNotaBase64;
+    public List<String> getXmlNotasBase64() {
+        return xmlNotasBase64;
     }
 
-    public void setXmlNotaBase64(String xmlNotaBase64) {
-        this.xmlNotaBase64 = xmlNotaBase64;
+    public void setXmlNotasBase64(List<String> xmlNotasBase64) {
+        this.xmlNotasBase64 = xmlNotasBase64;
+    }
+
+    public Long getIndiceArquivo() {
+        return indiceArquivo;
+    }
+
+    public void setIndiceArquivo(Long indiceArquivo) {
+        this.indiceArquivo = indiceArquivo;
     }
 }

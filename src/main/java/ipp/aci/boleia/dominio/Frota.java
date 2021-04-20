@@ -402,10 +402,16 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     
     @OneToOne(mappedBy = "frota")
     private SituacaoConectCar situacaoConectCar;
-    
+
     @OneToOne(mappedBy = "frota")
     private Lead lead;
-  
+
+    @OneToOne(mappedBy = "frota")
+    private ParametroNotaFiscal parametroNotaFiscal;
+
+    @Column(name = "ID_LEMBRAR_PARAMETRIZACAO_NF")
+    private Boolean lembrarParametrizacaoNf;
+
     @NotAudited
     @Formula("(SELECT NVL(COUNT(0), 0) FROM BOLEIA_SCHEMA.TAG_CONECTCAR T WHERE T.CD_FROTA = CD_FROTA)")
     private Integer totalTags;
@@ -1337,6 +1343,18 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
         return semNotaFiscal == null || !semNotaFiscal;
     }
 
+    /**
+     * Existe uma frota ou unidade que exige nota fiscal?
+     * @return true se positivo
+     */
+    @Transient
+    public boolean isFrotaOuUmaDasUnidadesExigemNotaFiscal(){
+        return  this.exigeNotaFiscal()
+                || this.getUnidades() != null
+                && this.getUnidades()
+                .stream()
+                .anyMatch(u -> u.getExigeNotaFiscal() != null && u.getExigeNotaFiscal());
+    }
 
     /**
      * Verifica se frota tem parametro de ciclo para atualizar
@@ -1367,6 +1385,14 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
 		this.situacaoConectCar = situacaoConectCar;
 	}
 
+    public ParametroNotaFiscal getParametroNotaFiscal() {
+        return parametroNotaFiscal;
+    }
+
+    public void setParametroNotaFiscal(ParametroNotaFiscal parametroNotaFiscal) {
+        this.parametroNotaFiscal = parametroNotaFiscal;
+    }
+
 	public Integer getTotalTags() {
 		return totalTags;
 	}
@@ -1389,5 +1415,13 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
 
 	public void setLead(Lead lead) {
 		this.lead = lead;
-	}    
+	}
+
+    public Boolean getLembrarParametrizacaoNf() {
+        return lembrarParametrizacaoNf;
+    }
+
+    public void setLembrarParametrizacaoNf(Boolean lembrarParametrizacaoNf) {
+        this.lembrarParametrizacaoNf = lembrarParametrizacaoNf;
+    }
 }
