@@ -4,6 +4,7 @@ import ipp.aci.boleia.dados.IPontoDeVendaDados;
 import ipp.aci.boleia.dominio.AtividadeComponente;
 import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.Usuario;
+import ipp.aci.boleia.dominio.enums.PerfilPontoDeVenda;
 import ipp.aci.boleia.dominio.enums.StatusAlteracaoPrecoPosto;
 import ipp.aci.boleia.dominio.enums.StatusAtivacao;
 import ipp.aci.boleia.dominio.enums.StatusHabilitacaoPontoVenda;
@@ -333,7 +334,18 @@ public class OraclePontoDeVendaDados extends OracleRepositorioBoleiaDados<PontoD
                 );
 
         if(filtro.getPerfilPontoDeVenda() != null) {
-            parametros.adicionarParametros(new ParametroPesquisaLike("perfilVenda", filtro.getPerfilPontoDeVenda().name()));
+            switch (filtro.getPerfilPontoDeVenda()) {
+                case RODOVIA:
+                case URBANO:
+                    parametros.adicionarParametros(new ParametroPesquisaLike("perfilVenda", filtro.getPerfilPontoDeVenda().name()));
+                    break;
+                case OUTROS:
+                    parametros.adicionarParametros(new ParametroPesquisaOr(
+                            new ParametroPesquisaNulo("perfilVenda"),
+                            new ParametroPesquisaLike("perfilVenda", PerfilPontoDeVenda.RODO_REDE.name())
+                    ));
+                    break;
+            }
         }
 
         if(CollectionUtils.isNotEmpty(filtro.getFiltrosCoordenadas())) {
