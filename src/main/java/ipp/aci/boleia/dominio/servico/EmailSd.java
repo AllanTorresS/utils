@@ -865,7 +865,7 @@ public class EmailSd {
             		erroTransacaoConectcar.getVeiculoId() != null ? erroTransacaoConectcar.getVeiculoId().toString() : "",
             		StringUtils.defaultString(erroTransacaoConectcar.getPlaca()),
             		erroTransacaoConectcar.getTipoTransacao() != null ? TipoTransacaoConectcar.obterPorValor(erroTransacaoConectcar.getTipoTransacao()) : "",
-            		erroTransacaoConectcar.getNumeroTag() != null ? erroTransacaoConectcar.getNumeroTag() : "",
+            		erroTransacaoConectcar.getNumeroTag() != null ? erroTransacaoConectcar.getNumeroTag().toString() : "",
             		erroTransacaoConectcar.getCodigoTransacaoConectcar() != null ? erroTransacaoConectcar.getCodigoTransacaoConectcar().toString() : "",
             		UtilitarioFormatacaoData.formatarDataHoraMinutosSegundos(erroTransacaoConectcar.getDataProcessamento()),
             		erroTransacaoConectcar.getErroProcessamento()));    
