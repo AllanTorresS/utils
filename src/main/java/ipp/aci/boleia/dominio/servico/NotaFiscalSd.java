@@ -676,15 +676,27 @@ public class NotaFiscalSd {
      * @param validacoesNotas Lista de erros das validacoes
      */
     private void validarCNPJDestinatario(List<Document> documentos, List<AutorizacaoPagamento> autorizacoesPagamento, List<ValidacaoUploadNotaFiscalVo> validacoesNotas) {
+        final long divisorDaRaiz = 1000000;
         for(AutorizacaoPagamento abastecimento : autorizacoesPagamento) {
-            final Long cnpjValidacao = obterCnpjDestino(abastecimento);
-            documentos.forEach(nota -> {
-                Long destCnpj = notaFiscalParserSd.getLong(nota, ConstantesNotaFiscalParser.DEST_CNPJ);
-                boolean destinoConfiguradoIgualDestinoNFe = cnpjValidacao != null && cnpjValidacao.equals(destCnpj);
-                if(!destinoConfiguradoIgualDestinoNFe){
-                    this.addErroValidacao(validacoesNotas, nota, Erro.NOTA_FISCAL_UPLOAD_CNPJ_DESTINATARIO_INVALIDO, cnpjValidacao.toString());
-                }
-            });
+            if(abastecimento.getFrota().getParametroNotaFiscal() == null){
+                final Long cnpjValidacao = abastecimento.getFrota().getCnpj()/divisorDaRaiz;
+                documentos.forEach(nota -> {
+                    Long destCnpj = notaFiscalParserSd.getLong(nota, ConstantesNotaFiscalParser.DEST_CNPJ)/divisorDaRaiz;
+                    boolean destinoConfiguradoIgualDestinoNFe = cnpjValidacao.equals(destCnpj);
+                    if(!destinoConfiguradoIgualDestinoNFe){
+                        this.addErroValidacao(validacoesNotas, nota, Erro.NOTA_FISCAL_UPLOAD_CNPJ_DESTINATARIO_INVALIDO, cnpjValidacao.toString());
+                    }
+                });
+            } else {
+                final Long cnpjValidacao = obterCnpjDestino(abastecimento);
+                documentos.forEach(nota -> {
+                    Long destCnpj = notaFiscalParserSd.getLong(nota, ConstantesNotaFiscalParser.DEST_CNPJ);
+                    boolean destinoConfiguradoIgualDestinoNFe = cnpjValidacao != null && cnpjValidacao.equals(destCnpj);
+                    if(!destinoConfiguradoIgualDestinoNFe){
+                        this.addErroValidacao(validacoesNotas, nota, Erro.NOTA_FISCAL_UPLOAD_CNPJ_DESTINATARIO_INVALIDO, cnpjValidacao.toString());
+                    }
+                });
+            }
         }
     }
 
@@ -759,9 +771,10 @@ public class NotaFiscalSd {
      * @param validacoesNotas Lista de erros das validacoes
      */
     private void validarCNPJEmitente(List<Document> documentos, List<AutorizacaoPagamento> autorizacoesPagamento, List<ValidacaoUploadNotaFiscalVo> validacoesNotas) {
+        final long divisorDaRaiz = 1000000;
         for(Document documento : documentos) {
-            Long emitCnpj = notaFiscalParserSd.getLong(documento, ConstantesNotaFiscalParser.EMIT_CNPJ);
-            Long cnpjEmitente = getPontoVendaResponsavelAbastecimentos(autorizacoesPagamento);
+            Long emitCnpj = notaFiscalParserSd.getLong(documento, ConstantesNotaFiscalParser.EMIT_CNPJ)/divisorDaRaiz;
+            Long cnpjEmitente = getPontoVendaResponsavelAbastecimentos(autorizacoesPagamento)/divisorDaRaiz;
             boolean emitCnpjOk = cnpjEmitente.equals(emitCnpj);
             if (!emitCnpjOk) {
                 this.addErroValidacao(validacoesNotas, documento, Erro.NOTA_FISCAL_UPLOAD_CNPJ_EMITENTE_INVALIDO);
