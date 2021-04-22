@@ -738,7 +738,7 @@ public class NotaFiscalSd {
     private void validarCNPJDestinatario(List<Document> documentos, List<AutorizacaoPagamento> autorizacoesPagamento, List<ValidacaoUploadNotaFiscalVo> validacoesNotas) {
         final long divisorDaRaiz = 1000000;
         for(AutorizacaoPagamento abastecimento : autorizacoesPagamento) {
-            if(abastecimento.getFrota().getParametroNotaFiscal() == null){
+            if(abastecimento.getParametroNotaFiscal() == null){
                 final Long cnpjValidacao = abastecimento.getFrota().getCnpj()/divisorDaRaiz;
                 documentos.forEach(nota -> {
                     Long destCnpj = notaFiscalParserSd.getLong(nota, ConstantesNotaFiscalParser.DEST_CNPJ)/divisorDaRaiz;
