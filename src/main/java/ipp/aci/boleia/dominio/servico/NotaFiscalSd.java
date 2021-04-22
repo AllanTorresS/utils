@@ -896,7 +896,7 @@ public class NotaFiscalSd {
                 BigDecimal valorTotalNota = valorDescontoTotal !=null ? valorTotalBrutoNota.add(valorDescontoTotal) : valorTotalBrutoNota;
                 valorTotalNota = valorTotalNota.setScale(2, BigDecimal.ROUND_HALF_UP);
                 if(valorTotalItensNota.compareTo(valorTotalNota) != 0) {
-                    addErroValidacao(validacoesNotas, documento, Erro.NOTA_FISCAL_UPLOAD_VERSAO_INVALIDA);
+                    addErroValidacao(validacoesNotas, documento, Erro.NOTA_FISCAL_POSSUI_SOMATORIO_DIFERENTE_VALOR_TOTAL);
                 }
             } else{
                 addErroValidacao(validacoesNotas, documento, Erro.NOTA_FISCAL_NAO_POSSUI_VALOR_TOTAL);
