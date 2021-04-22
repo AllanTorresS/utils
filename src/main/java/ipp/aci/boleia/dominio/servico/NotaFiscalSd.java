@@ -393,17 +393,19 @@ public class NotaFiscalSd {
                 Node item = itensNota.item(i);
                 Long ncmItem = notaFiscalParserSd.getLong(nota, ConstantesNotaFiscalParser.ITEM_NCM, item);
                 BigDecimal valor = notaFiscalParserSd.getBigDecimal(nota, ConstantesNotaFiscalParser.ITEM_VALOR_LIQUIDO, item);
-                Boolean isCombustivel = combustiveis
-                        .stream()
-                        .anyMatch(
-                                comb -> comb.getCodigosNcm()
-                                        .stream()
-                                        .anyMatch(ncm -> ncm.getCodigoNcm().equals(ncmItem))
-                        );
-                if (isCombustivel) {
-                    valorCombustivel = valorCombustivel.add(valor);
-                } else {
-                    valorProdutos = valorProdutos.add(valor);
+                if (valor != null) {
+                    Boolean isCombustivel = combustiveis
+                            .stream()
+                            .anyMatch(
+                                    comb -> comb.getCodigosNcm()
+                                            .stream()
+                                            .anyMatch(ncm -> ncm.getCodigoNcm().equals(ncmItem))
+                            );
+                    if (isCombustivel) {
+                        valorCombustivel = valorCombustivel.add(valor);
+                    } else {
+                        valorProdutos = valorProdutos.add(valor);
+                    }
                 }
             }
         }
@@ -429,14 +431,16 @@ public class NotaFiscalSd {
                 Node item = itensNota.item(i);
                 Long ncmItem = notaFiscalParserSd.getLong(nota, ConstantesNotaFiscalParser.ITEM_NCM, item);
                 BigDecimal valor = notaFiscalParserSd.getBigDecimal(nota, ConstantesNotaFiscalParser.ITEM_DESCONTO, item);
-                boolean isCombustivel = combustiveis.stream()
-                        .anyMatch(comb -> comb.getCodigosNcm()
-                                        .stream()
-                                        .anyMatch(ncm -> ncm.getCodigoNcm().equals(ncmItem)));
-                if (isCombustivel) {
-                    descontoCombustivel = descontoCombustivel.add(valor);
-                } else {
-                    descontoProdutos = descontoProdutos.add(valor);
+                if (valor != null) {
+                    boolean isCombustivel = combustiveis.stream()
+                            .anyMatch(comb -> comb.getCodigosNcm()
+                                    .stream()
+                                    .anyMatch(ncm -> ncm.getCodigoNcm().equals(ncmItem)));
+                    if (isCombustivel) {
+                        descontoCombustivel = descontoCombustivel.add(valor);
+                    } else {
+                        descontoProdutos = descontoProdutos.add(valor);
+                    }
                 }
             }
         }
