@@ -42,7 +42,7 @@ public class ReembolsoBaseSd {
         Date dataHoraCorrente = utilitarioAmbiente.buscarDataAmbiente();
 
         if(!reembolso.isPago()) {
-            if(reembolso.getValorDescontoAntecipacao() != null && reembolso.getValorDescontoAntecipacao().equals(reembolso.getValorTotal())) {
+            if(reembolso.getValorDescontoAntecipacao() != null && reembolso.getValorDescontoAntecipacao().compareTo(BigDecimal.ZERO) > 0 && reembolso.getValorDescontoAntecipacao().equals(reembolso.getValorTotal())) {
                 statusReembolso = PAGO;
             } else if(reembolso.getValorReembolso().compareTo(BigDecimal.ZERO) < 0) {
                 statusReembolso = A_DESCONTAR;
