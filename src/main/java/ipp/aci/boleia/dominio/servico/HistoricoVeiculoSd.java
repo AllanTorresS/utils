@@ -35,6 +35,7 @@ public class HistoricoVeiculoSd {
         historicoVeiculo.setVeiculo(veiculoEntidade);
         historicoVeiculo.setId(null);
         historicoVeiculo.setAgregado(veiculoEntidade.getAgregado());
+        historicoVeiculo.setDataCriacao(veiculoEntidade.getDataCriacao() != null ? veiculoEntidade.getDataCriacao(): ambiente.buscarDataAmbiente());
         historicoVeiculo.setUsuario(ambiente.getUsuarioLogado());
         historicoVeiculo.setDataAlteracao(ambiente.buscarDataAmbiente());
         repositorioHistoricoVeiculoDados.armazenar(historicoVeiculo);
