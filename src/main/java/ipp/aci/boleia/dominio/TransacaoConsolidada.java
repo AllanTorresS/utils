@@ -362,7 +362,7 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
      */
     public StatusNotaFiscal obterStatusNotaFiscal(Date dataCorrente) {
         if (statusNotaFiscal == null || statusNotaFiscal.equals(StatusNotaFiscal.PENDENTE.getValue())) {
-            if (dataCorrente.after(prazos.getDataLimiteEmissaoNfe())) {
+            if (dataCorrente.after(prazos.getDataLimiteEmissaoNfe()) && isFrotaExigeNF()) {
                 return StatusNotaFiscal.ATRASADA;
             } else {
                 return StatusNotaFiscal.PENDENTE;
