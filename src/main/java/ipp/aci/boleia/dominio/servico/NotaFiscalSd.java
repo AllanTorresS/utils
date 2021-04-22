@@ -333,7 +333,11 @@ public class NotaFiscalSd {
      * @return A função mapeadora
      */
     private Function<ItemDanfeVo, BigDecimal> obterFuncaoMapeadoraValorLiquido() {
-        return item -> new BigDecimal(item.getValorLiquido());
+        return item -> {
+            BigDecimal valorBruto = new BigDecimal(item.getValorLiquido());
+            BigDecimal desconto = item.getDesconto() != null && !item.getDesconto().isEmpty() ? new BigDecimal(item.getDesconto()) : BigDecimal.ZERO;
+            return valorBruto.subtract(desconto);
+        };
     }
 
     /**
