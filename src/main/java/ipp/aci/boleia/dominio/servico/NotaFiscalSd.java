@@ -422,7 +422,7 @@ public class NotaFiscalSd {
         BigDecimal valorTotalProdutoNota = documentos.stream().map(this::obterValorTotalProdutosNota).filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, BigDecimal.ROUND_HALF_UP);
 
         if (parametroNf != null && parametroNf.getSepararPorCombustivelProdutoServico() != null && parametroNf.getSepararPorCombustivelProdutoServico()) {
-            Boolean algumaNotaNaoSeparada = documentos.stream().anyMatch(nota -> obterValorTotalCombustivelNota(nota) != null && obterValorTotalProdutosNota(nota) != null);
+            boolean algumaNotaNaoSeparada = documentos.stream().anyMatch(nota -> obterValorTotalCombustivelNota(nota) != null && obterValorTotalProdutosNota(nota) != null);
             if (algumaNotaNaoSeparada) {
                 this.addErroValidacao(validacoesNotas, documento, Erro.NOTAS_FISCAIS_SEPARADAS_NAO_ENCONTRADAS);
             }
@@ -519,11 +519,11 @@ public class NotaFiscalSd {
     }
 
     /**
-     * Adiciona o erro da validacao na lista de validacoes
-     * @param validacoesNotas lista de validacoes
-     * @param documento nota.xml
+     * Adiciona o erro da validacao na lista de validações
+     * @param validacoesNotas lista de validações
+     * @param documento xml da nota fiscal
      * @param erro erro da validacao
-     * @param valorFaltanteEmissao O valor que falta para emissão completa de combustível ou produto
+     * @param argumentos argumentos da validação
      */
     private void addErroValidacao(List<ValidacaoUploadNotaFiscalVo> validacoesNotas, Document documento, Erro erro, Object ... argumentos){
         if(validacoesNotas == null || erro == null){
@@ -818,9 +818,10 @@ public class NotaFiscalSd {
             BigDecimal valorTotalProduto = valorProdutos != null ? valorProdutos.setScale(2, BigDecimal.ROUND_HALF_UP) : BigDecimal.ZERO;
 
             BigDecimal valorTotalItensNota = valorTotalProduto.add(valorTotalCombustivel);
-            BigDecimal valorTotalNota = notaFiscalParserSd.getBigDecimal(documento, ConstantesNotaFiscalParser.VALOR_TOTAL);
-
-            if (valorTotalNota != null) {
+            BigDecimal valorDescontoTotal = notaFiscalParserSd.getBigDecimal(documento, ConstantesNotaFiscalParser.VALOR_DESCONTO);
+            BigDecimal valorTotalBrutoNota = notaFiscalParserSd.getBigDecimal(documento, ConstantesNotaFiscalParser.VALOR_TOTAL);
+            if (valorTotalBrutoNota != null) {
+                BigDecimal valorTotalNota = valorDescontoTotal !=null ? valorTotalBrutoNota.add(valorDescontoTotal) : valorTotalBrutoNota;
                 valorTotalNota = valorTotalNota.setScale(2, BigDecimal.ROUND_HALF_UP);
                 if(valorTotalItensNota.compareTo(valorTotalNota) != 0) {
                     addErroValidacao(validacoesNotas, documento, Erro.NOTA_FISCAL_UPLOAD_VERSAO_INVALIDA);
