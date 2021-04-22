@@ -1,5 +1,6 @@
 package ipp.aci.boleia.dominio.vo;
 
+import ipp.aci.boleia.dominio.enums.PerfilPontoDeVenda;
 import ipp.aci.boleia.util.UtilitarioCoordenadasGeograficas;
 
 import java.math.BigDecimal;
@@ -16,6 +17,7 @@ public class FiltroPesquisaLocalizacaoVo {
 	private Double longitudeFinal;
 	private List<List<CoordenadaVo>> filtrosCoordenadas;
 	private BigDecimal margemGrausFiltroCoordenadas;
+	private PerfilPontoDeVenda perfilPontoDeVenda;
 
 	public FiltroPesquisaLocalizacaoVo() {
 		// serializacao json
@@ -25,24 +27,28 @@ public class FiltroPesquisaLocalizacaoVo {
 	 * Pesquisa a localiacao geografica de um ponto
 	 * @param ponto O ponto de referencia
 	 * @param distancia A distancia
+	 * @param perfilPontoDeVenda O perfil do ponto de venda
 	 */
-	public FiltroPesquisaLocalizacaoVo(CoordenadaGeograficaVo ponto, double distancia) {
+	public FiltroPesquisaLocalizacaoVo(CoordenadaGeograficaVo ponto, double distancia, PerfilPontoDeVenda perfilPontoDeVenda) {
 		double distanciaLatitude = UtilitarioCoordenadasGeograficas.converterDistanciaLatitude(distancia);
 		double distanciaLongitude = UtilitarioCoordenadasGeograficas.converterDistanciaLongitude(distancia, ponto.getLatitude());
 		this.latitudeInicial = ponto.getLatitude()  - distanciaLatitude;
 		this.latitudeFinal = ponto.getLatitude()  + distanciaLatitude;
 		this.longitudeInicial = ponto.getLongitude() - distanciaLongitude;
 		this.longitudeFinal = ponto.getLongitude() + distanciaLongitude;
+		this.perfilPontoDeVenda = perfilPontoDeVenda;
 	}
 
 	/**
 	 * Pesquisa a localizacao geografica de uma rota, dado um grupo de pontos
 	 * @param filtrosCoordenadas Os filtros de coordenadas
 	 * @param margemGrausFiltroCoordenadas A margem em graus do filtro de coordenadas
+	 * @param perfilPontoDeVenda O perfil do ponto de venda
 	 */
-	public FiltroPesquisaLocalizacaoVo(List<List<CoordenadaVo>> filtrosCoordenadas, BigDecimal margemGrausFiltroCoordenadas) {
+	public FiltroPesquisaLocalizacaoVo(List<List<CoordenadaVo>> filtrosCoordenadas, BigDecimal margemGrausFiltroCoordenadas, PerfilPontoDeVenda perfilPontoDeVenda) {
 		this.filtrosCoordenadas = filtrosCoordenadas;
 		this.margemGrausFiltroCoordenadas = margemGrausFiltroCoordenadas;
+		this.perfilPontoDeVenda = perfilPontoDeVenda;
 	}
 
 	public Double getLatitudeInicial() {
@@ -91,5 +97,13 @@ public class FiltroPesquisaLocalizacaoVo {
 
 	public void setMargemGrausFiltroCoordenadas(BigDecimal margemGrausFiltroCoordenadas) {
 		this.margemGrausFiltroCoordenadas = margemGrausFiltroCoordenadas;
+	}
+
+	public PerfilPontoDeVenda getPerfilPontoDeVenda() {
+		return perfilPontoDeVenda;
+	}
+
+	public void setPerfilPontoDeVenda(PerfilPontoDeVenda perfilPontoDeVenda) {
+		this.perfilPontoDeVenda = perfilPontoDeVenda;
 	}
 }

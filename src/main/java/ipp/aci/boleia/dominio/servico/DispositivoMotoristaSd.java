@@ -456,7 +456,7 @@ public class DispositivoMotoristaSd {
         double distancia = precisao != null && precisao.doubleValue() <= 250 ? 0.5 : 1.0;
         List<PontoDeVenda> postosProximos;
         FiltroPesquisaLocalizacaoVo filtro;
-        filtro = new FiltroPesquisaLocalizacaoVo(ponto, distancia);
+        filtro = new FiltroPesquisaLocalizacaoVo(ponto, distancia, null);
         postosProximos = repositorioPontoDeVenda.obterPontoDeVendaPorLimitesLocalizacao(filtro);
         postosProximos = postosProximos.stream().filter(p-> frotaPontoVendaSd.validarVisibilidade(frota.getId(), p)).collect(Collectors.toList());
         List<PontoDeVenda> postosHabilitados = new ArrayList<>();
