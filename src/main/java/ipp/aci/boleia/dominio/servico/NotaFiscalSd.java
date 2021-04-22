@@ -811,7 +811,7 @@ public class NotaFiscalSd {
      */
     private void validarValorTotal(List<Document> documentos, List<ValidacaoUploadNotaFiscalVo> validacoesNotas) {
         documentos.forEach(documento -> {
-            BigDecimal valorCombustivel = obterValorTotalCombustivelNota(documento); //392.90
+            BigDecimal valorCombustivel = obterValorTotalCombustivelNota(documento);
             BigDecimal valorTotalCombustivel = valorCombustivel != null ? valorCombustivel.setScale(2, BigDecimal.ROUND_HALF_UP) : BigDecimal.ZERO;
 
             BigDecimal valorProdutos = obterValorTotalProdutosNota(documento);
