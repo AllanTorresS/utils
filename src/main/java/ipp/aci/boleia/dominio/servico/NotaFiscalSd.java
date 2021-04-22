@@ -827,10 +827,9 @@ public class NotaFiscalSd {
      * @param validacoesNotas Lista de erros das validacoes
      */
     private void validarCNPJEmitente(List<Document> documentos, List<AutorizacaoPagamento> autorizacoesPagamento, List<ValidacaoUploadNotaFiscalVo> validacoesNotas) {
-        final long divisorDaRaiz = 1000000;
         for(Document documento : documentos) {
-            Long emitCnpj = notaFiscalParserSd.getLong(documento, ConstantesNotaFiscalParser.EMIT_CNPJ)/divisorDaRaiz;
-            Long cnpjEmitente = getPontoVendaResponsavelAbastecimentos(autorizacoesPagamento)/divisorDaRaiz;
+            Long emitCnpj = notaFiscalParserSd.getLong(documento, ConstantesNotaFiscalParser.EMIT_CNPJ);
+            Long cnpjEmitente = getPontoVendaResponsavelAbastecimentos(autorizacoesPagamento);
             boolean emitCnpjOk = cnpjEmitente.equals(emitCnpj);
             if (!emitCnpjOk) {
                 this.addErroValidacao(validacoesNotas, documento, Erro.NOTA_FISCAL_UPLOAD_CNPJ_EMITENTE_INVALIDO);
