@@ -309,6 +309,24 @@ public class NotaFiscalSd {
     }
 
     /**
+     * Obtém o desconto dos combustíveis de uma nota fiscal
+     * @param nota A nota fiscal
+     * @return O desconto de combustíveis
+     */
+    public BigDecimal obterDescontoCombustivelNota(Document nota) {
+        return calcularDescontosNota(nota).getLeft();
+    }
+
+    /**
+     * Obtém o desconto dos produtos de uma nota fiscal
+     * @param nota A nota fiscal
+     * @return O desconto de produtos
+     */
+    public BigDecimal obterDescontoProdutosNota(Document nota) {
+        return calcularDescontosNota(nota).getRight();
+    }
+
+    /**
      * Obtém o valor dos combustíveis de uma nota fiscal
      * @param itensNota Lista de itens da nota
      * @return O valor de combustíveis
@@ -394,6 +412,41 @@ public class NotaFiscalSd {
         return Pair.of(valorCombustivel, valorProdutos);
     }
 
+
+    /**
+     * Calcula os valores descontos de combustível e produtos
+     * @param nota A nota fiscal
+     * @return Os descontos calculados em formato de par (esquerda - valor de combustível / direita - valor de produtos)
+     */
+    private Pair<BigDecimal, BigDecimal> calcularDescontosNota(Document nota) {
+        NodeList itensNota = notaFiscalParserSd.getItens(nota);
+        BigDecimal descontoCombustivel = BigDecimal.ZERO;
+        BigDecimal descontoProdutos = BigDecimal.ZERO;
+        List<TipoCombustivel> combustiveis = tipoCombustivelDados.obterTodos(null);
+
+        if(itensNota != null){
+            for(int i = 0; i < itensNota.getLength(); i++) {
+                Node item = itensNota.item(i);
+                Long ncmItem = notaFiscalParserSd.getLong(nota, ConstantesNotaFiscalParser.ITEM_NCM, item);
+                BigDecimal valor = notaFiscalParserSd.getBigDecimal(nota, ConstantesNotaFiscalParser.ITEM_DESCONTO, item);
+                boolean isCombustivel = combustiveis.stream()
+                        .anyMatch(comb -> comb.getCodigosNcm()
+                                        .stream()
+                                        .anyMatch(ncm -> ncm.getCodigoNcm().equals(ncmItem)));
+                if (isCombustivel) {
+                    descontoCombustivel = descontoCombustivel.add(valor);
+                } else {
+                    descontoProdutos = descontoProdutos.add(valor);
+                }
+            }
+        }
+        descontoCombustivel = descontoCombustivel.compareTo(BigDecimal.ZERO) > 0 ? descontoCombustivel : BigDecimal.ZERO;
+        descontoProdutos = descontoProdutos.compareTo(BigDecimal.ZERO) > 0 ? descontoProdutos : BigDecimal.ZERO;
+        return Pair.of(descontoCombustivel, descontoProdutos);
+    }
+
+
+
     /**
      * Verifica o conteúdo da nota fiscal para verificação de coerência com os dados editados no abastecimento.
      *
@@ -438,9 +491,12 @@ public class NotaFiscalSd {
             }
         }
 
-        BigDecimal diferencaCombustivel = valorTotalCombustivelNota.subtract(valorCombustivelRestante).abs().setScale(2, BigDecimal.ROUND_HALF_UP);
-        BigDecimal diferencaProdutos = valorTotalProdutoNota.subtract(valorProdutosRestante).abs().setScale(2, BigDecimal.ROUND_HALF_UP);
-        if ((diferencaCombustivel.compareTo(margemAbastecimentos) > 0)) {
+        BigDecimal descontoCombustivel = documentos.stream().map(this::obterDescontoCombustivelNota).filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, BigDecimal.ROUND_HALF_UP);
+        BigDecimal descontoProduto = documentos.stream().map(this::obterDescontoProdutosNota).filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, BigDecimal.ROUND_HALF_UP);
+
+        BigDecimal diferencaCombustivel = valorTotalCombustivelNota.subtract(descontoCombustivel).subtract(valorCombustivelRestante).abs().setScale(2, BigDecimal.ROUND_HALF_UP);
+        BigDecimal diferencaProdutos = valorTotalProdutoNota.subtract(descontoProduto).subtract(valorProdutosRestante).abs().setScale(2, BigDecimal.ROUND_HALF_UP);
+        if(diferencaCombustivel.compareTo(margemAbastecimentos) > 0) {
             if (valorTotalCombustivelNota.compareTo(valorCombustivelRestante) > 0) {
                 this.addErroValidacao(validacoesNotas, null, Erro.NOTA_FISCAL_VALOR_COMB_EXCEDENTE);
             } else {
@@ -448,7 +504,7 @@ public class NotaFiscalSd {
                 this.addErroValidacao(validacoesNotas, documento, Erro.NOTA_FISCAL_VALOR_COMB_FALTANTE, valorFaltante);
             }
         }
-        if ((diferencaProdutos.compareTo(margemAbastecimentos) > 0)) {
+        if(diferencaProdutos.compareTo(margemAbastecimentos) > 0) {
             if (valorTotalProdutoNota.compareTo(valorProdutosRestante) > 0) {
                 this.addErroValidacao(validacoesNotas, documento, Erro.NOTA_FISCAL_VALOR_PROD_EXCEDENTE);
             } else {
