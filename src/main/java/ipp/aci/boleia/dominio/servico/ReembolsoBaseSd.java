@@ -10,6 +10,7 @@ import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.validation.constraints.Null;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -46,7 +47,7 @@ public class ReembolsoBaseSd {
                 statusReembolso = PAGO;
             } else if(reembolso.getValorReembolso().compareTo(BigDecimal.ZERO) < 0) {
                 statusReembolso = A_DESCONTAR;
-            } else if (reembolso.getValorReembolso().compareTo(BigDecimal.ZERO) == 0) {
+            } else if (reembolso.getValorReembolso().compareTo(BigDecimal.ZERO) == 0 || reembolso.getValorReembolso() == null) {
                 statusReembolso = SEM_REEMBOLSO;
             } else if(obterPrimeiroInstanteDia(reembolso.getDataVencimentoPgto()).before(obterPrimeiroInstanteDia(dataHoraCorrente))) {
                 statusReembolso = ATRASADO;
