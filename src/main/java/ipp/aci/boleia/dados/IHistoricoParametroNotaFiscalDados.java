@@ -1,6 +1,5 @@
 package ipp.aci.boleia.dados;
 
-import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.ParametroNotaFiscal;
 import ipp.aci.boleia.dominio.historico.HistoricoParametroNotaFiscal;
 
