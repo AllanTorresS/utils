@@ -10,6 +10,8 @@ import ipp.aci.boleia.dominio.vo.FiltroPesquisaFinanceiroVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFrotaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialFrotaVo;
 import ipp.aci.boleia.dominio.vo.apco.ClienteProFrotaVo;
+import ipp.aci.boleia.dominio.vo.FiltroAutoCompletePostoRotaVo;
+
 
 import java.util.Date;
 import java.util.List;
@@ -207,4 +209,12 @@ public interface IFrotaDados extends IRepositorioBoleiaDados<Frota> {
      * @return lista das frotas que atendem aos criterios de busca
      */
     List<Frota> pesquisarFrotasParaDetalheCiclo(FiltroPesquisaDetalheCicloVo filtro, Usuario usuarioLogado);
+
+    /**
+     * Obtém a lista das frotas a serem exibidas apos o autocomplete de busca de posto no roteirizador inteligente, caso posto interno esteja habilitado
+     *
+     * @param filtro O filtro de pesquisa com o termo do autocomplete
+     * @return lista das frotas que atendem aos criterios de busca
+     */
+    List<Frota> pesquisarParaAutocompleteRota(FiltroAutoCompletePostoRotaVo filtro);
 }

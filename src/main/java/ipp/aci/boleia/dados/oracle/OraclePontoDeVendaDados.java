@@ -32,6 +32,7 @@ import ipp.aci.boleia.dominio.vo.FiltroPesquisaLocalizacaoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaPontoDeVendaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaRotaPontoVendaServicosVo;
 import ipp.aci.boleia.dominio.vo.CoordenadaVo;
+import ipp.aci.boleia.dominio.vo.FiltroAutoCompletePostoRotaVo;
 import ipp.aci.boleia.util.Ordenacao;
 import ipp.aci.boleia.util.UtilitarioLambda;
 import ipp.aci.boleia.util.UtilitarioParse;
@@ -389,6 +390,18 @@ public class OraclePontoDeVendaDados extends OracleRepositorioBoleiaDados<PontoD
         return pesquisarUnicoSemIsolamentoDados(new ParametroPesquisaIgual("numeroAbadi", numeroAbadi));
     }
 
+    @Override
+    public List<PontoDeVenda> pesquisarParaAutocompleteRota(FiltroAutoCompletePostoRotaVo filtro){
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+
+        parametros.add(new ParametroPesquisaIgual("precosBase.precoMicromercado.tipoCombustivel.id", filtro.getTipoCombustivel()));
+        parametros.add(new ParametroPesquisaLike("nome", filtro.getTermo().replaceAll("[-./]+", "")));
+
+        //TODO Adicionar parametros do sistema
+
+        return pesquisar(new ParametroOrdenacaoColuna("razaoSocial"), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
     /**
      * Povoa os parametros de pesquisa referentes ao filtro revendedor da consulta
      * @param filtro O filtro da consulta
@@ -413,5 +426,4 @@ public class OraclePontoDeVendaDados extends OracleRepositorioBoleiaDados<PontoD
             parametros.add(new ParametroPesquisaEmpty(FOTOS, possuiFotos));
         }
     }
-
 }
