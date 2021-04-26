@@ -24,6 +24,4 @@ public class OracleRotaPostoDesconsideradoDados extends OracleRepositorioBoleiaD
     public List<RotaPostoDesconsiderado> obterPorRota(Long idRota) {
         return pesquisarSemIsolamentoDados((ParametroOrdenacaoColuna) null, new ParametroPesquisaIgual("idRota", idRota));
     }
-
-
 }
