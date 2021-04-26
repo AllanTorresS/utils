@@ -25,18 +25,18 @@ import java.util.List;
  */
 public enum ParametroSistema implements IEnumComLabel, IEnumComValor{
 
-    VOLUME_ABASTECIDO                (1,  TipoRestritividade.RESTRITIVA, true,  true, Collections.singletonList(TipoPerfilUsuario.FROTA), EstruturaParametroSistema.SIMPLES, "parametro.sistema.volume.abastecido.nome", "parametro.sistema.volume.abastecido.descricao", LogicaParametroVolumeAbastecido.class),
-    PRODUTO_ABASTECIMENTO            (2,  TipoRestritividade.RESTRITIVA, true,  false, Collections.singletonList(TipoPerfilUsuario.FROTA), EstruturaParametroSistema.PRODUTO_ABASTECIMENTO, "parametro.sistema.produto.abastecido.nome", "parametro.sistema.produto.abastecido.descricao", LogicaParametroProdutoAbastecido.class),
-    PRODUTOS_ADICIONAIS_PERMITIDOS   (3,  TipoRestritividade.VERSATIL,   true,  false, Collections.singletonList(TipoPerfilUsuario.FROTA), EstruturaParametroSistema.LISTA_PRODUTOS, "parametro.sistema.produtos.adicionais.nome", "parametro.sistema.produtos.adicionais.descricao", LogicaParametroProdutosAdicionais.class),
-    HORARIOS_ABASTECIMENTO           (4,  TipoRestritividade.VERSATIL,   true,  false, Collections.singletonList(TipoPerfilUsuario.FROTA), EstruturaParametroSistema.LISTA_HORARIOS, "parametro.sistema.horario.abastecimento.nome", "parametro.sistema.horario.abastecimento.descricao", LogicaParametroHorariosAbastecimento.class),
-    CONSUMO_ESTIMADO                 (5,  TipoRestritividade.VERSATIL,   true,  false, Collections.singletonList(TipoPerfilUsuario.FROTA), EstruturaParametroSistema.CONSUMO_ESTIMADO, "parametro.sistema.consumo.estimado.nome", "parametro.sistema.consumo.estimado.descricao", LogicaParametroConsumoEstimado.class),
-    PRECO_MAXIMO                     (6,  TipoRestritividade.VERSATIL,   true,  false, Collections.singletonList(TipoPerfilUsuario.FROTA), EstruturaParametroSistema.PRECO_MAXIMO, "parametro.sistema.preco.maximo.nome", "parametro.sistema.preco.maximo.descricao", LogicaParametroPrecoMaximo.class),
-    HODOMETRO_HORIMETRO              (7,  TipoRestritividade.RESTRITIVA, true,  false, Collections.singletonList(TipoPerfilUsuario.FROTA), EstruturaParametroSistema.HODOMETRO_HORIMETRO, "parametro.sistema.hodometro.horimetro.nome", "parametro.sistema.hodometro.horimetro.descricao", LogicaParametroHodometroHorimetro.class),
-    COTA_VEICULO                     (8,  TipoRestritividade.VERSATIL,   true,  false, Collections.singletonList(TipoPerfilUsuario.FROTA), EstruturaParametroSistema.COTA_VEICULO, "parametro.sistema.cota.veiculo.nome", "parametro.sistema.cota.veiculo.descricao", LogicaParametroCotaVeiculo.class),
-    INTERVALO_ABASTECIMENTO          (9,  TipoRestritividade.VERSATIL,   false, false, Collections.singletonList(TipoPerfilUsuario.FROTA), EstruturaParametroSistema.INTERVALO_ABASTECIMENTO, "parametro.sistema.intervalo.abastecimento.nome", "parametro.sistema.intervalo.abastecimento.descricao", LogicaParametroIntervaloAbastecimento.class),
-    POSTOS_AUTORIZADOS_ABASTECIMENTO (10, TipoRestritividade.VERSATIL,   true,  false, Arrays.asList(TipoPerfilUsuario.FROTA, TipoPerfilUsuario.INTERNO), EstruturaParametroSistema.POSTOS_AUTORIZADOS_ABASTECIMENTO, "parametro.sistema.postos.permitidos.nome", "parametro.sistema.postos.permitidos.descricao", LogicaParametroPostosAutorizadosAbastecimento.class),
-    CREDITO_VEICULO_AGREGADO         (11, TipoRestritividade.VERSATIL,   true,  false, Collections.singletonList(TipoPerfilUsuario.FROTA), EstruturaParametroSistema.CREDITO_VEICULO_AGREGADO, "parametro.sistema.credito.veiculo.agregado.nome", "parametro.sistema.credito.veiculo.agregado.descricao", LogicaParametroCreditoVeiculoAgregado.class),
-    LOCALIZACAO_ABASTECIMENTO        (12, TipoRestritividade.VERSATIL,   true,  false, Collections.singletonList(TipoPerfilUsuario.FROTA), EstruturaParametroSistema.SIMPLES, "parametro.sistema.localizacao.abastecimento.nome", "parametro.sistema.localizacao.abastecimento.descricao", LogicaParametroLocalizacaoAbastecimento.class);
+    VOLUME_ABASTECIDO                (1,  TipoRestritividade.RESTRITIVA, true,  true, Collections.singletonList(TipoPerfilUsuario.FROTA), EstruturaParametroSistema.SIMPLES, "parametro.sistema.volume.abastecido.nome", "parametro.sistema.volume.abastecido.descricao", LogicaParametroVolumeAbastecido.class, false),
+    PRODUTO_ABASTECIMENTO            (2,  TipoRestritividade.RESTRITIVA, true,  false, Collections.singletonList(TipoPerfilUsuario.FROTA), EstruturaParametroSistema.PRODUTO_ABASTECIMENTO, "parametro.sistema.produto.abastecido.nome", "parametro.sistema.produto.abastecido.descricao", LogicaParametroProdutoAbastecido.class, true),
+    PRODUTOS_ADICIONAIS_PERMITIDOS   (3,  TipoRestritividade.VERSATIL,   true,  false, Collections.singletonList(TipoPerfilUsuario.FROTA), EstruturaParametroSistema.LISTA_PRODUTOS, "parametro.sistema.produtos.adicionais.nome", "parametro.sistema.produtos.adicionais.descricao", LogicaParametroProdutosAdicionais.class, false),
+    HORARIOS_ABASTECIMENTO           (4,  TipoRestritividade.VERSATIL,   true,  false, Collections.singletonList(TipoPerfilUsuario.FROTA), EstruturaParametroSistema.LISTA_HORARIOS, "parametro.sistema.horario.abastecimento.nome", "parametro.sistema.horario.abastecimento.descricao", LogicaParametroHorariosAbastecimento.class, false),
+    CONSUMO_ESTIMADO                 (5,  TipoRestritividade.VERSATIL,   true,  false, Collections.singletonList(TipoPerfilUsuario.FROTA), EstruturaParametroSistema.CONSUMO_ESTIMADO, "parametro.sistema.consumo.estimado.nome", "parametro.sistema.consumo.estimado.descricao", LogicaParametroConsumoEstimado.class, false),
+    PRECO_MAXIMO                     (6,  TipoRestritividade.VERSATIL,   true,  false, Collections.singletonList(TipoPerfilUsuario.FROTA), EstruturaParametroSistema.PRECO_MAXIMO, "parametro.sistema.preco.maximo.nome", "parametro.sistema.preco.maximo.descricao", LogicaParametroPrecoMaximo.class, true),
+    HODOMETRO_HORIMETRO              (7,  TipoRestritividade.RESTRITIVA, true,  false, Collections.singletonList(TipoPerfilUsuario.FROTA), EstruturaParametroSistema.HODOMETRO_HORIMETRO, "parametro.sistema.hodometro.horimetro.nome", "parametro.sistema.hodometro.horimetro.descricao", LogicaParametroHodometroHorimetro.class, false),
+    COTA_VEICULO                     (8,  TipoRestritividade.VERSATIL,   true,  false, Collections.singletonList(TipoPerfilUsuario.FROTA), EstruturaParametroSistema.COTA_VEICULO, "parametro.sistema.cota.veiculo.nome", "parametro.sistema.cota.veiculo.descricao", LogicaParametroCotaVeiculo.class, false),
+    INTERVALO_ABASTECIMENTO          (9,  TipoRestritividade.VERSATIL,   false, false, Collections.singletonList(TipoPerfilUsuario.FROTA), EstruturaParametroSistema.INTERVALO_ABASTECIMENTO, "parametro.sistema.intervalo.abastecimento.nome", "parametro.sistema.intervalo.abastecimento.descricao", LogicaParametroIntervaloAbastecimento.class, true),
+    POSTOS_AUTORIZADOS_ABASTECIMENTO (10, TipoRestritividade.VERSATIL,   true,  false, Arrays.asList(TipoPerfilUsuario.FROTA, TipoPerfilUsuario.INTERNO), EstruturaParametroSistema.POSTOS_AUTORIZADOS_ABASTECIMENTO, "parametro.sistema.postos.permitidos.nome", "parametro.sistema.postos.permitidos.descricao", LogicaParametroPostosAutorizadosAbastecimento.class, true),
+    CREDITO_VEICULO_AGREGADO         (11, TipoRestritividade.VERSATIL,   true,  false, Collections.singletonList(TipoPerfilUsuario.FROTA), EstruturaParametroSistema.CREDITO_VEICULO_AGREGADO, "parametro.sistema.credito.veiculo.agregado.nome", "parametro.sistema.credito.veiculo.agregado.descricao", LogicaParametroCreditoVeiculoAgregado.class, false),
+    LOCALIZACAO_ABASTECIMENTO        (12, TipoRestritividade.VERSATIL,   true,  false, Collections.singletonList(TipoPerfilUsuario.FROTA), EstruturaParametroSistema.SIMPLES, "parametro.sistema.localizacao.abastecimento.nome", "parametro.sistema.localizacao.abastecimento.descricao", LogicaParametroLocalizacaoAbastecimento.class, false);
 
     private final Integer codigo;
     private final String nome;
@@ -47,6 +47,7 @@ public enum ParametroSistema implements IEnumComLabel, IEnumComValor{
     private final List<TipoPerfilUsuario> tiposPerfil;
     private final EstruturaParametroSistema estrutura;
     private final Class<ILogicaParametroSistema<?>> logicaExecucao;
+    private final boolean parametroRI;
 
     /**
      * Construtor do enum
@@ -57,8 +58,9 @@ public enum ParametroSistema implements IEnumComLabel, IEnumComValor{
      * @param nome Nome do parâmetro
      * @param descricao Descrição do parâmetro
      * @param logicaExecucao Classe que contém a lógica de execução do parâmetro
+     * @param parametroRI Flag que sinaliza se parametro vai ser opção de filtro no Roteirizador Inteligente
      */
-    ParametroSistema(Integer codigo, TipoRestritividade tipoRestritividade, boolean restritivaPorDefault, boolean sempreAtivo, List<TipoPerfilUsuario> tiposPerfil, EstruturaParametroSistema estrutura, String nome, String descricao, Class logicaExecucao) {
+    ParametroSistema(Integer codigo, TipoRestritividade tipoRestritividade, boolean restritivaPorDefault, boolean sempreAtivo, List<TipoPerfilUsuario> tiposPerfil, EstruturaParametroSistema estrutura, String nome, String descricao, Class logicaExecucao, boolean parametroRI) {
         this.codigo = codigo;
         this.tipoRestritividade = tipoRestritividade;
         this.restritivaPorDefault = restritivaPorDefault;
@@ -68,6 +70,7 @@ public enum ParametroSistema implements IEnumComLabel, IEnumComValor{
         this.nome = nome;
         this.descricao = descricao;
         this.logicaExecucao = logicaExecucao;
+        this.parametroRI = parametroRI;
     }
 
     public Integer getCodigo() {
@@ -104,6 +107,10 @@ public enum ParametroSistema implements IEnumComLabel, IEnumComValor{
 
     public List<TipoPerfilUsuario> getTiposPerfil() {
         return tiposPerfil;
+    }
+
+    public boolean isParametroRI() {
+        return parametroRI;
     }
 
     /**

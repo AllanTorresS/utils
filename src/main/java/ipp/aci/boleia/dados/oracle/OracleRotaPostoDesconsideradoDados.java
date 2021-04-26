@@ -1,6 +1,5 @@
 package ipp.aci.boleia.dados.oracle;
 
-import ipp.aci.boleia.dados.IRotaParametroFrotaDados;
 import ipp.aci.boleia.dados.IRotaPostoDesconsideradoDados;
 import ipp.aci.boleia.dominio.RotaPostoDesconsiderado;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
@@ -22,8 +21,8 @@ public class OracleRotaPostoDesconsideradoDados extends OracleRepositorioBoleiaD
         super(RotaPostoDesconsiderado.class);
     }
 
-    public List<RotaPostoDesconsiderado> obterPostoDesconsideradoPorRota(Long idRota) {
-        return pesquisarSemIsolamentoDados(new ParametroOrdenacaoColuna("idPtov"), new ParametroPesquisaIgual("idRota", idRota));
+    public List<RotaPostoDesconsiderado> obterPorRota(Long idRota) {
+        return pesquisarSemIsolamentoDados((ParametroOrdenacaoColuna) null, new ParametroPesquisaIgual("idRota", idRota));
     }
 
 
