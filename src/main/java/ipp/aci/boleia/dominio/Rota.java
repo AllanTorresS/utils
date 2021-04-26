@@ -104,6 +104,16 @@ public class Rota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @OneToMany(mappedBy = "rota", fetch = FetchType.LAZY)
     private List<RotaPostoDesconsiderado> rotaPostoDesconsiderados;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_VEICULO")
+    private Veiculo veiculo;
+
+    @Column(name = "VA_ATUAL_TANQUE")
+    private BigDecimal estadoTanqueInicio;
+
+    @Column(name = "VA_MEDIA_CONSUMO")
+    private BigDecimal mediaConsumo;
+
     @Override
     public Long getId() {
         return id;
@@ -233,5 +243,29 @@ public class Rota implements IPersistente, IExclusaoLogica, IPertenceFrota {
 
     public void setRotaPostoDesconsiderados(List<RotaPostoDesconsiderado> rotaPostoDesconsiderados) {
         this.rotaPostoDesconsiderados = rotaPostoDesconsiderados;
+    }
+
+    public Veiculo getVeiculo() {
+        return veiculo;
+    }
+
+    public void setVeiculo(Veiculo veiculo) {
+        this.veiculo = veiculo;
+    }
+
+    public BigDecimal getEstadoTanqueInicio() {
+        return estadoTanqueInicio;
+    }
+
+    public void setEstadoTanqueInicio(BigDecimal estadoTanqueInicio) {
+        this.estadoTanqueInicio = estadoTanqueInicio;
+    }
+
+    public BigDecimal getMediaConsumo() {
+        return mediaConsumo;
+    }
+
+    public void setMediaConsumo(BigDecimal mediaConsumo) {
+        this.mediaConsumo = mediaConsumo;
     }
 }

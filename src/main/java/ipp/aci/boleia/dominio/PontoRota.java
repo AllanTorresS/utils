@@ -100,6 +100,14 @@ public class PontoRota implements IPersistente, IPertenceFrota {
     @Column(name = "ID_API")
     private Integer api;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_FROTA")
+    private Frota frota;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_UNIDADE")
+    private Unidade unidade;
+
     @Override
     public Long getId() {
         return id;
@@ -221,5 +229,21 @@ public class PontoRota implements IPersistente, IPertenceFrota {
 
     public void setPrecoNegociado(Boolean precoNegociado) {
         this.precoNegociado = precoNegociado;
+    }
+
+    public Frota getFrota() {
+        return frota;
+    }
+
+    public void setFrota(Frota frota) {
+        this.frota = frota;
+    }
+
+    public Unidade getUnidade() {
+        return unidade;
+    }
+
+    public void setUnidade(Unidade unidade) {
+        this.unidade = unidade;
     }
 }
