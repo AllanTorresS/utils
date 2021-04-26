@@ -3,7 +3,7 @@ package ipp.aci.boleia.dominio.interfaces;
 import ipp.aci.boleia.dominio.Unidade;
 
 /**
- * Interface comum entre o parametro nota fiscal uf e seu histórico
+ * Contrato de implementação para parâmetros de nota fiscal com exceções de UF
  */
 public interface IParametroNotaFiscalUf {
 

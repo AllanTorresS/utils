@@ -10,17 +10,12 @@ import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
-
 
 /**
  * Encapsula as regras de negocio que envolvem a manipulacao de PrecosBase
  */
 @Component
 public class PrecoFreteSd {
-
-    @Autowired
-    private PrecoNegociadoSd precoNegociadoSd;
 
     @Autowired
     private IPrecoBaseDados repositorioPrecoBase;
@@ -49,7 +44,6 @@ public class PrecoFreteSd {
      * @param precoFrete preço a ser excluido
      */
     public void excluir(PrecoFrete precoFrete){
-        Date dataAtualizacao = utilitarioAmbiente.buscarDataAmbiente();
         precoFrete.setStatus(StatusPrecoFrete.HISTORICO.getValue());
         repositorioFrete.armazenar(precoFrete);
     }
