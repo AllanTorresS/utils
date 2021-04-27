@@ -10,8 +10,6 @@ import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
-
 
 /**
  * Encapsula as regras de negocio que envolvem a manipulacao de PrecosBase
