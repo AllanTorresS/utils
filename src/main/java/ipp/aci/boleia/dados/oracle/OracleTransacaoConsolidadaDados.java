@@ -60,6 +60,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ipp.aci.boleia.dominio.enums.StatusIntegracaoJde.PREVISTO;
 import static ipp.aci.boleia.dominio.enums.StatusIntegracaoReembolsoJde.ANTECIPADO;
 import static ipp.aci.boleia.dominio.enums.StatusPagamentoCobranca.A_VENCER;
 import static ipp.aci.boleia.util.UtilitarioCalculoData.adicionarMesesData;
@@ -319,7 +320,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "((tc.dataInicioPeriodo >= :dataInicioPeriodo AND tc.dataFimPeriodo <= :dataFimPeriodo) OR (tc.dataFimPeriodo >= :dataInicioPeriodo AND tc.dataInicioPeriodo <= :dataFimPeriodo)) " +
                     "AND (tc.quantidadeAbastecimentos > 0) " +
                     "AND (tc.statusConsolidacao = :statusCiclo OR :statusCiclo is null) " +
-                    "AND (c.statusIntegracaoJDE = :statusIntegracao OR :statusIntegracao is null) " +
+                    "AND (c.statusIntegracaoJDE = :statusIntegracao OR (c.statusIntegracaoJDE IS NULL AND :statusIntegracao = " + PREVISTO.getValue() + ") OR :statusIntegracao is null) " +
                     "AND (c.numeroDocumento = :numeroDocumento OR :numeroDocumento is null) " +
                     "%s ";
 
@@ -369,7 +370,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "((TC.dataInicioPeriodo >= :dataInicioPeriodo AND TC.dataFimPeriodo <= :dataFimPeriodo) OR (TC.dataFimPeriodo >= :dataInicioPeriodo AND TC.dataInicioPeriodo <= :dataFimPeriodo)) " +
                     "AND (TC.statusConsolidacao = :statusConsolidacao OR :statusConsolidacao is null) " +
                     "AND (TC.quantidadeAbastecimentos > 0) " +
-                    "AND ((C.statusIntegracaoJDE = :statusIntegracao OR :statusIntegracao is null) OR (C.statusIntegracaoJDE IS NULL AND " + StatusIntegracaoJde.PREVISTO.getValue() +" in :statusIntegracao)) " +
+                    "AND ((C.statusIntegracaoJDE = :statusIntegracao OR :statusIntegracao is null) OR (C.statusIntegracaoJDE IS NULL AND " + PREVISTO.getValue() +" in :statusIntegracao)) " +
                     "AND (C.numeroDocumento = :numeroDocumento OR :numeroDocumento is null) " +
                     "%s " +
                     "GROUP BY " +
