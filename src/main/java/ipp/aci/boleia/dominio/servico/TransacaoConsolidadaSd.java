@@ -26,6 +26,7 @@ import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.enums.ModalidadePagamento;
 import ipp.aci.boleia.dominio.enums.MotivoEstorno;
 import ipp.aci.boleia.dominio.enums.StatusNotaFiscal;
+import ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso;
 import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
 import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
@@ -78,6 +79,11 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso.ATRASADO;
+import static ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso.A_DESCONTAR;
+import static ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso.EM_ABERTO;
+import static ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso.PAGO;
+import static ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso.SEM_REEMBOLSO;
 import static ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada.FECHADA;
 import static ipp.aci.boleia.util.UtilitarioCalculo.calcularPorcentagem;
 import static ipp.aci.boleia.util.UtilitarioCalculo.somarValoresLista;
@@ -1341,5 +1347,24 @@ public class TransacaoConsolidadaSd {
         return !transacaoConsolidada.esta(FECHADA) &&
                 !transacaoConsolidada.possuiAntecipacaoRealizada() &&
                 possuiAutorizacaoPagamentoDisponivelParaAntecipar;
+    }
+
+    /**
+     * Define um status para o reembolso para a construção do DTO
+     * Caso já tenha sido criado, o reembolso será atualizado na base de dados
+     * Caso ainda não tenha sido criado (reembolso nulo), é retornado o status SEM REEMBOLSO
+     * @param transacaoConsolidada transacao consolidada à qual pertence o status será definido
+     */
+    public StatusPagamentoReembolso defineStatusReembolsoParaContrucaoDoDTO(TransacaoConsolidada transacaoConsolidada) {
+        StatusPagamentoReembolso statusReembolso;
+
+        if(transacaoConsolidada.getReembolso() != null) {
+            reembolsoSd.atualizarStatusReembolso(transacaoConsolidada.getReembolso());
+            statusReembolso = StatusPagamentoReembolso.obterPorValor(transacaoConsolidada.getReembolso().getStatus());
+        } else {
+            statusReembolso = SEM_REEMBOLSO;
+        }
+
+        return statusReembolso;
     }
 }
