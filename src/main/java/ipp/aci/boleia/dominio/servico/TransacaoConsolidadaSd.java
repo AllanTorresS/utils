@@ -83,6 +83,7 @@ import static ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso.ATRASADO;
 import static ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso.A_DESCONTAR;
 import static ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso.EM_ABERTO;
 import static ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso.PAGO;
+import static ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso.PREVISTO;
 import static ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso.SEM_REEMBOLSO;
 import static ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada.FECHADA;
 import static ipp.aci.boleia.util.UtilitarioCalculo.calcularPorcentagem;
@@ -1352,7 +1353,7 @@ public class TransacaoConsolidadaSd {
     /**
      * Define um status para o reembolso para a construção do DTO
      * Caso já tenha sido criado, o reembolso será atualizado na base de dados
-     * Caso ainda não tenha sido criado (reembolso nulo), é retornado o status SEM REEMBOLSO
+     * Caso ainda não tenha sido criado (reembolso nulo), é retornado o status PREVISTO
      * @param transacaoConsolidada transacao consolidada à qual pertence o status será definido
      */
     public StatusPagamentoReembolso defineStatusReembolsoParaContrucaoDoDTO(TransacaoConsolidada transacaoConsolidada) {
@@ -1362,7 +1363,7 @@ public class TransacaoConsolidadaSd {
             reembolsoSd.atualizarStatusReembolso(transacaoConsolidada.getReembolso());
             statusReembolso = StatusPagamentoReembolso.obterPorValor(transacaoConsolidada.getReembolso().getStatus());
         } else {
-            statusReembolso = SEM_REEMBOLSO;
+            statusReembolso = PREVISTO;
         }
 
         return statusReembolso;
