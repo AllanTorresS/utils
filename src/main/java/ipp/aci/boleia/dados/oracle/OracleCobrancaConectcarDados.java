@@ -117,7 +117,9 @@ public class OracleCobrancaConectcarDados extends OracleRepositorioBoleiaDados<C
 	public List<CobrancaConectcar> buscarCobrancasParaConsultarNotaFiscal() {
 		return pesquisar(new ParametroOrdenacaoColuna("dataVencimentoPagto",Ordenacao.DECRESCENTE),
 				new ParametroPesquisaNulo("numeroPedido", true),
-				new ParametroPesquisaNulo("numeroNotaFiscal", false));
+				new ParametroPesquisaOr(
+						new ParametroPesquisaNulo("numeroNotaFiscal", false),
+						new ParametroPesquisaNulo("codVerificacaoNF", false)));
 	}
 
 	@Override
