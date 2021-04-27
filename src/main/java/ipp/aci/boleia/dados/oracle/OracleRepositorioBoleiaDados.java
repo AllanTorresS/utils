@@ -364,6 +364,20 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
     }
 
     /**
+     * Realiza uma pesquisa a partir de uma queryString mapeando para tipo diretamente.
+     * Criado para obter Value Objets diretamente do banco.
+     *
+     * @param queryString A consulta em HQL
+     * @param tipoRetorno A classe do tipo do objeto de retorno
+     * @param parametros  Os parametros da busca
+     * @param <K> O tipo do objeto de retorno
+     * @return O resultado da consulta, contendo os dados de paginacao
+     */
+    protected <K> List<K> pesquisar(String queryString, Class<K> tipoRetorno, ParametroPesquisa... parametros) {
+        return pesquisar(queryString, true, false, tipoRetorno, parametros);
+    }
+
+    /**
      * Realiza uma pesquisa com paginação de uma servicos a partir de uma queryString considerando também os registros excluídos.
      *
      * @param paginacao   Os dados da paginacao
@@ -547,8 +561,10 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
      * @param paginacao   A paginacao  desejada
      * @param queryString A consulta a ser executada
      * @param isolamento  True caso se deseje isolamento de dados
+     * @param considerarExcluidos True caso deseje retornar os registros excluidos
      * @param tipoRetorno O tipo de retorno da consulta
      * @param parametros  Os parametros da consulta
+     * @param <K> O tipo do objeto de retorno
      * @return O resultado da consulta
      */
     private <K> ResultadoPaginado<K> pesquisar(InformacaoPaginacao paginacao, String queryString, boolean isolamento, boolean considerarExcluidos, Class<K> tipoRetorno, ParametroPesquisa... parametros) {
@@ -562,8 +578,10 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
      * @param queryString A consulta a ser executada
      * @param countQueryString A consulta de count a ser executada
      * @param isolamento  True caso se deseje isolamento de dados
+     * @param considerarExcluidos True caso deseje retornar os registros excluidos
      * @param tipoRetorno O tipo de retorno da consulta
      * @param parametros  Os parametros da consulta
+     * @param <K> O tipo do objeto de retorno
      * @return O resultado da consulta
      */
     private <K> ResultadoPaginado<K> pesquisar(InformacaoPaginacao paginacao, String queryString, String countQueryString, boolean isolamento, boolean considerarExcluidos, Class<K> tipoRetorno, ParametroPesquisa... parametros) {
@@ -603,6 +621,28 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
             UtilitarioIsolamentoInformacoes.exigirPermissaoAcesso((List<IPersistente>) resultado.getRegistros(), ambiente.getUsuarioLogado());
         }
         return resultado;
+    }
+
+    /**
+     * Executa uma pesquisa com ou sem isolamento de dados a partir dos parametros informados
+     *
+     * @param queryString A consulta a ser executada
+     * @param isolamento  True caso se deseje isolamento de dados
+     * @param considerarExcluidos True caso deseje retornar os registros excluidos
+     * @param tipoRetorno O tipo de retorno da consulta
+     * @param parametros  Os parametros da consulta
+     * @param <K> O tipo do objeto de retorno
+     * @return O resultado da consulta
+     */
+    private <K> List<K> pesquisar(String queryString, boolean isolamento, boolean considerarExcluidos, Class<K> tipoRetorno, ParametroPesquisa... parametros) {
+        List<K> registros = criarConsultaTipadaComParametros(queryString, tipoRetorno, parametros).getResultList();
+        if(!considerarExcluidos) {
+            registros = removerRegistrosExcluidos(registros, tipoRetorno);
+        }
+        if (isolamento && IPersistente.class.isAssignableFrom(tipoRetorno)) {
+            UtilitarioIsolamentoInformacoes.exigirPermissaoAcesso((List<IPersistente>)registros, ambiente.getUsuarioLogado());
+        }
+        return registros;
     }
 
     /**
@@ -681,6 +721,27 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
      */
     private Query criarConsultaComParametros(String queryString, ParametroPesquisa... parametros) {
         Query query = getGerenciadorDeEntidade().createQuery(queryString);
+        for (ParametroPesquisa param : parametros) {
+            if (param.getValor() != null && param.getValor().getClass().equals(Date.class)) {
+                query.setParameter(param.getNome(), (Date) param.getValor(), TemporalType.TIMESTAMP);
+            } else {
+                query.setParameter(param.getNome(), param.getValor());
+            }
+        }
+        return query;
+    }
+
+    /**
+     * Cria consulta HQL Tipada atraves de query em string e dados parametros
+     *
+     * @param queryString Query em string
+     * @param tipoRetorno tipo do retorno da consulta
+     * @param parametros  Parametro para preenchimento da consulta
+     * @param <K> O tipo do objeto de retorno
+     * @return Query preenchida
+     */
+    private <K> TypedQuery<K> criarConsultaTipadaComParametros(String queryString, Class<K> tipoRetorno, ParametroPesquisa... parametros) {
+        TypedQuery<K> query = getGerenciadorDeEntidade().createQuery(queryString, tipoRetorno);
         for (ParametroPesquisa param : parametros) {
             if (param.getValor() != null && param.getValor().getClass().equals(Date.class)) {
                 query.setParameter(param.getNome(), (Date) param.getValor(), TemporalType.TIMESTAMP);
