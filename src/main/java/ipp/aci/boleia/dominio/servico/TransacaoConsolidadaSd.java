@@ -682,7 +682,7 @@ public class TransacaoConsolidadaSd {
         }
 
         //Se o ciclo esta fechado e tiver zero abastecimentos aprovados com valor positivo, seu status NF deve ser SEM EMISSAO
-        if(transacaoConsolidada.esta(FECHADA) && transacaoConsolidada.exigeEmissaoNF() && (quantidadeDeTransacoesPositivasAutorizadasIgualZero || !possuiValorEmitido)){
+        if(transacaoConsolidada.esta(FECHADA) && transacaoConsolidada.isPassivelDeEmissao() && (quantidadeDeTransacoesPositivasAutorizadasIgualZero || !possuiValorEmitido)){
             transacaoConsolidada.setStatusNotaFiscal(StatusNotaFiscal.SEM_EMISSAO.getValue());
         }
 
