@@ -24,6 +24,8 @@ public class PedidoStatusAutorizacaoVo {
      *
      * @param numero numero do pedido
      * @param statusAutorizacao status da autorização pagamento associada
+     * @param mensagemErro erro relacionado ao pedido não autorizado
+     * @param dataExpiracao data limite para utilizar o pedido
      */
     public PedidoStatusAutorizacaoVo(String numero, Integer statusAutorizacao, String mensagemErro, Date dataExpiracao) {
         this.numero = numero;
@@ -36,6 +38,11 @@ public class PedidoStatusAutorizacaoVo {
         //Contrutor default
     }
 
+    /**
+     * Cria um status de pedido que não possui assiciação com autorização pagamento
+     *
+     * @param numero numero do pedido
+     */
     public PedidoStatusAutorizacaoVo(String numero) {
         this.numero = numero;
     }

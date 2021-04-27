@@ -368,7 +368,9 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
      * Criado para obter Value Objets diretamente do banco.
      *
      * @param queryString A consulta em HQL
+     * @param tipoRetorno A classe do tipo do objeto de retorno
      * @param parametros  Os parametros da busca
+     * @param <K> O tipo do objeto de retorno
      * @return O resultado da consulta, contendo os dados de paginacao
      */
     protected <K> List<K> pesquisar(String queryString, Class<K> tipoRetorno, ParametroPesquisa... parametros) {
@@ -559,8 +561,10 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
      * @param paginacao   A paginacao  desejada
      * @param queryString A consulta a ser executada
      * @param isolamento  True caso se deseje isolamento de dados
+     * @param considerarExcluidos True caso deseje retornar os registros excluidos
      * @param tipoRetorno O tipo de retorno da consulta
      * @param parametros  Os parametros da consulta
+     * @param <K> O tipo do objeto de retorno
      * @return O resultado da consulta
      */
     private <K> ResultadoPaginado<K> pesquisar(InformacaoPaginacao paginacao, String queryString, boolean isolamento, boolean considerarExcluidos, Class<K> tipoRetorno, ParametroPesquisa... parametros) {
@@ -574,8 +578,10 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
      * @param queryString A consulta a ser executada
      * @param countQueryString A consulta de count a ser executada
      * @param isolamento  True caso se deseje isolamento de dados
+     * @param considerarExcluidos True caso deseje retornar os registros excluidos
      * @param tipoRetorno O tipo de retorno da consulta
      * @param parametros  Os parametros da consulta
+     * @param <K> O tipo do objeto de retorno
      * @return O resultado da consulta
      */
     private <K> ResultadoPaginado<K> pesquisar(InformacaoPaginacao paginacao, String queryString, String countQueryString, boolean isolamento, boolean considerarExcluidos, Class<K> tipoRetorno, ParametroPesquisa... parametros) {
@@ -622,8 +628,10 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
      *
      * @param queryString A consulta a ser executada
      * @param isolamento  True caso se deseje isolamento de dados
+     * @param considerarExcluidos True caso deseje retornar os registros excluidos
      * @param tipoRetorno O tipo de retorno da consulta
      * @param parametros  Os parametros da consulta
+     * @param <K> O tipo do objeto de retorno
      * @return O resultado da consulta
      */
     private <K> List<K> pesquisar(String queryString, boolean isolamento, boolean considerarExcluidos, Class<K> tipoRetorno, ParametroPesquisa... parametros) {
@@ -729,6 +737,7 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
      * @param queryString Query em string
      * @param tipoRetorno tipo do retorno da consulta
      * @param parametros  Parametro para preenchimento da consulta
+     * @param <K> O tipo do objeto de retorno
      * @return Query preenchida
      */
     private <K> TypedQuery<K> criarConsultaTipadaComParametros(String queryString, Class<K> tipoRetorno, ParametroPesquisa... parametros) {
