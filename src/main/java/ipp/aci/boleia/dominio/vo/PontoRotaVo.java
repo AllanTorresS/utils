@@ -11,6 +11,7 @@ public class PontoRotaVo {
     private BigDecimal longitude;
     private Integer ordem;
     private String nome;
+    private Integer tipo;
 
     /**
      * Construtor padrão
@@ -23,12 +24,14 @@ public class PontoRotaVo {
      * @param longitude Longitude do ponto da rota
      * @param ordem Ordem do ponto na rota
      * @param nome Nome do ponto na rota
+     * @param tipo Tipo do ponto na rota
      */
-    public PontoRotaVo(BigDecimal latitude, BigDecimal longitude, Integer ordem, String nome) {
+    public PontoRotaVo(BigDecimal latitude, BigDecimal longitude, Integer ordem, String nome, Integer tipo) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.ordem = ordem;
         this.nome = nome;
+        this.tipo = tipo;
     }
 
     public BigDecimal getLatitude() {
@@ -61,5 +64,13 @@ public class PontoRotaVo {
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public Integer getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(Integer tipo) {
+        this.tipo = tipo;
     }
 }
