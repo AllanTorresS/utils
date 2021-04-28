@@ -8,20 +8,22 @@ import java.util.List;
 public class FiltroAutoCompletePostoRotaVo {
 
     private String termo;
-    private String idFrota;
+    private Long idFrota;
     private Boolean postoInterno;
+    private Boolean postoUrbano;
     private List<Integer> parametrosDeUso;
     private Long tipoCombustivel;
 
     public FiltroAutoCompletePostoRotaVo() {
     }
 
-    public FiltroAutoCompletePostoRotaVo(String termo, String idFrota, Boolean postoInterno, List<Integer> parametrosDeUso, Long tipoCombustivel) {
+    public FiltroAutoCompletePostoRotaVo(String termo, Long idFrota, Boolean postoInterno, List<Integer> parametrosDeUso, Long tipoCombustivel, Boolean postoUrbano) {
         this.termo = termo;
         this.idFrota = idFrota;
         this.postoInterno = postoInterno;
         this.parametrosDeUso = parametrosDeUso;
         this.tipoCombustivel = tipoCombustivel;
+        this.postoUrbano = postoUrbano;
     }
 
     public Long getTipoCombustivel() {
@@ -40,11 +42,11 @@ public class FiltroAutoCompletePostoRotaVo {
         this.termo = termo;
     }
 
-    public String getIdFrota() {
+    public Long getIdFrota() {
         return idFrota;
     }
 
-    public void setIdFrota(String idFrota) {
+    public void setIdFrota(Long idFrota) {
         this.idFrota = idFrota;
     }
 
@@ -62,5 +64,13 @@ public class FiltroAutoCompletePostoRotaVo {
 
     public void setParametrosDeUso(List<Integer> parametrosDeUso) {
         this.parametrosDeUso = parametrosDeUso;
+    }
+
+    public Boolean getPostoUrbano() {
+        return postoUrbano;
+    }
+
+    public void setPostoUrbano(Boolean postoUrbano) {
+        this.postoUrbano = postoUrbano;
     }
 }

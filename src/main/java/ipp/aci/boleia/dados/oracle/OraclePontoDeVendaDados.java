@@ -12,10 +12,12 @@ import ipp.aci.boleia.dominio.enums.StatusPosse;
 import ipp.aci.boleia.dominio.enums.TipoFiltroPontoVendaPrimario;
 import ipp.aci.boleia.dominio.enums.TipoFiltroPontoVendaSecundario;
 import ipp.aci.boleia.dominio.enums.TipoServico;
+import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaAnd;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDiferente;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaEmpty;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaFetch;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
@@ -395,11 +397,15 @@ public class OraclePontoDeVendaDados extends OracleRepositorioBoleiaDados<PontoD
         List<ParametroPesquisa> parametros = new ArrayList<>();
 
         parametros.add(new ParametroPesquisaIgual("precosBase.precoMicromercado.tipoCombustivel.id", filtro.getTipoCombustivel()));
+        if (!filtro.getPostoUrbano()){
+            parametros.add(new ParametroPesquisaDiferente("perfilVenda", "Urbano"));
+        }
         parametros.add(new ParametroPesquisaLike("nome", filtro.getTermo().replaceAll("[-./]+", "")));
 
         //TODO Adicionar parametros do sistema
 
-        return pesquisar(new ParametroOrdenacaoColuna("razaoSocial"), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        ResultadoPaginado<PontoDeVenda> resultadoPaginado = pesquisar( new InformacaoPaginacao(1,300, new ParametroOrdenacaoColuna("nome")) , parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        return resultadoPaginado.getRegistros();
     }
 
     /**
