@@ -404,8 +404,7 @@ public class OraclePontoDeVendaDados extends OracleRepositorioBoleiaDados<PontoD
 
         //TODO Adicionar parametros do sistema
 
-        ResultadoPaginado<PontoDeVenda> resultadoPaginado = pesquisar( new InformacaoPaginacao(1,300, new ParametroOrdenacaoColuna("nome")) , parametros.toArray(new ParametroPesquisa[parametros.size()]));
-        return resultadoPaginado.getRegistros();
+        return pesquisar(new ParametroOrdenacaoColuna("nome"), parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
     /**
