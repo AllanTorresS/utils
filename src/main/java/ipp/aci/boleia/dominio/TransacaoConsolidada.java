@@ -4,6 +4,7 @@ import ipp.aci.boleia.dominio.enums.ModalidadePagamento;
 import ipp.aci.boleia.dominio.enums.MotivoEstorno;
 import ipp.aci.boleia.dominio.enums.StatusIntegracaoReembolsoJde;
 import ipp.aci.boleia.dominio.enums.StatusNotaFiscal;
+import ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso;
 import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
@@ -45,6 +46,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso.PREVISTO;
 import static ipp.aci.boleia.util.UtilitarioLambda.verificarTodosNaoNulos;
 
 /**
@@ -749,5 +751,13 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
             return antecipacoes.stream().sorted(Comparator.comparing(ReembolsoAntecipado::getDataAntecipacao).reversed()).findFirst().orElse(null);
         }
         return null;
+    }
+
+    @Transient
+    public StatusPagamentoReembolso getStatusReembolso() {
+        if(reembolso != null) {
+            return StatusPagamentoReembolso.obterPorValor(reembolso.getStatus());
+        }
+        return PREVISTO;
     }
 }

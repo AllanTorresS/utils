@@ -1349,23 +1349,4 @@ public class TransacaoConsolidadaSd {
                 !transacaoConsolidada.possuiAntecipacaoRealizada() &&
                 possuiAutorizacaoPagamentoDisponivelParaAntecipar;
     }
-
-    /**
-     * Define um status para o reembolso para a construção do DTO
-     * Caso já tenha sido criado, o reembolso será atualizado na base de dados
-     * Caso ainda não tenha sido criado (reembolso nulo), é retornado o status PREVISTO
-     * @param transacaoConsolidada transacao consolidada à qual pertence o status será definido
-     */
-    public StatusPagamentoReembolso defineStatusReembolsoParaContrucaoDoDTO(TransacaoConsolidada transacaoConsolidada) {
-        StatusPagamentoReembolso statusReembolso;
-
-        if(transacaoConsolidada.getReembolso() != null) {
-            reembolsoSd.atualizarStatusReembolso(transacaoConsolidada.getReembolso());
-            statusReembolso = StatusPagamentoReembolso.obterPorValor(transacaoConsolidada.getReembolso().getStatus());
-        } else {
-            statusReembolso = PREVISTO;
-        }
-
-        return statusReembolso;
-    }
 }
