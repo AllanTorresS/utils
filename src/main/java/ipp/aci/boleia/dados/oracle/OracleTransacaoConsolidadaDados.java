@@ -31,6 +31,7 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaior;
 import ipp.aci.boleia.dominio.vo.AgrupamentoTransacaoConsolidadaCobrancaVo;
 import ipp.aci.boleia.dominio.vo.AgrupamentoTransacaoConsolidadaPvVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheCicloVo;
@@ -583,10 +584,10 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "%s " +
                     "ORDER BY TC.dataFimPeriodo";
 
-    private static final String CLAUSULA_STATUS_INTEGRACAO_REEMBOLSO = 
-                " AND (r.statusIntegracao in :statusIntegracao OR (r.statusIntegracao IS NULL AND a.valorReembolso IS NOT NULL AND " + ANTECIPADO.getValue() + " in :statusIntegracao) " +
-                " OR (r.statusIntegracao IS NULL AND a.valorReembolso IS NULL AND at.valorReembolso IS NOT NULL AND " + StatusIntegracaoReembolsoJde.ERRO_ENVIO.getValue() + " in :statusIntegracao) " +
-                " OR (r.statusIntegracao IS NULL AND a.valorReembolso IS NULL AND at.valorReembolso IS NULL AND " + StatusIntegracaoReembolsoJde.PREVISTO.getValue() + " in :statusIntegracao)) ";
+    private static final String CLAUSULA_STATUS_INTEGRACAO_REEMBOLSO =
+            " AND (r.statusIntegracao in :statusIntegracao OR (r.statusIntegracao IS NULL AND tc.possuiAntecipacaoRealizada = true AND " + ANTECIPADO.getValue() + " in :statusIntegracao) " +
+                    " OR (r.statusIntegracao IS NULL AND tc.possuiAntecipacaoRealizada = false AND tc.possuiAntecipacaoComErro = true AND " + StatusIntegracaoReembolsoJde.ERRO_ENVIO.getValue() + " in :statusIntegracao) " +
+                    " OR (r.statusIntegracao IS NULL AND tc.possuiAntecipacaoRealizada = false AND tc.possuiAntecipacaoComErro = false AND " + StatusIntegracaoReembolsoJde.PREVISTO.getValue() + " in :statusIntegracao)) ";
 
     private static final String CLAUSULA_STATUS_NOTA_FISCAL = " AND (tc.statusNotaFiscal in :statusNf) ";
 
@@ -598,8 +599,6 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             "FROM TransacaoConsolidada tc " +
             "LEFT JOIN tc.frotaPtov fpv " +
             "LEFT JOIN tc.reembolso r " +
-            "LEFT JOIN tc.antecipacoes a WITH a.statusIntegracao = " + StatusIntegracaoReembolsoJde.REALIZADO.getValue() + " " +
-            "LEFT JOIN tc.antecipacoes at " +
             "WHERE " +
             "(tc.dataInicioPeriodo >= :dataInicioPeriodo AND tc.dataFimPeriodo <= :dataFimPeriodo) " +
             "AND (fpv.pontoVenda.id  = :idPv OR :idPv is null) " +
@@ -614,7 +613,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             "AND (tc.empresaAgregada.id = :idEmpresaAgregada OR :idEmpresaAgregada is null) ";
 
     private static final String CONSULTA_CONSOLIDADOS_GRID_REEMBOLSO_SOLUCAO =
-            "SELECT DISTINCT tc " +
+            "SELECT tc " +
                     CONSULTA_COMUM_CONSOLIDADOS_GRID_REEMBOLSO +
                     "ORDER BY %s ";
 
@@ -1377,8 +1376,22 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
     @Override
     public ReembolsoTotalPeriodoVo obterTotalReembolsoPeriodo(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
-        parametros.add(new ParametroPesquisaDataMaiorOuIgual("reembolso.dataPagamento", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe())));
-        parametros.add(new ParametroPesquisaDataMenorOuIgual("reembolso.dataPagamento", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte())));
+
+        parametros.add(new ParametroPesquisaOr(
+                //Totalmente antecipados
+                new ParametroPesquisaAnd(
+                        new ParametroPesquisaIgual("reembolso.status", StatusPagamentoReembolso.PAGO.getValue()),
+                        new ParametroPesquisaIgual("reembolso.numeroDocumento", null),
+                        new ParametroPesquisaMaior("reembolso.valorDescontoAntecipacao", BigDecimal.ZERO),
+                        new ParametroPesquisaDataMaiorOuIgual("reembolso.dataVencimentoPgto", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe())),
+                        new ParametroPesquisaDataMenorOuIgual("reembolso.dataVencimentoPgto", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte()))
+                ),
+                //Outros
+                new ParametroPesquisaAnd(
+                        new ParametroPesquisaDataMaiorOuIgual("reembolso.dataPagamento", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe())),
+                        new ParametroPesquisaDataMenorOuIgual("reembolso.dataPagamento", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte()))
+                )
+        ));
 
         if(filtro.getPontoDeVenda() != null && filtro.getPontoDeVenda().getId() != null) {
             parametros.add(new ParametroPesquisaIn("frotaPtov.pontoVenda.id", Collections.singletonList(filtro.getPontoDeVenda().getId())));
