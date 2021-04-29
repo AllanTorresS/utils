@@ -73,7 +73,7 @@ public class FluxoAbastecimentoSd {
      */
     public IFluxoAbastecimentoConfig obterParaAbastecimento(Frota frota, Motorista motorista, Date data) {
         HistoricoFluxoAbastecimentoMotoristaConfig fluxoMotorista = repositorioHistoricoFluxoMotorista.obterFluxoPorData(motorista,data);
-        if (fluxoMotorista != null) {
+        if (fluxoMotorista != null && !fluxoMotorista.getExcluido()) {
             return fluxoMotorista;
         }
         HistoricoFluxoAbastecimentoFrotaConfig fluxoFrotaConfig = repositorioHistoricoFluxoFrota.obterFluxoPorData(frota, data);
