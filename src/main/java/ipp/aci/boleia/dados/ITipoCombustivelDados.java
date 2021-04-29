@@ -46,4 +46,13 @@ public interface ITipoCombustivelDados extends IRepositorioBoleiaDados<TipoCombu
      * @return A lista de tipos de combustível encontrados
      */
     List<TipoCombustivel> buscarPorCodigoNcm(Long codigoNcm);
+
+    /**
+     * Obtem os tipos de combustíveis permitidos para abastecimento
+     * a partir do veículo e frota
+     * @param idVeiculo id do veículo
+     * @param idFrota id da frota
+     * @return combustíveis permitidos
+     */
+    List<TipoCombustivel> buscarCombustivelPermitidoParaVeiculo(Long idVeiculo, Long idFrota);
 }

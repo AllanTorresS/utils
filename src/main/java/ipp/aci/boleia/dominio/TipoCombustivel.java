@@ -65,6 +65,9 @@ public class TipoCombustivel implements IPersistente {
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "tipoCombustivel")
 	private List<TipoCombustivelNcm> codigosNcm;
 
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "tipoCombustivel")
+	private List<FrotaParametroSistemaProdutoAbastecimento> parametrosProdutoAbastecimento;
+
 	@Override
 	public Long getId() {
 		return id;
@@ -145,5 +148,13 @@ public class TipoCombustivel implements IPersistente {
 
 	public void setCodigosNcm(List<TipoCombustivelNcm> codigosNcm) {
 		this.codigosNcm = codigosNcm;
+	}
+
+	public List<FrotaParametroSistemaProdutoAbastecimento> getParametrosProdutoAbastecimento() {
+		return parametrosProdutoAbastecimento;
+	}
+
+	public void setParametrosProdutoAbastecimento(List<FrotaParametroSistemaProdutoAbastecimento> parametrosProdutoAbastecimento) {
+		this.parametrosProdutoAbastecimento = parametrosProdutoAbastecimento;
 	}
 }
