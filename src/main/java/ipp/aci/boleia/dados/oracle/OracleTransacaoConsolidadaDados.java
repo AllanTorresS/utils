@@ -31,6 +31,7 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaior;
 import ipp.aci.boleia.dominio.vo.AgrupamentoTransacaoConsolidadaCobrancaVo;
 import ipp.aci.boleia.dominio.vo.AgrupamentoTransacaoConsolidadaPvVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheCicloVo;
@@ -1375,8 +1376,22 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
     @Override
     public ReembolsoTotalPeriodoVo obterTotalReembolsoPeriodo(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
-        parametros.add(new ParametroPesquisaDataMaiorOuIgual("reembolso.dataPagamento", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe())));
-        parametros.add(new ParametroPesquisaDataMenorOuIgual("reembolso.dataPagamento", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte())));
+
+        parametros.add(new ParametroPesquisaOr(
+                //Totalmente antecipados
+                new ParametroPesquisaAnd(
+                        new ParametroPesquisaIgual("reembolso.status", StatusPagamentoReembolso.PAGO.getValue()),
+                        new ParametroPesquisaIgual("reembolso.numeroDocumento", null),
+                        new ParametroPesquisaMaior("reembolso.valorDescontoAntecipacao", BigDecimal.ZERO),
+                        new ParametroPesquisaDataMaiorOuIgual("reembolso.dataVencimentoPgto", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe())),
+                        new ParametroPesquisaDataMenorOuIgual("reembolso.dataVencimentoPgto", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte()))
+                ),
+                //Outros
+                new ParametroPesquisaAnd(
+                        new ParametroPesquisaDataMaiorOuIgual("reembolso.dataPagamento", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe())),
+                        new ParametroPesquisaDataMenorOuIgual("reembolso.dataPagamento", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte()))
+                )
+        ));
 
         if(filtro.getPontoDeVenda() != null && filtro.getPontoDeVenda().getId() != null) {
             parametros.add(new ParametroPesquisaIn("frotaPtov.pontoVenda.id", Collections.singletonList(filtro.getPontoDeVenda().getId())));
