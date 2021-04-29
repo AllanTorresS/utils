@@ -59,6 +59,9 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
 
     private static final String QT_COMPLETA_ABASTECIMENTO_FORMULA = "(SELECT Q.QT_COMPLETA_ABASTECIMENTOS FROM BOLEIA_SCHEMA.V_T_CONSOL_QT_ABASTECIMENTO Q WHERE Q.CD_TRANS_CONSOL = CD_TRANS_CONSOL)";
 
+    private static final String FORMULA_POSSUI_ANTECIPACAO_REALIZADA = "(SELECT CASE WHEN (SELECT COUNT(A.CD_REEMB_ANTECIP) FROM BOLEIA_SCHEMA.REEMB_ANTECIP A WHERE A.ID_STATUS_INT_JDE = 1 AND A.CD_TRANS_CONSOL = CD_TRANS_CONSOL) > 0 THEN 1 ELSE 0 END FROM dual)";
+    private static final String FORMULA_POSSUI_ANTECIPACAO_COM_ERRO = "(SELECT CASE WHEN (SELECT COUNT(A.CD_REEMB_ANTECIP) FROM BOLEIA_SCHEMA.REEMB_ANTECIP A WHERE A.ID_STATUS_INT_JDE = 0 AND A.CD_TRANS_CONSOL = CD_TRANS_CONSOL) > 0 THEN 1 ELSE 0 END FROM dual)";
+
     @Id
     @Column(name = "CD_TRANS_CONSOL")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_TRANS_CONSOL")
@@ -195,6 +198,16 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "transacaoConsolidada")
     private List<ReembolsoAntecipado> antecipacoes;
+
+    @NotAudited
+    @Formula(FORMULA_POSSUI_ANTECIPACAO_REALIZADA)
+    @Basic(fetch = FetchType.LAZY)
+    private Boolean possuiAntecipacaoRealizada;
+
+    @NotAudited
+    @Formula(FORMULA_POSSUI_ANTECIPACAO_COM_ERRO)
+    @Basic(fetch = FetchType.LAZY)
+    private Boolean possuiAntecipacaoComErro;
 
     @Override
     public Long getId() {
@@ -549,6 +562,22 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
 
     public void setAntecipacoes(List<ReembolsoAntecipado> antecipacoes) {
         this.antecipacoes = antecipacoes;
+    }
+
+    public Boolean getPossuiAntecipacaoRealizada() {
+        return possuiAntecipacaoRealizada;
+    }
+
+    public void setPossuiAntecipacaoRealizada(Boolean possuiAntecipacaoRealizada) {
+        this.possuiAntecipacaoRealizada = possuiAntecipacaoRealizada;
+    }
+
+    public Boolean getPossuiAntecipacaoComErro() {
+        return possuiAntecipacaoComErro;
+    }
+
+    public void setPossuiAntecipacaoComErro(Boolean possuiAntecipacaoComErro) {
+        this.possuiAntecipacaoComErro = possuiAntecipacaoComErro;
     }
 
     /**
