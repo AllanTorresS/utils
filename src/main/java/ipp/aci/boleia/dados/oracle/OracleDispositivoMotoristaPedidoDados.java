@@ -31,8 +31,8 @@ public class OracleDispositivoMotoristaPedidoDados extends OracleRepositorioBole
             "GROUP BY tipoCombustivel.id ORDER BY MAX(dataCriacao) DESC";
 
     private static final String QUERY_PEDIDO_COM_STATUS_AUTORIZACAO =
-            "SELECT new ipp.aci.boleia.dominio.vo.PedidoStatusAutorizacaoVo(ab.pedido.numero, ab.status, ab.motivoRecusa, ab.pedido.dataExpiracao) " +
-            "FROM AutorizacaoPagamento ab WHERE ab.pedido.numero = :numero ORDER BY ab.dataRequisicao DESC";
+            "SELECT new ipp.aci.boleia.dominio.vo.PedidoStatusAutorizacaoVo(p.numero, ab.status, ab.motivoRecusa, p.dataExpiracao) " +
+            "FROM DispositivoMotoristaPedido p LEFT JOIN p.abastecimentos ab WHERE p.numero = :numero ORDER BY ab.dataRequisicao, p.dataExpiracao DESC";
 
     @Autowired
     private UtilitarioAmbiente utilitarioAmbiente;
