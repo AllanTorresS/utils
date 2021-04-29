@@ -31,7 +31,6 @@ public class OracleHistoricoFluxoAbastecimentoMotoristaDados extends OracleRepos
     public HistoricoFluxoAbastecimentoMotoristaConfig obterFluxoPorData(Motorista motorista, Date dataRequisicao) {
         ParametrosPesquisaBuilder parametros = new ParametrosPesquisaBuilder(
                 new ParametroPesquisaIgual("motorista.id", motorista.getId()),
-                new ParametroPesquisaIgual("excluido", false),
                 new ParametroPesquisaDataMenorOuIgual("dataAlteracao", dataRequisicao)
         );
         return obterPrimeiroObjetoDaLista(pesquisar(new ParametroOrdenacaoColuna("dataAlteracao", Ordenacao.DECRESCENTE), parametros.buildArray()));
