@@ -89,6 +89,12 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
                     " WHERE tc.frota.id = :idFrota " +
                     " ORDER BY tc.dataTransacao ASC";
 
+    private static final String QUERY_TRANSACOES_DETALHE_COBRANCA =
+            "SELECT tc " +
+                    " FROM TransacaoConectcar tc " +
+                    " WHERE tc.cobranca.id = :idCobranca " +
+                    " ORDER BY tc.dataTransacao ASC";
+
     @Autowired
     private UtilitarioAmbiente ambiente;
 
@@ -104,7 +110,8 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
 
     @Override
     public List<TransacaoConectcar> obterTransacoesPorCobranca(Long idCobranca) {
-        return pesquisar(null, "from TransacaoConectcar where cobranca.id = :idCobranca", new ParametroPesquisaIgual("idCobranca", idCobranca)).getRegistros();
+        StringBuilder queryTransacoesDetalheCobranca = new StringBuilder(QUERY_TRANSACOES_DETALHE_COBRANCA);
+        return pesquisar(null, queryTransacoesDetalheCobranca.toString(), new ParametroPesquisaIgual("idCobranca", idCobranca)).getRegistros();
     }
 
     /**
