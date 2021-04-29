@@ -43,18 +43,18 @@ public class OracleTipoCombustivelDados extends OracleRepositorioBoleiaDados<Tip
 					" ORDER BY c.descricao ";
 
 	private static final String CONSULTA_COMBUSTIVEIS_PERMITIDOS_PARA_O_VEICULO =
-			"SELECT DISTINCT tipoCombustivel " +
-			" FROM FrotaParametroSistema frotaParametroSistema  " +
-			" INNER JOIN frotaParametroSistema.combustiveisPermitidos frotaParamSisProdAbast " +
-			" INNER JOIN frotaParamSisProdAbast.tipoCombustivel tipoCombustivel " +
-			" INNER JOIN frotaParamSisProdAbast.veiculo veiculo " +
-			" WHERE ( " +
-			"           veiculo.id = :idVeiculo " +
-			"           AND frotaParametroSistema.frota.id = :idFrota " +
-			"           AND frotaParametroSistema.ativo = " + Boolean.TRUE +
-			"           AND frotaParametroSistema.parametroSistema = " + ParametroSistema.PRODUTO_ABASTECIMENTO.getCodigo() +
-			"           AND frotaParamSisProdAbast.permitido = " + Boolean.TRUE +
-			"       ) ";
+			"SELECT tipoCombustivel" +
+					" FROM TipoCombustivel tipoCombustivel "+
+					" INNER JOIN tipoCombustivel.parametrosProdutoAbastecimento frotaParamSisProdAbast " +
+					" INNER JOIN frotaParamSisProdAbast.frotaParametroSistema frotaParametroSistema " +
+					" INNER JOIN frotaParamSisProdAbast.veiculo veiculo " +
+					" WHERE ( " +
+					" 			veiculo.id = :idVeiculo " +
+					" 			AND frotaParametroSistema.frota.id = :idFrota " +
+					" 			AND frotaParametroSistema.ativo = " + Boolean.TRUE +
+					" 			AND frotaParametroSistema.parametroSistema = " + ParametroSistema.PRODUTO_ABASTECIMENTO.getCodigo() +
+					"  			AND frotaParamSisProdAbast.permitido = " + Boolean.TRUE +
+					"  		) ";
 
 
 
