@@ -130,6 +130,9 @@ public class DispositivoMotoristaPedido implements IPersistente, IPertenceFrota,
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "pedido")
     private List<TransacaoFrotaLeve> transacoesFrotasLeves;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "pedido")
+    private List<AutorizacaoPagamento> abastecimentos;
+
     @Override
     public Long getId() {
         return id;
@@ -269,5 +272,13 @@ public class DispositivoMotoristaPedido implements IPersistente, IPertenceFrota,
 
     public void setDispositivoMotorista(DispositivoMotorista dispositivoMotorista) {
         this.dispositivoMotorista = dispositivoMotorista;
+    }
+
+    public List<AutorizacaoPagamento> getAbastecimentos() {
+        return abastecimentos;
+    }
+
+    public void setAbastecimentos(List<AutorizacaoPagamento> abastecimentos) {
+        this.abastecimentos = abastecimentos;
     }
 }
