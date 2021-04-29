@@ -47,6 +47,7 @@ public final class ConstantesFormatacao {
     public static final String FORMATO_ISO_8601 = "yyyy-MM-dd'T'HH:mm:ssXXX";
     public static final String FORMATO_ISO_8601_COM_MILLIS = "yyyy-MM-dd'T'HH:mm:ss.sssXXX";
     public static final String FORMATO_ISO_8601_SEM_TIMEZONE = "yyyy-MM-dd'T'HH:mm:ss";
+    public static final String FORMATO_ISO_8601_COM_MILLIS_SEM_TIMEZONE = "yyyy-MM-dd'T'HH:mm:ss.SSS";
     public static final String FORMATO_ISO_8601_COM_MILLIS_E_TIMEZONE = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
     public static final String FORMATO_TIMEZONE_GMT_3 = "GMT-3";
     public static final String SEPARADOR_CHAVE_IDENTIFICADORA_AGRUPAMENTO_CICLOS = "|";
