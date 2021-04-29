@@ -46,6 +46,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso.AGUARDANDO_NF;
+import static ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso.EM_ABERTO;
+import static ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso.NF_ATRASADA;
 import static ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso.PREVISTO;
 import static ipp.aci.boleia.util.UtilitarioLambda.verificarTodosNaoNulos;
 
@@ -755,7 +758,7 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
 
     @Transient
     public StatusPagamentoReembolso getStatusReembolso() {
-        if(reembolso != null) {
+        if(reembolso != null && !reembolso.getStatus().equals(EM_ABERTO.getValue()) && !reembolso.getStatus().equals(AGUARDANDO_NF.getValue()) && !reembolso.getStatus().equals(NF_ATRASADA.getValue())) {
             return StatusPagamentoReembolso.obterPorValor(reembolso.getStatus());
         }
         return PREVISTO;
