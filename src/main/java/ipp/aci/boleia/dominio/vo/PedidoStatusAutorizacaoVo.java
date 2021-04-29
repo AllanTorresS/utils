@@ -1,11 +1,12 @@
 package ipp.aci.boleia.dominio.vo;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Classe com informações referentes do pedido e seu status de autorização
  */
-public class PedidoStatusAutorizacaoVo {
+public class PedidoStatusAutorizacaoVo implements Serializable {
 
     private String numero;
     private Integer statusAutorizacao;
