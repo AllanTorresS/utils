@@ -395,4 +395,14 @@ public class Unidade implements IPersistente, IExclusaoLogica, IPertenceFrota {
         cnpj += " - ";
         return cnpj + nome;
     }
+
+    @Transient
+    public String getLongitudeString() {
+        return UtilitarioFormatacao.formatarDecimal(this.longitude);
+    }
+
+    @Transient
+    public String getLatitudeString() {
+        return UtilitarioFormatacao.formatarDecimal(this.latitude);
+    }
 }
