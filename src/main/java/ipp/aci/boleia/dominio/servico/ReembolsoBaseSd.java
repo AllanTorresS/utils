@@ -1,16 +1,12 @@
 package ipp.aci.boleia.dominio.servico;
 
 import ipp.aci.boleia.dados.IReembolsoBaseDados;
-import ipp.aci.boleia.dados.servicos.jde.IVoucherBaseDados;
 import ipp.aci.boleia.dominio.Reembolso;
-import ipp.aci.boleia.dominio.ReembolsoBase;
 import ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso;
-import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.Null;
 import java.math.BigDecimal;
 import java.util.Date;
 
