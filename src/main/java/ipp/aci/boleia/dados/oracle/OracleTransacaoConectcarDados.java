@@ -25,6 +25,7 @@ import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgualIgnoreCase;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaTransacaoConsolidadaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaUtilizacaoTagVo;
@@ -275,7 +276,7 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
         }
 
         if (filtro.getPlaca() != null && !"".equals(filtro.getPlaca())) {
-            parametros.add(new ParametroPesquisaIgual("placa", filtro.getPlaca()));
+            parametros.add(new ParametroPesquisaIgualIgnoreCase("placa", filtro.getPlaca()));
         }
 
         if (filtro.getTipo() != null && filtro.getTipo().getName() != null) {
