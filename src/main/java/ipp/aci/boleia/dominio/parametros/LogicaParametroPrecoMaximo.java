@@ -10,6 +10,7 @@ import ipp.aci.boleia.dominio.enums.StatusExecucaoParametroSistema;
 import ipp.aci.boleia.dominio.vo.ContextoExecucaoParametroSistemaVo;
 import ipp.aci.boleia.dominio.vo.ResultadoExecucaoParametroSistemaVo;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
+import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.i18n.Mensagens;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -55,6 +56,7 @@ public class LogicaParametroPrecoMaximo implements ILogicaParametroSistema<Autor
 
                 if ((quantidadeMaximaPermitidaProduto != null && item.getQuantidade().compareTo(quantidadeMaximaPermitidaProduto) > 0 || quantidadeMaximaPermitidaAbastecimento != null && item.getQuantidade().compareTo((quantidadeMaximaPermitidaAbastecimento)) > 0)) {
                     resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
+                    resultado.setCodigoErro(Erro.ERRO_AUTORIZACAO_QUANTIDADE_MAX_PRODUTO);
                     BigDecimal quantidadeMaximaPermitida = quantidadeMaximaPermitidaProduto;
                     if(item.isAbastecimento()) {
                         quantidadeMaximaPermitida = quantidadeMaximaPermitidaAbastecimento;
@@ -67,6 +69,7 @@ public class LogicaParametroPrecoMaximo implements ILogicaParametroSistema<Autor
                     }
                 } else if (precoMaximoPermitido != null && item.getValorUnitario().compareTo(precoMaximoPermitido) > 0) {
                     resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
+                    resultado.setCodigoErro(Erro.ERRO_AUTORIZACAO_PRECO_MAX_PRODUTO);
                     produtosViolados.append(mensagens.obterMensagem("parametro.sistema.erro.abastecimento.preco.maximo.produto", item.getNome(), UtilitarioFormatacao.formatarDecimal(precoMaximoPermitido), UtilitarioFormatacao.formatarDecimal(item.getValorUnitario())));
                 }
             }
