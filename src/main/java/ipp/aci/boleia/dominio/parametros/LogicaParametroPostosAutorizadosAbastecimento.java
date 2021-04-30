@@ -9,6 +9,7 @@ import ipp.aci.boleia.dominio.servico.ParametroSistemaSd;
 import ipp.aci.boleia.dominio.vo.ContextoExecucaoParametroSistemaVo;
 import ipp.aci.boleia.dominio.vo.ResultadoExecucaoParametroSistemaVo;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
+import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.i18n.Mensagens;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -35,9 +36,11 @@ public class LogicaParametroPostosAutorizadosAbastecimento implements ILogicaPar
             FrotaParametroSistemaPostoAutorizadoAbastecimento autorizacaoPosto = frotaParam.getAutorizacaoAbastecimentoPosto(idPtov);
             if (autorizacaoPosto == null || !autorizacaoPosto.isAutorizado()) {
                 resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
+                resultado.setCodigoErro(Erro.PV_NAO_AUTORIZADO);
                 resultado.setMensagemErro(mensagens.obterMensagem("parametro.sistema.erro.abastecimento.posto.nao.autorizado", UtilitarioFormatacao.formatarPlacaVeiculo(veiculo.getPlaca())));
             } else if(parametroSistemaSd.violouLimiteAbastecimento(autorizacao, autorizacaoPosto, frotaParam.getEmLitros())) {
                 resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
+                resultado.setCodigoErro(Erro.PV_NAO_AUTORIZADO);
                 resultado.setMensagemErro(mensagens.obterMensagem("parametro.sistema.erro.abastecimento.posto.maximo", UtilitarioFormatacao.formatarPlacaVeiculo(veiculo.getPlaca()), autorizacao.getNomePosto()));
             }
         }

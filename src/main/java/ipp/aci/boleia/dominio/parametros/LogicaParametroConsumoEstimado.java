@@ -8,6 +8,7 @@ import ipp.aci.boleia.dominio.enums.StatusExecucaoParametroSistema;
 import ipp.aci.boleia.dominio.vo.ContextoExecucaoParametroSistemaVo;
 import ipp.aci.boleia.dominio.vo.ResultadoExecucaoParametroSistemaVo;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
+import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.i18n.Mensagens;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -39,11 +40,13 @@ public class LogicaParametroConsumoEstimado implements ILogicaParametroSistema<A
             if (consumoAnterior != null && consumoAtual != null) {
                 final BigDecimal consumoEstimadoMinimo = consumoAnterior.multiply(BigDecimal.ONE.subtract(frotaParam.getConsumo().getPorcentagemLimiteMinimo()));
                 if (consumoAtual.compareTo(consumoEstimadoMinimo) < 0) {
+                    resultado.setCodigoErro(Erro.ERRO_AUTORIZACAO_CONSUMO_ESTIMADO_MIN);
                     resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
                     resultado.setMensagemErro(mensagens.obterMensagem("parametro.sistema.erro.abastecimento.consumo.estimado.minimo", veiculo.getPlaca(), UtilitarioFormatacao.formatarDecimal(consumoEstimadoMinimo.setScale(2, RoundingMode.HALF_UP)), UtilitarioFormatacao.formatarDecimal(consumoAtual.setScale(2, RoundingMode.HALF_UP))));
                 }
                 final BigDecimal consumoEstimadoMaximo = consumoAnterior.multiply(BigDecimal.ONE.add(frotaParam.getConsumo().getPorcentagemLimiteMaximo()));
                 if (consumoAtual.compareTo(consumoEstimadoMaximo) > 0) {
+                    resultado.setCodigoErro(Erro.ERRO_AUTORIZACAO_CONSUMO_ESTIMADO_MAX);
                     resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
                     resultado.setMensagemErro(mensagens.obterMensagem("parametro.sistema.erro.abastecimento.consumo.estimado.maximo", veiculo.getPlaca(), UtilitarioFormatacao.formatarDecimal(consumoEstimadoMaximo.setScale(2, RoundingMode.HALF_UP)), UtilitarioFormatacao.formatarDecimal(consumoAtual.setScale(2, RoundingMode.HALF_UP))));
                 }
