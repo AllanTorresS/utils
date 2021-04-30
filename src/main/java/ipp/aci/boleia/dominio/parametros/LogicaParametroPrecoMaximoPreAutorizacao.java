@@ -33,9 +33,10 @@ public class LogicaParametroPrecoMaximoPreAutorizacao implements ILogicaParametr
         Veiculo veiculo = pedido.getVeiculo();
         TipoCombustivel combustivel = pedido.getCombustivel();
         if (veiculo.isProprio()) {
-            BigDecimal quantidadeMaximaPermitidaAbastecimento = frotaParam.getQuantidadeMaximaPorCombustivel().stream()
-                    .filter(pCombustivel -> Objects.equals(combustivel.getId(), pCombustivel.getCombustivel().getId()))
-                    .map(FrotaParametroSistemaPrecoMaximoAbastecimento::getQuantidadePermitida).findFirst().orElse(null);
+            BigDecimal quantidadeMaximaPermitidaAbastecimento =
+                    frotaParam.getQuantidadeMaximaPorCombustivel().stream()
+                        .filter(pCombustivel -> Objects.equals(combustivel.getId(), pCombustivel.getCombustivel().getId()) && pCombustivel.getQuantidadePermitida() != null)
+                        .map(FrotaParametroSistemaPrecoMaximoAbastecimento::getQuantidadePermitida).findFirst().orElse(null);
 
             if (quantidadeMaximaPermitidaAbastecimento != null && pedido.getLitragem().compareTo((quantidadeMaximaPermitidaAbastecimento)) > 0) {
                 resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
