@@ -57,9 +57,9 @@ public abstract class LogicaParametroProdutoAbastecidoBase {
             resultado.setCodigoErro(Erro.ERRO_AUTORIZACAO_PRODUTO_ABASTECIDO);
             String nomeCombustivelInformado = obterNomeCombustivel(tipoCombustivel.getId(), nomeProduto);
             resultado.setMensagemErro(mensagens.obterMensagem("parametro.sistema.erro.abastecimento.produto.abastecido", veiculo.getPlaca(), nomeCombustivelInformado));
-            return false;
+            return true;
         }
-        return true;
+        return false;
 
     }
 

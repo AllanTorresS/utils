@@ -22,6 +22,7 @@ import ipp.aci.boleia.dominio.parametros.LogicaParametroPostosAutorizadosAbastec
 import ipp.aci.boleia.dominio.parametros.LogicaParametroPrecoMaximo;
 import ipp.aci.boleia.dominio.parametros.LogicaParametroPrecoMaximoPreAutorizacao;
 import ipp.aci.boleia.dominio.parametros.LogicaParametroProdutoAbastecido;
+import ipp.aci.boleia.dominio.parametros.LogicaParametroProdutoAbastecidoPreAutorizacao;
 import ipp.aci.boleia.dominio.parametros.LogicaParametroProdutosAdicionais;
 import ipp.aci.boleia.dominio.parametros.LogicaParametroVolumeAbastecido;
 import ipp.aci.boleia.dominio.parametros.LogicaParametroVolumeAbastecidoPreAutorizacao;
@@ -42,7 +43,8 @@ public enum ParametroSistema {
             ImmutableMap.of(AutorizacaoPagamento.class, LogicaParametroVolumeAbastecido.class,
                     PreAutorizacaoPedidoVo.class, LogicaParametroVolumeAbastecidoPreAutorizacao.class)),
     PRODUTO_ABASTECIMENTO(2, TipoRestritividade.RESTRITIVA, true, false, Collections.singletonList(TipoPerfilUsuario.FROTA), EstruturaParametroSistema.PRODUTO_ABASTECIMENTO, "parametro.sistema.produto.abastecido.nome", "parametro.sistema.produto.abastecido.descricao",
-            ImmutableMap.of(AutorizacaoPagamento.class, LogicaParametroProdutoAbastecido.class)),
+            ImmutableMap.of(AutorizacaoPagamento.class, LogicaParametroProdutoAbastecido.class,
+                    PreAutorizacaoPedidoVo.class, LogicaParametroProdutoAbastecidoPreAutorizacao.class)),
     PRODUTOS_ADICIONAIS_PERMITIDOS(3, TipoRestritividade.VERSATIL, true, false, Collections.singletonList(TipoPerfilUsuario.FROTA), EstruturaParametroSistema.LISTA_PRODUTOS, "parametro.sistema.produtos.adicionais.nome", "parametro.sistema.produtos.adicionais.descricao",
             ImmutableMap.of(AutorizacaoPagamento.class, LogicaParametroProdutosAdicionais.class)),
     HORARIOS_ABASTECIMENTO(4, TipoRestritividade.VERSATIL, true, false, Collections.singletonList(TipoPerfilUsuario.FROTA), EstruturaParametroSistema.LISTA_HORARIOS, "parametro.sistema.horario.abastecimento.nome", "parametro.sistema.horario.abastecimento.descricao",
