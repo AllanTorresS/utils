@@ -70,8 +70,8 @@ public class OracleCobrancaDados extends OracleRepositorioBoleiaDados<Cobranca> 
                     "JOIN TC.frotaPtov FPV " +
                     "JOIN FPV.frota F " +
                     "WHERE F.id = :idFrota " +
-                    "AND C.dataVencimentoVigente >= :limiteInferiorCalculo " +
-                    "AND C.dataVencimentoVigente <= :limiteSuperiorCalculo ";
+                    "AND TRUNC(C.dataVencimentoVigente) >= TRUNC(:limiteInferiorCalculo) " +
+                    "AND TRUNC(C.dataVencimentoVigente) <= TRUNC(:limiteSuperiorCalculo) ";
 
     private static final String CONSULTA_COBRANCAS_ATRASADAS_EM_UM_PERIODO =
             CONSULTA_COBRANCAS_EM_UM_PERIODO +
@@ -361,7 +361,7 @@ public class OracleCobrancaDados extends OracleRepositorioBoleiaDados<Cobranca> 
      */
     private List<ParametroPesquisa> montarParametrosPesquisa(Long idFrota, PeriodoCalculoImpontualidadeFrota periodoCalculo, Boolean consultaAtrasados) {
         Date dataAtual = ambiente.buscarDataAmbiente();
-        Date limiteInferior = UtilitarioCalculoData.diminuirMeses(UtilitarioCalculoData.obterPrimeiroDiaMesAnterior(dataAtual), PeriodoCalculoImpontualidadeFrota.TRIMESTRAL.getValue().equals(periodoCalculo.getValue()) ? 3 : 12);
+        Date limiteInferior = UtilitarioCalculoData.diminuirMeses(UtilitarioCalculoData.obterPrimeiroDiaMes(dataAtual), PeriodoCalculoImpontualidadeFrota.TRIMESTRAL.getValue().equals(periodoCalculo.getValue()) ? 3 : 12);
         Date limiteSuperior = UtilitarioCalculoData.obterUltimoDiaMesAnterior(dataAtual);
         List<ParametroPesquisa> parametros = new ArrayList<>();
         parametros.add(new ParametroPesquisaIgual("idFrota", idFrota));

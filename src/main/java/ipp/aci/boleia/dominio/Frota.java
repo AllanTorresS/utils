@@ -2,9 +2,12 @@ package ipp.aci.boleia.dominio;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import ipp.aci.boleia.dominio.enums.ClassificacaoStatusFrota;
 import ipp.aci.boleia.dominio.enums.ModalidadePagamento;
 import ipp.aci.boleia.dominio.enums.StatusContrato;
 import ipp.aci.boleia.dominio.enums.StatusFrota;
+import ipp.aci.boleia.dominio.enums.StatusVigenciaAlteracaoStatusFrota;
+import ipp.aci.boleia.dominio.enums.TipoAlteracaoStatusFrota;
 import ipp.aci.boleia.dominio.interfaces.IExclusaoLogica;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
@@ -339,14 +342,6 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @Column(name = "NO_SEQ_JDE")
     private Long numeroSequencialJde;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="DT_INI_ATIV_TEMP")
-    private Date inicioAtivacaoTemporaria;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="DT_FIM_ATIV_TEMP")
-    private Date fimAtivacaoTemporaria;
-
     @OneToMany(mappedBy = "frota")
     private List<FrotaParametroSistema> parametrosSistema;
 
@@ -413,18 +408,8 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @Column(name = "ID_LEMBRAR_PARAMETRIZACAO_NF")
     private Boolean lembrarParametrizacaoNf;
 
-    @NotAudited
-    @Formula(" (SELECT m.tp_motiv_inativ from  BOLEIA_SCHEMA.motivo_inativ_frota m " +
-            "LEFT JOIN BOLEIA_SCHEMA.FROTA f on m.cd_frota = f.cd_frota " +
-            "where m.cd_frota = cd_frota " +
-            "AND m.dt_inativ = " +
-            "(select MAX(mi.dt_inativ) from BOLEIA_SCHEMA.motivo_inativ_frota mi " +
-                "join BOLEIA_SCHEMA.frota fr on mi.cd_frota = fr.cd_frota " +
-                "where fr.cd_frota = f.cd_frota )) ")
-    private Integer classificacaoStatusFrota;
-
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "frota")
-    private List<MotivoInativacaoFrota> motivosInativacao;
+    private List<MotivoAlteracaoStatusFrota> motivosAlteracaoStatus;
 
     @NotAudited
     @Formula("(SELECT NVL(COUNT(0), 0) FROM BOLEIA_SCHEMA.TAG_CONECTCAR T WHERE T.CD_FROTA = CD_FROTA)")
@@ -579,8 +564,6 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
         this.versao = versao;
         this.postoInterno = postoInterno;
         this.numeroSequencialJde = numeroSequencialJde;
-        this.inicioAtivacaoTemporaria = inicioAtivacaoTemporaria;
-        this.fimAtivacaoTemporaria = fimAtivacaoTemporaria;
         this.parametrosSistema = parametrosSistema;
         this.semNotaFiscal = semNotaFiscal;
         this.dataAceiteTermos = dataAceiteTermos;
@@ -592,8 +575,6 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
         this.connectCTAToken = connectCTAToken;
         this.condicoesComerciais = condicoesComerciais;
         this.situacaoConectCar = situacaoConectCar;
-        this.classificacaoStatusFrota = classificacaoStatusFrota;
-
     }
 
     @Override
@@ -1152,22 +1133,6 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
         return Collections.singletonList(this);
     }
 
-    public Date getInicioAtivacaoTemporaria() {
-        return inicioAtivacaoTemporaria;
-    }
-
-    public void setInicioAtivacaoTemporaria(Date inicioAtivacaoTemporaria) {
-        this.inicioAtivacaoTemporaria = inicioAtivacaoTemporaria;
-    }
-
-    public Date getFimAtivacaoTemporaria() {
-        return fimAtivacaoTemporaria;
-    }
-
-    public void setFimAtivacaoTemporaria(Date fimAtivacaoTemporaria) {
-        this.fimAtivacaoTemporaria = fimAtivacaoTemporaria;
-    }
-
     public List<FrotaParametroSistema> getParametrosSistema() {
         return parametrosSistema;
     }
@@ -1393,15 +1358,6 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
         }
     }
 
-    /**
-     * Obtém o motivo da última inativação da frota
-     * @return O motivo de inativação
-     */
-    @Transient
-    public MotivoInativacaoFrota getUltimaInativacaoFrota() {
-        return this.motivosInativacao.stream().max(Comparator.comparing(MotivoInativacaoFrota::getDataInativacao)).orElse(null);
-    }
-
 	public SituacaoConectCar getSituacaoConectCar() {
 		return situacaoConectCar;
 	}
@@ -1450,19 +1406,154 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
         this.lembrarParametrizacaoNf = lembrarParametrizacaoNf;
     }
 
-    public Integer getClassificacaoStatusFrota() {
-        return classificacaoStatusFrota;
+    public List<MotivoAlteracaoStatusFrota> getMotivosAlteracaoStatus() {
+        return motivosAlteracaoStatus;
     }
 
-    public void setClassificacaoStatusFrota(Integer classificacaoStatusFrota) {
-        this.classificacaoStatusFrota = classificacaoStatusFrota;
+    public void setMotivosAlteracaoStatus(List<MotivoAlteracaoStatusFrota> motivosAlteracaoStatus) {
+        this.motivosAlteracaoStatus = motivosAlteracaoStatus;
     }
 
-    public List<MotivoInativacaoFrota> getMotivosInativacao() {
-        return motivosInativacao;
+    /**
+     * Verifica se os debitos da frota em questao encontram-se pagos
+     * @return True caso os debitos da frota em questao encontrem-se pagos.
+     */
+    @Transient
+    public boolean isSemDebitosVencidos() {
+        return StatusFrota.ATIVO.getValue().equals(status)
+                && !motivosAlteracaoStatus.stream().anyMatch(
+                        motivo ->
+                                ClassificacaoStatusFrota.DEBITO_VENCIDO.getValue().equals(motivo.getTipoMotivo())
+                                && StatusVigenciaAlteracaoStatusFrota.VIGENTE.getValue().equals(motivo.getStatusVigenciaAlteracao())
+                );
     }
 
-    public void setMotivosInativacao(List<MotivoInativacaoFrota> motivosInativacao) {
-        this.motivosInativacao = motivosInativacao;
+    /**
+     * Verifica se a frota possui alguma ativação temporária em andamento
+     *
+     * @return True caso a frota possua ativação temporária em andamento, false caso contrário
+     */
+    @Transient
+    public boolean possuiAtivacaoTemporariaAtiva() {
+        return motivosAlteracaoStatus.stream().anyMatch(
+                motivo -> StatusVigenciaAlteracaoStatusFrota.VIGENTE.getValue().equals(motivo.getStatusVigenciaAlteracao())
+                        && TipoAlteracaoStatusFrota.ATIVACAO.getValue().equals(motivo.getTipoAlteracaoStatus())
+                        && motivo.getDataInicio() != null
+                        && motivo.getDataFim() != null
+        );
+    }
+
+    /**
+     * Verifica se a frota possui alguma inativação temporária em andamento
+     *
+     * @return True caso a frota possua inativação temporária em andamento, false caso contrário
+     */
+    @Transient
+    public boolean possuiInativacaoTemporariaAtiva() {
+        return motivosAlteracaoStatus
+                .stream()
+                .anyMatch(
+                    motivo -> StatusVigenciaAlteracaoStatusFrota.VIGENTE.getValue().equals(motivo.getStatusVigenciaAlteracao())
+                            && TipoAlteracaoStatusFrota.INATIVACAO.getValue().equals(motivo.getTipoAlteracaoStatus())
+                            && motivo.getDataInicio() != null
+                            && motivo.getDataFim() != null
+                );
+    }
+
+    /**
+     * Obtém o último motivo de ativação da frota
+     * @return O último motivo de ativação encontrado
+     */
+    @Transient
+    public MotivoAlteracaoStatusFrota getUltimoMotivoAtivacao() {
+        return motivosAlteracaoStatus
+                .stream()
+                .filter(
+                        motivo -> StatusVigenciaAlteracaoStatusFrota.VIGENTE.getValue().equals(motivo.getStatusVigenciaAlteracao())
+                                && TipoAlteracaoStatusFrota.ATIVACAO.getValue().equals(motivo.getTipoAlteracaoStatus())
+                )
+                .max(Comparator.comparing(MotivoAlteracaoStatusFrota::getDataCriacao))
+                .orElse(null);
+    }
+
+    /**
+     * Obtém o último motivo de inativação da frota
+     * @return O último motivo de inativação encontrado
+     */
+    @Transient
+    public MotivoAlteracaoStatusFrota getUltimoMotivoInativacao() {
+        return motivosAlteracaoStatus
+                .stream()
+                .filter(
+                    motivo -> StatusVigenciaAlteracaoStatusFrota.VIGENTE.getValue().equals(motivo.getStatusVigenciaAlteracao())
+                            && TipoAlteracaoStatusFrota.INATIVACAO.getValue().equals(motivo.getTipoAlteracaoStatus())
+                )
+                .max(Comparator.comparing(MotivoAlteracaoStatusFrota::getDataCriacao))
+                .orElse(null);
+    }
+
+    /**
+     * Obtém o último motivo de alteração de status da frota
+     * @return O último motivo de alteração de status encontrado
+     */
+    @Transient
+    public MotivoAlteracaoStatusFrota getUltimoMotivoAlteracaoStatus() {
+        return motivosAlteracaoStatus
+                .stream()
+                .filter(
+                        motivo -> StatusVigenciaAlteracaoStatusFrota.VIGENTE.getValue().equals(motivo.getStatusVigenciaAlteracao())
+                )
+                .max(Comparator.comparing(MotivoAlteracaoStatusFrota::getDataCriacao))
+                .orElse(null);
+    }
+
+    /**
+     * Obtém o último motivo vigente de débito vencido
+     * @return O motivo
+     */
+    @Transient
+    public MotivoAlteracaoStatusFrota getUltimoMotivoDebitoVencidoVigente() {
+        return motivosAlteracaoStatus
+                .stream()
+                .filter(
+                        motivo -> StatusVigenciaAlteracaoStatusFrota.VIGENTE.getValue().equals(motivo.getStatusVigenciaAlteracao())
+                                && ClassificacaoStatusFrota.DEBITO_VENCIDO.getValue().equals(motivo.getTipoMotivo())
+                )
+                .max(Comparator.comparing(MotivoAlteracaoStatusFrota::getDataCriacao))
+                .orElse(null);
+    }
+
+    /**
+     * Obtém o último motivo vigente de saldo zerado
+     * @return O motivo
+     */
+    @Transient
+    public MotivoAlteracaoStatusFrota getUltimoMotivoSaldoZeradoVigente() {
+        return motivosAlteracaoStatus
+                .stream()
+                .filter(
+                        motivo -> StatusVigenciaAlteracaoStatusFrota.VIGENTE.getValue().equals(motivo.getStatusVigenciaAlteracao())
+                                && motivo.getTipoMotivo().equals(ClassificacaoStatusFrota.SALDO_ZERADO.getValue())
+                                && status.equals(StatusFrota.INATIVO.getValue())
+                                && dataSaldoZerado != null
+                ).max(Comparator.comparing(MotivoAlteracaoStatusFrota::getDataCriacao))
+                .orElse(null);
+    }
+
+    /**
+     * Obtém o último motivo de alteração de status da frota
+     * @return O último motivo de alteração de status encontrado
+     */
+    @Transient
+    public MotivoAlteracaoStatusFrota getUltimoMotivoDefinitivo() {
+        return motivosAlteracaoStatus
+                .stream()
+                .filter(
+                        motivo -> StatusVigenciaAlteracaoStatusFrota.VIGENTE.getValue().equals(motivo.getStatusVigenciaAlteracao())
+                        && motivo.getDataInicio() == null
+                        && motivo.getDataFim() == null
+                )
+                .max(Comparator.comparing(MotivoAlteracaoStatusFrota::getDataCriacao))
+                .orElse(null);
     }
 }
