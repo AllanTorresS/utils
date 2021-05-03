@@ -3,9 +3,8 @@ package ipp.aci.boleia.dominio.servico;
 import ipp.aci.boleia.dados.IFrotaDados;
 import ipp.aci.boleia.dados.IPedidoCreditoFrotaDados;
 import ipp.aci.boleia.dominio.Frota;
-import ipp.aci.boleia.dominio.MotivoInativacaoFrota;
+import ipp.aci.boleia.dominio.MotivoAlteracaoStatusFrota;
 import ipp.aci.boleia.dominio.PedidoCreditoFrota;
-import ipp.aci.boleia.dominio.enums.ClassificacaoStatusFrota;
 import ipp.aci.boleia.dominio.enums.StatusPedidoCredito;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.excecao.ExcecaoValidacao;
@@ -43,6 +42,9 @@ public class PedidoCreditoFrotaSd {
 
     @Autowired
     private FrotaSd regrasFrota;
+
+    @Autowired
+    private MotivoAlteracaoStatusFrotaSd motivoAlteracaoStatusFrotaSd;
 
     /**
      * Valida o status de pagamento do pedido no momento da aprovacao
@@ -113,9 +115,11 @@ public class PedidoCreditoFrotaSd {
      * @param frota a ser reativada
      */
     public void ativarFrotaPrePaga(Frota frota) {
+        Date dataCorrente = ambiente.buscarDataAmbiente();
+        MotivoAlteracaoStatusFrota motivo = frota.getUltimoMotivoSaldoZeradoVigente();
+        motivo.setDataInicio(motivo.getDataCriacao());
+        motivo.setDataFim(dataCorrente);
         frota.setDataSaldoZerado(null);
         frota = repositorio.armazenar(frota);
-        MotivoInativacaoFrota motivo = regrasFrota.alterarStatusAtivacaoFrota(frota.getId(), true, ClassificacaoStatusFrota.OUTROS, mensagens.obterMensagem("frota.credito.pre.pago.ativar.motivo") );
-        regrasFrota.notificarAlteracaoFrota(motivo);
     }
 }

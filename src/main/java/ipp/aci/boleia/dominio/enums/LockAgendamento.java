@@ -16,7 +16,7 @@ public enum LockAgendamento {
     REGISTRO_KMV_PENDENTE                           (ConstantesDuracao.QUINZE_MINUTOS, ConstantesDuracao.UM_SEGUNDO),
     AVISO_DE_DEBITO                                 (ConstantesDuracao.UMA_HORA, ConstantesDuracao.UM_SEGUNDO),
     AVISO_DE_CREDITO                                (ConstantesDuracao.UMA_HORA, ConstantesDuracao.UM_SEGUNDO),
-    VERIFICACAO_FROTA_ATIVACAO_TEMPORARIA           (ConstantesDuracao.TRINTA_MINUTOS, ConstantesDuracao.UM_SEGUNDO),
+    VERIFICACAO_STATUS_FROTA                        (ConstantesDuracao.TRINTA_MINUTOS, ConstantesDuracao.UM_SEGUNDO),
     VERIFICACAO_SALDO_FROTA                         (ConstantesDuracao.UM_MINUTO, ConstantesDuracao.UM_SEGUNDO),
     CALCULO_PRECO_MEDIO                             (ConstantesDuracao.DUAS_HORAS, ConstantesDuracao.UM_SEGUNDO),
     CALCULO_PRECO_MAXIMO_SUGERIDO                   (ConstantesDuracao.UM_MINUTO, ConstantesDuracao.UM_SEGUNDO),
