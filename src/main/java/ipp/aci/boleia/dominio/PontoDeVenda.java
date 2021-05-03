@@ -3,6 +3,7 @@ package ipp.aci.boleia.dominio;
 
 import ipp.aci.boleia.dominio.enums.RestricaoVisibilidadePontoVenda;
 import ipp.aci.boleia.dominio.enums.StatusAtivacao;
+import ipp.aci.boleia.dominio.enums.StatusContratoAntecipacao;
 import ipp.aci.boleia.dominio.enums.StatusHabilitacaoPontoVenda;
 import ipp.aci.boleia.dominio.enums.TiposBandeiras;
 import ipp.aci.boleia.dominio.interfaces.IExclusaoLogica;
@@ -328,6 +329,9 @@ public class PontoDeVenda implements IPersistente, IExclusaoLogica, IPertenceRev
 
     @Column(name = "ID_RESTRICAO_VISIBILIDADE")
     private Integer restricaoVisibilidade;
+
+    @Column(name = "ID_INTERESSE_ANTECIPACAO")
+    private Integer statusInteresseAntecipacao;
     
     public PontoDeVenda() {
         // construtor default
@@ -843,6 +847,14 @@ public class PontoDeVenda implements IPersistente, IExclusaoLogica, IPertenceRev
 
     public void setRestricaoVisibilidade(Integer restricaoVisibilidade) {
         this.restricaoVisibilidade = restricaoVisibilidade;
+    }
+
+    public Integer getStatusInteresseAntecipacao() {
+        return statusInteresseAntecipacao;
+    }
+
+    public void setStatusInteresseAntecipacao(Integer statusInteresseAntecipacao) {
+        this.statusInteresseAntecipacao = statusInteresseAntecipacao;
     }
 
 	/**
