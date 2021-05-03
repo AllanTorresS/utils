@@ -51,6 +51,7 @@ public enum GrupoExecucaoParametroSistema {
 
     PRE_AUTORIZACAO_LITRAGEM(
         TratadorViolacoesParametrosPreAutorizacao.class,
+        ParametroSistema.PRODUTO_ABASTECIMENTO,
         ParametroSistema.VOLUME_ABASTECIDO,
         ParametroSistema.CONSUMO_ESTIMADO,
         ParametroSistema.PRECO_MAXIMO);
