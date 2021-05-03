@@ -29,7 +29,6 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgualIgnoreCas
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaior;
-import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaiorData;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaiorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMenor;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMenorOuIgual;
@@ -1169,8 +1168,6 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
             povoarParametroPesquisaMultiExists((ParametroPesquisaMultiJoin) param, criteria, builder, entityRoot, predicates);
         } else if (param instanceof ParametroPesquisaEmpty) {
             povoarParametroPesquisaEmpty((ParametroPesquisaEmpty) param, builder, entityRoot, predicates);
-        } else if (usarLeftJoins && param instanceof ParametroPesquisaMaiorData) {
-            povoarParametroPesquisaMaiorData((ParametroPesquisaMaiorData) param, (CriteriaQuery<?>) criteria, builder, entityRoot);
         }
     }
 
@@ -1399,11 +1396,6 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
             emptyPredicate = builder.not(emptyPredicate);
         }
         predicates.add(emptyPredicate);
-    }
-
-    private void povoarParametroPesquisaMaiorData(ParametroPesquisaMaiorData param, CriteriaQuery<?> criteria, CriteriaBuilder builder, Root<?> entityRoot) {
-        Expression<Date> maiorData = builder.greatest(entityRoot.<Date>get(param.getNome()));
-        criteria.multiselect(maiorData);
     }
 
     /**
