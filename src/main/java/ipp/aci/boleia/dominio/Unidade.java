@@ -361,4 +361,32 @@ public class Unidade implements IPersistente, IExclusaoLogica, IPertenceFrota {
         cnpj += " - ";
         return cnpj + nome;
     }
+
+    /**
+     * Obtem o endereço completo
+     * @return endereço completo
+     */
+    @Transient
+    public String obterEnderecoCompleto(){
+        StringBuffer buffer = new StringBuffer();
+        if(this.logradouroEndereco != null){
+            buffer.append(this.logradouroEndereco).append(", ");
+        }
+        if(this.numeroEndereco != null){
+            buffer.append(this.numeroEndereco).append(", ");
+        }
+        if(this.complementoEndereco != null){
+            buffer .append(this.complementoEndereco).append(", ");
+        }
+        if(this.bairro != null){
+            buffer.append(this.bairro).append(", ");
+        }
+        if(this.uf != null){
+            buffer.append(this.uf).append(", ");
+        }
+        if(this.cep != null){
+            buffer.append("( ").append(UtilitarioFormatacao.formatarCepApresentacao(this.cep)).append(" )");
+        }
+        return buffer.toString();
+    }
 }

@@ -25,6 +25,7 @@ import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgualIgnoreCase;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaTransacaoConsolidadaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaUtilizacaoTagVo;
@@ -88,6 +89,12 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
                     " WHERE tc.frota.id = :idFrota " +
                     " ORDER BY tc.dataTransacao ASC";
 
+    private static final String QUERY_TRANSACOES_DETALHE_COBRANCA =
+            "SELECT tc " +
+                    " FROM TransacaoConectcar tc " +
+                    " WHERE tc.cobranca.id = :idCobranca " +
+                    " ORDER BY tc.dataTransacao ASC";
+
     @Autowired
     private UtilitarioAmbiente ambiente;
 
@@ -103,7 +110,8 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
 
     @Override
     public List<TransacaoConectcar> obterTransacoesPorCobranca(Long idCobranca) {
-        return pesquisar(null, "from TransacaoConectcar where cobranca.id = :idCobranca", new ParametroPesquisaIgual("idCobranca", idCobranca)).getRegistros();
+        StringBuilder queryTransacoesDetalheCobranca = new StringBuilder(QUERY_TRANSACOES_DETALHE_COBRANCA);
+        return pesquisar(null, queryTransacoesDetalheCobranca.toString(), new ParametroPesquisaIgual("idCobranca", idCobranca)).getRegistros();
     }
 
     /**
@@ -275,7 +283,7 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
         }
 
         if (filtro.getPlaca() != null && !"".equals(filtro.getPlaca())) {
-            parametros.add(new ParametroPesquisaIgual("placa", filtro.getPlaca()));
+            parametros.add(new ParametroPesquisaIgualIgnoreCase("placa", filtro.getPlaca()));
         }
 
         if (filtro.getTipo() != null && filtro.getTipo().getName() != null) {

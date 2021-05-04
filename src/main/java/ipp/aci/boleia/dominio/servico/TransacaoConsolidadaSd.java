@@ -558,6 +558,7 @@ public class TransacaoConsolidadaSd {
         tc.setModalidadePagamento(prePago ? ModalidadePagamento.PRE_PAGO.getValue() : ModalidadePagamento.POS_PAGO.getValue());
         tc.setFrotaPtov(frotaPtov);
         tc.setFrotaExigeNF(frotaPtov.getFrota().exigeNotaFiscal());
+        tc.setFrotaGerenciaNf(frotaPtov.getFrota().isGerenciaNf());
         if(empresaAgregada != null) {
             tc.setEmpresaAgregada(empresaAgregada);
         } else if(unidade != null) {
@@ -672,7 +673,7 @@ public class TransacaoConsolidadaSd {
         //Verifica se o consolidado atende as condicoes para ter statusNF EMITIDA
         //Caso atenda, seta o status como EMITIDA
         //Caso nao atenda, seta o status como PARCIALMENTE_EMITIDA ou PENDENTE
-        if ((valorNotasMaiorZero && todosAbastPossuemNotaEmitidaOuJustificativa) || !transacaoConsolidada.exigeEmissaoNF()) {
+        if ((valorNotasMaiorZero && todosAbastPossuemNotaEmitidaOuJustificativa) || (!transacaoConsolidada.isPassivelDeEmissao())) {
             transacaoConsolidada.setStatusNotaFiscal(StatusNotaFiscal.EMITIDA.getValue());
         } else if(transacaoConsolidada.esta(FECHADA) && possuiValorEmitido && possuiValorASerEmitido) {
             transacaoConsolidada.setStatusNotaFiscal(StatusNotaFiscal.PARCIALMENTE_EMITIDA.getValue());
@@ -681,7 +682,7 @@ public class TransacaoConsolidadaSd {
         }
 
         //Se o ciclo esta fechado e tiver zero abastecimentos aprovados com valor positivo, seu status NF deve ser SEM EMISSAO
-        if(transacaoConsolidada.esta(FECHADA) && transacaoConsolidada.exigeEmissaoNF() && (quantidadeDeTransacoesPositivasAutorizadasIgualZero || !possuiValorEmitido)){
+        if(transacaoConsolidada.esta(FECHADA) && transacaoConsolidada.isPassivelDeEmissao() && (quantidadeDeTransacoesPositivasAutorizadasIgualZero || !possuiValorEmitido)){
             transacaoConsolidada.setStatusNotaFiscal(StatusNotaFiscal.SEM_EMISSAO.getValue());
         }
 
@@ -1189,7 +1190,7 @@ public class TransacaoConsolidadaSd {
         TransacaoConsolidadaPrazos prazosConsolidado = new TransacaoConsolidadaPrazos();
         Long prazoPagamento = 0L;
         Long prazoReembolso = 2L;
-        Date dataLimiteEmissaoNfe = UtilitarioCalculoData.adicionarDiasData(transacaoConsolidada.getDataFimPeriodo(), 5);
+        Date dataLimiteEmissaoNfe = transacaoConsolidada.getDataFimPeriodo();
         Boolean possuiPrazoAjuste = Boolean.FALSE;
 
         if(!transacaoConsolidada.getFrota().isPrePaga()){
@@ -1199,7 +1200,6 @@ public class TransacaoConsolidadaSd {
             //Nota: Se o prazo de geração de cobrança for zero, não há prazo de ajuste e as notas só poderão ser emitidas durante o ciclo,
             // com a cobrança sendo gerada após o fechamento deste.
             Date dataGeracaoCobranca = UtilitarioCalculoData.adicionarDiasData(transacaoConsolidada.getDataFimPeriodo(), 1);
-            dataLimiteEmissaoNfe = transacaoConsolidada.getDataFimPeriodo();
 
             //Nota: Ciclos de frotas pré-pagas não terão informações de cobrança, uma vez que elas não geram cobrança.
             Date dataVencimentoCobranca = UtilitarioCalculoData.adicionarDiasData(transacaoConsolidada.getDataFimPeriodo(), prazoPagamento.intValue());
@@ -1327,5 +1327,18 @@ public class TransacaoConsolidadaSd {
      */
     public Long obterCampoIdFrotaChaveIdentificadora(String[] chaveDividida) {
         return Long.parseLong(chaveDividida[2]);
+    }
+
+    /**
+     * Informa se uma transação consolidada pode realizar uma antecipação de reembolso.
+     *
+     * @param transacaoConsolidada Transação consolidada que será verificada.
+     * @return True, caso possa antecipar.
+     */
+    public boolean podeRealizarAntecipacaoReembolso(TransacaoConsolidada transacaoConsolidada) {
+        boolean possuiAutorizacaoPagamentoDisponivelParaAntecipar = transacaoConsolidada.getAutorizacoesPagamentoAssociadas().stream().anyMatch(a -> autorizacaoPagamentoSd.estaDisponivelParaAntecipacaoReembolso(a));
+        return !transacaoConsolidada.esta(FECHADA) &&
+                !transacaoConsolidada.possuiAntecipacaoRealizada() &&
+                possuiAutorizacaoPagamentoDisponivelParaAntecipar;
     }
 }

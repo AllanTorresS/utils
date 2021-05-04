@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Contrato para implementacao de repositorios de entidades Reembolso
  */
-public interface IReembolsoDados extends IRepositorioBoleiaDados<Reembolso> {
+public interface IReembolsoDados extends IReembolsoBaseDados<Reembolso> {
 
     /**
      * Pesquisa Reembolsos a partir do filtro informado
