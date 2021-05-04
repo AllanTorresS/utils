@@ -22,7 +22,7 @@ public class LogicaParametroCotaVeiculoPreAutorizacao extends LogicaParametroCot
         ResultadoExecucaoParametroSistemaVo<PreAutorizacaoPedidoVo> resultado = new ResultadoExecucaoParametroSistemaVo<>(pedidoCota);
         Veiculo veiculo = pedidoCota.getVeiculo();
 
-        if (aplicarRegraAoVeiculo(veiculo) && frotaParam.getCotaVeiculoVisivelMotorista() &&  veiculo.getSaldoVeiculo() != null) {
+        if (aplicarRegraAoVeiculo(veiculo) && frotaParam.getCotaVeiculoVisivelMotorista() && veiculo.getSaldoVeiculo() != null) {
             boolean cotaMensal = frotaParam.getCotaVeiculoPorAbastecimento() == null || !frotaParam.getCotaVeiculoPorAbastecimento();
             boolean cotaEmLitros = frotaParam.getEmLitros() != null && frotaParam.getEmLitros();
             if (!veiculo.getSaldoVeiculo().isSaldoSuficienteParaPreAutorizar(cotaEmLitros, cotaMensal)) {
