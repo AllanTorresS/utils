@@ -156,4 +156,11 @@ public interface IPontoDeVendaDados extends IRepositorioBoleiaDados<PontoDeVenda
      * @return ponto de venda.
      */
     PontoDeVenda obterPorCnpj(Long cnpj);
+
+    /**
+     * Retorna os pontos de venda a partir de uma lista de IDs.
+     * @param ids lista dos IDs que devem ser buscados no repositório
+     * @return lista dos pontos de venda associados a cada ID
+     */
+    List<PontoDeVenda> obterPorIds(List<Long> ids);
 }

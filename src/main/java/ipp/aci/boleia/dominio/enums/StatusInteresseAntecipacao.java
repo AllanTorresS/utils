@@ -1,14 +1,15 @@
 package ipp.aci.boleia.dominio.enums;
 
 /**
- * Lista os possíveis status de uma solicitação de interesse no programa de antecipação de reembolsos
+ * Lista os possíveis status de uma solicitação de interesse no programa de antecipação de recebíveis
  */
-public enum StatusContratoAntecipacao {
+public enum StatusInteresseAntecipacao {
 
     NAO_SOLICITADO(0),
     APROVADO(1),
     REJEITADO(2),
-    EM_ANALISE(3);
+    EM_ANALISE(3),
+    CANCELADO(4);
 
     private final Integer value;
 
@@ -16,7 +17,7 @@ public enum StatusContratoAntecipacao {
      * Construtor padrão
      * @param value O valor do status
      */
-    StatusContratoAntecipacao(Integer value) {
+    StatusInteresseAntecipacao(Integer value) {
         this.value = value;
     }
 
