@@ -502,6 +502,9 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataAtualizacao;
 
+    @ManyToMany(mappedBy = "autorizacoesPagamento", fetch = FetchType.LAZY)
+    private List<ReembolsoAntecipado> antecipacoesReembolso;
+
     @Transient
     private TipoErroAutorizacaoPagamento tipoErroAutorizacaoPagamento;
 
@@ -1683,6 +1686,14 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
         this.foiProcessadoPeloGeradorDeCampanhas = foiProcessadoPeloGeradorDeCampanhas;
     }
 
+    public List<ReembolsoAntecipado> getAntecipacoesReembolso() {
+        return antecipacoesReembolso;
+    }
+
+    public void setAntecipacoesReembolso(List<ReembolsoAntecipado> antecipacoesReembolso) {
+        this.antecipacoesReembolso = antecipacoesReembolso;
+    }
+
     public HistoricoParametroNotaFiscal getParametroNotaFiscal() {
         return parametroNotaFiscal;
     }
@@ -1821,6 +1832,10 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
         return getUnidadeExigeNf() != null && getUnidadeExigeNf();
     }
 
+    @Transient
+    public boolean possuiAntecipacaoReembolsoRealizada() {
+        return antecipacoesReembolso != null && antecipacoesReembolso.stream().anyMatch(ReembolsoAntecipado::isIntegracaoRealizada);
+    }
 
     /**
      * Calcula e retorna o Valor Total do Produto Serviço

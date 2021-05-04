@@ -10,6 +10,7 @@ public class DadosExportacaoPdfFinanceiroVo extends DadosExportacaoPdfBaseVo {
     private String filtroPosto;
     private String filtroPostoCnpj;
     private String reembolsoTotalPago;
+    private String valorAntecipado;
 
     public String getFiltroPeriodo() {
         return filtroPeriodo;
@@ -57,5 +58,13 @@ public class DadosExportacaoPdfFinanceiroVo extends DadosExportacaoPdfBaseVo {
 
     public void setReembolsoTotalPago(String reembolsoTotalPago) {
         this.reembolsoTotalPago = reembolsoTotalPago;
+    }
+
+    public String getValorAntecipado() {
+        return valorAntecipado;
+    }
+
+    public void setValorAntecipado(String valorAntecipado) {
+        this.valorAntecipado = valorAntecipado;
     }
 }

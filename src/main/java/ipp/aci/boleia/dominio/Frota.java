@@ -348,6 +348,9 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @Column(name="ID_SEM_NOTA_FISCAL")
     private Boolean semNotaFiscal;
 
+    @Column(name="ID_GERENCIA_NF")
+    private Boolean gerenciaNf;
+
     @Column(name = "DT_ACEITE_TERMOS")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataAceiteTermos;
@@ -1337,7 +1340,7 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
                 .anyMatch(u -> u.getExigeNotaFiscal() != null && u.getExigeNotaFiscal());
     }
 
-    /**
+     /**
      * Verifica se frota tem parametro de ciclo para atualizar
      * @return true caso tenha novo parâmetro de ciclo
      */
@@ -1398,12 +1401,48 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
 		this.lead = lead;
 	}
 
+    public Boolean isGerenciaNf() {
+        return gerenciaNf;
+    }
+
+    public void setGerenciaNf(Boolean gerenciaNf) {
+        this.gerenciaNf = gerenciaNf;
+	}
+
     public Boolean getLembrarParametrizacaoNf() {
         return lembrarParametrizacaoNf;
     }
 
     public void setLembrarParametrizacaoNf(Boolean lembrarParametrizacaoNf) {
         this.lembrarParametrizacaoNf = lembrarParametrizacaoNf;
+    }
+
+    /**
+     * Obtem o endereço completo
+     * @return endereço completo
+     */
+    @Transient
+    public String obterEnderecoCompleto(){
+        StringBuffer buffer = new StringBuffer();
+        if(this.logradouro != null){
+            buffer.append(this.logradouro).append(", ");
+        }
+        if(this.numero != null){
+            buffer.append(this.numero).append(", ");
+        }
+        if(this.complemento != null){
+            buffer .append(this.complemento).append(", ");
+        }
+        if(this.bairro != null){
+            buffer.append(this.bairro).append(", ");
+        }
+        if(this.unidadeFederativa != null){
+            buffer.append(this.unidadeFederativa).append(", ");
+        }
+        if(this.cep != null){
+            buffer.append("( ").append(UtilitarioFormatacao.formatarCepApresentacao(this.cep)).append(" )");
+        }
+        return buffer.toString();
     }
 
     public List<MotivoAlteracaoStatusFrota> getMotivosAlteracaoStatus() {

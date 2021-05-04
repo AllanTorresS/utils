@@ -12,6 +12,7 @@ import ipp.aci.boleia.dominio.AutorizacaoPagamento;
 import ipp.aci.boleia.dominio.AutorizacaoPagamentoEdicao;
 import ipp.aci.boleia.dominio.Cobranca;
 import ipp.aci.boleia.dominio.CobrancaConectcar;
+import ipp.aci.boleia.dominio.ErroIntegracaoTransacaoConectcar;
 import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.FrotaPontoVenda;
 import ipp.aci.boleia.dominio.GapPontoDeVenda;
@@ -33,6 +34,7 @@ import ipp.aci.boleia.dominio.enums.StatusIntegracaoJde;
 import ipp.aci.boleia.dominio.enums.TipoItemAutorizacaoPagamento;
 import ipp.aci.boleia.dominio.enums.TipoPerfilUsuario;
 import ipp.aci.boleia.dominio.enums.TipoToken;
+import ipp.aci.boleia.dominio.enums.TipoTransacaoConectcar;
 import ipp.aci.boleia.dominio.vo.EdicaoAbastecimentoVo;
 import ipp.aci.boleia.dominio.vo.AtualizarExigenciaNfeErroVo;
 import ipp.aci.boleia.dominio.vo.TokenVo;
@@ -40,6 +42,7 @@ import ipp.aci.boleia.util.UtilitarioFormatacao;
 import ipp.aci.boleia.util.UtilitarioFormatacaoData;
 import ipp.aci.boleia.util.i18n.Mensagens;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
+import ipp.aci.boleia.util.rotas.ExternoRotas;
 import ipp.aci.boleia.util.rotas.Paginas;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,6 +118,9 @@ public class EmailSd {
 
     @Value("${email.avisos.integracao}")
     private String destinatarioIntegracao;
+    
+    @Value("${email.suporte}")
+    private String emailSuporte;
 
     private static final String APPLICATION_TYPE_PDF = "application/pdf";
 
@@ -797,8 +803,8 @@ public class EmailSd {
     }
 
     /**
-     * Envia email com as críticas da recolha automática de notas fiscais
-     * @param anexosNaoConciliados Todas as notas não conciliadas de uma revenda em um dia
+     * Envia email com as crÃ­ticas da recolha automÃ¡tica de notas fiscais
+     * @param anexosNaoConciliados Todas as notas nÃ£o conciliadas de uma revenda em um dia
      * @param emailsDestinatarios E-mails dos gestores da revenda
      * @param cnpj O CNPJ
      */
@@ -815,7 +821,7 @@ public class EmailSd {
     }
 
     /**
-     * Envia um email com todas as mensagens de falhas da sincronização com o SalesForce
+     * Envia um email com todas as mensagens de falhas da sincronizaÃ§Ã£o com o SalesForce
      * @param motivosFalhas motivos das falhas
      */
     public void enviarEmailsFalhasAtualizacaoExigenciaNfSalesForce(List<AtualizarExigenciaNfeErroVo> motivosFalhas, List<String> destinatariosIntegracaoParametroNf){
@@ -834,5 +840,40 @@ public class EmailSd {
 
         emailDados.enviarEmail(assunto,corpoMensagem, destinatariosIntegracaoParametroNf);
     }
+    
+    /**
+     * Envia um email quando ocorre um erro no processamento da transação enviada pela Conectcar.
+     * Destinatário configurado em na propriedade "email.suporte".
+     * 
+     * @param erroTransacaoConectcar representa o objeto ErroIntegracaoTransacaoConectcar contendo algumas informações para auxiliar no tratamento do erro
+     */
+    public void enviarEmailErroIntegracaoTransacaoConectcar(ErroIntegracaoTransacaoConectcar erroTransacaoConectcar) {
+    	if (emailSuporte != null){
+            String assunto = mensagens.obterMensagem("email.erro.integracao.transacao.conectcar.assunto");
+
+            String frotaCnpjRazaoSocial = "";
+            Frota frota = erroTransacaoConectcar.getFrota();
+            if(frota != null) {
+            	frotaCnpjRazaoSocial = StringUtils.defaultString(formatarCnpjApresentacao(frota.getCnpj())) + " - " + StringUtils.defaultString(frota.getRazaoSocial());
+            } else {
+            	frotaCnpjRazaoSocial = mensagens.obterMensagem("Erro.ERRO_FROTA_NAO_ENCONTRADA");
+            }
+            
+            StringBuilder corpo = new StringBuilder(mensagens.obterMensagem("email.erro.integracao.transacao.conectcar.corpo",
+            		ExternoRotas.TRANSACAO_CONECTCAR_API,
+            		frotaCnpjRazaoSocial,
+            		erroTransacaoConectcar.getVeiculoId() != null ? erroTransacaoConectcar.getVeiculoId().toString() : "",
+            		StringUtils.defaultString(erroTransacaoConectcar.getPlaca()),
+            		erroTransacaoConectcar.getTipoTransacao() != null ? TipoTransacaoConectcar.obterPorValor(erroTransacaoConectcar.getTipoTransacao()) : "",
+            		erroTransacaoConectcar.getNumeroTag() != null ? erroTransacaoConectcar.getNumeroTag().toString() : "",
+            		erroTransacaoConectcar.getCodigoTransacaoConectcar() != null ? erroTransacaoConectcar.getCodigoTransacaoConectcar().toString() : "",
+            		UtilitarioFormatacaoData.formatarDataHoraMinutosSegundos(erroTransacaoConectcar.getDataProcessamento()),
+            		erroTransacaoConectcar.getErroProcessamento()));    
+            
+            corpo.append(mensagens.obterMensagem("email.erro.integracao.transacao.conectcar.rodape"));
+            
+            emailDados.enviarEmail(assunto, corpo.toString(), Collections.singletonList(emailSuporte));
+		}
+	}
 
 }

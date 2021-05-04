@@ -184,6 +184,24 @@ public final class UtilitarioFormatacaoData {
     }
 
     /**
+     * Le uma data a partir de uma String com o formato PADRAO_ISO_8601 sem Timezone
+     *
+     * @param texto O texto a ser interpretado
+     * @return A data obtida
+     */
+    public static Date lerDataIso8601SemTimezone(String texto) {
+        try {
+            return StringUtils.isEmpty(texto) ? null : new SimpleDateFormat(ConstantesFormatacao.FORMATO_ISO_8601_COM_MILLIS_SEM_TIMEZONE).parse(texto);
+        } catch (ParseException e) {
+            try {
+                return StringUtils.isEmpty(texto) ? null : new SimpleDateFormat(ConstantesFormatacao.FORMATO_ISO_8601_SEM_TIMEZONE).parse(texto);
+            } catch (ParseException e1) {
+                throw new ExcecaoBoleiaRuntime(Erro.CONVERSAO_DATA, e1);
+            }
+        }
+    }
+
+    /**
      * Formata uma data para uma String com o formato PADRAO_ISO_8601
      *
      * @param data A data a ser formatada

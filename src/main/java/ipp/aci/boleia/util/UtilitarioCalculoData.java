@@ -514,6 +514,15 @@ public final class UtilitarioCalculoData {
     }
 
     /**
+     * Verifica se o dia no Calendario é final de semana, Sábado ou Domingo
+     * @param calendario Data em calendario
+     * @return true se for final de semana, Sábado ou Domingo
+     */
+    public static boolean isFinalDeSemana(Calendar calendario) {
+        return calendario.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY || calendario.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY;
+    }
+
+    /**
      * Diminui uma quantidade de meses da data
      * @param data A data a ser subtraída
      * @param qtdMeses A quantidade de meses a serem subtraídos
