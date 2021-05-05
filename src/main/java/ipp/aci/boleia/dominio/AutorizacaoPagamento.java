@@ -1282,11 +1282,6 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     }
 
     @Transient
-    public BigDecimal getValorEmitidoConsiderandoJustificativa() {
-        return notaFiscalEstaEmitido() ? valorTotal : getValorEmitido();
-    }
-
-    @Transient
     public Integer getQuantidadeNotasFiscais() {
         return getNotasFiscais() != null ? getNotasFiscaisSemJustificativa().size() : 0;
     }
