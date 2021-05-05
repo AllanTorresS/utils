@@ -1,8 +1,14 @@
 package ipp.aci.boleia.util.excecao;
 
 /**
- * Erros de negócio lançados pela aplicação
- * Atenção: Cuidado ao alterar a ordem dos codigos de erros, são utilizados diretamente na exibição das messagens nos aplicativos mobile.
+ * Erros de negócio lançados pela aplicação.
+ * Os Erros devem ser separados por intervalos de 1000
+ * quando são referênciados pelo código em plataformas Externas, como APP Mobile e API Externa.
+ * Como ocorre no caso do App do motorista, onde começam em 1000.
+ *
+ * Ao adicionar novo valor de erro, caso o código desse valor esteja
+ * sendo referênciado externamente, esse valor deverá ocupar uma faixa não existente.
+ *
  */
 public enum Erro {
 
@@ -168,15 +174,27 @@ public enum Erro {
 	ERRO_DIA_REEMBOLSO_INVALIDO(162),
 	ERRO_QUANTIDADE_TAGS(163),
 	ERRO_ENDERECO_INVALIDO(164),
-    ERRO_AUTORIZACAO_CONSUMO_ESTIMADO_MAX(170),
-    ERRO_AUTORIZACAO_VOLUME_ABASTECIDO(171),
-    ERRO_AUTORIZACAO_HODOMETRO_LIMITE(172),
-    ERRO_AUTORIZACAO_HORIMETRO_LIMITE(173),
-    ERRO_AUTORIZACAO_CONSUMO_ESTIMADO_MIN(174),
-    ERRO_AUTORIZACAO_QUANTIDADE_MAX_PRODUTO(175),
-    ERRO_AUTORIZACAO_FLUXO_PLACA_DIVERGENTE(176),
-    PV_NAO_AUTORIZADO(177),
-    ERRO_AUTORIZACAO_PRECO_MAX_PRODUTO(178);
+    ERRO_VALIDACAO_ALTERACAO_FROTA(165),
+    NOTAS_FISCAIS_SEPARADAS_NAO_ENCONTRADAS(166),
+    NOTA_FISCAL_COMB_OU_PROD_AUSENTE(167),
+    NOTA_FISCAL_VALOR_COMB_EXCEDENTE(168),
+    NOTA_FISCAL_VALOR_PROD_EXCEDENTE(169),
+    NOTA_FISCAL_VALOR_COMB_FALTANTE(170),
+    NOTA_FISCAL_VALOR_PROD_FALTANTE(171),
+    NOTA_FISCAL_ABASTECIMENTO_ENCONTRADO_FLAG_SEPARACAO(172),
+    NOTAS_FISCAIS_REPETIDAS_NO_UPLOAD(173),
+    NOTA_FISCAL_POSSUI_SOMATORIO_DIFERENTE_VALOR_TOTAL(174),
+
+    // APP MOTORISTA 1000 - Erros mapeados no Aplicativo Motorista
+    ERRO_AUTORIZACAO_CONSUMO_ESTIMADO_MAX(1000),
+    ERRO_AUTORIZACAO_VOLUME_ABASTECIDO(1001),
+    ERRO_AUTORIZACAO_HODOMETRO_LIMITE(1002),
+    ERRO_AUTORIZACAO_HORIMETRO_LIMITE(1003),
+    ERRO_AUTORIZACAO_CONSUMO_ESTIMADO_MIN(1004),
+    ERRO_AUTORIZACAO_QUANTIDADE_MAX_PRODUTO(1005),
+    ERRO_AUTORIZACAO_FLUXO_PLACA_DIVERGENTE(1006),
+    PV_NAO_AUTORIZADO(1007),
+    ERRO_AUTORIZACAO_PRECO_MAX_PRODUTO(1008);
 
     private final Integer codigo;
 

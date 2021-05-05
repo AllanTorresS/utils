@@ -190,7 +190,7 @@ public final class UtilitarioCalculoData {
      * @param unidadeTempo A unidade de tempo desejada
      * @return A data resultante da operacao
      */
-    private static Date definirTempoData(Date data, int valorCampoData, int unidadeTempo) {
+    public static Date definirTempoData(Date data, int valorCampoData, int unidadeTempo) {
         if (data == null) {
             return null;
         }
@@ -513,4 +513,12 @@ public final class UtilitarioCalculoData {
         return calendar.getTime();
     }
 
+    /**
+     * Verifica se o dia no Calendario é final de semana, Sábado ou Domingo
+     * @param calendario Data em calendario
+     * @return true se for final de semana, Sábado ou Domingo
+     */
+    public static boolean isFinalDeSemana(Calendar calendario) {
+        return calendario.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY || calendario.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY;
+    }
 }

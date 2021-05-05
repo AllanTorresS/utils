@@ -2,7 +2,9 @@ package ipp.aci.boleia.dominio;
 
 import ipp.aci.boleia.dominio.enums.ModalidadePagamento;
 import ipp.aci.boleia.dominio.enums.MotivoEstorno;
+import ipp.aci.boleia.dominio.enums.StatusIntegracaoReembolsoJde;
 import ipp.aci.boleia.dominio.enums.StatusNotaFiscal;
+import ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso;
 import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
@@ -39,10 +41,15 @@ import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso.AGUARDANDO_NF;
+import static ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso.EM_ABERTO;
+import static ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso.NF_ATRASADA;
+import static ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso.PREVISTO;
 import static ipp.aci.boleia.util.UtilitarioLambda.verificarTodosNaoNulos;
 
 /**
@@ -56,6 +63,9 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     private static final long serialVersionUID = 8095939439819340567L;
 
     private static final String QT_COMPLETA_ABASTECIMENTO_FORMULA = "(SELECT Q.QT_COMPLETA_ABASTECIMENTOS FROM BOLEIA_SCHEMA.V_T_CONSOL_QT_ABASTECIMENTO Q WHERE Q.CD_TRANS_CONSOL = CD_TRANS_CONSOL)";
+
+    private static final String FORMULA_POSSUI_ANTECIPACAO_REALIZADA = "(SELECT CASE WHEN (SELECT COUNT(A.CD_REEMB_ANTECIP) FROM BOLEIA_SCHEMA.REEMB_ANTECIP A WHERE A.ID_STATUS_INT_JDE = 1 AND A.CD_TRANS_CONSOL = CD_TRANS_CONSOL) > 0 THEN 1 ELSE 0 END FROM dual)";
+    private static final String FORMULA_POSSUI_ANTECIPACAO_COM_ERRO = "(SELECT CASE WHEN (SELECT COUNT(A.CD_REEMB_ANTECIP) FROM BOLEIA_SCHEMA.REEMB_ANTECIP A WHERE A.ID_STATUS_INT_JDE = 0 AND A.CD_TRANS_CONSOL = CD_TRANS_CONSOL) > 0 THEN 1 ELSE 0 END FROM dual)";
 
     @Id
     @Column(name = "CD_TRANS_CONSOL")
@@ -187,6 +197,22 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     @NotNull
     @Column(name = "ID_FROTA_EXIGE_NF")
     private boolean frotaExigeNF;
+
+    @Column(name="ID_FROTA_GERENCIA_NF")
+    private Boolean frotaGerenciaNf;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "transacaoConsolidada")
+    private List<ReembolsoAntecipado> antecipacoes;
+
+    @NotAudited
+    @Formula(FORMULA_POSSUI_ANTECIPACAO_REALIZADA)
+    @Basic(fetch = FetchType.LAZY)
+    private Boolean possuiAntecipacaoRealizada;
+
+    @NotAudited
+    @Formula(FORMULA_POSSUI_ANTECIPACAO_COM_ERRO)
+    @Basic(fetch = FetchType.LAZY)
+    private Boolean possuiAntecipacaoComErro;
 
     @Override
     public Long getId() {
@@ -339,7 +365,7 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     }
 
     public Date getDataUltimaEmissaoNf() {
-       return dataUltimaEmissaoNf;
+        return dataUltimaEmissaoNf;
     }
 
     public void setDataUltimaEmissaoNf(Date dataUltimaEmissaoNf) {
@@ -354,7 +380,7 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
      */
     public StatusNotaFiscal obterStatusNotaFiscal(Date dataCorrente) {
         if (statusNotaFiscal == null || statusNotaFiscal.equals(StatusNotaFiscal.PENDENTE.getValue())) {
-            if (dataCorrente.after(prazos.getDataLimiteEmissaoNfe())) {
+            if (dataCorrente.after(prazos.getDataLimiteEmissaoNfe()) && isFrotaExigeNF()) {
                 return StatusNotaFiscal.ATRASADA;
             } else {
                 return StatusNotaFiscal.PENDENTE;
@@ -500,6 +526,22 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
         this.frotaExigeNF = frotaExigeNF;
     }
 
+    public Boolean getFrotaGerenciaNf() {
+        return frotaGerenciaNf;
+    }
+
+    public void setFrotaGerenciaNf(Boolean frotaGerenciaNf) {
+        this.frotaGerenciaNf = frotaGerenciaNf;
+    }
+
+    public Unidade getUnidade() {
+        return unidade;
+    }
+
+    public void setUnidade(Unidade unidade) {
+        this.unidade = unidade;
+    }
+
     /**
      * Gera uma chave unica para cada TransacaoConsolidada, tendo o objetivo de garantir que cada ciclo seja unico no banco de dados.
      * Existe uma constraint (UQ_CHAVE_TRANS_CONSOL) no banco que valida a unicidade da chave.
@@ -519,12 +561,28 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
         this.chave = UtilitarioCriptografia.calcularHashSHA256(keyBuilder.toString());
     }
 
-    public Unidade getUnidade() {
-        return unidade;
+    public List<ReembolsoAntecipado> getAntecipacoes() {
+        return antecipacoes;
     }
 
-    public void setUnidade(Unidade unidade) {
-        this.unidade = unidade;
+    public void setAntecipacoes(List<ReembolsoAntecipado> antecipacoes) {
+        this.antecipacoes = antecipacoes;
+    }
+
+    public Boolean getPossuiAntecipacaoRealizada() {
+        return possuiAntecipacaoRealizada;
+    }
+
+    public void setPossuiAntecipacaoRealizada(Boolean possuiAntecipacaoRealizada) {
+        this.possuiAntecipacaoRealizada = possuiAntecipacaoRealizada;
+    }
+
+    public Boolean getPossuiAntecipacaoComErro() {
+        return possuiAntecipacaoComErro;
+    }
+
+    public void setPossuiAntecipacaoComErro(Boolean possuiAntecipacaoComErro) {
+        this.possuiAntecipacaoComErro = possuiAntecipacaoComErro;
     }
 
     /**
@@ -600,6 +658,16 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     }
 
     /**
+     * Informa se é a transação consolidada é passível de emissão de nota fiscal.
+     *
+     * @return true, caso seja.
+     */
+    @Transient
+    public boolean isPassivelDeEmissao() {
+        return exigeEmissaoNF() || frotaGerenciaNf != null && frotaGerenciaNf;
+    }
+
+    /**
      * Retorna uma lista com todas as autorizações de pagamento associadas a transação consolidada.
      *
      * @return lista de autorizações de pagamento.
@@ -617,8 +685,8 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     public boolean todasTransacoesSaoNegativas(){
         if (getQuantidadeAbastecimentos() == 0){
             return getAutorizacoesPagamentoAssociadas().stream()
-                .filter(AutorizacaoPagamento::estaAutorizadaOuCancelada)
-                .noneMatch(autorizacaoPagamento -> autorizacaoPagamento.getValorTotal().compareTo(BigDecimal.ZERO) >= 0);
+                    .filter(AutorizacaoPagamento::estaAutorizadaOuCancelada)
+                    .noneMatch(autorizacaoPagamento -> autorizacaoPagamento.getValorTotal().compareTo(BigDecimal.ZERO) >= 0);
         }
         return false;
     }
@@ -631,9 +699,9 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     public boolean todasTransacoesSaoCanceladas(){
         boolean existeCancelado = getAutorizacoesPagamentoAssociadas().stream().anyMatch(AutorizacaoPagamento::estaCancelado);
         return getAutorizacoesPagamentoAssociadas().stream()
-                .allMatch(autorizacaoPagamento -> (autorizacaoPagamento.estaCancelado() && 
-                    MotivoEstorno.obterPorValor(autorizacaoPagamento.getMotivoEstorno()).getSemAlteracao()) ||
-                    (autorizacaoPagamento.getValorTotal().compareTo(BigDecimal.ZERO) < 0 && existeCancelado));
+                .allMatch(autorizacaoPagamento -> (autorizacaoPagamento.estaCancelado() &&
+                        MotivoEstorno.obterPorValor(autorizacaoPagamento.getMotivoEstorno()).getSemAlteracao()) ||
+                        (autorizacaoPagamento.getValorTotal().compareTo(BigDecimal.ZERO) < 0 && existeCancelado));
     }
 
     /**
@@ -664,7 +732,6 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
                 .allMatch(autorizacaoPagamento -> ((autorizacaoPagamento.estaCancelado() ||
                         (autorizacaoPagamento.getValorTotal().compareTo(BigDecimal.ZERO) < 0) && existeCancelado && existeEstornado)));
     }
-
     /**
      * Verifica se todos os abastecimentos do consolidado possuem pendência de nota fiscal
      * @return True caso todas estejam com pendência, false caso contrário
@@ -687,5 +754,42 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
             return getValorEmitidoNotaFiscal().divide(getValorTotalNotaFiscal(), 2, BigDecimal.ROUND_HALF_DOWN).multiply(new BigDecimal(100));
         }
         return null;
+    }
+
+    @Transient
+    public ReembolsoAntecipado getAntecipacaoRealizada() {
+        if(antecipacoes != null) {
+            return antecipacoes.stream().filter(antecipacao -> StatusIntegracaoReembolsoJde.REALIZADO.getValue().equals(antecipacao.getStatusIntegracao())).findFirst().orElse(null);
+        }
+        return null;
+    }
+
+    @Transient
+    public Boolean possuiAntecipacaoRealizada() {
+        return getAntecipacaoRealizada() != null;
+    }
+
+    @Transient
+    public Boolean possuiAntecipacaoComErro() {
+        if(antecipacoes != null) {
+            return antecipacoes.stream().anyMatch(antecipacao -> StatusIntegracaoReembolsoJde.ERRO_ENVIO.getValue().equals(antecipacao.getStatusIntegracao()));
+        }
+        return false;
+    }
+
+    @Transient
+    public ReembolsoAntecipado getUltimaAntecipacao() {
+        if(antecipacoes != null) {
+            return antecipacoes.stream().sorted(Comparator.comparing(ReembolsoAntecipado::getDataAntecipacao).reversed()).findFirst().orElse(null);
+        }
+        return null;
+    }
+
+    @Transient
+    public StatusPagamentoReembolso getStatusReembolso() {
+        if(reembolso != null && !reembolso.getStatus().equals(EM_ABERTO.getValue()) && !reembolso.getStatus().equals(AGUARDANDO_NF.getValue()) && !reembolso.getStatus().equals(NF_ATRASADA.getValue())) {
+            return StatusPagamentoReembolso.obterPorValor(reembolso.getStatus());
+        }
+        return PREVISTO;
     }
 }

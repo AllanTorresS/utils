@@ -54,6 +54,7 @@ public class OraclePrecoDados extends OracleOrdenacaoPrecosDados<Preco> implemen
             "     AND pv.id = :idPontoVenda " +
             "     AND (f.id = :idFrota OR :idFrota IS NULL) " +
             "     AND p.status IN :statusValidos " +
+            "     AND (pb.invalido is null OR pb.invalido = false) " +
             "     AND NOT EXISTS ( " +
             "         SELECT 1 FROM Preco p_" +
             "         WHERE " +
