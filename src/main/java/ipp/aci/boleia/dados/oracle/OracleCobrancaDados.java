@@ -343,14 +343,25 @@ public class OracleCobrancaDados extends OracleRepositorioBoleiaDados<Cobranca> 
 
     @Override
     public Long obterQuantidadeCobrancaPagasEmAtraso(Long idFrota, PeriodoCalculoImpontualidadeFrota periodoCalculo) {
-        List<ParametroPesquisa> parametros = montarParametrosPesquisa(idFrota, periodoCalculo, true);
+        List<ParametroPesquisa> parametros = montarParametrosPesquisaImpontualidade(idFrota, periodoCalculo, true);
         return pesquisarUnicoSemIsolamentoDados(CONSULTA_COBRANCAS_ATRASADAS_EM_UM_PERIODO, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
     @Override
     public Long obterQuantidadeTotalCobrancas(Long idFrota, PeriodoCalculoImpontualidadeFrota periodoCalculo) {
-        List<ParametroPesquisa> parametros = montarParametrosPesquisa(idFrota, periodoCalculo, false);
+        List<ParametroPesquisa> parametros = montarParametrosPesquisaImpontualidade(idFrota, periodoCalculo, false);
         return pesquisarUnicoSemIsolamentoDados(CONSULTA_COBRANCAS_EM_UM_PERIODO, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+    @Override
+    public List<Cobranca> buscarCobrancasAtrasadasDoisDiasUteis() {
+        Date limiteInferiorData = UtilitarioCalculoData.obterProximoDiaUtilSemFeriado(UtilitarioCalculoData.adicionarDiasData(UtilitarioCalculoData.obterUltimoInstanteDia(ambiente.buscarDataAmbiente()), 2));
+        return pesquisarSemIsolamentoDados(
+            new ParametroOrdenacaoColuna("dataVencimentoPagto", Ordenacao.CRESCENTE),
+            new ParametroPesquisaDataMaiorOuIgual("dataVencimentoPagto", limiteInferiorData),
+            new ParametroPesquisaNulo("dataPagamento"),
+            new ParametroPesquisaDiferente("statusIntegracaoJDE", StatusIntegracaoJde.REALIZADO.getValue())
+        );
     }
 
     /**
@@ -359,7 +370,7 @@ public class OracleCobrancaDados extends OracleRepositorioBoleiaDados<Cobranca> 
      * @param periodoCalculo O período do cálculo
      * @return Os parâmetros de pesquisa
      */
-    private List<ParametroPesquisa> montarParametrosPesquisa(Long idFrota, PeriodoCalculoImpontualidadeFrota periodoCalculo, Boolean consultaAtrasados) {
+    private List<ParametroPesquisa> montarParametrosPesquisaImpontualidade(Long idFrota, PeriodoCalculoImpontualidadeFrota periodoCalculo, Boolean consultaAtrasados) {
         Date dataAtual = ambiente.buscarDataAmbiente();
         Date limiteInferior = UtilitarioCalculoData.diminuirMeses(UtilitarioCalculoData.obterPrimeiroDiaMes(dataAtual), PeriodoCalculoImpontualidadeFrota.TRIMESTRAL.getValue().equals(periodoCalculo.getValue()) ? 3 : 12);
         Date limiteSuperior = UtilitarioCalculoData.obterUltimoDiaMesAnterior(dataAtual);
@@ -373,4 +384,6 @@ public class OracleCobrancaDados extends OracleRepositorioBoleiaDados<Cobranca> 
 
         return parametros;
     }
+
+
 }

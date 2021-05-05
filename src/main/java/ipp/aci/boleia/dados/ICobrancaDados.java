@@ -123,4 +123,10 @@ public interface ICobrancaDados extends IRepositorioBoleiaDados<Cobranca> {
      */
     Long obterQuantidadeTotalCobrancas(Long idFrota, PeriodoCalculoImpontualidadeFrota periodoCalculo);
 
+    /**
+     * Obtém as cobranças atrasadas há dois dias úteis
+     * @return As cobranças encontradas
+     */
+    List<Cobranca> buscarCobrancasAtrasadasDoisDiasUteis();
+
 }
