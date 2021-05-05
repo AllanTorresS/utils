@@ -14,16 +14,19 @@ public class FiltroAutoCompletePostoRotaVo {
     private List<Integer> parametrosDeUso;
     private Long tipoCombustivel;
 
+    private List<Long> postosParametizados;
+
     public FiltroAutoCompletePostoRotaVo() {
     }
 
-    public FiltroAutoCompletePostoRotaVo(String termo, Long idFrota, Boolean postoInterno, List<Integer> parametrosDeUso, Long tipoCombustivel, Boolean postoUrbano) {
+    public FiltroAutoCompletePostoRotaVo(String termo, Long idFrota, Boolean postoInterno, List<Integer> parametrosDeUso, Long tipoCombustivel, Boolean postoUrbano, List<Long> postosParametizados) {
         this.termo = termo;
         this.idFrota = idFrota;
         this.postoInterno = postoInterno;
         this.parametrosDeUso = parametrosDeUso;
         this.tipoCombustivel = tipoCombustivel;
         this.postoUrbano = postoUrbano;
+        this.postosParametizados = postosParametizados;
     }
 
     public Long getTipoCombustivel() {
@@ -72,5 +75,13 @@ public class FiltroAutoCompletePostoRotaVo {
 
     public void setPostoUrbano(Boolean postoUrbano) {
         this.postoUrbano = postoUrbano;
+    }
+
+    public List<Long> getPostosParametizados() {
+        return postosParametizados;
+    }
+
+    public void setPostosParametizados(List<Long> postosParametizados) {
+        this.postosParametizados = postosParametizados;
     }
 }
