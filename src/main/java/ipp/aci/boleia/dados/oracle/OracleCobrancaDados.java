@@ -360,7 +360,7 @@ public class OracleCobrancaDados extends OracleRepositorioBoleiaDados<Cobranca> 
             new ParametroOrdenacaoColuna("dataVencimentoPagto", Ordenacao.CRESCENTE),
             new ParametroPesquisaDataMaiorOuIgual("dataVencimentoPagto", limiteInferiorData),
             new ParametroPesquisaNulo("dataPagamento"),
-            new ParametroPesquisaDiferente("statusIntegracaoJDE", StatusIntegracaoJde.REALIZADO.getValue())
+            new ParametroPesquisaIgual("statusIntegracaoJDE", StatusIntegracaoJde.REALIZADO.getValue())
         );
     }
 
