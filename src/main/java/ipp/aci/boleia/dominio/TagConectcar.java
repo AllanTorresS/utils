@@ -171,33 +171,4 @@ public class TagConectcar implements IPersistente, IExclusaoLogicaComData{
 		}
 	}
 
-	public Veiculo getVeiculoMaisRecente() {
-
-		Veiculo veiculoMaisRecente = null;
-		Date dataMaisRecente = null;
-
-		if (veiculos != null && !veiculos.isEmpty()) {
-			for (Veiculo veiculo : veiculos) {
-				if (veiculoMaisRecente == null) {
-					veiculoMaisRecente = veiculo;
-					if (veiculo.getDataAtualizacao() != null && veiculo.getDataAtualizacao().after(veiculo.getDataCriacao())) {
-						dataMaisRecente = veiculo.getDataAtualizacao();
-					} else {
-						dataMaisRecente = veiculo.getDataCriacao();
-					}
-				} else {
-					if (veiculo.getDataCriacao().after(dataMaisRecente)) {
-						veiculoMaisRecente = veiculo;
-						dataMaisRecente = veiculo.getDataCriacao();
-					}
-					if (veiculo.getDataAtualizacao() != null && veiculo.getDataAtualizacao().after(dataMaisRecente)) {
-						veiculoMaisRecente = veiculo;
-						dataMaisRecente = veiculo.getDataAtualizacao();
-					}
-				}
-			}
-		}
-
-		return veiculoMaisRecente;
-	}
 }
