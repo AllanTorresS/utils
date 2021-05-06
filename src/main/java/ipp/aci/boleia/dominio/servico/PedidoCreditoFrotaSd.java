@@ -1,6 +1,7 @@
 package ipp.aci.boleia.dominio.servico;
 
 import ipp.aci.boleia.dados.IFrotaDados;
+import ipp.aci.boleia.dados.IMotivoAlteracaoStatusFrotaDados;
 import ipp.aci.boleia.dados.IPedidoCreditoFrotaDados;
 import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.MotivoAlteracaoStatusFrota;
@@ -45,6 +46,9 @@ public class PedidoCreditoFrotaSd {
 
     @Autowired
     private MotivoAlteracaoStatusFrotaSd motivoAlteracaoStatusFrotaSd;
+
+    @Autowired
+    private IMotivoAlteracaoStatusFrotaDados repositorioMotivo;
 
     /**
      * Valida o status de pagamento do pedido no momento da aprovacao
@@ -117,9 +121,12 @@ public class PedidoCreditoFrotaSd {
     public void ativarFrotaPrePaga(Frota frota) {
         Date dataCorrente = ambiente.buscarDataAmbiente();
         MotivoAlteracaoStatusFrota motivo = frota.getUltimoMotivoSaldoZeradoVigente();
-        motivo.setDataInicio(motivo.getDataCriacao());
-        motivo.setDataFim(dataCorrente);
-        frota.setDataSaldoZerado(null);
-        frota = repositorio.armazenar(frota);
+        if(motivo != null) {
+            motivo.setDataInicio(motivo.getDataCriacao());
+            motivo.setDataFim(dataCorrente);
+            repositorioMotivo.armazenar(motivo);
+            frota.setDataSaldoZerado(null);
+            frota = repositorio.armazenar(frota);
+        }
     }
 }
