@@ -1572,8 +1572,8 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
                 .stream()
                 .filter(
                         motivo -> StatusVigenciaAlteracaoStatusFrota.VIGENTE.getValue().equals(motivo.getStatusVigenciaAlteracao())
-                                && motivo.getTipoMotivo().equals(ClassificacaoStatusFrota.SALDO_ZERADO.getValue())
-                                && status.equals(StatusFrota.INATIVO.getValue())
+                                && ClassificacaoStatusFrota.SALDO_ZERADO.getValue().equals(motivo.getTipoMotivo())
+                                && StatusFrota.INATIVO.getValue().equals(status)
                                 && dataSaldoZerado != null
                 ).max(Comparator.comparing(MotivoAlteracaoStatusFrota::getDataCriacao))
                 .orElse(null);
