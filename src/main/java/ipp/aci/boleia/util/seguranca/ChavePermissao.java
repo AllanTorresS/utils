@@ -98,6 +98,7 @@ public final class ChavePermissao {
     public static final String PRECO_BASE_EXPORTAR                          = SPRING_ROLE_PREFIX + "PRECO_BASE_EXPORTAR" + SPRING_ROLE_SUFFIX;
     public static final String PRECO_BASE_INCLUIR                           = SPRING_ROLE_PREFIX + "PRECO_BASE_INCLUIR" + SPRING_ROLE_SUFFIX;
     public static final String PRECO_BASE_INCLUIR_EM_LOTES                  = SPRING_ROLE_PREFIX + "PRECO_BASE_INCLUIR_EM_LOTES" + SPRING_ROLE_SUFFIX;
+    public static final String PRECO_BASE_EXCLUIR                           = SPRING_ROLE_PREFIX + "PRECO_BASE_EXCLUIR" + SPRING_ROLE_SUFFIX;
     public static final String ABASTECIMENTO_CONSULTAR_E_VISUALIZAR         = SPRING_ROLE_PREFIX + "ABASTECIMENTO_CONSULTAR_E_VISUALIZAR" + SPRING_ROLE_SUFFIX;
     public static final String ABASTECIMENTO_AUTORIZAR                      = SPRING_ROLE_PREFIX + "ABASTECIMENTO_AUTORIZAR" + SPRING_ROLE_SUFFIX;
     public static final String ABASTECIMENTO_APROVAR_REPROVAR               = SPRING_ROLE_PREFIX + "ABASTECIMENTO_APROVAR_REPROVAR" + SPRING_ROLE_SUFFIX;
@@ -140,6 +141,7 @@ public final class ChavePermissao {
     public static final String REEMBOLSO_CONSULTAR                          = SPRING_ROLE_PREFIX + "REEMBOLSO_CONSULTAR" + SPRING_ROLE_SUFFIX;
     public static final String REEMBOLSO_EXPORTAR                           = SPRING_ROLE_PREFIX + "REEMBOLSO_EXPORTAR" + SPRING_ROLE_SUFFIX;
     public static final String REEMBOLSO_GERAR_VOUCHER                      = SPRING_ROLE_PREFIX + "REEMBOLSO_GERAR_VOUCHER" + SPRING_ROLE_SUFFIX;
+    public static final String REEMBOLSO_ANTECIPAR_VOUCHER                  = SPRING_ROLE_PREFIX + "REEMBOLSO_ANTECIPAR_VOUCHER" + SPRING_ROLE_SUFFIX;
     public static final String ACEITAR_TERMO_USO_PV                         = SPRING_ROLE_PREFIX + "ACEITAR_TERMO_USO_PV" + SPRING_ROLE_SUFFIX;
     public static final String PARAMETRO_SISTEMA_CONSULTAR_E_VISUALIZAR     = SPRING_ROLE_PREFIX + "PARAMETRO_SISTEMA_CONSULTAR_E_VISUALIZAR" + SPRING_ROLE_SUFFIX;
     public static final String PARAMETRO_SISTEMA_ALTERAR                    = SPRING_ROLE_PREFIX + "PARAMETRO_SISTEMA_ALTERAR" + SPRING_ROLE_SUFFIX;
@@ -181,7 +183,9 @@ public final class ChavePermissao {
     public static final String DOCUMENTO_CONSULTAR_E_VISUALIZAR             = SPRING_ROLE_PREFIX + "DOCUMENTO_CONSULTAR_E_VISUALIZAR" + SPRING_ROLE_SUFFIX;
     public static final String DOCUMENTO_INCLUIR                            = SPRING_ROLE_PREFIX + "DOCUMENTO_INCLUIR" + SPRING_ROLE_SUFFIX;
     public static final String DOCUMENTO_EXCLUIR                            = SPRING_ROLE_PREFIX + "DOCUMENTO_EXCLUIR" + SPRING_ROLE_SUFFIX;
-    
+    public static final String PARAMETRO_NF_CONSULTAR_E_VISUALIZAR          = SPRING_ROLE_PREFIX + "PARAMETRO_NF_CONSULTAR_E_VISUALIZAR" + SPRING_ROLE_SUFFIX;
+    public static final String PARAMETRO_NF_INCLUIR                         = SPRING_ROLE_PREFIX + "PARAMETRO_NF_INCLUIR" + SPRING_ROLE_SUFFIX;
+
     public static final String LEAD_DASHBOARD_CONECTCAR 					= SPRING_ROLE_PREFIX + "LEAD_DASHBOARD_CONECTCAR" + SPRING_ROLE_SUFFIX;
     public static final String PEDIDO_TAG 									= SPRING_ROLE_PREFIX + "PEDIDO_TAG" + SPRING_ROLE_SUFFIX;
     public static final String RASTREAR_PEDIDO_TAG 							= SPRING_ROLE_PREFIX + "RASTREAR_PEDIDO_TAG" + SPRING_ROLE_SUFFIX;
@@ -228,6 +232,8 @@ public final class ChavePermissao {
     public static final String PRECO_FRETE_EXCLUIR   = SPRING_ROLE_PREFIX + "PRECO_FRETE_EXCLUIR"   + SPRING_ROLE_SUFFIX;
 
     public static final String DETALHAMENTO_REEMBOLSO                       = SPRING_ROLE_PREFIX + "DETALHAMENTO_REEMBOLSO" + SPRING_ROLE_SUFFIX;
+
+    public static final String DETALHAMENTO_COBRANCA_EXPORTAR               = FINANCEIRO_EXPORTAR_XLS + " or " +  COBRANCA_EXPORTAR;
 
     // Permissão da API de Frotistas.
     public static final String API_FROTISTA                                         = SPRING_ROLE_PREFIX + "API_FROTISTA" + SPRING_ROLE_SUFFIX;
@@ -322,6 +328,8 @@ public final class ChavePermissao {
     public static final String ROTA_INTELIGENTE_CONSULTAR_E_VISUALIZAR         = SPRING_ROLE_PREFIX + "ROTA_INTELIGENTE_CONSULTAR_E_VISUALIZAR" + SPRING_ROLE_SUFFIX;
     public static final String ROTA_INTELIGENTE_EXCLUIR                        = SPRING_ROLE_PREFIX + "ROTA_INTELIGENTE_EXCLUIR" + SPRING_ROLE_SUFFIX;
     public static final String ROTA_INTELIGENTE_INCLUIR                        = SPRING_ROLE_PREFIX + "ROTA_INTELIGENTE_INCLUIR" + SPRING_ROLE_SUFFIX;
+
+    public static final String RELATORIO_NOTA_FISCAL_EXPORTAR                  = SPRING_ROLE_PREFIX + "RELATORIO_NOTA_FISCAL_EXPORTAR" + SPRING_ROLE_SUFFIX;
 
     /**
      * Impede instanciacao e heranca

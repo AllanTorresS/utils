@@ -8,9 +8,11 @@ import ipp.aci.boleia.dominio.enums.StatusEdicao;
 import ipp.aci.boleia.dominio.enums.StatusNotaFiscalAbastecimento;
 import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
 import ipp.aci.boleia.dominio.enums.TipoErroAutorizacaoPagamento;
+import ipp.aci.boleia.dominio.enums.TipoItemAutorizacaoPagamento;
 import ipp.aci.boleia.dominio.enums.TipoPreenchimentoLitragem;
 import ipp.aci.boleia.dominio.enums.TipoRealizacaoPedido;
 import ipp.aci.boleia.dominio.enums.TipoSenhaAutorizacao;
+import ipp.aci.boleia.dominio.historico.HistoricoParametroNotaFiscal;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
 import ipp.aci.boleia.dominio.interfaces.IPertenceMotorista;
@@ -20,6 +22,7 @@ import org.hibernate.annotations.Formula;
 import org.hibernate.envers.AuditJoinTable;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -489,10 +492,18 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     @Formula(CHAVE_ORDENACAO_FINANCEIRO_FORMULA)
     private Integer chaveOrdenacaoFinanceiro;
 
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_HISTORICO_PARAM_NF")
+    private HistoricoParametroNotaFiscal parametroNotaFiscal;
+
     @NotAudited
     @Column(name = "DT_ATUALIZACAO")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataAtualizacao;
+
+    @ManyToMany(mappedBy = "autorizacoesPagamento", fetch = FetchType.LAZY)
+    private List<ReembolsoAntecipado> antecipacoesReembolso;
 
     @Transient
     private TipoErroAutorizacaoPagamento tipoErroAutorizacaoPagamento;
@@ -1618,6 +1629,15 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
         return this.getItems().stream().filter(i -> !i.isAbastecimento()).collect(Collectors.toList());
     }
 
+    /**
+     * Obtém a lista de valores unitários dos produtos de uma autorização de pagamento
+     * @return A lista de valores unitários
+     */
+    @Transient
+    public List<BigDecimal> getValoresUnitariosServicos() {
+        return this.obterItensServico().stream().map(ItemAutorizacaoPagamento::getValorUnitario).collect(Collectors.toList());
+    }
+
     public Long getCodigoAbastecimentoCTA() {
         return codigoAbastecimentoCTA;
     }
@@ -1664,6 +1684,22 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
 
     public void setFoiProcessadoPeloGeradorDeCampanhas(Boolean foiProcessadoPeloGeradorDeCampanhas) {
         this.foiProcessadoPeloGeradorDeCampanhas = foiProcessadoPeloGeradorDeCampanhas;
+    }
+
+    public List<ReembolsoAntecipado> getAntecipacoesReembolso() {
+        return antecipacoesReembolso;
+    }
+
+    public void setAntecipacoesReembolso(List<ReembolsoAntecipado> antecipacoesReembolso) {
+        this.antecipacoesReembolso = antecipacoesReembolso;
+    }
+
+    public HistoricoParametroNotaFiscal getParametroNotaFiscal() {
+        return parametroNotaFiscal;
+    }
+
+    public void setParametroNotaFiscal(HistoricoParametroNotaFiscal parametroNotaFiscal) {
+        this.parametroNotaFiscal = parametroNotaFiscal;
     }
 
     /**
@@ -1854,5 +1890,97 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     @Transient
     public boolean unidadeExigeNf() {
         return getUnidadeExigeNf() != null && getUnidadeExigeNf();
+    }
+
+    @Transient
+    public boolean possuiAntecipacaoReembolsoRealizada() {
+        return antecipacoesReembolso != null && antecipacoesReembolso.stream().anyMatch(ReembolsoAntecipado::isIntegracaoRealizada);
+    }
+
+    /**
+     * Calcula e retorna o Valor Total do Produto Serviço
+     * @return valor calculado
+     */
+    @Transient
+    public BigDecimal obtemValorTotalProdutoServico() {
+        if(this.getItems() != null
+                && this.getItems().stream()
+                .anyMatch(i -> TipoItemAutorizacaoPagamento.PRODUTO_SERVICO.getValue().equals(i.getTipoItem())
+                        && i.getValorTotal() != null)) {
+
+            BigDecimal valorTotal = this.getItems().stream()
+                    .filter(i -> TipoItemAutorizacaoPagamento.PRODUTO_SERVICO.getValue().equals(i.getTipoItem())
+                            && i.getValorTotal() != null)
+                    .map(ItemAutorizacaoPagamento::getValorTotal)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            return valorTotal;
+        }
+        return null;
+    }
+
+    /**
+     * Calcula e retorna o Valor Emitido de combustível
+     * @return valor calculado
+     */
+    @Transient
+    public BigDecimal obtemValorEmitidoCombustivel() {
+        return this.getNotasFiscais().stream()
+                .filter(nota -> nota.getValorCombustivel() != null)
+                .map(NotaFiscal::getValorCombustivel)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    /**
+     * Calcula e retorna o Valor Emitido do Produto Serviço
+     * @return valor calculado
+     */
+    @Transient
+    public BigDecimal obtemValorEmitidoProdutoServico() {
+        return this.getNotasFiscais().stream()
+                .filter(nota -> nota.getValorProdutosServicos() != null)
+                .map(NotaFiscal::getValorProdutosServicos)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+
+    /**
+     * Calcula e retorna o Valor Total do abastecimento
+     * @return valor calculado
+     */
+    @Transient
+    public BigDecimal obtemValorTotalAbastecimento() {
+        if(this.getItems() != null
+            && this.getItems().stream()
+                .anyMatch(i -> TipoItemAutorizacaoPagamento.ABASTECIMENTO.getValue().equals(i.getTipoItem())
+                        && i.getValorTotal() != null)) {
+
+            BigDecimal valorTotal = this.getItems().stream()
+                    .filter(i -> TipoItemAutorizacaoPagamento.ABASTECIMENTO.getValue().equals(i.getTipoItem())
+                            && i.getValorTotal() != null)
+                    .map(ItemAutorizacaoPagamento::getValorTotal)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            return valorTotal;
+        }
+        return null;
+    }
+
+    /**
+     * Verifica se um abastecimento possui emissão de combustível
+     * @return True caso possua emissão, false caso contrário
+     */
+    @Transient
+    public Boolean possuiEmissaoCombustivel() {
+        return this.notasFiscais.stream().anyMatch(nota -> nota.getValorCombustivel() != null);
+    }
+
+    /**
+     * Verifica se um abastecimento possui emissão de produtos
+     * @return True caso possua emissão, false caso contrário
+     */
+    @Transient
+    public Boolean possuiEmissaoProdutos() {
+        return this.notasFiscais.stream().anyMatch(nota -> nota.getValorProdutosServicos() != null);
     }
 }

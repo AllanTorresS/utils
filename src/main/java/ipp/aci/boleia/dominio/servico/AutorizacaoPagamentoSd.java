@@ -352,4 +352,14 @@ public class AutorizacaoPagamentoSd {
         }
         return false;
     }
+
+    /**
+     * Informa se uma autorização de pagamento está disponível ou não para uma antecipação de reembolso.
+     *
+     * @param autorizacaoPagamento A autorização de pagamento que será verificada.
+     * @return True, caso esteja disponível.
+     */
+    public boolean estaDisponivelParaAntecipacaoReembolso(AutorizacaoPagamento autorizacaoPagamento) {
+        return autorizacaoPagamento.notaFiscalEstaEmitido() && !autorizacaoPagamento.possuiAntecipacaoReembolsoRealizada();
+    }
 }

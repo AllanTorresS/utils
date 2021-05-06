@@ -63,7 +63,7 @@ public class EmpresaAgregadaSd {
      * @return Quantidade
      */
     public Long obterQuantidadeRelacionados(EmpresaAgregada empresaAgregada) {
-        Long quantidade = 0L;
+        long quantidade = 0L;
         quantidade += empresaAgregada.getVeiculos().size();
         quantidade += empresaAgregada.getMotoristas().size();
 

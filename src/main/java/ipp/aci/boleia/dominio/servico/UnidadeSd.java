@@ -61,6 +61,15 @@ public class UnidadeSd {
 
 
     /**
+     * Armazena os dados de uma unidade
+     * @param unidade A unidade  ser armazenada
+     * @return A unidade armazenada
+     */
+    public Unidade armazenar(Unidade unidade) {
+        return repositorio.armazenar(unidade);
+    }
+
+    /**
      * Obtem a unidade matriz para a frota logada
      * @return Unidade matriz
      */

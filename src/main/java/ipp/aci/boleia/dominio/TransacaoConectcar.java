@@ -141,6 +141,9 @@ public class TransacaoConectcar implements IPersistente, IPertenceFrota {
 	@Column(name = "CD_TRANSACAO_CONECTCAR")
 	private Long codigoTransacaoConectcar;
 	
+	@Column(name = "DS_NOME_PRACA")
+	private String nomePraca;
+	
 	@Override
 	public Long getId() {
 		return id;
@@ -371,6 +374,14 @@ public class TransacaoConectcar implements IPersistente, IPertenceFrota {
 
 	public void setFrotaVeiculo(Frota frotaVeiculo) {
 		this.frotaVeiculo = frotaVeiculo;
+	}
+
+	public String getNomePraca() {
+		return nomePraca;
+	}
+
+	public void setNomePraca(String nomePraca) {
+		this.nomePraca = nomePraca;
 	}
 
 }
