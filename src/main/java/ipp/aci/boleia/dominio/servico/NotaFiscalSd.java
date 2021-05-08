@@ -817,9 +817,16 @@ public class NotaFiscalSd {
      */
     public BigDecimal obterValorTotalNota(Document nota) {
         BigDecimal valorCombustivel = obterValorTotalCombustivelNota(nota);
+        BigDecimal valorDescontoCombustivel = obterDescontoCombustivelNota(nota);
         BigDecimal valorProdutos = obterValorTotalProdutosNota(nota);
-        valorCombustivel = valorCombustivel != null ? valorCombustivel : BigDecimal.ZERO;
-        valorProdutos = valorProdutos != null ? valorProdutos : BigDecimal.ZERO;
+        BigDecimal valorDescontoProdutos = obterDescontoProdutosNota(nota);
+
+        valorDescontoCombustivel = valorDescontoCombustivel != null ? valorDescontoCombustivel : BigDecimal.ZERO;
+        valorCombustivel = valorCombustivel != null && valorCombustivel.compareTo(BigDecimal.ZERO) > 0 ? valorCombustivel.subtract(valorDescontoCombustivel) : BigDecimal.ZERO;
+
+        valorDescontoProdutos = valorDescontoProdutos != null ? valorDescontoProdutos : BigDecimal.ZERO;
+        valorProdutos = valorProdutos != null && valorProdutos.compareTo(BigDecimal.ZERO) > 0 ? valorProdutos.subtract(valorDescontoProdutos) : BigDecimal.ZERO;
+
         return valorCombustivel.add(valorProdutos).setScale(2, BigDecimal.ROUND_HALF_UP);
     }
 
