@@ -1,12 +1,19 @@
 package ipp.aci.boleia.dominio.rotinas;
 
-import ipp.aci.boleia.dominio.*;
+import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import org.hibernate.envers.Audited;
 
-import javax.persistence.*;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 import java.util.Collections;
 import java.util.Date;
@@ -18,7 +25,7 @@ import java.util.List;
 @Entity
 @Audited
 @Table(name = "MOTORISTA_ENVIO_EMAIL")
-public class MotoristaEnvioEmail implements IPersistente /*, IExclusaoLogica, IPertenceFrota, IPertenceMotorista */ {
+public class MotoristaEnvioEmail implements IPersistente {
 
     private static final long serialVersionUID = -5710886542823346375L;
 
@@ -34,13 +41,9 @@ public class MotoristaEnvioEmail implements IPersistente /*, IExclusaoLogica, IP
     @Column(name = "NM_MOTORISTA")
     private String nome;
 
-    @Min(10L)
-    @Max(99L)
     @Column(name = "CD_DDD_TEL_CEL")
     private Integer dddTelefoneCelular;
 
-    @Min(10000000L)
-    @Max(999999999L)
     @Column(name = "NO_TEL_CEL")
     private Integer telefoneCelular;
 
@@ -58,9 +61,7 @@ public class MotoristaEnvioEmail implements IPersistente /*, IExclusaoLogica, IP
     /**
      * Construtor padrão da entidade.
      */
-    public MotoristaEnvioEmail() {
-        // nada a fazer
-    }
+    public MotoristaEnvioEmail() {}
 
     /**
      * Construtor da classe
