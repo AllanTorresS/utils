@@ -144,6 +144,7 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
             "FROM " +
             "Frota F " +
             "JOIN FETCH F.motivosAlteracaoStatus MAS " +
+            "LEFT JOIN FETCH MAS.usuario U " +
             "WHERE size(MAS) > 1 " +
             "AND MAS.statusVigenciaAlteracao = " + StatusVigenciaAlteracaoStatusFrota.VIGENTE.getValue();
 

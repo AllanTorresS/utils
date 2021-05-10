@@ -186,7 +186,7 @@ public class FrotaSd {
                                                                  ClassificacaoStatusFrota classificacao,
                                                                  String justificativa, Date prazoAlteracaoTemporaria) {
         Frota frota = repositorio.obterPorId(idFrota);
-        MotivoAlteracaoStatusFrota motivoAlteracao = motivoAlteracaoStatusFrotaSd.criarMotivoAlteracaoStatus(frota, tipoAlteracao, classificacao, justificativa, prazoAlteracaoTemporaria, null);
+        MotivoAlteracaoStatusFrota motivoAlteracao = motivoAlteracaoStatusFrotaSd.criarMotivoAlteracaoStatus(frota, tipoAlteracao, classificacao, justificativa, prazoAlteracaoTemporaria, frota.getUltimoMotivoDefinitivo());
         frota.setStatus(motivoAlteracao.isAtivacao() ? StatusFrota.ATIVO.getValue() : StatusFrota.INATIVO.getValue());
         repositorio.armazenar(frota);
         return motivoAlteracao;
