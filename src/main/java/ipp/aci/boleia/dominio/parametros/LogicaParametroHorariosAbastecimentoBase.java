@@ -41,7 +41,7 @@ public abstract class LogicaParametroHorariosAbastecimentoBase {
             frotaParametroSistema.getHorarios().stream()
                     .filter(h -> h.getTipoVeiculo().getId().equals(tipoVeiculo.getId()))
                     .filter(h -> h.getDiaSemana().equals(diaSemana))
-                    .filter(h -> !h.isPermitido() || hora < h.getDe() || hora > h.getAte())
+                    .filter(h -> !h.isPermitido() || hora < h.getDe() || hora > (h.getAte() - 1))
                     .findFirst()
                     .ifPresent(h -> {
                         resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
