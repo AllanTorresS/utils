@@ -1,5 +1,6 @@
 package ipp.aci.boleia.dominio.interfaces;
 
+import ipp.aci.boleia.dominio.AutorizacaoPagamento;
 import ipp.aci.boleia.dominio.Motorista;
 import ipp.aci.boleia.dominio.Veiculo;
 
@@ -75,5 +76,15 @@ public interface IFluxoAbastecimentoConfig {
      */
     default boolean possuiMesmaPlacaDoFluxo(Veiculo veiculo) {
         return this.getVeiculo() == null || Objects.equals(veiculo.getPlaca(), this.getVeiculo().getPlaca());
+    }
+
+    /**
+     *  Verifica se é nescessario verificar hodometro/horimetro para o abastecimento em questão
+     *
+     * @param autorizacaoPagamento abastecimento validado
+     * @return true se a configuração de fluxo exige hodometro/horimetro e se o abastecimento tem as informações de hodometro/horimetro
+     */
+    default boolean deveValidarHodometroHorimetro(AutorizacaoPagamento autorizacaoPagamento) {
+        return this.getExigirTelaHodometroHorimetro() || autorizacaoPagamento.temHodometroOuHorimetro();
     }
 }
