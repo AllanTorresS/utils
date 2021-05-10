@@ -594,7 +594,7 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
 
         parametros.add(new ParametroPesquisaIgual("postoInterno",true));
         parametros.add(new ParametroPesquisaIgual("id", filtro.getIdFrota()));
-        parametros.add(new ParametroPesquisaLike("razaoSocial", filtro.getTermo().replaceAll("[-./]+", "")));
+        parametros.add(new ParametroPesquisaLike("razaoSocial", filtro.getTermo()));
 
         return pesquisar(new ParametroOrdenacaoColuna("razaoSocial"), parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }

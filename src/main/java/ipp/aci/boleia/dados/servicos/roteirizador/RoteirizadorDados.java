@@ -43,9 +43,7 @@ public class RoteirizadorDados implements IRoteirizadorDados {
     @Override
     public RespostaRoteirizadorVo calcularRota(RequisicaoRoteirizadorVo requisicao) {
         try {
-            LOGGER.info(String.format("URL %s", roteirizadorUrl));
             String stringRequest = new ObjectMapper().writeValueAsString(requisicao);
-            LOGGER.info(String.format("Requisição enviada ao gateway %s", stringRequest));
             return clientRest.doPostJson(roteirizadorUrl, requisicao, null, this::tratarResposta);
         } catch (JsonProcessingException e) {
             throw new ExcecaoBoleiaRuntime(Erro.ERRO_INTEGRACAO, e);
@@ -55,9 +53,7 @@ public class RoteirizadorDados implements IRoteirizadorDados {
     @Override
     public RespostaRoteirizadorValidarVo validarRota(RequisicaoRoteirizadorValidarVo requisicao){
         try {
-            LOGGER.info(String.format("URL %s", validadorUrl));
             String stringRequest = new ObjectMapper().writeValueAsString(requisicao);
-            LOGGER.info(String.format("Requisição enviada ao gateway %s", stringRequest));
             return clientRest.doPostJson(validadorUrl, requisicao, null, this::tratarRespostaValidador);
         } catch (JsonProcessingException e) {
             throw new ExcecaoBoleiaRuntime(Erro.ERRO_INTEGRACAO, e);
@@ -70,13 +66,12 @@ public class RoteirizadorDados implements IRoteirizadorDados {
      * @param resp {@link CloseableHttpResponse} Objeto que representa a resposta
      * @return {@link RespostaRoteirizadorVo} Resposta convertida
      */
-    public RespostaRoteirizadorVo tratarResposta(CloseableHttpResponse resp) {
+    private RespostaRoteirizadorVo tratarResposta(CloseableHttpResponse resp) {
         RespostaRoteirizadorVo response;
         try {
             response = UtilitarioJson.toObjectWithConfigureFailOnUnknowProperties(resp, RespostaRoteirizadorVo.class, false);
             response.setStatusRequisicao(resp.getStatusLine().getStatusCode());
-            LOGGER.info(String.format("Resposta recebida do gateway : %s", new ObjectMapper().writeValueAsString(response)));
-        } catch (IOException|ExcecaoBoleiaRuntime e) {
+        } catch (ExcecaoBoleiaRuntime e) {
             throw new ExcecaoBoleiaRuntime(Erro.ERRO_INTEGRACAO, e);
         }
         return response;
@@ -87,13 +82,12 @@ public class RoteirizadorDados implements IRoteirizadorDados {
      * @param resp {@link CloseableHttpResponse} Objeto que representa a resposta
      * @return {@link RespostaRoteirizadorVo} Resposta convertida
      */
-    public RespostaRoteirizadorValidarVo tratarRespostaValidador(CloseableHttpResponse resp) {
+    private RespostaRoteirizadorValidarVo tratarRespostaValidador(CloseableHttpResponse resp) {
         RespostaRoteirizadorValidarVo response;
         try {
             response = UtilitarioJson.toObjectWithConfigureFailOnUnknowProperties(resp, RespostaRoteirizadorValidarVo.class, false);
             response.setStatusRequisicao(resp.getStatusLine().getStatusCode());
-            LOGGER.info(String.format("Resposta recebida do gateway : %s", new ObjectMapper().writeValueAsString(response)));
-        } catch (IOException|ExcecaoBoleiaRuntime e) {
+        } catch (ExcecaoBoleiaRuntime e) {
             throw new ExcecaoBoleiaRuntime(Erro.ERRO_INTEGRACAO, e);
         }
         return response;

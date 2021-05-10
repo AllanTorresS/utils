@@ -2,12 +2,8 @@ package ipp.aci.boleia.dados.oracle;
 
 import ipp.aci.boleia.dados.IPostoInternoTipoCombustivelPrecoDados;
 import ipp.aci.boleia.dominio.PostoInternoTipoCombustivelPreco;
-import ipp.aci.boleia.dominio.RotaPostoDesconsiderado;
-import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
-import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDiferente;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
-import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -15,7 +11,7 @@ import java.util.List;
 
 
 /**
- * Respositorio de entidades Rota
+ * Respositorio de entidades de PostoInternoTipoCombustivelPreco que define relação entre Posto Interno e um Tipo de Combustivel com seu preço
  */
 @Repository
 public class OraclePostoInternoTipoCombustivelPrecoDados extends OracleRepositorioBoleiaDados<PostoInternoTipoCombustivelPreco> implements IPostoInternoTipoCombustivelPrecoDados {
@@ -27,14 +23,18 @@ public class OraclePostoInternoTipoCombustivelPrecoDados extends OracleRepositor
         super(PostoInternoTipoCombustivelPreco.class);
     }
 
-    public List<PostoInternoTipoCombustivelPreco> obterPorPostoInternoTipoCombustivel(Long idFrota, Long idUnide, Long idTipoCombustivel) {
+    @Override
+    public PostoInternoTipoCombustivelPreco obterPorPostoInternoTipoCombustivel(Long idFrota, Long idUnidade, Long idTipoCombustivel) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
 
-        parametros.add(new ParametroPesquisaIgual("idFrota", idFrota));
-        parametros.add(new ParametroPesquisaIgual("idUnidade", idUnide));
-        parametros.add(new ParametroPesquisaIgual("idTipoCombustivel", idTipoCombustivel));
+        if (idFrota != null){
+            parametros.add(new ParametroPesquisaIgual("frota.id", idFrota));
+        }else if (idUnidade != null){
+            parametros.add(new ParametroPesquisaIgual("unidade.id", idUnidade));
+        }
+        parametros.add(new ParametroPesquisaIgual("tipoCombustivel.id", idTipoCombustivel));
 
-        return pesquisar((ParametroOrdenacaoColuna) null, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        return pesquisarUnico(parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
 }

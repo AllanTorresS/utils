@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 
 
 /**
- * Representa a ligacao entra a tabela de Rota e Postos
+ * Representa a ligacao entra a tabela de Postos Interno e Tipo de Combustivel com seu respectivo preço
  */
 @Entity
 @Audited
@@ -25,30 +25,19 @@ public class PostoInternoTipoCombustivelPreco implements IPersistente {
     private Long id;
 
     @NotNull
-    @Column(name = "CD_FROTA")
-    private Long idFrota;
-
-    @Column(name = "CD_UNIDADE")
-    private Long idUnidade;
-
-    @NotNull
-    @Column(name = "CD_TIPO_COMBUSTIVEL")
-    private Long idTipoCombustivel;
-
-    @NotNull
     @Column(name = "VA_PRECO")
     private BigDecimal preco;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CD_FROTA", insertable = false, updatable = false)
+    @JoinColumn(name = "CD_FROTA")
     private Frota frota;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CD_UNIDADE", insertable = false, updatable = false)
+    @JoinColumn(name = "CD_UNIDADE")
     private Unidade unidade;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CD_TIPO_COMBUSTIVEL", insertable = false, updatable = false)
+    @JoinColumn(name = "CD_TIPO_COMBUSTIVEL")
     private TipoCombustivel tipoCombustivel;
 
     @Override
@@ -59,30 +48,6 @@ public class PostoInternoTipoCombustivelPreco implements IPersistente {
     @Override
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getIdFrota() {
-        return idFrota;
-    }
-
-    public void setIdFrota(Long idFrota) {
-        this.idFrota = idFrota;
-    }
-
-    public Long getIdUnidade() {
-        return idUnidade;
-    }
-
-    public void setIdUnidade(Long idUnidade) {
-        this.idUnidade = idUnidade;
-    }
-
-    public Long getIdTipoCombustivel() {
-        return idTipoCombustivel;
-    }
-
-    public void setIdTipoCombustivel(Long idTipoCombustivel) {
-        this.idTipoCombustivel = idTipoCombustivel;
     }
 
     public BigDecimal getPreco() {

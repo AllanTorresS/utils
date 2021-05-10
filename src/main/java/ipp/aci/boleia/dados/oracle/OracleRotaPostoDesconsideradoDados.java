@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * Respositorio de entidades Rota
+ * Respositorio de entidades RotaPostoDesconsiderado que define a relação entre uma Rota e seus Postos Desconsiderados
  */
 @Repository
 public class OracleRotaPostoDesconsideradoDados extends OracleRepositorioBoleiaDados<RotaPostoDesconsiderado> implements IRotaPostoDesconsideradoDados {
@@ -22,6 +22,6 @@ public class OracleRotaPostoDesconsideradoDados extends OracleRepositorioBoleiaD
     }
 
     public List<RotaPostoDesconsiderado> obterPorRota(Long idRota) {
-        return pesquisarSemIsolamentoDados((ParametroOrdenacaoColuna) null, new ParametroPesquisaIgual("idRota", idRota));
+        return pesquisar((ParametroOrdenacaoColuna) null, new ParametroPesquisaIgual("rota.id", idRota));
     }
 }

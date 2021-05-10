@@ -114,7 +114,7 @@ public class OracleUnidadeDados extends OracleRepositorioBoleiaDados<Unidade> im
 
 		parametros.add(new ParametroPesquisaIgual("postoInterno",true));
 		parametros.add(new ParametroPesquisaIgual("frota.id", filtro.getIdFrota()));
-		parametros.add(new ParametroPesquisaLike("nome", filtro.getTermo().replaceAll("[-./]+", "")));
+		parametros.add(new ParametroPesquisaLike("nome", filtro.getTermo()));
 
 		return pesquisar(new ParametroOrdenacaoColuna("nome"), parametros.toArray(new ParametroPesquisa[parametros.size()]));
 	}

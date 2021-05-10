@@ -16,17 +16,10 @@ public class FiltroAutoCompletePostoRotaVo {
 
     private List<Long> postosParametizados;
 
+    /**
+     * Construtor Padrão
+     */
     public FiltroAutoCompletePostoRotaVo() {
-    }
-
-    public FiltroAutoCompletePostoRotaVo(String termo, Long idFrota, Boolean postoInterno, List<Integer> parametrosDeUso, Long tipoCombustivel, Boolean postoUrbano, List<Long> postosParametizados) {
-        this.termo = termo;
-        this.idFrota = idFrota;
-        this.postoInterno = postoInterno;
-        this.parametrosDeUso = parametrosDeUso;
-        this.tipoCombustivel = tipoCombustivel;
-        this.postoUrbano = postoUrbano;
-        this.postosParametizados = postosParametizados;
     }
 
     public Long getTipoCombustivel() {

@@ -19,10 +19,6 @@ public enum TipoPostoRota implements IEnumComValor{
         this.value = value;
     }
 
-    /**
-     * Obtem o valor da enumercao
-     * @return o valor da enumeracao
-     */
     public Integer getValue() {
         return value;
     }

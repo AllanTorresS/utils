@@ -9,5 +9,10 @@ import java.util.List;
  */
 public interface IRotaParametroFrotaDados extends IRepositorioBoleiaDados<RotaParametroFrota> {
 
+    /**
+     * Obtem os parametros de sistema de uma rota
+     * @param idRota A rota
+     * @return A lista de parametros de sistema de uma rota
+     */
     List<RotaParametroFrota> obterPorRota(Long idRota);
 }

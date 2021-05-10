@@ -405,27 +405,27 @@ public class OraclePontoDeVendaDados extends OracleRepositorioBoleiaDados<PontoD
             parametros.add(new ParametroPesquisaDiferente("perfilVenda", "Urbano"));
         }
 
-        if (!filtro.getPostosParametizados().isEmpty()){
+        if (filtro.getPostosParametizados() != null && !filtro.getPostosParametizados().isEmpty()){
             parametros.add(new ParametroPesquisaIn("id", filtro.getPostosParametizados()));
         }
 
         parametros.add(new ParametroPesquisaOr(
-                new ParametroPesquisaIgual("restricaoVisibilidade", RestricaoVisibilidadePontoVenda.SEM_RESTRICAO),
+                new ParametroPesquisaIgual("restricaoVisibilidade", RestricaoVisibilidadePontoVenda.SEM_RESTRICAO.getValue()),
                 new ParametroPesquisaAnd(
-                        new ParametroPesquisaIgual("restricaoVisibilidade", RestricaoVisibilidadePontoVenda.VISIVEL_APENAS_PARA_FROTAS_COM_VINCULO_ATIVO),
-                        new ParametroPesquisaIgual("negociacoes.statusVinculo", StatusVinculoFrotaPontoVenda.ATIVO),
-                        new ParametroPesquisaIgual("negociacoes.statusBloqueio", StatusBloqueio.DESBLOQUEADO),
+                        new ParametroPesquisaIgual("restricaoVisibilidade", RestricaoVisibilidadePontoVenda.VISIVEL_APENAS_PARA_FROTAS_COM_VINCULO_ATIVO.getValue()),
+                        new ParametroPesquisaIgual("negociacoes.statusVinculo", StatusVinculoFrotaPontoVenda.ATIVO.getValue()),
+                        new ParametroPesquisaIgual("negociacoes.statusBloqueio", StatusBloqueio.DESBLOQUEADO.getValue()),
                         new ParametroPesquisaIgual("negociacoes.frota.id", filtro.getIdFrota())
                 )
         ));
 
         parametros.add(new ParametroPesquisaIgual("precosBase.precoMicromercado.tipoCombustivel.id", filtro.getTipoCombustivel()));
 
-        parametros.add(new ParametroPesquisaIgual("status",StatusAtivacao.ATIVO));
-        parametros.add(new ParametroPesquisaIgual("statusHabilitacao",StatusHabilitacaoPontoVenda.HABILITADO));
+        parametros.add(new ParametroPesquisaIgual("status",StatusAtivacao.ATIVO.getValue()));
+        parametros.add(new ParametroPesquisaIgual("statusHabilitacao",StatusHabilitacaoPontoVenda.HABILITADO.getValue()));
         parametros.add(new ParametroPesquisaIgual("excluido",false));
 
-        parametros.add(new ParametroPesquisaLike("nome", filtro.getTermo().replaceAll("[-./]+", "")));
+        parametros.add(new ParametroPesquisaLike("nome", filtro.getTermo()));
 
 
         return pesquisar(new ParametroOrdenacaoColuna("nome"), parametros.toArray(new ParametroPesquisa[parametros.size()]));

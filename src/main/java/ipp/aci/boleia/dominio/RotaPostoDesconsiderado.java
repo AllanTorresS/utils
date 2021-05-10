@@ -32,45 +32,20 @@ public class RotaPostoDesconsiderado implements IPersistente {
     @SequenceGenerator(name = "SEQ_ROTA_PTOV_DESCON", sequenceName = "SEQ_ROTA_PTOV_DESCON", allocationSize = 1)
     private Long id;
 
-    @NotNull
-    @Column(name = "CD_ROTA")
-    private Long idRota;
-
-    @NotNull
-    @Column(name = "CD_PTOV")
-    private Long idPtov;
-
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CD_ROTA", insertable = false, updatable = false)
+    @JoinColumn(name = "CD_ROTA")
     private Rota rota;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CD_PTOV", insertable = false, updatable = false)
+    @JoinColumn(name = "CD_PTOV")
     private PontoDeVenda pontoDeVenda;
 
-    public Long getIdRota() {
-        return idRota;
-    }
-
-    public void setIdRota(Long idRota) {
-        this.idRota = idRota;
-    }
-
-    public Long getIdPtov() {
-        return idPtov;
-    }
-
-    public void setIdPtov(Long idPtov) {
-        this.idPtov = idPtov;
-    }
 
     public Rota getRota() {
         return rota;
     }
 
     public void setRota(Rota rota) {
-        this.idRota = rota.getId();
         this.rota = rota;
     }
 
