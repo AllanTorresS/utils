@@ -501,18 +501,20 @@ public class NotaFiscalSd {
         BigDecimal diferencaCombustivel = valorTotalCombustivelNota.subtract(descontoCombustivel).subtract(valorCombustivelRestante).abs().setScale(2, BigDecimal.ROUND_HALF_UP);
         BigDecimal diferencaProdutos = valorTotalProdutoNota.subtract(descontoProduto).subtract(valorProdutosRestante).abs().setScale(2, BigDecimal.ROUND_HALF_UP);
         if(diferencaCombustivel.compareTo(margemAbastecimentos) > 0) {
-            if (valorTotalCombustivelNota.compareTo(valorCombustivelRestante) > 0) {
+            BigDecimal valorTotalComDesconto = valorTotalCombustivelNota.subtract(descontoCombustivel);
+            if (valorTotalComDesconto.compareTo(valorCombustivelRestante) > 0) {
                 this.addErroValidacao(validacoesNotas, null, Erro.NOTA_FISCAL_VALOR_COMB_EXCEDENTE);
             } else {
-                BigDecimal valorFaltante = valorCombustivelRestante.subtract(valorTotalCombustivelNota);
+                BigDecimal valorFaltante = valorCombustivelRestante.subtract(valorTotalComDesconto);
                 this.addErroValidacao(validacoesNotas, documento, Erro.NOTA_FISCAL_VALOR_COMB_FALTANTE, valorFaltante);
             }
         }
         if(diferencaProdutos.compareTo(margemAbastecimentos) > 0) {
-            if (valorTotalProdutoNota.compareTo(valorProdutosRestante) > 0) {
+            BigDecimal valorTotalComDesconto = valorTotalProdutoNota.subtract(descontoProduto);
+            if (valorTotalComDesconto.compareTo(valorProdutosRestante) > 0) {
                 this.addErroValidacao(validacoesNotas, documento, Erro.NOTA_FISCAL_VALOR_PROD_EXCEDENTE);
             } else {
-                BigDecimal valorFaltante = valorProdutosRestante.subtract(valorTotalProdutoNota);
+                BigDecimal valorFaltante = valorProdutosRestante.subtract(valorTotalComDesconto);
                 this.addErroValidacao(validacoesNotas, documento, Erro.NOTA_FISCAL_VALOR_PROD_FALTANTE, valorFaltante);
             }
         }
