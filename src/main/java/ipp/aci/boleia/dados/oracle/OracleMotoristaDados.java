@@ -53,7 +53,7 @@ public class OracleMotoristaDados extends OracleRepositorioBoleiaDados<Motorista
     private static final String LISTAR_MOTORISTAS_SEM_ABASTECIMENTO =
             "SELECT m " +
             "FROM Motorista m " +
-            "WHERE m.dataCriacao < :diasDeVerificacao and " +
+            "WHERE trunc(m.dataCriacao) = trunc(:diasDeVerificacao) and " +
             "NOT EXISTS (" +
             " 	SELECT 1 " +
             " 	FROM AbastecimentoCta ac " +
@@ -376,7 +376,7 @@ public class OracleMotoristaDados extends OracleRepositorioBoleiaDados<Motorista
 
     @Override
     public List<Motorista> obterMotoristasSemAbastecimento(Integer diasDeVerificacao) {
-        ParametroPesquisaIgual parametroDiasDeVerificacao = new ParametroPesquisaIgual("diasDeVerificacao", UtilitarioCalculoData.adicionarDiasData(utilitarioAmbiente.buscarDataAmbiente(), -diasDeVerificacao));
+        ParametroPesquisaIgual parametroDiasDeVerificacao = new ParametroPesquisaIgual("diasDeVerificacao", UtilitarioCalculoData.obterPrimeiroInstanteDia(UtilitarioCalculoData.adicionarDiasData(utilitarioAmbiente.buscarDataAmbiente(), -diasDeVerificacao)));
         return pesquisar(null, LISTAR_MOTORISTAS_SEM_ABASTECIMENTO, parametroDiasDeVerificacao).getRegistros();
     }
 
