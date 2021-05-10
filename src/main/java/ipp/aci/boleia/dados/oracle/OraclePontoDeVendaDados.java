@@ -405,7 +405,7 @@ public class OraclePontoDeVendaDados extends OracleRepositorioBoleiaDados<PontoD
             parametros.add(new ParametroPesquisaDiferente("perfilVenda", "Urbano"));
         }
 
-        if (filtro.getPostosParametizados() != null && !filtro.getPostosParametizados().isEmpty()){
+        if (!CollectionUtils.isEmpty(filtro.getPostosParametizados())){
             parametros.add(new ParametroPesquisaIn("id", filtro.getPostosParametizados()));
         }
 
