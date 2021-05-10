@@ -34,24 +34,12 @@ public class RotaParametroFrota implements IPersistente {
     private Long id;
 
     @NotNull
-    @Column(name = "CD_ROTA")
-    private Long idRota;
-
-    @NotNull
     @Column(name = "ID_PARAMETRO")
     private Integer idParametro;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CD_ROTA", insertable = false, updatable = false)
+    @JoinColumn(name = "CD_ROTA")
     private Rota rota;
-
-    public Long getIdRota() {
-        return idRota;
-    }
-
-    public void setIdRota(Long idRota) {
-        this.idRota = idRota;
-    }
 
     public Integer getIdParametro() {
         return idParametro;
@@ -66,7 +54,6 @@ public class RotaParametroFrota implements IPersistente {
     }
 
     public void setRota(Rota rota) {
-        this.idRota = rota.getId();
         this.rota = rota;
     }
 
