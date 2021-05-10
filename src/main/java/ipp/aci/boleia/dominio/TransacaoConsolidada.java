@@ -794,4 +794,12 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
         }
         return PREVISTO;
     }
+
+    @Transient
+    public Boolean getTransacaoCompletamenteAntecipada() {
+        if(reembolso != null && antecipacoes!= null) {
+            return reembolso.getValorDescontoAntecipacao() != null && reembolso.getValorDescontoAntecipacao().compareTo(BigDecimal.ZERO) > 0 && reembolso.getValorDescontoAntecipacao().equals(reembolso.getValorTotal());
+        }
+        return false;
+    }
 }
