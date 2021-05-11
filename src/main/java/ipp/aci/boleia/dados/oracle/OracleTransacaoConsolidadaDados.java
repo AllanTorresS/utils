@@ -113,7 +113,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "SUM(CASE WHEN ( " +  CLAUSULA_EXIGE_NOTA + " OR " + CLAUSULA_FROTA_GERENCIA_NF + " ) THEN TC.valorEmitidoNotaFiscal ELSE 0 END), " +
                     "SUM(TC.quantidadeAbastecimentos), " +
                     "CASE WHEN TC.reembolso is NULL THEN " + StatusPagamentoReembolso.PREVISTO.getValue() + " ELSE RM.status END, " +
-                    "SUM(A.valorReembolso), " + 
+                    "SUM(A.valorReembolso), " +
                     "MAX(CASE WHEN ( " +  CLAUSULA_EXIGE_NOTA + " OR " + CLAUSULA_FROTA_GERENCIA_NF + " ) THEN 1 ELSE 0 END), " +
                     "MAX(CASE WHEN ( " + CLAUSULA_EXIGE_NOTA + " ) THEN 1 ELSE 0 END ))";
 
@@ -1062,15 +1062,24 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
 
     @Override
     public TransacaoConsolidada obterConsolidado(Boolean frotaExigeNF, Frota frota, PontoDeVenda pv, ModalidadePagamento modalidadePagamento, EmpresaAgregada empresaAgregada, Unidade unidade, Date dataReferencia) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
         ParametroPesquisa parametroEmpresaAgregadaExigeNf = new ParametroPesquisaNulo("empresaAgregada.id");
         ParametroPesquisa parametroUnidadeExigeNf = new ParametroPesquisaNulo("unidade.id");
         if(empresaAgregada != null) {
             parametroEmpresaAgregadaExigeNf = new ParametroPesquisaIgual("empresaAgregada.id", empresaAgregada.getId());
         } else if(unidade != null) {
             parametroUnidadeExigeNf = new ParametroPesquisaIgual("unidade.id", unidade.getId());
+        } else if(frotaExigeNF != null) {
+            if(frota.isGerenciaNf() == null) {
+                parametros.add(new ParametroPesquisaIgual("frotaExigeNF", frotaExigeNF));
+            } else if(frota.isGerenciaNf()) {
+                parametros.add(new ParametroPesquisaAnd(
+                        new ParametroPesquisaIgual("frotaExigeNF", frotaExigeNF),
+                        new ParametroPesquisaIgual("frotaGerenciaNf", frota.isGerenciaNf())
+                ));
+            }
         }
 
-        List<ParametroPesquisa> parametros = new ArrayList<>();
         parametros.add(new ParametroPesquisaDataMenorOuIgual("dataInicioPeriodo", dataReferencia));
         parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataFimPeriodo", UtilitarioCalculoData.obterPrimeiroInstanteDia(dataReferencia)));
         parametros.add(new ParametroPesquisaIgual("frotaPtov.pontoVenda.id", pv.getId()));
@@ -1078,16 +1087,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         parametros.add(new ParametroPesquisaIgual("modalidadePagamento", modalidadePagamento.getValue()));
         parametros.add(parametroEmpresaAgregadaExigeNf);
         parametros.add(parametroUnidadeExigeNf);
-        if(frotaExigeNF != null) {
-            if(frota.isGerenciaNf() == null){
-                parametros.add(new ParametroPesquisaIgual("frotaExigeNF", frotaExigeNF));
-            }else if(frota.isGerenciaNf()){
-                parametros.add(new ParametroPesquisaAnd(
-                        new ParametroPesquisaIgual("frotaExigeNF", frotaExigeNF),
-                        new ParametroPesquisaIgual("frotaGerenciaNf", frota.isGerenciaNf())
-                ));
-            }
-        }
+
         return pesquisarUnico(parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
