@@ -300,12 +300,30 @@ public class NotaFiscalSd {
     }
 
     /**
+     * Obtém o valor com o desconto da NFe dos combustíveis de uma nota fiscal
+     * @param nota A nota fiscal
+     * @return O valor de combustíveis
+     */
+    public BigDecimal obterValorTotalCombustivelNotaComDesconto(Document nota) {
+        return calcularValoresNotaComDesconto(nota).getLeft();
+    }
+
+    /**
      * Obtém o valor dos produtos de uma nota fiscal
      * @param nota A nota fiscal
      * @return O valor de produtos
      */
     public BigDecimal obterValorTotalProdutosNota(Document nota) {
         return calcularValoresNota(nota).getRight();
+    }
+
+    /**
+     * Obtém o valor com desconto dos produtos de uma nota fiscal
+     * @param nota A nota fiscal
+     * @return O valor de produtos
+     */
+    public BigDecimal obterValorTotalProdutosNotaComDesconto(Document nota) {
+        return calcularValoresNotaComDesconto(nota).getRight();
     }
 
     /**
@@ -414,6 +432,46 @@ public class NotaFiscalSd {
         return Pair.of(valorCombustivel, valorProdutos);
     }
 
+    /**
+     * Calcula os valores unitários de combustível e produtos
+     * @param nota A nota fiscal
+     * @return Os valores calculados em formato de par (esquerda - valor de combustível / direita - valor de produtos)
+     */
+    private Pair<BigDecimal, BigDecimal> calcularValoresNotaComDesconto(Document nota) {
+        NodeList itensNota = notaFiscalParserSd.getItens(nota);
+        BigDecimal valorCombustivel = BigDecimal.ZERO;
+        BigDecimal valorProdutos = BigDecimal.ZERO;
+        List<TipoCombustivel> combustiveis = tipoCombustivelDados.obterTodos(null);
+
+        if(itensNota != null){
+            for(int i = 0; i < itensNota.getLength(); i++) {
+                Node item = itensNota.item(i);
+                Long ncmItem = notaFiscalParserSd.getLong(nota, ConstantesNotaFiscalParser.ITEM_NCM, item);
+                BigDecimal valor = notaFiscalParserSd.getBigDecimal(nota, ConstantesNotaFiscalParser.ITEM_VALOR_LIQUIDO, item);
+                BigDecimal valorDesconto = notaFiscalParserSd.getBigDecimal(nota, ConstantesNotaFiscalParser.ITEM_DESCONTO, item);
+                valor =  valor.subtract(valorDesconto);
+
+                if (valor != null) {
+                    Boolean isCombustivel = combustiveis
+                            .stream()
+                            .anyMatch(
+                                    comb -> comb.getCodigosNcm()
+                                            .stream()
+                                            .anyMatch(ncm -> ncm.getCodigoNcm().equals(ncmItem))
+                            );
+                    if (isCombustivel) {
+                        valorCombustivel = valorCombustivel.add(valor);
+                    } else {
+                        valorProdutos = valorProdutos.add(valor);
+                    }
+                }
+            }
+        }
+        valorCombustivel = valorCombustivel.compareTo(BigDecimal.ZERO) > 0 ? valorCombustivel : null;
+        valorProdutos = valorProdutos.compareTo(BigDecimal.ZERO) > 0 ? valorProdutos : null;
+        return Pair.of(valorCombustivel, valorProdutos);
+    }
+
 
     /**
      * Calcula os valores descontos de combustível e produtos
@@ -498,8 +556,8 @@ public class NotaFiscalSd {
         BigDecimal descontoCombustivel = documentos.stream().map(this::obterDescontoCombustivelNota).filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, BigDecimal.ROUND_HALF_UP);
         BigDecimal descontoProduto = documentos.stream().map(this::obterDescontoProdutosNota).filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, BigDecimal.ROUND_HALF_UP);
 
-        BigDecimal diferencaCombustivel = valorTotalCombustivelNota.subtract(descontoCombustivel).subtract(valorCombustivelRestante).abs().setScale(2, BigDecimal.ROUND_HALF_UP);
-        BigDecimal diferencaProdutos = valorTotalProdutoNota.subtract(descontoProduto).subtract(valorProdutosRestante).abs().setScale(2, BigDecimal.ROUND_HALF_UP);
+        BigDecimal diferencaCombustivel = BigDecimal.ZERO.compareTo(valorTotalCombustivelNota) == 0 ? BigDecimal.ZERO : valorTotalCombustivelNota.subtract(descontoCombustivel).subtract(valorCombustivelRestante).abs().setScale(2, BigDecimal.ROUND_HALF_UP);
+        BigDecimal diferencaProdutos = BigDecimal.ZERO.compareTo(valorTotalProdutoNota) == 0 ? BigDecimal.ZERO : valorTotalProdutoNota.subtract(descontoProduto).subtract(valorProdutosRestante).abs().setScale(2, BigDecimal.ROUND_HALF_UP);
         if(diferencaCombustivel.compareTo(margemAbastecimentos) > 0) {
             BigDecimal valorTotalComDesconto = valorTotalCombustivelNota.subtract(descontoCombustivel);
             if (valorTotalComDesconto.compareTo(valorCombustivelRestante) > 0) {
