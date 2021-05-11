@@ -308,6 +308,7 @@ public final class ChavePermissao {
     public static final String ROTA_INTELIGENTE_CONSULTAR_E_VISUALIZAR         = SPRING_ROLE_PREFIX + "ROTA_INTELIGENTE_CONSULTAR_E_VISUALIZAR" + SPRING_ROLE_SUFFIX;
     public static final String ROTA_INTELIGENTE_EXCLUIR                        = SPRING_ROLE_PREFIX + "ROTA_INTELIGENTE_EXCLUIR" + SPRING_ROLE_SUFFIX;
     public static final String ROTA_INTELIGENTE_INCLUIR                        = SPRING_ROLE_PREFIX + "ROTA_INTELIGENTE_INCLUIR" + SPRING_ROLE_SUFFIX;
+    public static final String ROTA_INTELIGENTE_EXPORTAR                       = SPRING_ROLE_PREFIX + "ROTA_INTELIGENTE_EXPORTAR" + SPRING_ROLE_SUFFIX;
 
     /**
      * Impede instanciacao e heranca
