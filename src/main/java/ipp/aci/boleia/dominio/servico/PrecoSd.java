@@ -3,7 +3,6 @@ package ipp.aci.boleia.dominio.servico;
 import ipp.aci.boleia.dados.IFrotaPontoVendaDados;
 import ipp.aci.boleia.dados.IPrecoBaseDados;
 import ipp.aci.boleia.dados.IPrecoDados;
-import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.FrotaPontoVenda;
 import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.Preco;
@@ -222,17 +221,17 @@ public class PrecoSd {
     /**
      * Obtem o preço negociado entre uma frota e um ponto de venda, caso exista.
      * Caso não exista um preço negociado retorna o preço base do combustível caso o mesmo seja comercializado pelo ponto de venda informado.
-     * @param frota frota da negociação
-     * @param pontoDeVenda ponto de venda da negociação
+     * @param idFrota id da frota da negociação
+     * @param idPontoDeVenda id do ponto de venda da negociação
      * @param idTipoCombustivel id do combustível a ser consultado
      * @return o preço do combustível
      */
-    public BigDecimal obterPrecoPraticadoCombustivel(Frota frota, PontoDeVenda pontoDeVenda, Long idTipoCombustivel) {
-        List<PrecoBase> precos = repositorioPrecoBase.buscarPrecosVigentes(pontoDeVenda.getId(), idTipoCombustivel);
+    public BigDecimal obterPrecoPraticadoCombustivel(Long idFrota, Long idPontoDeVenda, Long idTipoCombustivel) {
+        List<PrecoBase> precos = repositorioPrecoBase.buscarPrecosVigentes(idPontoDeVenda, idTipoCombustivel);
         if(precos == null || precos.isEmpty()) {
             return null;
         }
-        Preco preco = repositorioPreco.obterAtualPorFrotaPvCombustivel(frota.getId(), pontoDeVenda.getId(), idTipoCombustivel);
+        Preco preco = repositorioPreco.obterAtualPorFrotaPvCombustivel(idFrota, idPontoDeVenda, idTipoCombustivel);
         if(preco != null) {
             return preco.getPreco();
         }
