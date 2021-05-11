@@ -894,12 +894,10 @@ public class NotaFiscalSd {
             BigDecimal valorTotalProduto = valorProdutos != null ? valorProdutos.setScale(2, BigDecimal.ROUND_HALF_UP) : BigDecimal.ZERO;
 
             BigDecimal valorTotalItensNota = valorTotalProduto.add(valorTotalCombustivel);
-            BigDecimal valorDescontoTotal = notaFiscalParserSd.getBigDecimal(documento, ConstantesNotaFiscalParser.VALOR_DESCONTO);
-            BigDecimal valorTotalBrutoNota = notaFiscalParserSd.getBigDecimal(documento, ConstantesNotaFiscalParser.VALOR_TOTAL);
+            BigDecimal valorTotalBrutoNota = notaFiscalParserSd.getBigDecimal(documento, ConstantesNotaFiscalParser.VALOR_TOTAL_PRODUTOS);
             if (valorTotalBrutoNota != null) {
-                BigDecimal valorTotalNota = valorDescontoTotal !=null ? valorTotalBrutoNota.add(valorDescontoTotal) : valorTotalBrutoNota;
-                valorTotalNota = valorTotalNota.setScale(2, BigDecimal.ROUND_HALF_UP);
-                if(valorTotalItensNota.compareTo(valorTotalNota) != 0) {
+                valorTotalBrutoNota = valorTotalBrutoNota.setScale(2, BigDecimal.ROUND_HALF_UP);
+                if(valorTotalItensNota.compareTo(valorTotalBrutoNota) != 0) {
                     addErroValidacao(validacoesNotas, documento, Erro.NOTA_FISCAL_POSSUI_SOMATORIO_DIFERENTE_VALOR_TOTAL);
                 }
             } else{
