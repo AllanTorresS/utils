@@ -349,6 +349,9 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @Column(name="ID_SEM_NOTA_FISCAL")
     private Boolean semNotaFiscal;
 
+    @Column(name="ID_GERENCIA_NF_AGENDADA")
+    private Boolean gerenciaNfAgendada;
+
     @Column(name="ID_GERENCIA_NF")
     private Boolean gerenciaNf;
 
@@ -423,7 +426,7 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @Formula("(SELECT NVL(COUNT(0), 0) FROM BOLEIA_SCHEMA.TAG_CONECTCAR T WHERE T.CD_FROTA = CD_FROTA AND T.DT_ATIVACAO IS NOT NULL)")
     private Integer totalTagsAtivas;
 
-	/**
+    /**
      * Construtor default
      */
     public Frota() {
@@ -1108,22 +1111,22 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
 
     public ApiToken getApiToken() {
         return apiTokens != null ?
-            apiTokens
-                .stream()
-                .filter(a -> !a.isContingencia())
-                .findFirst()
-                .orElse(null)
-            : null;
+                apiTokens
+                        .stream()
+                        .filter(a -> !a.isContingencia())
+                        .findFirst()
+                        .orElse(null)
+                : null;
     }
 
     public ApiToken getApiTokenContigencia() {
         return apiTokens != null ?
-            apiTokens
-                .stream()
-                .filter(ApiToken::isContingencia)
-                .findFirst()
-                .orElse(null)
-            : null;
+                apiTokens
+                        .stream()
+                        .filter(ApiToken::isContingencia)
+                        .findFirst()
+                        .orElse(null)
+                : null;
     }
 
     @Transient
@@ -1153,19 +1156,19 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
         this.semNotaFiscal = semNotaFiscal;
     }
 
-	/**
-	 * @return the apiTokens
-	 */
-	public List<ApiToken> getApiTokens() {
-		return apiTokens;
-	}
+    /**
+     * @return the apiTokens
+     */
+    public List<ApiToken> getApiTokens() {
+        return apiTokens;
+    }
 
-	/**
-	 * @param apiTokens the apiTokens to set
-	 */
-	public void setApiTokens(List<ApiToken> apiTokens) {
-		this.apiTokens = apiTokens;
-	}
+    /**
+     * @param apiTokens the apiTokens to set
+     */
+    public void setApiTokens(List<ApiToken> apiTokens) {
+        this.apiTokens = apiTokens;
+    }
 
     public Date getDataAceiteTermos() {
         return dataAceiteTermos;
@@ -1256,7 +1259,7 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
      * @return true, caso a frota seja pre paga e nao tenha realizado uma primeira compra, false caso contrario
      */
     public Boolean exigeCompraCredito() {
-	    return this.modoPagamento.equals(ModalidadePagamento.PRE_PAGO.getValue()) && (this.primeiraCompra == null || !this.primeiraCompra);
+        return this.modoPagamento.equals(ModalidadePagamento.PRE_PAGO.getValue()) && (this.primeiraCompra == null || !this.primeiraCompra);
     }
 
     /**
@@ -1311,13 +1314,11 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     }
 
     public void setCondicoesComerciais(CondicoesComerciais condicoesComerciais) {
-		this.condicoesComerciais = condicoesComerciais;
-	}
-
+        this.condicoesComerciais = condicoesComerciais;
+    }
     public CondicoesComerciais getCondicoesComerciais() {
-		return condicoesComerciais;
-	}
-
+        return condicoesComerciais;
+    }
     /**
      * Informa se a Matriz da frota exige nota fiscal.
      *
@@ -1341,7 +1342,7 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
                 .anyMatch(u -> u.getExigeNotaFiscal() != null && u.getExigeNotaFiscal());
     }
 
-     /**
+    /**
      * Verifica se frota tem parametro de ciclo para atualizar
      * @return true caso tenha novo parâmetro de ciclo
      */
@@ -1362,13 +1363,13 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
         }
     }
 
-	public SituacaoConectCar getSituacaoConectCar() {
-		return situacaoConectCar;
-	}
+    public SituacaoConectCar getSituacaoConectCar() {
+        return situacaoConectCar;
+    }
 
-	public void setSituacaoConectCar(SituacaoConectCar situacaoConectCar) {
-		this.situacaoConectCar = situacaoConectCar;
-	}
+    public void setSituacaoConectCar(SituacaoConectCar situacaoConectCar) {
+        this.situacaoConectCar = situacaoConectCar;
+    }
 
     public ParametroNotaFiscal getParametroNotaFiscal() {
         return parametroNotaFiscal;
@@ -1378,29 +1379,37 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
         this.parametroNotaFiscal = parametroNotaFiscal;
     }
 
-	public Integer getTotalTags() {
-		return totalTags;
-	}
+    public Integer getTotalTags() {
+        return totalTags;
+    }
 
-	public void setTotalTags(Integer totalTags) {
-		this.totalTags = totalTags;
-	}
+    public void setTotalTags(Integer totalTags) {
+        this.totalTags = totalTags;
+    }
 
-	public Integer getTotalTagsAtivas() {
-		return totalTagsAtivas;
-	}
+    public Integer getTotalTagsAtivas() {
+        return totalTagsAtivas;
+    }
 
-	public void setTotalTagsAtivas(Integer totalTagsAtivas) {
-		this.totalTagsAtivas = totalTagsAtivas;
-	}
+    public void setTotalTagsAtivas(Integer totalTagsAtivas) {
+        this.totalTagsAtivas = totalTagsAtivas;
+    }
 
-	public Lead getLead() {
-		return lead;
-	}
+    public Lead getLead() {
+        return lead;
+    }
 
-	public void setLead(Lead lead) {
-		this.lead = lead;
-	}
+    public void setLead(Lead lead) {
+        this.lead = lead;
+    }
+
+    public Boolean getGerenciaNfAgendada() {
+        return gerenciaNfAgendada;
+    }
+
+    public void setGerenciaNfAgendada(Boolean gerenciaNfAgendada) {
+        this.gerenciaNfAgendada = gerenciaNfAgendada;
+    }
 
     public Boolean isGerenciaNf() {
         return gerenciaNf;
@@ -1408,7 +1417,7 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
 
     public void setGerenciaNf(Boolean gerenciaNf) {
         this.gerenciaNf = gerenciaNf;
-	}
+    }
 
     public Boolean getLembrarParametrizacaoNf() {
         return lembrarParametrizacaoNf;

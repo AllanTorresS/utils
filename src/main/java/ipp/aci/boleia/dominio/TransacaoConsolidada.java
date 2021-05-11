@@ -557,6 +557,8 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
             keyBuilder.append(unidade.getId() + unidade.getCnpj());
         } else if (frotaExigeNF) {
             keyBuilder.append(frotaPtov.getFrota().getId() + frotaPtov.getFrota().getCnpj());
+        } else if(frotaGerenciaNf != null) {
+            keyBuilder.append(frotaGerenciaNf);
         }
         this.chave = UtilitarioCriptografia.calcularHashSHA256(keyBuilder.toString());
     }
