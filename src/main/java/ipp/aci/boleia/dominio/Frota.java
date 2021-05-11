@@ -1456,10 +1456,7 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     }
 
     public List<MotivoAlteracaoStatusFrota> getMotivosAlteracaoStatus() {
-        return motivosAlteracaoStatus
-                .stream()
-                .sorted(Comparator.comparing(MotivoAlteracaoStatusFrota::getDataCriacao))
-                .collect(Collectors.toList());
+       return motivosAlteracaoStatus;
     }
 
     public void setMotivosAlteracaoStatus(List<MotivoAlteracaoStatusFrota> motivosAlteracaoStatus) {
@@ -1607,5 +1604,17 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
                 )
                 .max(Comparator.comparing(MotivoAlteracaoStatusFrota::getDataCriacao))
                 .orElse(null);
+    }
+
+    /**
+     * Obtém a lista de motivos da frota ordenados por data de criação
+     * @return A lista ordenada
+     */
+    @Transient
+    public List<MotivoAlteracaoStatusFrota> getMotivosAlteracaoStatusFrotaOrdenados() {
+        return motivosAlteracaoStatus
+                .stream()
+                .sorted(Comparator.comparing(MotivoAlteracaoStatusFrota::getDataCriacao))
+                .collect(Collectors.toList());
     }
 }
