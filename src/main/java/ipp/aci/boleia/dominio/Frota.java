@@ -45,6 +45,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 /**
  * Representa a tabela de Frota
@@ -1446,7 +1447,10 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     }
 
     public List<MotivoAlteracaoStatusFrota> getMotivosAlteracaoStatus() {
-        return motivosAlteracaoStatus;
+        return motivosAlteracaoStatus
+                .stream()
+                .sorted(Comparator.comparing(MotivoAlteracaoStatusFrota::getDataCriacao))
+                .collect(Collectors.toList());
     }
 
     public void setMotivosAlteracaoStatus(List<MotivoAlteracaoStatusFrota> motivosAlteracaoStatus) {
