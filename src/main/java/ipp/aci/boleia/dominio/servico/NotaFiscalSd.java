@@ -449,16 +449,14 @@ public class NotaFiscalSd {
                 Long ncmItem = notaFiscalParserSd.getLong(nota, ConstantesNotaFiscalParser.ITEM_NCM, item);
                 BigDecimal valor = notaFiscalParserSd.getBigDecimal(nota, ConstantesNotaFiscalParser.ITEM_VALOR_LIQUIDO, item);
                 BigDecimal valorDesconto = notaFiscalParserSd.getBigDecimal(nota, ConstantesNotaFiscalParser.ITEM_DESCONTO, item);
-                valor =  valor.subtract(valorDesconto);
 
                 if (valor != null) {
+                    valor =  valor.subtract(valorDesconto);
                     Boolean isCombustivel = combustiveis
                             .stream()
-                            .anyMatch(
-                                    comb -> comb.getCodigosNcm()
-                                            .stream()
-                                            .anyMatch(ncm -> ncm.getCodigoNcm().equals(ncmItem))
-                            );
+                            .flatMap(comb -> comb.getCodigosNcm().stream())
+                            .anyMatch(ncm -> ncm.getCodigoNcm().equals(ncmItem));
+
                     if (isCombustivel) {
                         valorCombustivel = valorCombustivel.add(valor);
                     } else {
