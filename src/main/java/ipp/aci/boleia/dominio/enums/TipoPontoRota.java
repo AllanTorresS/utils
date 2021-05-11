@@ -11,7 +11,7 @@ public enum TipoPontoRota implements IEnumComLabel<TipoPontoRota> {
     ORIGEM(0),
     DESTINO(2),
     INTERMEDIARIO(1),
-    RETORNO_DESTINO(3);
+    RETORNO_ORIGEM(3);
 
     private final Integer value;
 
