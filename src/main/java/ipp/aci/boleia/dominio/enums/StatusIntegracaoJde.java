@@ -8,7 +8,8 @@ import ipp.aci.boleia.util.i18n.IEnumComLabel;
 public enum StatusIntegracaoJde implements IEnumComLabel<StatusAtivacao>, IEnumComValor {
 
     ERRO_ENVIO(0),
-    REALIZADO(1);
+    REALIZADO(1),
+    PREVISTO(2);
 
     private final Integer value;
 

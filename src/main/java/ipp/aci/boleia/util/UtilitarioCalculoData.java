@@ -512,4 +512,13 @@ public final class UtilitarioCalculoData {
         calendar.add(Calendar.DAY_OF_MONTH, -qtdDias);
         return calendar.getTime();
     }
+
+    /**
+     * Verifica se o dia no Calendario é final de semana, Sábado ou Domingo
+     * @param calendario Data em calendario
+     * @return true se for final de semana, Sábado ou Domingo
+     */
+    public static boolean isFinalDeSemana(Calendar calendario) {
+        return calendario.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY || calendario.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY;
+    }
 }

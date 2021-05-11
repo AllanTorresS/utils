@@ -18,6 +18,7 @@ import ipp.aci.boleia.dominio.vo.FiltroPesquisaReembolsoGraficoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaReembolsoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaTransacaoConsolidadaVo;
 import ipp.aci.boleia.dominio.vo.PontosGraficoFinanceiroVo;
+import ipp.aci.boleia.dominio.vo.ReembolsoTotalPeriodoVo;
 import ipp.aci.boleia.dominio.vo.frotista.FiltroPesquisaNotaFiscalFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.ResultadoPaginadoFrtVo;
 
@@ -197,12 +198,12 @@ public interface ITransacaoConsolidadaDados extends IRepositorioBoleiaDados<Tran
     List<TransacaoConsolidada> pesquisarTransacoesPorPvEData(Long pv, Date de, Date ate);
 
     /**
-     * Pesquisa o total de reembolso dos consolidados baseadd no filtro de pesquisa.
+     * Pesquisa o total de reembolso dos consolidados baseado no filtro de pesquisa.
      * @param filtro parâmetros utilizados na consulta.
      * @param usuarioLogado usuario logado que solicita a pesquisa.
-     * @return A soma dos reembolsos.
+     * @return Vo com o total de reembolso.
      */
-    BigDecimal obterTotalReembolsoPeriodo(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado);
+    ReembolsoTotalPeriodoVo obterTotalReembolsoPeriodo(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado);
 
     /**
      * Pesquisa uma lista de transações consolidadas baseado em um filtro de pesquisa
