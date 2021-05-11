@@ -537,42 +537,37 @@ public class NotaFiscalSd {
         BigDecimal valorProdutosRestante = obterValorTotalProdutosRestanteEmissaoAutorizacoesPagamentoSelecionadas(autorizacoesPagamento).setScale(2, BigDecimal.ROUND_HALF_UP);
         BigDecimal margemAbastecimentos = obterValorMargemTotal(autorizacoesPagamento.size()).setScale(2, BigDecimal.ROUND_HALF_UP);
 
-        BigDecimal valorTotalCombustivelNota = documentos.stream().map(this::obterValorTotalCombustivelNota).filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, BigDecimal.ROUND_HALF_UP);
-        BigDecimal valorTotalProdutoNota = documentos.stream().map(this::obterValorTotalProdutosNota).filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, BigDecimal.ROUND_HALF_UP);
+        BigDecimal valorTotalCombustivelNotaComDesconto = documentos.stream().map(this::obterValorTotalCombustivelNotaComDesconto).filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, BigDecimal.ROUND_HALF_UP);
+        BigDecimal valorTotalProdutoNotaComdesconto = documentos.stream().map(this::obterValorTotalProdutosNotaComDesconto).filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, BigDecimal.ROUND_HALF_UP);
 
         if (parametroNf != null && parametroNf.getSepararPorCombustivelProdutoServico() != null && parametroNf.getSepararPorCombustivelProdutoServico()) {
-            boolean algumaNotaNaoSeparada = documentos.stream().anyMatch(nota -> obterValorTotalCombustivelNota(nota) != null && obterValorTotalProdutosNota(nota) != null);
+            boolean algumaNotaNaoSeparada = documentos.stream().anyMatch(nota -> obterValorTotalCombustivelNotaComDesconto(nota) != null && obterValorTotalProdutosNotaComDesconto(nota) != null);
             if (algumaNotaNaoSeparada) {
                 this.addErroValidacao(validacoesNotas, documento, Erro.NOTAS_FISCAIS_SEPARADAS_NAO_ENCONTRADAS);
             }
             if (
-                    (valorCombustivelRestante.compareTo(BigDecimal.ZERO) > 0 && valorTotalCombustivelNota.compareTo(BigDecimal.ZERO) == 0)
-                    || (valorProdutosRestante.compareTo(BigDecimal.ZERO) > 0 && valorTotalProdutoNota.compareTo(BigDecimal.ZERO) == 0)
+                    (valorCombustivelRestante.compareTo(BigDecimal.ZERO) > 0 && valorTotalCombustivelNotaComDesconto.compareTo(BigDecimal.ZERO) == 0)
+                    || (valorProdutosRestante.compareTo(BigDecimal.ZERO) > 0 && valorTotalProdutoNotaComdesconto.compareTo(BigDecimal.ZERO) == 0)
             ) {
                 this.addErroValidacao(validacoesNotas, documento, Erro.NOTA_FISCAL_COMB_OU_PROD_AUSENTE);
             }
         }
 
-        BigDecimal descontoCombustivel = documentos.stream().map(this::obterDescontoCombustivelNota).filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, BigDecimal.ROUND_HALF_UP);
-        BigDecimal descontoProduto = documentos.stream().map(this::obterDescontoProdutosNota).filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, BigDecimal.ROUND_HALF_UP);
-
-        BigDecimal diferencaCombustivel = BigDecimal.ZERO.compareTo(valorTotalCombustivelNota) == 0 ? BigDecimal.ZERO : valorTotalCombustivelNota.subtract(descontoCombustivel).subtract(valorCombustivelRestante).abs().setScale(2, BigDecimal.ROUND_HALF_UP);
-        BigDecimal diferencaProdutos = BigDecimal.ZERO.compareTo(valorTotalProdutoNota) == 0 ? BigDecimal.ZERO : valorTotalProdutoNota.subtract(descontoProduto).subtract(valorProdutosRestante).abs().setScale(2, BigDecimal.ROUND_HALF_UP);
+        BigDecimal diferencaCombustivel = BigDecimal.ZERO.compareTo(valorTotalCombustivelNotaComDesconto) == 0 ? BigDecimal.ZERO : valorTotalCombustivelNotaComDesconto.subtract(valorCombustivelRestante).abs().setScale(2, BigDecimal.ROUND_HALF_UP);
+        BigDecimal diferencaProdutos = BigDecimal.ZERO.compareTo(valorTotalProdutoNotaComdesconto) == 0 ? BigDecimal.ZERO : valorTotalProdutoNotaComdesconto.subtract(valorProdutosRestante).abs().setScale(2, BigDecimal.ROUND_HALF_UP);
         if(diferencaCombustivel.compareTo(margemAbastecimentos) > 0) {
-            BigDecimal valorTotalComDesconto = valorTotalCombustivelNota.subtract(descontoCombustivel);
-            if (valorTotalComDesconto.compareTo(valorCombustivelRestante) > 0) {
+            if (valorTotalCombustivelNotaComDesconto.compareTo(valorCombustivelRestante) > 0) {
                 this.addErroValidacao(validacoesNotas, null, Erro.NOTA_FISCAL_VALOR_COMB_EXCEDENTE);
             } else {
-                BigDecimal valorFaltante = valorCombustivelRestante.subtract(valorTotalComDesconto);
+                BigDecimal valorFaltante = valorCombustivelRestante.subtract(valorTotalCombustivelNotaComDesconto);
                 this.addErroValidacao(validacoesNotas, documento, Erro.NOTA_FISCAL_VALOR_COMB_FALTANTE, valorFaltante);
             }
         }
         if(diferencaProdutos.compareTo(margemAbastecimentos) > 0) {
-            BigDecimal valorTotalComDesconto = valorTotalProdutoNota.subtract(descontoProduto);
-            if (valorTotalComDesconto.compareTo(valorProdutosRestante) > 0) {
+            if (valorTotalProdutoNotaComdesconto.compareTo(valorProdutosRestante) > 0) {
                 this.addErroValidacao(validacoesNotas, documento, Erro.NOTA_FISCAL_VALOR_PROD_EXCEDENTE);
             } else {
-                BigDecimal valorFaltante = valorProdutosRestante.subtract(valorTotalComDesconto);
+                BigDecimal valorFaltante = valorProdutosRestante.subtract(valorTotalProdutoNotaComdesconto);
                 this.addErroValidacao(validacoesNotas, documento, Erro.NOTA_FISCAL_VALOR_PROD_FALTANTE, valorFaltante);
             }
         }
