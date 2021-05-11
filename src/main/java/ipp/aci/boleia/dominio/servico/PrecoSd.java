@@ -3,6 +3,7 @@ package ipp.aci.boleia.dominio.servico;
 import ipp.aci.boleia.dados.IFrotaPontoVendaDados;
 import ipp.aci.boleia.dados.IPrecoBaseDados;
 import ipp.aci.boleia.dados.IPrecoDados;
+import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.FrotaPontoVenda;
 import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.Preco;
@@ -10,6 +11,7 @@ import ipp.aci.boleia.dominio.PrecoBase;
 import ipp.aci.boleia.dominio.PrecoMicromercado;
 import ipp.aci.boleia.dominio.enums.StatusAlteracaoPrecoPosto;
 import ipp.aci.boleia.dominio.enums.StatusPreco;
+import ipp.aci.boleia.util.UtilitarioLambda;
 import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.excecao.ExcecaoValidacao;
 import ipp.aci.boleia.util.i18n.Mensagens;
@@ -215,5 +217,25 @@ public class PrecoSd {
         if(precoSolicitado.compareTo(BigDecimal.ZERO) == 0 || precoSolicitado.equals(preco.getPreco())){
             throw new ExcecaoValidacao(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("precoBase.aprovacao.validacao.preco.invalido"));
         }
+    }
+
+    /**
+     * Obtem o preço negociado entre uma frota e um ponto de venda, caso exista.
+     * Caso não exista um preço negociado retorna o preço base do combustível caso o mesmo seja comercializado pelo ponto de venda informado.
+     * @param frota frota da negociação
+     * @param pontoDeVenda ponto de venda da negociação
+     * @param idTipoCombustivel id do combustível a ser consultado
+     * @return o preço do combustível
+     */
+    public BigDecimal obterPrecoPraticadoCombustivel(Frota frota, PontoDeVenda pontoDeVenda, Long idTipoCombustivel) {
+        List<PrecoBase> precos = repositorioPrecoBase.buscarPrecosVigentes(pontoDeVenda.getId(), idTipoCombustivel);
+        if(precos == null || precos.isEmpty()) {
+            return null;
+        }
+        Preco preco = repositorioPreco.obterAtualPorFrotaPvCombustivel(frota.getId(), pontoDeVenda.getId(), idTipoCombustivel);
+        if(preco != null) {
+            return preco.getPreco();
+        }
+        return UtilitarioLambda.obterPrimeiroObjetoDaLista(precos).getPreco();
     }
 }
