@@ -16,6 +16,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
@@ -93,6 +94,14 @@ public class NfeAnexosArmazem implements IPersistente {
 
     @Column(name = "NO_TENTATIVAS_ATUALIZACAO")
     private Integer numeroTentativasAtualizacao;
+
+    @Digits(integer = 12, fraction = 4)
+    @Column(name = "VR_COMB")
+    private BigDecimal valorCombustivel;
+
+    @Digits(integer = 12, fraction = 4)
+    @Column(name = "VR_PROD_SERV")
+    private BigDecimal valorProdutosServicos;
 
     @Version
     @Column(name = "NO_VERSAO")
@@ -226,5 +235,34 @@ public class NfeAnexosArmazem implements IPersistente {
 
     public void setChaveAcesso(String chaveAcesso) {
         this.chaveAcesso = chaveAcesso;
+    }
+
+    public BigDecimal getValorCombustivel() {
+        return valorCombustivel;
+    }
+
+    public void setValorCombustivel(BigDecimal valorCombustivel) {
+        this.valorCombustivel = valorCombustivel;
+    }
+
+    public BigDecimal getValorProdutosServicos() {
+        return valorProdutosServicos;
+    }
+
+    public void setValorProdutosServicos(BigDecimal valorProdutosServicos) {
+        this.valorProdutosServicos = valorProdutosServicos;
+    }
+
+    /**
+     * Obtém a representação do número completo da nota (Nota + Número de Série)
+     * @return O número completo da nota
+     */
+    @Transient
+    public String getNumeroCompletoNf() {
+        StringBuffer sb = new StringBuffer();
+        sb.append(numeroNota);
+        sb.append("-");
+        sb.append(serieNota);
+        return sb.toString();
     }
 }

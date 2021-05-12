@@ -68,4 +68,8 @@ public class OracleTipoCombustivelDados extends OracleRepositorioBoleiaDados<Tip
 		return pesquisarUnico(new ParametroPesquisaIgual("codigoConnectCTA", tipoCombustivelConnect));
 	}
 
+	@Override
+	public List<TipoCombustivel> buscarPorCodigoNcm(Long codigoNcm) {
+		return pesquisar(new ParametroOrdenacaoColuna("id"), new ParametroPesquisaIgual("codigosNcm.codigoNcm", codigoNcm));
+	}
 }

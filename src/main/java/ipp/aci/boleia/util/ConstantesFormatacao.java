@@ -6,12 +6,14 @@ package ipp.aci.boleia.util;
 public final class ConstantesFormatacao {
 
     public static final String FORMATO_MOEDA_REAL = "R$ ###,##0.";
+    public static final String FORMATO_MOEDA_REAL_SEM_PREFIXO = "###,##0.";
     public static final String FORMATO_MOEDA_REAL_COM_SINAL = "+R$ ###,##0.00;-R$ ";
     public static final String FORMATO_PERCENTUAL = "##0.00%";
     public static final String FORMATO_KILOMETROS = "###,### Km";
     public static final String FORMATO_HORAS = "###,##0.00 H";
     public static final String FORMATO_LITROS = "###,##0.000 L";
     public static final String FORMATO_LITROS_DUAS_CASAS = "###,##0.00 L";
+    public static final String FORMATO_DUAS_CASAS = "###,##0.00";
     public static final String FORMATO_TRES_CASAS = "##0.000";
     public static final String FORMATO_MDR = "###,##0.00";
     public static final String FORMATO_TELEFONE_DEZ = "(##) ####-####";
@@ -45,8 +47,10 @@ public final class ConstantesFormatacao {
     public static final String FORMATO_ISO_8601 = "yyyy-MM-dd'T'HH:mm:ssXXX";
     public static final String FORMATO_ISO_8601_COM_MILLIS = "yyyy-MM-dd'T'HH:mm:ss.sssXXX";
     public static final String FORMATO_ISO_8601_SEM_TIMEZONE = "yyyy-MM-dd'T'HH:mm:ss";
+    public static final String FORMATO_ISO_8601_COM_MILLIS_SEM_TIMEZONE = "yyyy-MM-dd'T'HH:mm:ss.SSS";
     public static final String FORMATO_ISO_8601_COM_MILLIS_E_TIMEZONE = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
     public static final String FORMATO_TIMEZONE_GMT_3 = "GMT-3";
+    public static final String SEPARADOR_CHAVE_IDENTIFICADORA_AGRUPAMENTO_CICLOS = "|";
 
     /**
      * Impede instanciacao

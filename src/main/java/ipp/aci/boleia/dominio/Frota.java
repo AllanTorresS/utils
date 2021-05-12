@@ -134,7 +134,7 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
      */
     @Size(max=250)
     @Column(name = "NM_ASSESSOR_RESP")
-    @Deprecated   
+    @Deprecated
     private String assessorResponsavel;
 
     /**
@@ -147,17 +147,17 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @JsonIgnoreProperties("frotasAssessoradas")
     @Deprecated
     private Usuario usuarioAssessorResponsavel;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_USU_CONSULTOR_HUNTER")
     @JsonIgnoreProperties("frotasAssessoradas")
     private Usuario usuarioConsultorHunter;
-        
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_USU_CONSULTOR_FARMER_PESADO")
     @JsonIgnoreProperties("frotasAssessoradas")
     private Usuario usuarioConsultorFarmerPesado;
-            
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_USU_CONSULTOR_FARMER_LEVE")
     @JsonIgnoreProperties("frotasAssessoradas")
@@ -353,6 +353,12 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @Column(name="ID_SEM_NOTA_FISCAL")
     private Boolean semNotaFiscal;
 
+    @Column(name="ID_GERENCIA_NF_AGENDADA")
+    private Boolean gerenciaNfAgendada;
+
+    @Column(name="ID_GERENCIA_NF")
+    private Boolean gerenciaNf;
+
     @Column(name = "DT_ACEITE_TERMOS")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataAceiteTermos;
@@ -400,9 +406,12 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
 
     @OneToOne(mappedBy = "frota")
     private CondicoesComerciais condicoesComerciais;
-    
+
     @OneToOne(mappedBy = "frota")
     private SituacaoConectCar situacaoConectCar;
+
+    @OneToOne(mappedBy = "frota")
+    private Lead lead;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "frota")
     private List<PostoInternoTipoCombustivelPreco> postoInternoTipoCombustivelPreco;
@@ -412,16 +421,22 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
 
     @Column(name = "QT_GRAU_LONGIT")
     private BigDecimal longitude;
-  
+
+    @OneToOne(mappedBy = "frota")
+    private ParametroNotaFiscal parametroNotaFiscal;
+
+    @Column(name = "ID_LEMBRAR_PARAMETRIZACAO_NF")
+    private Boolean lembrarParametrizacaoNf;
+
     @NotAudited
     @Formula("(SELECT NVL(COUNT(0), 0) FROM BOLEIA_SCHEMA.TAG_CONECTCAR T WHERE T.CD_FROTA = CD_FROTA)")
     private Integer totalTags;
-    
+
     @NotAudited
     @Formula("(SELECT NVL(COUNT(0), 0) FROM BOLEIA_SCHEMA.TAG_CONECTCAR T WHERE T.CD_FROTA = CD_FROTA AND T.DT_ATIVACAO IS NOT NULL)")
     private Integer totalTagsAtivas;
-    
-	/**
+
+    /**
      * Construtor default
      */
     public Frota() {
@@ -578,7 +593,7 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
         this.connectCTAToken = connectCTAToken;
         this.condicoesComerciais = condicoesComerciais;
         this.situacaoConectCar = situacaoConectCar;
-             
+
     }
 
     @Override
@@ -1107,23 +1122,23 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     }
 
     public ApiToken getApiToken() {
-        return apiTokens != null ? 
-            apiTokens
-                .stream()
-                .filter(a -> !a.isContingencia())
-                .findFirst()
-                .orElse(null)
-            : null;
+        return apiTokens != null ?
+                apiTokens
+                        .stream()
+                        .filter(a -> !a.isContingencia())
+                        .findFirst()
+                        .orElse(null)
+                : null;
     }
 
     public ApiToken getApiTokenContigencia() {
-        return apiTokens != null ? 
-            apiTokens
-                .stream()
-                .filter(ApiToken::isContingencia)
-                .findFirst()
-                .orElse(null)
-            : null;
+        return apiTokens != null ?
+                apiTokens
+                        .stream()
+                        .filter(ApiToken::isContingencia)
+                        .findFirst()
+                        .orElse(null)
+                : null;
     }
 
     @Transient
@@ -1169,19 +1184,19 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
         this.semNotaFiscal = semNotaFiscal;
     }
 
-	/**
-	 * @return the apiTokens
-	 */
-	public List<ApiToken> getApiTokens() {
-		return apiTokens;
-	}
+    /**
+     * @return the apiTokens
+     */
+    public List<ApiToken> getApiTokens() {
+        return apiTokens;
+    }
 
-	/**
-	 * @param apiTokens the apiTokens to set
-	 */
-	public void setApiTokens(List<ApiToken> apiTokens) {
-		this.apiTokens = apiTokens;
-	}
+    /**
+     * @param apiTokens the apiTokens to set
+     */
+    public void setApiTokens(List<ApiToken> apiTokens) {
+        this.apiTokens = apiTokens;
+    }
 
     public Date getDataAceiteTermos() {
         return dataAceiteTermos;
@@ -1272,7 +1287,7 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
      * @return true, caso a frota seja pre paga e nao tenha realizado uma primeira compra, false caso contrario
      */
     public Boolean exigeCompraCredito() {
-	    return this.modoPagamento.equals(ModalidadePagamento.PRE_PAGO.getValue()) && (this.primeiraCompra == null || !this.primeiraCompra);
+        return this.modoPagamento.equals(ModalidadePagamento.PRE_PAGO.getValue()) && (this.primeiraCompra == null || !this.primeiraCompra);
     }
 
     /**
@@ -1327,13 +1342,13 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     }
 
     public void setCondicoesComerciais(CondicoesComerciais condicoesComerciais) {
-		this.condicoesComerciais = condicoesComerciais;
-	}
-    
+        this.condicoesComerciais = condicoesComerciais;
+    }
+
     public CondicoesComerciais getCondicoesComerciais() {
-		return condicoesComerciais;
-	}
-    
+        return condicoesComerciais;
+    }
+
     /**
      * Informa se a Matriz da frota exige nota fiscal.
      *
@@ -1344,6 +1359,18 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
         return semNotaFiscal == null || !semNotaFiscal;
     }
 
+    /**
+     * Existe uma frota ou unidade que exige nota fiscal?
+     * @return true se positivo
+     */
+    @Transient
+    public boolean isFrotaOuUmaDasUnidadesExigemNotaFiscal(){
+        return  this.exigeNotaFiscal()
+                || this.getUnidades() != null
+                && this.getUnidades()
+                .stream()
+                .anyMatch(u -> u.getExigeNotaFiscal() != null && u.getExigeNotaFiscal());
+    }
 
     /**
      * Verifica se frota tem parametro de ciclo para atualizar
@@ -1376,29 +1403,37 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
         return UtilitarioFormatacao.formatarDecimal(this.latitude);
     }
 
-	public SituacaoConectCar getSituacaoConectCar() {
-		return situacaoConectCar;
-	}
+    public SituacaoConectCar getSituacaoConectCar() {
+        return situacaoConectCar;
+    }
 
-	public void setSituacaoConectCar(SituacaoConectCar situacaoConectCar) {
-		this.situacaoConectCar = situacaoConectCar;
-	}
+    public void setSituacaoConectCar(SituacaoConectCar situacaoConectCar) {
+        this.situacaoConectCar = situacaoConectCar;
+    }
 
-	public Integer getTotalTags() {
-		return totalTags;
-	}
+    public ParametroNotaFiscal getParametroNotaFiscal() {
+        return parametroNotaFiscal;
+    }
 
-	public void setTotalTags(Integer totalTags) {
-		this.totalTags = totalTags;
-	}
+    public void setParametroNotaFiscal(ParametroNotaFiscal parametroNotaFiscal) {
+        this.parametroNotaFiscal = parametroNotaFiscal;
+    }
 
-	public Integer getTotalTagsAtivas() {
-		return totalTagsAtivas;
-	}
+    public Integer getTotalTags() {
+        return totalTags;
+    }
 
-	public void setTotalTagsAtivas(Integer totalTagsAtivas) {
-		this.totalTagsAtivas = totalTagsAtivas;
-	}
+    public void setTotalTags(Integer totalTags) {
+        this.totalTags = totalTags;
+    }
+
+    public Integer getTotalTagsAtivas() {
+        return totalTagsAtivas;
+    }
+
+    public void setTotalTagsAtivas(Integer totalTagsAtivas) {
+        this.totalTagsAtivas = totalTagsAtivas;
+    }
 
     public List<PostoInternoTipoCombustivelPreco> getPostoInternoTipoCombustivelPreco() {
         return postoInternoTipoCombustivelPreco;
@@ -1424,4 +1459,63 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
         this.longitude = longitude;
     }
 
+    public Lead getLead() {
+        return lead;
+    }
+
+    public void setLead(Lead lead) {
+        this.lead = lead;
+    }
+
+    public Boolean getGerenciaNfAgendada() {
+        return gerenciaNfAgendada;
+    }
+
+    public void setGerenciaNfAgendada(Boolean gerenciaNfAgendada) {
+        this.gerenciaNfAgendada = gerenciaNfAgendada;
+    }
+
+    public Boolean isGerenciaNf() {
+        return gerenciaNf;
+    }
+
+    public void setGerenciaNf(Boolean gerenciaNf) {
+        this.gerenciaNf = gerenciaNf;
+    }
+
+    public Boolean getLembrarParametrizacaoNf() {
+        return lembrarParametrizacaoNf;
+    }
+
+    public void setLembrarParametrizacaoNf(Boolean lembrarParametrizacaoNf) {
+        this.lembrarParametrizacaoNf = lembrarParametrizacaoNf;
+    }
+
+    /**
+     * Obtem o endereço completo
+     * @return endereço completo
+     */
+    @Transient
+    public String obterEnderecoCompleto(){
+        StringBuffer buffer = new StringBuffer();
+        if(this.logradouro != null){
+            buffer.append(this.logradouro).append(", ");
+        }
+        if(this.numero != null){
+            buffer.append(this.numero).append(", ");
+        }
+        if(this.complemento != null){
+            buffer .append(this.complemento).append(", ");
+        }
+        if(this.bairro != null){
+            buffer.append(this.bairro).append(", ");
+        }
+        if(this.unidadeFederativa != null){
+            buffer.append(this.unidadeFederativa).append(", ");
+        }
+        if(this.cep != null){
+            buffer.append("( ").append(UtilitarioFormatacao.formatarCepApresentacao(this.cep)).append(" )");
+        }
+        return buffer.toString();
+    }
 }

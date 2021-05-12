@@ -1,7 +1,10 @@
 package ipp.aci.boleia.dominio;
 
+import ipp.aci.boleia.dominio.interfaces.IExclusaoLogicaComData;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
+import org.hibernate.annotations.Where;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,9 +12,11 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Representa a tabela de AtivacaoTag
@@ -19,7 +24,7 @@ import java.util.Date;
 @Entity
 @Audited
 @Table(name = "TAG_CONECTCAR")
-public class TagConectcar implements IPersistente {
+public class TagConectcar implements IPersistente, IExclusaoLogicaComData{
 
 	private static final long serialVersionUID = -8043835722308868542L;
 
@@ -40,11 +45,28 @@ public class TagConectcar implements IPersistente {
 	
 	@Column(name = "DT_BLOQUEIO")
 	private Date dataBloqueio;
-	         
+
+	@Column(name = "DT_EXCLUSAO")
+	private Date dataExclusao;
+	
+	@NotAudited
+	@OneToMany(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DS_PLACA", insertable = false, updatable = false, referencedColumnName = "DS_PLACA")
+	@Where(clause = "ID_EXCLUIDO = 0 AND ID_STATUS = 1")
+	private List<Veiculo> veiculos;
+
 	/**
 	 * Construtor padrão da entidade.
 	 */
 	public TagConectcar() {}
+
+	/**
+	 * Construtor por ID e data de ativação
+	 */
+	public TagConectcar(Long id, Date dataExclusao) {
+		this.id = id;
+		this.dataExclusao = dataExclusao;
+	}
 
 	public Long getId() {
 		return id;
@@ -85,21 +107,34 @@ public class TagConectcar implements IPersistente {
 	public void setDataBloqueio(Date dataBloqueio) {
 		this.dataBloqueio = dataBloqueio;
 	}
-	
+
+	@Override
+	public Boolean getExcluido() {
+		return this.dataExclusao != null;
+	}
+
+	public Date getDataExclusao() {
+		return dataExclusao;
+	}
+
+	public void setDataExclusao(Date dataExclusao) {
+		this.dataExclusao = dataExclusao;
+	}
+
+	public List<Veiculo> getVeiculos() {
+		return veiculos;
+	}
+
+	public void setVeiculos(List<Veiculo> veiculos) {
+		this.veiculos = veiculos;
+	}
+
 	public boolean isAtivo(){
-		if(dataAtivacao != null) {
-			return true;
-		}
-		
-		return false;
+		return dataBloqueio == null;
 	}
 	
 	public boolean isBloqueado(){
-		if(dataBloqueio != null) {
-			return true;
-		}
-		
-		return false;
+		return dataBloqueio != null;
 	}
 	
 	public Integer getStatus() {
@@ -130,10 +165,10 @@ public class TagConectcar implements IPersistente {
 			return false;
 		TagConectcar other = (TagConectcar) obj;
 		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		return true;
+			return other.id == null;
+		} else {
+			return id.equals(other.id);
+		}
 	}
+
 }

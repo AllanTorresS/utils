@@ -9,7 +9,9 @@ public enum StatusIntegracaoReembolsoConectcarJde implements IEnumComLabel<Statu
 
     ERRO_ENVIO(0),
     REALIZADO(1),
-    PENDENTE(2);
+    PENDENTE(2),
+    AGUARDANDO_LIBERACAO(3),
+    ERRO_LIBERACAO(4);
 
     private final Integer value;
 

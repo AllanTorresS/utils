@@ -1,7 +1,6 @@
 package ipp.aci.boleia.dominio.vo;
 
 import ipp.aci.boleia.dominio.pesquisa.comum.BaseFiltroPaginado;
-
 /**
  * Objeto que representa uma requisição de preenchimento de cabeçalho de relatórios com cabeçalhos dinâmicos
  * @param <F> O tipo do objeto de filtro
