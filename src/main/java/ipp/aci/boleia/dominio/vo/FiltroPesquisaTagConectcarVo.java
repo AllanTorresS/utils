@@ -11,6 +11,7 @@ public class FiltroPesquisaTagConectcarVo extends BaseFiltroPaginado {
 	private EntidadeVo frota;
 	private String placa;
 	private EnumVo status;
+	private EnumVo tipoUtilizacao;
 
 	public Long getId() {
 		return id;
@@ -42,6 +43,14 @@ public class FiltroPesquisaTagConectcarVo extends BaseFiltroPaginado {
 
 	public void setFrota(EntidadeVo frota) {
 		this.frota = frota;
+	}
+
+	public EnumVo getTipoUtilizacao() {
+		return tipoUtilizacao;
+	}
+
+	public void setTipoUtilizacao(EnumVo tipoUtilizacao) {
+		this.tipoUtilizacao = tipoUtilizacao;
 	}
 
 }

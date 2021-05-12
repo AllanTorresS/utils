@@ -6,6 +6,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import ipp.aci.boleia.dominio.TagConectcar;
+import ipp.aci.boleia.dominio.enums.TipoUtilizacao;
 
 /**
  * Vo de integração dos lotes de adesivos com a conectcar 
@@ -29,7 +30,15 @@ public class AtivacaoLoteIntegracaoVo {
 		this.adesivos = new ArrayList<AdesivosIntegracaoVo>();
 		
 		for (TagConectcar tag : listaConectCar) {
-			adesivos.add(new AdesivosIntegracaoVo(false, tag.getId(), new VeiculoIntegracaoVo(tag.getPlaca())));
+			String[] servicosBloqueio = null;
+			if(TipoUtilizacao.ESTACIONAMENTO.getValue().equals(tag.getTipoUtilizacao())) {
+				servicosBloqueio = new String[1];
+				servicosBloqueio[0] = TipoUtilizacao.PEDAGIO.name();
+			} else if(TipoUtilizacao.PEDAGIO.getValue().equals(tag.getTipoUtilizacao())) {
+				servicosBloqueio = new String[1];
+				servicosBloqueio[0] = TipoUtilizacao.ESTACIONAMENTO.name();
+			}
+			adesivos.add(new AdesivosIntegracaoVo(false, servicosBloqueio, tag.getId(), new VeiculoIntegracaoVo(tag.getPlaca())));
 		}
 		
 	}
