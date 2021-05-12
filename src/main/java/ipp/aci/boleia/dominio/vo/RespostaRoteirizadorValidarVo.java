@@ -15,6 +15,7 @@ public class RespostaRoteirizadorValidarVo {
     private String mensagem;
     private Integer statusRequisicao;
     private Integer status;
+    private List<String> trechos;
 
     /**
      * Construtor padrão
@@ -49,5 +50,13 @@ public class RespostaRoteirizadorValidarVo {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public List<String> getTrechos() {
+        return trechos;
+    }
+
+    public void setTrechos(List<String> trechos) {
+        this.trechos = trechos;
     }
 }

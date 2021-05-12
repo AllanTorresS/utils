@@ -15,6 +15,7 @@ public class RespostaRoteirizadorVo {
     private Integer codigo;
     private String mensagem;
     private Integer statusRequisicao;
+    private List<String> trechos = new ArrayList<>();
 
     /**
      * Construtor padrão
@@ -51,4 +52,11 @@ public class RespostaRoteirizadorVo {
 
     public void setStatusRequisicao(Integer statusRequisicao) { this.statusRequisicao = statusRequisicao; }
 
+    public List<String> getTrechos() {
+        return trechos;
+    }
+
+    public void setTrechos(List<String> trechos) {
+        this.trechos = trechos;
+    }
 }
