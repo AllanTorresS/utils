@@ -1,9 +1,11 @@
 package ipp.aci.boleia.dominio.enums;
 
+import ipp.aci.boleia.util.i18n.IEnumComLabel;
+
 /**
  * Lista os possíveis status de uma solicitação de interesse no programa de antecipação de recebíveis
  */
-public enum StatusInteresseAntecipacao {
+public enum StatusInteresseAntecipacao implements IEnumComLabel<StatusInteresseAntecipacao> {
 
     NAO_SOLICITADO(0),
     APROVADO(1),
