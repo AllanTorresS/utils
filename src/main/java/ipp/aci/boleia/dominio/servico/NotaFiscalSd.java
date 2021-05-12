@@ -451,8 +451,9 @@ public class NotaFiscalSd {
                 BigDecimal valorDesconto = notaFiscalParserSd.getBigDecimal(nota, ConstantesNotaFiscalParser.ITEM_DESCONTO, item);
 
                 if (valor != null) {
-                    valor =  valor.subtract(valorDesconto);
-                    Boolean isCombustivel = combustiveis
+                    valor = valorDesconto == null ? valor : valor.subtract(valorDesconto);
+                    Boolean isCombustivel = ncmItem != null &&
+                            combustiveis
                             .stream()
                             .flatMap(comb -> comb.getCodigosNcm().stream())
                             .anyMatch(ncm -> ncm.getCodigoNcm().equals(ncmItem));
