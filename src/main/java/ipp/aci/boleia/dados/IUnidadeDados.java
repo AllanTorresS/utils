@@ -1,8 +1,10 @@
 package ipp.aci.boleia.dados;
 
+import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.Unidade;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroAutoCompletePostoRotaVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaPostoInternoRotaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaUnidadeVo;
 
 import java.util.List;
@@ -78,4 +80,12 @@ public interface IUnidadeDados extends IRepositorioBoleiaDados<Unidade> {
 	 * @return lista das unidades que atendem aos criterios de busca
 	 */
 	List<Unidade> pesquisarParaAutocompleteRota(FiltroAutoCompletePostoRotaVo filtro);
+
+	/**
+	 * Obtém a lista das unidade a serem exibidas que possuem Posto Interno na proximidade da Rota
+	 *
+	 * @param filtro O filtro de pesquisa com as posições da Rota
+	 * @return lista das unidades que atendem aos criterios de busca
+	 */
+	List<Unidade> pesquisarPostoInternoNaRota(FiltroPesquisaPostoInternoRotaVo filtro);
 }

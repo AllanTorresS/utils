@@ -6,12 +6,16 @@ import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.enums.ModalidadePagamento;
 import ipp.aci.boleia.dominio.enums.StatusAcumuloKmv;
+import ipp.aci.boleia.dominio.enums.StatusAlteracaoPrecoPosto;
 import ipp.aci.boleia.dominio.enums.StatusApiToken;
 import ipp.aci.boleia.dominio.enums.StatusContrato;
 import ipp.aci.boleia.dominio.enums.StatusFrota;
 import ipp.aci.boleia.dominio.enums.StatusFrotaConectcar;
 import ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso;
 import ipp.aci.boleia.dominio.enums.TipoAcumuloKmv;
+import ipp.aci.boleia.dominio.enums.TipoFiltroPontoVendaPrimario;
+import ipp.aci.boleia.dominio.enums.TipoFiltroPontoVendaSecundario;
+import ipp.aci.boleia.dominio.enums.TipoServico;
 import ipp.aci.boleia.dominio.enums.StatusAtivado;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
@@ -21,12 +25,16 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaior;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenor;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaEntre;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaFetch;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgualIgnoreCase;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
+import ipp.aci.boleia.dominio.vo.CoordenadaVo;
+import ipp.aci.boleia.dominio.vo.EntidadeVo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDiferente;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaAbastecimentoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheCicloVo;
@@ -34,9 +42,11 @@ import ipp.aci.boleia.dominio.vo.FiltroPesquisaFinanceiroVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFrotaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialFrotaVo;
 import ipp.aci.boleia.dominio.vo.FiltroAutoCompletePostoRotaVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaPostoInternoRotaVo;
 import ipp.aci.boleia.dominio.vo.apco.ClienteProFrotaVo;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
+import ipp.aci.boleia.util.UtilitarioLambda;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 
 import ipp.aci.boleia.util.seguranca.UtilitarioIsolamentoInformacoes;
@@ -45,9 +55,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -606,4 +619,41 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
 
         return pesquisar(new ParametroOrdenacaoColuna("razaoSocial"), parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
+
+    @Override
+    public List<Frota> pesquisarPostoInternoNaRota(FiltroPesquisaPostoInternoRotaVo filtro){
+        List<ParametroPesquisa> params = new ArrayList();
+        params.add(new ParametroPesquisaNulo("latitude", true));
+        params.add(new ParametroPesquisaNulo("longitude", true));
+        params.add(new ParametroPesquisaIgual("id", filtro.getIdFrota()));
+
+        if (CollectionUtils.isNotEmpty(filtro.getFiltrosCoordenadas())) {
+            ParametroPesquisaOr condicoesOr = new ParametroPesquisaOr(new ParametroPesquisa[0]);
+            BigDecimal margem = filtro.getMargemGrausFiltroCoordenadas() != null ? filtro.getMargemGrausFiltroCoordenadas() : BigDecimal.valueOf(0L);
+            Iterator var5 = filtro.getFiltrosCoordenadas().iterator();
+
+            while(var5.hasNext()) {
+                List<CoordenadaVo> listaCoordenadas = (List)var5.next();
+
+                for(int i = 0; i < listaCoordenadas.size() - 1; ++i) {
+                    CoordenadaVo ca = listaCoordenadas.get(i);
+                    BigDecimal caLat = ca.getLatitude();
+                    BigDecimal caLong = ca.getLongitude();
+                    CoordenadaVo cb = listaCoordenadas.get(i + 1);
+                    BigDecimal cbLat = cb.getLatitude();
+                    BigDecimal cbLong = cb.getLongitude();
+                    BigDecimal xa = (cbLat.compareTo(caLat) > 0 ? caLat : cbLat).subtract(margem);
+                    BigDecimal xb = (cbLat.compareTo(caLat) > 0 ? cbLat : caLat).add(margem);
+                    BigDecimal ya = (cbLong.compareTo(caLong) > 0 ? caLong : cbLong).subtract(margem);
+                    BigDecimal yb = (cbLong.compareTo(caLong) > 0 ? cbLong : caLong).add(margem);
+                    condicoesOr.addParametro(new ParametroPesquisaAnd(new ParametroPesquisa[]{new ParametroPesquisaEntre("latitude", xa, xb), new ParametroPesquisaEntre("longitude", ya, yb)}));
+                }
+            }
+
+            params.add(condicoesOr);
+        }
+
+        return this.pesquisar((ParametroOrdenacaoColuna)null, params.toArray(new ParametroPesquisa[params.size()]));
+    }
+
 }
