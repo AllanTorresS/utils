@@ -1366,6 +1366,16 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
         }
     }
 
+    @Transient
+    public String getLongitudeString() {
+        return UtilitarioFormatacao.formatarDecimal(this.longitude);
+    }
+
+    @Transient
+    public String getLatitudeString() {
+        return UtilitarioFormatacao.formatarDecimal(this.latitude);
+    }
+
 	public SituacaoConectCar getSituacaoConectCar() {
 		return situacaoConectCar;
 	}
@@ -1414,11 +1424,4 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
         this.longitude = longitude;
     }
 
-    public String getLatitudeString() {
-        return latitude.toString();
-    }
-
-    public String getLongitudeString() {
-        return longitude.toString();
-    }
 }

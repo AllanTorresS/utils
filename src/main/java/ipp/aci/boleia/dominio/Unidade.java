@@ -375,14 +375,6 @@ public class Unidade implements IPersistente, IExclusaoLogica, IPertenceFrota {
         this.longitude = longitude;
     }
 
-    public String getLatitudeString() {
-        return latitude.toString();
-    }
-
-    public String getLongitudeString() {
-        return longitude.toString();
-    }
-
     @Transient
     @Override
     public List<Frota> getFrotas() {
@@ -403,5 +395,15 @@ public class Unidade implements IPersistente, IExclusaoLogica, IPertenceFrota {
         String nome = getNome();
         cnpj += " - ";
         return cnpj + nome;
+    }
+
+    @Transient
+    public String getLongitudeString() {
+        return UtilitarioFormatacao.formatarDecimal(this.longitude);
+    }
+
+    @Transient
+    public String getLatitudeString() {
+        return UtilitarioFormatacao.formatarDecimal(this.latitude);
     }
 }
