@@ -10,6 +10,7 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgualIgnoreCase;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
+import ipp.aci.boleia.dominio.vo.FiltroAutoCompletePostoRotaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaUnidadeVo;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Repository;
@@ -105,5 +106,16 @@ public class OracleUnidadeDados extends OracleRepositorioBoleiaDados<Unidade> im
 		return pesquisar(new ParametroOrdenacaoColuna("nome"),
                 new ParametroPesquisaIgual("frota.id", idFrota),
 				new ParametroPesquisaIgual("postoInterno", 1));
+	}
+
+	@Override
+	public List<Unidade> pesquisarParaAutocompleteRota(FiltroAutoCompletePostoRotaVo filtro){
+		List<ParametroPesquisa> parametros = new ArrayList<>();
+
+		parametros.add(new ParametroPesquisaIgual("postoInterno",true));
+		parametros.add(new ParametroPesquisaIgual("frota.id", filtro.getIdFrota()));
+		parametros.add(new ParametroPesquisaLike("nome", filtro.getTermo()));
+
+		return pesquisar(new ParametroOrdenacaoColuna("nome"), parametros.toArray(new ParametroPesquisa[parametros.size()]));
 	}
 }

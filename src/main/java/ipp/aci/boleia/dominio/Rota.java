@@ -6,6 +6,7 @@ import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
 import org.hibernate.envers.Audited;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -63,7 +64,7 @@ public class Rota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @Column(name = "ID_EXCLUIDO")
     private Boolean excluido;
 
-    @OneToMany(mappedBy = "rota", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "rota", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PontoRota> pontos;
 
     @Version
@@ -91,6 +92,28 @@ public class Rota implements IPersistente, IExclusaoLogica, IPertenceFrota {
 
     @Transient
     private Long quantidadePostos;
+
+    @OneToMany(mappedBy = "rota", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RotaParametroFrota> rotaParametrosFrotas;
+
+    @Column(name = "ID_POSTO_URBANO")
+    private Boolean postoUrbano;
+
+    @Column(name = "ID_IDA_VOLTA")
+    private Boolean idaVolta;
+
+    @OneToMany(mappedBy = "rota", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RotaPostoDesconsiderado> rotaPostoDesconsiderados;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_VEICULO")
+    private Veiculo veiculo;
+
+    @Column(name = "VA_ATUAL_TANQUE")
+    private BigDecimal estadoTanqueInicio;
+
+    @Column(name = "VA_MEDIA_CONSUMO")
+    private BigDecimal mediaConsumo;
 
     @Override
     public Long getId() {
@@ -189,5 +212,61 @@ public class Rota implements IPersistente, IExclusaoLogica, IPertenceFrota {
 
     public void setTipoCombustivel(TipoCombustivel tipoCombustivel) {
         this.tipoCombustivel = tipoCombustivel;
+    }
+
+    public List<RotaParametroFrota> getRotaParametrosFrotas() {
+        return rotaParametrosFrotas;
+    }
+
+    public void setRotaParametrosFrotas(List<RotaParametroFrota> rotaParametrosFrotas) {
+        this.rotaParametrosFrotas = rotaParametrosFrotas;
+    }
+
+    public Boolean getPostoUrbano() {
+        return postoUrbano;
+    }
+
+    public void setPostoUrbano(Boolean postoUrbano) {
+        this.postoUrbano = postoUrbano;
+    }
+
+    public Boolean getIdaVolta() {
+        return idaVolta;
+    }
+
+    public void setIdaVolta(Boolean idaVolta) {
+        this.idaVolta = idaVolta;
+    }
+
+    public List<RotaPostoDesconsiderado> getRotaPostoDesconsiderados() {
+        return rotaPostoDesconsiderados;
+    }
+
+    public void setRotaPostoDesconsiderados(List<RotaPostoDesconsiderado> rotaPostoDesconsiderados) {
+        this.rotaPostoDesconsiderados = rotaPostoDesconsiderados;
+    }
+
+    public Veiculo getVeiculo() {
+        return veiculo;
+    }
+
+    public void setVeiculo(Veiculo veiculo) {
+        this.veiculo = veiculo;
+    }
+
+    public BigDecimal getEstadoTanqueInicio() {
+        return estadoTanqueInicio;
+    }
+
+    public void setEstadoTanqueInicio(BigDecimal estadoTanqueInicio) {
+        this.estadoTanqueInicio = estadoTanqueInicio;
+    }
+
+    public BigDecimal getMediaConsumo() {
+        return mediaConsumo;
+    }
+
+    public void setMediaConsumo(BigDecimal mediaConsumo) {
+        this.mediaConsumo = mediaConsumo;
     }
 }

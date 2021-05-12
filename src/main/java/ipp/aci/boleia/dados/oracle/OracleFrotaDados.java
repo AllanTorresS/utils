@@ -31,6 +31,7 @@ import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheCicloVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFinanceiroVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFrotaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialFrotaVo;
+import ipp.aci.boleia.dominio.vo.FiltroAutoCompletePostoRotaVo;
 import ipp.aci.boleia.dominio.vo.apco.ClienteProFrotaVo;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
@@ -585,5 +586,16 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
         }
 
         return pesquisarComExcluidos(null, CONSULTA_FROTAS_PARA_DETALHE_CICLO, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+    }
+
+    @Override
+    public List<Frota> pesquisarParaAutocompleteRota(FiltroAutoCompletePostoRotaVo filtro){
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+
+        parametros.add(new ParametroPesquisaIgual("postoInterno",true));
+        parametros.add(new ParametroPesquisaIgual("id", filtro.getIdFrota()));
+        parametros.add(new ParametroPesquisaLike("razaoSocial", filtro.getTermo()));
+
+        return pesquisar(new ParametroOrdenacaoColuna("razaoSocial"), parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 }

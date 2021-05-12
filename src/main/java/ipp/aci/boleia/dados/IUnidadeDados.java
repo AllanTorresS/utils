@@ -1,8 +1,8 @@
 package ipp.aci.boleia.dados;
 
-
 import ipp.aci.boleia.dominio.Unidade;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
+import ipp.aci.boleia.dominio.vo.FiltroAutoCompletePostoRotaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaUnidadeVo;
 
 import java.util.List;
@@ -70,4 +70,12 @@ public interface IUnidadeDados extends IRepositorioBoleiaDados<Unidade> {
 	 * @return A lista de unidades encontradas
 	 */
 	List<Unidade> pesquisarUnidadesComPostoInternoPorFrota(Long idFrota);
+
+	/**
+	 * Obtém a lista das unidades a serem exibidas apos o autocomplete de busca de posto no roteirizador inteligente, caso posto interno esteja habilitado
+	 *
+	 * @param filtro O filtro de pesquisa com o termo do autocomplete
+	 * @return lista das unidades que atendem aos criterios de busca
+	 */
+	List<Unidade> pesquisarParaAutocompleteRota(FiltroAutoCompletePostoRotaVo filtro);
 }

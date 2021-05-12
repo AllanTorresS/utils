@@ -11,6 +11,7 @@ public class VeiculoRotaVo {
     private Long combustivel;
     private String percentualTanque;
     private Integer volumeTotalTanque;
+    private String placa;
 
     /**
      * Construtor padrão
@@ -24,11 +25,12 @@ public class VeiculoRotaVo {
      * @param percentualTanque Percentual do tanque considerado para cálculo
      * @param volumeTotalTanque Volume total do tanque
      */
-    public VeiculoRotaVo(BigDecimal kmlVeiculo, Long combustivel, String percentualTanque, Integer volumeTotalTanque) {
+    public VeiculoRotaVo(BigDecimal kmlVeiculo, Long combustivel, String percentualTanque, Integer volumeTotalTanque, String placa) {
         this.kmlVeiculo = kmlVeiculo;
         this.combustivel = combustivel;
         this.percentualTanque = percentualTanque;
         this.volumeTotalTanque = volumeTotalTanque;
+        this.placa = placa;
     }
 
     public BigDecimal getKmlVeiculo() {
@@ -59,4 +61,11 @@ public class VeiculoRotaVo {
         this.volumeTotalTanque = volumeTotalTanque;
     }
 
+    public String getPlaca() {
+        return placa;
+    }
+
+    public void setPlaca(String placa) {
+        this.placa = placa;
+    }
 }
