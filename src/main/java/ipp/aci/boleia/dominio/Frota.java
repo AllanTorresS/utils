@@ -1423,4 +1423,12 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     public void setLongitude(BigDecimal longitude) {
         this.longitude = longitude;
     }
+
+    public String getLatitudeString() {
+        return latitude.toString();
+    }
+
+    public String getLongitudeString() {
+        return longitude.toString();
+    }
 }

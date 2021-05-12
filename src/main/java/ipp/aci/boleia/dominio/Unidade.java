@@ -366,12 +366,21 @@ public class Unidade implements IPersistente, IExclusaoLogica, IPertenceFrota {
         this.latitude = latitude;
     }
 
+
     public BigDecimal getLongitude() {
         return longitude;
     }
 
     public void setLongitude(BigDecimal longitude) {
         this.longitude = longitude;
+    }
+
+    public String getLatitudeString() {
+        return latitude.toString();
+    }
+
+    public String getLongitudeString() {
+        return longitude.toString();
     }
 
     @Transient
