@@ -163,6 +163,9 @@ public class HistoricoVeiculo implements IPersistente , IPertenceFrota {
     @Column(name = "CD_IDENTIFICADOR_INTERNO")
     private String identificadorInterno;
 
+    @Column(name = "ID_ABAST_DUAS_PLACAS")
+    private Boolean habilitadoAbastecerDuasPlacas;
+
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_USUARIO")
@@ -429,6 +432,14 @@ public class HistoricoVeiculo implements IPersistente , IPertenceFrota {
 
     public void setIdentificadorInterno(String identificadorInterno) {
         this.identificadorInterno = identificadorInterno;
+    }
+
+    public Boolean getHabilitadoAbastecerDuasPlacas() {
+        return habilitadoAbastecerDuasPlacas;
+    }
+
+    public void setHabilitadoAbastecerDuasPlacas(Boolean habilitadoAbastecerDuasPlacas) {
+        this.habilitadoAbastecerDuasPlacas = habilitadoAbastecerDuasPlacas;
     }
 
     public Usuario getUsuario() {
