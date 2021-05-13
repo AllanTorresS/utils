@@ -47,6 +47,8 @@ public class UtilitarioExcel {
     private static final String TIPO_ENUM = "leitura.excel.tipo.enum.label";
     private static final String TIPO_EMAIL = "leitura.excel.tipo.email.label";
     private static final String CELULA_VAZIA = "texto.comum.vazio";
+    private static final String SIM = "texto.comum.sim";
+    private static final String NAO = "texto.comum.nao";
 
     public static final String ERRO_VALIDACAO_INVALIDO = "leitura.excel.erro.validacao.invalido";
     public static final String ERRO_VALIDACAO_SUBTIPO = "leitura.excel.erro.validacao.tipoSubtipo";
@@ -593,6 +595,18 @@ public class UtilitarioExcel {
             celula.getCellStyle().setDataFormat(wb.getCreationHelper().createDataFormat().getFormat(formatoData));
         }
         return celula;
+    }
+
+    /**
+     * Escreve um determinado valor do tipo boolean em uma célula.
+     *
+     * @param linha linha
+     * @param numeroCelula numero da celula
+     * @param valor da celula
+     */
+    public void escreverCelula(Row linha, int numeroCelula, boolean valor) {
+        Cell celula = obterCelula(linha, numeroCelula, null);
+        escreverCelula(celula,valor ? mensagens.obterMensagem(SIM) : mensagens.obterMensagem(NAO));
     }
 
     /**
