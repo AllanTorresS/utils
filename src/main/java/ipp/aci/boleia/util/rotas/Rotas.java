@@ -150,6 +150,7 @@ public final  class Rotas {
     public static final String VEICULO_COTA_RELATORIO_API            = BASE_API + "/veiculo/cota";
     public static final String DETALHE_COBRANCA_API                  = BASE_API + "/detalheCobranca";
     public static final String DETALHE_REEMBOLSO_API                 = BASE_API + "/detalheReembolso";
+    public static final String CONFIGURACAO_ANTECIPACAO_API          = BASE_API + "/configuracaoAntecipacao";
 
     public static final String RELATORIO_NOTA_FISCAL_API             = BASE_API + "/relatorioNotaFiscal";
 
