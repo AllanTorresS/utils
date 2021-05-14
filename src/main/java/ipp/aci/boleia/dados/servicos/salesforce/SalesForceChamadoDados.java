@@ -3,6 +3,8 @@ package ipp.aci.boleia.dados.servicos.salesforce;
 import ipp.aci.boleia.dados.IChamadoDados;
 import ipp.aci.boleia.dados.IClienteHttpDados;
 import ipp.aci.boleia.dados.IMotivoChamadoDados;
+import ipp.aci.boleia.dominio.vo.salesforce.ConsultaChamadosVo;
+import ipp.aci.boleia.dominio.vo.salesforce.FiltroConsultaChamadosVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +18,7 @@ import java.util.Map;
  * Respositorio para abertura de chamados Salesforce
  */
 @Repository
-public class SalesForceChamadoDados implements IChamadoDados {
+public class SalesForceChamadoDados extends AcessoSalesForceBase implements IChamadoDados {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SalesForceChamadoDados.class);
 
@@ -44,6 +46,13 @@ public class SalesForceChamadoDados implements IChamadoDados {
 
     @Autowired
     private IMotivoChamadoDados motivoChamadoDados;
+
+    @Override
+    public ConsultaChamadosVo consultarChamados(FiltroConsultaChamadosVo filtro) {
+        prepararRequisicao("", null);
+        //TODO - a fazer
+        return null;
+    }
 
     @Override
     public boolean abrirChamado(String company ,String name, String email, String phone, Long idReason, String subject, String description) {
