@@ -1,11 +1,13 @@
 package ipp.aci.boleia.dominio.vo.salesforce;
 
+import ipp.aci.boleia.dominio.pesquisa.comum.BaseFiltroPaginado;
+
 import java.util.Date;
 
 /**
  * Filtro de pesquisa da consulta de chamados.
  */
-public class FiltroConsultaChamadosVo {
+public class FiltroConsultaChamadosVo extends BaseFiltroPaginado {
     private String numeroChamado;
     private Date dataAbertura;
     private String status;

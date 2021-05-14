@@ -10,8 +10,6 @@ import java.util.List;
 public class ConsultaChamadosVo {
     @JsonProperty("totalSize")
     private Long totalItems;
-    @JsonProperty("done")
-    private Boolean sucesso;
     @JsonProperty("records")
     private List<ChamadoVo> chamados;
 
@@ -21,14 +19,6 @@ public class ConsultaChamadosVo {
 
     public void setTotalItems(Long totalItems) {
         this.totalItems = totalItems;
-    }
-
-    public Boolean getSucesso() {
-        return sucesso;
-    }
-
-    public void setSucesso(Boolean sucesso) {
-        this.sucesso = sucesso;
     }
 
     public List<ChamadoVo> getChamados() {

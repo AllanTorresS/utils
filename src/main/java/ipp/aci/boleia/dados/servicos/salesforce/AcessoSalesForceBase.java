@@ -66,7 +66,7 @@ public class AcessoSalesForceBase {
 
     protected Header[] authorizationHeaders;
 
-    protected String instance_url;
+    protected String instanceUrl;
 
     protected String endpointUrl;
 
@@ -86,7 +86,7 @@ public class AcessoSalesForceBase {
      */
     protected void prepararRequisicao(String servicoUrl, Object corpo) {
         autenticarSalesforce();
-        this.endpointUrl = this.instance_url.concat(servicoUrl);
+        this.endpointUrl = this.instanceUrl.concat(servicoUrl);
         this.requestBody = UtilitarioJson.toJSON(corpo != null ? corpo : "");
     }
 
@@ -121,7 +121,7 @@ public class AcessoSalesForceBase {
         if (this.statusCode == HttpStatus.OK.value()) {
             this.authorizationHeaders = new Header[]{new BasicHeader(
                     AUTHORIZATION_HEADER, this.responseBody.get(CAMPO_TIPO_TOKEN).textValue() + " " + this.responseBody.get(CAMPO_TOKEN_ACESSO).textValue())};
-            this.instance_url = this.responseBody.get(CAMPO_INSTANCIA_URL).textValue();
+            this.instanceUrl = this.responseBody.get(CAMPO_INSTANCIA_URL).textValue();
             return true;
         } else {
             return false;

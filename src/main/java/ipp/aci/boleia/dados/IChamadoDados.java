@@ -1,5 +1,7 @@
 package ipp.aci.boleia.dados;
 
+import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
+import ipp.aci.boleia.dominio.vo.salesforce.ChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.ConsultaChamadosVo;
 import ipp.aci.boleia.dominio.vo.salesforce.FiltroConsultaChamadosVo;
 
@@ -15,7 +17,7 @@ public interface IChamadoDados {
      * @param filtro Filtro de pesquisa
      * @return Resultado da consulta
      */
-    ConsultaChamadosVo consultarChamados(FiltroConsultaChamadosVo filtro);
+    ResultadoPaginado<ChamadoVo> consultarChamados(FiltroConsultaChamadosVo filtro);
 
     /**
      * Abre chamado no SalesForce

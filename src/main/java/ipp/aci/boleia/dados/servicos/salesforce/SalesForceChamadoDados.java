@@ -3,16 +3,36 @@ package ipp.aci.boleia.dados.servicos.salesforce;
 import ipp.aci.boleia.dados.IChamadoDados;
 import ipp.aci.boleia.dados.IClienteHttpDados;
 import ipp.aci.boleia.dados.IMotivoChamadoDados;
+import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
+import ipp.aci.boleia.dominio.vo.SolicitacaoLeadExtVo;
+import ipp.aci.boleia.dominio.vo.salesforce.ChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.ConsultaChamadosVo;
 import ipp.aci.boleia.dominio.vo.salesforce.FiltroConsultaChamadosVo;
+import ipp.aci.boleia.util.UtilitarioCalculoData;
+import ipp.aci.boleia.util.UtilitarioJson;
+import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+
+import static ipp.aci.boleia.util.UtilitarioCalculoData.obterPrimeiroInstanteDia;
+import static ipp.aci.boleia.util.UtilitarioCalculoData.obterUltimoInstanteDia;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.text.MessageFormat.format;
 
 /**
  * Respositorio para abertura de chamados Salesforce
@@ -21,6 +41,23 @@ import java.util.Map;
 public class SalesForceChamadoDados extends AcessoSalesForceBase implements IChamadoDados {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SalesForceChamadoDados.class);
+
+    private static final String PARAMETRO_DATA_ABERTURA = "AND CreatedDate>={1} AND CreatedDate<={2}";
+
+    private static final String FROM_CONSULTAR_CHAMADOS =
+            "FROM Case " +
+            "WHERE CaseNumber LIKE ''{0}'' AND " +
+            "       Status LIKE ''{1}'' " +
+            "       {2} ";
+
+    private static final String CONSULTAR_CHAMADOS =
+            "SELECT CaseNumber,CreatedDate,CNPJPosto__c,CNPJFrota__c,Motivo__c,Status " +
+            FROM_CONSULTAR_CHAMADOS +
+            "ORDER BY CreatedDate DESC " +
+            "LIMIT {3} OFFSET {4}";
+
+    private static final String COUNT_CONSULTAR_CHAMADOS =
+            "SELECT COUNT() " + FROM_CONSULTAR_CHAMADOS;
 
     private static final String ALIAS_ORGID = "orgid";
     private static final String ALIAS_COMPANY = "company";
@@ -35,11 +72,26 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     private static final int LIMITE_PHONE = 15;
     private static final int LIMITE_DESCRIPTION = 1024;
 
+    private static final String CAMPO_TOTAL_ITEMS = "totalSize";
+    private static final String CAMPO_SUCESSO = "done";
+
+    @Value("${salesforce.chamados.authorization.client.id}")
+    private String clientId;
+    @Value("${salesforce.chamados.authorization.client.secret}")
+    private String clientSecret;
+    @Value("${salesforce.chamados.authorization.username}")
+    private String username;
+    @Value("${salesforce.chamados.authorization.password}")
+    private String password;
+
     @Value("${salesforce.chamado.orgid}")
     private String orgid;
 
     @Value("${salesforce.chamado.url}")
     private String endereco;
+
+    @Value("${salesforce.chamados.consulta.url}")
+    private String urlConsulta;
 
     @Autowired
     private IClienteHttpDados restDados;
@@ -48,10 +100,99 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     private IMotivoChamadoDados motivoChamadoDados;
 
     @Override
-    public ConsultaChamadosVo consultarChamados(FiltroConsultaChamadosVo filtro) {
-        prepararRequisicao("", null);
-        //TODO - a fazer
+    public ResultadoPaginado<ChamadoVo> consultarChamados(FiltroConsultaChamadosVo filtro) {
+        try {
+            String queryConsulta = formatarQueryParaPesquisa(CONSULTAR_CHAMADOS, true, filtro);
+            String queryCount = formatarQueryParaPesquisa(COUNT_CONSULTAR_CHAMADOS, false, filtro);
+
+            return realizarConsultaChamados(queryConsulta, queryCount);
+        } catch (UnsupportedEncodingException e) {
+            throw new ExcecaoBoleiaRuntime(e);
+        }
+    }
+
+    /**
+     * Realiza as integrações da consulta de chamados.
+     *
+     * @param queryConsulta Query utilizada para consultar os dados.
+     * @param queryCount Query utilizada para realizar o count total dos dados.
+     * @return Resultado paginado da consulta.
+     */
+    private ResultadoPaginado<ChamadoVo> realizarConsultaChamados(String queryConsulta, String queryCount) throws UnsupportedEncodingException {
+        prepararRequisicao(urlConsulta, null);
+
+        String endpointConsulta = this.instanceUrl.concat(format(this.urlConsulta, queryConsulta));
+        String endpointCount = this.instanceUrl.concat(format(this.urlConsulta, queryCount));
+        ConsultaChamadosVo consultaChamadosVo = restDados.doGet(endpointConsulta, this.authorizationHeaders, this::tratarRespostaConsultaChamados);
+        Integer totalItems = restDados.doGet(endpointCount, this.authorizationHeaders, this::tratarRespostaCountChamados);
+
+        ResultadoPaginado<ChamadoVo> resultadoPaginado = new ResultadoPaginado<>();
+        resultadoPaginado.setTotalItems(totalItems);
+        resultadoPaginado.setRegistros(consultaChamadosVo.getChamados());
+        return resultadoPaginado;
+    }
+
+    /**
+     * Trata a resposta da consulta de chamados realizada pela API do Salesforce.
+     *
+     * @param response Resposta da integração.
+     * @return Objeto com o resultado da consulta.
+     */
+    private ConsultaChamadosVo tratarRespostaConsultaChamados(CloseableHttpResponse response) {
+        prepararResposta(response);
+        if (this.statusCode == HttpStatus.OK.value()) {
+            if (this.responseBody.get(CAMPO_SUCESSO) != null && this.responseBody.get(CAMPO_SUCESSO).asBoolean(false)) {
+                return UtilitarioJson.toObjectWithConfigureFailOnUnknowProperties(this.responseBody.toString(), ConsultaChamadosVo.class, false);
+            } else {
+                return new ConsultaChamadosVo();
+            }
+        }
         return null;
+    }
+
+    /**
+     * Trata a resposta do count de chamados.
+     *
+     * @param response Response da integração.
+     * @return Total de itens encontrados.
+     */
+    private Integer tratarRespostaCountChamados(CloseableHttpResponse response) {
+        prepararResposta(response);
+        if (this.statusCode == HttpStatus.OK.value()) {
+            if (this.responseBody.get(CAMPO_SUCESSO) != null && this.responseBody.get(CAMPO_SUCESSO).asBoolean(false)) {
+                return this.responseBody.get(CAMPO_TOTAL_ITEMS).asInt(0);
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * Formata uma query de consulta que será utilizada na integração com a API do Salesforce.
+     *
+     * @param query Query a ser formatada.
+     * @param possuiPaginacao Informa se a query possui informações de paginação.
+     * @param filtro Filtro de consulta.
+     * @return Query formatada.
+     */
+    private String formatarQueryParaPesquisa(String query, boolean possuiPaginacao, FiltroConsultaChamadosVo filtro) {
+        String numeroChamado = filtro.getNumeroChamado() != null ? filtro.getNumeroChamado() : "%25%25";
+        String status = filtro.getStatus() != null ? filtro.getStatus() : "%25%25";
+        String parametroDataAbertura = "";
+        if(filtro.getDataAbertura() != null) {
+            parametroDataAbertura = format(PARAMETRO_DATA_ABERTURA, obterPrimeiroInstanteDia(filtro.getDataAbertura()), obterUltimoInstanteDia(filtro.getDataAbertura()));
+        }
+
+        List<Object> argumentos = new ArrayList<>();
+        argumentos.add(numeroChamado);
+        argumentos.add(status);
+        argumentos.add(parametroDataAbertura);
+        if(possuiPaginacao) {
+            Integer limit = filtro.getPaginacao().getTamanhoPagina();
+            Integer offset = (filtro.getPaginacao().getPagina() * filtro.getPaginacao().getTamanhoPagina()) - filtro.getPaginacao().getTamanhoPagina();
+            argumentos.add(limit);
+            argumentos.add(offset);
+        }
+        return format(query.replaceAll(" ", "+"), argumentos.toArray(new Object[argumentos.size()]));
     }
 
     @Override
@@ -91,5 +232,25 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
 
     public void setEndereco(String endereco) {
         this.endereco = endereco;
+    }
+
+    @Override
+    public String getClientId() {
+        return clientId;
+    }
+
+    @Override
+    public String getClientSecret() {
+        return clientSecret;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
     }
 }
