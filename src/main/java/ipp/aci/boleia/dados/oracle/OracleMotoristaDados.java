@@ -22,6 +22,7 @@ import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialMotoristaVo;
 import ipp.aci.boleia.dominio.vo.externo.FiltroPesquisaMotoristaExtVo;
 import ipp.aci.boleia.dominio.vo.frotista.FiltroPesquisaMotoristaFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.ResultadoPaginadoFrtVo;
+import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioLambda;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.apache.commons.collections4.CollectionUtils;
@@ -45,6 +46,9 @@ import static ipp.aci.boleia.util.UtilitarioFormatacao.obterLongMascara;
  */
 @Repository
 public class OracleMotoristaDados extends OracleRepositorioBoleiaDados<Motorista> implements IMotoristaDados {
+
+    private static final String QUERY_EXCLUSAO_DADOS_MOTORISTA = "DELETE FROM AbastecimentoCta ac " +
+            "WHERE ac.dataProcessamento <= :dataProcessamento";
 
     @Autowired
     private UtilitarioAmbiente utilitarioAmbiente;
@@ -349,5 +353,12 @@ public class OracleMotoristaDados extends OracleRepositorioBoleiaDados<Motorista
         filtro.setCpf(identificador);
         ResultadoPaginado<Motorista> resultadoBusca = pesquisar(filtro);
         return resultadoBusca.getTotalItems() > 0 ? resultadoBusca.getRegistros().stream().findFirst().get() : null;
+    }
+
+    @Override
+    public void excluirDadosPessoais(Integer diasDeArmazenamento) {
+        Query query = getGerenciadorDeEntidade().createQuery(QUERY_EXCLUSAO_DADOS_MOTORISTA);
+        query.setParameter("dataProcessamento", UtilitarioCalculoData.adicionarDiasData(utilitarioAmbiente.buscarDataAmbiente(), diasDeArmazenamento));
+        query.executeUpdate();
     }
 }
