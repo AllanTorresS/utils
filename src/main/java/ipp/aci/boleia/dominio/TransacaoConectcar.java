@@ -110,6 +110,9 @@ public class TransacaoConectcar implements IPersistente, IPertenceFrota {
 	@JoinColumn(name = "CD_TAG_CONECTCAR")
 	private TagConectcar tag;
 
+	@Column(name = "CD_TAG_CONECTCAR", insertable = false, updatable = false)
+	private Long numeroTag;
+
 	@Column(name = "DS_PRACA")
 	private String praca;
 
@@ -128,11 +131,18 @@ public class TransacaoConectcar implements IPersistente, IPertenceFrota {
 	@Column(name = "QT_EIXOS")
 	private Integer quantidadeEixos;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "CD_FROTA_VEICULO")
+	private Frota frotaVeiculo;
+
 	/**
 	 * Código da transação originada da Conectcar
 	 */
 	@Column(name = "CD_TRANSACAO_CONECTCAR")
 	private Long codigoTransacaoConectcar;
+	
+	@Column(name = "DS_NOME_PRACA")
+	private String nomePraca;
 	
 	@Override
 	public Long getId() {
@@ -348,6 +358,30 @@ public class TransacaoConectcar implements IPersistente, IPertenceFrota {
 
 	public void setQuantidadeEixos(Integer quantidadeEixos) {
 		this.quantidadeEixos = quantidadeEixos;
+	}
+
+	public Long getNumeroTag() {
+		return numeroTag;
+	}
+
+	public void setNumeroTag(Long numeroTag) {
+		this.numeroTag = numeroTag;
+	}
+
+	public Frota getFrotaVeiculo() {
+		return frotaVeiculo;
+	}
+
+	public void setFrotaVeiculo(Frota frotaVeiculo) {
+		this.frotaVeiculo = frotaVeiculo;
+	}
+
+	public String getNomePraca() {
+		return nomePraca;
+	}
+
+	public void setNomePraca(String nomePraca) {
+		this.nomePraca = nomePraca;
 	}
 
 }

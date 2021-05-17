@@ -5,10 +5,11 @@ import ipp.aci.boleia.util.i18n.IEnumComLabel;
 /**
  * Indica o status da integração de uma entidade
  */
-public enum StatusIntegracaoJde implements IEnumComLabel<StatusAtivacao> {
+public enum StatusIntegracaoJde implements IEnumComLabel<StatusAtivacao>, IEnumComValor {
 
     ERRO_ENVIO(0),
-    REALIZADO(1);
+    REALIZADO(1),
+    PREVISTO(2);
 
     private final Integer value;
 
@@ -21,6 +22,7 @@ public enum StatusIntegracaoJde implements IEnumComLabel<StatusAtivacao> {
         this.value = value;
     }
 
+    @Override
     public Integer getValue() {
         return value;
     }

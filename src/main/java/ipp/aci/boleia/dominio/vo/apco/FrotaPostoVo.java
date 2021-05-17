@@ -1,5 +1,4 @@
 package ipp.aci.boleia.dominio.vo.apco;
-import ipp.aci.boleia.dominio.FrotaPontoVenda;
 
 import java.util.Date;
 

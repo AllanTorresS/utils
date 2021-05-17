@@ -92,6 +92,16 @@ public class PrecoSd {
     }
 
     /**
+     * Propaga a exclusão do Preço Base
+     * @param precoBase Preco base a propagar
+     */
+    public void propagarExclusao(PrecoBase precoBase){
+        List<Preco> precoListaAtual = repositorioPreco.buscarPrecosAtuais(precoBase.getIdPontoVenda(), precoBase.getPrecoMicromercado().getTipoCombustivel().getId());
+        precoListaAtual.forEach(precos->precoNegociadoSd.criarApartirDaExclusaoDePrecoBase(precos));
+    }
+
+
+    /**
      * Propaga as atualizações de preço base para preços patricados pelo PV em relacao as frotas que com ele negociam
      *
      * @param precoBase Preco base a propagar

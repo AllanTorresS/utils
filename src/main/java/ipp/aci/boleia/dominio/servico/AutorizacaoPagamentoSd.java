@@ -339,4 +339,27 @@ public class AutorizacaoPagamentoSd {
         }
 
     }
+
+    /**
+     * Verifica se o UUID do abastecimento do integrador já foi utilizado em um abastecimento do Portal
+     * @param uuidAbastecimento O UUID do abastecimento
+     * @return true caso exista abastecimento do Portal com mesmo UUID, false caso contrário
+     */
+    public boolean verificarAbastecimentoIntegradorExistente(String uuidAbastecimento) {
+        if(uuidAbastecimento != null){
+            AutorizacaoPagamento autorizacaoPagamentoComMesmoAbastecimento = repositorioAutorizacaoPagamento.obterAutorizacaoPagamentoComMesmoAbastecimento(uuidAbastecimento);
+            return autorizacaoPagamentoComMesmoAbastecimento != null;
+        }
+        return false;
+    }
+
+    /**
+     * Informa se uma autorização de pagamento está disponível ou não para uma antecipação de reembolso.
+     *
+     * @param autorizacaoPagamento A autorização de pagamento que será verificada.
+     * @return True, caso esteja disponível.
+     */
+    public boolean estaDisponivelParaAntecipacaoReembolso(AutorizacaoPagamento autorizacaoPagamento) {
+        return autorizacaoPagamento.notaFiscalEstaEmitido() && !autorizacaoPagamento.possuiAntecipacaoReembolsoRealizada();
+    }
 }

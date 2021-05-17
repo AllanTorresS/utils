@@ -144,6 +144,7 @@ public class MotorGeracaoRelatorioSd {
         motor.setMsgErro(null);
         motor.setUltimaPaginaProcessada(null);
         motor.setTotalDePaginas(null);
+        motor.setRotaEmProcessamento(null);
         motor.getAbasRelatorio().forEach(abaRelatorio -> {
             abaRelatorio.setRegistrosProcessados(null);
             abaRelatorio.setTotalRegistros(null);

@@ -1,33 +1,6 @@
 package ipp.aci.boleia.dominio.servico;
 
 
-import static ipp.aci.boleia.dominio.enums.ChaveConfiguracaoSistema.CELULAR_CENTRAL_ATENDIMENTO_DDD;
-import static ipp.aci.boleia.dominio.enums.ChaveConfiguracaoSistema.CELULAR_CENTRAL_ATENDIMENTO_NUMERO;
-import static ipp.aci.boleia.dominio.enums.ChaveConfiguracaoSistema.TELEFONE_CENTRAL_ATENDIMENTO_DDD;
-import static ipp.aci.boleia.dominio.enums.ChaveConfiguracaoSistema.TELEFONE_CENTRAL_ATENDIMENTO_NUMERO;
-import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarCnpjApresentacao;
-import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarCpfApresentacao;
-import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarDecimal;
-import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarDecimalMoedaReal;
-import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarNumeroTelefone;
-import static ipp.aci.boleia.util.UtilitarioFormatacao.obterString;
-import static ipp.aci.boleia.util.UtilitarioFormatacaoData.formatarDataHora;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-import javax.mail.util.ByteArrayDataSource;
-
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
 import ipp.aci.boleia.dados.IConfiguracaoSistemaDados;
 import ipp.aci.boleia.dados.IFrotaDados;
 import ipp.aci.boleia.dados.IFrotaPontoVendaDados;
@@ -39,6 +12,7 @@ import ipp.aci.boleia.dominio.AutorizacaoPagamento;
 import ipp.aci.boleia.dominio.AutorizacaoPagamentoEdicao;
 import ipp.aci.boleia.dominio.Cobranca;
 import ipp.aci.boleia.dominio.CobrancaConectcar;
+import ipp.aci.boleia.dominio.ErroIntegracaoTransacaoConectcar;
 import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.FrotaPontoVenda;
 import ipp.aci.boleia.dominio.GapPontoDeVenda;
@@ -46,6 +20,7 @@ import ipp.aci.boleia.dominio.GapServico;
 import ipp.aci.boleia.dominio.HistoricoPontoVenda;
 import ipp.aci.boleia.dominio.ItemAutorizacaoPagamento;
 import ipp.aci.boleia.dominio.Motorista;
+import ipp.aci.boleia.dominio.NfeAnexosArmazem;
 import ipp.aci.boleia.dominio.ParametroCiclo;
 import ipp.aci.boleia.dominio.PedidoCreditoFrota;
 import ipp.aci.boleia.dominio.PontoDeVenda;
@@ -59,13 +34,42 @@ import ipp.aci.boleia.dominio.enums.StatusIntegracaoJde;
 import ipp.aci.boleia.dominio.enums.TipoItemAutorizacaoPagamento;
 import ipp.aci.boleia.dominio.enums.TipoPerfilUsuario;
 import ipp.aci.boleia.dominio.enums.TipoToken;
+import ipp.aci.boleia.dominio.enums.TipoTransacaoConectcar;
 import ipp.aci.boleia.dominio.vo.EdicaoAbastecimentoVo;
+import ipp.aci.boleia.dominio.vo.AtualizarExigenciaNfeErroVo;
 import ipp.aci.boleia.dominio.vo.TokenVo;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
 import ipp.aci.boleia.util.UtilitarioFormatacaoData;
 import ipp.aci.boleia.util.i18n.Mensagens;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
+import ipp.aci.boleia.util.rotas.ExternoRotas;
 import ipp.aci.boleia.util.rotas.Paginas;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
+
+import javax.mail.util.ByteArrayDataSource;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import static ipp.aci.boleia.dominio.enums.ChaveConfiguracaoSistema.CELULAR_CENTRAL_ATENDIMENTO_DDD;
+import static ipp.aci.boleia.dominio.enums.ChaveConfiguracaoSistema.CELULAR_CENTRAL_ATENDIMENTO_NUMERO;
+import static ipp.aci.boleia.dominio.enums.ChaveConfiguracaoSistema.TELEFONE_CENTRAL_ATENDIMENTO_DDD;
+import static ipp.aci.boleia.dominio.enums.ChaveConfiguracaoSistema.TELEFONE_CENTRAL_ATENDIMENTO_NUMERO;
+import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarCnpjApresentacao;
+import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarCpfApresentacao;
+import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarDecimal;
+import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarDecimalMoedaReal;
+import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarNumeroTelefone;
+import static ipp.aci.boleia.util.UtilitarioFormatacao.obterString;
+import static ipp.aci.boleia.util.UtilitarioFormatacaoData.formatarDataHora;
 
 /**
  * Oferece funcionalidades para envio de emails
@@ -114,6 +118,9 @@ public class EmailSd {
 
     @Value("${email.avisos.integracao}")
     private String destinatarioIntegracao;
+    
+    @Value("${email.suporte}")
+    private String emailSuporte;
 
     private static final String APPLICATION_TYPE_PDF = "application/pdf";
 
@@ -574,14 +581,18 @@ public class EmailSd {
                         mensagens.obterMensagem(
                                 "frota.cobranca.ajuste.boleto.email.dataVencimento",
                                 UtilitarioFormatacaoData.formatarDataCurta(dataVencimento)),
-                        utilitarioAmbiente.getURLContextoAplicacao());
+                        utilitarioAmbiente.getURLContextoAplicacao(),
+                    UtilitarioFormatacaoData.formatarDataCurtaHifen(cobranca.getDataInicioPeriodo()),
+                    UtilitarioFormatacaoData.formatarDataCurtaHifen(cobranca.getDataFimPeriodo()));
             anexo = new ByteArrayDataSource(anexoBytes,APPLICATION_TYPE_PDF);
             nomeAnexo = mensagens.obterMensagem("frota.cobranca.fim.ciclo.email.anexo", UtilitarioFormatacaoData.formatarDataCurtaHifen(dataVencimento));
         } else {
             corpo = mensagens.obterMensagem("frota.cobranca.ajuste.boleto.email.corpo",
                     nomeDestinatario, valorTotal, informacaoCiclo,
                     "",
-                    utilitarioAmbiente.getURLContextoAplicacao());
+                    utilitarioAmbiente.getURLContextoAplicacao(),
+                    UtilitarioFormatacaoData.formatarDataCurtaHifen(cobranca.getDataInicioPeriodo()),
+                    UtilitarioFormatacaoData.formatarDataCurtaHifen(cobranca.getDataFimPeriodo()));
         }
 
         emailDados.enviarEmail(assunto, corpo, Collections.singletonList(emailDestinatario), anexo, nomeAnexo);
@@ -607,14 +618,18 @@ public class EmailSd {
             corpo = mensagens.obterMensagem("frota.cobranca.fim.ciclo.email.corpo.sucesso",
                     nomeDestinatario, informacaoCiclo, valorTotal,
                     UtilitarioFormatacaoData.formatarDataCurta(dataVencimento),
-                    utilitarioAmbiente.getURLContextoAplicacao());
+                    utilitarioAmbiente.getURLContextoAplicacao(),
+                    UtilitarioFormatacaoData.formatarDataCurtaHifen(cobranca.getDataInicioPeriodo()),
+                    UtilitarioFormatacaoData.formatarDataCurtaHifen(cobranca.getDataFimPeriodo()));
 
             anexo = new ByteArrayDataSource(anexoBytes, APPLICATION_TYPE_PDF);
             nomeAnexo = mensagens.obterMensagem("frota.cobranca.fim.ciclo.email.anexo", UtilitarioFormatacaoData.formatarDataCurtaHifen(dataVencimento));
         } else {
             corpo = mensagens.obterMensagem("frota.cobranca.fim.ciclo.email.corpo.falha",
                     nomeDestinatario, informacaoCiclo, valorTotal,
-                    utilitarioAmbiente.getURLContextoAplicacao());
+                    utilitarioAmbiente.getURLContextoAplicacao(),
+                    UtilitarioFormatacaoData.formatarDataCurtaHifen(cobranca.getDataInicioPeriodo()),
+                    UtilitarioFormatacaoData.formatarDataCurtaHifen(cobranca.getDataFimPeriodo()));
         }
 
         emailDados.enviarEmail(assunto, corpo, Collections.singletonList(emailDestinatario), anexo, nomeAnexo);
@@ -786,5 +801,79 @@ public class EmailSd {
             emailDados.enviarEmail(assunto, corpo.toString(), Arrays.asList(destinatario));
         }
     }
+
+    /**
+     * Envia email com as crÃ­ticas da recolha automÃ¡tica de notas fiscais
+     * @param anexosNaoConciliados Todas as notas nÃ£o conciliadas de uma revenda em um dia
+     * @param emailsDestinatarios E-mails dos gestores da revenda
+     * @param cnpj O CNPJ
+     */
+    public void enviarEmailDeCriticasRecolhaAutomatica(List<NfeAnexosArmazem> anexosNaoConciliados, List<String> emailsDestinatarios) {
+        Date date = utilitarioAmbiente.buscarDataAmbiente();
+        String assunto = this.mensagens.obterMensagem("assunto.email.erro.recolha.automatica");
+        String motivoRecusa = anexosNaoConciliados.stream().map(anexo -> "&emsp;<p>" + anexo.getNumeroCompletoNf() + ": " + anexo.getNotaFiscal() != null && anexo.getNotaFiscal().getMotivoFalhaConciliacao() != null ? anexo.getNotaFiscal().getMotivoFalhaConciliacao() : anexo.getMotivoFalhaImportacao() + "</p><br>").collect(Collectors.joining());
+        String data = UtilitarioFormatacaoData.formatarDataCurta(date);
+        String hora = UtilitarioFormatacaoData.formatarHoraMinutosSegundos(date);
+        Long cnpj = anexosNaoConciliados.stream().map(NfeAnexosArmazem::getCnpjPtov).findFirst().orElse(null);
+        String cnpjFormatado = UtilitarioFormatacao.formatarCnpjApresentacao(cnpj);
+        String corpo = this.mensagens.obterMensagem("recolha.recusa.email", data, hora, cnpjFormatado, motivoRecusa);
+        emailDados.enviarEmail(assunto, corpo, emailsDestinatarios);
+    }
+
+    /**
+     * Envia um email com todas as mensagens de falhas da sincronizaÃ§Ã£o com o SalesForce
+     * @param motivosFalhas motivos das falhas
+     */
+    public void enviarEmailsFalhasAtualizacaoExigenciaNfSalesForce(List<AtualizarExigenciaNfeErroVo> motivosFalhas, List<String> destinatariosIntegracaoParametroNf){
+        final String assunto = mensagens.obterMensagem("integracao.salesforce.assunto.email.erro.atualizasao.parametrizacao.nfe");
+        final String rodape = mensagens.obterMensagem("integracao.salesforce.rodape.email");
+
+        final String corpoMensagem = motivosFalhas.stream().filter(m -> m != null).map(m -> {
+            final String exigenciaNf = m.getExigeNotaFiscal() ? mensagens.obterMensagem("texto.comum.sim") : mensagens.obterMensagem("texto.comum.nao");
+            final String data = UtilitarioFormatacaoData.formatarDataCurta(m.getData());
+            final String hora = UtilitarioFormatacaoData.formatarHoraMinutosSegundos(m.getData());
+            final String cnpj = UtilitarioFormatacao.formatarCpfCnpjApresentacao(m.getCnpj());
+            final String motivo = m.getStatusCode() == HttpStatus.NOT_FOUND.value() ? mensagens.obterMensagem("integracao.salesforce.cnpj.nao.encontrado", cnpj) : "";
+            final String motivoDaRecusa = mensagens.obterMensagem("integracao.salesforce.motivo.recusa.atualizasao.parametrizacao.nfe", motivo);
+            return mensagens.obterMensagem("integracao.salesforce.corpo.email.erro.atualizasao.parametrizacao.nfe", data, hora, cnpj, exigenciaNf, motivoDaRecusa);
+        }).reduce("", String::concat).concat(rodape);
+
+        emailDados.enviarEmail(assunto,corpoMensagem, destinatariosIntegracaoParametroNf);
+    }
+    
+    /**
+     * Envia um email quando ocorre um erro no processamento da transação enviada pela Conectcar.
+     * Destinatário configurado em na propriedade "email.suporte".
+     * 
+     * @param erroTransacaoConectcar representa o objeto ErroIntegracaoTransacaoConectcar contendo algumas informações para auxiliar no tratamento do erro
+     */
+    public void enviarEmailErroIntegracaoTransacaoConectcar(ErroIntegracaoTransacaoConectcar erroTransacaoConectcar) {
+    	if (emailSuporte != null){
+            String assunto = mensagens.obterMensagem("email.erro.integracao.transacao.conectcar.assunto");
+
+            String frotaCnpjRazaoSocial = "";
+            Frota frota = erroTransacaoConectcar.getFrota();
+            if(frota != null) {
+            	frotaCnpjRazaoSocial = StringUtils.defaultString(formatarCnpjApresentacao(frota.getCnpj())) + " - " + StringUtils.defaultString(frota.getRazaoSocial());
+            } else {
+            	frotaCnpjRazaoSocial = mensagens.obterMensagem("Erro.ERRO_FROTA_NAO_ENCONTRADA");
+            }
+            
+            StringBuilder corpo = new StringBuilder(mensagens.obterMensagem("email.erro.integracao.transacao.conectcar.corpo",
+            		ExternoRotas.TRANSACAO_CONECTCAR_API,
+            		frotaCnpjRazaoSocial,
+            		erroTransacaoConectcar.getVeiculoId() != null ? erroTransacaoConectcar.getVeiculoId().toString() : "",
+            		StringUtils.defaultString(erroTransacaoConectcar.getPlaca()),
+            		erroTransacaoConectcar.getTipoTransacao() != null ? TipoTransacaoConectcar.obterPorValor(erroTransacaoConectcar.getTipoTransacao()) : "",
+            		erroTransacaoConectcar.getNumeroTag() != null ? erroTransacaoConectcar.getNumeroTag().toString() : "",
+            		erroTransacaoConectcar.getCodigoTransacaoConectcar() != null ? erroTransacaoConectcar.getCodigoTransacaoConectcar().toString() : "",
+            		UtilitarioFormatacaoData.formatarDataHoraMinutosSegundos(erroTransacaoConectcar.getDataProcessamento()),
+            		erroTransacaoConectcar.getErroProcessamento()));    
+            
+            corpo.append(mensagens.obterMensagem("email.erro.integracao.transacao.conectcar.rodape"));
+            
+            emailDados.enviarEmail(assunto, corpo.toString(), Collections.singletonList(emailSuporte));
+		}
+	}
 
 }

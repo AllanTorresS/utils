@@ -20,7 +20,6 @@ import ipp.aci.boleia.dominio.vo.VolumeAbastecidoTipoCombustivelVo;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
 import ipp.aci.boleia.util.negocio.ParametrosPesquisaBuilder;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -63,7 +62,7 @@ public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<Autori
                     "SUM(a.totalLitrosAbastecimento) AS mediaTotalLitrosAbastecimento, " +
                     "CASE WHEN MAX(a.hodometro) - MIN(a.hodometro) > 0 " +
                     "THEN " + TipoConsumo.KML.getValue() + " " +
-                    "ELSE " + TipoConsumo.HL.getValue() + " " +
+                    "ELSE " + TipoConsumo.LH.getValue() + " " +
                     "END AS tipoConsumo, " +
                     "a.razaoSocialFrota, " +
                     "a.cnpjFrota) " +
@@ -89,7 +88,7 @@ public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<Autori
                     "( :tipoConsumo IS NULL OR " +
                     ":tipoConsumo = " + TipoConsumo.KML.getValue() + " AND " +
                     "(MAX(a.hodometro) - MIN(a.hodometro) > 0) " +
-                    "OR :tipoConsumo = " + TipoConsumo.HL.getValue() + " AND " +
+                    "OR :tipoConsumo = " + TipoConsumo.LH.getValue() + " AND " +
                     "(MAX(a.horimetro) - MIN(a.horimetro) > 0) ) " +
                     "ORDER BY  ";
 
@@ -132,7 +131,7 @@ public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<Autori
                     "SUM(a.totalLitrosAbastecimento) AS mediaTotalLitrosAbastecimento, " +
                     "CASE WHEN MAX(a.hodometro) - MIN(a.hodometro) > 0 " +
                     "THEN " + TipoConsumo.KML.getValue() + " " +
-                    "ELSE " + TipoConsumo.HL.getValue() + " " +
+                    "ELSE " + TipoConsumo.LH.getValue() + " " +
                     "END AS tipoConsumo, " +
                     "a.razaoSocialFrota, " +
                     "a.cnpjFrota) " +
@@ -157,7 +156,7 @@ public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<Autori
                     "( :tipoConsumo IS NULL OR " +
                     ":tipoConsumo = " + TipoConsumo.KML.getValue() + " AND " +
                     "(MAX(a.hodometro) - MIN(a.hodometro) > 0) " +
-                    "OR :tipoConsumo = " + TipoConsumo.HL.getValue() + " AND " +
+                    "OR :tipoConsumo = " + TipoConsumo.LH.getValue() + " AND " +
                     "(MAX(a.horimetro) - MIN(a.horimetro) > 0) ) " +
                     "ORDER BY  ";
 
@@ -201,7 +200,7 @@ public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<Autori
                     "SUM(a.totalLitrosAbastecimento) AS mediaTotalLitrosAbastecimento, " +
                     "CASE WHEN MAX(a.hodometro) - MIN(a.hodometro) > 0 " +
                     "THEN " + TipoConsumo.KML.getValue() + " " +
-                    "ELSE " + TipoConsumo.HL.getValue() + " " +
+                    "ELSE " + TipoConsumo.LH.getValue() + " " +
                     "END AS tipoConsumo, " +
                     "a.razaoSocialFrota, " +
                     "a.cnpjFrota) " +
@@ -228,7 +227,7 @@ public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<Autori
                     "( :tipoConsumo IS NULL OR " +
                     ":tipoConsumo = " + TipoConsumo.KML.getValue() + " AND " +
                     "(MAX(a.hodometro) - MIN(a.hodometro) > 0) " +
-                    "OR :tipoConsumo = " + TipoConsumo.HL.getValue() + " AND " +
+                    "OR :tipoConsumo = " + TipoConsumo.LH.getValue() + " AND " +
                     "(MAX(a.horimetro) - MIN(a.horimetro) > 0) ) " +
                     "ORDER BY  ";
 
@@ -455,9 +454,18 @@ public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<Autori
                 ||vo.getMediaTotalLitrosAbastecimento().subtract(primeiroAbastecimento.getRegistros().get(0).getTotalLitrosAbastecimento()).compareTo(BigDecimal.ZERO) == 0){
             return  null;
         }
-        vo.setMedia(BigDecimal.valueOf(vo.getMediaHorHod())
-                .divide((vo.getMediaTotalLitrosAbastecimento()
-                        .subtract(primeiroAbastecimento.getRegistros().get(0).getTotalLitrosAbastecimento())), 3, RoundingMode.HALF_EVEN));
+        switch (TipoConsumo.obterPorValor(vo.getTipoConsumo())) {
+            case KML:
+                vo.setMedia(BigDecimal.valueOf(vo.getMediaHorHod())
+                        .divide((vo.getMediaTotalLitrosAbastecimento()
+                                .subtract(primeiroAbastecimento.getRegistros().get(0).getTotalLitrosAbastecimento())), 3, RoundingMode.HALF_EVEN));
+                break;
+            case LH:
+                vo.setMedia(vo.getMediaTotalLitrosAbastecimento()
+                        .subtract(primeiroAbastecimento.getRegistros().get(0).getTotalLitrosAbastecimento())
+                        .divide(BigDecimal.valueOf(vo.getMediaHorHod()), 3, RoundingMode.HALF_EVEN));
+                break;
+        }
 
         return vo;
     }

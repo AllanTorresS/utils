@@ -5,13 +5,15 @@ import ipp.aci.boleia.util.i18n.IEnumComLabel;
 /**
  * Indica o status da integração de uma entidade de reembolso
  */
-public enum StatusIntegracaoReembolsoJde implements IEnumComLabel<StatusAtivacao> {
+public enum StatusIntegracaoReembolsoJde implements IEnumComLabel<StatusIntegracaoReembolsoJde> {
 
     ERRO_ENVIO(0),
     REALIZADO(1),
     PENDENTE(2),
     AGUARDANDO_LIBERACAO(3),
-    ERRO_LIBERACAO(4);
+    ERRO_LIBERACAO(4),
+    ANTECIPADO(5),
+    PREVISTO(6);
 
     private final Integer value;
 
