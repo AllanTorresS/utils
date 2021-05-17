@@ -8,6 +8,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author pedro.silva
  */
 public class ChamadoVo {
+    @JsonProperty("Id")
+    private String idSalesforce;
     @JsonProperty("CaseNumber")
     private String numero;
     @JsonProperty("CreatedDate")
@@ -16,10 +18,28 @@ public class ChamadoVo {
     private String cnpjPosto;
     @JsonProperty("CNPJFrota__c")
     private String cnpjFrota;
+    @JsonProperty("Solicitante__c")
+    private String solicitante;
     @JsonProperty("Motivo__c")
     private String motivo;
     @JsonProperty("Status")
     private String status;
+
+    public String getIdSalesforce() {
+        return idSalesforce;
+    }
+
+    public void setIdSalesforce(String idSalesforce) {
+        this.idSalesforce = idSalesforce;
+    }
+
+    public String getSolicitante() {
+        return solicitante;
+    }
+
+    public void setSolicitante(String solicitante) {
+        this.solicitante = solicitante;
+    }
 
     public String getNumero() {
         return numero;

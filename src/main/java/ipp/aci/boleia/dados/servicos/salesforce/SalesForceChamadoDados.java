@@ -4,11 +4,9 @@ import ipp.aci.boleia.dados.IChamadoDados;
 import ipp.aci.boleia.dados.IClienteHttpDados;
 import ipp.aci.boleia.dados.IMotivoChamadoDados;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
-import ipp.aci.boleia.dominio.vo.SolicitacaoLeadExtVo;
 import ipp.aci.boleia.dominio.vo.salesforce.ChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.ConsultaChamadosVo;
 import ipp.aci.boleia.dominio.vo.salesforce.FiltroConsultaChamadosVo;
-import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioJson;
 import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -21,16 +19,17 @@ import org.springframework.stereotype.Repository;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
+import static ipp.aci.boleia.util.ConstantesSalesForce.SOLICITANTE_FROTA;
+import static ipp.aci.boleia.util.ConstantesSalesForce.SOLICITANTE_INTERNO;
+import static ipp.aci.boleia.util.ConstantesSalesForce.SOLICITANTE_REVENDA;
 import static ipp.aci.boleia.util.UtilitarioCalculoData.obterPrimeiroInstanteDia;
 import static ipp.aci.boleia.util.UtilitarioCalculoData.obterUltimoInstanteDia;
+import static ipp.aci.boleia.util.UtilitarioFormatacaoData.formatarDataIso8601ComTimeZoneMillis;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.text.MessageFormat.format;
 
@@ -42,19 +41,24 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SalesForceChamadoDados.class);
 
-    private static final String PARAMETRO_DATA_ABERTURA = "AND CreatedDate>={1} AND CreatedDate<={2}";
+    private static final String PARAMETRO_CONTATO_FROTA = " AND Contact.IdExterno__c=':contatoFrota' ";
+    private static final String PARAMETRO_CONTATO_REVENDA = " AND ContatoDoPosto__r.IdExterno__c=':contatoPosto' ";
+    private static final String PARAMETRO_DATA_ABERTURA = " AND CreatedDate >= :dataAberturaDe AND CreatedDate <= :dataAberturaAte ";
 
     private static final String FROM_CONSULTAR_CHAMADOS =
             "FROM Case " +
-            "WHERE CaseNumber LIKE ''{0}'' AND " +
-            "       Status LIKE ''{1}'' " +
-            "       {2} ";
+            "WHERE CaseNumber LIKE ':numeroChamado' AND " +
+            "       Status LIKE ':status' AND " +
+            "       Solicitante__c=':solicitante' " +
+            PARAMETRO_CONTATO_FROTA +
+            PARAMETRO_CONTATO_REVENDA +
+            PARAMETRO_DATA_ABERTURA;
 
     private static final String CONSULTAR_CHAMADOS =
-            "SELECT CaseNumber,CreatedDate,CNPJPosto__c,CNPJFrota__c,Motivo__c,Status " +
+            "SELECT Id,CaseNumber,CreatedDate,CNPJPosto__c,CNPJFrota__c,Solicitante__c,Motivo__c,Status " +
             FROM_CONSULTAR_CHAMADOS +
             "ORDER BY CreatedDate DESC " +
-            "LIMIT {3} OFFSET {4}";
+            "LIMIT :limit OFFSET :offset";
 
     private static final String COUNT_CONSULTAR_CHAMADOS =
             "SELECT COUNT() " + FROM_CONSULTAR_CHAMADOS;
@@ -111,6 +115,51 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
         }
     }
 
+    @Override
+    public boolean abrirChamado(String company ,String name, String email, String phone, Long idReason, String subject, String description) {
+
+        Map<String, String> form = new LinkedHashMap<>();
+        form.put(ALIAS_ORGID, orgid);
+        form.put(ALIAS_COMPANY, limitar(company, LIMITE_DEFAULT));
+        form.put(ALIAS_NAME, limitar(name, LIMITE_DEFAULT));
+        form.put(ALIAS_EMAIL, limitar(email, LIMITE_DEFAULT));
+        form.put(ALIAS_PHONE, limitar(phone, LIMITE_PHONE));
+        form.put(ALIAS_REASON, motivoChamadoDados.obterPorId(idReason).getDescricao());
+        form.put(ALIAS_SUBJECT, limitar(subject, LIMITE_DEFAULT));
+        form.put(ALIAS_DESCRIPTION, limitar(description, LIMITE_DESCRIPTION));
+
+        try {
+            return restDados.doPostFormEncoded(endereco, form, resp -> resp.getStatusLine().getStatusCode() == 200);
+        }catch (Exception ex){
+            LOGGER.error(ex.getMessage(), ex);
+            return false;
+        }
+    }
+
+    public void setEndereco(String endereco) {
+        this.endereco = endereco;
+    }
+
+    @Override
+    public String getClientId() {
+        return clientId;
+    }
+
+    @Override
+    public String getClientSecret() {
+        return clientSecret;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
     /**
      * Realiza as integrações da consulta de chamados.
      *
@@ -128,7 +177,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
 
         ResultadoPaginado<ChamadoVo> resultadoPaginado = new ResultadoPaginado<>();
         resultadoPaginado.setTotalItems(totalItems);
-        resultadoPaginado.setRegistros(consultaChamadosVo.getChamados());
+        resultadoPaginado.setRegistros(consultaChamadosVo.getChamados() != null ? consultaChamadosVo.getChamados() : new ArrayList<>());
         return resultadoPaginado;
     }
 
@@ -173,47 +222,85 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
      * @param possuiPaginacao Informa se a query possui informações de paginação.
      * @param filtro Filtro de consulta.
      * @return Query formatada.
+     *
+     * @throws UnsupportedEncodingException Exceção lançada caso não seja possível codificar o conteúdo da
+     * query de consulta para ser usado na url de integração.
      */
-    private String formatarQueryParaPesquisa(String query, boolean possuiPaginacao, FiltroConsultaChamadosVo filtro) {
-        String numeroChamado = filtro.getNumeroChamado() != null ? filtro.getNumeroChamado() : "%25%25";
-        String status = filtro.getStatus() != null ? filtro.getStatus() : "%25%25";
-        String parametroDataAbertura = "";
-        if(filtro.getDataAbertura() != null) {
-            parametroDataAbertura = format(PARAMETRO_DATA_ABERTURA, obterPrimeiroInstanteDia(filtro.getDataAbertura()), obterUltimoInstanteDia(filtro.getDataAbertura()));
+    private String formatarQueryParaPesquisa(String query, boolean possuiPaginacao, FiltroConsultaChamadosVo filtro) throws UnsupportedEncodingException {
+        Map<String, Object> parametros = new HashMap<>();
+        parametros.put("numeroChamado", tratarParametroLikeNulo(filtro.getNumeroChamado()));
+        parametros.put("status", tratarParametroLikeNulo(filtro.getStatus()));
+        parametros.put("solicitante", obterParametroSolicitante(filtro));
+
+        if(filtro.isContatoFrota()) {
+            query = query.replace(PARAMETRO_CONTATO_REVENDA, "");
+            parametros.put("contatoFrota", tratarParametroLikeNulo(filtro.getContato()));
+        } else if(filtro.isContatoRevenda()) {
+            query = query.replace(PARAMETRO_CONTATO_FROTA, "");
+            parametros.put("contatoPosto", tratarParametroLikeNulo(filtro.getContato()));
         }
 
-        List<Object> argumentos = new ArrayList<>();
-        argumentos.add(numeroChamado);
-        argumentos.add(status);
-        argumentos.add(parametroDataAbertura);
+        if(filtro.getDataAbertura() != null) {
+            parametros.put("dataAberturaDe", formatarDataIso8601ComTimeZoneMillis(obterPrimeiroInstanteDia(filtro.getDataAbertura())));
+            parametros.put("dataAberturaAte", formatarDataIso8601ComTimeZoneMillis(obterUltimoInstanteDia(filtro.getDataAbertura())));
+        } else {
+            query = query.replace(PARAMETRO_DATA_ABERTURA, "");
+        }
+
         if(possuiPaginacao) {
             Integer limit = filtro.getPaginacao().getTamanhoPagina();
             Integer offset = (filtro.getPaginacao().getPagina() * filtro.getPaginacao().getTamanhoPagina()) - filtro.getPaginacao().getTamanhoPagina();
-            argumentos.add(limit);
-            argumentos.add(offset);
+            parametros.put("limit", limit);
+            parametros.put("offset", offset);
         }
-        return format(query.replaceAll(" ", "+"), argumentos.toArray(new Object[argumentos.size()]));
+        return formatarQueryParaConsulta(query, parametros);
     }
 
-    @Override
-    public boolean abrirChamado(String company ,String name, String email, String phone, Long idReason, String subject, String description) {
-
-        Map<String, String> form = new LinkedHashMap<>();
-        form.put(ALIAS_ORGID, orgid);
-        form.put(ALIAS_COMPANY, limitar(company, LIMITE_DEFAULT));
-        form.put(ALIAS_NAME, limitar(name, LIMITE_DEFAULT));
-        form.put(ALIAS_EMAIL, limitar(email, LIMITE_DEFAULT));
-        form.put(ALIAS_PHONE, limitar(phone, LIMITE_PHONE));
-        form.put(ALIAS_REASON, motivoChamadoDados.obterPorId(idReason).getDescricao());
-        form.put(ALIAS_SUBJECT, limitar(subject, LIMITE_DEFAULT));
-        form.put(ALIAS_DESCRIPTION, limitar(description, LIMITE_DESCRIPTION));
-
-        try {
-            return restDados.doPostFormEncoded(endereco, form, resp -> resp.getStatusLine().getStatusCode() == 200);
-        }catch (Exception ex){
-            LOGGER.error(ex.getMessage(), ex);
-            return false;
+    /**
+     * Obtém o valor do parametro solicitante utilizado na busca por chamados no salesforce.
+     *
+     * @param filtro Filtro de consulta.
+     * @return Valor do solicitante.
+     */
+    private String obterParametroSolicitante(FiltroConsultaChamadosVo filtro) {
+        if(filtro.isContatoFrota()) {
+            return SOLICITANTE_FROTA;
+        } else if(filtro.isContatoRevenda()) {
+            return SOLICITANTE_REVENDA;
+        } else if(filtro.isContatoInterno()) {
+            return SOLICITANTE_INTERNO;
         }
+        return null;
+    }
+
+    /**
+     * Trata o valor de um parâmetro like que pode ser nulo.
+     *
+     * @param parametro Valor do parâmetro like que pode ser nulo.
+     * @return O valor do parâmetro que deverá ser utilizado na consulta.
+     */
+    private String tratarParametroLikeNulo(String parametro) {
+        if(parametro == null) {
+            return "%%";
+        }
+        return parametro;
+    }
+
+    /**
+     * Formata uma query soql para a realização de uma consulta pela API do salesforce.
+     *
+     * @param query Query soql.
+     * @param parametros Parametros da consulta.
+     * @return Query formatada.
+     *
+     * @throws UnsupportedEncodingException Exceção lançada caso não seja possível codificar o conteúdo da
+     * query de consulta para ser usado na url de integração.
+     */
+    private String formatarQueryParaConsulta(String query, Map<String, Object> parametros) throws UnsupportedEncodingException {
+        for (String parametro : parametros.keySet()) {
+            query = query.replace(":" + parametro, parametros.get(parametro).toString());
+        }
+        return URLEncoder.encode(query, UTF_8.displayName());
     }
 
     /**
@@ -228,29 +315,5 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
             campo = campo.substring(0, limite);
         }
         return campo;
-    }
-
-    public void setEndereco(String endereco) {
-        this.endereco = endereco;
-    }
-
-    @Override
-    public String getClientId() {
-        return clientId;
-    }
-
-    @Override
-    public String getClientSecret() {
-        return clientSecret;
-    }
-
-    @Override
-    public String getUsername() {
-        return username;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
     }
 }
