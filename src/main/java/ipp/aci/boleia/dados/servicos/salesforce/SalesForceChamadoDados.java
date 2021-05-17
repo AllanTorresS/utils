@@ -22,7 +22,9 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static ipp.aci.boleia.util.ConstantesSalesForce.SOLICITANTE_FROTA;
 import static ipp.aci.boleia.util.ConstantesSalesForce.SOLICITANTE_INTERNO;
@@ -32,6 +34,7 @@ import static ipp.aci.boleia.util.UtilitarioCalculoData.obterUltimoInstanteDia;
 import static ipp.aci.boleia.util.UtilitarioFormatacaoData.formatarDataIso8601ComTimeZoneMillis;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.text.MessageFormat.format;
+import static java.util.stream.Collectors.joining;
 
 /**
  * Respositorio para abertura de chamados Salesforce
@@ -42,7 +45,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     private static final Logger LOGGER = LoggerFactory.getLogger(SalesForceChamadoDados.class);
 
     private static final String PARAMETRO_CONTATO_FROTA = " AND Contact.IdExterno__c=':contatoFrota' ";
-    private static final String PARAMETRO_CONTATO_REVENDA = " AND ContatoDoPosto__r.IdExterno__c=':contatoPosto' ";
+    private static final String PARAMETRO_CONTATO_REVENDA = " AND ContatoDoPosto__r.IdExterno__c IN (:contatoPosto) ";
     private static final String PARAMETRO_DATA_ABERTURA = " AND CreatedDate >= :dataAberturaDe AND CreatedDate <= :dataAberturaAte ";
 
     private static final String FROM_CONSULTAR_CHAMADOS =
@@ -232,12 +235,13 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
         parametros.put("status", tratarParametroLikeNulo(filtro.getStatus()));
         parametros.put("solicitante", obterParametroSolicitante(filtro));
 
+        List<String> contatos = obterContatosParaConsulta(filtro);
         if(filtro.isContatoFrota()) {
             query = query.replace(PARAMETRO_CONTATO_REVENDA, "");
-            parametros.put("contatoFrota", tratarParametroLikeNulo(filtro.getContato()));
+            parametros.put("contatoFrota", contatos.stream().findFirst().orElse(""));
         } else if(filtro.isContatoRevenda()) {
             query = query.replace(PARAMETRO_CONTATO_FROTA, "");
-            parametros.put("contatoPosto", tratarParametroLikeNulo(filtro.getContato()));
+            parametros.put("contatoPosto", contatos.stream().collect(joining("','", "'", "'")));
         }
 
         if(filtro.getDataAbertura() != null) {
@@ -249,11 +253,26 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
 
         if(possuiPaginacao) {
             Integer limit = filtro.getPaginacao().getTamanhoPagina();
-            Integer offset = (filtro.getPaginacao().getPagina() * filtro.getPaginacao().getTamanhoPagina()) - filtro.getPaginacao().getTamanhoPagina();
+            Integer offset = filtro.getPaginacao().getOffset();
             parametros.put("limit", limit);
             parametros.put("offset", offset);
         }
         return formatarQueryParaConsulta(query, parametros);
+    }
+
+    /**
+     * Retorna uma lista com os contatos utilizados na consulta.
+     *
+     * @param filtro Filtro de busca.
+     * @return Lista com contatos.
+     */
+    private List<String> obterContatosParaConsulta(FiltroConsultaChamadosVo filtro) {
+        String cpfContato = filtro.getCpfContato();
+        List<String> cnpjsContato = filtro.getCnpjsContato();
+        if(cpfContato != null && cnpjsContato != null && !cnpjsContato.isEmpty()) {
+            return cnpjsContato.stream().map(cnpj -> cpfContato + cnpj).collect(Collectors.toList());
+        }
+        return new ArrayList<>();
     }
 
     /**

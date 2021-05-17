@@ -2,8 +2,8 @@ package ipp.aci.boleia.dominio.vo.salesforce;
 
 import ipp.aci.boleia.dominio.pesquisa.comum.BaseFiltroPaginado;
 
-import javax.persistence.Transient;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Filtro de pesquisa da consulta de chamados.
@@ -12,8 +12,7 @@ public class FiltroConsultaChamadosVo extends BaseFiltroPaginado {
     private String numeroChamado;
     private Date dataAbertura;
     private String status;
-    private Long idPv;
-    private String cnpjContato;
+    private List<String> cnpjsContato;
     private String cpfContato;
     private boolean contatoFrota;
     private boolean contatoRevenda;
@@ -43,12 +42,12 @@ public class FiltroConsultaChamadosVo extends BaseFiltroPaginado {
         this.status = status;
     }
 
-    public String getCnpjContato() {
-        return cnpjContato;
+    public List<String> getCnpjsContato() {
+        return cnpjsContato;
     }
 
-    public void setCnpjContato(String cnpjContato) {
-        this.cnpjContato = cnpjContato;
+    public void setCnpjsContato(List<String> cnpjsContato) {
+        this.cnpjsContato = cnpjsContato;
     }
 
     public String getCpfContato() {
@@ -81,13 +80,5 @@ public class FiltroConsultaChamadosVo extends BaseFiltroPaginado {
 
     public void setContatoInterno(boolean contatoInterno) {
         this.contatoInterno = contatoInterno;
-    }
-
-    @Transient
-    public String getContato() {
-        if(cpfContato != null && cnpjContato != null) {
-            return cpfContato + cnpjContato;
-        }
-        return null;
     }
 }
