@@ -9,6 +9,8 @@ import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheCicloVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFinanceiroVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFrotaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialFrotaVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaPostoInternoRotaVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaRotaPontoVendaServicosVo;
 import ipp.aci.boleia.dominio.vo.apco.ClienteProFrotaVo;
 import ipp.aci.boleia.dominio.vo.FiltroAutoCompletePostoRotaVo;
 
@@ -217,4 +219,13 @@ public interface IFrotaDados extends IRepositorioBoleiaDados<Frota> {
      * @return lista das frotas que atendem aos criterios de busca
      */
     List<Frota> pesquisarParaAutocompleteRota(FiltroAutoCompletePostoRotaVo filtro);
+
+
+    /**
+     * Obtém a lista das frotas a serem exibidas que possuem Posto Interno na proximidade da Rota
+     *
+     * @param filtro O filtro de pesquisa com as posições da Rota
+     * @return lista das frotas que atendem aos criterios de busca
+     */
+    List<Frota> pesquisarPostoInternoNaRota(FiltroPesquisaPostoInternoRotaVo filtro);
 }
