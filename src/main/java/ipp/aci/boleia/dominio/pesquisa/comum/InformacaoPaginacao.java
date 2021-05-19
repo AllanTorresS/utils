@@ -2,6 +2,7 @@ package ipp.aci.boleia.dominio.pesquisa.comum;
 
 import ipp.aci.boleia.util.Ordenacao;
 
+import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -164,5 +165,15 @@ public class InformacaoPaginacao {
 	 */
 	public boolean existemParametrosOrdenacaoColuna() {
 		return parametrosOrdenacaoColuna != null && !parametrosOrdenacaoColuna.isEmpty();
+	}
+
+	/**
+	 * Retorna o valor de offset que deverá ser utilizado na consulta paginada com base na pagina atual e tamanho da pagina.
+	 *
+	 * @return valor de offset.
+	 */
+	@Transient
+	public Integer getOffset() {
+		return (pagina * tamanhoPagina) - tamanhoPagina;
 	}
 }
