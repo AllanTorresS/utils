@@ -13,7 +13,8 @@ public enum ClassificacaoStatusFrota implements IEnumComLabel<ClassificacaoStatu
     INADIMPLENCIA(1, "", ""),
     SUSPENSAO_DE_ATIVIDADE(2, "", ""),
     DEBITO_VENCIDO(3, "cobranca.servico.motivo.inativacao.debito.vencido", "frota.credito.pre.pago.ativar.motivo"),
-    SALDO_ZERADO(4, "frota.credito.pre.pago.inativar.saldo.zerado.motivo", "frota.credito.pre.pago.ativar.motivo");
+    SALDO_ZERADO(4, "frota.credito.pre.pago.inativar.saldo.zerado.motivo", "frota.credito.pre.pago.ativar.motivo"),
+    NAO_INICIADA(5,"","");
 
     private final Integer value;
     private final String chaveMensagemInativacao;
