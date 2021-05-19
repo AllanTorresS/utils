@@ -362,7 +362,7 @@ public class OracleCobrancaDados extends OracleRepositorioBoleiaDados<Cobranca> 
             new ParametroPesquisaDataMaiorOuIgual("dataVencimentoPagto", limiteInferiorData),
             new ParametroPesquisaNulo("dataPagamento"),
             new ParametroPesquisaIgual("statusIntegracaoJDE", StatusIntegracaoJde.REALIZADO.getValue()),
-            new ParametroPesquisaFetch("frota")
+            new ParametroPesquisaFetch("transacoesConsolidadas.frotaPtov.frota")
         );
     }
 
