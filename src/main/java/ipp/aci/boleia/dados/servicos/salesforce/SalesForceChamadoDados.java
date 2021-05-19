@@ -6,6 +6,7 @@ import ipp.aci.boleia.dados.IMotivoChamadoDados;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.salesforce.ChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.ConsultaChamadosVo;
+import ipp.aci.boleia.dominio.vo.salesforce.CriacaoChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.FiltroConsultaChamadosVo;
 import ipp.aci.boleia.util.UtilitarioJson;
 import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
@@ -100,11 +101,17 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     @Value("${salesforce.chamados.consulta.url}")
     private String urlConsulta;
 
+    @Value("${salesforce.chamados.criacao.url")
+    private String urlCriacao;
+
     @Autowired
     private IClienteHttpDados restDados;
 
     @Autowired
     private IMotivoChamadoDados motivoChamadoDados;
+
+    public SalesForceChamadoDados() {
+    }
 
     @Override
     public ResultadoPaginado<ChamadoVo> consultarChamados(FiltroConsultaChamadosVo filtro) {
@@ -119,7 +126,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     }
 
     @Override
-    public boolean abrirChamado(String company ,String name, String email, String phone, Long idReason, String subject, String description) {
+    public boolean abrirChamado(String company, String name, String email, String phone, Long idReason, String subject, String description) {
 
         Map<String, String> form = new LinkedHashMap<>();
         form.put(ALIAS_ORGID, orgid);
@@ -137,6 +144,11 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
             LOGGER.error(ex.getMessage(), ex);
             return false;
         }
+    }
+
+    @Override
+    public void criarChamado(CriacaoChamadoVo vo) {
+        prepararRequisicao(urlCriacao, vo);
     }
 
     public void setEndereco(String endereco) {
