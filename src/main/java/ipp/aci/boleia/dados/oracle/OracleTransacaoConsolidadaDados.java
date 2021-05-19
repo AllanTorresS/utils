@@ -84,19 +84,19 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             "WHEN (TC.frotaExigeNF = false AND TC.unidade IS NULL AND TC.empresaAgregada IS NULL) THEN 2 " +
             "ELSE 3 " +
             "END ";
-    private static final String CLAUSULA_DATA_REEMB_GERADO = 
+    private static final String CLAUSULA_DATA_REEMB_GERADO =
             " tc.reembolso IS NOT NULL AND " +
             " ((rm.dataPagamento is null AND (rm.dataVencimentoPgto >= :dataInicioPeriodo AND rm.dataVencimentoPgto <= :dataFimPeriodo)) " +
             " OR (rm.dataPagamento >= :dataInicioPeriodo AND rm.dataPagamento <= :dataFimPeriodo)) ";
 
-    private static final String CLAUSULA_DATA_REEMB_NAO_GERADO = 
+    private static final String CLAUSULA_DATA_REEMB_NAO_GERADO =
             " tc.reembolso IS NULL AND " +
             " ((f_ptov.frota.modoPagamento = " + ModalidadePagamento.POS_PAGO.getValue() +
             " AND (trunc(tc.dataFimPeriodo + prz.prazoReembolso) >= :dataInicioPeriodo AND trunc(tc.dataFimPeriodo + prz.prazoReembolso) <= :dataFimPeriodo)) " +
             " OR (f_ptov.frota.modoPagamento = " + ModalidadePagamento.PRE_PAGO.getValue() +
             " AND (trunc(tc.dataFimPeriodo + 2) >= :dataInicioPeriodo AND trunc(tc.dataFimPeriodo + 2) <= :dataFimPeriodo))) ";
 
-    private static final String CLAUSULA_CALCULO_PRAZO_REEMB_PRE_PAGO = 
+    private static final String CLAUSULA_CALCULO_PRAZO_REEMB_PRE_PAGO =
             " f_ptov.frota.modoPagamento = " + ModalidadePagamento.PRE_PAGO.getValue() +
             " THEN TRUNC(tc.dataFimPeriodo + 2) ";
 
@@ -591,10 +591,10 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
     private static final String CLAUSULA_STATUS_NOTA_FISCAL = " AND (tc.statusNotaFiscal in :statusNf) ";
 
     private static final String CLAUSULA_STATUS_PAGAMENTO_REEMBOLSO = " AND ((r is null AND " +
-             StatusPagamentoReembolso.PREVISTO.getValue() + " in :statusPagamento) OR (r is not null AND (r.status in :statusPagamento OR " + 
+             StatusPagamentoReembolso.PREVISTO.getValue() + " in :statusPagamento) OR (r is not null AND (r.status in :statusPagamento OR " +
              " (r.status = " + StatusPagamentoReembolso.EM_ABERTO.getValue() + " AND " + StatusPagamentoReembolso.PREVISTO.getValue() + " in :statusPagamento)))) ";
-    
-    private static final String CONSULTA_COMUM_CONSOLIDADOS_GRID_REEMBOLSO = 
+
+    private static final String CONSULTA_COMUM_CONSOLIDADOS_GRID_REEMBOLSO =
             "FROM TransacaoConsolidada tc " +
             "LEFT JOIN tc.frotaPtov fpv " +
             "LEFT JOIN tc.reembolso r " +
@@ -1064,14 +1064,10 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         } else if(unidade != null) {
             parametroUnidadeExigeNf = new ParametroPesquisaIgual("unidade.id", unidade.getId());
         } else if(frotaExigeNF != null) {
-            if(frota.isGerenciaNf() == null) {
-                parametros.add(new ParametroPesquisaIgual("frotaExigeNF", frotaExigeNF));
-            } else if(frota.isGerenciaNf()) {
                 parametros.add(new ParametroPesquisaAnd(
                         new ParametroPesquisaIgual("frotaExigeNF", frotaExigeNF),
                         new ParametroPesquisaIgual("frotaGerenciaNf", frota.isGerenciaNf())
                 ));
-            }
         }
 
         parametros.add(new ParametroPesquisaDataMenorOuIgual("dataInicioPeriodo", dataReferencia));
@@ -1169,7 +1165,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         parametros.add(new ParametroPesquisaIgual("frotaPtov.pontoVenda.id", pv));
         parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataInicioPeriodo", UtilitarioCalculoData.obterPrimeiroInstanteDia(de)));
         parametros.add(new ParametroPesquisaDataMenorOuIgual("dataFimPeriodo", UtilitarioCalculoData.obterUltimoInstanteDia(ate)));
-        
+
         return pesquisar((ParametroOrdenacaoColuna) null, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
