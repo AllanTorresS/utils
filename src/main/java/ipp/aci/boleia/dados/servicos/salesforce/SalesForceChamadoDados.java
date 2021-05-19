@@ -3,6 +3,7 @@ package ipp.aci.boleia.dados.servicos.salesforce;
 import ipp.aci.boleia.dados.IChamadoDados;
 import ipp.aci.boleia.dados.IClienteHttpDados;
 import ipp.aci.boleia.dados.IMotivoChamadoDados;
+import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.salesforce.ChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.ConsultaChamadosVo;
@@ -44,23 +45,24 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SalesForceChamadoDados.class);
 
-    private static final String PARAMETRO_CONTATO_FROTA = " AND Contact.IdExterno__c=':contatoFrota' ";
-    private static final String PARAMETRO_CONTATO_REVENDA = " AND ContatoDoPosto__r.IdExterno__c IN (:contatoPosto) ";
-    private static final String PARAMETRO_DATA_ABERTURA = " AND CreatedDate >= :dataAberturaDe AND CreatedDate <= :dataAberturaAte ";
+    private static final String CLAUSULA_CONTATO_FROTA = " AND Contact.IdExterno__c=':contatoFrota' ";
+    private static final String CLAUSULA_CONTATO_REVENDA = " AND ContatoDoPosto__r.IdExterno__c IN (:contatoPosto) ";
+    private static final String CLAUSULA_DATA_ABERTURA = " AND CreatedDate >= :dataAberturaDe AND CreatedDate <= :dataAberturaAte ";
+    private static final String ORDER_BY_CONSULTA_CHAMADOS = "ORDER BY :ordenacao ";
 
     private static final String FROM_CONSULTAR_CHAMADOS =
             "FROM Case " +
             "WHERE CaseNumber LIKE ':numeroChamado' AND " +
             "       Status LIKE ':status' AND " +
             "       Solicitante__c=':solicitante' " +
-            PARAMETRO_CONTATO_FROTA +
-            PARAMETRO_CONTATO_REVENDA +
-            PARAMETRO_DATA_ABERTURA;
+                    CLAUSULA_CONTATO_FROTA +
+                    CLAUSULA_CONTATO_REVENDA +
+                    CLAUSULA_DATA_ABERTURA;
 
     private static final String CONSULTAR_CHAMADOS =
             "SELECT Id,CaseNumber,CreatedDate,CNPJPosto__c,CNPJFrota__c,Solicitante__c,Motivo__c,Status " +
             FROM_CONSULTAR_CHAMADOS +
-            "ORDER BY CreatedDate DESC " +
+            ORDER_BY_CONSULTA_CHAMADOS +
             "LIMIT :limit OFFSET :offset";
 
     private static final String COUNT_CONSULTAR_CHAMADOS =
@@ -237,10 +239,10 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
 
         List<String> contatos = obterContatosParaConsulta(filtro);
         if(filtro.isContatoFrota()) {
-            query = query.replace(PARAMETRO_CONTATO_REVENDA, "");
+            query = query.replace(CLAUSULA_CONTATO_REVENDA, "");
             parametros.put("contatoFrota", contatos.stream().findFirst().orElse(""));
         } else if(filtro.isContatoRevenda()) {
-            query = query.replace(PARAMETRO_CONTATO_FROTA, "");
+            query = query.replace(CLAUSULA_CONTATO_FROTA, "");
             parametros.put("contatoPosto", contatos.stream().collect(joining("','", "'", "'")));
         }
 
@@ -248,16 +250,45 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
             parametros.put("dataAberturaDe", formatarDataIso8601ComTimeZoneMillis(obterPrimeiroInstanteDia(filtro.getDataAbertura())));
             parametros.put("dataAberturaAte", formatarDataIso8601ComTimeZoneMillis(obterUltimoInstanteDia(filtro.getDataAbertura())));
         } else {
-            query = query.replace(PARAMETRO_DATA_ABERTURA, "");
+            query = query.replace(CLAUSULA_DATA_ABERTURA, "");
         }
 
         if(possuiPaginacao) {
-            Integer limit = filtro.getPaginacao().getTamanhoPagina();
-            Integer offset = filtro.getPaginacao().getOffset();
-            parametros.put("limit", limit);
-            parametros.put("offset", offset);
+            adicionarParametrosPaginacao(filtro, parametros);
+
+            List<ParametroOrdenacaoColuna> parametrosOrdenacao = filtro.getPaginacao().getParametrosOrdenacaoColuna();
+            if(parametrosOrdenacao != null && !parametrosOrdenacao.isEmpty()) {
+                adicionarParametrosOrdenacao(parametrosOrdenacao, parametros);
+            } else {
+                query = query.replace(ORDER_BY_CONSULTA_CHAMADOS, "");
+            }
         }
         return formatarQueryParaConsulta(query, parametros);
+    }
+
+    /**
+     * Adiciona os parametros de ordenação no mapa de parametros da consulta.
+     *  @param parametrosOrdenacao Parametros de ordenação a serem aplicados na consulta.
+     * @param parametros Map com os parametros da consulta.
+     */
+    private void adicionarParametrosOrdenacao(List<ParametroOrdenacaoColuna> parametrosOrdenacao, Map<String, Object> parametros) {
+        String parametroOrdenacao = parametrosOrdenacao.stream()
+                                                        .map(p -> p.getNome() + " " + p.getSentidoOrdenacao().getTermoSql())
+                                                        .collect(joining(","));
+        parametros.put("ordenacao", parametroOrdenacao);
+    }
+
+    /**
+     * Adiciona os parametros de paginação no mapa de parametros da consulta.
+     *
+     * @param filtro Filtro de pesquisa.
+     * @param parametros Map com os parametros da consulta.
+     */
+    private void adicionarParametrosPaginacao(FiltroConsultaChamadosVo filtro, Map<String, Object> parametros) {
+        Integer limit = filtro.getPaginacao().getTamanhoPagina();
+        Integer offset = filtro.getPaginacao().getOffset();
+        parametros.put("limit", limit);
+        parametros.put("offset", offset);
     }
 
     /**
