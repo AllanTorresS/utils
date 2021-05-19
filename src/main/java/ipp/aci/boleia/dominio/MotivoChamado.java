@@ -9,7 +9,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
 /**
- * Representa a tabela de Motivo Chamado
+ * Representa a tabela de Motivo ChamadoTipo
  */
 @Entity
 @Table(name = "MOTIVO_CHAMADO")

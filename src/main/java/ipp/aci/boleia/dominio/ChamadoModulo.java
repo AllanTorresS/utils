@@ -35,18 +35,6 @@ public class ChamadoModulo implements IPersistente {
     @Column(name = "NM_MODULO")
     private String nome;
 
-    @NotNull
-    @Column(name = "ID_FROTISTA")
-    private boolean portalFrotista;
-
-    @NotNull
-    @Column(name = "ID_REVENDEDOR")
-    private boolean portalRevendedor;
-
-    @NotNull
-    @Column(name = "ID_SOLUCAO")
-    private boolean portalSolucao;
-
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
     @JoinTable(name = "CHAMADO_SISTEMA_MODULO",
             joinColumns = @JoinColumn(name = "CD_CHAMADO_MODULO", referencedColumnName = "CD_CHAMADO_MODULO"),
@@ -71,27 +59,11 @@ public class ChamadoModulo implements IPersistente {
         this.nome = nome;
     }
 
-    public boolean isPortalFrotista() {
-        return portalFrotista;
+    public List<ChamadoSistema> getSistemas() {
+        return sistemas;
     }
 
-    public void setPortalFrotista(boolean portalFrotista) {
-        this.portalFrotista = portalFrotista;
-    }
-
-    public boolean isPortalRevendedor() {
-        return portalRevendedor;
-    }
-
-    public void setPortalRevendedor(boolean portalRevendedor) {
-        this.portalRevendedor = portalRevendedor;
-    }
-
-    public boolean isPortalSolucao() {
-        return portalSolucao;
-    }
-
-    public void setPortalSolucao(boolean portalSolucao) {
-        this.portalSolucao = portalSolucao;
+    public void setSistemas(List<ChamadoSistema> sistemas) {
+        this.sistemas = sistemas;
     }
 }

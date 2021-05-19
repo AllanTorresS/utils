@@ -100,4 +100,20 @@ public class ChamadoSistema implements IPersistente {
     public void setPortalSolucao(boolean portalSolucao) {
         this.portalSolucao = portalSolucao;
     }
+
+    public List<ChamadoModulo> getModulos() {
+        return modulos;
+    }
+
+    public void setModulos(List<ChamadoModulo> modulos) {
+        this.modulos = modulos;
+    }
+
+    public List<ChamadoMotivo> getMotivos() {
+        return motivos;
+    }
+
+    public void setMotivos(List<ChamadoMotivo> motivos) {
+        this.motivos = motivos;
+    }
 }
