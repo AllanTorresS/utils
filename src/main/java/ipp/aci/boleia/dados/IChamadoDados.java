@@ -3,6 +3,7 @@ package ipp.aci.boleia.dados;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.salesforce.ChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.ConsultaChamadosVo;
+import ipp.aci.boleia.dominio.vo.salesforce.CriacaoChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.FiltroConsultaChamadosVo;
 
 /**
@@ -31,5 +32,7 @@ public interface IChamadoDados {
      * @param description do chamado
      * @return true se o chamado for enviado para o SalesForce, false caso contrário
      */
-    boolean abrirChamado(String company ,String name, String email, String phone, Long idReason, String subject, String description);
+    boolean abrirChamado(String company, String name, String email, String phone, Long idReason, String subject, String description);
+
+    void criarChamado(CriacaoChamadoVo vo);
 }

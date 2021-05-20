@@ -25,6 +25,10 @@ public class ChamadoVo {
     @JsonProperty("Status")
     private String status;
 
+    public ChamadoVo() {
+
+    }
+
     public String getIdSalesforce() {
         return idSalesforce;
     }
