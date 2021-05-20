@@ -67,14 +67,16 @@ public class FluxoAbastecimentoSd {
      * Obtém configuração de fluxo de abastecimento para frota, motorista e data parametrizados.
      *
      * @param frota da configuração de fluxo
-     * @param motorista da configuração de fluxo
+     * @param motorista da configuração de fluxo, pode ser opcional (nulo)
      * @param data no historico da configuração de fluxo
      * @return configuração de fluxo para contexto parametrizado
      */
     public IFluxoAbastecimentoConfig obterParaAbastecimento(Frota frota, Motorista motorista, Date data) {
-        HistoricoFluxoAbastecimentoMotoristaConfig fluxoMotorista = repositorioHistoricoFluxoMotorista.obterFluxoPorData(motorista,data);
-        if (fluxoMotorista != null && !fluxoMotorista.getExcluido()) {
-            return fluxoMotorista;
+        if (motorista != null) {
+            HistoricoFluxoAbastecimentoMotoristaConfig fluxoMotorista = repositorioHistoricoFluxoMotorista.obterFluxoPorData(motorista,data);
+            if (fluxoMotorista != null && !fluxoMotorista.getExcluido()) {
+                return fluxoMotorista;
+            }
         }
         HistoricoFluxoAbastecimentoFrotaConfig fluxoFrotaConfig = repositorioHistoricoFluxoFrota.obterFluxoPorData(frota, data);
         return fluxoFrotaConfig != null ? fluxoFrotaConfig : this.obterFluxoAbastecimentoPadrao();
