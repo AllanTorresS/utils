@@ -26,7 +26,6 @@ public class LeadCredenciamentoPostoIntegradorVo extends BaseLeadCredenciamentoI
 	@JsonProperty("BandeiraBranca__c")
 	private String bandeiraBranca;
 
-	@Size(max = 5)
 	@JsonProperty("ParticiparAntecipacaoRecebiveis__c")
 	private Boolean aceiteAntecipacao;
 	
