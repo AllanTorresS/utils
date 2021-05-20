@@ -65,6 +65,22 @@ public class OracleReembolsoDados extends OracleRepositorioBoleiaDados<Reembolso
 				"r.numeroDocumento IS NOT NULL";
 
 	/**
+	 * Consulta para listar todos os reembolsos a serem pagos ordenando pela data de vencimento de pagamento
+ 	 */
+	private static final String CONSULTA_PROXIMO_REEMBOLSO_A_SER_PAGO =
+			"SELECT r " +
+			"FROM TransacaoConsolidada tc " +
+			"JOIN tc.frotaPtov fp " +
+			"JOIN tc.reembolso r " +
+			"WHERE r.dataVencimentoPgto IS NOT NULL AND " +
+			"r.numeroDocumento IS NOT NULL AND " +
+			"r.status <> " + StatusPagamentoReembolso.PAGO.getValue() + " AND " +
+			"r.dataPagamento IS NULL AND " +
+			"r.valorReembolso > 0 AND " +
+			"fp.pontoVenda.id IN :idsPvs " +
+			"ORDER BY r.dataVencimentoPgto ASC";
+
+	/**
 	 * Instancia o repositorio
 	 */
 	public OracleReembolsoDados() {
@@ -219,5 +235,15 @@ public class OracleReembolsoDados extends OracleRepositorioBoleiaDados<Reembolso
 		parametros.add(new ParametroPesquisaDataMaiorOuIgual("transacoesConsolidadas.dataInicioPeriodo", UtilitarioCalculoData.obterPrimeiroInstanteDia(de)));
 		parametros.add(new ParametroPesquisaDataMenorOuIgual("transacoesConsolidadas.dataFimPeriodo", UtilitarioCalculoData.obterUltimoInstanteDia(ate)));
 		return pesquisar((ParametroOrdenacaoColuna) null, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+	}
+
+	@Override
+	public Reembolso obterProximoReembolsoParaPagamento(List<Long> idsPontoVenda) {
+		//return pesquisarSemIsolamentoDados(null, CONSULTA_PROXIMO_REEMBOLSO_A_SER_PAGO).getRegistros().get(0);
+		List<Reembolso> reembolsos = pesquisar(null, CONSULTA_PROXIMO_REEMBOLSO_A_SER_PAGO).getRegistros();
+		if(reembolsos != null && !reembolsos.isEmpty()){
+			return reembolsos.get(0);
+		}
+		return null;
 	}
 }
