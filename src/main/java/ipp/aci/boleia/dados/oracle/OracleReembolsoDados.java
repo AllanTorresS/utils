@@ -35,6 +35,7 @@ import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -239,8 +240,9 @@ public class OracleReembolsoDados extends OracleRepositorioBoleiaDados<Reembolso
 
 	@Override
 	public Reembolso obterProximoReembolsoParaPagamento(List<Long> idsPontoVenda) {
-		//return pesquisarSemIsolamentoDados(null, CONSULTA_PROXIMO_REEMBOLSO_A_SER_PAGO).getRegistros().get(0);
-		List<Reembolso> reembolsos = pesquisar(null, CONSULTA_PROXIMO_REEMBOLSO_A_SER_PAGO).getRegistros();
+		List<ParametroPesquisa> parametros = new ArrayList<>();
+		parametros.add(new ParametroPesquisaIn("idsPvs", idsPontoVenda.stream().collect(Collectors.toList())));
+		List<Reembolso> reembolsos = pesquisar(null, CONSULTA_PROXIMO_REEMBOLSO_A_SER_PAGO, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
 		if(reembolsos != null && !reembolsos.isEmpty()){
 			return reembolsos.get(0);
 		}
