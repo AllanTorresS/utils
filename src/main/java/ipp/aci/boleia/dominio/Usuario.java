@@ -182,6 +182,9 @@ public class Usuario implements IPersistente, IExclusaoLogica, IPertenceFrota, I
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "usuario")
     private CodigoValidacaoTokenJwt codigoValidacaoTokenJwt;
 
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "usuario")
+    private ContaBeneficioUsuario contaBeneficioUsuario;
+
     /**
      * Coordenadoria que um assessor esta associado.
      */
@@ -617,6 +620,14 @@ public class Usuario implements IPersistente, IExclusaoLogica, IPertenceFrota, I
 
     public void setDataCriacao(Date dataCriacao) {
         this.dataCriacao = dataCriacao;
+    }
+
+    public ContaBeneficioUsuario getContaBeneficioUsuario() {
+        return contaBeneficioUsuario;
+    }
+
+    public void setContaBeneficioUsuario(ContaBeneficioUsuario contaBeneficioUsuario) {
+        this.contaBeneficioUsuario = contaBeneficioUsuario;
     }
 
     /**
