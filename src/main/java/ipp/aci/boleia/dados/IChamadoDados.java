@@ -1,11 +1,23 @@
 package ipp.aci.boleia.dados;
 
+import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
+import ipp.aci.boleia.dominio.vo.salesforce.ChamadoVo;
+import ipp.aci.boleia.dominio.vo.salesforce.ConsultaChamadosVo;
+import ipp.aci.boleia.dominio.vo.salesforce.FiltroConsultaChamadosVo;
+
 /**
  * Contrato para implementacao de repositorios
  * de entidades de chamado
  */
-@FunctionalInterface
 public interface IChamadoDados {
+
+    /**
+     * Realiza a consulta por uma lista de chamados no salesforce.
+     *
+     * @param filtro Filtro de pesquisa
+     * @return Resultado da consulta
+     */
+    ResultadoPaginado<ChamadoVo> consultarChamados(FiltroConsultaChamadosVo filtro);
 
     /**
      * Abre chamado no SalesForce

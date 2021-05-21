@@ -56,7 +56,7 @@ public final  class Rotas {
     public static final  String ESTADOS_API                          = BASE_API + "/estado";
     public static final  String VEICULO_API                          = BASE_API + "/veiculo";
     public static final  String VEICULO_COTA_API                     = BASE_API + "/veiculo/cota";
-    public static final  String ABRIR_CHAMADO_API                    = BASE_API + "/chamado";
+    public static final  String CHAMADO_API                          = BASE_API + "/chamado";
     public static final  String MOTIVO_CHAMADO_API                   = BASE_API + "/motivoChamado";
     public static final  String FROTA_API                            = BASE_API + "/frota";
     public static final  String PV_API                               = BASE_API + "/pv";
