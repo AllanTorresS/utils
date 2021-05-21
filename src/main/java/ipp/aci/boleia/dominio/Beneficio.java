@@ -24,6 +24,8 @@ public class Beneficio implements IPersistente {
 
     @Id
     @Column(name = "CD_BENEFICIO")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_BENEFICIOS")
+    @SequenceGenerator(name = "SEQ_BENEFICIOS", sequenceName = "SEQ_BENEFICIOS", allocationSize = 1)
     private Long id;
 
     @NotNull
