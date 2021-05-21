@@ -88,6 +88,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     private static final String CAMPO_TOTAL_ITEMS = "totalSize";
     private static final String CAMPO_DONE = "done";
     private static final String CAMPO_SUCCESS = "success";
+    private static final String CAMPO_MESSAGE = "message";
 
     @Value("${salesforce.chamados.authorization.client.id}")
     private String clientId;
@@ -107,7 +108,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     @Value("${salesforce.chamados.consulta.url}")
     private String urlConsulta;
 
-    @Value("${salesforce.chamados.criacao.url")
+    @Value("${salesforce.chamados.criacao.url}")
     private String urlCriacao;
 
     @Autowired
@@ -131,24 +132,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     @Override
     public void criarChamado(CriacaoChamadoVo chamadoVo) throws ExcecaoBoleiaRuntime {
         autenticarSalesforce();
-        restDados.doPostJson(this.urlCriacao, chamadoVo, this.authorizationHeaders, this::trataRespostaCriacao);
-    }
-
-    /***
-     * Trata a resposta de criacao
-     * @param response a resposta
-     * @return true em caso de sucesso
-     */
-    private boolean trataRespostaCriacao(CloseableHttpResponse response) {
-        prepararResposta(response);
-        if (this.statusCode != HttpStatus.CREATED.value()) {
-            //TODO log
-            throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("Erro.SERVICO_EXTERNO_INDISPONIVEL"));
-        } else if (this.responseBody.get(CAMPO_SUCCESS) == null || this.responseBody.get(CAMPO_SUCCESS) != null && this.responseBody.get(CAMPO_SUCCESS).asBoolean(false)){
-            //TODO log
-            throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("Erro.SERVICO_EXTERNO_INDISPONIVEL"));
-        }
-        return true;
+        restDados.doPostJson(this.instanceUrl.concat(this.urlCriacao), chamadoVo, this.authorizationHeaders, this::trataRespostaCriacao);
     }
 
     @Override
@@ -194,6 +178,21 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     @Override
     public String getPassword() {
         return password;
+    }
+
+
+    /***
+     * Trata a resposta de criacao
+     * @param response a resposta
+     * @return true em caso de sucesso
+     */
+    private boolean trataRespostaCriacao(CloseableHttpResponse response) {
+        prepararResposta(response);
+        if (this.statusCode != HttpStatus.CREATED.value()) {
+            LOGGER.error(this.responseBody.get(CAMPO_MESSAGE).toString());
+            throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("Erro.SERVICO_EXTERNO_INDISPONIVEL"));
+        }
+        return true;
     }
 
     /**
