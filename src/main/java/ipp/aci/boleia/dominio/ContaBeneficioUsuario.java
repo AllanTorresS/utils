@@ -21,7 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Representa a tabela de pedido Motorista autonomo
+ * Representa a tabela de conta benefício usuário
  */
 @Entity
 @Table(name = "CONTA_BENEFICIO_USUARIO")

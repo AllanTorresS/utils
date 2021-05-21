@@ -5,7 +5,7 @@ import ipp.aci.boleia.dominio.pesquisa.comum.BaseFiltroPaginado;
 import java.util.List;
 
 /**
- * Filtro para pesquisa de usuario de ponto de venda
+ * Filtro para pesquisa de beneficiários 
  */
 public class FiltroPesquisaBeneficiarioVo extends BaseFiltroPaginado {
 

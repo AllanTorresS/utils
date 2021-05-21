@@ -19,7 +19,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * Representa a tabela de pedido Motorista autonomo
+ * Representa a tabela de operação conta benefício
  */
 @Entity
 @Table(name = "OPERACAO_CONTA_BENEFICIO")

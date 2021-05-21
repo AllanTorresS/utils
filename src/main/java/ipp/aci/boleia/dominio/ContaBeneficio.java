@@ -15,7 +15,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 /**
- * Representa a tabela de pedido Motorista autonomo
+ * Representa a tabela de conta benefício
  */
 @Entity
 @Table(name = "CONTA_BENEFICIO")
