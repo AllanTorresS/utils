@@ -241,6 +241,26 @@ public final class UtilitarioCalculoData {
         }
         return adicionarDiasData(data, numeroDiasParaDiaUtil);
     }
+
+    /**
+     * Calcula o último dia útil antes de uma data
+     *
+     * @param data data de referência
+     * @return último dia útil
+     */
+    public static Date obterUltimoDiaUtilSemFeriado(Date data) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(data);
+
+        int dow = c.get(Calendar.DAY_OF_WEEK);
+        int numeroDiasParaDiaUtil = 0;
+        if (dow == Calendar.SUNDAY) {
+            numeroDiasParaDiaUtil = -2;
+        } else if (dow == Calendar.SATURDAY) {
+            numeroDiasParaDiaUtil = -1;
+        }
+        return adicionarDiasData(data, numeroDiasParaDiaUtil);
+    }
     /**
      * Obtem o primeiro dia do mes da data parametrizada
      *
