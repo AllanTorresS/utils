@@ -10,7 +10,10 @@ import ipp.aci.boleia.dominio.vo.salesforce.ConsultaChamadosVo;
 import ipp.aci.boleia.dominio.vo.salesforce.CriacaoChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.FiltroConsultaChamadosVo;
 import ipp.aci.boleia.util.UtilitarioJson;
+import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
+import ipp.aci.boleia.util.excecao.ExcecaoServicoIndisponivel;
+import ipp.aci.boleia.util.excecao.ExcecaoValidacao;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,7 +86,8 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     private static final int LIMITE_DESCRIPTION = 1024;
 
     private static final String CAMPO_TOTAL_ITEMS = "totalSize";
-    private static final String CAMPO_SUCESSO = "done";
+    private static final String CAMPO_DONE = "done";
+    private static final String CAMPO_SUCCESS = "success";
 
     @Value("${salesforce.chamados.authorization.client.id}")
     private String clientId;
@@ -112,9 +116,6 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     @Autowired
     private IMotivoChamadoDados motivoChamadoDados;
 
-    public SalesForceChamadoDados() {
-    }
-
     @Override
     public ResultadoPaginado<ChamadoVo> consultarChamados(FiltroConsultaChamadosVo filtro) {
         try {
@@ -128,7 +129,30 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     }
 
     @Override
-    public boolean abrirChamado(String company, String name, String email, String phone, Long idReason, String subject, String description) {
+    public void criarChamado(CriacaoChamadoVo chamadoVo) throws ExcecaoBoleiaRuntime {
+        autenticarSalesforce();
+        restDados.doPostJson(this.urlCriacao, chamadoVo, this.authorizationHeaders, this::trataRespostaCriacao);
+    }
+
+    /***
+     * Trata a resposta de criacao
+     * @param response a resposta
+     * @return true em caso de sucesso
+     */
+    private boolean trataRespostaCriacao(CloseableHttpResponse response) {
+        prepararResposta(response);
+        if (this.statusCode != HttpStatus.CREATED.value()) {
+            //TODO log
+            throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("Erro.SERVICO_EXTERNO_INDISPONIVEL"));
+        } else if (this.responseBody.get(CAMPO_SUCCESS) == null || this.responseBody.get(CAMPO_SUCCESS) != null && this.responseBody.get(CAMPO_SUCCESS).asBoolean(false)){
+            //TODO log
+            throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("Erro.SERVICO_EXTERNO_INDISPONIVEL"));
+        }
+        return true;
+    }
+
+    @Override
+    public boolean abrirChamadoEmail(String company ,String name, String email, String phone, Long idReason, String subject, String description) {
 
         Map<String, String> form = new LinkedHashMap<>();
         form.put(ALIAS_ORGID, orgid);
@@ -146,11 +170,6 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
             LOGGER.error(ex.getMessage(), ex);
             return false;
         }
-    }
-
-    @Override
-    public void criarChamado(CriacaoChamadoVo vo) {
-        prepararRequisicao(urlCriacao, vo);
     }
 
     public void setEndereco(String endereco) {
@@ -207,13 +226,14 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     private ConsultaChamadosVo tratarRespostaConsultaChamados(CloseableHttpResponse response) {
         prepararResposta(response);
         if (this.statusCode == HttpStatus.OK.value()) {
-            if (this.responseBody.get(CAMPO_SUCESSO) != null && this.responseBody.get(CAMPO_SUCESSO).asBoolean(false)) {
+            if (this.responseBody.get(CAMPO_DONE) != null && this.responseBody.get(CAMPO_DONE).asBoolean(false)) {
                 return UtilitarioJson.toObjectWithConfigureFailOnUnknowProperties(this.responseBody.toString(), ConsultaChamadosVo.class, false);
             } else {
                 return new ConsultaChamadosVo();
             }
+        }else {
+            throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("chamado.abrir.erro.jde.erro"));
         }
-        return null;
     }
 
     /**
@@ -225,7 +245,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     private Integer tratarRespostaCountChamados(CloseableHttpResponse response) {
         prepararResposta(response);
         if (this.statusCode == HttpStatus.OK.value()) {
-            if (this.responseBody.get(CAMPO_SUCESSO) != null && this.responseBody.get(CAMPO_SUCESSO).asBoolean(false)) {
+            if (this.responseBody.get(CAMPO_DONE) != null && this.responseBody.get(CAMPO_DONE).asBoolean(false)) {
                 return this.responseBody.get(CAMPO_TOTAL_ITEMS).asInt(0);
             }
         }

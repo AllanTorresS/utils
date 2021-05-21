@@ -5,6 +5,9 @@ import ipp.aci.boleia.dominio.vo.salesforce.ChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.ConsultaChamadosVo;
 import ipp.aci.boleia.dominio.vo.salesforce.CriacaoChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.FiltroConsultaChamadosVo;
+import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
+import ipp.aci.boleia.util.excecao.ExcecaoServicoIndisponivel;
+import ipp.aci.boleia.util.excecao.ExcecaoValidacao;
 
 /**
  * Contrato para implementacao de repositorios
@@ -21,7 +24,7 @@ public interface IChamadoDados {
     ResultadoPaginado<ChamadoVo> consultarChamados(FiltroConsultaChamadosVo filtro);
 
     /**
-     * Abre chamado no SalesForce
+     * Abre chamado no SalesForce por email
      *
      * @param company do chamado
      * @param name do chamado
@@ -32,7 +35,12 @@ public interface IChamadoDados {
      * @param description do chamado
      * @return true se o chamado for enviado para o SalesForce, false caso contrário
      */
-    boolean abrirChamado(String company, String name, String email, String phone, Long idReason, String subject, String description);
+    boolean abrirChamadoEmail(String company ,String name, String email, String phone, Long idReason, String subject, String description);
 
-    void criarChamado(CriacaoChamadoVo vo);
+    /**
+     * Abre chamado no SalesForce
+     *
+     * @param chamadoVo os dados do chamado
+     */
+    void criarChamado(CriacaoChamadoVo chamadoVo)  throws ExcecaoBoleiaRuntime;
 }
