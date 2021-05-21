@@ -3,6 +3,8 @@ package ipp.aci.boleia.dados;
 import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.enums.TipoPerfilUsuario;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaBeneficiarioVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialMotoristaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaUsuarioVo;
 
 import java.util.List;
@@ -193,4 +195,21 @@ public interface IUsuarioDados extends IRepositorioBoleiaDados<Usuario> {
      * @return Quantidade total de usuários
      */
     Long obterTotalUsuariosDonosFrota();
+
+	/**
+	 * Pesquisa beneficiários a partir do filtro informado
+	 * 
+	 * @param filtro O filtro da busca
+	 * @return A lista de beneficiarios escontrados
+	 */
+	List<Usuario> obterBeneficiariosPorNomeCpf(FiltroPesquisaParcialMotoristaVo filtro);
+
+    
+	/**
+	 * Pesquisa beneficiários a partir do filtro informado
+	 * 
+	 * @param filtro O filtro da busca
+	 * @return A lista de beneficiarios escontrados
+	 */
+    ResultadoPaginado<Usuario> obterBeneficiarios(FiltroPesquisaBeneficiarioVo filtro);
 }
