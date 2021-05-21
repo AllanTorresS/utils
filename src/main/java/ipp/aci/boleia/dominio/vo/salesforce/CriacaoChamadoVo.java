@@ -1,5 +1,6 @@
 package ipp.aci.boleia.dominio.vo.salesforce;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
@@ -15,14 +16,18 @@ public class CriacaoChamadoVo {
     private String solicitante;
     @JsonProperty("Origin")
     private String origem;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("Account" )
-    private AccountChamadoVo accountPosto;
-    @JsonProperty("Contact" )
-    private ContactChamadoVo contactPosto;
-    @JsonProperty("Frota_Associada__r" )
     private AccountChamadoVo accountFrota;
-    @JsonProperty("ContatoDoPosto__r" )
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonProperty("Contact" )
     private ContactChamadoVo contactFrota;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonProperty("Frota_Associada__r" )
+    private AccountChamadoVo accountPosto;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonProperty("ContatoDoPosto__r" )
+    private ContactChamadoVo contactPosto;
     @JsonProperty("Subject")
     private String assunto;
     @JsonProperty("Description")

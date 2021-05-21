@@ -87,8 +87,6 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
 
     private static final String CAMPO_TOTAL_ITEMS = "totalSize";
     private static final String CAMPO_DONE = "done";
-    private static final String CAMPO_SUCCESS = "success";
-    private static final String CAMPO_MESSAGE = "message";
 
     @Value("${salesforce.chamados.authorization.client.id}")
     private String clientId;
@@ -189,7 +187,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     private boolean trataRespostaCriacao(CloseableHttpResponse response) {
         prepararResposta(response);
         if (this.statusCode != HttpStatus.CREATED.value()) {
-            LOGGER.error(this.responseBody.get(CAMPO_MESSAGE).toString());
+            LOGGER.error(this.responseBody.toString());
             throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("Erro.SERVICO_EXTERNO_INDISPONIVEL"));
         }
         return true;
