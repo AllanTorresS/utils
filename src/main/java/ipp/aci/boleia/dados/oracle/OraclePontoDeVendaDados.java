@@ -15,13 +15,10 @@ import ipp.aci.boleia.dominio.enums.StatusVinculoFrotaPontoVenda;
 import ipp.aci.boleia.dominio.enums.TipoFiltroPontoVendaPrimario;
 import ipp.aci.boleia.dominio.enums.TipoFiltroPontoVendaSecundario;
 import ipp.aci.boleia.dominio.enums.TipoServico;
-import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaAnd;
-import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgual;
-import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDiferente;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaEmpty;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaFetch;
@@ -292,8 +289,6 @@ public class OraclePontoDeVendaDados extends OracleRepositorioBoleiaDados<PontoD
             params.add(condicoesOr);
         }
 
-        params.add(new ParametroPesquisaFetch("avaliacao"));
-
         return pesquisar((ParametroOrdenacaoColuna)null, params.toArray(new ParametroPesquisa[params.size()]));
     }
 
@@ -410,12 +405,20 @@ public class OraclePontoDeVendaDados extends OracleRepositorioBoleiaDados<PontoD
         }
 
         parametros.add(new ParametroPesquisaOr(
-                new ParametroPesquisaIgual("restricaoVisibilidade", RestricaoVisibilidadePontoVenda.SEM_RESTRICAO.getValue()),
+                new ParametroPesquisaAnd(
+                    new ParametroPesquisaIgual("restricaoVisibilidade", RestricaoVisibilidadePontoVenda.SEM_RESTRICAO.getValue()),
+                    new ParametroPesquisaIgual("negociacoes.statusBloqueio", StatusBloqueio.DESBLOQUEADO.getValue()),
+                    new ParametroPesquisaIgual("negociacoes.frota.id", filtro.getIdFrota())
+                ),
                 new ParametroPesquisaAnd(
                         new ParametroPesquisaIgual("restricaoVisibilidade", RestricaoVisibilidadePontoVenda.VISIVEL_APENAS_PARA_FROTAS_COM_VINCULO_ATIVO.getValue()),
                         new ParametroPesquisaIgual("negociacoes.statusVinculo", StatusVinculoFrotaPontoVenda.ATIVO.getValue()),
                         new ParametroPesquisaIgual("negociacoes.statusBloqueio", StatusBloqueio.DESBLOQUEADO.getValue()),
                         new ParametroPesquisaIgual("negociacoes.frota.id", filtro.getIdFrota())
+                ),
+                new ParametroPesquisaAnd(
+                        new ParametroPesquisaIgual("restricaoVisibilidade", RestricaoVisibilidadePontoVenda.SEM_RESTRICAO.getValue()),
+                        new ParametroPesquisaNulo("negociacoes", false)
                 )
         ));
 
