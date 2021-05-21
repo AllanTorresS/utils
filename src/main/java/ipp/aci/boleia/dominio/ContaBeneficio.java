@@ -23,6 +23,8 @@ public class ContaBeneficio implements IPersistente {
 
     @Id
     @Column(name = "CD_CONTA_BENEFICIO")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_CONTA_BENEFICIO")
+    @SequenceGenerator(name = "SEQ_CONTA_BENEFICIO", sequenceName = "SEQ_CONTA_BENEFICIO", allocationSize = 1)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -27,8 +27,8 @@ public class OperacaoContaBeneficio implements IPersistente {
 
     @Id
     @Column(name = "CD_OPERACAO_CONTA_BENEFICIO")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_CONTA_BENEFICIO_USUARIO")
-    @SequenceGenerator(name = "SEQ_CONTA_BENEFICIO_USUARIO", sequenceName = "SEQ_CONTA_BENEFICIO_USUARIO", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_OPERACAO_CONTA_BENEFICIO")
+    @SequenceGenerator(name = "SEQ_OPERACAO_CONTA_BENEFICIO", sequenceName = "SEQ_OPERACAO_CONTA_BENEFICIO", allocationSize = 1)
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
