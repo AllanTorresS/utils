@@ -13,7 +13,7 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaBeneficiarioVo;
-import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialMotoristaVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaUsuarioVo;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
 import ipp.aci.boleia.util.UtilitarioLambda;
@@ -291,7 +291,7 @@ public class OracleUsuarioDados extends OracleRepositorioBoleiaDados<Usuario> im
     }
 
     @Override
-    public List<Usuario> obterBeneficiariosPorNomeCpf(FiltroPesquisaParcialMotoristaVo filtro) {
+    public List<Usuario> obterBeneficiariosPorNomeCpf(FiltroPesquisaParcialVo filtro) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
         povoarParametrosParaAutocomplete(filtro, parametros);
         return UtilitarioLambda.filtrarDistintosPorPropriedade(pesquisar(new ParametroOrdenacaoColuna("nome"), parametros.toArray(new ParametroPesquisa[parametros.size()])), Usuario::getCpf);
@@ -396,7 +396,7 @@ public class OracleUsuarioDados extends OracleRepositorioBoleiaDados<Usuario> im
      * @param filtro     O filtro de pesquisa
      * @param parametros Os parametros da consulta
      */
-    private void povoarParametrosParaAutocomplete(FiltroPesquisaParcialMotoristaVo filtro, List<ParametroPesquisa> parametros) {
+    private void povoarParametrosParaAutocomplete(FiltroPesquisaParcialVo filtro, List<ParametroPesquisa> parametros) {
         String termoCnpj = preparaTermoCnpj(filtro.getTermo());
         ParametroPesquisa paramCnpj = new ParametroPesquisaLike("cpf", termoCnpj);
         ParametroPesquisa paramRazao = new ParametroPesquisaLike("nome", filtro.getTermo());

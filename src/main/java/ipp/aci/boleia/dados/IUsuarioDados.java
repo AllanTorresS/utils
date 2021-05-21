@@ -4,7 +4,7 @@ import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.enums.TipoPerfilUsuario;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaBeneficiarioVo;
-import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialMotoristaVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaUsuarioVo;
 
 import java.util.List;
@@ -202,7 +202,7 @@ public interface IUsuarioDados extends IRepositorioBoleiaDados<Usuario> {
 	 * @param filtro O filtro da busca
 	 * @return A lista de beneficiarios escontrados
 	 */
-	List<Usuario> obterBeneficiariosPorNomeCpf(FiltroPesquisaParcialMotoristaVo filtro);
+	List<Usuario> obterBeneficiariosPorNomeCpf(FiltroPesquisaParcialVo filtro);
 
     
 	/**
