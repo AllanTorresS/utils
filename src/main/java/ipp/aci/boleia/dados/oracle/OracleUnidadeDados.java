@@ -120,6 +120,8 @@ public class OracleUnidadeDados extends OracleRepositorioBoleiaDados<Unidade> im
 	public List<Unidade> pesquisarParaAutocompleteRota(FiltroAutoCompletePostoRotaVo filtro){
 		List<ParametroPesquisa> parametros = new ArrayList<>();
 
+		parametros.add(new ParametroPesquisaNulo("latitude", true));
+		parametros.add(new ParametroPesquisaNulo("longitude", true));
 		parametros.add(new ParametroPesquisaIgual("postoInterno",true));
 		parametros.add(new ParametroPesquisaIgual("frota.id", filtro.getIdFrota()));
 		parametros.add(new ParametroPesquisaLike("nome", filtro.getTermo()));

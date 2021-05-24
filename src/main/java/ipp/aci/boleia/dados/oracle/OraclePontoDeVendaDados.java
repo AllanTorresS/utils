@@ -401,6 +401,9 @@ public class OraclePontoDeVendaDados extends OracleRepositorioBoleiaDados<PontoD
     public List<PontoDeVenda> pesquisarParaAutocompleteRota(FiltroAutoCompletePostoRotaVo filtro){
         List<ParametroPesquisa> parametros = new ArrayList<>();
 
+        parametros.add(new ParametroPesquisaNulo("latitude", true));
+        parametros.add(new ParametroPesquisaNulo("longitude", true));
+
         if (!filtro.getPostoUrbano()){
             parametros.add(new ParametroPesquisaDiferente("perfilVenda", "Urbano"));
         }

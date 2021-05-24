@@ -613,6 +613,8 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
     public List<Frota> pesquisarParaAutocompleteRota(FiltroAutoCompletePostoRotaVo filtro){
         List<ParametroPesquisa> parametros = new ArrayList<>();
 
+        parametros.add(new ParametroPesquisaNulo("latitude", true));
+        parametros.add(new ParametroPesquisaNulo("longitude", true));
         parametros.add(new ParametroPesquisaIgual("postoInterno",true));
         parametros.add(new ParametroPesquisaIgual("id", filtro.getIdFrota()));
         parametros.add(new ParametroPesquisaLike("razaoSocial", filtro.getTermo()));
