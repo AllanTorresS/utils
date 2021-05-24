@@ -9,6 +9,8 @@ import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
 import ipp.aci.boleia.util.excecao.ExcecaoServicoIndisponivel;
 import ipp.aci.boleia.util.excecao.ExcecaoValidacao;
 
+import java.util.List;
+
 /**
  * Contrato para implementacao de repositorios
  * de entidades de chamado
@@ -43,4 +45,35 @@ public interface IChamadoDados {
      * @param chamadoVo os dados do chamado
      */
     void criarChamado(CriacaoChamadoVo chamadoVo)  throws ExcecaoBoleiaRuntime;
+
+    /**
+     * Retorna uma lista com os tipos de chamado que podem ser abertos.
+     *
+     * @return Lista com os tipos de chamado.
+     */
+    List<String> listarTiposChamado();
+
+    /**
+     * Retorna a lista de sistemas de origem com base no tipo do chamado.
+     *
+     * @param tipo Tipo do chamado.
+     * @return Lista com os sistemas de origem.
+     */
+    List<String> listarSistemasDeOrigemPorTipo(String tipo);
+
+    /**
+     * Retorna a lista de motivos com base no sistema de origem do chamado.
+     *
+     * @param sistemaDeOrigem Sistema de Origem do chamado.
+     * @return Lista com os motivos.
+     */
+    List<String> listarMotivosPorSistemaDeOrigem(String sistemaDeOrigem);
+
+    /**
+     * Retorna a lista de módulos com base no sistema de origem do chamado.
+     *
+     * @param sistemaDeOrigem Sistema de Origem do chamado.
+     * @return Lista com os módulos.
+     */
+    List<String> listarModulosPorSistemaDeOrigem(String sistemaDeOrigem);
 }

@@ -14,6 +14,11 @@ public final class ConstantesSalesForce {
     public static final String ACCOUNT_FROTA = "-CL";
     public static final String ACCOUNT_PV = "-PV";
 
+    public static final String CAMPO_TIPO = "Type";
+    public static final String CAMPO_SISTEMA_ORIGEM = "ClassificacaoPerfil__c";
+    public static final String CAMPO_MOTIVO = "Motivo__c";
+    public static final String CAMPO_MODULO = "MotivoSolicitacao__c";
+
     /**
      * Impede instanciacao
      */

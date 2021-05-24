@@ -3,12 +3,16 @@ package ipp.aci.boleia.dados.servicos.salesforce;
 import ipp.aci.boleia.dados.IChamadoDados;
 import ipp.aci.boleia.dados.IClienteHttpDados;
 import ipp.aci.boleia.dados.IMotivoChamadoDados;
+import ipp.aci.boleia.dados.servicos.rest.ConsumidorHttp;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.salesforce.ChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.ConsultaChamadosVo;
 import ipp.aci.boleia.dominio.vo.salesforce.CriacaoChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.FiltroConsultaChamadosVo;
+import ipp.aci.boleia.dominio.vo.salesforce.PicklistVo;
+import ipp.aci.boleia.dominio.vo.salesforce.ValorPicklistVo;
+import ipp.aci.boleia.util.ConstantesSalesForce;
 import ipp.aci.boleia.util.UtilitarioJson;
 import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
@@ -24,12 +28,15 @@ import org.springframework.stereotype.Repository;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static ipp.aci.boleia.util.ConstantesSalesForce.SOLICITANTE_FROTA;
 import static ipp.aci.boleia.util.ConstantesSalesForce.SOLICITANTE_INTERNO;
@@ -39,6 +46,7 @@ import static ipp.aci.boleia.util.UtilitarioCalculoData.obterUltimoInstanteDia;
 import static ipp.aci.boleia.util.UtilitarioFormatacaoData.formatarDataIso8601ComTimeZoneMillis;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.text.MessageFormat.format;
+import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
 
 /**
@@ -109,6 +117,9 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     @Value("${salesforce.chamados.criacao.url}")
     private String urlCriacao;
 
+    @Value("${salesforce.chamados.listar.picklists}")
+    private String urlListarPicklists;
+
     @Autowired
     private IClienteHttpDados restDados;
 
@@ -152,6 +163,83 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
             LOGGER.error(ex.getMessage(), ex);
             return false;
         }
+    }
+
+    @Override
+    public List<String> listarTiposChamado() {
+        return listarValoresPicklist(ConstantesSalesForce.CAMPO_TIPO, resposta -> {
+            prepararResposta(resposta);
+            if(this.statusCode == HttpStatus.OK.value()) {
+                PicklistVo picklist = UtilitarioJson.toObjectWithConfigureFailOnUnknowProperties(this.responseBody.toString(), PicklistVo.class, false);
+                return picklist.getValores().stream().map(ValorPicklistVo::getLabel).collect(Collectors.toList());
+            }
+            return new ArrayList<>();
+        });
+    }
+
+    @Override
+    public List<String> listarSistemasDeOrigemPorTipo(String tipo) {
+        return listarValoresPicklist(ConstantesSalesForce.CAMPO_SISTEMA_ORIGEM, resposta -> {
+            prepararResposta(resposta);
+            if(this.statusCode == HttpStatus.OK.value()) {
+                PicklistVo picklist = UtilitarioJson.toObjectWithConfigureFailOnUnknowProperties(this.responseBody.toString(), PicklistVo.class, false);
+                Integer valorEntradaTipo = picklist.getValoresEntrada().get(tipo);
+
+                return picklist.getValores().stream()
+                            .filter(valor -> asList(valor.getValoresEntradaValidos()).contains(valorEntradaTipo))
+                            .map(ValorPicklistVo::getLabel)
+                            .collect(Collectors.toList());
+            }
+            return new ArrayList<>();
+        });
+    }
+
+    @Override
+    public List<String> listarMotivosPorSistemaDeOrigem(String sistemaDeOrigem) {
+        return listarValoresPicklist(ConstantesSalesForce.CAMPO_MOTIVO, resposta -> {
+            prepararResposta(resposta);
+            if(this.statusCode == HttpStatus.OK.value()) {
+                PicklistVo picklist = UtilitarioJson.toObjectWithConfigureFailOnUnknowProperties(this.responseBody.toString(), PicklistVo.class, false);
+                Integer valorEntradaSistemaDeOrigem = picklist.getValoresEntrada().get(sistemaDeOrigem);
+
+                return picklist.getValores().stream()
+                        .filter(valor -> asList(valor.getValoresEntradaValidos()).contains(valorEntradaSistemaDeOrigem))
+                        .map(ValorPicklistVo::getLabel)
+                        .collect(Collectors.toList());
+            }
+            return new ArrayList<>();
+        });
+    }
+
+    @Override
+    public List<String> listarModulosPorSistemaDeOrigem(String sistemaDeOrigem) {
+        return listarValoresPicklist(ConstantesSalesForce.CAMPO_MODULO, resposta -> {
+            prepararResposta(resposta);
+            if(this.statusCode == HttpStatus.OK.value()) {
+                PicklistVo picklist = UtilitarioJson.toObjectWithConfigureFailOnUnknowProperties(this.responseBody.toString(), PicklistVo.class, false);
+                Integer valorEntradaSistemaDeOrigem = picklist.getValoresEntrada().get(sistemaDeOrigem);
+
+                return picklist.getValores().stream()
+                        .filter(valor -> asList(valor.getValoresEntradaValidos()).contains(valorEntradaSistemaDeOrigem))
+                        .map(ValorPicklistVo::getLabel)
+                        .collect(Collectors.toList());
+            }
+            return new ArrayList<>();
+        });
+    }
+
+    /**
+     * Lista os valores de um picklist do salesforce.
+     *
+     * @param nomeCampo Nome do campo picklist.
+     * @param consumidorHttp Consumidor HTTP da requisição.
+     * @return Lista de valores.
+     */
+    private List<String> listarValoresPicklist(String nomeCampo, ConsumidorHttp<List<String>> consumidorHttp) {
+        String urlPicklists = MessageFormat.format(this.urlListarPicklists, ConstantesSalesForce.RECORD_TYPE_ID, nomeCampo);
+        prepararRequisicao(urlPicklists, null);
+
+        return restDados.doGet(this.endpointUrl, this.authorizationHeaders, consumidorHttp);
     }
 
     public void setEndereco(String endereco) {
