@@ -48,6 +48,13 @@ public interface IChamadoDados {
     void criarChamado(CriacaoChamadoVo chamadoVo)  throws ExcecaoBoleiaRuntime;
 
     /**
+     * Retorna uma lista com os status possíveis de um chamado.
+     *
+     * @return Lista com os status que um chamado pode ter.
+     */
+    List<ValorPicklistVo> listarStatusChamado();
+
+    /**
      * Retorna uma lista com os tipos de chamado que podem ser abertos.
      *
      * @return Lista com os tipos de chamado.

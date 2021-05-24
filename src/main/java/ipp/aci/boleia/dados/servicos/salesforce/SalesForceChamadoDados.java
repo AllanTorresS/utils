@@ -166,6 +166,18 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     }
 
     @Override
+    public List<ValorPicklistVo> listarStatusChamado() {
+        return listarValoresPicklist(ConstantesSalesForce.CAMPO_STATUS, resposta -> {
+            prepararResposta(resposta);
+            if(this.statusCode == HttpStatus.OK.value()) {
+                PicklistVo picklist = UtilitarioJson.toObjectWithConfigureFailOnUnknowProperties(this.responseBody.toString(), PicklistVo.class, false);
+                return picklist.getValores();
+            }
+            return new ArrayList<>();
+        });
+    }
+
+    @Override
     public List<ValorPicklistVo> listarTiposChamado() {
         return listarValoresPicklist(ConstantesSalesForce.CAMPO_TIPO, resposta -> {
             prepararResposta(resposta);
