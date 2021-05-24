@@ -234,6 +234,7 @@ public class NotaFiscalSd {
     }
 
     /**
+     * Verifica se o modelo da nota é igual ao modelo permitido.
      *
      * @param documentos Documento quem contém os dados da nota fiscal
      * @param validacoesNotas Lista de erros das validacoes
