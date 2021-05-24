@@ -12,6 +12,6 @@ public interface IVerificacaoImagemGoEpikDados {
      * @param imageData código da imagem em Base64
      * @return valor da leitura da API
      */
-    String validarImagemContadorGoEpik(String imageData);
+    //String validarImagemContadorGoEpik(String imageData);
 
 }
