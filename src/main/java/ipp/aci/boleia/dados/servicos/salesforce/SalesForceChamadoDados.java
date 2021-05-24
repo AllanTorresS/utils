@@ -49,7 +49,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SalesForceChamadoDados.class);
 
-    private static final String CLAUSULA_CONTATO_FROTA = " AND Contact.IdExterno__c=':contatoFrota' ";
+    private static final String CLAUSULA_CONTATO = " AND Contact.IdExterno__c=':contato' ";
     private static final String CLAUSULA_CONTATO_REVENDA = " AND ContatoDoPosto__r.IdExterno__c IN (:contatoPosto) ";
     private static final String CLAUSULA_DATA_ABERTURA = " AND CreatedDate >= :dataAberturaDe AND CreatedDate <= :dataAberturaAte ";
     private static final String ORDER_BY_CONSULTA_CHAMADOS = "ORDER BY :ordenacao ";
@@ -59,7 +59,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
             "WHERE CaseNumber LIKE ':numeroChamado' AND " +
             "       Status LIKE ':status' AND " +
             "       Solicitante__c=':solicitante' " +
-                    CLAUSULA_CONTATO_FROTA +
+                    CLAUSULA_CONTATO +
                     CLAUSULA_CONTATO_REVENDA +
                     CLAUSULA_DATA_ABERTURA;
 
@@ -267,11 +267,11 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
         parametros.put("solicitante", obterParametroSolicitante(filtro));
 
         List<String> contatos = obterContatosParaConsulta(filtro);
-        if(filtro.isContatoFrota()) {
+        if(filtro.isContatoFrota() || filtro.isContatoInterno()) {
             query = query.replace(CLAUSULA_CONTATO_REVENDA, "");
-            parametros.put("contatoFrota", contatos.stream().findFirst().orElse(""));
+            parametros.put("contato", contatos.stream().findFirst().orElse(""));
         } else if(filtro.isContatoRevenda()) {
-            query = query.replace(CLAUSULA_CONTATO_FROTA, "");
+            query = query.replace(CLAUSULA_CONTATO, "");
             parametros.put("contatoPosto", contatos.stream().collect(joining("','", "'", "'")));
         }
 
