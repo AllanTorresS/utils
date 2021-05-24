@@ -18,24 +18,23 @@ public class GoEpikValidacaoDados implements IVerificacaoImagemGoEpikDados {
     @Value("${goepik.service.apikey}")
     private String apiKey;
 
-//    @Value("${goepik.service.url}")
-//    private String endereco;
+    @Value("${goepik.service.url}")
+    private String endereco;
 
     @Autowired
     private IClienteHttpDados clienteHttpDados;
 
+    @Override
+    public String validarImagemContadorGoEpik(String imageData) {
 
-//    @Override
-//    public String validarImagemContadorGoEpik(String imageData) {
-//
-//        ImagemGoEpikVo body = new ImagemGoEpikVo();
-//        body.setImage(imageData);
-//
-//        RespostaValidacaoGoEpik vo = clienteHttpDados.doPostJson(endereco, null, null, body, montarHeader(apiKey),
-//                resp -> UtilitarioJson.toObject(EntityUtils.toString(resp.getEntity()), RespostaValidacaoGoEpik.class));
-//
-//        return vo.getResult();
-//    }
+        ImagemGoEpikVo body = new ImagemGoEpikVo();
+        body.setImage(imageData);
+
+        RespostaValidacaoGoEpik vo = clienteHttpDados.doPostJson(endereco, null, null, body, montarHeader(apiKey),
+                resp -> UtilitarioJson.toObject(EntityUtils.toString(resp.getEntity()), RespostaValidacaoGoEpik.class));
+
+        return vo.getResult();
+    }
 
 
     /**
