@@ -4,7 +4,6 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import ipp.aci.boleia.dados.IEmailEnvioDados;
 import ipp.aci.boleia.dados.IFrotaDados;
 import ipp.aci.boleia.dados.ILeadCredenciamentoDados;
-import ipp.aci.boleia.dados.IMotivoAlteracaoStatusFrotaDados;
 import ipp.aci.boleia.dados.IParametroCicloDados;
 import ipp.aci.boleia.dados.IUsuarioDados;
 import ipp.aci.boleia.dominio.Credenciamento;
@@ -51,9 +50,6 @@ public class FrotaSd {
 
     @Autowired
     private IFrotaDados repositorio;
-
-    @Autowired
-    private IMotivoAlteracaoStatusFrotaDados repositorioMotivo;
 
     @Autowired
     private IEmailEnvioDados emailDados;
