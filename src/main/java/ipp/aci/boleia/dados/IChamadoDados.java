@@ -5,6 +5,7 @@ import ipp.aci.boleia.dominio.vo.salesforce.ChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.ConsultaChamadosVo;
 import ipp.aci.boleia.dominio.vo.salesforce.CriacaoChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.FiltroConsultaChamadosVo;
+import ipp.aci.boleia.dominio.vo.salesforce.ValorPicklistVo;
 import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
 import ipp.aci.boleia.util.excecao.ExcecaoServicoIndisponivel;
 import ipp.aci.boleia.util.excecao.ExcecaoValidacao;
@@ -51,7 +52,7 @@ public interface IChamadoDados {
      *
      * @return Lista com os tipos de chamado.
      */
-    List<String> listarTiposChamado();
+    List<ValorPicklistVo> listarTiposChamado();
 
     /**
      * Retorna a lista de sistemas de origem com base no tipo do chamado.
@@ -59,7 +60,7 @@ public interface IChamadoDados {
      * @param tipo Tipo do chamado.
      * @return Lista com os sistemas de origem.
      */
-    List<String> listarSistemasDeOrigemPorTipo(String tipo);
+    List<ValorPicklistVo> listarSistemasDeOrigemPorTipo(String tipo);
 
     /**
      * Retorna a lista de motivos com base no sistema de origem do chamado.
@@ -67,7 +68,7 @@ public interface IChamadoDados {
      * @param sistemaDeOrigem Sistema de Origem do chamado.
      * @return Lista com os motivos.
      */
-    List<String> listarMotivosPorSistemaDeOrigem(String sistemaDeOrigem);
+    List<ValorPicklistVo> listarMotivosPorSistemaDeOrigem(String sistemaDeOrigem);
 
     /**
      * Retorna a lista de módulos com base no sistema de origem do chamado.
@@ -75,5 +76,5 @@ public interface IChamadoDados {
      * @param sistemaDeOrigem Sistema de Origem do chamado.
      * @return Lista com os módulos.
      */
-    List<String> listarModulosPorSistemaDeOrigem(String sistemaDeOrigem);
+    List<ValorPicklistVo> listarModulosPorSistemaDeOrigem(String sistemaDeOrigem);
 }

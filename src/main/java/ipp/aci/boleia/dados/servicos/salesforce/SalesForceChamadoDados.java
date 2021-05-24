@@ -166,19 +166,19 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     }
 
     @Override
-    public List<String> listarTiposChamado() {
+    public List<ValorPicklistVo> listarTiposChamado() {
         return listarValoresPicklist(ConstantesSalesForce.CAMPO_TIPO, resposta -> {
             prepararResposta(resposta);
             if(this.statusCode == HttpStatus.OK.value()) {
                 PicklistVo picklist = UtilitarioJson.toObjectWithConfigureFailOnUnknowProperties(this.responseBody.toString(), PicklistVo.class, false);
-                return picklist.getValores().stream().map(ValorPicklistVo::getLabel).collect(Collectors.toList());
+                return picklist.getValores();
             }
             return new ArrayList<>();
         });
     }
 
     @Override
-    public List<String> listarSistemasDeOrigemPorTipo(String tipo) {
+    public List<ValorPicklistVo> listarSistemasDeOrigemPorTipo(String tipo) {
         return listarValoresPicklist(ConstantesSalesForce.CAMPO_SISTEMA_ORIGEM, resposta -> {
             prepararResposta(resposta);
             if(this.statusCode == HttpStatus.OK.value()) {
@@ -186,16 +186,15 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
                 Integer valorEntradaTipo = picklist.getValoresEntrada().get(tipo);
 
                 return picklist.getValores().stream()
-                            .filter(valor -> asList(valor.getValoresEntradaValidos()).contains(valorEntradaTipo))
-                            .map(ValorPicklistVo::getLabel)
-                            .collect(Collectors.toList());
+                        .filter(valor -> asList(valor.getValoresEntradaValidos()).contains(valorEntradaTipo))
+                        .collect(Collectors.toList());
             }
             return new ArrayList<>();
         });
     }
 
     @Override
-    public List<String> listarMotivosPorSistemaDeOrigem(String sistemaDeOrigem) {
+    public List<ValorPicklistVo> listarMotivosPorSistemaDeOrigem(String sistemaDeOrigem) {
         return listarValoresPicklist(ConstantesSalesForce.CAMPO_MOTIVO, resposta -> {
             prepararResposta(resposta);
             if(this.statusCode == HttpStatus.OK.value()) {
@@ -204,7 +203,6 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
 
                 return picklist.getValores().stream()
                         .filter(valor -> asList(valor.getValoresEntradaValidos()).contains(valorEntradaSistemaDeOrigem))
-                        .map(ValorPicklistVo::getLabel)
                         .collect(Collectors.toList());
             }
             return new ArrayList<>();
@@ -212,7 +210,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     }
 
     @Override
-    public List<String> listarModulosPorSistemaDeOrigem(String sistemaDeOrigem) {
+    public List<ValorPicklistVo> listarModulosPorSistemaDeOrigem(String sistemaDeOrigem) {
         return listarValoresPicklist(ConstantesSalesForce.CAMPO_MODULO, resposta -> {
             prepararResposta(resposta);
             if(this.statusCode == HttpStatus.OK.value()) {
@@ -221,7 +219,6 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
 
                 return picklist.getValores().stream()
                         .filter(valor -> asList(valor.getValoresEntradaValidos()).contains(valorEntradaSistemaDeOrigem))
-                        .map(ValorPicklistVo::getLabel)
                         .collect(Collectors.toList());
             }
             return new ArrayList<>();
@@ -235,7 +232,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
      * @param consumidorHttp Consumidor HTTP da requisição.
      * @return Lista de valores.
      */
-    private List<String> listarValoresPicklist(String nomeCampo, ConsumidorHttp<List<String>> consumidorHttp) {
+    private List<ValorPicklistVo> listarValoresPicklist(String nomeCampo, ConsumidorHttp<List<ValorPicklistVo>> consumidorHttp) {
         String urlPicklists = MessageFormat.format(this.urlListarPicklists, ConstantesSalesForce.RECORD_TYPE_ID, nomeCampo);
         prepararRequisicao(urlPicklists, null);
 
