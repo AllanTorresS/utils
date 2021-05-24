@@ -2,22 +2,17 @@ package ipp.aci.boleia.dados.servicos.goepik;
 
 import ipp.aci.boleia.dados.IClienteHttpDados;
 import ipp.aci.boleia.dados.IVerificacaoImagemGoEpikDados;
-import ipp.aci.boleia.dominio.vo.DispositivoAllowMeVo;
 import ipp.aci.boleia.dominio.vo.ImagemGoEpikVo;
 import ipp.aci.boleia.dominio.vo.RespostaValidacaoGoEpik;
 import ipp.aci.boleia.util.UtilitarioJson;
 import org.apache.http.Header;
-import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicHeader;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
+@Component
 public class GoEpikValidacaoDados implements IVerificacaoImagemGoEpikDados {
 
     @Value("${goepik.service.apikey}")
@@ -28,7 +23,6 @@ public class GoEpikValidacaoDados implements IVerificacaoImagemGoEpikDados {
 
     @Autowired
     private IClienteHttpDados clienteHttpDados;
-
 
     @Override
     public String validarImagemContadorGoEpik(String imageData) {
