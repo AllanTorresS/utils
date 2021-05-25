@@ -24,6 +24,7 @@ public final class ConstantesNotaFiscalParser {
     public static final String FINALIDADE                   = "/nfeProc/NFe/infNFe/ide/finNFe/text()";
     public static final String INDICADOR_FINAL              = "/nfeProc/NFe/infNFe/ide/indFinal/text()";
     public static final String JUSTIFICATIVA                = "/nfeProc/NFe/infNFe/ide/xJust/text()";
+    public static final String MODELO                       = "/nfeProc/NFe/infNFe/ide/mod/text()";
 
     public static final String EMIT_RAZAO_SOCIAL            = "/nfeProc/NFe/infNFe/emit/xNome/text()";
     public static final String EMIT_CNPJ           		    = "/nfeProc/NFe/infNFe/emit/CNPJ/text()";
