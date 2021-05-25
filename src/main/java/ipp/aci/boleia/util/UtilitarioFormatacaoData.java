@@ -1,5 +1,13 @@
 package ipp.aci.boleia.util;
 
+import ipp.aci.boleia.util.excecao.Erro;
+import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeConstants;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.YearMonth;
@@ -7,16 +15,7 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeConstants;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-
-import org.apache.commons.lang3.StringUtils;
-
-import ipp.aci.boleia.util.excecao.Erro;
-import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
+import java.util.regex.Pattern;
 
 /**
  * Utilitario para formatacao de datas
@@ -183,7 +182,7 @@ public final class UtilitarioFormatacaoData {
             }
         }
     }
-    
+
     /**
      * Le uma data a partir de uma String com o formato PADRAO_ISO_8601 sem Timezone
      *
@@ -200,7 +199,7 @@ public final class UtilitarioFormatacaoData {
                 throw new ExcecaoBoleiaRuntime(Erro.CONVERSAO_DATA, e1);
             }
         }
-    }        
+    }
 
     /**
      * Formata uma data para uma String com o formato PADRAO_ISO_8601
@@ -283,6 +282,40 @@ public final class UtilitarioFormatacaoData {
         } catch (ParseException e) {
             throw new ExcecaoBoleiaRuntime(Erro.CONVERSAO_DATA, e);
         }
+    }
+
+    /**
+     * Le uma string hora no formato PADRAO_HORA_MINUTOS retornando o valor total da hora.
+     * Exemplo: 01:30 retorna 1.
+     *
+     * @param texto O texto a ser interpretado
+     * @return O valor da hora
+     */
+    public static Integer lerCampoHora(String texto) {
+        Integer hora = null;
+        Pattern pattern = Pattern.compile("((?:(?:0|1)\\d|2[0-3])):([0-5]\\d)");
+        if(!StringUtils.isEmpty(texto) && pattern.matcher(texto).matches()) {
+            String[] horaMinuto = texto.split(":");
+            hora = Integer.parseInt(horaMinuto[0]);
+        }
+        return hora;
+    }
+
+    /**
+     * Le uma string hora no formato PADRAO_HORA_MINUTOS retornando o valor total do minuto.
+     * Exemplo: 01:30 retorna 30.
+     *
+     * @param texto O texto a ser interpretado
+     * @return O valor dos minutos
+     */
+    public static Integer lerCampoMinutos(String texto) {
+        Integer minutos = null;
+        Pattern pattern = Pattern.compile("((?:(?:0|1)\\d|2[0-3])):([0-5]\\d)");
+        if(!StringUtils.isEmpty(texto) && pattern.matcher(texto).matches()) {
+            String[] horaMinuto = texto.split(":");
+            minutos = Integer.parseInt(horaMinuto[1]);
+        }
+        return minutos;
     }
 
     /**
