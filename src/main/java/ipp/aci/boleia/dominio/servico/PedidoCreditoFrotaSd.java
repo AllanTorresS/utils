@@ -45,9 +45,6 @@ public class PedidoCreditoFrotaSd {
     private FrotaSd regrasFrota;
 
     @Autowired
-    private MotivoAlteracaoStatusFrotaSd motivoAlteracaoStatusFrotaSd;
-
-    @Autowired
     private IMotivoAlteracaoStatusFrotaDados repositorioMotivo;
 
     /**
