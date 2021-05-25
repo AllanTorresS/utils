@@ -6,10 +6,13 @@ import org.hibernate.envers.Audited;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -23,11 +26,12 @@ import javax.persistence.CascadeType;
 @Audited
 @Table(name = "CHAMADO_SISTEMA")
 public class ChamadoSistema implements IPersistente {
-
 	private static final long serialVersionUID = -6226038120046024032L;
 
     @Id
     @Column(name = "CD_CHAMADO_SISTEMA")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_CHAMADO_SISTEMA")
+    @SequenceGenerator(name = "SEQ_CHAMADO_SISTEMA", sequenceName = "SEQ_CHAMADO_SISTEMA", allocationSize = 1)
     private Long id;
 
     @NotNull
@@ -46,18 +50,6 @@ public class ChamadoSistema implements IPersistente {
     @NotNull
     @Column(name = "ID_SOLUCAO")
     private boolean portalSolucao;
-
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
-    @JoinTable(name = "CHAMADO_SISTEMA_MODULO",
-            joinColumns = @JoinColumn(name = "CD_CHAMADO_SISTEMA", referencedColumnName = "CD_CHAMADO_SISTEMA"),
-            inverseJoinColumns = @JoinColumn(name = "CD_CHAMADO_MODULO", referencedColumnName = "CD_CHAMADO_MODULO"))
-    private List<ChamadoModulo> modulos;
-
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
-    @JoinTable(name = "CHAMADO_SISTEMA_MOTIVO",
-            joinColumns = @JoinColumn(name = "CD_CHAMADO_SISTEMA", referencedColumnName = "CD_CHAMADO_SISTEMA"),
-            inverseJoinColumns = @JoinColumn(name = "CD_CHAMADO_MOTIVO", referencedColumnName = "CD_CHAMADO_MOTIVO"))
-    private List<ChamadoMotivo> motivos;
 
     @Override
     public Long getId() {
@@ -101,19 +93,4 @@ public class ChamadoSistema implements IPersistente {
         this.portalSolucao = portalSolucao;
     }
 
-    public List<ChamadoModulo> getModulos() {
-        return modulos;
-    }
-
-    public void setModulos(List<ChamadoModulo> modulos) {
-        this.modulos = modulos;
-    }
-
-    public List<ChamadoMotivo> getMotivos() {
-        return motivos;
-    }
-
-    public void setMotivos(List<ChamadoMotivo> motivos) {
-        this.motivos = motivos;
-    }
 }

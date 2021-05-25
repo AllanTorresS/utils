@@ -1,9 +1,7 @@
 package ipp.aci.boleia.dados.oracle;
 
 import ipp.aci.boleia.dados.IChamadoSistemaDados;
-import ipp.aci.boleia.dados.IChamadoTipoDados;
 import ipp.aci.boleia.dominio.ChamadoSistema;
-import ipp.aci.boleia.dominio.ChamadoTipo;
 import ipp.aci.boleia.dominio.enums.TipoPerfilUsuario;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;

@@ -2,7 +2,6 @@ package ipp.aci.boleia.dados;
 
 
 import ipp.aci.boleia.dominio.ChamadoSistema;
-import ipp.aci.boleia.dominio.ChamadoTipo;
 import ipp.aci.boleia.dominio.enums.TipoPerfilUsuario;
 
 import java.util.List;
