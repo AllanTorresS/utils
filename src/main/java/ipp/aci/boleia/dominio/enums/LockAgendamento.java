@@ -16,7 +16,7 @@ public enum LockAgendamento {
     REGISTRO_KMV_PENDENTE                           (ConstantesDuracao.QUINZE_MINUTOS, ConstantesDuracao.UM_SEGUNDO),
     AVISO_DE_DEBITO                                 (ConstantesDuracao.UMA_HORA, ConstantesDuracao.UM_SEGUNDO),
     AVISO_DE_CREDITO                                (ConstantesDuracao.UMA_HORA, ConstantesDuracao.UM_SEGUNDO),
-    VERIFICACAO_FROTA_ATIVACAO_TEMPORARIA           (ConstantesDuracao.TRINTA_MINUTOS, ConstantesDuracao.UM_SEGUNDO),
+    VERIFICACAO_STATUS_FROTA                        (ConstantesDuracao.UM_MINUTO, ConstantesDuracao.UM_SEGUNDO),
     VERIFICACAO_SALDO_FROTA                         (ConstantesDuracao.UM_MINUTO, ConstantesDuracao.UM_SEGUNDO),
     CALCULO_PRECO_MEDIO                             (ConstantesDuracao.DUAS_HORAS, ConstantesDuracao.UM_SEGUNDO),
     CALCULO_PRECO_MAXIMO_SUGERIDO                   (ConstantesDuracao.UM_MINUTO, ConstantesDuracao.UM_SEGUNDO),
@@ -46,7 +46,10 @@ public enum LockAgendamento {
 	COBRANCA_CONECTCAR                              (ConstantesDuracao.DUAS_HORAS, ConstantesDuracao.DUAS_HORAS),
 	REEMBOLSO_CONECTCAR                             (ConstantesDuracao.DUAS_HORAS, ConstantesDuracao.DUAS_HORAS),
 	AVISO_DE_DEBITO_CONECTCAR                       (ConstantesDuracao.UMA_HORA, ConstantesDuracao.UM_SEGUNDO),
-	AVISO_DE_CREDITO_CONECTCAR                      (ConstantesDuracao.UMA_HORA, ConstantesDuracao.UM_SEGUNDO);
+	AVISO_DE_CREDITO_CONECTCAR                      (ConstantesDuracao.UMA_HORA, ConstantesDuracao.UM_SEGUNDO),
+	EXCLUSAO_DADOS_PESSOAIS_MOTORISTAS              (ConstantesDuracao.CINCO_MINUTO, ConstantesDuracao.UM_SEGUNDO),
+    AVISO_MOTORISTAS_SEM_ABASTECIMENTO              (ConstantesDuracao.CINCO_MINUTO, ConstantesDuracao.UM_SEGUNDO),
+    EXCLUSAO_DADOS_MOTORISTAS_SEM_ABASTECIMENTO     (ConstantesDuracao.CINCO_MINUTO, ConstantesDuracao.UM_SEGUNDO);
 
 	private final long duracao;
     private final long duracaoMinima;
