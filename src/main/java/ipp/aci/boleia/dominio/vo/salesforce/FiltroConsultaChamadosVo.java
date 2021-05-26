@@ -18,6 +18,13 @@ public class FiltroConsultaChamadosVo extends BaseFiltroPaginado {
     private boolean contatoRevenda;
     private boolean contatoInterno;
 
+    /**
+     * Construtor default
+     */
+    public FiltroConsultaChamadosVo() {
+    }
+
+
     public String getNumeroChamado() {
         return numeroChamado;
     }

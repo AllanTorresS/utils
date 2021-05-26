@@ -13,6 +13,12 @@ public class ConsultaChamadosVo {
     @JsonProperty("records")
     private List<ChamadoVo> chamados;
 
+    /**
+     * Construtor default
+     */
+    public ConsultaChamadosVo() {
+    }
+
     public Long getTotalItems() {
         return totalItems;
     }

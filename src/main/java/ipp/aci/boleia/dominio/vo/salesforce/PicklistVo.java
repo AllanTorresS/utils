@@ -16,6 +16,12 @@ public class PicklistVo {
     @JsonProperty("values")
     private List<ValorPicklistVo> valores;
 
+    /**
+     * Construtor default
+     */
+    public PicklistVo() {
+    }
+
     public Map<String, Integer> getValoresEntrada() {
         return valoresEntrada;
     }
