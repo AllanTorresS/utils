@@ -25,7 +25,7 @@ public class GoEpikValidacaoDados implements IVerificacaoImagemGoEpikDados {
     private IClienteHttpDados clienteHttpDados;
 
     @Override
-    public String validarImagemContadorGoEpik(String imageData) {
+    public RespostaValidacaoGoEpik validarImagemContadorGoEpik(String imageData) {
 
         ImagemGoEpikVo body = new ImagemGoEpikVo();
         body.setImage(imageData);
@@ -33,7 +33,7 @@ public class GoEpikValidacaoDados implements IVerificacaoImagemGoEpikDados {
         RespostaValidacaoGoEpik vo = clienteHttpDados.doPostJson(endereco, null, null, body, montarHeader(apiKey),
                 resp -> UtilitarioJson.toObject(EntityUtils.toString(resp.getEntity()), RespostaValidacaoGoEpik.class));
 
-        return vo.getResult();
+        return vo;
     }
 
 
