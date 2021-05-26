@@ -14,6 +14,12 @@ public class ValorPicklistVo {
     @JsonProperty("value")
     private String valor;
 
+    /**
+     * Construtor default
+     */
+    public ValorPicklistVo() {
+    }
+
     public String getLabel() {
         return label;
     }

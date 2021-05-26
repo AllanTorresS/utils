@@ -12,6 +12,12 @@ public class AccountChamadoVo {
     @JsonProperty("ID_Externo__c")
     private String idExterno;
 
+    /**
+     * Construtor default
+     */
+    public AccountChamadoVo() {
+    }
+
     public AccountChamadoVo(String idExterno) {
         this.idExterno = idExterno;
     }
