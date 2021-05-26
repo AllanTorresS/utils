@@ -1,6 +1,8 @@
 package ipp.aci.boleia.dados;
 
 
+import ipp.aci.boleia.dominio.vo.RespostaValidacaoGoEpik;
+
 /**
  * Contrato para implementacao de repositorio de verificacao de imgens na Api da GoEpik
  */
@@ -12,6 +14,6 @@ public interface IVerificacaoImagemGoEpikDados {
      * @param imageData código da imagem em Base64
      * @return valor da leitura da API
      */
-    String validarImagemContadorGoEpik(String imageData);
+    RespostaValidacaoGoEpik validarImagemContadorGoEpik(String imageData);
 
 }

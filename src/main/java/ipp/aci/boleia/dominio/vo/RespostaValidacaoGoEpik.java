@@ -1,10 +1,12 @@
 package ipp.aci.boleia.dominio.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Classe com informacoes relacionadas a resposta da api da GoEpik
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class RespostaValidacaoGoEpik {
 
     @JsonProperty("OCR_Result")
