@@ -15,13 +15,13 @@ import java.util.List;
  * Respositorio de entidades ChamadoSistema
  */
 @Repository
-public class OracleChamadoSistamaDados extends OracleRepositorioBoleiaDados<ChamadoSistema> implements IChamadoSistemaDados {
+public class OracleChamadoSistemaDados extends OracleRepositorioBoleiaDados<ChamadoSistema> implements IChamadoSistemaDados {
 
 
     /**
      * Instancia o repositorio
      */
-    public OracleChamadoSistamaDados() {
+    public OracleChamadoSistemaDados() {
         super(ChamadoSistema.class);
     }
 

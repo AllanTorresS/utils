@@ -44,6 +44,7 @@ public interface IChamadoDados {
      * Abre chamado no SalesForce
      *
      * @param chamadoVo os dados do chamado
+     * @throws ExcecaoBoleiaRuntime Caso ocorra algum erro
      */
     void criarChamado(CriacaoChamadoVo chamadoVo)  throws ExcecaoBoleiaRuntime;
 
