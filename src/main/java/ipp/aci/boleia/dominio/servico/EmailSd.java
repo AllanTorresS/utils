@@ -51,6 +51,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import javax.mail.util.ByteArrayDataSource;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -904,7 +905,7 @@ public class EmailSd {
         String assunto = mensagens.obterMensagem("frota.cobranca.debitovencido.email.assunto");
         ByteArrayDataSource anexo = null;
         String nomeAnexo = null;
-        String valorTotal = UtilitarioFormatacao.formatarDecimalMoedaReal(cobranca.getValorTotal());
+        String valorTotal = UtilitarioFormatacao.formatarDecimalMoedaReal(cobranca.getValorTotal().setScale(2, BigDecimal.ROUND_HALF_UP));
         String informacaoCiclo = UtilitarioFormatacaoData.formatarDataPeriodoMes(cobranca.getDataInicioPeriodo(), cobranca.getDataFimPeriodo());
         Date dataVencimento = cobranca.getDataVencimentoPagto();
         String corpo;
