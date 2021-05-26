@@ -326,7 +326,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
                 return new ConsultaChamadosVo();
             }
         }else {
-            throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("chamado.abrir.erro.jde.erro"));
+            throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("chamado.abrir.erro.integracao"));
         }
     }
 
