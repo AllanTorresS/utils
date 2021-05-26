@@ -10,9 +10,9 @@ import org.apache.http.message.BasicHeader;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
-@Component
+@Repository
 public class GoEpikValidacaoDados implements IVerificacaoImagemGoEpikDados {
 
     @Value("${goepik.service.apikey}")
