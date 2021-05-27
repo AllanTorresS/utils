@@ -34,8 +34,8 @@ public class ContaBeneficioUsuario implements IPersistente {
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CD_USUARIO")
-    private Usuario usuario;
+    @JoinColumn(name = "CD_BENEFICIARIO")
+    private Beneficiario beneficiario;
 
     @Column(name = "VA_SALDO")
     private BigDecimal saldo;
@@ -49,6 +49,10 @@ public class ContaBeneficioUsuario implements IPersistente {
     @Column(name = "DT_ATUALIZACAO")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataAtualizacao;
+
+    @Column(name = "DT_ENCERRAMENTO")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataEncerramento;
 
     @OneToMany(mappedBy = "contaBeneficioUsuario", fetch = FetchType.LAZY)
     private List<ContaBeneficio> contasBeneficio;
@@ -66,12 +70,12 @@ public class ContaBeneficioUsuario implements IPersistente {
         this.id = id;
     }
 
-    public Usuario getUsuario() {
-        return usuario;
+    public Beneficiario getBeneficiario() {
+        return beneficiario;
     }
 
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
+    public void setBeneficiario(Beneficiario beneficiario) {
+        this.beneficiario = beneficiario;
     }
 
     public BigDecimal getSaldo() {
@@ -112,5 +116,13 @@ public class ContaBeneficioUsuario implements IPersistente {
 
     public void setDataAtualizacao(Date dataAtualizacao) {
         this.dataAtualizacao = dataAtualizacao;
+    }
+
+    public Date getDataEncerramento() {
+        return dataEncerramento;
+    }
+
+    public void setDataEncerramento(Date dataEncerramento) {
+        this.dataEncerramento = dataEncerramento;
     }
 }

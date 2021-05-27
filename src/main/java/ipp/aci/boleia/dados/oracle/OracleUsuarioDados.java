@@ -290,29 +290,6 @@ public class OracleUsuarioDados extends OracleRepositorioBoleiaDados<Usuario> im
         return pesquisarSemIsolamentoDados((ParametroOrdenacaoColuna) null, new ParametroPesquisaIgual("coordenadoria.id", id));
     }
 
-    @Override
-    public List<Usuario> obterBeneficiariosPorNomeCpf(FiltroPesquisaParcialVo filtro) {
-        List<ParametroPesquisa> parametros = new ArrayList<>();
-        povoarParametrosParaAutocomplete(filtro, parametros);
-        return UtilitarioLambda.filtrarDistintosPorPropriedade(pesquisar(new ParametroOrdenacaoColuna("nome"), parametros.toArray(new ParametroPesquisa[parametros.size()])), Usuario::getCpf);
-    }
-
-    @Override
-    public ResultadoPaginado<Usuario> obterBeneficiarios(FiltroPesquisaBeneficiarioVo filtro) {
-        List<ParametroPesquisa> parametros = new ArrayList<>();
-
-        if(filtro.getUsuario() != null && filtro.getUsuario().getId() != null) {
-            parametros.add(new ParametroPesquisaIgual("id", filtro.getUsuario().getId()));
-        }
-        parametros.add(new ParametroPesquisaIgual("tipoPerfil.id",TipoPerfilUsuario.MOTORISTA.getValue()));
-
-        if(filtro.getPaginacao() != null && filtro.getPaginacao().getParametrosOrdenacaoColuna().isEmpty()) {
-            filtro.getPaginacao().getParametrosOrdenacaoColuna().add(new ParametroOrdenacaoColuna("nome"));
-        }
-
-        return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
-    }
-
     /**
      * Monta os parametros de pesquisa de acordo com o filtro informado
      * @param filtro O filtro de pesquisa
@@ -389,20 +366,4 @@ public class OracleUsuarioDados extends OracleRepositorioBoleiaDados<Usuario> im
             parametros.put(condicao, new ParametroPesquisaIgual(nomeCampo, valorParametro));
         }
     }
-
-    /**
-     * Povoa os parametros de pesquisa para a busca do componente de auto-complete
-     *
-     * @param filtro     O filtro de pesquisa
-     * @param parametros Os parametros da consulta
-     */
-    private void povoarParametrosParaAutocomplete(FiltroPesquisaParcialVo filtro, List<ParametroPesquisa> parametros) {
-        String termoCnpj = preparaTermoCnpj(filtro.getTermo());
-        ParametroPesquisa paramCnpj = new ParametroPesquisaLike("cpf", termoCnpj);
-        ParametroPesquisa paramRazao = new ParametroPesquisaLike("nome", filtro.getTermo());
-
-        parametros.add(new ParametroPesquisaOr(paramRazao, paramCnpj));
-        parametros.add(new ParametroPesquisaIgual("tipoPerfil.id",TipoPerfilUsuario.MOTORISTA.getValue()));
-    }
-
 }
