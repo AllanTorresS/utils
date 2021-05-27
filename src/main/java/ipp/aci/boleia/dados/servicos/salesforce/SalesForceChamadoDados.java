@@ -1,9 +1,12 @@
 package ipp.aci.boleia.dados.servicos.salesforce;
 
 import ipp.aci.boleia.dados.IChamadoDados;
+import ipp.aci.boleia.dados.IChamadoSistemaDados;
 import ipp.aci.boleia.dados.IClienteHttpDados;
 import ipp.aci.boleia.dados.IMotivoChamadoDados;
 import ipp.aci.boleia.dados.servicos.rest.ConsumidorHttp;
+import ipp.aci.boleia.dominio.ChamadoSistema;
+import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.salesforce.ChamadoVo;
@@ -16,8 +19,6 @@ import ipp.aci.boleia.util.ConstantesSalesForce;
 import ipp.aci.boleia.util.UtilitarioJson;
 import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
-import ipp.aci.boleia.util.excecao.ExcecaoServicoIndisponivel;
-import ipp.aci.boleia.util.excecao.ExcecaoValidacao;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,13 +31,11 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static ipp.aci.boleia.util.ConstantesSalesForce.SOLICITANTE_FROTA;
 import static ipp.aci.boleia.util.ConstantesSalesForce.SOLICITANTE_INTERNO;
@@ -126,6 +125,9 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     @Autowired
     private IMotivoChamadoDados motivoChamadoDados;
 
+    @Autowired
+    private IChamadoSistemaDados chamadoSistemaDados;
+
     @Override
     public ResultadoPaginado<ChamadoVo> consultarChamados(FiltroConsultaChamadosVo filtro) {
         try {
@@ -190,15 +192,15 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     }
 
     @Override
-    public List<ValorPicklistVo> listarSistemasDeOrigemPorTipo(String tipo) {
+    public List<ValorPicklistVo> listarSistemasDeOrigem() {
+        Usuario usuarioLogado = ambiente.getUsuarioLogado();
+        List<ChamadoSistema> chamadoSistemas = chamadoSistemaDados.obterSistemasChamado(usuarioLogado.getTipoPerfilUsuario());
         return listarValoresPicklist(ConstantesSalesForce.CAMPO_SISTEMA_ORIGEM, resposta -> {
             prepararResposta(resposta);
             if(this.statusCode == HttpStatus.OK.value()) {
                 PicklistVo picklist = UtilitarioJson.toObjectWithConfigureFailOnUnknowProperties(this.responseBody.toString(), PicklistVo.class, false);
-                Integer valorEntradaTipo = picklist.getValoresEntrada().get(tipo);
-
                 return picklist.getValores().stream()
-                        .filter(valor -> asList(valor.getValoresEntradaValidos()).contains(valorEntradaTipo))
+                        .filter(valor -> chamadoSistemas.stream().anyMatch(chamadoSistema -> chamadoSistema.getNome().equals(valor.getLabel())))
                         .collect(Collectors.toList());
             }
             return new ArrayList<>();
@@ -275,7 +277,6 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
         return password;
     }
 
-
     /***
      * Trata a resposta de criacao
      * @param response a resposta
@@ -285,7 +286,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
         prepararResposta(response);
         if (this.statusCode != HttpStatus.CREATED.value()) {
             LOGGER.error(this.responseBody.toString());
-            throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("Erro.SERVICO_EXTERNO_INDISPONIVEL"));
+            throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("chamado.abrir.erro.integracao"));
         }
         return true;
     }
@@ -325,8 +326,8 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
             } else {
                 return new ConsultaChamadosVo();
             }
-        }else {
-            throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("chamado.abrir.erro.integracao"));
+        } else {
+            throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("Erro.SERVICO_EXTERNO_INDISPONIVEL"));
         }
     }
 

@@ -63,12 +63,11 @@ public interface IChamadoDados {
     List<ValorPicklistVo> listarTiposChamado();
 
     /**
-     * Retorna a lista de sistemas de origem com base no tipo do chamado.
+     * Retorna a lista de sistemas de origem possíveis para um chamado.
      *
-     * @param tipo Tipo do chamado.
      * @return Lista com os sistemas de origem.
      */
-    List<ValorPicklistVo> listarSistemasDeOrigemPorTipo(String tipo);
+    List<ValorPicklistVo> listarSistemasDeOrigem();
 
     /**
      * Retorna a lista de motivos com base no sistema de origem do chamado.
