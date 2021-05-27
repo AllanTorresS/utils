@@ -3,7 +3,7 @@ package ipp.aci.boleia.dados.servicos.goepik;
 import ipp.aci.boleia.dados.IClienteHttpDados;
 import ipp.aci.boleia.dados.IVerificacaoImagemGoEpikDados;
 import ipp.aci.boleia.dominio.vo.ImagemGoEpikVo;
-import ipp.aci.boleia.dominio.vo.RespostaValidacaoGoEpik;
+import ipp.aci.boleia.dominio.vo.RespostaValidacaoGoEpikVo;
 import ipp.aci.boleia.util.UtilitarioJson;
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
@@ -25,13 +25,13 @@ public class GoEpikValidacaoDados implements IVerificacaoImagemGoEpikDados {
     private IClienteHttpDados clienteHttpDados;
 
     @Override
-    public RespostaValidacaoGoEpik validarImagemContadorGoEpik(String imageData) {
+    public RespostaValidacaoGoEpikVo validarImagemContadorGoEpik(String imageData) {
 
         ImagemGoEpikVo body = new ImagemGoEpikVo();
         body.setImage(imageData);
 
-        RespostaValidacaoGoEpik vo = clienteHttpDados.doPostJson(endereco, null, null, body, montarHeader(apiKey),
-                resp -> UtilitarioJson.toObject(EntityUtils.toString(resp.getEntity()), RespostaValidacaoGoEpik.class));
+        RespostaValidacaoGoEpikVo vo = clienteHttpDados.doPostJson(endereco, null, null, body, montarHeader(apiKey),
+                resp -> UtilitarioJson.toObject(EntityUtils.toString(resp.getEntity()), RespostaValidacaoGoEpikVo.class));
 
         return vo;
     }

@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Classe com informacoes relacionadas a resposta da api da GoEpik
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class RespostaValidacaoGoEpik {
+public class RespostaValidacaoGoEpikVo {
 
     @JsonProperty("OCR_Result")
     private String result;
