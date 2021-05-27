@@ -1,14 +1,23 @@
 package ipp.aci.boleia.dados.servicos.salesforce;
 
 import ipp.aci.boleia.dados.IChamadoDados;
+import ipp.aci.boleia.dados.IChamadoSistemaDados;
 import ipp.aci.boleia.dados.IClienteHttpDados;
 import ipp.aci.boleia.dados.IMotivoChamadoDados;
+import ipp.aci.boleia.dados.servicos.rest.ConsumidorHttp;
+import ipp.aci.boleia.dominio.ChamadoSistema;
+import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.salesforce.ChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.ConsultaChamadosVo;
+import ipp.aci.boleia.dominio.vo.salesforce.CriacaoChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.FiltroConsultaChamadosVo;
+import ipp.aci.boleia.dominio.vo.salesforce.PicklistVo;
+import ipp.aci.boleia.dominio.vo.salesforce.ValorPicklistVo;
+import ipp.aci.boleia.util.ConstantesSalesForce;
 import ipp.aci.boleia.util.UtilitarioJson;
+import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.slf4j.Logger;
@@ -20,6 +29,7 @@ import org.springframework.stereotype.Repository;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -35,6 +45,7 @@ import static ipp.aci.boleia.util.UtilitarioCalculoData.obterUltimoInstanteDia;
 import static ipp.aci.boleia.util.UtilitarioFormatacaoData.formatarDataIso8601ComTimeZoneMillis;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.text.MessageFormat.format;
+import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
 
 /**
@@ -82,7 +93,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     private static final int LIMITE_DESCRIPTION = 1024;
 
     private static final String CAMPO_TOTAL_ITEMS = "totalSize";
-    private static final String CAMPO_SUCESSO = "done";
+    private static final String CAMPO_DONE = "done";
 
     @Value("${salesforce.chamados.authorization.client.id}")
     private String clientId;
@@ -102,11 +113,20 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     @Value("${salesforce.chamados.consulta.url}")
     private String urlConsulta;
 
+    @Value("${salesforce.chamados.criacao.url}")
+    private String urlCriacao;
+
+    @Value("${salesforce.chamados.listar.picklists}")
+    private String urlListarPicklists;
+
     @Autowired
     private IClienteHttpDados restDados;
 
     @Autowired
     private IMotivoChamadoDados motivoChamadoDados;
+
+    @Autowired
+    private IChamadoSistemaDados chamadoSistemaDados;
 
     @Override
     public ResultadoPaginado<ChamadoVo> consultarChamados(FiltroConsultaChamadosVo filtro) {
@@ -121,7 +141,13 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     }
 
     @Override
-    public boolean abrirChamado(String company ,String name, String email, String phone, Long idReason, String subject, String description) {
+    public void criarChamado(CriacaoChamadoVo chamadoVo) throws ExcecaoBoleiaRuntime {
+        autenticarSalesforce();
+        restDados.doPostJson(this.instanceUrl.concat(this.urlCriacao), chamadoVo, this.authorizationHeaders, this::trataRespostaCriacao);
+    }
+
+    @Override
+    public boolean abrirChamadoEmail(String company ,String name, String email, String phone, Long idReason, String subject, String description) {
 
         Map<String, String> form = new LinkedHashMap<>();
         form.put(ALIAS_ORGID, orgid);
@@ -139,6 +165,92 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
             LOGGER.error(ex.getMessage(), ex);
             return false;
         }
+    }
+
+    @Override
+    public List<ValorPicklistVo> listarStatusChamado() {
+        return listarValoresPicklist(ConstantesSalesForce.CAMPO_STATUS, resposta -> {
+            prepararResposta(resposta);
+            if(this.statusCode == HttpStatus.OK.value()) {
+                PicklistVo picklist = UtilitarioJson.toObjectWithConfigureFailOnUnknowProperties(this.responseBody.toString(), PicklistVo.class, false);
+                return picklist.getValores();
+            }
+            return new ArrayList<>();
+        });
+    }
+
+    @Override
+    public List<ValorPicklistVo> listarTiposChamado() {
+        return listarValoresPicklist(ConstantesSalesForce.CAMPO_TIPO, resposta -> {
+            prepararResposta(resposta);
+            if(this.statusCode == HttpStatus.OK.value()) {
+                PicklistVo picklist = UtilitarioJson.toObjectWithConfigureFailOnUnknowProperties(this.responseBody.toString(), PicklistVo.class, false);
+                return picklist.getValores();
+            }
+            return new ArrayList<>();
+        });
+    }
+
+    @Override
+    public List<ValorPicklistVo> listarSistemasDeOrigem() {
+        Usuario usuarioLogado = ambiente.getUsuarioLogado();
+        List<ChamadoSistema> chamadoSistemas = chamadoSistemaDados.obterSistemasChamado(usuarioLogado.getTipoPerfilUsuario());
+        return listarValoresPicklist(ConstantesSalesForce.CAMPO_SISTEMA_ORIGEM, resposta -> {
+            prepararResposta(resposta);
+            if(this.statusCode == HttpStatus.OK.value()) {
+                PicklistVo picklist = UtilitarioJson.toObjectWithConfigureFailOnUnknowProperties(this.responseBody.toString(), PicklistVo.class, false);
+                return picklist.getValores().stream()
+                        .filter(valor -> chamadoSistemas.stream().anyMatch(chamadoSistema -> chamadoSistema.getNome().equals(valor.getLabel())))
+                        .collect(Collectors.toList());
+            }
+            return new ArrayList<>();
+        });
+    }
+
+    @Override
+    public List<ValorPicklistVo> listarMotivosPorSistemaDeOrigem(String sistemaDeOrigem) {
+        return listarValoresPicklist(ConstantesSalesForce.CAMPO_MOTIVO, resposta -> {
+            prepararResposta(resposta);
+            if(this.statusCode == HttpStatus.OK.value()) {
+                PicklistVo picklist = UtilitarioJson.toObjectWithConfigureFailOnUnknowProperties(this.responseBody.toString(), PicklistVo.class, false);
+                Integer valorEntradaSistemaDeOrigem = picklist.getValoresEntrada().get(sistemaDeOrigem);
+
+                return picklist.getValores().stream()
+                        .filter(valor -> asList(valor.getValoresEntradaValidos()).contains(valorEntradaSistemaDeOrigem))
+                        .collect(Collectors.toList());
+            }
+            return new ArrayList<>();
+        });
+    }
+
+    @Override
+    public List<ValorPicklistVo> listarModulosPorSistemaDeOrigem(String sistemaDeOrigem) {
+        return listarValoresPicklist(ConstantesSalesForce.CAMPO_MODULO, resposta -> {
+            prepararResposta(resposta);
+            if(this.statusCode == HttpStatus.OK.value()) {
+                PicklistVo picklist = UtilitarioJson.toObjectWithConfigureFailOnUnknowProperties(this.responseBody.toString(), PicklistVo.class, false);
+                Integer valorEntradaSistemaDeOrigem = picklist.getValoresEntrada().get(sistemaDeOrigem);
+
+                return picklist.getValores().stream()
+                        .filter(valor -> asList(valor.getValoresEntradaValidos()).contains(valorEntradaSistemaDeOrigem))
+                        .collect(Collectors.toList());
+            }
+            return new ArrayList<>();
+        });
+    }
+
+    /**
+     * Lista os valores de um picklist do salesforce.
+     *
+     * @param nomeCampo Nome do campo picklist.
+     * @param consumidorHttp Consumidor HTTP da requisição.
+     * @return Lista de valores.
+     */
+    private List<ValorPicklistVo> listarValoresPicklist(String nomeCampo, ConsumidorHttp<List<ValorPicklistVo>> consumidorHttp) {
+        String urlPicklists = MessageFormat.format(this.urlListarPicklists, ConstantesSalesForce.RECORD_TYPE_ID, nomeCampo);
+        prepararRequisicao(urlPicklists, null);
+
+        return restDados.doGet(this.endpointUrl, this.authorizationHeaders, consumidorHttp);
     }
 
     public void setEndereco(String endereco) {
@@ -163,6 +275,20 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     @Override
     public String getPassword() {
         return password;
+    }
+
+    /***
+     * Trata a resposta de criacao
+     * @param response a resposta
+     * @return true em caso de sucesso
+     */
+    private boolean trataRespostaCriacao(CloseableHttpResponse response) {
+        prepararResposta(response);
+        if (this.statusCode != HttpStatus.CREATED.value()) {
+            LOGGER.error(this.responseBody.toString());
+            throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("chamado.abrir.erro.integracao"));
+        }
+        return true;
     }
 
     /**
@@ -195,13 +321,14 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     private ConsultaChamadosVo tratarRespostaConsultaChamados(CloseableHttpResponse response) {
         prepararResposta(response);
         if (this.statusCode == HttpStatus.OK.value()) {
-            if (this.responseBody.get(CAMPO_SUCESSO) != null && this.responseBody.get(CAMPO_SUCESSO).asBoolean(false)) {
+            if (this.responseBody.get(CAMPO_DONE) != null && this.responseBody.get(CAMPO_DONE).asBoolean(false)) {
                 return UtilitarioJson.toObjectWithConfigureFailOnUnknowProperties(this.responseBody.toString(), ConsultaChamadosVo.class, false);
             } else {
                 return new ConsultaChamadosVo();
             }
+        } else {
+            throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("Erro.SERVICO_EXTERNO_INDISPONIVEL"));
         }
-        return null;
     }
 
     /**
@@ -213,7 +340,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     private Integer tratarRespostaCountChamados(CloseableHttpResponse response) {
         prepararResposta(response);
         if (this.statusCode == HttpStatus.OK.value()) {
-            if (this.responseBody.get(CAMPO_SUCESSO) != null && this.responseBody.get(CAMPO_SUCESSO).asBoolean(false)) {
+            if (this.responseBody.get(CAMPO_DONE) != null && this.responseBody.get(CAMPO_DONE).asBoolean(false)) {
                 return this.responseBody.get(CAMPO_TOTAL_ITEMS).asInt(0);
             }
         }

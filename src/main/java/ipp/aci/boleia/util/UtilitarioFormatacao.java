@@ -510,6 +510,21 @@ public final class UtilitarioFormatacao {
     }
 
     /**
+     * Converte um CNPJ ou CPF para string
+     *
+     * @param valor O valor a ser convertido
+     * @return O valor em string
+     */
+    public static String formatarCpfCnpjString(Long valor) {
+        if (valor == null) {
+            return "";
+        }
+        return valor.toString().length() > 11 ?
+                formatarNumeroZerosEsquerda(valor, TAMANHO_CNPJ).toUpperCase() :
+                formatarNumeroZerosEsquerda(valor, TAMANHO_CPF).toUpperCase();
+    }
+
+    /**
      * Formata um CEP.
      *
      * @param cep Um objeto contendo o CEP

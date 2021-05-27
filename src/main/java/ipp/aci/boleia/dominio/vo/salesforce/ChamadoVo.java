@@ -25,6 +25,13 @@ public class ChamadoVo {
     @JsonProperty("Status")
     private String status;
 
+    /**
+     * Construtor default
+     */
+    public ChamadoVo() {
+
+    }
+
     public String getIdSalesforce() {
         return idSalesforce;
     }
