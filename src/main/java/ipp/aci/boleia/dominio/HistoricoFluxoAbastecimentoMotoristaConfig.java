@@ -60,6 +60,10 @@ public class HistoricoFluxoAbastecimentoMotoristaConfig implements IPersistente,
     @JoinColumn(name = "CD_VEICULO")
     private Veiculo veiculo;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_VEICULO_CLI")
+    private Veiculo veiculoClimatizador;
+
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_USUARIO")
@@ -80,6 +84,10 @@ public class HistoricoFluxoAbastecimentoMotoristaConfig implements IPersistente,
 
         if (fluxo.getVeiculo() != null) {
             this.veiculo = fluxo.getVeiculo();
+        }
+
+        if (fluxo.getVeiculoClimatizador() != null) {
+            this.veiculoClimatizador = fluxo.getVeiculoClimatizador();
         }
 
         this.exigirTelaHodometroHorimetro = fluxo.getExigirTelaHodometroHorimetro();
@@ -180,6 +188,14 @@ public class HistoricoFluxoAbastecimentoMotoristaConfig implements IPersistente,
 
     public void setVeiculo(Veiculo veiculo) {
         this.veiculo = veiculo;
+    }
+
+    public Veiculo getVeiculoClimatizador() {
+        return veiculoClimatizador;
+    }
+
+    public void setVeiculoClimatizador(Veiculo veiculoClimatizador) {
+        this.veiculoClimatizador = veiculoClimatizador;
     }
 
     public Date getDataAlteracao() {
