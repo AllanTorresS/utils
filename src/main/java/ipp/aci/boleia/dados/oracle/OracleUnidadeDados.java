@@ -134,6 +134,7 @@ public class OracleUnidadeDados extends OracleRepositorioBoleiaDados<Unidade> im
 		List<ParametroPesquisa> params = new ArrayList();
 		params.add(new ParametroPesquisaNulo("latitude", true));
 		params.add(new ParametroPesquisaNulo("longitude", true));
+		params.add(new ParametroPesquisaIgual("postoInterno",true));
 		params.add(new ParametroPesquisaIgual("frota.id", filtro.getIdFrota()));
 
 		if (CollectionUtils.isNotEmpty(filtro.getFiltrosCoordenadas())) {
