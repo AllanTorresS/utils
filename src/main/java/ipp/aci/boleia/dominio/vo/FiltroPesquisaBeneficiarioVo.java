@@ -9,15 +9,15 @@ import java.util.List;
  */
 public class FiltroPesquisaBeneficiarioVo extends BaseFiltroPaginado {
 
-    private EntidadeVo usuario;
+    private EntidadeVo beneficiario;
     private List<Long> idsBeneficios;
 
-    public EntidadeVo getUsuario() {
-        return usuario;
+    public EntidadeVo getBeneficiario() {
+        return beneficiario;
     }
 
-    public void setUsuario(EntidadeVo usuario) {
-        this.usuario = usuario;
+    public void setBeneficiario(EntidadeVo beneficiario) {
+        this.beneficiario = beneficiario;
     }
 
     public List<Long> getIdsBeneficios() {
