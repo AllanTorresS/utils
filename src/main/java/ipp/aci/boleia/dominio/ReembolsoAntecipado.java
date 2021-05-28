@@ -1,6 +1,7 @@
 package ipp.aci.boleia.dominio;
 
 import ipp.aci.boleia.dominio.enums.StatusLiberacaoReembolsoJde;
+import ipp.aci.boleia.dominio.enums.TipoAntecipacao;
 import org.hibernate.envers.AuditJoinTable;
 import org.hibernate.envers.Audited;
 
@@ -18,6 +19,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Date;
@@ -54,6 +56,10 @@ public class ReembolsoAntecipado extends ReembolsoBase {
     @Version
     @Column(name = "NO_VERSAO")
     private Long versao;
+
+    @NotNull
+    @Column(name = "ID_TIPO_ANTECIPACAO")
+    private TipoAntecipacao tipoAntecipacao;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_TRANS_CONSOL")
@@ -133,6 +139,14 @@ public class ReembolsoAntecipado extends ReembolsoBase {
 
     public void setVersao(Long versao) {
         this.versao = versao;
+    }
+
+    public TipoAntecipacao getTipoAntecipacao() {
+        return tipoAntecipacao;
+    }
+
+    public void setTipoAntecipacao(TipoAntecipacao tipoAntecipacao) {
+        this.tipoAntecipacao = tipoAntecipacao;
     }
 
     @Override

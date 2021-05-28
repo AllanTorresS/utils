@@ -6,6 +6,7 @@ import ipp.aci.boleia.dominio.enums.StatusIntegracaoReembolsoJde;
 import ipp.aci.boleia.dominio.enums.StatusNotaFiscal;
 import ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso;
 import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
+import ipp.aci.boleia.dominio.enums.TipoAntecipacao;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
 import ipp.aci.boleia.dominio.interfaces.IPertenceRevendedor;
@@ -761,7 +762,8 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     @Transient
     public ReembolsoAntecipado getAntecipacaoRealizada() {
         if(antecipacoes != null) {
-            return antecipacoes.stream().filter(antecipacao -> StatusIntegracaoReembolsoJde.REALIZADO.getValue().equals(antecipacao.getStatusIntegracao())).findFirst().orElse(null);
+            return antecipacoes.stream().filter(antecipacao -> StatusIntegracaoReembolsoJde.REALIZADO.getValue()
+                    .equals(antecipacao.getStatusIntegracao()) && antecipacao.getTipoAntecipacao().equals(TipoAntecipacao.SOLUCAO)).findFirst().orElse(null);
         }
         return null;
     }
