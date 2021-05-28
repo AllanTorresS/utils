@@ -7,6 +7,7 @@ import ipp.aci.boleia.dados.INegociacaoDados;
 import ipp.aci.boleia.dados.INotaFiscalDados;
 import ipp.aci.boleia.dados.IParametroCicloDados;
 import ipp.aci.boleia.dados.IPrazoGeracaoCobrancaDados;
+import ipp.aci.boleia.dados.IReembolsoDados;
 import ipp.aci.boleia.dados.ITransacaoConsolidadaDados;
 import ipp.aci.boleia.dados.ITransacaoConsolidadaDetalheDados;
 import ipp.aci.boleia.dominio.AutorizacaoPagamento;
@@ -18,6 +19,7 @@ import ipp.aci.boleia.dominio.NotaFiscal;
 import ipp.aci.boleia.dominio.ParametroCiclo;
 import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.PrazoGeracaoCobranca;
+import ipp.aci.boleia.dominio.Reembolso;
 import ipp.aci.boleia.dominio.TransacaoConsolidada;
 import ipp.aci.boleia.dominio.TransacaoConsolidadaDetalhe;
 import ipp.aci.boleia.dominio.TransacaoConsolidadaPrazos;
@@ -141,6 +143,9 @@ public class TransacaoConsolidadaSd {
 
     @Autowired
     private IFilaPostergacaoAbastecimentoDados filaPostergacaoAbastecimentoDados;
+
+    @Autowired
+    private IReembolsoDados repositorioReembolso;
 
     @Autowired
     @Qualifier("Redis")
@@ -687,7 +692,9 @@ public class TransacaoConsolidadaSd {
         }
 
         if(transacaoConsolidada.getReembolso() != null) {
+            Reembolso reembolso = repositorioReembolso.obterPorId(transacaoConsolidada.getReembolso().getId());
             reembolsoSd.atualizarStatusReembolso(transacaoConsolidada.getReembolso());
+            repositorioReembolso.armazenar(reembolso);
         }
     }
 
