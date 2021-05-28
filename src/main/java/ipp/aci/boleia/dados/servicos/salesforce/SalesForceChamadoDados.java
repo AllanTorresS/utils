@@ -79,6 +79,15 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     private static final String COUNT_CONSULTAR_CHAMADOS =
             "SELECT COUNT() " + FROM_CONSULTAR_CHAMADOS;
 
+    private static final String CONSULTAR_CHAMADOS_DUPLICADOS =
+            "SELECT Id " +
+            "FROM Case " +
+            "WHERE IsClosed=false AND " +
+            "      Type=':tipoChamado' AND " +
+            "      ClassificacaoPerfil__c=':sistemaDeOrigem' AND " +
+            "      Motivo__c=':motivo' AND " +
+            "      MotivoSolicitacao__c=':modulo'";
+
     private static final String ALIAS_ORGID = "orgid";
     private static final String ALIAS_COMPANY = "company";
     private static final String ALIAS_NAME = "name";
@@ -130,14 +139,22 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
 
     @Override
     public ResultadoPaginado<ChamadoVo> consultarChamados(FiltroConsultaChamadosVo filtro) {
-        try {
-            String queryConsulta = formatarQueryParaPesquisa(CONSULTAR_CHAMADOS, true, filtro);
-            String queryCount = formatarQueryParaPesquisa(COUNT_CONSULTAR_CHAMADOS, false, filtro);
+        String queryConsulta = formatarQueryParaPesquisa(CONSULTAR_CHAMADOS, true, filtro);
+        String queryCount = formatarQueryParaPesquisa(COUNT_CONSULTAR_CHAMADOS, false, filtro);
 
-            return realizarConsultaChamados(queryConsulta, queryCount);
-        } catch (UnsupportedEncodingException e) {
-            throw new ExcecaoBoleiaRuntime(e);
-        }
+        return executarQuerySalesforcePaginada(queryConsulta, queryCount);
+    }
+
+    @Override
+    public List<ChamadoVo> buscarChamadosDuplicados(CriacaoChamadoVo criacaoChamadoVo) {
+        Map<String, Object> parametros = new HashMap<>();
+        parametros.put("tipoChamado", criacaoChamadoVo.getTipoChamado());
+        parametros.put("sistemaDeOrigem", criacaoChamadoVo.getSistemaOrigem());
+        parametros.put("motivo", criacaoChamadoVo.getMotivo());
+        parametros.put("modulo", criacaoChamadoVo.getModulo());
+
+        String query = formatarQueryParaConsulta(CONSULTAR_CHAMADOS_DUPLICADOS, parametros);
+        return executarQuerySalesforce(query);
     }
 
     @Override
@@ -286,19 +303,19 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
         prepararResposta(response);
         if (this.statusCode != HttpStatus.CREATED.value()) {
             LOGGER.error(this.responseBody.toString());
-            throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("chamado.abrir.erro.integracao"));
+            throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("chamado.criacao.erro.integracao"));
         }
         return true;
     }
 
     /**
-     * Realiza as integrações da consulta de chamados.
+     * Executa uma consulta SOQL paginada pela API do Salesforce.
      *
      * @param queryConsulta Query utilizada para consultar os dados.
      * @param queryCount Query utilizada para realizar o count total dos dados.
      * @return Resultado paginado da consulta.
      */
-    private ResultadoPaginado<ChamadoVo> realizarConsultaChamados(String queryConsulta, String queryCount) throws UnsupportedEncodingException {
+    private ResultadoPaginado<ChamadoVo> executarQuerySalesforcePaginada(String queryConsulta, String queryCount) {
         prepararRequisicao(urlConsulta, null);
 
         String endpointConsulta = this.instanceUrl.concat(format(this.urlConsulta, queryConsulta));
@@ -310,6 +327,20 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
         resultadoPaginado.setTotalItems(totalItems);
         resultadoPaginado.setRegistros(consultaChamadosVo.getChamados() != null ? consultaChamadosVo.getChamados() : new ArrayList<>());
         return resultadoPaginado;
+    }
+
+    /**
+     * Executa uma consulta SOQL pela API do Salesforce.
+     *
+     * @param queryConsulta Query utilizada para consultar os dados.
+     * @return Resultado da consulta.
+     */
+    private List<ChamadoVo> executarQuerySalesforce(String queryConsulta) {
+        prepararRequisicao(urlConsulta, null);
+
+        String endpointConsulta = this.instanceUrl.concat(format(this.urlConsulta, queryConsulta));
+        ConsultaChamadosVo consultaChamadosVo = restDados.doGet(endpointConsulta, this.authorizationHeaders, this::tratarRespostaConsultaChamados);
+        return consultaChamadosVo.getChamados() != null ? consultaChamadosVo.getChamados() : new ArrayList<>();
     }
 
     /**
@@ -354,11 +385,8 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
      * @param possuiPaginacao Informa se a query possui informações de paginação.
      * @param filtro Filtro de consulta.
      * @return Query formatada.
-     *
-     * @throws UnsupportedEncodingException Exceção lançada caso não seja possível codificar o conteúdo da
-     * query de consulta para ser usado na url de integração.
      */
-    private String formatarQueryParaPesquisa(String query, boolean possuiPaginacao, FiltroConsultaChamadosVo filtro) throws UnsupportedEncodingException {
+    private String formatarQueryParaPesquisa(String query, boolean possuiPaginacao, FiltroConsultaChamadosVo filtro) {
         Map<String, Object> parametros = new HashMap<>();
         parametros.put("numeroChamado", tratarParametroLikeNulo(filtro.getNumeroChamado()));
         parametros.put("status", tratarParametroLikeNulo(filtro.getStatus()));
@@ -469,15 +497,17 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
      * @param query Query soql.
      * @param parametros Parametros da consulta.
      * @return Query formatada.
-     *
-     * @throws UnsupportedEncodingException Exceção lançada caso não seja possível codificar o conteúdo da
-     * query de consulta para ser usado na url de integração.
      */
-    private String formatarQueryParaConsulta(String query, Map<String, Object> parametros) throws UnsupportedEncodingException {
-        for (String parametro : parametros.keySet()) {
-            query = query.replace(":" + parametro, parametros.get(parametro).toString());
+    private String formatarQueryParaConsulta(String query, Map<String, Object> parametros) {
+        try {
+            for (String parametro : parametros.keySet()) {
+                query = query.replace(":" + parametro, parametros.get(parametro).toString());
+            }
+            return URLEncoder.encode(query, UTF_8.displayName());
+        } catch (UnsupportedEncodingException e) {
+            LOGGER.error(mensagens.obterMensagem("chamado.erro.formatacao.query.integracao"));
+            throw new ExcecaoBoleiaRuntime(e);
         }
-        return URLEncoder.encode(query, UTF_8.displayName());
     }
 
     /**
