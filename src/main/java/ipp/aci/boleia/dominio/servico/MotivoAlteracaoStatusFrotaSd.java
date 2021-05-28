@@ -1,6 +1,5 @@
 package ipp.aci.boleia.dominio.servico;
 
-import ipp.aci.boleia.dados.IFrotaDados;
 import ipp.aci.boleia.dados.IMotivoAlteracaoStatusFrotaDados;
 import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.MotivoAlteracaoStatusFrota;
@@ -23,9 +22,6 @@ public class MotivoAlteracaoStatusFrotaSd {
 
     @Autowired
     private IMotivoAlteracaoStatusFrotaDados repositorio;
-
-    @Autowired
-    private IFrotaDados repositorioFrota;
 
     @Autowired
     private UtilitarioAmbiente ambiente;

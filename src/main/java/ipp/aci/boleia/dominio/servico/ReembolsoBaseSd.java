@@ -1,6 +1,5 @@
 package ipp.aci.boleia.dominio.servico;
 
-import ipp.aci.boleia.dados.IReembolsoBaseDados;
 import ipp.aci.boleia.dominio.Reembolso;
 import ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
@@ -22,9 +21,6 @@ import static ipp.aci.boleia.util.UtilitarioCalculoData.obterPrimeiroInstanteDia
  */
 @Component
 public class ReembolsoBaseSd {
-
-    @Autowired
-    private IReembolsoBaseDados repositorioReembolsoBase;
 
     @Autowired
     private UtilitarioAmbiente utilitarioAmbiente;
@@ -53,6 +49,5 @@ public class ReembolsoBaseSd {
         }
 
         reembolso.setStatus(statusReembolso.getValue());
-        repositorioReembolsoBase.armazenar(reembolso);
     }
 }
