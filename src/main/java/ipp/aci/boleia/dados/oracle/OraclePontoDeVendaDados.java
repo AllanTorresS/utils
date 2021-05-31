@@ -200,6 +200,14 @@ public class OraclePontoDeVendaDados extends OracleRepositorioBoleiaDados<PontoD
             params.add(new ParametroPesquisaOr(new ParametroPesquisaLike("nome", filtro.getNome()), new ParametroPesquisaLike("municipio", filtro.getNome())));
         }
 
+        if (!filtro.getPostoUrbano()){
+            params.add(new ParametroPesquisaDiferente("perfilVenda", "Urbano"));
+        }
+
+        if (!CollectionUtils.isEmpty(filtro.getPostosParametizados())){
+            params.add(new ParametroPesquisaIn("id", filtro.getPostosParametizados()));
+        }
+
         if(CollectionUtils.isNotEmpty(filtro.getTiposCombustivel())) {
             List<Long> idsCombustiveis = UtilitarioLambda.converterLista(filtro.getTiposCombustivel(), EntidadeVo::getId);
 
