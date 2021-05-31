@@ -57,7 +57,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     private static final Logger LOGGER = LoggerFactory.getLogger(SalesForceChamadoDados.class);
 
     private static final String CLAUSULA_CONTATO = " AND Contact.IdExterno__c=':contato' ";
-    private static final String CLAUSULA_CONTATO_REVENDA = " AND ContatoDoPosto__r.IdExterno__c IN (:contatoPosto) ";
+    private static final String CLAUSULA_CONTATO_REVENDA = " AND ContatoDoPosto__r.IdExterno__c IN (:contato) ";
     private static final String CLAUSULA_DATA_ABERTURA = " AND CreatedDate >= :dataAberturaDe AND CreatedDate <= :dataAberturaAte ";
     private static final String ORDER_BY_CONSULTA_CHAMADOS = "ORDER BY :ordenacao ";
 
@@ -153,8 +153,16 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
         parametros.put("motivo", criacaoChamadoVo.getMotivo());
         parametros.put("modulo", criacaoChamadoVo.getModulo());
 
-        String query = formatarQueryParaConsulta(CONSULTAR_CHAMADOS_DUPLICADOS, parametros);
-        return executarQuerySalesforce(query);
+        String solicitante = criacaoChamadoVo.getSolicitante();
+        String query = CONSULTAR_CHAMADOS_DUPLICADOS;
+        if(solicitante.equals(SOLICITANTE_FROTA) || solicitante.equals(SOLICITANTE_INTERNO)) {
+            parametros.put("contato", criacaoChamadoVo.getContactFrota().getIdExterno());
+            query += CLAUSULA_CONTATO;
+        } else if(solicitante.equals(SOLICITANTE_REVENDA)) {
+            parametros.put("contato", "'" + criacaoChamadoVo.getContactPosto().getIdExterno() + "'");
+            query += CLAUSULA_CONTATO_REVENDA;
+        }
+        return executarQuerySalesforce(formatarQueryParaConsulta(query, parametros));
     }
 
     @Override
@@ -398,7 +406,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
             parametros.put("contato", contatos.stream().findFirst().orElse(""));
         } else if(filtro.isContatoRevenda()) {
             query = query.replace(CLAUSULA_CONTATO, "");
-            parametros.put("contatoPosto", contatos.stream().collect(joining("','", "'", "'")));
+            parametros.put("contato", contatos.stream().collect(joining("','", "'", "'")));
         }
 
         if(filtro.getDataAbertura() != null) {
