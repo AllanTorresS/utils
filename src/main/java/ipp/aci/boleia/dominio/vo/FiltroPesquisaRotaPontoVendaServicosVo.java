@@ -10,6 +10,9 @@ public class FiltroPesquisaRotaPontoVendaServicosVo {
 
     private String nome;
     private Long idFrota;
+    private Boolean postoUrbano;
+    private List<Integer> parametrosDeUso;
+    private List<Long> postosParametizados;
     private List<EntidadeVo> tiposCombustivel;
     private List<EnumVo> opcoesPrimarias;
     private List<EnumVo> opcoesSecundarias;
@@ -31,6 +34,30 @@ public class FiltroPesquisaRotaPontoVendaServicosVo {
 
     public void setIdFrota(Long idFrota) {
         this.idFrota = idFrota;
+    }
+
+    public Boolean getPostoUrbano() {
+        return postoUrbano;
+    }
+
+    public void setPostoUrbano(Boolean postoUrbano) {
+        this.postoUrbano = postoUrbano;
+    }
+
+    public List<Integer> getParametrosDeUso() {
+        return parametrosDeUso;
+    }
+
+    public void setParametrosDeUso(List<Integer> parametrosDeUso) {
+        this.parametrosDeUso = parametrosDeUso;
+    }
+
+    public List<Long> getPostosParametizados() {
+        return postosParametizados;
+    }
+
+    public void setPostosParametizados(List<Long> postosParametizados) {
+        this.postosParametizados = postosParametizados;
     }
 
     public List<EntidadeVo> getTiposCombustivel() { return tiposCombustivel; }
