@@ -14,7 +14,6 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgu
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenor;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDiferente;
-import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaFetch;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaior;
@@ -78,6 +77,16 @@ public class OracleCobrancaDados extends OracleRepositorioBoleiaDados<Cobranca> 
             CONSULTA_COBRANCAS_EM_UM_PERIODO +
             CLAUSULA_PAGAMENTO_ATRASADO;
 
+    public static final String CONSULTA_COBRANCAS_ATRASADAS_DOIS_DIAS_UTEIS =
+            "SELECT DISTINCT C " +
+                    " FROM Cobranca C " +
+                    " JOIN FETCH C.transacoesConsolidadas TC " +
+                    " JOIN FETCH TC.frotaPtov FPV " +
+                    " JOIN FETCH FPV.frota F " +
+                    " WHERE TRUNC(C.dataVencimentoVigente) = TRUNC(:dataVerificacao) " +
+                    " AND C.dataPagamento IS NULL " +
+                    " AND C.statusIntegracaoJDE = " + StatusIntegracaoJde.REALIZADO.getValue() +
+                    " ORDER BY C.dataVencimentoVigente";
 
     /**
      * Instancia o repositorio
@@ -356,14 +365,10 @@ public class OracleCobrancaDados extends OracleRepositorioBoleiaDados<Cobranca> 
 
     @Override
     public List<Cobranca> buscarCobrancasAtrasadasDoisDiasUteis() {
-        Date limiteInferiorData = UtilitarioCalculoData.obterProximoDiaUtilSemFeriado(UtilitarioCalculoData.adicionarDiasData(UtilitarioCalculoData.obterUltimoInstanteDia(ambiente.buscarDataAmbiente()), 2));
-        return pesquisarSemIsolamentoDados(
-            new ParametroOrdenacaoColuna("dataVencimentoPagto", Ordenacao.CRESCENTE),
-            new ParametroPesquisaDataMaiorOuIgual("dataVencimentoPagto", limiteInferiorData),
-            new ParametroPesquisaNulo("dataPagamento"),
-            new ParametroPesquisaIgual("statusIntegracaoJDE", StatusIntegracaoJde.REALIZADO.getValue()),
-            new ParametroPesquisaFetch("transacoesConsolidadas.frotaPtov.frota")
-        );
+        Date doisDiasUteisAtras = UtilitarioCalculoData.obterUltimoDiaUtilSemFeriado(UtilitarioCalculoData.adicionarDiasData(UtilitarioCalculoData.obterPrimeiroInstanteDia(ambiente.buscarDataAmbiente()), -2));
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaIgual("dataVerificacao", doisDiasUteisAtras));
+        return pesquisar(null, CONSULTA_COBRANCAS_ATRASADAS_DOIS_DIAS_UTEIS, Cobranca.class, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
 
     /**
