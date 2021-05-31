@@ -40,6 +40,8 @@ public class CriacaoChamadoVo {
     private String modulo;
     @JsonProperty("Motivo__c")
     private String motivo;
+    @JsonProperty("Priority")
+    private String prioridade;
 
     public CriacaoChamadoVo() {
         // serializacao JSON
@@ -147,5 +149,13 @@ public class CriacaoChamadoVo {
 
     public void setMotivo(String motivo) {
         this.motivo = motivo;
+    }
+
+    public String getPrioridade() {
+        return prioridade;
+    }
+
+    public void setPrioridade(String prioridade) {
+        this.prioridade = prioridade;
     }
 }
