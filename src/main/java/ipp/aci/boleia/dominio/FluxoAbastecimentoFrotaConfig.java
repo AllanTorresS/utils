@@ -41,8 +41,6 @@ public class FluxoAbastecimentoFrotaConfig implements IPersistente, IPertenceFro
     private Boolean exigirPosto;
     @Column(name="ID_COMBUSTIVEL")
     private Boolean exigirCombustivel;
-    @Column(name="ID_LITRAGEM")
-    private Boolean exigirLitragem;
 
     @NotNull
     @ManyToOne(fetch= FetchType.LAZY)
@@ -101,14 +99,6 @@ public class FluxoAbastecimentoFrotaConfig implements IPersistente, IPertenceFro
 
     public void setExigirCombustivel(Boolean exigirCombustivel) {
         this.exigirCombustivel = exigirCombustivel;
-    }
-
-    public Boolean getExigirLitragem() {
-        return exigirLitragem;
-    }
-
-    public void setExigirLitragem(Boolean exigirLitragem) {
-        this.exigirLitragem = exigirLitragem;
     }
 
     public Frota getFrota() {

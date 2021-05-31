@@ -20,7 +20,7 @@ public class LogicaParametroVolumeAbastecidoPreAutorizacao extends LogicaParamet
         ResultadoExecucaoParametroSistemaVo<PreAutorizacaoPedidoVo> resultado = new ResultadoExecucaoParametroSistemaVo<>(pedidoLitragem);
         Veiculo veiculo = pedidoLitragem.getVeiculo();
         if(veiculo.getCapacidadeTanque() != null) {
-            executarValidacao(veiculo,pedidoLitragem.getLitragem(), resultado);
+            executarValidacao(veiculo, pedidoLitragem.getLitragem(), resultado);
         }
         return resultado;
     }

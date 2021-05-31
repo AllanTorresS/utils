@@ -110,7 +110,6 @@ public class FluxoAbastecimentoSd {
         fluxoAbastecimentoFrota.setExigirLeituraAutoHodometroHorimetro(true);
         fluxoAbastecimentoFrota.setExigirPosto(false);
         fluxoAbastecimentoFrota.setExigirCombustivel(true);
-        fluxoAbastecimentoFrota.setExigirLitragem(true);
         return fluxoAbastecimentoFrota;
     }
 
