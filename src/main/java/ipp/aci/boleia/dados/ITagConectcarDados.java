@@ -33,7 +33,7 @@ public interface ITagConectcarDados extends IRepositorioBoleiaDados<TagConectcar
      * Obtem a primeira tag ativa de uma frota, utilizado para calcular o ciclo de uma frota 
      * na criação de uma transacao
      * 
-     * param idFrota código identificador da frota
+     * @param idFrota código identificador da frota
      * @return tag encontrada
      */
     TagConectcar obtemPrimeiraTagAtivaPorFrota(Long idFrota);

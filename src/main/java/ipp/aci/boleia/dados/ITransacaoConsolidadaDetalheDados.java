@@ -27,6 +27,7 @@ public interface ITransacaoConsolidadaDetalheDados extends IRepositorioBoleiaDad
      * @param idPv O pv
      * @param idTipoCombustivel O produto
      * @param data A data desejada
+     * @param isolamento Informa se a busca será com isolamento de dados
      * @return Lista de detalhes
      */
     List<TransacaoConsolidadaDetalhe> obterDetalhesTransacaoPorFrotaPvCombustivel(Long idFrota, Long idPv, Long idTipoCombustivel, Date data, boolean isolamento);

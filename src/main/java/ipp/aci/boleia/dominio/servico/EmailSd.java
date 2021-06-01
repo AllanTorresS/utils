@@ -806,7 +806,6 @@ public class EmailSd {
      * Envia email com as crÃ­ticas da recolha automÃ¡tica de notas fiscais
      * @param anexosNaoConciliados Todas as notas nÃ£o conciliadas de uma revenda em um dia
      * @param emailsDestinatarios E-mails dos gestores da revenda
-     * @param cnpj O CNPJ
      */
     public void enviarEmailDeCriticasRecolhaAutomatica(List<NfeAnexosArmazem> anexosNaoConciliados, List<String> emailsDestinatarios) {
         Date date = utilitarioAmbiente.buscarDataAmbiente();
@@ -821,8 +820,9 @@ public class EmailSd {
     }
 
     /**
-     * Envia um email com todas as mensagens de falhas da sincronizaÃ§Ã£o com o SalesForce
+     * Envia um email com todas as mensagens de falhas da sincronização com o SalesForce
      * @param motivosFalhas motivos das falhas
+     * @param destinatariosIntegracaoParametroNf Destinatarios que receberão o email
      */
     public void enviarEmailsFalhasAtualizacaoExigenciaNfSalesForce(List<AtualizarExigenciaNfeErroVo> motivosFalhas, List<String> destinatariosIntegracaoParametroNf){
         final String assunto = mensagens.obterMensagem("integracao.salesforce.assunto.email.erro.atualizasao.parametrizacao.nfe");

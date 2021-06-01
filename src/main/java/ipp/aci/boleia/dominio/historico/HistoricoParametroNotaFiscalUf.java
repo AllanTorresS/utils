@@ -1,5 +1,6 @@
 package ipp.aci.boleia.dominio.historico;
 
+import ipp.aci.boleia.dominio.ParametroNotaFiscalUf;
 import ipp.aci.boleia.dominio.Unidade;
 import ipp.aci.boleia.dominio.interfaces.IParametroNotaFiscalUf;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;

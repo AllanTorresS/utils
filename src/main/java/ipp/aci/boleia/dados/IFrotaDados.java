@@ -43,6 +43,7 @@ public interface IFrotaDados extends IRepositorioBoleiaDados<Frota> {
     /**
      * Pesquisa frota a partir do filtro informado
      * @param filtro O filtro da busca e usuário logado
+     * @param usuario Usuario usado na validação
      * @return Uma lista de entidades localizadas sem segregação
      */
     ResultadoPaginado<Frota> pesquisarValidacaoSegregacao(FiltroPesquisaFrotaVo filtro, Usuario usuario);
@@ -57,6 +58,7 @@ public interface IFrotaDados extends IRepositorioBoleiaDados<Frota> {
     /**
      * Pesquisa por frotas utilizando os campos CNPJ e/ou Razao Social
      * @param filtro Filtro contendo os parametros da  e usuario logado
+     * @param usuarioLogado Usuário autenticado no sistema
      * @return Lista com as entidades encontradas sem segregação
      */
     List<Frota> pesquisarPorCnpjRazaoSocialValidacaoSegregacao(FiltroPesquisaParcialFrotaVo filtro, Usuario usuarioLogado);
