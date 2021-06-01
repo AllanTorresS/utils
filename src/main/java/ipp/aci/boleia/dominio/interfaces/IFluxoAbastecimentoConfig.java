@@ -47,13 +47,6 @@ public interface IFluxoAbastecimentoConfig {
     Boolean getExigirCombustivel();
 
     /**
-     * Indica se no fluxo de abastecimento a litragem deve ser exigida
-     *
-     * @return true para exigir a litragem
-     */
-    Boolean getExigirLitragem();
-
-    /**
      * Motorista associado a configuração de fluxo
      *
      * @return motorista da configuração de fluxo

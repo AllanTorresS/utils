@@ -45,8 +45,6 @@ public class HistoricoFluxoAbastecimentoMotoristaConfig implements IPersistente,
     private Boolean exigirPosto;
     @Column(name="ID_COMBUSTIVEL")
     private Boolean exigirCombustivel;
-    @Column(name="ID_LITRAGEM")
-    private Boolean exigirLitragem;
 
     @Column(name = "ID_EXCLUIDO")
     private Boolean excluido;
@@ -95,7 +93,6 @@ public class HistoricoFluxoAbastecimentoMotoristaConfig implements IPersistente,
         this.exigirLeituraAutoHodometroHorimetro = fluxo.getExigirLeituraAutoHodometroHorimetro();
         this.exigirPosto = fluxo.getExigirPosto();
         this.exigirCombustivel = fluxo.getExigirCombustivel();
-        this.exigirLitragem = fluxo.getExigirLitragem();
 
         this.usuario = usuario;
     }
@@ -156,14 +153,6 @@ public class HistoricoFluxoAbastecimentoMotoristaConfig implements IPersistente,
 
     public void setExigirCombustivel(Boolean exigirCombustivel) {
         this.exigirCombustivel = exigirCombustivel;
-    }
-
-    public Boolean getExigirLitragem() {
-        return exigirLitragem;
-    }
-
-    public void setExigirLitragem(Boolean exigirLitragem) {
-        this.exigirLitragem = exigirLitragem;
     }
 
     public Boolean getExcluido() {
