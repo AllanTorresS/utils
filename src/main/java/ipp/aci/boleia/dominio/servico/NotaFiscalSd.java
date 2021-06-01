@@ -1178,6 +1178,7 @@ public class NotaFiscalSd {
         ItemDanfeVo item = new ItemDanfeVo();
         item.setCodigoProduto(UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.ITEM_CODIGO_PRODUTO, itens.item(i)));
         item.setDescProdutoServico(UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.ITEM_DESCR_PRODUTO, itens.item(i)));
+        item.setInfAdProd(UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.ITEM_INFO_ADICIONAIS, itens.item(i)));
         item.setNcmsh(UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.ITEM_NCM, itens.item(i)));
         item.setCst(UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.ITEM_CST, itens.item(i)));
         item.setCfop(UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.ITEM_CFOP, itens.item(i)));

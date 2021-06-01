@@ -75,7 +75,7 @@ public final class ConstantesNotaFiscalParser {
     public static final String ITEM_VALOR_UNITARIO           = "prod/vUnCom/text()";
     public static final String ITEM_VALOR_LIQUIDO            = "prod/vProd/text()";
     public static final String ITEM_DESCONTO                 = "prod/vDesc/text()";
-    public static final String ITEM_INFO_ADICIONAIS          = "/nfeProc/NFe/infNFe/det/infAdProd/text()";
+    public static final String ITEM_INFO_ADICIONAIS          = "infAdProd/text()";
 
     public static final String TRANSP_NOME                   = "/nfeProc/NFe/infNFe/transp/transporta/xNome/text()";
     public static final String TRANSP_CPF                    = "/nfeProc/NFe/infNFe/transp/transporta/CPF/text()";
