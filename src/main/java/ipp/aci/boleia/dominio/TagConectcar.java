@@ -62,6 +62,8 @@ public class TagConectcar implements IPersistente, IExclusaoLogicaComData{
 
 	/**
 	 * Construtor por ID e data de ativação
+	 * @param id Identificador da tag
+	 * @param dataExclusao Data de exclusão da tag
 	 */
 	public TagConectcar(Long id, Date dataExclusao) {
 		this.id = id;

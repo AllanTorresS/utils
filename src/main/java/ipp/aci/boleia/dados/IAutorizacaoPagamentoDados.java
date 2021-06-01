@@ -320,7 +320,7 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
     /**
      * Obtém abastecimentos com o qual a nota pode ser consolidada
      *
-     * @param cnpjDest CPNJ do destinatário da nota
+     * @param cnpjEmit CPNJ do emissor da nota
      * @param dataEmissao Data de emissão da nota
      * @param valorTotalNota O valor total da nota
      * @return Os abastecimentos encontrados

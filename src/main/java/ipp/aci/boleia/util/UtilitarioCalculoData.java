@@ -280,7 +280,7 @@ public final class UtilitarioCalculoData {
 
     /**
      * Obtem o primeiro dia do mês seguinte
-     *
+     * @param data Data referência
      * @return o primeiro dia do mês seguinte
      */
     public static Date obterPrimeiroDiaMesSeguinte(Date data) {

@@ -51,6 +51,10 @@ public class HistoricoTagConectcar implements IPersistente {
 
 	/**
 	 * Construtor por ID e data de ativação
+	 * @param tag Identificador da tag
+	 * @param dataExclusao Data de exclusão da tag
+	 * @param placa Placa associada a tag
+	 * @param frota Frota da tag
 	 */
 	public HistoricoTagConectcar(Long tag, Date dataExclusao, String placa, Frota frota) {
 		this.tag = tag;
