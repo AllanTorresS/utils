@@ -24,6 +24,10 @@ public class ChamadoVo {
     private String motivo;
     @JsonProperty("Status")
     private String status;
+    @JsonProperty("ClassificacaoPerfil__c")
+    private String sistemaOrigem;
+    @JsonProperty("Type")
+    private String tipoChamado;
 
     /**
      * Construtor default
@@ -94,5 +98,21 @@ public class ChamadoVo {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getSistemaOrigem() {
+        return sistemaOrigem;
+    }
+
+    public void setSistemaOrigem(String sistemaOrigem) {
+        this.sistemaOrigem = sistemaOrigem;
+    }
+
+    public String getTipoChamado() {
+        return tipoChamado;
+    }
+
+    public void setTipoChamado(String tipoChamado) {
+        this.tipoChamado = tipoChamado;
     }
 }

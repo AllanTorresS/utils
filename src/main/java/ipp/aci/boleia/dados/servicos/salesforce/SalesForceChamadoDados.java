@@ -71,7 +71,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
                     CLAUSULA_DATA_ABERTURA;
 
     private static final String CONSULTAR_CHAMADOS =
-            "SELECT Id,CaseNumber,CreatedDate,CNPJPosto__c,CNPJFrota__c,Solicitante__c,Motivo__c,Status " +
+            "SELECT Id,CaseNumber,CreatedDate,CNPJPosto__c,CNPJFrota__c,Solicitante__c,Motivo__c,Status,ClassificacaoPerfil__c,Type " +
             FROM_CONSULTAR_CHAMADOS +
             ORDER_BY_CONSULTA_CHAMADOS +
             "LIMIT :limit OFFSET :offset";
