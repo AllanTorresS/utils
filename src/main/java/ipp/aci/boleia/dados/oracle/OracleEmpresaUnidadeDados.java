@@ -4,6 +4,7 @@ import ipp.aci.boleia.dados.IEmpresaUnidadeDados;
 import ipp.aci.boleia.dominio.EmpresaUnidade;
 import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.Usuario;
+import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
@@ -134,5 +135,10 @@ public class OracleEmpresaUnidadeDados extends OracleRepositorioBoleiaDados<Empr
             parametros.add(new ParametroPesquisaIgual("statusConsolidacao", null));
         }
         return pesquisarComExcluidos(null, CONSULTA_EMPRESA_UNIDADE_PARA_DETALHAMENTO_CICLO, EmpresaUnidadeVo.class, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+    }
+
+    @Override
+    public List<EmpresaUnidade> obterPorFrota(Long idFrota) {
+        return pesquisar((ParametroOrdenacaoColuna) null, new ParametroPesquisaIgual("frota.id", idFrota));
     }
 }

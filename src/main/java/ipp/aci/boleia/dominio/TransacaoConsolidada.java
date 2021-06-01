@@ -557,6 +557,8 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
             keyBuilder.append(unidade.getId() + unidade.getCnpj());
         } else if (frotaExigeNF) {
             keyBuilder.append(frotaPtov.getFrota().getId() + frotaPtov.getFrota().getCnpj());
+        } else if(frotaGerenciaNf != null) {
+            keyBuilder.append(frotaGerenciaNf);
         }
         this.chave = UtilitarioCriptografia.calcularHashSHA256(keyBuilder.toString());
     }
@@ -791,5 +793,13 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
             return StatusPagamentoReembolso.obterPorValor(reembolso.getStatus());
         }
         return PREVISTO;
+    }
+
+    @Transient
+    public Boolean getTransacaoCompletamenteAntecipada() {
+        if(reembolso != null && antecipacoes!= null) {
+            return reembolso.getValorDescontoAntecipacao() != null && reembolso.getValorDescontoAntecipacao().compareTo(BigDecimal.ZERO) > 0 && reembolso.getValorDescontoAntecipacao().equals(reembolso.getValorTotal());
+        }
+        return false;
     }
 }

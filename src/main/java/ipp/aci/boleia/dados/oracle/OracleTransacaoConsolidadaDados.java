@@ -28,9 +28,9 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgu
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDiferente;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaior;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
-import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaior;
 import ipp.aci.boleia.dominio.vo.AgrupamentoTransacaoConsolidadaCobrancaVo;
 import ipp.aci.boleia.dominio.vo.AgrupamentoTransacaoConsolidadaPvVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheCicloVo;
@@ -84,19 +84,19 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             "WHEN (TC.frotaExigeNF = false AND TC.unidade IS NULL AND TC.empresaAgregada IS NULL) THEN 2 " +
             "ELSE 3 " +
             "END ";
-    private static final String CLAUSULA_DATA_REEMB_GERADO = 
+    private static final String CLAUSULA_DATA_REEMB_GERADO =
             " tc.reembolso IS NOT NULL AND " +
             " ((rm.dataPagamento is null AND (rm.dataVencimentoPgto >= :dataInicioPeriodo AND rm.dataVencimentoPgto <= :dataFimPeriodo)) " +
             " OR (rm.dataPagamento >= :dataInicioPeriodo AND rm.dataPagamento <= :dataFimPeriodo)) ";
 
-    private static final String CLAUSULA_DATA_REEMB_NAO_GERADO = 
+    private static final String CLAUSULA_DATA_REEMB_NAO_GERADO =
             " tc.reembolso IS NULL AND " +
             " ((f_ptov.frota.modoPagamento = " + ModalidadePagamento.POS_PAGO.getValue() +
             " AND (trunc(tc.dataFimPeriodo + prz.prazoReembolso) >= :dataInicioPeriodo AND trunc(tc.dataFimPeriodo + prz.prazoReembolso) <= :dataFimPeriodo)) " +
             " OR (f_ptov.frota.modoPagamento = " + ModalidadePagamento.PRE_PAGO.getValue() +
             " AND (trunc(tc.dataFimPeriodo + 2) >= :dataInicioPeriodo AND trunc(tc.dataFimPeriodo + 2) <= :dataFimPeriodo))) ";
 
-    private static final String CLAUSULA_CALCULO_PRAZO_REEMB_PRE_PAGO = 
+    private static final String CLAUSULA_CALCULO_PRAZO_REEMB_PRE_PAGO =
             " f_ptov.frota.modoPagamento = " + ModalidadePagamento.PRE_PAGO.getValue() +
             " THEN TRUNC(tc.dataFimPeriodo + 2) ";
 
@@ -113,7 +113,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "SUM(CASE WHEN ( " +  CLAUSULA_EXIGE_NOTA + " OR " + CLAUSULA_FROTA_GERENCIA_NF + " ) THEN TC.valorEmitidoNotaFiscal ELSE 0 END), " +
                     "SUM(TC.quantidadeAbastecimentos), " +
                     "CASE WHEN TC.reembolso is NULL THEN " + StatusPagamentoReembolso.PREVISTO.getValue() + " ELSE RM.status END, " +
-                    "SUM(A.valorReembolso), " + 
+                    "SUM(A.valorReembolso), " +
                     "MAX(CASE WHEN ( " +  CLAUSULA_EXIGE_NOTA + " OR " + CLAUSULA_FROTA_GERENCIA_NF + " ) THEN 1 ELSE 0 END), " +
                     "MAX(CASE WHEN ( " + CLAUSULA_EXIGE_NOTA + " ) THEN 1 ELSE 0 END ))";
 
@@ -363,6 +363,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             "FROM TransacaoConsolidada TC " +
                     "LEFT JOIN TC.frotaPtov FPV " +
                     "LEFT JOIN FPV.frota F " +
+                    "LEFT JOIN FPV.pontoVenda PV " +
                     "LEFT JOIN TC.cobranca C " +
                     "LEFT JOIN TC.empresaAgregada EA " +
                     "LEFT JOIN TC.unidade U	" +
@@ -373,6 +374,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "AND (TC.quantidadeAbastecimentos > 0) " +
                     "AND ((C.statusIntegracaoJDE = :statusIntegracao OR :statusIntegracao is null) OR (C.statusIntegracaoJDE IS NULL AND " + PREVISTO.getValue() +" in :statusIntegracao)) " +
                     "AND (C.numeroDocumento = :numeroDocumento OR :numeroDocumento is null) " +
+                    "AND (U.id = :empresaUnidade OR EA.id = :empresaUnidade OR :empresaUnidade is null) " +
+                    "AND (PV.id = :pontoVenda OR :pontoVenda is null) " +
                     "%s " +
                     "GROUP BY " +
                     "F.id, " +
@@ -572,6 +575,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             "SELECT TC " +
                     "FROM TransacaoConsolidada TC " +
                     "LEFT JOIN TC.frotaPtov FPV " +
+                    "LEFT JOIN TC.unidade U	" +
+                    "LEFT JOIN TC.empresaAgregada EA " +
                     "LEFT JOIN FPV.frota F " +
                     "LEFT JOIN FPV.pontoVenda PV " +
                     "LEFT JOIN TC.cobranca C " +
@@ -580,6 +585,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "AND ((TC.dataInicioPeriodo >= :dataInicioPeriodo AND TC.dataFimPeriodo <= :dataFimPeriodo) OR (TC.dataFimPeriodo >= :dataInicioPeriodo AND TC.dataInicioPeriodo <= :dataFimPeriodo)) " +
                     "AND (TC.statusConsolidacao = :statusConsolidacao OR :statusConsolidacao is null) " +
                     "AND (TC.quantidadeAbastecimentos > 0) " +
+                    "AND (U.id = :empresaUnidade OR EA.id = :empresaUnidade OR :empresaUnidade is null) " +
                     "%s " +
                     "ORDER BY TC.dataFimPeriodo";
 
@@ -591,10 +597,10 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
     private static final String CLAUSULA_STATUS_NOTA_FISCAL = " AND (tc.statusNotaFiscal in :statusNf) ";
 
     private static final String CLAUSULA_STATUS_PAGAMENTO_REEMBOLSO = " AND ((r is null AND " +
-             StatusPagamentoReembolso.PREVISTO.getValue() + " in :statusPagamento) OR (r is not null AND (r.status in :statusPagamento OR " + 
+             StatusPagamentoReembolso.PREVISTO.getValue() + " in :statusPagamento) OR (r is not null AND (r.status in :statusPagamento OR " +
              " (r.status = " + StatusPagamentoReembolso.EM_ABERTO.getValue() + " AND " + StatusPagamentoReembolso.PREVISTO.getValue() + " in :statusPagamento)))) ";
-    
-    private static final String CONSULTA_COMUM_CONSOLIDADOS_GRID_REEMBOLSO = 
+
+    private static final String CONSULTA_COMUM_CONSOLIDADOS_GRID_REEMBOLSO =
             "FROM TransacaoConsolidada tc " +
             "LEFT JOIN tc.frotaPtov fpv " +
             "LEFT JOIN tc.reembolso r " +
@@ -1056,15 +1062,20 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
 
     @Override
     public TransacaoConsolidada obterConsolidado(Boolean frotaExigeNF, Frota frota, PontoDeVenda pv, ModalidadePagamento modalidadePagamento, EmpresaAgregada empresaAgregada, Unidade unidade, Date dataReferencia) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
         ParametroPesquisa parametroEmpresaAgregadaExigeNf = new ParametroPesquisaNulo("empresaAgregada.id");
         ParametroPesquisa parametroUnidadeExigeNf = new ParametroPesquisaNulo("unidade.id");
         if(empresaAgregada != null) {
             parametroEmpresaAgregadaExigeNf = new ParametroPesquisaIgual("empresaAgregada.id", empresaAgregada.getId());
         } else if(unidade != null) {
             parametroUnidadeExigeNf = new ParametroPesquisaIgual("unidade.id", unidade.getId());
+        } else if(frotaExigeNF != null) {
+                parametros.add(new ParametroPesquisaAnd(
+                        new ParametroPesquisaIgual("frotaExigeNF", frotaExigeNF),
+                        new ParametroPesquisaIgual("frotaGerenciaNf", frota.isGerenciaNf())
+                ));
         }
 
-        List<ParametroPesquisa> parametros = new ArrayList<>();
         parametros.add(new ParametroPesquisaDataMenorOuIgual("dataInicioPeriodo", dataReferencia));
         parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataFimPeriodo", UtilitarioCalculoData.obterPrimeiroInstanteDia(dataReferencia)));
         parametros.add(new ParametroPesquisaIgual("frotaPtov.pontoVenda.id", pv.getId()));
@@ -1072,16 +1083,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         parametros.add(new ParametroPesquisaIgual("modalidadePagamento", modalidadePagamento.getValue()));
         parametros.add(parametroEmpresaAgregadaExigeNf);
         parametros.add(parametroUnidadeExigeNf);
-        if(frotaExigeNF != null) {
-            if(frota.isGerenciaNf() == null){
-                parametros.add(new ParametroPesquisaIgual("frotaExigeNF", frotaExigeNF));
-            }else if(frota.isGerenciaNf()){
-                parametros.add(new ParametroPesquisaAnd(
-                        new ParametroPesquisaIgual("frotaExigeNF", frotaExigeNF),
-                        new ParametroPesquisaIgual("frotaGerenciaNf", frota.isGerenciaNf())
-                ));
-            }
-        }
+
         return pesquisarUnico(parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
@@ -1169,7 +1171,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         parametros.add(new ParametroPesquisaIgual("frotaPtov.pontoVenda.id", pv));
         parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataInicioPeriodo", UtilitarioCalculoData.obterPrimeiroInstanteDia(de)));
         parametros.add(new ParametroPesquisaDataMenorOuIgual("dataFimPeriodo", UtilitarioCalculoData.obterUltimoInstanteDia(ate)));
-        
+
         return pesquisar((ParametroOrdenacaoColuna) null, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
@@ -1433,6 +1435,12 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             parametros.add(new ParametroPesquisaIgual("cobranca.id", filtro.getIdCobranca()));
         }
 
+        if(filtro.getEmpresaUnidade() != null && filtro.getEmpresaUnidade().getIdUnidade() != null) {
+            parametros.add(new ParametroPesquisaIgual("unidade.id", filtro.getEmpresaUnidade().getIdUnidade()));
+        } else if (filtro.getEmpresaUnidade() != null && filtro.getEmpresaUnidade().getIdEmpresaAgregada() != null) {
+            parametros.add(new ParametroPesquisaIgual("empresaAgregada.id", filtro.getEmpresaUnidade().getIdEmpresaAgregada()));
+        }
+
         return pesquisar(new ParametroOrdenacaoColuna("dataFimPeriodo"), parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
@@ -1455,6 +1463,14 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             parametros.add(new ParametroPesquisaIgual("idPv", filtro.getPontoDeVenda().getId()));
         } else {
             parametros.add(new ParametroPesquisaIgual("idPv", null));
+        }
+
+        if(filtro.getEmpresaUnidade() != null && filtro.getEmpresaUnidade().getIdUnidade() != null) {
+            parametros.add(new ParametroPesquisaIgual("empresaUnidade", filtro.getEmpresaUnidade().getIdUnidade()));
+        } else if (filtro.getEmpresaUnidade() != null && filtro.getEmpresaUnidade().getIdEmpresaAgregada() != null) {
+            parametros.add(new ParametroPesquisaIgual("empresaUnidade", filtro.getEmpresaUnidade().getIdEmpresaAgregada()));
+        } else {
+            parametros.add(new ParametroPesquisaIgual("empresaUnidade", null));
         }
 
         String filtroStatus = " ";
@@ -1643,6 +1659,20 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             parametros.add(new ParametroPesquisaIgual("numeroDocumento", filtro.getNumeroDocumento()));
         } else {
             parametros.add(new ParametroPesquisaIgual("numeroDocumento", null));
+        }
+
+        if(filtro.getEmpresaUnidade() != null && filtro.getEmpresaUnidade().getIdUnidade() != null) {
+            parametros.add(new ParametroPesquisaIgual("empresaUnidade", filtro.getEmpresaUnidade().getIdUnidade()));
+        } else if (filtro.getEmpresaUnidade() != null && filtro.getEmpresaUnidade().getIdEmpresaAgregada() != null) {
+            parametros.add(new ParametroPesquisaIgual("empresaUnidade", filtro.getEmpresaUnidade().getIdEmpresaAgregada()));
+        } else {
+            parametros.add(new ParametroPesquisaIgual("empresaUnidade", null));
+        }
+
+        if(filtro.getPontoDeVenda() != null) {
+            parametros.add(new ParametroPesquisaIgual("pontoVenda", filtro.getPontoDeVenda().getId()));
+        } else {
+            parametros.add(new ParametroPesquisaIgual("pontoVenda", null));
         }
 
         String filtroStatus = " ";
