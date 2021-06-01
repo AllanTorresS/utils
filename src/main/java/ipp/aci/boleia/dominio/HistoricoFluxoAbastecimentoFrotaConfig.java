@@ -45,8 +45,6 @@ public class HistoricoFluxoAbastecimentoFrotaConfig implements IPersistente, IFl
     private Boolean exigirPosto;
     @Column(name="ID_COMBUSTIVEL")
     private Boolean exigirCombustivel;
-    @Column(name="ID_LITRAGEM")
-    private Boolean exigirLitragem;
 
     @ManyToOne(fetch= FetchType.LAZY)
     @JoinColumn(name = "CD_FROTA")
@@ -74,7 +72,6 @@ public class HistoricoFluxoAbastecimentoFrotaConfig implements IPersistente, IFl
         this.exigirLeituraAutoHodometroHorimetro = fluxo.getExigirLeituraAutoHodometroHorimetro();
         this.exigirPosto = fluxo.getExigirPosto();
         this.exigirCombustivel = fluxo.getExigirCombustivel();
-        this.exigirLitragem = fluxo.getExigirLitragem();
 
         this.usuario = usuario;
     }
@@ -127,14 +124,6 @@ public class HistoricoFluxoAbastecimentoFrotaConfig implements IPersistente, IFl
 
     public void setExigirCombustivel(Boolean exigirCombustivel) {
         this.exigirCombustivel = exigirCombustivel;
-    }
-
-    public Boolean getExigirLitragem() {
-        return exigirLitragem;
-    }
-
-    public void setExigirLitragem(Boolean exigirLitragem) {
-        this.exigirLitragem = exigirLitragem;
     }
 
     public Frota getFrota() {

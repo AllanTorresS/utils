@@ -43,8 +43,6 @@ public class FluxoAbastecimentoMotoristaConfig implements IPersistente, IPertenc
     private Boolean exigirPosto;
     @Column(name="ID_COMBUSTIVEL")
     private Boolean exigirCombustivel;
-    @Column(name="ID_LITRAGEM")
-    private Boolean exigirLitragem;
 
     @Column(name = "ID_EXCLUIDO")
     private Boolean excluido;
@@ -120,15 +118,6 @@ public class FluxoAbastecimentoMotoristaConfig implements IPersistente, IPertenc
 
     public void setExigirCombustivel(Boolean exigirCombustivel) {
         this.exigirCombustivel = exigirCombustivel;
-    }
-
-    @Override
-    public Boolean getExigirLitragem() {
-        return exigirLitragem;
-    }
-
-    public void setExigirLitragem(Boolean exigirLitragem) {
-        this.exigirLitragem = exigirLitragem;
     }
 
     @Override
