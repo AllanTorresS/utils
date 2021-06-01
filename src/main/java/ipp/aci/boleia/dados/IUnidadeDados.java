@@ -1,6 +1,5 @@
 package ipp.aci.boleia.dados;
 
-import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.Unidade;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroAutoCompletePostoRotaVo;
