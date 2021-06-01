@@ -75,6 +75,7 @@ public class NotaFiscalSd {
 
     private static final Logger LOG = LoggerFactory.getLogger(NotaFiscalSd.class);
     private static final int LIMITE_NO_SERIE = 10;
+    private static final String MODELO_PERMITIDO = "55";
     private static final List<Erro> ERROS_BLOQUEANTES = ImmutableList.of(Erro.NOTA_FISCAL_UPLOAD_VERSAO_INVALIDA, Erro.NOTA_FISCAL_UPLOAD_NOTA_REPETIDA);
 
     @Autowired
@@ -222,6 +223,7 @@ public class NotaFiscalSd {
     public List<ValidacaoUploadNotaFiscalVo> validarDadosNovaNotaFiscal(List<Document> documentos, List<AutorizacaoPagamento> autorizacoesPagamento) {
         List<ValidacaoUploadNotaFiscalVo> validacoesNotas = new ArrayList<>();
         validarVersaoNota(documentos, validacoesNotas);
+        validarModeloDeNota(documentos, validacoesNotas);
         if (validacoesNotas.isEmpty()){
             validarNumeroSerieNota(documentos, validacoesNotas);
             validarNumeroNota(documentos, validacoesNotas);
@@ -229,6 +231,21 @@ public class NotaFiscalSd {
             validarDadosNota(documentos, autorizacoesPagamento, validacoesNotas);
         }
         return validacoesNotas;
+    }
+
+    /**
+     * Verifica se o modelo da nota é igual ao modelo permitido.
+     *
+     * @param documentos Documento quem contém os dados da nota fiscal
+     * @param validacoesNotas Lista de erros das validacoes
+     */
+    private void validarModeloDeNota(List<Document> documentos, List<ValidacaoUploadNotaFiscalVo> validacoesNotas) {
+        for(Document documento : documentos) {
+            String nNfe = notaFiscalParserSd.getString(documento, ConstantesNotaFiscalParser.MODELO);
+            if (!nNfe.equals(MODELO_PERMITIDO)) {
+                this.addErroValidacao(validacoesNotas, documento, Erro.MODELO_DE_NOTA_FISCAL_INVALIDO);
+            }
+        }
     }
 
     /**
