@@ -1,6 +1,6 @@
 package ipp.aci.boleia.util.seguranca;
 
-/**pedido
+/**
  * Enumera as chaves de permissao do sistema para concessao
  * de permissoes de acesso nas APIs REST
  */
