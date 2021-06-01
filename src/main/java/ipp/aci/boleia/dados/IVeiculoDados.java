@@ -80,6 +80,16 @@ public interface IVeiculoDados extends IRepositorioBoleiaDados<Veiculo> {
 	List<Veiculo> buscarVeiculosPorPlacaLike(String placa);
 
 	/**
+	 * Realiza a busca de veículo pela placa em qualquer frota cadastrada podendo ter restrições.
+	 * @param placa a placa informada para pesquisa.
+	 * @param apenasClimatizador flag que indica se a pesquisa deve retornar apenas veículos do subtipo climatizador ou não.
+	 * @param apenasHabilitadoAbastecerDuasPlacas flag que indica se a pesquisa deve retornar apenas veículos habilitados
+	 * a abastecer com duas placas ou não.
+	 * @return a lista com os veículos encontrados que satisfazem as condições presentes do filtro de busca informado.
+	 */
+	List<Veiculo> buscarVeiculosPorPlacaLike(String placa, Boolean apenasClimatizador, Boolean apenasHabilitadoAbastecerDuasPlacas);
+
+	/**
 	 * Encontra veiculos com a mesma placa
 	 *
 	 * @param filtro o filtro utilizado
