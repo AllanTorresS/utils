@@ -1,6 +1,10 @@
 package ipp.aci.boleia.dominio.vo;
 
+import ipp.aci.boleia.dominio.EmpresaAgregada;
+import ipp.aci.boleia.dominio.EmpresaUnidade;
+import ipp.aci.boleia.dominio.Unidade;
 import ipp.aci.boleia.dominio.enums.TipoEntidadeUnidadeEmpresaAgregada;
+import ipp.aci.boleia.util.UtilitarioFormatacao;
 
 /**
  * Representa uma entidade EmpresaUnidade
@@ -11,6 +15,7 @@ public class EmpresaUnidadeVo {
     private Long idFrota;
     private Long idUnidade;
     private Long idEmpresaAgregada;
+    private String label;
 
     /**
      * Construtor default
@@ -33,6 +38,22 @@ public class EmpresaUnidadeVo {
         this.idFrota = idFrota;
         this.idUnidade = idUnidade;
         this.idEmpresaAgregada = idEmpresaAgregada;
+    }
+
+    /**
+     * Construtor da classe.
+     *
+     * @param empresaUnidade Entidade {@link ipp.aci.boleia.dominio.EmpresaUnidade}.
+     */
+    public EmpresaUnidadeVo(EmpresaUnidade empresaUnidade) {
+        Unidade unidade = empresaUnidade.getUnidade();
+        EmpresaAgregada empresaAgregada = empresaUnidade.getEmpresaAgregada();
+        this.id = empresaUnidade.getId();
+        this.tipo = new EnumVo(empresaUnidade.getTipoEntidadeEnum());
+        this.idFrota = empresaUnidade.getFrota().getId();
+        this.idUnidade = unidade != null ? unidade.getId() : null;
+        this.idEmpresaAgregada = empresaAgregada != null ? empresaAgregada.getId() : null;
+        this.label = unidade != null ? unidade.getNome() + " - " + UtilitarioFormatacao.formatarCnpjApresentacao(unidade.getCnpj()) : empresaAgregada.getRazaoSocial() + " - " + UtilitarioFormatacao.formatarCnpjApresentacao(empresaAgregada.getCnpj());
     }
 
     public Long getId() {
@@ -73,5 +94,13 @@ public class EmpresaUnidadeVo {
 
     public void setIdEmpresaAgregada(Long idEmpresaAgregada) {
         this.idEmpresaAgregada = idEmpresaAgregada;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
     }
 }
