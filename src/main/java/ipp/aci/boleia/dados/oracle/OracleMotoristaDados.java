@@ -23,6 +23,7 @@ import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialMotoristaVo;
 import ipp.aci.boleia.dominio.vo.externo.FiltroPesquisaMotoristaExtVo;
 import ipp.aci.boleia.dominio.vo.frotista.FiltroPesquisaMotoristaFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.ResultadoPaginadoFrtVo;
+import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioLambda;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.apache.commons.collections4.CollectionUtils;
@@ -47,8 +48,20 @@ import static ipp.aci.boleia.util.UtilitarioFormatacao.obterLongMascara;
 @Repository
 public class OracleMotoristaDados extends OracleRepositorioBoleiaDados<Motorista> implements IMotoristaDados {
 
-    @Autowired
-    private UtilitarioAmbiente utilitarioAmbiente;
+    private static final String QUERY_EXCLUSAO_DADOS_MOTORISTA = "DELETE FROM AbastecimentoCta ac " +
+            "WHERE ac.dataProcessamento <= :dataProcessamento";
+
+    private static final String LISTAR_MOTORISTAS_SEM_ABASTECIMENTO =
+            "SELECT m " +
+            "FROM Motorista m " +
+            "WHERE trunc(m.dataCriacao) = trunc(:diasDeVerificacao) and " +
+            "NOT EXISTS (" +
+            " 	SELECT 1 " +
+            " 	FROM AbastecimentoCta ac " +
+            " 	JOIN ac.autorizacaoPagamentoImportada ap " +
+            " 	WHERE ap.motorista.id = m.id " +
+            ") " +
+            "ORDER BY m.frota, m.dataCriacao ";
 
     private static final String LISTAR_MOTORISTAS_POR_CONSOLIDADO =
             "SELECT DISTINCT m " +
@@ -57,6 +70,9 @@ public class OracleMotoristaDados extends OracleRepositorioBoleiaDados<Motorista
             "WHERE (ap.transacaoConsolidadaPostergada.id = :idConsolidado OR ap.transacaoConsolidada.id = :idConsolidado) AND " +
             "       upper(m.nome) LIKE :nome AND " +
             "       m.excluido = false";
+
+    @Autowired
+    private UtilitarioAmbiente utilitarioAmbiente;
 
     /**
      * Instancia o repositorio
@@ -350,6 +366,19 @@ public class OracleMotoristaDados extends OracleRepositorioBoleiaDados<Motorista
         filtro.setCpf(identificador);
         ResultadoPaginado<Motorista> resultadoBusca = pesquisar(filtro);
         return resultadoBusca.getTotalItems() > 0 ? resultadoBusca.getRegistros().stream().findFirst().get() : null;
+    }
+
+    @Override
+    public void excluirDadosPessoais(Integer diasDeArmazenamento) {
+        Query query = getGerenciadorDeEntidade().createQuery(QUERY_EXCLUSAO_DADOS_MOTORISTA);
+        query.setParameter("dataProcessamento",  UtilitarioCalculoData.obterPrimeiroInstanteDia(UtilitarioCalculoData.adicionarDiasData(utilitarioAmbiente.buscarDataAmbiente(), -diasDeArmazenamento)));
+        query.executeUpdate();
+    }
+
+    @Override
+    public List<Motorista> obterMotoristasSemAbastecimento(Integer diasDeVerificacao) {
+        ParametroPesquisaIgual parametroDiasDeVerificacao = new ParametroPesquisaIgual("diasDeVerificacao", UtilitarioCalculoData.obterPrimeiroInstanteDia(UtilitarioCalculoData.adicionarDiasData(utilitarioAmbiente.buscarDataAmbiente(), -diasDeVerificacao)));
+        return pesquisar(null, LISTAR_MOTORISTAS_SEM_ABASTECIMENTO, parametroDiasDeVerificacao).getRegistros();
     }
 
     @Override

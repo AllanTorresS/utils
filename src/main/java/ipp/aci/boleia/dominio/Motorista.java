@@ -175,6 +175,10 @@ public class Motorista implements IPersistente, IExclusaoLogica, IPertenceFrota,
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataExpiracaoToken;
 
+    @Column(name="DT_CRIACAO")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataCriacao;
+
     @Column(name = "DT_ATUALIZACAO")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataAtualizacao;
@@ -531,6 +535,14 @@ public class Motorista implements IPersistente, IExclusaoLogica, IPertenceFrota,
     public UsuarioMotorista getUsuarioMotorista() { return usuarioMotorista; }
 
     public void setUsuarioMotorista(UsuarioMotorista usuarioMotorista) { this.usuarioMotorista = usuarioMotorista; }
+
+    public Date getDataCriacao() {
+        return dataCriacao;
+    }
+
+    public void setDataCriacao(Date dataCriacao) {
+        this.dataCriacao = dataCriacao;
+    }
 
     public List<FluxoAbastecimentoMotoristaConfig> getFluxoAbastecimentoMotoristaConfigs() {
         return fluxoAbastecimentoMotoristaConfigs;
