@@ -21,6 +21,9 @@ import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import static ipp.aci.boleia.util.UtilitarioCalculoData.adicionarSegundosData;
+import static ipp.aci.boleia.util.UtilitarioCalculoData.obterPrimeiroInstanteDia;
+
 /**
  * Representa a tabela de Configuração de Antecipação
  */
@@ -216,6 +219,17 @@ public class ConfiguracaoAntecipacaoRecebiveis implements IPersistente {
     }
 
     /**
+     * Obtém o prazo de vencimento correto baseado no horário limite para antecipação
+     * @param dataReferencia a data que deve ser usada como data ambiente
+     * @return o prazo de vencimento, em dias
+     */
+    @Transient
+    public Integer getPrazoVencimentoVigente(Date dataReferencia) {
+        Date dataLimite = adicionarSegundosData(obterPrimeiroInstanteDia(dataReferencia), getHorarioLimiteVigente(dataReferencia));
+        return dataReferencia.after(dataLimite) ? prazoVencimento + 1 : prazoVencimento;
+    }
+
+    /**
      * Atualiza a taxa percentual do Pró-Frotas e do Parceiro
      * @param taxaProFrotasPercentual a taxa do Pró-Frotas
      * @param taxaParceiroPercentual a taxa do Parceiro
@@ -248,7 +262,7 @@ public class ConfiguracaoAntecipacaoRecebiveis implements IPersistente {
      */
     public void atualizarHorarioLimite(Integer novoHorarioLimite, Date dataAmbiente) {
         Integer horarioLimiteVigente = getHorarioLimiteVigente(dataAmbiente);
-        Date dataLimite = UtilitarioCalculoData.adicionarSegundosData(UtilitarioCalculoData.obterPrimeiroInstanteDia(dataAmbiente), horarioLimiteVigente);
+        Date dataLimite = adicionarSegundosData(obterPrimeiroInstanteDia(dataAmbiente), horarioLimiteVigente);
         if (!horarioLimiteVigente.equals(novoHorarioLimite)) {
             this.setDataAtualizacaoHorarioLimite(dataAmbiente);
             if (dataAmbiente.after(dataLimite)) {

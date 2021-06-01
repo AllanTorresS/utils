@@ -11,6 +11,7 @@ import ipp.aci.boleia.dominio.Unidade;
 import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.enums.ModalidadePagamento;
 import ipp.aci.boleia.dominio.enums.StatusIntegracaoReembolsoJde;
+import ipp.aci.boleia.dominio.enums.StatusInteresseAntecipacao;
 import ipp.aci.boleia.dominio.enums.StatusNotaFiscal;
 import ipp.aci.boleia.dominio.enums.StatusNotaFiscalAbastecimento;
 import ipp.aci.boleia.dominio.enums.StatusPagamentoCobranca;
@@ -635,8 +636,10 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "FROM TransacaoConsolidada tc " +
                     "JOIN tc.prazos ptc " +
                     "JOIN tc.frotaPtov fp " +
+                    "JOIN fp.pontoVenda pv " +
                     "WHERE " +
-                    "EXISTS (SELECT 1 FROM AutorizacaoPagamento a " +
+                    "pv.statusInteresseAntecipacao = " + StatusInteresseAntecipacao.APROVADO.getValue() +
+                    " AND EXISTS (SELECT 1 FROM AutorizacaoPagamento a " +
                     "JOIN a.transacaoConsolidada tc1 " +
                     "LEFT JOIN a.transacaoConsolidadaPostergada tcp " +
                     "WHERE tc = COALESCE(tcp.id, tc1.id) " +
