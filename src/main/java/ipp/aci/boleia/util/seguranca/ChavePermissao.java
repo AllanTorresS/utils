@@ -1,6 +1,6 @@
 package ipp.aci.boleia.util.seguranca;
 
-/**pedido
+/**
  * Enumera as chaves de permissao do sistema para concessao
  * de permissoes de acesso nas APIs REST
  */
@@ -41,6 +41,7 @@ public final class ChavePermissao {
     public static final String FROTA_EXPORTAR                               = SPRING_ROLE_PREFIX + "FROTA_EXPORTAR" + SPRING_ROLE_SUFFIX;
     public static final String FROTA_HABILITAR                              = SPRING_ROLE_PREFIX + "FROTA_HABILITAR" + SPRING_ROLE_SUFFIX;
     public static final String FROTA_ATIVAR_TEMPORARIAMENTE                 = SPRING_ROLE_PREFIX + "FROTA_ATIVAR_TEMPORARIAMENTE" + SPRING_ROLE_SUFFIX;
+    public static final String FROTA_INATIVAR_TEMPORARIAMENTE               = SPRING_ROLE_PREFIX + "FROTA_INATIVAR_TEMPORARIAMENTE" + SPRING_ROLE_SUFFIX;
     public static final String CENTRO_DE_CUSTO_ALTERAR                      = SPRING_ROLE_PREFIX + "CENTRO_DE_CUSTO_ALTERAR" + SPRING_ROLE_SUFFIX;
     public static final String CENTRO_DE_CUSTO_CONSULTAR_E_VISUALIZAR       = SPRING_ROLE_PREFIX + "CENTRO_DE_CUSTO_CONSULTAR_E_VISUALIZAR" + SPRING_ROLE_SUFFIX;
     public static final String CENTRO_DE_CUSTO_EXCLUIR                      = SPRING_ROLE_PREFIX + "CENTRO_DE_CUSTO_EXCLUIR" + SPRING_ROLE_SUFFIX;
