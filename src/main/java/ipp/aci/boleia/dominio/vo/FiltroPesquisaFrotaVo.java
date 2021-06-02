@@ -18,6 +18,7 @@ public class FiltroPesquisaFrotaVo extends BaseFiltroPaginado {
     private EntidadeVo assessor;
     private EnumVo statusConectcar;
 	private Boolean possuiCondicaoComercialConectcar;
+    private EnumVo classificacaoStatusFrota;
 
     public String getCnpj() {
         return cnpj;
@@ -107,4 +108,11 @@ public class FiltroPesquisaFrotaVo extends BaseFiltroPaginado {
 		this.statusConectcar = statusConectcar;
 	}
 
+    public EnumVo getClassificacaoStatusFrota() {
+        return classificacaoStatusFrota;
+    }
+
+    public void setClassificacaoStatusFrota(EnumVo classificacaoStatusFrota) {
+        this.classificacaoStatusFrota = classificacaoStatusFrota;
+    }
 }

@@ -3,6 +3,7 @@ package ipp.aci.boleia.dominio;
 import ipp.aci.boleia.dominio.enums.StatusLiberacaoReembolsoJde;
 import ipp.aci.boleia.dominio.enums.TipoAntecipacao;
 import org.hibernate.envers.AuditJoinTable;
+import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.Column;
@@ -29,6 +30,7 @@ import java.util.List;
  * Representa a tabela de Reembolso Antecipado
  */
 @Audited
+@AuditOverride(forClass = ReembolsoBase.class)
 @Entity
 @Table(name = "REEMB_ANTECIP")
 public class ReembolsoAntecipado extends ReembolsoBase {

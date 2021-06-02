@@ -1,6 +1,7 @@
 package ipp.aci.boleia.dominio;
 
 import ipp.aci.boleia.dominio.enums.StatusLiberacaoReembolsoJde;
+import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.Column;
@@ -22,6 +23,7 @@ import java.util.List;
  * Representa a tabela de Reembolso
  */
 @Audited
+@AuditOverride(forClass = ReembolsoBase.class)
 @Entity
 @Table(name = "REEMBOLSO")
 public class Reembolso extends ReembolsoBase {

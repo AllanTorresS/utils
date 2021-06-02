@@ -4,26 +4,24 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import ipp.aci.boleia.dados.IEmailEnvioDados;
 import ipp.aci.boleia.dados.IFrotaDados;
 import ipp.aci.boleia.dados.ILeadCredenciamentoDados;
-import ipp.aci.boleia.dados.IMotivoInativacaoFrotaDados;
 import ipp.aci.boleia.dados.IParametroCicloDados;
 import ipp.aci.boleia.dados.IUsuarioDados;
 import ipp.aci.boleia.dominio.Credenciamento;
 import ipp.aci.boleia.dominio.Frota;
-import ipp.aci.boleia.dominio.MotivoInativacaoFrota;
+import ipp.aci.boleia.dominio.MotivoAlteracaoStatusFrota;
 import ipp.aci.boleia.dominio.ParametroCiclo;
 import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.enums.ClassificacaoStatusFrota;
 import ipp.aci.boleia.dominio.enums.StatusCredenciamentoFrota;
 import ipp.aci.boleia.dominio.enums.StatusFrota;
+import ipp.aci.boleia.dominio.enums.TipoAlteracaoStatusFrota;
 import ipp.aci.boleia.dominio.enums.TipoPerfilUsuario;
 import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFrotaVo;
-import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
 import ipp.aci.boleia.util.UtilitarioFormatacaoData;
 import ipp.aci.boleia.util.excecao.Erro;
-import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
 import ipp.aci.boleia.util.excecao.ExcecaoTokenJwtExpirado;
 import ipp.aci.boleia.util.excecao.ExcecaoValidacao;
 import ipp.aci.boleia.util.i18n.Mensagens;
@@ -54,9 +52,6 @@ public class FrotaSd {
     private IFrotaDados repositorio;
 
     @Autowired
-    private IMotivoInativacaoFrotaDados repositorioMotivo;
-
-    @Autowired
     private IEmailEnvioDados emailDados;
 
     @Autowired
@@ -76,6 +71,9 @@ public class FrotaSd {
     
     @Autowired
 	private ILeadCredenciamentoDados repositorioLeadCredenciamento;
+
+    @Autowired
+    private MotivoAlteracaoStatusFrotaSd motivoAlteracaoStatusFrotaSd;
 
     /**
      * Armazena os dados de uma frota
@@ -157,9 +155,7 @@ public class FrotaSd {
      * @return indica se a frota está em período de ativação temporária
      */
     public boolean isFrotaEmAtivacaoTemporaria(Frota frota) {
-        Date dataAtual = ambiente.buscarDataAmbiente();
-        return frota.getInicioAtivacaoTemporaria() != null && frota.getFimAtivacaoTemporaria() != null &&
-                dataAtual.after(frota.getInicioAtivacaoTemporaria()) && dataAtual.before(frota.getFimAtivacaoTemporaria());
+        return frota.possuiAtivacaoTemporariaAtiva();
     }
 
     /**
@@ -167,8 +163,8 @@ public class FrotaSd {
      * @param frota Frota alterada
      * @param motivo motivo de alteração da frota
      */
-    public void enviarEmailAlteracaoStatusFrota(Frota frota, MotivoInativacaoFrota motivo) {
-        String nomeUsuario = ambiente.getUsuarioLogado() != null ? ambiente.getUsuarioLogado().getNome() : mensagens.obterMensagem("frota.servico.alteracao.email.usuario.sistema");
+    public void enviarEmailAlteracaoStatusFrota(Frota frota, MotivoAlteracaoStatusFrota motivo) {
+        String nomeUsuario = motivo.getUsuario() != null ? motivo.getUsuario().getNome() : mensagens.obterMensagem("frota.servico.alteracao.email.usuario.sistema");
         enviarEmailAlteracaoStatusFrota(frota, motivo, nomeUsuario);
     }
 
@@ -176,42 +172,20 @@ public class FrotaSd {
     /**
      * Altera o status de ativacao de uma frota
      * @param idFrota A frota
-     * @param ativar True se desejada ativacao, false caso contrario
+     * @param tipoAlteracao O tipo de alteração (ativação ou inativação)
      * @param classificacao A classificacao do motivo da alteracao do status
      * @param justificativa A justificativa da alteracao
+     * @param prazoAlteracaoTemporaria O prazo da alteração temporária
      * @return o motivo de inativação
      */
-    public MotivoInativacaoFrota alterarStatusAtivacaoFrota(Long idFrota, boolean ativar, ClassificacaoStatusFrota classificacao, String justificativa) {
+    public MotivoAlteracaoStatusFrota alterarStatusAtivacaoFrota(Long idFrota, TipoAlteracaoStatusFrota tipoAlteracao,
+                                                                 ClassificacaoStatusFrota classificacao,
+                                                                 String justificativa, Date prazoAlteracaoTemporaria) {
         Frota frota = repositorio.obterPorId(idFrota);
-        Date dataAmbiente = ambiente.buscarDataAmbiente();
-
-        MotivoInativacaoFrota motivo;
-        if (ativar) {
-            if (frota.getStatus().equals(StatusFrota.ATIVO.getValue())) {
-                throw new ExcecaoBoleiaRuntime(Erro.STATUS_INVALIDO, Frota.class.getSimpleName(), frota.getId());
-            }
-            motivo = repositorioMotivo.buscarMotivoInativacaoAtualFrota(idFrota);
-            motivo.setDataReativacao(dataAmbiente);
-            motivo.setDescricaoReativacao(justificativa);
-        } else {
-            if (!frota.getStatus().equals(StatusFrota.ATIVO.getValue())) {
-                throw new ExcecaoBoleiaRuntime(Erro.STATUS_INVALIDO, Frota.class.getSimpleName(), frota.getId());
-            }
-            motivo = new MotivoInativacaoFrota();
-            motivo.setFrota(frota);
-            motivo.setDataInativacao(dataAmbiente);
-            motivo.setDescricaoInativacao(justificativa);
-            motivo.setTipoMotivo(classificacao.getValue());
-            if(ambiente.getUsuarioLogado() != null || classificacao.getValue().equals(ClassificacaoStatusFrota.DEBITO_VENCIDO.getValue())) {
-                frota.setInicioAtivacaoTemporaria(null);
-                frota.setFimAtivacaoTemporaria(null);
-            }
-        }
-
-        motivo = repositorioMotivo.armazenar(motivo);
-        frota.setStatus(ativar ? StatusFrota.ATIVO.getValue() : StatusFrota.INATIVO.getValue());
+        MotivoAlteracaoStatusFrota motivoAlteracao = motivoAlteracaoStatusFrotaSd.criarMotivoAlteracaoStatus(frota, tipoAlteracao, classificacao, justificativa, prazoAlteracaoTemporaria, frota.getUltimoMotivoDefinitivo());
+        frota.setStatus(motivoAlteracao.isAtivacao() ? StatusFrota.ATIVO.getValue() : StatusFrota.INATIVO.getValue());
         repositorio.armazenar(frota);
-        return motivo;
+        return motivoAlteracao;
     }
 
     /**
@@ -221,7 +195,7 @@ public class FrotaSd {
      * @param motivo motivo de alteração da frota
      * @param nomeUsuario Nome do usuário que gerou o incidente.
      */
-    public void enviarEmailAlteracaoStatusFrota(Frota frota, MotivoInativacaoFrota motivo, String nomeUsuario) {
+    public void enviarEmailAlteracaoStatusFrota(Frota frota, MotivoAlteracaoStatusFrota motivo, String nomeUsuario) {
         List<Usuario> administradores = repositorioUsuario.obterPorTipoPerfilGestor(TipoPerfilUsuario.INTERNO, false);
         List<String> destinatarios = new ArrayList<>();
         for (Usuario usuario:administradores) {
@@ -229,15 +203,15 @@ public class FrotaSd {
                 destinatarios.add(usuario.getEmail());
             }
         }
-        String dataAlteracao;
+        String classificacao = motivo.getTipoMotivo() != null ? ClassificacaoStatusFrota.obterPorValor(motivo.getTipoMotivo()).getLabel() : mensagens.obterMensagem("texto.comum.vazio");
+        String dataAlteracao = UtilitarioFormatacaoData.formatarDataHora(motivo.getDataCriacao());
         String descricao;
-        String classificacao = ClassificacaoStatusFrota.obterPorValor(motivo.getTipoMotivo()).getLabel();
-        if (StatusFrota.ATIVO.getValue().equals(frota.getStatus())) {
-            dataAlteracao = UtilitarioFormatacaoData.formatarDataHora(motivo.getDataReativacao());
-            descricao = motivo.getDescricaoReativacao();
+        if (ClassificacaoStatusFrota.DEBITO_VENCIDO.getValue().equals(motivo.getTipoMotivo()) || ClassificacaoStatusFrota.SALDO_ZERADO.getValue().equals(motivo.getTipoMotivo())) {
+            descricao = StatusFrota.ATIVO.getValue().equals(motivo.getFrota().getStatus())
+                    ? mensagens.obterMensagem(ClassificacaoStatusFrota.obterPorValor(motivo.getTipoMotivo()).getChaveMensagemReativacao())
+                    : mensagens.obterMensagem(ClassificacaoStatusFrota.obterPorValor(motivo.getTipoMotivo()).getChaveMensagemInativacao());
         } else {
-            dataAlteracao = UtilitarioFormatacaoData.formatarDataHora(motivo.getDataInativacao());
-            descricao = motivo.getDescricaoInativacao();
+            descricao = motivo.getMotivo();
         }
         emailDados.enviarEmail(mensagens.obterMensagem("frota.servico.alteracao.email.assunto"),
                 mensagens.obterMensagem("frota.servico.alteracao.email.mensagem", UtilitarioFormatacao.formatarCnpjApresentacao(frota.getCnpj()), frota.getRazaoSocial(),
@@ -246,42 +220,11 @@ public class FrotaSd {
     }
 
     /**
-     * Ativa uma frota temporariamente apos uma inativacao devido a vencimento de debito
-     *
-     * @param frota A frota
-     * @param dataInicioAtivacao A data de inicio de ativacao
-     * @param dataFimAtivacao A data de fim da ativacao
-     * @param descricaoMotivo A descricao do motivo
-     * @throws ExcecaoValidacao em caso de erros de validacao negociais
-     */
-    public void ativarFrotaTemporariamente(Frota frota, Date dataInicioAtivacao, Date dataFimAtivacao, String descricaoMotivo) throws ExcecaoValidacao {
-
-        Date dataAtual = ambiente.buscarDataAmbiente();
-        MotivoInativacaoFrota motivo = repositorioMotivo.buscarMotivoInativacaoAtualFrota(frota.getId());
-        if (motivo == null || !motivo.getTipoMotivo().equals(ClassificacaoStatusFrota.DEBITO_VENCIDO.getValue())) {
-            throw new ExcecaoValidacao(mensagens.obterMensagem("frota.servico.ativar.temporario.status.invalido"));
-        }
-
-        if(dataFimAtivacao.before(dataAtual) || dataInicioAtivacao.before(dataAtual)) {
-            throw new ExcecaoValidacao(mensagens.obterMensagem("frota.servico.ativar.temporario.periodo.invalido"));
-        }
-
-        descricaoMotivo = descricaoMotivo != null ? descricaoMotivo : mensagens.obterMensagem("cobranca.servico.descricao.reativacao.temporaria");
-        frota.setInicioAtivacaoTemporaria(dataInicioAtivacao);
-        frota.setFimAtivacaoTemporaria(dataFimAtivacao);
-        frota = repositorio.armazenar(frota);
-        if (dataInicioAtivacao.before(dataAtual) || UtilitarioCalculoData.isHoje(dataAtual, dataInicioAtivacao)) {
-            motivo = alterarStatusAtivacaoFrota(frota.getId(), true, null, descricaoMotivo);
-            notificarAlteracaoFrota(motivo);
-        }
-    }
-
-    /**
      * Dispara emails e notificações informando sobre a alteração de status de uma frota.
      *
      * @param motivo o motivo da alteração de status
      */
-    public void notificarAlteracaoFrota(MotivoInativacaoFrota motivo) {
+    public void notificarAlteracaoFrota(MotivoAlteracaoStatusFrota motivo) {
         notificacaoUsuarioSd.enviarNotificacaoFrotaAlterada(motivo.getFrota());
         enviarEmailAlteracaoStatusFrota(motivo.getFrota(), motivo);
     }
@@ -292,8 +235,7 @@ public class FrotaSd {
      * @return true se a frota estiver inativa, false caso contrario.
      */
     public boolean isFrotaInativa(Frota frota) {
-        MotivoInativacaoFrota motivo = repositorioMotivo.buscarMotivoInativacaoAtualFrota(frota.getId());
-        return motivo != null;
+        return frota.getUltimoMotivoInativacao() != null;
     }
 
     /**
@@ -302,9 +244,8 @@ public class FrotaSd {
      * @return true se a frota esta inativada, false caso contrario
      */
     public boolean isFrotaInativadaPorSaldoZerado(Frota frota) {
-        MotivoInativacaoFrota motivo = repositorioMotivo.buscarMotivoInativacaoAtualFrota(frota.getId());
-        return motivo != null && motivo.getTipoMotivo().equals(ClassificacaoStatusFrota.OUTROS.getValue()) &&
-                frota.getStatus().equals(StatusFrota.INATIVO.getValue()) && frota.getDataSaldoZerado() != null;
+        MotivoAlteracaoStatusFrota motivo = frota.getUltimoMotivoSaldoZeradoVigente();
+        return motivo != null;
     }
     
     /**
