@@ -219,15 +219,15 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
     }
 
     @Override
-    public List<Veiculo> buscarVeiculosPorPlacaLike(String placa, Boolean apenasClimatizador, Boolean apenasHabilitadoAbastecerDuasPlacas) {
+    public List<Veiculo> buscarVeiculosPorPlacaLike(FiltroPesquisaParcialVeiculoVo filtro) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
-        parametros.add(new ParametroPesquisaLike("placa", placa));
+        parametros.add(new ParametroPesquisaLike("placa", filtro.getTermo()));
 
-        if(apenasClimatizador){
+        if(filtro.getApenasClimatizador()){
             parametros.add(new ParametroPesquisaIgual("subtipoVeiculo.descricao", "Climatizador"));
         }
-        if(apenasHabilitadoAbastecerDuasPlacas){
-            parametros.add(new ParametroPesquisaIgual("habilitadoAbastecerDuasPlacas", apenasHabilitadoAbastecerDuasPlacas));
+        if(filtro.getApenasHabilitadoAbastecerDuasPlacas()){
+            parametros.add(new ParametroPesquisaIgual("habilitadoAbastecerDuasPlacas", true));
         }
         return pesquisar((ParametroOrdenacaoColuna) null, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
