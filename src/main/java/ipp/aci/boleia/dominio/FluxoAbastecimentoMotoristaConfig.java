@@ -56,6 +56,10 @@ public class FluxoAbastecimentoMotoristaConfig implements IPersistente, IPertenc
     @JoinColumn(name = "CD_VEICULO")
     private Veiculo veiculo;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_VEICULO_CLI")
+    private Veiculo veiculoClimatizador;
+
     @Version
     @Column(name = "NO_VERSAO")
     private Long versao;
@@ -136,6 +140,14 @@ public class FluxoAbastecimentoMotoristaConfig implements IPersistente, IPertenc
 
     public void setVeiculo(Veiculo veiculo) {
         this.veiculo = veiculo;
+    }
+
+    public Veiculo getVeiculoClimatizador() {
+        return veiculoClimatizador;
+    }
+
+    public void setVeiculoClimatizador(Veiculo veiculoClimatizador) {
+        this.veiculoClimatizador = veiculoClimatizador;
     }
 
     @Override
