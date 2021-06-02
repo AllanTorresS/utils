@@ -2,8 +2,6 @@ package ipp.aci.boleia.dados;
 
 import ipp.aci.boleia.dominio.PostoInternoTipoCombustivelPreco;
 
-import java.util.List;
-
 /**
  * Contrato para implementacao de repositorios da entidade de PostoInternoTipoCombustivelPreco
  */
