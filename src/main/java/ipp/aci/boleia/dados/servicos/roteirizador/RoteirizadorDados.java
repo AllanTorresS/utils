@@ -37,7 +37,7 @@ public class RoteirizadorDados implements IRoteirizadorDados {
     }
 
     @Override
-    public RespostaRoteirizadorValidarVo validarRota(RequisicaoRoteirizadorValidarVo requisicao){
+    public RespostaRoteirizadorValidarVo validarRota(RequisicaoRoteirizadorValidarVo requisicao) {
         return clientRest.doPostJson(validadorUrl, requisicao, null, this::tratarRespostaValidador);
     }
 
