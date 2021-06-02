@@ -1,7 +1,5 @@
 package ipp.aci.boleia.dados.servicos.roteirizador;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import ipp.aci.boleia.dados.IClienteHttpDados;
 import ipp.aci.boleia.dados.IRoteirizadorDados;
 import ipp.aci.boleia.dominio.vo.RequisicaoRoteirizadorValidarVo;
@@ -12,11 +10,10 @@ import ipp.aci.boleia.util.UtilitarioJson;
 import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
+
 
 /**
  * Respositorio de entidades do roteirizador
@@ -27,10 +24,6 @@ public class RoteirizadorDados implements IRoteirizadorDados {
     @Autowired
     private IClienteHttpDados clientRest;
 
-    /**
-     * Logger para possíveis erros na requisição.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(RoteirizadorDados.class);
 
     @Value("${roteirizador.api.gateway.endereco.url}")
     private String roteirizadorUrl;
@@ -40,22 +33,12 @@ public class RoteirizadorDados implements IRoteirizadorDados {
 
     @Override
     public RespostaRoteirizadorVo calcularRota(RequisicaoRoteirizadorVo requisicao) {
-        try {
-            String stringRequest = new ObjectMapper().writeValueAsString(requisicao);
-            return clientRest.doPostJson(roteirizadorUrl, requisicao, null, this::tratarResposta);
-        } catch (JsonProcessingException e) {
-            throw new ExcecaoBoleiaRuntime(Erro.ERRO_INTEGRACAO, e);
-        }
+        return clientRest.doPostJson(roteirizadorUrl, requisicao, null, this::tratarResposta);
     }
 
     @Override
-    public RespostaRoteirizadorValidarVo validarRota(RequisicaoRoteirizadorValidarVo requisicao){
-        try {
-            String stringRequest = new ObjectMapper().writeValueAsString(requisicao);
-            return clientRest.doPostJson(validadorUrl, requisicao, null, this::tratarRespostaValidador);
-        } catch (JsonProcessingException e) {
-            throw new ExcecaoBoleiaRuntime(Erro.ERRO_INTEGRACAO, e);
-        }
+    public RespostaRoteirizadorValidarVo validarRota(RequisicaoRoteirizadorValidarVo requisicao) {
+        return clientRest.doPostJson(validadorUrl, requisicao, null, this::tratarRespostaValidador);
     }
 
 
