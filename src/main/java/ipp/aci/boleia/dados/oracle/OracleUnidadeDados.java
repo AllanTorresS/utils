@@ -2,7 +2,6 @@ package ipp.aci.boleia.dados.oracle;
 
 
 import ipp.aci.boleia.dados.IUnidadeDados;
-import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.Unidade;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;

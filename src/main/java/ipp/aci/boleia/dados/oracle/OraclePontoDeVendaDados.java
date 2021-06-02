@@ -21,6 +21,7 @@ import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaAnd;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDiferente;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaEmpty;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaEntre;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaFetch;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
@@ -29,14 +30,13 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaior;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMenor;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
-import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaEntre;
+import ipp.aci.boleia.dominio.vo.CoordenadaVo;
 import ipp.aci.boleia.dominio.vo.EntidadeVo;
-import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialPtovVo;
+import ipp.aci.boleia.dominio.vo.FiltroAutoCompletePostoRotaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaLocalizacaoVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialPtovVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaPontoDeVendaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaRotaPontoVendaServicosVo;
-import ipp.aci.boleia.dominio.vo.CoordenadaVo;
-import ipp.aci.boleia.dominio.vo.FiltroAutoCompletePostoRotaVo;
 import ipp.aci.boleia.util.Ordenacao;
 import ipp.aci.boleia.util.UtilitarioLambda;
 import ipp.aci.boleia.util.UtilitarioParse;
@@ -200,7 +200,7 @@ public class OraclePontoDeVendaDados extends OracleRepositorioBoleiaDados<PontoD
             params.add(new ParametroPesquisaOr(new ParametroPesquisaLike("nome", filtro.getNome()), new ParametroPesquisaLike("municipio", filtro.getNome())));
         }
 
-        if (!filtro.getPostoUrbano()){
+        if (filtro.getPostoUrbano() != null && !filtro.getPostoUrbano()){
             params.add(new ParametroPesquisaDiferente("perfilVenda", "Urbano"));
         }
 

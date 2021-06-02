@@ -4,16 +4,14 @@ import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
+import ipp.aci.boleia.dominio.vo.FiltroAutoCompletePostoRotaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaAbastecimentoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheCicloVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFinanceiroVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFrotaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialFrotaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaPostoInternoRotaVo;
-import ipp.aci.boleia.dominio.vo.FiltroPesquisaRotaPontoVendaServicosVo;
 import ipp.aci.boleia.dominio.vo.apco.ClienteProFrotaVo;
-import ipp.aci.boleia.dominio.vo.FiltroAutoCompletePostoRotaVo;
-
 
 import java.util.Date;
 import java.util.List;
