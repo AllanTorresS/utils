@@ -5,6 +5,19 @@ package ipp.aci.boleia.util;
  */
 public final class ConstantesSalesForce {
 
+    public static final String AUTHORIZATION_HEADER = "Authorization";
+    public static final String AUTHORIZATION_TIPO_CONCESSAO = "grant_type";
+    public static final String AUTHORIZATION_CLIENTE_ID = "client_id";
+    public static final String AUTHORIZATION_CLIENTE_SEGREDO = "client_secret";
+    public static final String AUTHORIZATION_USUARIO = "username";
+    public static final String AUTHORIZATION_SENHA = "password";
+
+    public static final String CAMPO_TIPO_TOKEN = "token_type";
+    public static final String CAMPO_TOKEN_ACESSO = "access_token";
+    public static final String CAMPO_INSTANCIA_URL = "instance_url";
+    
+    public static final String CODIGO_ERRO_SESSAO_EXPIRADA = "INVALID_SESSION_ID";
+
     public static final String PROSPECT = "Prospect";
     public static final String RECORD_TYPE_ID = "012f2000000ANFwAAO";
     public static final String ORIGIN = "Portal";
