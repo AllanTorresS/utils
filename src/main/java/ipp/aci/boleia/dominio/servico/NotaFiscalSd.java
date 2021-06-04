@@ -793,12 +793,12 @@ public class NotaFiscalSd {
         final long divisorDaRaiz = 1000000;
         for(AutorizacaoPagamento abastecimento : autorizacoesPagamento) {
             if(abastecimento.getParametroNotaFiscal() == null){
-                final Long cnpjValidacao = abastecimento.getFrota().getCnpj()/divisorDaRaiz;
+                final Long cnpjRaizValidacao = abastecimento.getFrota().getCnpj()/divisorDaRaiz;
                 documentos.forEach(nota -> {
                     Long destCnpj = notaFiscalParserSd.getLong(nota, ConstantesNotaFiscalParser.DEST_CNPJ)/divisorDaRaiz;
-                    boolean destinoConfiguradoIgualDestinoNFe = cnpjValidacao.equals(destCnpj);
+                    boolean destinoConfiguradoIgualDestinoNFe = cnpjRaizValidacao.equals(destCnpj);
                     if(!destinoConfiguradoIgualDestinoNFe){
-                        this.addErroValidacao(validacoesNotas, nota, Erro.NOTA_FISCAL_UPLOAD_CNPJ_DESTINATARIO_INVALIDO, cnpjValidacao.toString());
+                        this.addErroValidacao(validacoesNotas, nota, Erro.NOTA_FISCAL_UPLOAD_CNPJ_DESTINATARIO_INVALIDO, abastecimento.getFrota().getCnpj().toString());
                     }
                 });
             } else {
