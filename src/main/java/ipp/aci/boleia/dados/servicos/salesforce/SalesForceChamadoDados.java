@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
@@ -52,6 +53,7 @@ import static java.util.stream.Collectors.joining;
  * Respositorio para abertura de chamados Salesforce
  */
 @Repository
+@Scope("prototype")
 public class SalesForceChamadoDados extends AcessoSalesForceBase implements IChamadoDados {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SalesForceChamadoDados.class);
