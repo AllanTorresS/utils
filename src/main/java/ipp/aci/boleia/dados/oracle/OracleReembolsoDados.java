@@ -1,10 +1,12 @@
 package ipp.aci.boleia.dados.oracle;
 
 import ipp.aci.boleia.dados.IReembolsoDados;
+import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.Reembolso;
 import ipp.aci.boleia.dominio.enums.StatusIntegracaoJde;
 import ipp.aci.boleia.dominio.enums.StatusIntegracaoReembolsoJde;
 import ipp.aci.boleia.dominio.enums.StatusLiberacaoReembolsoJde;
+import ipp.aci.boleia.dominio.enums.StatusNotaFiscal;
 import ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso;
 import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
@@ -36,6 +38,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -80,12 +83,25 @@ public class OracleReembolsoDados extends OracleRepositorioBoleiaDados<Reembolso
                     "fp.pontoVenda.id IN :idsPvs " +
                     "ORDER BY r.dataVencimentoPgto ASC";
 
-    /**
-     * Instancia o repositorio
-     */
-    public OracleReembolsoDados() {
-        super(Reembolso.class);
-    }
+	private static final String CONSULTA_DATAS_VENCIMENTO_PARCEIRO_XP =
+			"SELECT r " +
+			"FROM TransacaoConsolidada tc " +
+			"JOIN tc.frotaPtov fp " +
+			"JOIN tc.reembolso r " +
+			"WHERE tc.possuiAntecipacaoRealizada is false " +
+			"AND tc.statusNotaFiscal = " + StatusNotaFiscal.EMITIDA.getValue() +
+			" AND (tc.valorFaturamento <> 0 OR tc.valorReembolso <> 0 OR tc.valorTotalNotaFiscal <> 0 OR tc.quantidadeAbastecimentos <> 0) " +
+			"AND (%s) " +
+			"AND (r is null OR (r is not null AND " +
+			"r.status = " + StatusPagamentoReembolso.EM_ABERTO.getValue() + "))" +
+			" ORDER BY r.dataVencimentoPgto ASC";
+
+	/**
+	 * Instancia o repositorio
+	 */
+	public OracleReembolsoDados() {
+		super(Reembolso.class);
+	}
 
     @Override
     public ResultadoPaginado<Reembolso> pesquisar(FiltroPesquisaReembolsoVo filtro) {
@@ -247,4 +263,22 @@ public class OracleReembolsoDados extends OracleRepositorioBoleiaDados<Reembolso
         }
         return null;
     }
+
+	@Override
+	public List<Date> obterDatasVencimentoDisponiveisAntecipacao(Long idPv) {
+		String consulta = CONSULTA_DATAS_VENCIMENTO_PARCEIRO_XP;
+		List<ParametroPesquisa> parametros = new ArrayList<>();
+		if(idPv != null) {
+			consulta = String.format(consulta, ":idPv = fp.pontoVenda.id");
+			parametros.add(new ParametroPesquisaIgual("idPv", idPv));
+		} else {
+			consulta = String.format(consulta, "fp.pontoVenda.id IN :idPvs");
+			List<PontoDeVenda> pontosDeVenda = ambiente.getUsuarioLogado().getPontosDeVenda();
+			parametros.add(new ParametroPesquisaIn("idPvs", pontosDeVenda.stream().map(PontoDeVenda::getId).collect(Collectors.toList())));
+		}
+		List<Reembolso> reembolsos = pesquisar(null, consulta,
+				parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+		List<Date> datasVencimento = reembolsos.stream().map(Reembolso::getDataVencimentoPgto).collect(Collectors.toList());
+		return new ArrayList<>(new LinkedHashSet<>(datasVencimento));
+	}
 }
