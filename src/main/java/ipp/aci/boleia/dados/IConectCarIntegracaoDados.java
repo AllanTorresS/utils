@@ -1,6 +1,7 @@
 package ipp.aci.boleia.dados;
 
 import ipp.aci.boleia.dominio.vo.conectcar.AtivacaoLoteIntegracaoVo;
+import ipp.aci.boleia.dominio.vo.conectcar.AtivacaoTagIntegracaoVo;
 import ipp.aci.boleia.dominio.vo.conectcar.ConectCarBloquearContratoRequestVo;
 import ipp.aci.boleia.dominio.vo.conectcar.ConectCarBloqueioResponseVo;
 import ipp.aci.boleia.dominio.vo.conectcar.ConectCarConsultaPedidoTagResponseVo;
@@ -17,7 +18,7 @@ import ipp.aci.boleia.util.excecao.ExcecaoValidacao;
 public interface IConectCarIntegracaoDados {
 	
 	boolean bloquearTag(TagDadosIntegracaoVo corpo) throws ExcecaoValidacao;
-	boolean desbloquearTag(TagDadosIntegracaoVo corpo) throws ExcecaoValidacao;
+	boolean desbloquearTag(AtivacaoTagIntegracaoVo corpo) throws ExcecaoValidacao;
 	boolean desvincularTag(TagDadosIntegracaoVo corpo) throws ExcecaoValidacao;
 	ConectCarBloqueioResponseVo ativarEmLote(AtivacaoLoteIntegracaoVo corpo) throws ExcecaoValidacao;	
 	ConectCarPedidoResponseVo criarPedidoEntrega(ConectcarCriarPedidoEntregaVo corpo) throws ExcecaoValidacao;
