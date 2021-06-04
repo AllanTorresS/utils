@@ -57,7 +57,7 @@ public class ConectCarDados extends AcessoSalesForceBase implements ILeadConectC
 		prepararRequisicao(this.consultarAccount.replace(CNPJ_URL, solicitacao.getCnpj()), solicitacao);
 		LOGGER.info("ConectCarDados.enviarLead.endpointUrl: " + this.endpointUrl);
 		LOGGER.info("ConectCarDados.enviarLead.authorizationHeaders: " + this.authorizationHeaders);
-		SolicitacaoLeadExtVo solicitacaoRetorno = enviarRequisicaoGet(this::tratarConsultaAccount);
+		SolicitacaoLeadExtVo solicitacaoRetorno = restDados.doGet(this.endpointUrl, this.authorizationHeaders, this::tratarConsultaAccount);
 		String id = solicitacaoRetorno.getId();
 		
 		if (id == null) {
@@ -70,7 +70,7 @@ public class ConectCarDados extends AcessoSalesForceBase implements ILeadConectC
 		solicitacao.setStageName(CAMPO_STAGE_NAME);
 		solicitacao.setGastoMensal(solicitacao.getGastoMensal().replace(".", "").replace(",", "."));
 		prepararRequisicao(this.oportunidadeCriarUrl, solicitacao);
-		boolean enviadoSucesso = enviarRequisicaoPost(this::tratarEnviarLead);
+		boolean enviadoSucesso = restDados.doPostJson(this.endpointUrl, solicitacao, this.authorizationHeaders, this::tratarEnviarLead);
 		if (!enviadoSucesso) {
 			LOGGER.error(this.mensagem);
 			throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("servico.conectcar.erro.envio.oportunidade"));
