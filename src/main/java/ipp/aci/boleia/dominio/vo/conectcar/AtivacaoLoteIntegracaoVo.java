@@ -31,14 +31,17 @@ public class AtivacaoLoteIntegracaoVo {
 		
 		for (TagConectcar tag : listaConectCar) {
 			String[] servicosBloqueio = null;
+			boolean bloquear = false;
 			if(TipoUtilizacao.ESTACIONAMENTO.getValue().equals(tag.getTipoUtilizacao())) {
+				bloquear = true;
 				servicosBloqueio = new String[1];
 				servicosBloqueio[0] = TipoUtilizacao.PEDAGIO.name();
 			} else if(TipoUtilizacao.PEDAGIO.getValue().equals(tag.getTipoUtilizacao())) {
+				bloquear = true;
 				servicosBloqueio = new String[1];
 				servicosBloqueio[0] = TipoUtilizacao.ESTACIONAMENTO.name();
 			}
-			adesivos.add(new AdesivosIntegracaoVo(false, servicosBloqueio, tag.getId(), new VeiculoIntegracaoVo(tag.getPlaca())));
+			adesivos.add(new AdesivosIntegracaoVo(bloquear, servicosBloqueio, tag.getId(), new VeiculoIntegracaoVo(tag.getPlaca())));
 		}
 		
 	}
