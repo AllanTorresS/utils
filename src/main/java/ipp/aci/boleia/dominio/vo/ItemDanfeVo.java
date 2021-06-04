@@ -22,6 +22,8 @@ public class ItemDanfeVo {
     private String alqIcms;
     private String alqIpi;
 
+    private String infAdProd;
+
     /**
      * Construtor default.
      */
@@ -148,4 +150,8 @@ public class ItemDanfeVo {
     public void setAlqIpi(String alqIpi) {
         this.alqIpi = alqIpi;
     }
+
+    public String getInfAdProd() { return infAdProd; }
+
+    public void setInfAdProd(String infAdProd) { this.infAdProd = infAdProd; }
 }
