@@ -18,6 +18,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.persistence.OneToOne;
@@ -91,10 +93,12 @@ public class Rota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @JoinColumn(name = "CD_TIPO_COMBUSTIVEL")
     private TipoCombustivel tipoCombustivel;
 
-    @Column(name = "DT_CRIACAO")
+    @Column(name = "DT_CRIACAO", insertable = false, updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date dataCriacao;
 
-    @Column(name = "DT_ATUALIZACAO")
+    @Column(name = "DT_ATUALIZACAO", insertable = false, updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date dataAtualizacao;
 
     @Transient
