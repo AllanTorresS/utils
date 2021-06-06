@@ -14,8 +14,7 @@ public class FiltroPesquisaRotaPontoVendaServicosVo {
     private List<Integer> parametrosDeUso;
     private List<Long> postosParametizados;
     private List<EntidadeVo> tiposCombustivel;
-    private List<EnumVo> opcoesPrimarias;
-    private List<EnumVo> opcoesSecundarias;
+    private List<PontoRotaPostoPesquisaVo> pontosRotaPostoPesquisa;
     private List<List<CoordenadaVo>> filtrosCoordenadas;
     private BigDecimal margemGrausFiltroCoordenadas;
 
@@ -64,14 +63,6 @@ public class FiltroPesquisaRotaPontoVendaServicosVo {
 
     public void setTiposCombustivel(List<EntidadeVo> tiposCombustivel) { this.tiposCombustivel = tiposCombustivel; }
 
-    public List<EnumVo> getOpcoesPrimarias() { return opcoesPrimarias; }
-
-    public void setOpcoesPrimarias(List<EnumVo> opcoesPrimarias) { this.opcoesPrimarias = opcoesPrimarias; }
-
-    public List<EnumVo> getOpcoesSecundarias() { return opcoesSecundarias; }
-
-    public void setOpcoesSecundarias(List<EnumVo> opcoesSecundarias) { this.opcoesSecundarias = opcoesSecundarias; }
-
     public List<List<CoordenadaVo>> getFiltrosCoordenadas() {
         return filtrosCoordenadas;
     }
@@ -86,5 +77,13 @@ public class FiltroPesquisaRotaPontoVendaServicosVo {
 
     public void setMargemGrausFiltroCoordenadas(BigDecimal margemGrausFiltroCoordenadas) {
         this.margemGrausFiltroCoordenadas = margemGrausFiltroCoordenadas;
+    }
+
+    public List<PontoRotaPostoPesquisaVo> getPontosRotaPostoPesquisa() {
+        return pontosRotaPostoPesquisa;
+    }
+
+    public void setPontosRotaPostoPesquisa(List<PontoRotaPostoPesquisaVo> pontosRotaPostoPesquisa) {
+        this.pontosRotaPostoPesquisa = pontosRotaPostoPesquisa;
     }
 }

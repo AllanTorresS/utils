@@ -18,6 +18,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.persistence.OneToOne;
@@ -27,6 +29,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -89,6 +92,14 @@ public class Rota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @OneToOne
     @JoinColumn(name = "CD_TIPO_COMBUSTIVEL")
     private TipoCombustivel tipoCombustivel;
+
+    @Column(name = "DT_CRIACAO", insertable = false, updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataCriacao;
+
+    @Column(name = "DT_ATUALIZACAO", insertable = false, updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataAtualizacao;
 
     @Transient
     private Long quantidadePostos;
@@ -268,5 +279,21 @@ public class Rota implements IPersistente, IExclusaoLogica, IPertenceFrota {
 
     public void setMediaConsumo(BigDecimal mediaConsumo) {
         this.mediaConsumo = mediaConsumo;
+    }
+
+    public Date getDataCriacao() {
+        return dataCriacao;
+    }
+
+    public void setDataCriacao(Date dataCriacao) {
+        this.dataCriacao = dataCriacao;
+    }
+
+    public Date getDataAtualizacao() {
+        return dataAtualizacao;
+    }
+
+    public void setDataAtualizacao(Date dataAtualizacao) {
+        this.dataAtualizacao = dataAtualizacao;
     }
 }
