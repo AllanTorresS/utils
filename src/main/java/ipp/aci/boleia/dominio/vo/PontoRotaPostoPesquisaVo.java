@@ -1,7 +1,7 @@
 package ipp.aci.boleia.dominio.vo;
 
 /**
- * VO usado para obter pontos de rotas calculadas
+ * VO usado para pesquisar postos presentes numa rota
  */
 public class PontoRotaPostoPesquisaVo {
 
