@@ -24,6 +24,7 @@ public final class ConstantesNotaFiscalParser {
     public static final String FINALIDADE                   = "/nfeProc/NFe/infNFe/ide/finNFe/text()";
     public static final String INDICADOR_FINAL              = "/nfeProc/NFe/infNFe/ide/indFinal/text()";
     public static final String JUSTIFICATIVA                = "/nfeProc/NFe/infNFe/ide/xJust/text()";
+    public static final String MODELO                       = "/nfeProc/NFe/infNFe/ide/mod/text()";
 
     public static final String EMIT_RAZAO_SOCIAL            = "/nfeProc/NFe/infNFe/emit/xNome/text()";
     public static final String EMIT_CNPJ           		    = "/nfeProc/NFe/infNFe/emit/CNPJ/text()";
@@ -74,7 +75,7 @@ public final class ConstantesNotaFiscalParser {
     public static final String ITEM_VALOR_UNITARIO           = "prod/vUnCom/text()";
     public static final String ITEM_VALOR_LIQUIDO            = "prod/vProd/text()";
     public static final String ITEM_DESCONTO                 = "prod/vDesc/text()";
-    public static final String ITEM_INFO_ADICIONAIS          = "/nfeProc/NFe/infNFe/det/infAdProd/text()";
+    public static final String ITEM_INFO_ADICIONAIS          = "infAdProd/text()";
 
     public static final String TRANSP_NOME                   = "/nfeProc/NFe/infNFe/transp/transporta/xNome/text()";
     public static final String TRANSP_CPF                    = "/nfeProc/NFe/infNFe/transp/transporta/CPF/text()";

@@ -30,6 +30,8 @@ public class AvisoDebitoConectcarVo {
     private List<DetalheTransacaoConectcarVo> detalhes;
     private String valorDescontoAbastecimentos;
     private String valorAbastecimentosTotalComDesconto;
+    private String valorMensalidade;
+    private String valorTransacoes;
 
     public String getEmitente() {
         return emitente;
@@ -206,4 +208,12 @@ public class AvisoDebitoConectcarVo {
     public void setValorDevido(String valorDevido) {
         this.valorDevido = valorDevido;
     }
+
+    public String getValorMensalidade() { return valorMensalidade; }
+
+    public void setValorMensalidade(String valorMensalidade) { this.valorMensalidade = valorMensalidade; }
+
+    public String getValorTransacoes() { return valorTransacoes; }
+
+    public void setValorTransacoes(String valorTransacoes) { this.valorTransacoes = valorTransacoes; }
 }
