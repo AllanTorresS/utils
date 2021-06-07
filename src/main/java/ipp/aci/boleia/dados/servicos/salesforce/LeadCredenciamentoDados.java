@@ -54,7 +54,7 @@ public class LeadCredenciamentoDados extends AcessoSalesForceBase implements ILe
 			throw new ExcecaoValidacao(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("credenciamento.servico.criarLead.existente"));
     	}
     	prepararRequisicao(this.criarAlterarLeadUrl.replace(CNPJ_URL, cnpj), corpo);
-		String leadId = restDados.doPatchJson(this.endpointUrl, corpo, this.authorizationHeaders, this::tratarCriarLead);
+		String leadId = enviarRequisicaoPatch(this::tratarCriarLead);
 		if (leadId == null) {
 			LOGGER.error(this.mensagem);
 			throw new ExcecaoBoleiaRuntime(Erro.ERRO_INTEGRACAO, this.mensagem);
@@ -68,7 +68,7 @@ public class LeadCredenciamentoDados extends AcessoSalesForceBase implements ILe
 			throw new ExcecaoValidacao(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("credenciamento.servico.atualizarLead.inexistente"));
     	}
 		prepararRequisicao(this.criarAlterarLeadUrl.replace(CNPJ_URL, cnpj), corpo);
-		boolean leadAtualizado = restDados.doPatchJson(this.endpointUrl, corpo, this.authorizationHeaders, this::tratarAtualizacaoLead);
+		boolean leadAtualizado = enviarRequisicaoPatch(this::tratarAtualizacaoLead);
 		if (!leadAtualizado) {
 			LOGGER.error(this.mensagem);
 			throw new ExcecaoBoleiaRuntime(Erro.ERRO_INTEGRACAO, this.mensagem);
@@ -78,7 +78,7 @@ public class LeadCredenciamentoDados extends AcessoSalesForceBase implements ILe
 	@Override
 	public void anexarLead(Object corpo) {
 		prepararRequisicao(this.anexarLeadUrl, corpo);
-		boolean anexado = restDados.doPostJson(this.endpointUrl, corpo, this.authorizationHeaders, this::tratarAnexarLead);
+		boolean anexado = enviarRequisicaoPost(this::tratarAnexarLead);
 		if (!anexado) {
 			LOGGER.error(this.mensagem);
 			throw new ExcecaoBoleiaRuntime(Erro.ERRO_INTEGRACAO, this.mensagem);
@@ -88,7 +88,7 @@ public class LeadCredenciamentoDados extends AcessoSalesForceBase implements ILe
 	@Override
 	public LeadCredenciamentoPostoIntegradorVo consultarPostoLead(String cnpj) throws ExcecaoValidacao {
 		prepararRequisicao(this.consultarLeadUrl.replace(ATRIBUTOS_URL, CAMPO_PAGINA+","+ATRIBUTOS_CONSULTA_POSTO).replace(CNPJ_URL, cnpj), null);
-		LeadCredenciamentoPostoIntegradorVo postoLeadVo = restDados.doGet(this.endpointUrl, this.authorizationHeaders, this::tratarConsultaPostoLead);
+		LeadCredenciamentoPostoIntegradorVo postoLeadVo = enviarRequisicaoGet(this::tratarConsultaPostoLead);
 		if (postoLeadVo == null) {
 			LOGGER.error(this.mensagem);
 			throw new ExcecaoBoleiaRuntime(Erro.ERRO_INTEGRACAO, this.mensagem);
@@ -102,7 +102,7 @@ public class LeadCredenciamentoDados extends AcessoSalesForceBase implements ILe
 	@Override
 	public LeadCredenciamentoFrotaIntegradorVo consultarFrotaLead(String cnpj, EtapaCredenciamentoFrota etapa) throws ExcecaoValidacao {
 		prepararRequisicao(montaConsultaFrota(cnpj, etapa), null);
-		LeadCredenciamentoFrotaIntegradorVo frotaLeadVo = restDados.doGet(this.endpointUrl, this.authorizationHeaders, this::tratarConsultaFrotaLead);
+		LeadCredenciamentoFrotaIntegradorVo frotaLeadVo = enviarRequisicaoGet(this::tratarConsultaFrotaLead);
 		if (frotaLeadVo == null) {
 			LOGGER.error(this.mensagem);
 			throw new ExcecaoBoleiaRuntime(Erro.ERRO_INTEGRACAO, this.mensagem);
@@ -147,7 +147,7 @@ public class LeadCredenciamentoDados extends AcessoSalesForceBase implements ILe
 	@Override
 	public Boolean validarLeadExistente(String cnpj) {
 		prepararRequisicao(this.consultarLeadUrl.replace(ATRIBUTOS_URL, CAMPO_CNPJ).replace(CNPJ_URL, cnpj), null);
-		return restDados.doGet(this.endpointUrl, this.authorizationHeaders, this::tratarValidarExistenciaLead);
+		return enviarRequisicaoGet(this::tratarValidarExistenciaLead);
 	}
 
 	
