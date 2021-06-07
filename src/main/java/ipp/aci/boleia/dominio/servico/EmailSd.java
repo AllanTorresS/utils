@@ -35,8 +35,8 @@ import ipp.aci.boleia.dominio.enums.TipoItemAutorizacaoPagamento;
 import ipp.aci.boleia.dominio.enums.TipoPerfilUsuario;
 import ipp.aci.boleia.dominio.enums.TipoToken;
 import ipp.aci.boleia.dominio.enums.TipoTransacaoConectcar;
-import ipp.aci.boleia.dominio.vo.EdicaoAbastecimentoVo;
 import ipp.aci.boleia.dominio.vo.AtualizarExigenciaNfeErroVo;
+import ipp.aci.boleia.dominio.vo.EdicaoAbastecimentoVo;
 import ipp.aci.boleia.dominio.vo.TokenVo;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
 import ipp.aci.boleia.util.UtilitarioFormatacaoData;
@@ -51,6 +51,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import javax.mail.util.ByteArrayDataSource;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -875,5 +876,59 @@ public class EmailSd {
             emailDados.enviarEmail(assunto, corpo.toString(), Collections.singletonList(emailSuporte));
 		}
 	}
+
+    /**
+     * Envia um email para o responsável e para os usuários responsáveis da frota
+     * avisando sobre as cobranças atrasadas, com o boleto em anexo
+     * @param cobranca a cobrança que é referenciada no email
+     * @param anexoBytes o arquivo a ser anexado ao email
+     */
+    public void enviarEmailCobrancaAtrasadaFrota(Cobranca cobranca, byte[] anexoBytes) {
+        enviarEmailCobrancaAtrasadaFrota(cobranca, anexoBytes,
+                cobranca.getFrota().getNomeResponsavelFrota(), cobranca.getFrota().getEmailResponsavelFrota());
+        for (Usuario usuario: repositorio.obterGestorPorFrota(cobranca.getFrota().getId())) {
+            String emailDestinatario = usuario.getEmail();
+            if (StringUtils.isNotBlank(emailDestinatario) && !emailDestinatario.equals(cobranca.getFrota().getEmailResponsavelFrota())) {
+                enviarEmailCobrancaAtrasadaFrota(cobranca, anexoBytes, usuario.getNome(), usuario.getEmail());
+            }
+        }
+    }
+
+    /**
+     * Envia e-mail sobre cobranças vencidas para a frota
+     * @param cobranca A cobrança em questão
+     * @param anexoBytes O PDF do boleto para anexo
+     * @param nomeDestinatario O nome do destinatário do e-mail
+     * @param emailDestinatario O e-mail do destinatário
+     */
+    private void enviarEmailCobrancaAtrasadaFrota(Cobranca cobranca, byte[] anexoBytes, String nomeDestinatario, String emailDestinatario) {
+        String assunto = mensagens.obterMensagem("frota.cobranca.debitovencido.email.assunto");
+        ByteArrayDataSource anexo = null;
+        String nomeAnexo = null;
+        String valorTotal = UtilitarioFormatacao.formatarDecimalMoedaReal(cobranca.getValorTotal().setScale(2, BigDecimal.ROUND_HALF_UP));
+        String informacaoCiclo = UtilitarioFormatacaoData.formatarDataPeriodoMes(cobranca.getDataInicioPeriodo(), cobranca.getDataFimPeriodo());
+        Date dataVencimento = cobranca.getDataVencimentoPagto();
+        String corpo;
+
+        if (dataVencimento != null) {
+            corpo = mensagens.obterMensagem("frota.cobranca.debitovencido.email.corpo.sucesso",
+                    nomeDestinatario, informacaoCiclo, valorTotal,
+                    UtilitarioFormatacaoData.formatarDataCurta(dataVencimento),
+                    utilitarioAmbiente.getURLContextoAplicacao(),
+                    UtilitarioFormatacaoData.formatarDataCurtaHifen(cobranca.getDataInicioPeriodo()),
+                    UtilitarioFormatacaoData.formatarDataCurtaHifen(cobranca.getDataFimPeriodo()));
+
+            anexo = new ByteArrayDataSource(anexoBytes, APPLICATION_TYPE_PDF);
+            nomeAnexo = mensagens.obterMensagem("frota.cobranca.debitovencido.email.anexo", UtilitarioFormatacaoData.formatarDataCurtaHifen(dataVencimento));
+        } else {
+            corpo = mensagens.obterMensagem("frota.cobranca.debitovencido.email.corpo.falha",
+                    nomeDestinatario, informacaoCiclo, valorTotal,
+                    utilitarioAmbiente.getURLContextoAplicacao(),
+                    UtilitarioFormatacaoData.formatarDataCurtaHifen(cobranca.getDataInicioPeriodo()),
+                    UtilitarioFormatacaoData.formatarDataCurtaHifen(cobranca.getDataFimPeriodo()));
+        }
+
+        emailDados.enviarEmail(assunto, corpo, Collections.singletonList(emailDestinatario), anexo, nomeAnexo);
+    }
 
 }

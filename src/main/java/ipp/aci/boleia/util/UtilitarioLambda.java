@@ -136,6 +136,16 @@ public final class UtilitarioLambda {
     }
 
     /**
+     * Obtém o último elemento de uma lista ordenada
+     * @param lista A lista ordenada
+     * @param <T> O tipo da lista
+     * @return O último elemento da lista
+     */
+    public static <T> T obterUltimoElementoListaOrdenada(List<T> lista) {
+        return lista.stream().reduce((first, second) -> second).orElse(null);
+    }
+
+    /**
      * Gera predicado para filtrar uma lista removendo duplicatas de acordo com uma propriedade do objeto
      * @param extratorChave a chave a ser utilizada para buscar duplicatas
      * @param <T> O tipo do objeto

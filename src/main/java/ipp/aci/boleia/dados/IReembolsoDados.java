@@ -68,4 +68,12 @@ public interface IReembolsoDados extends IReembolsoBaseDados<Reembolso> {
      * @return lista de reembolsos encontrada.
      */
     List<Reembolso> pesquisarPorPvEData(Long pv, Date de, Date ate);
+
+    /**
+     * Obtém o próximo reembolso a ser feito para a revenda(data do próximo pagamento).
+     *
+     * @param idsPontoVenda Identificadores dos pontos de vendas utilizados na busca
+     * @return O próximo reembolso a ser feito para revenda.
+     */
+    Reembolso obterProximoReembolsoParaPagamento(List<Long> idsPontoVenda);
 }

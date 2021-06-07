@@ -209,4 +209,10 @@ public interface IFrotaDados extends IRepositorioBoleiaDados<Frota> {
      * @return lista das frotas que atendem aos criterios de busca
      */
     List<Frota> pesquisarFrotasParaDetalheCiclo(FiltroPesquisaDetalheCicloVo filtro, Usuario usuarioLogado);
+
+    /**
+     * Busca frotas com mais de um motivo de alteração vigentes
+     * @return As frotas encontradas
+     */
+    List<Frota> buscarFrotasComMultiplosMotivosAlteracaoVigentes();
 }
