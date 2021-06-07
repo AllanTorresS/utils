@@ -2,7 +2,6 @@ package ipp.aci.boleia.dados.servicos.salesforce;
 
 import ipp.aci.boleia.dados.IChamadoDados;
 import ipp.aci.boleia.dados.IChamadoSistemaDados;
-import ipp.aci.boleia.dados.IClienteHttpDados;
 import ipp.aci.boleia.dados.IMotivoChamadoDados;
 import ipp.aci.boleia.dados.servicos.rest.ConsumidorHttp;
 import ipp.aci.boleia.dominio.ChamadoSistema;
@@ -131,9 +130,6 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     private String urlListarPicklists;
 
     @Autowired
-    private IClienteHttpDados restDados;
-
-    @Autowired
     private IMotivoChamadoDados motivoChamadoDados;
 
     @Autowired
@@ -169,8 +165,8 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
 
     @Override
     public void criarChamado(CriacaoChamadoVo chamadoVo) throws ExcecaoBoleiaRuntime {
-        autenticarSalesforce();
-        restDados.doPostJson(this.instanceUrl.concat(this.urlCriacao), chamadoVo, this.authorizationHeaders, this::trataRespostaCriacao);
+        prepararRequisicao(urlCriacao, chamadoVo);
+        enviarRequisicaoPost(this::trataRespostaCriacao);
     }
 
     @Override
@@ -277,7 +273,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
         String urlPicklists = MessageFormat.format(this.urlListarPicklists, ConstantesSalesForce.RECORD_TYPE_ID, nomeCampo);
         prepararRequisicao(urlPicklists, null);
 
-        return restDados.doGet(this.endpointUrl, this.authorizationHeaders, consumidorHttp);
+        return enviarRequisicaoGet(consumidorHttp);
     }
 
     public void setEndereco(String endereco) {
@@ -330,8 +326,8 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
 
         String endpointConsulta = this.instanceUrl.concat(format(this.urlConsulta, queryConsulta));
         String endpointCount = this.instanceUrl.concat(format(this.urlConsulta, queryCount));
-        ConsultaChamadosVo consultaChamadosVo = restDados.doGet(endpointConsulta, this.authorizationHeaders, this::tratarRespostaConsultaChamados);
-        Integer totalItems = restDados.doGet(endpointCount, this.authorizationHeaders, this::tratarRespostaCountChamados);
+        ConsultaChamadosVo consultaChamadosVo = enviarRequisicaoGet(endpointConsulta, this::tratarRespostaConsultaChamados);
+        Integer totalItems = enviarRequisicaoGet(endpointCount, this::tratarRespostaCountChamados);
 
         ResultadoPaginado<ChamadoVo> resultadoPaginado = new ResultadoPaginado<>();
         resultadoPaginado.setTotalItems(totalItems);
@@ -349,7 +345,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
         prepararRequisicao(urlConsulta, null);
 
         String endpointConsulta = this.instanceUrl.concat(format(this.urlConsulta, queryConsulta));
-        ConsultaChamadosVo consultaChamadosVo = restDados.doGet(endpointConsulta, this.authorizationHeaders, this::tratarRespostaConsultaChamados);
+        ConsultaChamadosVo consultaChamadosVo = enviarRequisicaoGet(endpointConsulta, this::tratarRespostaConsultaChamados);
         return consultaChamadosVo.getChamados() != null ? consultaChamadosVo.getChamados() : new ArrayList<>();
     }
 
