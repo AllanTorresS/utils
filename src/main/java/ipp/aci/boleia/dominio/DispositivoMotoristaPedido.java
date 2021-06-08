@@ -71,7 +71,6 @@ public class DispositivoMotoristaPedido implements IPersistente, IPertenceFrota,
     @JoinColumn(name = "CD_VEICULO")
     private Veiculo veiculo;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_TIPO_COMBUSTIVEL")
     private TipoCombustivel tipoCombustivel;
