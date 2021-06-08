@@ -77,10 +77,4 @@ public interface IReembolsoDados extends IReembolsoBaseDados<Reembolso> {
      */
     Reembolso obterProximoReembolsoParaPagamento(List<Long> idsPontoVenda);
 
-    /**
-     * Busca uma lista de datas de vencimento disponíveis para antecipação
-     * @param idPv id do ponto de venda
-     * @return a lista com as datas de vencimento
-     */
-    List<Date> obterDatasVencimentoDisponiveisAntecipacao(Long idPv);
 }
