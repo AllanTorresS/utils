@@ -80,12 +80,12 @@ public class OracleReembolsoDados extends OracleRepositorioBoleiaDados<Reembolso
                     "fp.pontoVenda.id IN :idsPvs " +
                     "ORDER BY r.dataVencimentoPgto ASC";
 
-    /**
-     * Instancia o repositorio
-     */
-    public OracleReembolsoDados() {
-        super(Reembolso.class);
-    }
+	/**
+	 * Instancia o repositorio
+	 */
+	public OracleReembolsoDados() {
+		super(Reembolso.class);
+	}
 
     @Override
     public ResultadoPaginado<Reembolso> pesquisar(FiltroPesquisaReembolsoVo filtro) {
@@ -237,14 +237,15 @@ public class OracleReembolsoDados extends OracleRepositorioBoleiaDados<Reembolso
         return pesquisar((ParametroOrdenacaoColuna) null, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
-    @Override
-    public Reembolso obterProximoReembolsoParaPagamento(List<Long> idsPontoVenda) {
-        List<ParametroPesquisa> parametros = new ArrayList<>();
-        parametros.add(new ParametroPesquisaIn("idsPvs", idsPontoVenda.stream().collect(Collectors.toList())));
-        List<Reembolso> reembolsos = pesquisar(null, CONSULTA_PROXIMO_REEMBOLSO_A_SER_PAGO, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
-        if(reembolsos != null && !reembolsos.isEmpty()){
-            return reembolsos.get(0);
-        }
-        return null;
-    }
+	@Override
+	public Reembolso obterProximoReembolsoParaPagamento(List<Long> idsPontoVenda) {
+		List<ParametroPesquisa> parametros = new ArrayList<>();
+		parametros.add(new ParametroPesquisaIn("idsPvs", idsPontoVenda.stream().collect(Collectors.toList())));
+		List<Reembolso> reembolsos = pesquisar(null, CONSULTA_PROXIMO_REEMBOLSO_A_SER_PAGO, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+		if(reembolsos != null && !reembolsos.isEmpty()){
+			return reembolsos.get(0);
+		}
+		return null;
+	}
+
 }
