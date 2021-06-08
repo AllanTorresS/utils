@@ -28,6 +28,14 @@ public class ChamadoVo {
     private String sistemaOrigem;
     @JsonProperty("Type")
     private String tipoChamado;
+    @JsonProperty("Priority")
+    private String prioridade;
+    @JsonProperty("MotivoSolicitacao__c")
+    private String modulo;
+    @JsonProperty("Subject")
+    private String assunto;
+    @JsonProperty("Description")
+    private String descricao;
 
     /**
      * Construtor default
@@ -114,5 +122,37 @@ public class ChamadoVo {
 
     public void setTipoChamado(String tipoChamado) {
         this.tipoChamado = tipoChamado;
+    }
+
+    public String getPrioridade() {
+        return prioridade;
+    }
+
+    public void setPrioridade(String prioridade) {
+        this.prioridade = prioridade;
+    }
+
+    public String getModulo() {
+        return modulo;
+    }
+
+    public void setModulo(String modulo) {
+        this.modulo = modulo;
+    }
+
+    public String getAssunto() {
+        return assunto;
+    }
+
+    public void setAssunto(String assunto) {
+        this.assunto = assunto;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
     }
 }

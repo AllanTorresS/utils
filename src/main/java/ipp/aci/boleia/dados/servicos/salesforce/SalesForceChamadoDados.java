@@ -71,6 +71,12 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
                     CLAUSULA_CONTATO_REVENDA +
                     CLAUSULA_DATA_ABERTURA;
 
+    private static final String OBTER_CHAMADO_POR_ID =
+            "SELECT Id,CreatedDate,CNPJPosto__c,CNPJFrota__c,Solicitante__c,CaseNumber,Status," +
+            "       Priority,Type,ClassificacaoPerfil__c,Motivo__c,MotivoSolicitacao__c,Subject,Description " +
+            "FROM Case " +
+            "WHERE Id=':idSalesforce'";
+
     private static final String CONSULTAR_CHAMADOS =
             "SELECT Id,CaseNumber,CreatedDate,CNPJPosto__c,CNPJFrota__c,Solicitante__c,Motivo__c,Status,ClassificacaoPerfil__c,Type " +
             FROM_CONSULTAR_CHAMADOS +
@@ -134,6 +140,14 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
 
     @Autowired
     private IChamadoSistemaDados chamadoSistemaDados;
+
+    @Override
+    public ChamadoVo obterPorIdSalesforce(String idSalesforce) {
+        Map<String, Object> parametros = new HashMap<>();
+        parametros.put("idSalesforce", idSalesforce);
+        List<ChamadoVo> chamados = executarQuerySalesforce(formatarQueryParaConsulta(OBTER_CHAMADO_POR_ID, parametros));
+        return chamados != null ? chamados.stream().findFirst().orElse(null) : null;
+    }
 
     @Override
     public ResultadoPaginado<ChamadoVo> consultarChamados(FiltroConsultaChamadosVo filtro) {
