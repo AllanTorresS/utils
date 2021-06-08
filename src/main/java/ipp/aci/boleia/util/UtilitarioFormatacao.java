@@ -23,7 +23,6 @@ public final class UtilitarioFormatacao {
     private static final int VALOR_FINAL_CAPTURA_DDD =3;
     private static final int VALOR_INICIO_CAPTURA_NUMERO_TELEFONE =4;
 
-
     public static final String TO_LOWER = "LOWER(%s)";
 
     public static final String REMOVER_ACENTO = "TRANSLATE( %s, " +
