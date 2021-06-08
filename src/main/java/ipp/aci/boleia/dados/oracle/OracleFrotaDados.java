@@ -15,6 +15,7 @@ import ipp.aci.boleia.dominio.enums.StatusFrotaConectcar;
 import ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso;
 import ipp.aci.boleia.dominio.enums.StatusVigenciaAlteracaoStatusFrota;
 import ipp.aci.boleia.dominio.enums.TipoAcumuloKmv;
+import ipp.aci.boleia.dominio.enums.TipoAlteracaoStatusFrota;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
@@ -114,9 +115,9 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
 
     private static final String CONSULTA_CLIENTE_PROFROTAS =
             "SELECT new ipp.aci.boleia.dominio.vo.apco.ClienteProFrotaVo(" +
-                    "f.id, f.cnpj, f.razaoSocial, f.status, MAX(m.dataInativacao)) " +
-                    "FROM MotivoInativacaoFrota AS m " +
-                    "RIGHT JOIN m.frota AS f ";
+                    "f.id, f.cnpj, f.razaoSocial, f.status, MAX(m.dataInicio)) " +
+                    "FROM MotivoAlteracaoStatusFrota AS m " +
+                    "RIGHT JOIN m.frota AS f";
 
     private static final String CONSULTA_FROTAS_ASSOCIADAS_A_CICLOS_CONTIDOS_NO_PERIODO =
             "SELECT DISTINCT f " +
@@ -571,7 +572,10 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
 
         String consulta = CONSULTA_CLIENTE_PROFROTAS;
         if(dataUltimoEnvio != null){
-            consulta += "WHERE f.dataAtualizacao IS NOT NULL  AND f.dataAtualizacao >= :dataUltimoEnvio GROUP BY f.id, f.cnpj, f.razaoSocial, f.status";
+            consulta +=
+                    " WHERE m.dataInicio IS NOT NULL AND m.tipoAlteracaoStatus = " + TipoAlteracaoStatusFrota.INATIVACAO.getValue() +
+                    " AND f.dataAtualizacao IS NOT NULL AND f.dataAtualizacao >= :dataUltimoEnvio" +
+                    " GROUP BY f.id, f.cnpj, f.razaoSocial, f.status";
             return pesquisar(null, consulta, ClienteProFrotaVo.class, new ParametroPesquisaIgual("dataUltimoEnvio", dataUltimoEnvio) ).getRegistros();
         }
         else {
