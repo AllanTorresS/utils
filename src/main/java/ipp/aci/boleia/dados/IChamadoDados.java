@@ -16,6 +16,14 @@ import java.util.List;
 public interface IChamadoDados {
 
     /**
+     * Obtém os dados de um chamado a partir do seu identificador interno do salesforce.
+     *
+     * @param idSalesforce Identificador interno do chamado no salesforce.
+     * @return Objeto com as informações do chamado.
+     */
+    ChamadoVo obterPorIdSalesforce(String idSalesforce);
+
+    /**
      * Realiza a consulta por uma lista de chamados no salesforce.
      *
      * @param filtro Filtro de pesquisa
