@@ -19,6 +19,6 @@ public class OracleConfiguracaoAntecipacaoRecebiveisDados extends OracleReposito
 
     @Override
     public ConfiguracaoAntecipacaoRecebiveis obterConfiguracaoVigente() {
-        return pesquisarUnico(null);
+        return pesquisarUnico();
     }
 }
