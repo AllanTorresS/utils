@@ -15,6 +15,7 @@ import ipp.aci.boleia.dominio.vo.salesforce.FiltroConsultaChamadosVo;
 import ipp.aci.boleia.dominio.vo.salesforce.PicklistVo;
 import ipp.aci.boleia.dominio.vo.salesforce.ValorPicklistVo;
 import ipp.aci.boleia.util.ConstantesSalesForce;
+import ipp.aci.boleia.util.UtilitarioFormatacao;
 import ipp.aci.boleia.util.UtilitarioJson;
 import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
@@ -40,6 +41,8 @@ import java.util.stream.Collectors;
 import static ipp.aci.boleia.util.ConstantesSalesForce.SOLICITANTE_FROTA;
 import static ipp.aci.boleia.util.ConstantesSalesForce.SOLICITANTE_INTERNO;
 import static ipp.aci.boleia.util.ConstantesSalesForce.SOLICITANTE_REVENDA;
+import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarCpfApresentacao;
+import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarCnpjApresentacao;
 import static ipp.aci.boleia.util.UtilitarioCalculoData.obterPrimeiroInstanteDia;
 import static ipp.aci.boleia.util.UtilitarioCalculoData.obterUltimoInstanteDia;
 import static ipp.aci.boleia.util.UtilitarioFormatacaoData.formatarDataIso8601ComTimeZoneMillis;
@@ -113,10 +116,13 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
 
     @Value("${salesforce.chamados.authorization.client.id}")
     private String clientId;
+
     @Value("${salesforce.chamados.authorization.client.secret}")
     private String clientSecret;
+
     @Value("${salesforce.chamados.authorization.username}")
     private String username;
+
     @Value("${salesforce.chamados.authorization.password}")
     private String password;
 
@@ -135,6 +141,9 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     @Value("${salesforce.chamados.listar.picklists}")
     private String urlListarPicklists;
 
+    @Value("${salesforce.chamados.cnpj.interno}")
+    private String cnpjContatoUsuarioInterno;
+
     @Autowired
     private IMotivoChamadoDados motivoChamadoDados;
 
@@ -143,9 +152,19 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
 
     @Override
     public ChamadoVo obterPorIdSalesforce(String idSalesforce) {
+        Usuario usuarioLogado = ambiente.getUsuarioLogado();
+        List<String> contatos = obterContatosPorUsuario(usuarioLogado);
         Map<String, Object> parametros = new HashMap<>();
         parametros.put("idSalesforce", idSalesforce);
-        List<ChamadoVo> chamados = executarQuerySalesforce(formatarQueryParaConsulta(OBTER_CHAMADO_POR_ID, parametros));
+        String query = OBTER_CHAMADO_POR_ID;
+        if(usuarioLogado.isFrotista() || usuarioLogado.isInterno()) {
+            parametros.put("contato", contatos.stream().findFirst().orElse(""));
+            query += CLAUSULA_CONTATO;
+        } else if(usuarioLogado.isRevendedor()) {
+            parametros.put("contato", contatos.stream().collect(joining("','", "'", "'")));
+            query += CLAUSULA_CONTATO_REVENDA;
+        }
+        List<ChamadoVo> chamados = executarQuerySalesforce(formatarQueryParaConsulta(query, parametros));
         return chamados != null ? chamados.stream().findFirst().orElse(null) : null;
     }
 
@@ -479,6 +498,29 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
             return cnpjsContato.stream().map(cnpj -> cpfContato + cnpj).collect(Collectors.toList());
         }
         return new ArrayList<>();
+    }
+
+    /**
+     * Retorna uma lista com os contatos para uma consulta de um usuário logado.
+     *
+     * @param usuario Usuário logado.
+     * @return Lista com contatos.
+     */
+    private List<String> obterContatosPorUsuario(Usuario usuario) {
+        List<String> contatos = new ArrayList<>();
+        String cpfUsuario = formatarCpfApresentacao(usuario.getCpf());
+        if(usuario.isFrotista()) {
+            contatos.add(cpfUsuario.concat(formatarCnpjApresentacao(usuario.getFrota().getCnpj())));
+        } else if(usuario.isRevendedor()) {
+            contatos.addAll(
+                usuario.getPontosDeVenda().stream()
+                    .map(pv -> cpfUsuario.concat(formatarCnpjApresentacao(pv.getCnpj())))
+                    .collect(Collectors.toList())
+            );
+        } else if(usuario.isInterno()) {
+            contatos.add(cpfUsuario.concat(cnpjContatoUsuarioInterno));
+        }
+        return contatos;
     }
 
     /**
