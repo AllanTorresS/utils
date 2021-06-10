@@ -124,10 +124,9 @@ public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<Autori
                     "a.agregadoVeiculo,             " +
                     "a.razaoSocialEmpresaVeiculo,   " +
                     "a.frota.id AS idFrota,         " +
-                    "CASE WHEN a.hodometro is NOT NULL AND MAX(a.hodometro) - MIN(a.hodometro) > 0" +
+                    "CASE WHEN MAX(a.hodometro) - MIN(a.hodometro) > 0 " +
                     "THEN (MAX(a.hodometro) - MIN(a.hodometro)) " +
-                    "ELSE CASE WHEN a.horimetro is NOT NULL AND (MAX(a.horimetro) - MIN(a.horimetro) > 0)" +
-                    "THEN (MAX(a.horimetro) - MIN(a.horimetro)"+
+                    "ELSE (MAX(a.horimetro) - MIN(a.horimetro))" +
                     "END AS mediaHorHod, " +
                     "SUM(a.totalLitrosAbastecimento) AS mediaTotalLitrosAbastecimento, " +
                     "CASE WHEN MAX(a.hodometro) - MIN(a.hodometro) > 0 " +
@@ -138,6 +137,7 @@ public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<Autori
                     "a.cnpjFrota) " +
                     "FROM AutorizacaoPagamento a " +
                     "WHERE a.status = " + StatusAutorizacao.AUTORIZADO.getValue() + " AND " +
+                    "(a.hodometro IS NOT NULL OR a.horimetro IS NOT NULL) AND "+
                     "(a.valorTotal IS NULL or a.valorTotal >= 0) AND " +
                     "(a.valorUnitarioAbastecimento IS NULL or a.valorUnitarioAbastecimento >= 0) AND " +
                     "a.dataRequisicao BETWEEN :de and :ate AND " +
