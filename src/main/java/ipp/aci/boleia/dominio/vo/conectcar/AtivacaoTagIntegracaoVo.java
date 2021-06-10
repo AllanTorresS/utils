@@ -1,5 +1,6 @@
 package ipp.aci.boleia.dominio.vo.conectcar;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import ipp.aci.boleia.dominio.enums.TipoUtilizacao;
@@ -17,6 +18,7 @@ public class AtivacaoTagIntegracaoVo {
 	private String placa;
 
 	@JsonProperty("ServicosBloqueio")
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private String[] servicosBloqueio;
 	
 	public AtivacaoTagIntegracaoVo() {
