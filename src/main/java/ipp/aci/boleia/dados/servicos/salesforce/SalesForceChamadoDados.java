@@ -203,27 +203,6 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     }
 
     @Override
-    public boolean abrirChamadoEmail(String company ,String name, String email, String phone, Long idReason, String subject, String description) {
-
-        Map<String, String> form = new LinkedHashMap<>();
-        form.put(ALIAS_ORGID, orgid);
-        form.put(ALIAS_COMPANY, limitar(company, LIMITE_DEFAULT));
-        form.put(ALIAS_NAME, limitar(name, LIMITE_DEFAULT));
-        form.put(ALIAS_EMAIL, limitar(email, LIMITE_DEFAULT));
-        form.put(ALIAS_PHONE, limitar(phone, LIMITE_PHONE));
-        form.put(ALIAS_REASON, motivoChamadoDados.obterPorId(idReason).getDescricao());
-        form.put(ALIAS_SUBJECT, limitar(subject, LIMITE_DEFAULT));
-        form.put(ALIAS_DESCRIPTION, limitar(description, LIMITE_DESCRIPTION));
-
-        try {
-            return restDados.doPostFormEncoded(endereco, form, resp -> resp.getStatusLine().getStatusCode() == 200);
-        }catch (Exception ex){
-            LOGGER.error(ex.getMessage(), ex);
-            return false;
-        }
-    }
-
-    @Override
     public List<ValorPicklistVo> listarStatusChamado() {
         return listarValoresPicklist(ConstantesSalesForce.CAMPO_STATUS, resposta -> {
             prepararResposta(resposta);
