@@ -151,6 +151,8 @@ public final  class Rotas {
     public static final String DETALHE_COBRANCA_API                  = BASE_API + "/detalheCobranca";
     public static final String DETALHE_REEMBOLSO_API                 = BASE_API + "/detalheReembolso";
 
+    public static final String RELATORIO_NOTA_FISCAL_API             = BASE_API + "/relatorioNotaFiscal";
+
     /**
      * Construtor privado, impede instanciacao e heranca
      */

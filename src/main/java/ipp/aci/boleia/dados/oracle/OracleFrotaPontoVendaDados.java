@@ -8,6 +8,7 @@ import ipp.aci.boleia.dominio.enums.StatusAtivacao;
 import ipp.aci.boleia.dominio.enums.StatusBloqueio;
 import ipp.aci.boleia.dominio.enums.StatusFrota;
 import ipp.aci.boleia.dominio.enums.StatusHabilitacaoPontoVenda;
+import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
@@ -146,8 +147,11 @@ public class OracleFrotaPontoVendaDados extends OracleRepositorioBoleiaDados<Fro
 	public List<FrotaPontoVenda> buscarPorFrota(Frota frota) {
 		List<ParametroPesquisa> parametros = new ArrayList<>();
 		parametros.add(new ParametroPesquisaDiferente("frota.id", frota.getId()));
-		return pesquisar(new ParametroOrdenacaoColuna("dataAtualizacao", Ordenacao.CRESCENTE), parametros.toArray(new ParametroPesquisa[parametros.size()]));
-
+		InformacaoPaginacao paginacao = new InformacaoPaginacao();
+		paginacao.setPagina(1);
+		paginacao.setTamanhoPagina(1);
+		paginacao.getParametrosOrdenacaoColuna().add(new ParametroOrdenacaoColuna("dataAtualizacao", Ordenacao.CRESCENTE));
+		return pesquisar(paginacao, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
 	}
 
     @Override

@@ -11,7 +11,9 @@ public enum StatusIntegracaoReembolsoJde implements IEnumComLabel<StatusIntegrac
     REALIZADO(1),
     PENDENTE(2),
     AGUARDANDO_LIBERACAO(3),
-    ERRO_LIBERACAO(4);
+    ERRO_LIBERACAO(4),
+    ANTECIPADO(5),
+    PREVISTO(6);
 
     private final Integer value;
 

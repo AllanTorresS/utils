@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Contrato para implementacao de repositorios de entidades Reembolso
  */
-public interface IReembolsoDados extends IRepositorioBoleiaDados<Reembolso> {
+public interface IReembolsoDados extends IReembolsoBaseDados<Reembolso> {
 
     /**
      * Pesquisa Reembolsos a partir do filtro informado
@@ -68,4 +68,12 @@ public interface IReembolsoDados extends IRepositorioBoleiaDados<Reembolso> {
      * @return lista de reembolsos encontrada.
      */
     List<Reembolso> pesquisarPorPvEData(Long pv, Date de, Date ate);
+
+    /**
+     * Obtém o próximo reembolso a ser feito para a revenda(data do próximo pagamento).
+     *
+     * @param idsPontoVenda Identificadores dos pontos de vendas utilizados na busca
+     * @return O próximo reembolso a ser feito para revenda.
+     */
+    Reembolso obterProximoReembolsoParaPagamento(List<Long> idsPontoVenda);
 }
