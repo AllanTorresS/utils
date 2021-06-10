@@ -50,7 +50,7 @@ public class CategoriaPermissao implements IPersistente {
     @Column(name = "NM_CATEGORIA")
     private String nome;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "categoriaPermissao")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "categoria")
     private List<Permissao> permissoes;
 
     @Version
