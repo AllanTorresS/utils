@@ -137,6 +137,7 @@ public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<Autori
                     "a.cnpjFrota) " +
                     "FROM AutorizacaoPagamento a " +
                     "WHERE a.status = " + StatusAutorizacao.AUTORIZADO.getValue() + " AND " +
+                    "(a.hodometro IS NOT NULL OR a.horimetro IS NOT NULL) AND "+
                     "(a.valorTotal IS NULL or a.valorTotal >= 0) AND " +
                     "(a.valorUnitarioAbastecimento IS NULL or a.valorUnitarioAbastecimento >= 0) AND " +
                     "a.dataRequisicao BETWEEN :de and :ate AND " +
@@ -529,7 +530,7 @@ public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<Autori
 
         InformacaoPaginacao infoPag = new InformacaoPaginacao();
 
-       return pesquisar(infoPag, String.format(QUERY_VOLUME_ABASTECIDO_POR_TIPO_COMBUSTIVEL_EM_PERIODO), VolumeAbastecidoTipoCombustivelVo.class, builder.buildArray());
+        return pesquisar(infoPag, String.format(QUERY_VOLUME_ABASTECIDO_POR_TIPO_COMBUSTIVEL_EM_PERIODO), VolumeAbastecidoTipoCombustivelVo.class, builder.buildArray());
     }
 
     /**
