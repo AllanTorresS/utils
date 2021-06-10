@@ -30,7 +30,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Representa a tabela de Perfil
+ * Representa a tabela de categoria de permissão
  */
 @Audited
 @Entity
