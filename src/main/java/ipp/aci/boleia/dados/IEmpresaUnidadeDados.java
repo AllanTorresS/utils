@@ -29,4 +29,11 @@ public interface IEmpresaUnidadeDados extends IRepositorioBoleiaDados<EmpresaUni
      * @return As Empresas/Unidades encontradas
      */
     List<EmpresaUnidadeVo> obterEmpresasUnidadesParaDetalhamentoCiclo(FiltroPesquisaEmpresaUnidadeFinanceiroVo filtro, Usuario usuarioLogado);
+
+    /**
+     * Obtém a lista de empresas/unidades de uma frota
+     * @param idFrota O id da frota
+     * @return As empresas/unidades encontradas
+     */
+    List<EmpresaUnidade> obterPorFrota(Long idFrota);
 }

@@ -14,7 +14,8 @@ public enum StatusPagamentoReembolso implements IEnumComLabel<StatusPagamentoRee
     AGUARDANDO_NF(3),
     NF_ATRASADA(4),
     A_DESCONTAR(5),
-    PREVISTO(6);
+    PREVISTO(6),
+    SEM_REEMBOLSO(7);
 
     private final Integer value;
 

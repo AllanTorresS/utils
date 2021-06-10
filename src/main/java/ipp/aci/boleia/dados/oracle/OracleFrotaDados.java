@@ -4,15 +4,17 @@ import ipp.aci.boleia.dados.IFrotaDados;
 import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.Usuario;
+import ipp.aci.boleia.dominio.enums.ClassificacaoStatusFrota;
 import ipp.aci.boleia.dominio.enums.ModalidadePagamento;
 import ipp.aci.boleia.dominio.enums.StatusAcumuloKmv;
 import ipp.aci.boleia.dominio.enums.StatusApiToken;
+import ipp.aci.boleia.dominio.enums.StatusAtivado;
 import ipp.aci.boleia.dominio.enums.StatusContrato;
 import ipp.aci.boleia.dominio.enums.StatusFrota;
 import ipp.aci.boleia.dominio.enums.StatusFrotaConectcar;
 import ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso;
+import ipp.aci.boleia.dominio.enums.StatusVigenciaAlteracaoStatusFrota;
 import ipp.aci.boleia.dominio.enums.TipoAcumuloKmv;
-import ipp.aci.boleia.dominio.enums.StatusAtivado;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
@@ -21,13 +23,13 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaior;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenor;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDiferente;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgualIgnoreCase;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
-import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDiferente;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaAbastecimentoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheCicloVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFinanceiroVo;
@@ -37,7 +39,6 @@ import ipp.aci.boleia.dominio.vo.apco.ClienteProFrotaVo;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
-
 import ipp.aci.boleia.util.seguranca.UtilitarioIsolamentoInformacoes;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -61,8 +62,9 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
 
     private static final String CLAUSULA_DATA_REEMB_GERADO =
             " tc.reembolso IS NOT NULL AND " +
-            " ((r.dataPagamento is null AND (r.dataVencimentoPgto >= :dataInicial AND r.dataVencimentoPgto <= :dataFinal)) " +
-            " OR (r.dataPagamento >= :dataInicial AND r.dataPagamento <= :dataFinal)) ";
+            " ((r.dataPagamento is null  AND r.status <> " + StatusPagamentoReembolso.SEM_REEMBOLSO.getValue() + " AND (r.dataVencimentoPgto >= :dataInicial AND r.dataVencimentoPgto <= :dataFinal)) " +
+            " OR (r.dataPagamento >= :dataInicial AND r.dataPagamento <= :dataFinal) " +
+            " OR (r.status = " + StatusPagamentoReembolso.SEM_REEMBOLSO.getValue() + " AND tc.dataInicioPeriodo >= :dataInicial AND tc.dataFimPeriodo <= :dataFinal)) " ;
 
     private static final String CLAUSULA_DATA_REEMB_NAO_GERADO =
             " tc.reembolso IS NULL AND " +
@@ -137,6 +139,15 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
                     "   (tc.reembolso is NULL OR tc.reembolso.status = " + StatusPagamentoReembolso.EM_ABERTO.getValue() + " OR tc.reembolso.status = " + StatusPagamentoReembolso.PREVISTO.getValue() + ")" +
                     "ORDER BY f.nomeRazaoFrota";
 
+    private static final String CONSULTA_FROTAS_MULTIPLOS_MOTIVOS =
+            "SELECT DISTINCT F " +
+            "FROM " +
+            "Frota F " +
+            "JOIN FETCH F.motivosAlteracaoStatus MAS " +
+            "LEFT JOIN FETCH MAS.usuario U " +
+            "WHERE size(MAS) > 1 " +
+            "AND MAS.statusVigenciaAlteracao = " + StatusVigenciaAlteracaoStatusFrota.VIGENTE.getValue();
+
     /**
      * Instancia o repositorio
      */
@@ -202,6 +213,13 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
                     filtro.getPaginacao().getParametrosOrdenacaoColuna().add(0, new ParametroOrdenacaoColuna("situacaoConectCar.status", parametro.getSentidoOrdenacao()));
                 }
             }
+        }
+
+        if (filtro.getClassificacaoStatusFrota() != null && filtro.getClassificacaoStatusFrota().getName() != null) {
+            parametros.add(new ParametroPesquisaAnd(
+                    new ParametroPesquisaIgual("motivosAlteracaoStatus.tipoMotivo", ClassificacaoStatusFrota.valueOf(filtro.getClassificacaoStatusFrota().getName()).getValue()),
+                    new ParametroPesquisaIgual("motivosAlteracaoStatus.statusVigenciaAlteracao", StatusVigenciaAlteracaoStatusFrota.VIGENTE.getValue()))
+            );
         }
         
         povoarParametroApiToken(filtro, parametros);
@@ -592,5 +610,11 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
         }
 
         return pesquisarComExcluidos(null, CONSULTA_FROTAS_PARA_DETALHE_CICLO, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+    }
+
+    @Override
+    public List<Frota> buscarFrotasComMultiplosMotivosAlteracaoVigentes() {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        return pesquisar(null, CONSULTA_FROTAS_MULTIPLOS_MOTIVOS, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
 }

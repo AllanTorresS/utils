@@ -24,6 +24,7 @@ public class RegistroExportacaoPdfCicloFinanceiroVo extends RegistroExportacaoPd
     private Boolean atrasada;
     private Boolean exigeNf;
     private String observacao;
+    private Boolean passivelDeEmissao;
 
     public RegistroExportacaoPdfCicloFinanceiroVo(){
         // Serialização
@@ -179,5 +180,13 @@ public class RegistroExportacaoPdfCicloFinanceiroVo extends RegistroExportacaoPd
 
     public void setExigeNf(Boolean exigeNf) {
         this.exigeNf = exigeNf;
+    }
+
+    public Boolean getPassivelDeEmissao() {
+        return passivelDeEmissao;
+    }
+
+    public void setPassivelDeEmissao(Boolean passivelDeEmissao) {
+        this.passivelDeEmissao = passivelDeEmissao;
     }
 }
