@@ -1454,4 +1454,37 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         return pesquisar((InformacaoPaginacao) null, CONSULTA_ABASTECIMENTOS_SEM_EMISSAO_PROD_POR_NFE, AutorizacaoPagamento.class,
                 parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
+
+    @Override
+    public AutorizacaoPagamento obterUltimoAbastecimentoVeiculoHodometroValido(Long idVeiculo) {
+        InformacaoPaginacao paginacao = new InformacaoPaginacao(1, 1, new ParametroOrdenacaoColuna("dataProcessamento", Ordenacao.DECRESCENTE));
+
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaIgual("status", StatusAutorizacao.AUTORIZADO.getValue()));
+        parametros.add(new ParametroPesquisaIgual("veiculo.id", idVeiculo));
+        parametros.add(new ParametroPesquisaDiferente("hodometro", null));
+        parametros.add(new ParametroPesquisaNulo("idAutorizacaoEstorno"));
+
+        ResultadoPaginado<AutorizacaoPagamento> resultado = pesquisarSemIsolamentoDados(paginacao,
+                parametros.toArray(new ParametroPesquisa[parametros.size()]));
+
+        return resultado.getRegistros().isEmpty() ? null : resultado.getRegistros().get(0);
+    }
+
+    @Override
+    public AutorizacaoPagamento obterUltimoAbastecimentoVeiculoHorimetroValido(Long idVeiculo) {
+        InformacaoPaginacao paginacao = new InformacaoPaginacao(1, 1, new ParametroOrdenacaoColuna("dataProcessamento", Ordenacao.DECRESCENTE));
+
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaIgual("status", StatusAutorizacao.AUTORIZADO.getValue()));
+        parametros.add(new ParametroPesquisaIgual("veiculo.id", idVeiculo));
+        parametros.add(new ParametroPesquisaDiferente("horimetro", null));
+        parametros.add(new ParametroPesquisaNulo("idAutorizacaoEstorno"));
+
+        ResultadoPaginado<AutorizacaoPagamento> resultado = pesquisarSemIsolamentoDados(paginacao,
+                parametros.toArray(new ParametroPesquisa[parametros.size()]));
+
+        return resultado.getRegistros().isEmpty() ? null : resultado.getRegistros().get(0);
+    }
+
 }
