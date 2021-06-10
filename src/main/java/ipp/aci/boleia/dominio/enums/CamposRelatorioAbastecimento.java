@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
  */
 public enum CamposRelatorioAbastecimento {
     ID_TRANSACAO(100,"enum.CamposRelatorioAbastecimento.ID_TRANSACAO.label", true, true, true, 1, 20, false),
-    NUMERO_NOTA_FISCAL(101,"enum.CamposRelatorioAbastecimento.NUMERO_NOTA_FISCAL.label", true, true,true, 1, 20, false),
+    NUMERO_PEDIDO(101, "enum.CamposRelatorioAbastecimento.NUMERO_PEDIDO.label", false, true,true, 1, 30, false),
     CODIGO_AUTORIZACAO(102, "enum.CamposRelatorioAbastecimento.CODIGO_AUTORIZACAO.label", false, true,true, 1, 50, false),
     HORA_TRANSACAO(103, "enum.CamposRelatorioAbastecimento.HORA_TRANSACAO.label", false, true,true, 1, 20, false),
     DATA_TRANSACAO(104, "enum.CamposRelatorioAbastecimento.DATA_TRANSACAO.label", false, true,true, 1, 20, false),
@@ -28,6 +28,12 @@ public enum CamposRelatorioAbastecimento {
     UF_EMPRESA_AGREGADA(303, "enum.CamposRelatorioAbastecimento.UF_EMPRESA_AGREGADA.label", true, true,true, 3, 30, false),
     CODIGO_CENTRO_DE_CUSTO(400, "enum.CamposRelatorioAbastecimento.CODIGO_CENTRO_DE_CUSTO.label", false, true,true, 4, 25, false),
     NOME_CENTRO_DE_CUSTO(401, "enum.CamposRelatorioAbastecimento.NOME_CENTRO_DE_CUSTO.label", false, true,true, 4, 50, false),
+    CNPJ_ESTABELECIMENTO_CREDENCIADO(410, "enum.CamposRelatorioAbastecimento.CNPJ_ESTABELECIMENTO_CREDENCIADO.label", true, true, true,8, 25, false),
+    RAZAO_SOCIAL_ESTABELECIMENTO_CREDENCIADO(411, "enum.CamposRelatorioAbastecimento.RAZAO_SOCIAL_ESTABELECIMENTO_CREDENCIADO.label", true, true, true,8, 50, false),
+    NOME_FANTASIA_ESTABELECIMENTO_CREDENCIADO(412, "enum.CamposRelatorioAbastecimento.NOME_FANTASIA_ESTABELECIMENTO_CREDENCIADO.label", true, true, true,8, 50, false),
+    ENDERECO_ESTABELECIMENTO_CREDECIADO(413, "enum.CamposRelatorioAbastecimento.ENDERECO_ESTABELECIMENTO_CREDECIADO.label", true, true, true,8, 100, false),
+    CIDADE_ESTABELECIMENTO_CREDECIADO(414, "enum.CamposRelatorioAbastecimento.CIDADE_ESTABELECIMENTO_CREDECIADO.label", true, true, true,8, 30, false),
+    UF_ESTABELECIMENTO_CREDENCIADO(415, "enum.CamposRelatorioAbastecimento.UF_ESTABELECIMENTO_CREDENCIADO.label", true, true, true,8, 30, false),
     PLACA_VEICULO(500, "enum.CamposRelatorioAbastecimento.PLACA_VEICULO.label", true, true,true, 5, 25, false),
     CLASSIFICACAO_VEICULO(501, "enum.CamposRelatorioAbastecimento.CLASSIFICACAO_VEICULO.label", false, true,true, 5, 30, false),
     IDENTIFICADOR_INTERNO(502, "enum.CamposRelatorioAbastecimento.IDENTIFICADOR_INTERNO.label", false, true,true, 5, 30, false),
@@ -52,7 +58,6 @@ public enum CamposRelatorioAbastecimento {
     ESTORNO(700, "enum.CamposRelatorioAbastecimento.ESTORNO.label", false, true,true, 7, 20, false),
     ID_ESTORNO(701, "enum.CamposRelatorioAbastecimento.ID_ESTORNO.label", false, true,true, 7, 20, false),
     PEDIDO(702, "enum.CamposRelatorioAbastecimento.PEDIDO.label", false, true,true, 7, 30, false),
-    NUMERO_PEDIDO(703, "enum.CamposRelatorioAbastecimento.NUMERO_PEDIDO.label", false, true,true, 7, 30, false),
     NUMERO_PEDIDO_PRE_PAGO(704, "enum.CamposRelatorioAbastecimento.NUMERO_PEDIDO_PRE_PAGO.label", false, true,true, 7, 40, false),
     CODIGO_VIP(706, "enum.CamposRelatorioAbastecimento.CODIGO_VIP.label", true, true,true, 7, 20, false),
     PRODUTO(707, "enum.CamposRelatorioAbastecimento.PRODUTO.label", true, true, true,7, 30, false),
@@ -82,17 +87,12 @@ public enum CamposRelatorioAbastecimento {
     TROCA_OLEO_VALOR_TOTAL_SERVICO(731, "enum.CamposRelatorioAbastecimento.TROCA_OLEO_VALOR_TOTAL_SERVICO.label", true, true, true,7, 30, false),
     VALOR_TOTAL_TRANSACAO(732, "enum.CamposRelatorioAbastecimento.VALOR_TOTAL_TRANSACAO.label", true, true, true,7, 30, false),
     STATUS(733, "enum.CamposRelatorioAbastecimento.STATUS.label", true, true, true,7, 25, false),
-    MOTIVO_RECUSA(734, "enum.CamposRelatorioAbastecimento.MOTIVO_RECUSA.label", true, true, true,7, 30, false),
-    MOTIVO_CONTINGENCIA(735, "enum.CamposRelatorioAbastecimento.MOTIVO_CONTINGENCIA.label", true, true, true,7, 30, false),
-    VALOR_DESCONTO_FROTAS_LEVES(736, "enum.CamposRelatoriosAbastecimento.VALOR_DESCONTO_FROTAS_LEVES.label", false, true, true,7, 30, true),
-    VALOR_COM_DESCONTO_FROTAS_LEVES(737, "enum.CamposRelatorioAbastecimento.VALOR_TOTAL_DESCONTO_FROTAS_LEVES.label", false, true, true,7, 30, true),
-    RESUMO_OPERACAO(738, "enum.CamposRelatorioAbastecimento.RESUMO_OPERACAO.label", true, true, true,7, 100, false),
-    CNPJ_ESTABELECIMENTO_CREDENCIADO(800, "enum.CamposRelatorioAbastecimento.CNPJ_ESTABELECIMENTO_CREDENCIADO.label", true, true, true,8, 25, false),
-    RAZAO_SOCIAL_ESTABELECIMENTO_CREDENCIADO(801, "enum.CamposRelatorioAbastecimento.RAZAO_SOCIAL_ESTABELECIMENTO_CREDENCIADO.label", true, true, true,8, 50, false),
-    NOME_FANTASIA_ESTABELECIMENTO_CREDENCIADO(802, "enum.CamposRelatorioAbastecimento.NOME_FANTASIA_ESTABELECIMENTO_CREDENCIADO.label", true, true, true,8, 50, false),
-    ENDERECO_ESTABELECIMENTO_CREDECIADO(803, "enum.CamposRelatorioAbastecimento.ENDERECO_ESTABELECIMENTO_CREDECIADO.label", true, true, true,8, 100, false),
-    CIDADE_ESTABELECIMENTO_CREDECIADO(804, "enum.CamposRelatorioAbastecimento.CIDADE_ESTABELECIMENTO_CREDECIADO.label", true, true, true,8, 30, false),
-    UF_ESTABELECIMENTO_CREDENCIADO(805, "enum.CamposRelatorioAbastecimento.UF_ESTABELECIMENTO_CREDENCIADO.label", true, true, true,8, 30, false);
+    NUMERO_NOTA_FISCAL(734,"enum.CamposRelatorioAbastecimento.NUMERO_NOTA_FISCAL.label", true, true,true, 7, 20, false),
+    MOTIVO_RECUSA(735, "enum.CamposRelatorioAbastecimento.MOTIVO_RECUSA.label", true, true, true,7, 30, false),
+    MOTIVO_CONTINGENCIA(736, "enum.CamposRelatorioAbastecimento.MOTIVO_CONTINGENCIA.label", true, true, true,7, 30, false),
+    VALOR_DESCONTO_FROTAS_LEVES(737, "enum.CamposRelatoriosAbastecimento.VALOR_DESCONTO_FROTAS_LEVES.label", false, true, true,7, 30, true),
+    VALOR_COM_DESCONTO_FROTAS_LEVES(738, "enum.CamposRelatorioAbastecimento.VALOR_TOTAL_DESCONTO_FROTAS_LEVES.label", false, true, true,7, 30, true),
+    RESUMO_OPERACAO(739, "enum.CamposRelatorioAbastecimento.RESUMO_OPERACAO.label", true, true, true,7, 100, false);
 
 
     private int codigo;
