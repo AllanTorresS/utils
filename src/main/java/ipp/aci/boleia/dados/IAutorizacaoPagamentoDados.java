@@ -454,4 +454,18 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
      * @return Os abastecimentos encontrados
      */
     List<AutorizacaoPagamento> obterAbastecimentoParaConciliacaoPorValorDeProduto(Long cnpjEmit, Date dataEmissao, BigDecimal valorTotalNota);
+
+    /**
+     * Obtem o ultimo abastecimento ou estorno autorizado do veiculo com valor de Hodometro diferente de nulo
+     * @param idVeiculo O id do veiculo
+     * @return O ultimo abastecimento
+     */
+    AutorizacaoPagamento obterUltimoAbastecimentoVeiculoHodometroValido(Long idVeiculo);
+
+    /**
+     * Obtem o ultimo abastecimento ou estorno autorizado do veiculo com valor de Horimetro diferente de nulo
+     * @param idVeiculo O id do veiculo
+     * @return O ultimo abastecimento
+     */
+    AutorizacaoPagamento obterUltimoAbastecimentoVeiculoHorimetroValido(Long idVeiculo);
 }
