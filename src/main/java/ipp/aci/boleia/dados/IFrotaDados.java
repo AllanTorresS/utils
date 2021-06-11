@@ -4,11 +4,13 @@ import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
+import ipp.aci.boleia.dominio.vo.FiltroAutoCompletePostoRotaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaAbastecimentoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheCicloVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFinanceiroVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFrotaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialFrotaVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaPostoInternoRotaVo;
 import ipp.aci.boleia.dominio.vo.apco.ClienteProFrotaVo;
 
 import java.util.Date;
@@ -208,6 +210,23 @@ public interface IFrotaDados extends IRepositorioBoleiaDados<Frota> {
      */
     List<Frota> pesquisarFrotasParaDetalheCiclo(FiltroPesquisaDetalheCicloVo filtro, Usuario usuarioLogado);
 
+    /**
+     * Obtém a lista das frotas a serem exibidas apos o autocomplete de busca de posto no roteirizador inteligente, caso posto interno esteja habilitado
+     *
+     * @param filtro O filtro de pesquisa com o termo do autocomplete
+     * @return lista das frotas que atendem aos criterios de busca
+     */
+    List<Frota> pesquisarParaAutocompleteRota(FiltroAutoCompletePostoRotaVo filtro);
+
+
+    /**
+     * Obtém a lista das frotas a serem exibidas que possuem Posto Interno na proximidade da Rota
+     *
+     * @param filtro O filtro de pesquisa com as posições da Rota
+     * @return lista das frotas que atendem aos criterios de busca
+     */
+    List<Frota> pesquisarPostoInternoNaRota(FiltroPesquisaPostoInternoRotaVo filtro);
+    
     /**
      * Busca frotas com mais de um motivo de alteração vigentes
      * @return As frotas encontradas
