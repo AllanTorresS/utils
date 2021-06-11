@@ -2,34 +2,26 @@ package ipp.aci.boleia.dominio.vo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Representa uma determinada resposta ao invocar o serviço de roteirizador inteligente
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class RespostaRoteirizadorVo {
+public class RespostaRoteirizadorValidarVo {
 
-    private List<PontoRoteirizadorVo> pontos = new ArrayList<>();
     private Integer codigo;
     private String mensagem;
     private Integer statusRequisicao;
+    private Integer status;
+    private List<String> trechos;
 
     /**
      * Construtor padrão
      */
-    public RespostaRoteirizadorVo() {
+    public RespostaRoteirizadorValidarVo() {
         // Construtor padrão para serialização
     }
-
-    public RespostaRoteirizadorVo(List<PontoRoteirizadorVo> pontos) {
-        this.pontos = pontos;
-    }
-
-    public List<PontoRoteirizadorVo> getPontos() { return pontos; }
-
-    public void setPontos(List<PontoRoteirizadorVo> pontos) { this.pontos = pontos; }
 
     public Integer getCodigo() {
         return codigo;
@@ -50,4 +42,20 @@ public class RespostaRoteirizadorVo {
     public Integer getStatusRequisicao() { return statusRequisicao; }
 
     public void setStatusRequisicao(Integer statusRequisicao) { this.statusRequisicao = statusRequisicao; }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public List<String> getTrechos() {
+        return trechos;
+    }
+
+    public void setTrechos(List<String> trechos) {
+        this.trechos = trechos;
+    }
 }

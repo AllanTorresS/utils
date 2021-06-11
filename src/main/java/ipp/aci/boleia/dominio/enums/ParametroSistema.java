@@ -27,6 +27,7 @@ import ipp.aci.boleia.dominio.parametros.LogicaParametroProdutosAdicionais;
 import ipp.aci.boleia.dominio.parametros.LogicaParametroVolumeAbastecido;
 import ipp.aci.boleia.dominio.parametros.LogicaParametroVolumeAbastecidoPreAutorizacao;
 import ipp.aci.boleia.dominio.vo.PreAutorizacaoPedidoVo;
+import ipp.aci.boleia.util.i18n.IEnumComLabel;
 
 import java.lang.reflect.Type;
 import java.util.Collections;
@@ -37,42 +38,20 @@ import java.util.Map;
 /**
  * Enumera os possiveis parametros de sistema, configurações default, lógica e contextos de execução.
  */
-public enum ParametroSistema {
+public enum ParametroSistema implements IEnumComLabel, IEnumComValor{
 
-    VOLUME_ABASTECIDO(1, TipoRestritividade.RESTRITIVA, true, true, Collections.singletonList(TipoPerfilUsuario.FROTA), EstruturaParametroSistema.SIMPLES, "parametro.sistema.volume.abastecido.nome", "parametro.sistema.volume.abastecido.descricao",
-            ImmutableMap.of(AutorizacaoPagamento.class, LogicaParametroVolumeAbastecido.class,
-                    PreAutorizacaoPedidoVo.class, LogicaParametroVolumeAbastecidoPreAutorizacao.class)),
-    PRODUTO_ABASTECIMENTO(2, TipoRestritividade.RESTRITIVA, true, false, Collections.singletonList(TipoPerfilUsuario.FROTA), EstruturaParametroSistema.PRODUTO_ABASTECIMENTO, "parametro.sistema.produto.abastecido.nome", "parametro.sistema.produto.abastecido.descricao",
-            ImmutableMap.of(AutorizacaoPagamento.class, LogicaParametroProdutoAbastecido.class,
-                    PreAutorizacaoPedidoVo.class, LogicaParametroProdutoAbastecidoPreAutorizacao.class)),
-    PRODUTOS_ADICIONAIS_PERMITIDOS(3, TipoRestritividade.VERSATIL, true, false, Collections.singletonList(TipoPerfilUsuario.FROTA), EstruturaParametroSistema.LISTA_PRODUTOS, "parametro.sistema.produtos.adicionais.nome", "parametro.sistema.produtos.adicionais.descricao",
-            ImmutableMap.of(AutorizacaoPagamento.class, LogicaParametroProdutosAdicionais.class)),
-    HORARIOS_ABASTECIMENTO(4, TipoRestritividade.VERSATIL, true, false, Collections.singletonList(TipoPerfilUsuario.FROTA), EstruturaParametroSistema.LISTA_HORARIOS, "parametro.sistema.horario.abastecimento.nome", "parametro.sistema.horario.abastecimento.descricao",
-            ImmutableMap.of(AutorizacaoPagamento.class, LogicaParametroHorariosAbastecimento.class,
-                    PreAutorizacaoPedidoVo.class, LogicaParametroHorariosAbastecimentoPreAutorizacao.class)),
-    CONSUMO_ESTIMADO(5, TipoRestritividade.VERSATIL, true, false, Collections.singletonList(TipoPerfilUsuario.FROTA), EstruturaParametroSistema.CONSUMO_ESTIMADO, "parametro.sistema.consumo.estimado.nome", "parametro.sistema.consumo.estimado.descricao",
-            ImmutableMap.of(AutorizacaoPagamento.class, LogicaParametroConsumoEstimado.class,
-                    PreAutorizacaoPedidoVo.class, LogicaParametroConsumoEstimadoPreAutorizacao.class)),
-    PRECO_MAXIMO(6, TipoRestritividade.VERSATIL, true, false, Collections.singletonList(TipoPerfilUsuario.FROTA), EstruturaParametroSistema.PRECO_MAXIMO, "parametro.sistema.preco.maximo.nome", "parametro.sistema.preco.maximo.descricao",
-            ImmutableMap.of(AutorizacaoPagamento.class, LogicaParametroPrecoMaximo.class,
-                    PreAutorizacaoPedidoVo.class, LogicaParametroPrecoMaximoPreAutorizacao.class)),
-    HODOMETRO_HORIMETRO(7, TipoRestritividade.RESTRITIVA, true, false, Collections.singletonList(TipoPerfilUsuario.FROTA), EstruturaParametroSistema.HODOMETRO_HORIMETRO, "parametro.sistema.hodometro.horimetro.nome", "parametro.sistema.hodometro.horimetro.descricao",
-            ImmutableMap.of(AutorizacaoPagamento.class, LogicaParametroHodometroHorimetro.class,
-                    PreAutorizacaoPedidoVo.class, LogicaParametroHodometroHorimetroPreAutorizacao.class)),
-    COTA_VEICULO(8, TipoRestritividade.VERSATIL, true, false, Collections.singletonList(TipoPerfilUsuario.FROTA), EstruturaParametroSistema.COTA_VEICULO, "parametro.sistema.cota.veiculo.nome", "parametro.sistema.cota.veiculo.descricao",
-            ImmutableMap.of(AutorizacaoPagamento.class, LogicaParametroCotaVeiculo.class,
-                    PreAutorizacaoPedidoVo.class, LogicaParametroCotaVeiculoPreAutorizacao.class)),
-    INTERVALO_ABASTECIMENTO(9, TipoRestritividade.VERSATIL, false, false, Collections.singletonList(TipoPerfilUsuario.FROTA), EstruturaParametroSistema.INTERVALO_ABASTECIMENTO, "parametro.sistema.intervalo.abastecimento.nome", "parametro.sistema.intervalo.abastecimento.descricao",
-            ImmutableMap.of(AutorizacaoPagamento.class, LogicaParametroIntervaloAbastecimento.class,
-                    PreAutorizacaoPedidoVo.class, LogicaParametroIntervaloAbastecimentoPreAutorizacao.class)),
-    POSTOS_AUTORIZADOS_ABASTECIMENTO(10, TipoRestritividade.VERSATIL, true, false,  ImmutableList.of(TipoPerfilUsuario.FROTA, TipoPerfilUsuario.INTERNO), EstruturaParametroSistema.POSTOS_AUTORIZADOS_ABASTECIMENTO, "parametro.sistema.postos.permitidos.nome", "parametro.sistema.postos.permitidos.descricao",
-            ImmutableMap.of(AutorizacaoPagamento.class, LogicaParametroPostosAutorizadosAbastecimento.class,
-                    PreAutorizacaoPedidoVo.class, LogicaParametroPostosAutorizadosAbastecimentoPreAutorizacao.class)),
-    CREDITO_VEICULO_AGREGADO(11, TipoRestritividade.VERSATIL, true, false, Collections.singletonList(TipoPerfilUsuario.FROTA), EstruturaParametroSistema.CREDITO_VEICULO_AGREGADO, "parametro.sistema.credito.veiculo.agregado.nome", "parametro.sistema.credito.veiculo.agregado.descricao",
-            ImmutableMap.of(AutorizacaoPagamento.class, LogicaParametroCreditoVeiculoAgregado.class,
-                    PreAutorizacaoPedidoVo.class, LogicaParametroCreditoVeiculoAgregadoPreAutorizacao.class)),
-    LOCALIZACAO_ABASTECIMENTO(12, TipoRestritividade.VERSATIL, true, false, Collections.singletonList(TipoPerfilUsuario.FROTA), EstruturaParametroSistema.SIMPLES, "parametro.sistema.localizacao.abastecimento.nome", "parametro.sistema.localizacao.abastecimento.descricao",
-            ImmutableMap.of(AutorizacaoPagamento.class, LogicaParametroLocalizacaoAbastecimento.class));
+    VOLUME_ABASTECIDO                (1,  TipoRestritividade.RESTRITIVA, true,  true,  Collections.singletonList(TipoPerfilUsuario.FROTA),                   EstruturaParametroSistema.SIMPLES,                          "parametro.sistema.volume.abastecido.nome",         "parametro.sistema.volume.abastecido.descricao",         ImmutableMap.of(AutorizacaoPagamento.class, LogicaParametroVolumeAbastecido.class, PreAutorizacaoPedidoVo.class, LogicaParametroVolumeAbastecidoPreAutorizacao.class),                             false),
+    PRODUTO_ABASTECIMENTO            (2,  TipoRestritividade.RESTRITIVA, true,  false, Collections.singletonList(TipoPerfilUsuario.FROTA),                   EstruturaParametroSistema.PRODUTO_ABASTECIMENTO,            "parametro.sistema.produto.abastecido.nome",        "parametro.sistema.produto.abastecido.descricao",        ImmutableMap.of(AutorizacaoPagamento.class, LogicaParametroProdutoAbastecido.class, PreAutorizacaoPedidoVo.class, LogicaParametroProdutoAbastecidoPreAutorizacao.class),                           true),
+    PRODUTOS_ADICIONAIS_PERMITIDOS   (3,  TipoRestritividade.VERSATIL,   true,  false, Collections.singletonList(TipoPerfilUsuario.FROTA),                   EstruturaParametroSistema.LISTA_PRODUTOS,                   "parametro.sistema.produtos.adicionais.nome",       "parametro.sistema.produtos.adicionais.descricao",       ImmutableMap.of(AutorizacaoPagamento.class, LogicaParametroProdutosAdicionais.class),                                                                                                              false),
+    HORARIOS_ABASTECIMENTO           (4,  TipoRestritividade.VERSATIL,   true,  false, Collections.singletonList(TipoPerfilUsuario.FROTA),                   EstruturaParametroSistema.LISTA_HORARIOS,                   "parametro.sistema.horario.abastecimento.nome",     "parametro.sistema.horario.abastecimento.descricao",     ImmutableMap.of(AutorizacaoPagamento.class, LogicaParametroHorariosAbastecimento.class, PreAutorizacaoPedidoVo.class, LogicaParametroHorariosAbastecimentoPreAutorizacao.class),                   false),
+    CONSUMO_ESTIMADO                 (5,  TipoRestritividade.VERSATIL,   true,  false, Collections.singletonList(TipoPerfilUsuario.FROTA),                   EstruturaParametroSistema.CONSUMO_ESTIMADO,                 "parametro.sistema.consumo.estimado.nome",          "parametro.sistema.consumo.estimado.descricao",          ImmutableMap.of(AutorizacaoPagamento.class, LogicaParametroConsumoEstimado.class, PreAutorizacaoPedidoVo.class, LogicaParametroConsumoEstimadoPreAutorizacao.class),                               false),
+    PRECO_MAXIMO                     (6,  TipoRestritividade.VERSATIL,   true,  false, Collections.singletonList(TipoPerfilUsuario.FROTA),                   EstruturaParametroSistema.PRECO_MAXIMO,                     "parametro.sistema.preco.maximo.nome",              "parametro.sistema.preco.maximo.descricao",              ImmutableMap.of(AutorizacaoPagamento.class, LogicaParametroPrecoMaximo.class, PreAutorizacaoPedidoVo.class, LogicaParametroPrecoMaximoPreAutorizacao.class),                                       true),
+    HODOMETRO_HORIMETRO              (7,  TipoRestritividade.RESTRITIVA, true,  false, Collections.singletonList(TipoPerfilUsuario.FROTA),                   EstruturaParametroSistema.HODOMETRO_HORIMETRO,              "parametro.sistema.hodometro.horimetro.nome",       "parametro.sistema.hodometro.horimetro.descricao",       ImmutableMap.of(AutorizacaoPagamento.class, LogicaParametroHodometroHorimetro.class, PreAutorizacaoPedidoVo.class, LogicaParametroHodometroHorimetroPreAutorizacao.class),                         false),
+    COTA_VEICULO                     (8,  TipoRestritividade.VERSATIL,   true,  false, Collections.singletonList(TipoPerfilUsuario.FROTA),                   EstruturaParametroSistema.COTA_VEICULO,                     "parametro.sistema.cota.veiculo.nome",              "parametro.sistema.cota.veiculo.descricao",              ImmutableMap.of(AutorizacaoPagamento.class, LogicaParametroCotaVeiculo.class, PreAutorizacaoPedidoVo.class, LogicaParametroCotaVeiculoPreAutorizacao.class),                                       false),
+    INTERVALO_ABASTECIMENTO          (9,  TipoRestritividade.VERSATIL,   false, false, Collections.singletonList(TipoPerfilUsuario.FROTA),                   EstruturaParametroSistema.INTERVALO_ABASTECIMENTO,          "parametro.sistema.intervalo.abastecimento.nome",   "parametro.sistema.intervalo.abastecimento.descricao",   ImmutableMap.of(AutorizacaoPagamento.class, LogicaParametroIntervaloAbastecimento.class, PreAutorizacaoPedidoVo.class, LogicaParametroIntervaloAbastecimentoPreAutorizacao.class),                 true),
+    POSTOS_AUTORIZADOS_ABASTECIMENTO (10, TipoRestritividade.VERSATIL,   true,  false, ImmutableList.of(TipoPerfilUsuario.FROTA, TipoPerfilUsuario.INTERNO), EstruturaParametroSistema.POSTOS_AUTORIZADOS_ABASTECIMENTO, "parametro.sistema.postos.permitidos.nome",         "parametro.sistema.postos.permitidos.descricao",         ImmutableMap.of(AutorizacaoPagamento.class, LogicaParametroPostosAutorizadosAbastecimento.class, PreAutorizacaoPedidoVo.class, LogicaParametroPostosAutorizadosAbastecimentoPreAutorizacao.class), true),
+    CREDITO_VEICULO_AGREGADO         (11, TipoRestritividade.VERSATIL,   true,  false, Collections.singletonList(TipoPerfilUsuario.FROTA),                   EstruturaParametroSistema.CREDITO_VEICULO_AGREGADO,         "parametro.sistema.credito.veiculo.agregado.nome",  "parametro.sistema.credito.veiculo.agregado.descricao",  ImmutableMap.of(AutorizacaoPagamento.class, LogicaParametroCreditoVeiculoAgregado.class, PreAutorizacaoPedidoVo.class, LogicaParametroCreditoVeiculoAgregadoPreAutorizacao.class),                 false),
+    LOCALIZACAO_ABASTECIMENTO        (12, TipoRestritividade.VERSATIL,   true,  false, Collections.singletonList(TipoPerfilUsuario.FROTA),                   EstruturaParametroSistema.SIMPLES,                          "parametro.sistema.localizacao.abastecimento.nome", "parametro.sistema.localizacao.abastecimento.descricao", ImmutableMap.of(AutorizacaoPagamento.class, LogicaParametroLocalizacaoAbastecimento.class),                                                                                                        false);
 
     private final Integer codigo;
     private final String nome;
@@ -83,6 +62,7 @@ public enum ParametroSistema {
     private final List<TipoPerfilUsuario> tiposPerfil;
     private final EstruturaParametroSistema estrutura;
     private final Map<Class<?>, Class<? extends ILogicaParametroSistema<?>>> logicaExecucaoPorContexto;
+    private final boolean parametroRI;
 
     /**
      * Construtor do enum
@@ -94,8 +74,9 @@ public enum ParametroSistema {
      * @param nome                 Nome do parâmetro
      * @param descricao            Descrição do parâmetro
      * @param logicaExecucaoPorContexto registros de lógicas de execução separadas por tipo de contexto
+     * @param parametroRI Flag que sinaliza se parametro vai ser opção de filtro no Roteirizador Inteligente
      */
-    ParametroSistema(Integer codigo, TipoRestritividade tipoRestritividade, boolean restritivaPorDefault, boolean sempreAtivo, List<TipoPerfilUsuario> tiposPerfil, EstruturaParametroSistema estrutura, String nome, String descricao, Map<Class<?>, Class<? extends ILogicaParametroSistema<?>>> logicaExecucaoPorContexto) {
+    ParametroSistema(Integer codigo, TipoRestritividade tipoRestritividade, boolean restritivaPorDefault, boolean sempreAtivo, List<TipoPerfilUsuario> tiposPerfil, EstruturaParametroSistema estrutura, String nome, String descricao, Map<Class<?>, Class<? extends ILogicaParametroSistema<?>>> logicaExecucaoPorContexto, boolean parametroRI) {
         this.codigo = codigo;
         this.tipoRestritividade = tipoRestritividade;
         this.restritivaPorDefault = restritivaPorDefault;
@@ -105,6 +86,7 @@ public enum ParametroSistema {
         this.nome = nome;
         this.descricao = descricao;
         this.logicaExecucaoPorContexto = logicaExecucaoPorContexto;
+        this.parametroRI = parametroRI;
     }
 
     public Integer getCodigo() {
@@ -151,6 +133,10 @@ public enum ParametroSistema {
         return tiposPerfil;
     }
 
+    public boolean isParametroRI() {
+        return parametroRI;
+    }
+
     /**
      * Obtem o parametro pelo codigo
      *
@@ -164,5 +150,15 @@ public enum ParametroSistema {
             }
         }
         return null;
+    }
+
+    @Override
+    public Integer getValue() {
+        return codigo;
+    }
+
+    @Override
+    public String getLabel() {
+        return nome;
     }
 }

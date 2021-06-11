@@ -8,6 +8,7 @@ import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialPtovVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaLocalizacaoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaPontoDeVendaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaRotaPontoVendaServicosVo;
+import ipp.aci.boleia.dominio.vo.FiltroAutoCompletePostoRotaVo;
 
 import java.util.List;
 
@@ -156,4 +157,12 @@ public interface IPontoDeVendaDados extends IRepositorioBoleiaDados<PontoDeVenda
      * @return ponto de venda.
      */
     PontoDeVenda obterPorCnpj(Long cnpj);
+
+    /**
+     * Obtém a lista das postos a serem exibidas apos o autocomplete de busca de posto no roteirizador inteligente
+     *
+     * @param filtro O filtro de pesquisa com o termo do autocomplete
+     * @return lista das pontos de venda que atendem aos criterios de busca
+     */
+    List<PontoDeVenda> pesquisarParaAutocompleteRota(FiltroAutoCompletePostoRotaVo filtro);
 }
