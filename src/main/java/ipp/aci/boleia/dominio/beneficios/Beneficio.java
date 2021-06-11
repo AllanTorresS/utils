@@ -1,4 +1,4 @@
-package ipp.aci.boleia.dominio;
+package ipp.aci.boleia.dominio.beneficios;
 
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 

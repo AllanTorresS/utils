@@ -1,4 +1,4 @@
-package ipp.aci.boleia.dominio;
+package ipp.aci.boleia.dominio.beneficios;
 
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 
@@ -24,13 +24,13 @@ import java.util.List;
  * Representa a tabela de conta benefício usuário
  */
 @Entity
-@Table(name = "CONTA_BENEFICIO_USUARIO")
-public class ContaBeneficioUsuario implements IPersistente {
+@Table(name = "CONTA_BENEFICIARIO")
+public class ContaBeneficiario implements IPersistente {
 
     @Id
-    @Column(name = "CD_CONTA_BENEFICIO_USUARIO")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_CONTA_BENEFICIO_USUARIO")
-    @SequenceGenerator(name = "SEQ_CONTA_BENEFICIO_USUARIO", sequenceName = "SEQ_CONTA_BENEFICIO_USUARIO", allocationSize = 1)
+    @Column(name = "CD_CONTA_BENEFICIARIO")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_CONTA_BENEFICIARIO")
+    @SequenceGenerator(name = "SEQ_CONTA_BENEFICIARIO", sequenceName = "SEQ_CONTA_BENEFICIARIO", allocationSize = 1)
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -58,7 +58,7 @@ public class ContaBeneficioUsuario implements IPersistente {
     private List<ContaBeneficio> contasBeneficio;
 
     @OneToMany(mappedBy = "contaBeneficioUsuario", fetch = FetchType.LAZY)
-    private List<OperacaoContaBeneficio> operacoesContaBeneficio;
+    private List<OperacaoContaBeneficiario> operacoesContaBeneficio;
 
     @Override
     public Long getId() {
@@ -94,11 +94,11 @@ public class ContaBeneficioUsuario implements IPersistente {
         this.contasBeneficio = contasBeneficio;
     }
 
-    public List<OperacaoContaBeneficio> getOperacoesContaBeneficio() {
+    public List<OperacaoContaBeneficiario> getOperacoesContaBeneficio() {
         return operacoesContaBeneficio;
     }
 
-    public void setOperacoesContaBeneficio(List<OperacaoContaBeneficio> operacoesContaBeneficio) {
+    public void setOperacoesContaBeneficio(List<OperacaoContaBeneficiario> operacoesContaBeneficio) {
         this.operacoesContaBeneficio = operacoesContaBeneficio;
     }
 

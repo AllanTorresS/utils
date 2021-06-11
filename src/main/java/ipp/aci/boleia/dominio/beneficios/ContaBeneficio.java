@@ -1,4 +1,4 @@
-package ipp.aci.boleia.dominio;
+package ipp.aci.boleia.dominio.beneficios;
 
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 
@@ -31,8 +31,8 @@ public class ContaBeneficio implements IPersistente {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CD_CONTA_BENEFICIO_USUARIO")
-    private ContaBeneficioUsuario contaBeneficioUsuario;
+    @JoinColumn(name = "CD_CONTA_BENEFICIARIO")
+    private ContaBeneficiario contaBeneficiario;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_BENEFICIO")
@@ -62,12 +62,12 @@ public class ContaBeneficio implements IPersistente {
         this.id = id;
     }
 
-    public ContaBeneficioUsuario getContaBeneficioUsuario() {
-        return contaBeneficioUsuario;
+    public ContaBeneficiario getContaBeneficiario() {
+        return contaBeneficiario;
     }
 
-    public void setContaBeneficioUsuario(ContaBeneficioUsuario contaBeneficioUsuario) {
-        this.contaBeneficioUsuario = contaBeneficioUsuario;
+    public void setContaBeneficiario(ContaBeneficiario contaBeneficiario) {
+        this.contaBeneficiario = contaBeneficiario;
     }
 
     public Beneficio getBeneficio() {

@@ -1,9 +1,8 @@
 package ipp.aci.boleia.dados.oracle;
 
 import ipp.aci.boleia.dados.IBeneficiarioDados;
-import ipp.aci.boleia.dominio.Beneficiario;
+import ipp.aci.boleia.dominio.beneficios.Beneficiario;
 import ipp.aci.boleia.dominio.enums.StatusAtivacao;
-import ipp.aci.boleia.dominio.enums.TipoPerfilUsuario;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
@@ -11,7 +10,6 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaBeneficiarioVo;
-
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialVo;
 import ipp.aci.boleia.util.UtilitarioLambda;
 import org.springframework.stereotype.Repository;
