@@ -5,7 +5,10 @@ import org.hibernate.envers.Audited;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -65,6 +68,10 @@ public class Permissao implements IPersistente {
     @NotNull
     @Column(name = "ID_MODULO_INTERNO")
     private boolean moduloInterno;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_CATEGORIA_PERMISSAO")
+    private CategoriaPermissao categoria;
 
 	@Override
     public Long getId() {
@@ -154,6 +161,14 @@ public class Permissao implements IPersistente {
 
     public void setModuloInterno(boolean moduloInterno) {
         this.moduloInterno = moduloInterno;
+    }
+
+    public CategoriaPermissao getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(CategoriaPermissao categoria) {
+        this.categoria = categoria;
     }
 
     @Override
