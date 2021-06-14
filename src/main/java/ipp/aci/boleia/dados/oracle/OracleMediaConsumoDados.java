@@ -450,21 +450,29 @@ public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<Autori
         InformacaoPaginacao infoPag=new InformacaoPaginacao();
         infoPag.setTamanhoPagina(1);
         ResultadoPaginado<AutorizacaoPagamento> primeiroAbastecimento = pesquisar(infoPag, String.format(QUERY_PESQUISAR_PRIMEIRO_ABASTECIMENTO_MEDIA_CONSUMO_VEICULO, outrasClausulas), AutorizacaoPagamento.class, builder.buildArray());
-        if(primeiroAbastecimento.getRegistros() == null || primeiroAbastecimento.getTotalItems() < 1
-                || vo.getMediaTotalLitrosAbastecimento().compareTo(BigDecimal.ZERO) == 0
-                || vo.getMediaTotalLitrosAbastecimento().subtract(primeiroAbastecimento.getRegistros().get(0).getTotalLitrosAbastecimento()).compareTo(BigDecimal.ZERO) == 0
-                || vo.getMediaHorHod() == null || vo.getMediaHorHod().equals(0L)) {
-            return  null;
+
+        boolean naoPossuiRegistrosPrimeiroAbast = primeiroAbastecimento.getRegistros() == null || primeiroAbastecimento.getTotalItems() < 1;
+        boolean naoPossuiMediaTotalLitrosAbast = vo.getMediaTotalLitrosAbastecimento().compareTo(BigDecimal.ZERO) == 0;
+        boolean naoPossuiMediaHorHod = vo.getMediaHorHod() == null || vo.getMediaHorHod().equals(0L);
+
+        if (naoPossuiRegistrosPrimeiroAbast || naoPossuiMediaTotalLitrosAbast || naoPossuiMediaHorHod) {
+            return null;
         }
+
+        BigDecimal difMediaTotalLitrosAbastPorTotalPrimeiroAbast = vo.getMediaTotalLitrosAbastecimento()
+                .subtract(primeiroAbastecimento.getRegistros().get(0).getTotalLitrosAbastecimento());
+
+        if(difMediaTotalLitrosAbastPorTotalPrimeiroAbast.compareTo(BigDecimal.ZERO) == 0) {
+            return null;
+        }
+
         switch (TipoConsumo.obterPorValor(vo.getTipoConsumo())) {
             case KML:
                 vo.setMedia(BigDecimal.valueOf(vo.getMediaHorHod())
-                        .divide((vo.getMediaTotalLitrosAbastecimento()
-                                .subtract(primeiroAbastecimento.getRegistros().get(0).getTotalLitrosAbastecimento())), 3, RoundingMode.HALF_EVEN));
+                        .divide(difMediaTotalLitrosAbastPorTotalPrimeiroAbast, 3, RoundingMode.HALF_EVEN));
                 break;
             case LH:
-                vo.setMedia(vo.getMediaTotalLitrosAbastecimento()
-                        .subtract(primeiroAbastecimento.getRegistros().get(0).getTotalLitrosAbastecimento())
+                vo.setMedia(difMediaTotalLitrosAbastPorTotalPrimeiroAbast
                         .divide(BigDecimal.valueOf(vo.getMediaHorHod()), 3, RoundingMode.HALF_EVEN));
                 break;
         }
