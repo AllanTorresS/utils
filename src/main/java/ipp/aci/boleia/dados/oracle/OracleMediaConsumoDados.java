@@ -452,7 +452,8 @@ public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<Autori
         ResultadoPaginado<AutorizacaoPagamento> primeiroAbastecimento = pesquisar(infoPag, String.format(QUERY_PESQUISAR_PRIMEIRO_ABASTECIMENTO_MEDIA_CONSUMO_VEICULO, outrasClausulas), AutorizacaoPagamento.class, builder.buildArray());
         if(primeiroAbastecimento.getRegistros() == null || primeiroAbastecimento.getTotalItems() < 1
                 || vo.getMediaTotalLitrosAbastecimento().compareTo(BigDecimal.ZERO) == 0
-                ||vo.getMediaTotalLitrosAbastecimento().subtract(primeiroAbastecimento.getRegistros().get(0).getTotalLitrosAbastecimento()).compareTo(BigDecimal.ZERO) == 0){
+                || vo.getMediaTotalLitrosAbastecimento().subtract(primeiroAbastecimento.getRegistros().get(0).getTotalLitrosAbastecimento()).compareTo(BigDecimal.ZERO) == 0
+                || vo.getMediaHorHod() == null || vo.getMediaHorHod().equals(0L)) {
             return  null;
         }
         switch (TipoConsumo.obterPorValor(vo.getTipoConsumo())) {
