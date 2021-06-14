@@ -1,5 +1,6 @@
 package ipp.aci.boleia.dominio.beneficios;
 
+import ipp.aci.boleia.dominio.AutorizacaoPagamento;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 
 import javax.persistence.Column;
@@ -35,6 +36,10 @@ public class OperacaoContaBeneficiario implements IPersistente {
     @JoinColumn(name = "CD_CONTA_BENEFICIARIO")
     private ContaBeneficiario contaBeneficiario;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_AUTORIZACAO_PAGAMENTO")
+    private AutorizacaoPagamento autorizacaoPagamento;
+
     @Column(name = "VA_TOTAL")
     private BigDecimal valorTotal;
 
@@ -67,6 +72,14 @@ public class OperacaoContaBeneficiario implements IPersistente {
 
     public void setContaBeneficiario(ContaBeneficiario contaBeneficiario) {
         this.contaBeneficiario = contaBeneficiario;
+    }
+
+    public AutorizacaoPagamento getAutorizacaoPagamento() {
+        return autorizacaoPagamento;
+    }
+
+    public void setAutorizacaoPagamento(AutorizacaoPagamento autorizacaoPagamento) {
+        this.autorizacaoPagamento = autorizacaoPagamento;
     }
 
     public BigDecimal getValorTotal() {

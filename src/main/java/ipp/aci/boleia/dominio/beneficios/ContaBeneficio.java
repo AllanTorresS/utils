@@ -14,6 +14,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
@@ -51,6 +52,10 @@ public class ContaBeneficio implements IPersistente {
     @Column(name = "DT_ATUALIZACAO")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataAtualizacao;
+
+    @Version
+    @Column(name = "NO_VERSAO")
+    private Long versao;
 
     @Override
     public Long getId() {
@@ -100,5 +105,13 @@ public class ContaBeneficio implements IPersistente {
 
     public void setDataAtualizacao(Date dataAtualizacao) {
         this.dataAtualizacao = dataAtualizacao;
+    }
+
+    public Long getVersao() {
+        return versao;
+    }
+
+    public void setVersao(Long versao) {
+        this.versao = versao;
     }
 }

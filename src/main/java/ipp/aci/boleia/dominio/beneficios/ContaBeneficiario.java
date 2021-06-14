@@ -15,6 +15,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -54,11 +55,15 @@ public class ContaBeneficiario implements IPersistente {
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataEncerramento;
 
-    @OneToMany(mappedBy = "contaBeneficioUsuario", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "contaBeneficiario", fetch = FetchType.LAZY)
     private List<ContaBeneficio> contasBeneficio;
 
-    @OneToMany(mappedBy = "contaBeneficioUsuario", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "contaBeneficiario", fetch = FetchType.LAZY)
     private List<OperacaoContaBeneficiario> operacoesContaBeneficio;
+
+    @Version
+    @Column(name = "NO_VERSAO")
+    private Long versao;
 
     @Override
     public Long getId() {
@@ -124,5 +129,13 @@ public class ContaBeneficiario implements IPersistente {
 
     public void setDataEncerramento(Date dataEncerramento) {
         this.dataEncerramento = dataEncerramento;
+    }
+
+    public Long getVersao() {
+        return versao;
+    }
+
+    public void setVersao(Long versao) {
+        this.versao = versao;
     }
 }
