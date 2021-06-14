@@ -1,6 +1,6 @@
 package ipp.aci.boleia.dados;
 
-import ipp.aci.boleia.dominio.ConfiguracaoDistribuicaoAutomatica;
+import ipp.aci.boleia.dominio.beneficios.ConfiguracaoDistribuicaoAutomatica;
 
 /**
  * Contrato para implementação de repositírios de entidades ConfiguracaoDistribuicaoAutomatica

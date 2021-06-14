@@ -1,5 +1,6 @@
 package ipp.aci.boleia.dominio.beneficios;
 
+import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
 

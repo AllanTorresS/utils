@@ -1,7 +1,7 @@
 package ipp.aci.boleia.dados.oracle;
 
 import ipp.aci.boleia.dados.IConfiguracaoDistribuicaoAutomaticaDados;
-import ipp.aci.boleia.dominio.ConfiguracaoDistribuicaoAutomatica;
+import ipp.aci.boleia.dominio.beneficios.ConfiguracaoDistribuicaoAutomatica;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 
 import org.springframework.stereotype.Repository;
