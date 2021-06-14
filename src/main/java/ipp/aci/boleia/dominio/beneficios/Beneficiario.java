@@ -1,5 +1,6 @@
-package ipp.aci.boleia.dominio;
+package ipp.aci.boleia.dominio.beneficios;
 
+import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.interfaces.IExclusaoLogica;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
@@ -74,7 +75,7 @@ public class Beneficiario implements IPersistente, IExclusaoLogica, IPertenceFro
     private Long versao;
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "beneficiario")
-    private ContaBeneficioUsuario contaBeneficioUsuario;
+    private ContaBeneficiario contaBeneficiario;
 
     @Override
     public Long getId() {
@@ -160,12 +161,12 @@ public class Beneficiario implements IPersistente, IExclusaoLogica, IPertenceFro
         this.versao = versao;
     }
 
-    public ContaBeneficioUsuario getContaBeneficioUsuario() {
-        return contaBeneficioUsuario;
+    public ContaBeneficiario getContaBeneficiario() {
+        return contaBeneficiario;
     }
 
-    public void setContaBeneficioUsuario(ContaBeneficioUsuario contaBeneficioUsuario) {
-        this.contaBeneficioUsuario = contaBeneficioUsuario;
+    public void setContaBeneficiario(ContaBeneficiario contaBeneficiario) {
+        this.contaBeneficiario = contaBeneficiario;
     }
 
     @Transient

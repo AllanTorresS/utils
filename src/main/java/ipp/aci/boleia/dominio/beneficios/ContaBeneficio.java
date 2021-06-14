@@ -1,4 +1,4 @@
-package ipp.aci.boleia.dominio;
+package ipp.aci.boleia.dominio.beneficios;
 
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 
@@ -14,6 +14,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
@@ -31,8 +32,8 @@ public class ContaBeneficio implements IPersistente {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CD_CONTA_BENEFICIO_USUARIO")
-    private ContaBeneficioUsuario contaBeneficioUsuario;
+    @JoinColumn(name = "CD_CONTA_BENEFICIARIO")
+    private ContaBeneficiario contaBeneficiario;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_BENEFICIO")
@@ -52,6 +53,10 @@ public class ContaBeneficio implements IPersistente {
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataAtualizacao;
 
+    @Version
+    @Column(name = "NO_VERSAO")
+    private Long versao;
+
     @Override
     public Long getId() {
         return id;
@@ -62,12 +67,12 @@ public class ContaBeneficio implements IPersistente {
         this.id = id;
     }
 
-    public ContaBeneficioUsuario getContaBeneficioUsuario() {
-        return contaBeneficioUsuario;
+    public ContaBeneficiario getContaBeneficiario() {
+        return contaBeneficiario;
     }
 
-    public void setContaBeneficioUsuario(ContaBeneficioUsuario contaBeneficioUsuario) {
-        this.contaBeneficioUsuario = contaBeneficioUsuario;
+    public void setContaBeneficiario(ContaBeneficiario contaBeneficiario) {
+        this.contaBeneficiario = contaBeneficiario;
     }
 
     public Beneficio getBeneficio() {
@@ -100,5 +105,13 @@ public class ContaBeneficio implements IPersistente {
 
     public void setDataAtualizacao(Date dataAtualizacao) {
         this.dataAtualizacao = dataAtualizacao;
+    }
+
+    public Long getVersao() {
+        return versao;
+    }
+
+    public void setVersao(Long versao) {
+        this.versao = versao;
     }
 }
