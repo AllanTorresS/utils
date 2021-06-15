@@ -62,6 +62,7 @@ public final  class Rotas {
     public static final  String PV_API                               = BASE_API + "/pv";
     public static final  String PERFIL_API                           = BASE_API + "/perfil";
     public static final  String PERMISSAO_API                        = BASE_API + "/permissao";
+    public static final  String CATEGORIA_API                        = BASE_API + "/categoria";
     public static final  String USUARIO_API                          = BASE_API + "/usuario";
     public static final  String USUARIO_FROTA_API                    = BASE_API + "/usuarioFrota";
     public static final  String USUARIO_REVENDA_API                  = BASE_API + "/usuarioRevenda";

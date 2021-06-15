@@ -69,7 +69,7 @@ public class Permissao implements IPersistente {
     @Column(name = "ID_MODULO_INTERNO")
     private boolean moduloInterno;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "CD_CATEGORIA_PERMISSAO")
     private CategoriaPermissao categoria;
 
