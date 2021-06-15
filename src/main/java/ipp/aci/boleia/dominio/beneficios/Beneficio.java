@@ -1,6 +1,7 @@
 package ipp.aci.boleia.dominio.beneficios;
 
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,6 +22,7 @@ import java.util.List;
 /**
  * Representa a tabela de benefícios
  */
+@Audited
 @Entity
 @Table(name = "BENEFICIO")
 public class Beneficio implements IPersistente {
