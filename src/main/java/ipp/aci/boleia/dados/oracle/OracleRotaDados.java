@@ -120,7 +120,7 @@ public class OracleRotaDados extends OracleRepositorioBoleiaDados<Rota> implemen
     private static final String ORDER_BY_ORIGEM_DESTINO = " ORDER BY NOME_ORIGEM_DESTINO ";
 
     private static final String PLANO_VIAGEM_NULL = "AND r.planoViagem IS NULL";
-    private static final String PLANO_VIAGEM_EXISTS = "AND r.planoViagem IS NOT NULL AND r.principal = " + PRINCIPAL_VALUE;
+    private static final String PLANO_VIAGEM_EXISTS = "AND r.planoViagem IS NOT NULL AND r.planoViagem.excluido = 0 AND r.principal = " + PRINCIPAL_VALUE;
 
     /**
      * Construtor
