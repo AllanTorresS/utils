@@ -3,6 +3,7 @@ package ipp.aci.boleia.dominio.beneficios;
 import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,12 +12,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.Date;
@@ -25,6 +27,7 @@ import java.util.List;
 /**
  * Representa a tabela de configuração de distribuição automática
  */
+@Audited
 @Entity
 @Table(name = "CONFIG_DISTRIBUICAO_AUTO")
 public class ConfiguracaoDistribuicaoAutomatica implements IPersistente, IPertenceFrota {
@@ -35,7 +38,8 @@ public class ConfiguracaoDistribuicaoAutomatica implements IPersistente, IPerten
     @SequenceGenerator(name = "SEQ_CONFIG_DISTRIBUICAO_AUTO", sequenceName = "SEQ_CONFIG_DISTRIBUICAO_AUTO", allocationSize = 1)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_FROTA")
     private Frota frota;
 
@@ -56,7 +60,7 @@ public class ConfiguracaoDistribuicaoAutomatica implements IPersistente, IPerten
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataAtualizacao;
 
-    @NotNull
+    @Version
     @Column(name="NO_VERSAO")
     private Long versao;
 
