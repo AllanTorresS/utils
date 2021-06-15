@@ -2,6 +2,7 @@ package ipp.aci.boleia.dominio.beneficios;
 
 import ipp.aci.boleia.dominio.AutorizacaoPagamento;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -22,6 +23,7 @@ import java.util.Date;
 /**
  * Representa a tabela de operação conta beneficiário
  */
+@Audited
 @Entity
 @Table(name = "OPER_CONTA_BENEFICIARIO")
 public class OperacaoContaBeneficiario implements IPersistente {

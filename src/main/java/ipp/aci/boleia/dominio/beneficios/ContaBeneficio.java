@@ -1,6 +1,8 @@
 package ipp.aci.boleia.dominio.beneficios;
 
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,6 +23,7 @@ import java.util.Date;
 /**
  * Representa a tabela de conta benefício
  */
+@Audited
 @Entity
 @Table(name = "CONTA_BENEFICIO")
 public class ContaBeneficio implements IPersistente {
@@ -35,6 +38,7 @@ public class ContaBeneficio implements IPersistente {
     @JoinColumn(name = "CD_CONTA_BENEFICIARIO")
     private ContaBeneficiario contaBeneficiario;
 
+    @NotAudited
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_BENEFICIO")
     private Beneficio beneficio;

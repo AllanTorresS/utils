@@ -4,6 +4,7 @@ import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.interfaces.IExclusaoLogica;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,6 +28,7 @@ import java.util.List;
 /**
  * Representa a tabela de beneficiário
  */
+@Audited
 @Entity
 @Table(name = "BENEFICIARIO")
 public class Beneficiario implements IPersistente, IExclusaoLogica, IPertenceFrota {
