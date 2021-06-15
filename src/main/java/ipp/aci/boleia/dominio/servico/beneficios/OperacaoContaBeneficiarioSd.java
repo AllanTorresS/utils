@@ -28,15 +28,15 @@ public class OperacaoContaBeneficiarioSd {
     private UtilitarioAmbiente utilitarioAmbiente;
 
     /**
-     * Cria uma operação de débito em uma conta de beneficiário.
+     * Cria uma operação de crédito em uma conta de beneficiário.
      *
      * @param contaBeneficiario a conta que sofreu a operação.
      * @param valorOperacao o valor da operação.
      * @return operação criada.
      *
-     * @throws ExcecaoValidacao lançada caso seja passado um valor menor ou igual a zero para a criação do débito.
+     * @throws ExcecaoValidacao lançada caso seja passado um valor menor ou igual a zero para a criação do crédito.
      */
-    public OperacaoContaBeneficiario criarOperacaoDebitoConta(ContaBeneficiario contaBeneficiario, BigDecimal valorOperacao) throws ExcecaoValidacao {
+    public OperacaoContaBeneficiario criarOperacaoCreditoConta(ContaBeneficiario contaBeneficiario, BigDecimal valorOperacao) throws ExcecaoValidacao {
         if(valorOperacao.compareTo(BigDecimal.ZERO) <= 0) {
             throw new ExcecaoValidacao(Erro.ERRO_GENERICO);
         }
