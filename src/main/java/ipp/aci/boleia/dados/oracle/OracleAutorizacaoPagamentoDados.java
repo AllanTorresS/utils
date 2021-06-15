@@ -1464,6 +1464,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         parametros.add(new ParametroPesquisaIgual("veiculo.id", idVeiculo));
         parametros.add(new ParametroPesquisaDiferente("hodometro", null));
         parametros.add(new ParametroPesquisaNulo("idAutorizacaoEstorno"));
+        parametros.add(new ParametroPesquisaMaior("valorTotal",BigDecimal.ZERO));
 
         ResultadoPaginado<AutorizacaoPagamento> resultado = pesquisarSemIsolamentoDados(paginacao,
                 parametros.toArray(new ParametroPesquisa[parametros.size()]));
@@ -1480,6 +1481,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         parametros.add(new ParametroPesquisaIgual("veiculo.id", idVeiculo));
         parametros.add(new ParametroPesquisaDiferente("horimetro", null));
         parametros.add(new ParametroPesquisaNulo("idAutorizacaoEstorno"));
+        parametros.add(new ParametroPesquisaMaior("valorTotal",BigDecimal.ZERO));
 
         ResultadoPaginado<AutorizacaoPagamento> resultado = pesquisarSemIsolamentoDados(paginacao,
                 parametros.toArray(new ParametroPesquisa[parametros.size()]));
