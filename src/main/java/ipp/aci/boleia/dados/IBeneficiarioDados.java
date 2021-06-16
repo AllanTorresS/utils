@@ -1,6 +1,6 @@
 package ipp.aci.boleia.dados;
 
-import ipp.aci.boleia.dominio.Beneficiario;
+import ipp.aci.boleia.dominio.beneficios.Beneficiario;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaBeneficiarioVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialVo;

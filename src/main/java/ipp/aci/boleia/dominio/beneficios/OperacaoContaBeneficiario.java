@@ -1,6 +1,8 @@
-package ipp.aci.boleia.dominio;
+package ipp.aci.boleia.dominio.beneficios;
 
+import ipp.aci.boleia.dominio.AutorizacaoPagamento;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,21 +21,26 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * Representa a tabela de operação conta benefício
+ * Representa a tabela de operação conta beneficiário
  */
+@Audited
 @Entity
-@Table(name = "OPERACAO_CONTA_BENEFICIO")
-public class OperacaoContaBeneficio implements IPersistente {
+@Table(name = "OPER_CONTA_BENEFICIARIO")
+public class OperacaoContaBeneficiario implements IPersistente {
 
     @Id
-    @Column(name = "CD_OPERACAO_CONTA_BENEFICIO")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_OPERACAO_CONTA_BENEFICIO")
-    @SequenceGenerator(name = "SEQ_OPERACAO_CONTA_BENEFICIO", sequenceName = "SEQ_OPERACAO_CONTA_BENEFICIO", allocationSize = 1)
+    @Column(name = "CD_OPER_CONTA_BENEFICIARIO")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_OPER_CONTA_BENEFICIARIO")
+    @SequenceGenerator(name = "SEQ_OPER_CONTA_BENEFICIARIO", sequenceName = "SEQ_OPER_CONTA_BENEFICIARIO", allocationSize = 1)
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CD_CONTA_BENEFICIO_USUARIO")
-    private ContaBeneficioUsuario contaBeneficioUsuario;
+    @JoinColumn(name = "CD_CONTA_BENEFICIARIO")
+    private ContaBeneficiario contaBeneficiario;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_AUTORIZACAO_PAGAMENTO")
+    private AutorizacaoPagamento autorizacaoPagamento;
 
     @Column(name = "VA_TOTAL")
     private BigDecimal valorTotal;
@@ -61,12 +68,20 @@ public class OperacaoContaBeneficio implements IPersistente {
         this.id = id;
     }
 
-    public ContaBeneficioUsuario getContaBeneficioUsuario() {
-        return contaBeneficioUsuario;
+    public ContaBeneficiario getContaBeneficiario() {
+        return contaBeneficiario;
     }
 
-    public void setContaBeneficioUsuario(ContaBeneficioUsuario contaBeneficioUsuario) {
-        this.contaBeneficioUsuario = contaBeneficioUsuario;
+    public void setContaBeneficiario(ContaBeneficiario contaBeneficiario) {
+        this.contaBeneficiario = contaBeneficiario;
+    }
+
+    public AutorizacaoPagamento getAutorizacaoPagamento() {
+        return autorizacaoPagamento;
+    }
+
+    public void setAutorizacaoPagamento(AutorizacaoPagamento autorizacaoPagamento) {
+        this.autorizacaoPagamento = autorizacaoPagamento;
     }
 
     public BigDecimal getValorTotal() {

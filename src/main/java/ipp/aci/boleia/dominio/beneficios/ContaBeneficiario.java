@@ -1,6 +1,7 @@
-package ipp.aci.boleia.dominio;
+package ipp.aci.boleia.dominio.beneficios;
 
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,6 +16,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -23,14 +25,15 @@ import java.util.List;
 /**
  * Representa a tabela de conta benefício usuário
  */
+@Audited
 @Entity
-@Table(name = "CONTA_BENEFICIO_USUARIO")
-public class ContaBeneficioUsuario implements IPersistente {
+@Table(name = "CONTA_BENEFICIARIO")
+public class ContaBeneficiario implements IPersistente {
 
     @Id
-    @Column(name = "CD_CONTA_BENEFICIO_USUARIO")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_CONTA_BENEFICIO_USUARIO")
-    @SequenceGenerator(name = "SEQ_CONTA_BENEFICIO_USUARIO", sequenceName = "SEQ_CONTA_BENEFICIO_USUARIO", allocationSize = 1)
+    @Column(name = "CD_CONTA_BENEFICIARIO")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_CONTA_BENEFICIARIO")
+    @SequenceGenerator(name = "SEQ_CONTA_BENEFICIARIO", sequenceName = "SEQ_CONTA_BENEFICIARIO", allocationSize = 1)
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -54,11 +57,15 @@ public class ContaBeneficioUsuario implements IPersistente {
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataEncerramento;
 
-    @OneToMany(mappedBy = "contaBeneficioUsuario", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "contaBeneficiario", fetch = FetchType.LAZY)
     private List<ContaBeneficio> contasBeneficio;
 
-    @OneToMany(mappedBy = "contaBeneficioUsuario", fetch = FetchType.LAZY)
-    private List<OperacaoContaBeneficio> operacoesContaBeneficio;
+    @OneToMany(mappedBy = "contaBeneficiario", fetch = FetchType.LAZY)
+    private List<OperacaoContaBeneficiario> operacoesContaBeneficio;
+
+    @Version
+    @Column(name = "NO_VERSAO")
+    private Long versao;
 
     @Override
     public Long getId() {
@@ -94,11 +101,11 @@ public class ContaBeneficioUsuario implements IPersistente {
         this.contasBeneficio = contasBeneficio;
     }
 
-    public List<OperacaoContaBeneficio> getOperacoesContaBeneficio() {
+    public List<OperacaoContaBeneficiario> getOperacoesContaBeneficio() {
         return operacoesContaBeneficio;
     }
 
-    public void setOperacoesContaBeneficio(List<OperacaoContaBeneficio> operacoesContaBeneficio) {
+    public void setOperacoesContaBeneficio(List<OperacaoContaBeneficiario> operacoesContaBeneficio) {
         this.operacoesContaBeneficio = operacoesContaBeneficio;
     }
 
@@ -124,5 +131,13 @@ public class ContaBeneficioUsuario implements IPersistente {
 
     public void setDataEncerramento(Date dataEncerramento) {
         this.dataEncerramento = dataEncerramento;
+    }
+
+    public Long getVersao() {
+        return versao;
+    }
+
+    public void setVersao(Long versao) {
+        this.versao = versao;
     }
 }

@@ -31,19 +31,6 @@ public interface IChamadoDados {
      */
     ResultadoPaginado<ChamadoVo> consultarChamados(FiltroConsultaChamadosVo filtro);
 
-    /**
-     * Abre chamado no SalesForce por email
-     *
-     * @param company do chamado
-     * @param name do chamado
-     * @param email do chamado
-     * @param phone do chamado
-     * @param idReason do chamado
-     * @param subject do chamado
-     * @param description do chamado
-     * @return true se o chamado for enviado para o SalesForce, false caso contrário
-     */
-    boolean abrirChamadoEmail(String company ,String name, String email, String phone, Long idReason, String subject, String description);
 
     /**
      * Busca uma lista de chamados ativos com as mesmas características de um chamado que será aberto.

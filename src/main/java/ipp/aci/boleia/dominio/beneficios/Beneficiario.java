@@ -1,8 +1,10 @@
-package ipp.aci.boleia.dominio;
+package ipp.aci.boleia.dominio.beneficios;
 
+import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.interfaces.IExclusaoLogica;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,6 +28,7 @@ import java.util.List;
 /**
  * Representa a tabela de beneficiário
  */
+@Audited
 @Entity
 @Table(name = "BENEFICIARIO")
 public class Beneficiario implements IPersistente, IExclusaoLogica, IPertenceFrota {
@@ -74,7 +77,7 @@ public class Beneficiario implements IPersistente, IExclusaoLogica, IPertenceFro
     private Long versao;
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "beneficiario")
-    private ContaBeneficioUsuario contaBeneficioUsuario;
+    private ContaBeneficiario contaBeneficiario;
 
     @Override
     public Long getId() {
@@ -160,12 +163,12 @@ public class Beneficiario implements IPersistente, IExclusaoLogica, IPertenceFro
         this.versao = versao;
     }
 
-    public ContaBeneficioUsuario getContaBeneficioUsuario() {
-        return contaBeneficioUsuario;
+    public ContaBeneficiario getContaBeneficiario() {
+        return contaBeneficiario;
     }
 
-    public void setContaBeneficioUsuario(ContaBeneficioUsuario contaBeneficioUsuario) {
-        this.contaBeneficioUsuario = contaBeneficioUsuario;
+    public void setContaBeneficiario(ContaBeneficiario contaBeneficiario) {
+        this.contaBeneficiario = contaBeneficiario;
     }
 
     @Transient

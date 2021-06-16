@@ -70,4 +70,12 @@ public class CategoriaPermissao implements IPersistente {
     public void setPermissoes(List<Permissao> permissoes) {
         this.permissoes = permissoes;
     }
+
+    public Long getVersao() {
+        return versao;
+    }
+
+    public void setVersao(Long versao) {
+        this.versao = versao;
+    }
 }

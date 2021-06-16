@@ -98,18 +98,6 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
             "      Motivo__c=':motivo' AND " +
             "      MotivoSolicitacao__c=':modulo'";
 
-    private static final String ALIAS_ORGID = "orgid";
-    private static final String ALIAS_COMPANY = "company";
-    private static final String ALIAS_NAME = "name";
-    private static final String ALIAS_EMAIL = "email";
-    private static final String ALIAS_PHONE = "phone";
-    private static final String ALIAS_REASON = "00N0v0000018AKZ";
-    private static final String ALIAS_SUBJECT = "subject";
-    private static final String ALIAS_DESCRIPTION = "description";
-
-    private static final int LIMITE_DEFAULT = 80;
-    private static final int LIMITE_PHONE = 15;
-    private static final int LIMITE_DESCRIPTION = 1024;
 
     private static final String CAMPO_TOTAL_ITEMS = "totalSize";
     private static final String CAMPO_DONE = "done";
@@ -125,12 +113,6 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
 
     @Value("${salesforce.chamados.authorization.password}")
     private String password;
-
-    @Value("${salesforce.chamado.orgid}")
-    private String orgid;
-
-    @Value("${salesforce.chamado.url}")
-    private String endereco;
 
     @Value("${salesforce.chamados.consulta.url}")
     private String urlConsulta;
@@ -200,27 +182,6 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     public void criarChamado(CriacaoChamadoVo chamadoVo) throws ExcecaoBoleiaRuntime {
         prepararRequisicao(urlCriacao, chamadoVo);
         enviarRequisicaoPost(this::trataRespostaCriacao);
-    }
-
-    @Override
-    public boolean abrirChamadoEmail(String company ,String name, String email, String phone, Long idReason, String subject, String description) {
-
-        Map<String, String> form = new LinkedHashMap<>();
-        form.put(ALIAS_ORGID, orgid);
-        form.put(ALIAS_COMPANY, limitar(company, LIMITE_DEFAULT));
-        form.put(ALIAS_NAME, limitar(name, LIMITE_DEFAULT));
-        form.put(ALIAS_EMAIL, limitar(email, LIMITE_DEFAULT));
-        form.put(ALIAS_PHONE, limitar(phone, LIMITE_PHONE));
-        form.put(ALIAS_REASON, motivoChamadoDados.obterPorId(idReason).getDescricao());
-        form.put(ALIAS_SUBJECT, limitar(subject, LIMITE_DEFAULT));
-        form.put(ALIAS_DESCRIPTION, limitar(description, LIMITE_DESCRIPTION));
-
-        try {
-            return restDados.doPostFormEncoded(endereco, form, resp -> resp.getStatusLine().getStatusCode() == 200);
-        }catch (Exception ex){
-            LOGGER.error(ex.getMessage(), ex);
-            return false;
-        }
     }
 
     @Override
@@ -307,10 +268,6 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
         prepararRequisicao(urlPicklists, null);
 
         return enviarRequisicaoGet(consumidorHttp);
-    }
-
-    public void setEndereco(String endereco) {
-        this.endereco = endereco;
     }
 
     @Override

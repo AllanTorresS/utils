@@ -148,7 +148,6 @@ public final class ChavePermissao {
     public static final String PARAMETRO_SISTEMA_ALTERAR                    = SPRING_ROLE_PREFIX + "PARAMETRO_SISTEMA_ALTERAR" + SPRING_ROLE_SUFFIX;
     public static final String DISPOSITIVO_MOTORISTA_GERAR_PEDIDO           = SPRING_ROLE_PREFIX + "DISPOSITIVO_MOTORISTA_GERAR_PEDIDO" + SPRING_ROLE_SUFFIX;
     public static final String ROTINA_DISPARAR_MANUALMENTE                  = SPRING_ROLE_PREFIX + "ROTINA_DISPARAR_MANUALMENTE" + SPRING_ROLE_SUFFIX;
-    public static final String ABRIR_CHAMADO                                = SPRING_ROLE_PREFIX + "ABRIR_CHAMADO" + SPRING_ROLE_SUFFIX;
     public static final String CHAMADO_CONSULTAR                            = SPRING_ROLE_PREFIX + "CHAMADO_CONSULTAR" + SPRING_ROLE_SUFFIX;
     public static final String CHAMADO_INCLUIR                              = SPRING_ROLE_PREFIX + "CHAMADO_INCLUIR" + SPRING_ROLE_SUFFIX;
     public static final String API_TOKEN_CONSULTAR                          = SPRING_ROLE_PREFIX + "API_TOKEN_CONSULTAR" + SPRING_ROLE_SUFFIX;
@@ -234,6 +233,7 @@ public final class ChavePermissao {
     public static final String DETALHAMENTO_COBRANCA_EXPORTAR               = FINANCEIRO_EXPORTAR_XLS + " or " +  COBRANCA_EXPORTAR;
 
     public static final String BENEFICIOS_CONSULTAR                       = SPRING_ROLE_PREFIX + "BENEFICIOS_CONSULTAR" + SPRING_ROLE_SUFFIX;
+    public static final String BENEFICIOS_ADICIONAR_SALDO                 = SPRING_ROLE_PREFIX + "BENEFICIOS_ADICIONAR_SALDO" + SPRING_ROLE_SUFFIX;
 
     // Permissão da API de Frotistas.
     public static final String API_FROTISTA                                         = SPRING_ROLE_PREFIX + "API_FROTISTA" + SPRING_ROLE_SUFFIX;
