@@ -1,14 +1,5 @@
 package ipp.aci.boleia.dados.oracle;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-
-import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.stereotype.Repository;
-
 import ipp.aci.boleia.dados.ITagConectcarDados;
 import ipp.aci.boleia.dominio.TagConectcar;
 import ipp.aci.boleia.dominio.enums.StatusAtivacao;
@@ -19,6 +10,13 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgualIgnoreCase;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaTagConectcarVo;
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.stereotype.Repository;
+
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Repositório de entidades TagConectcar
@@ -46,6 +44,11 @@ public class OracleTagConectcarDados extends OracleRepositorioBoleiaDados<TagCon
          " AND t.dataAtivacao IS NOT NULL " +
          " AND t.dataExclusao IS NULL " +
          " ORDER BY t.id ASC ";
+
+    private static final String QUERY_TAG =
+            " SELECT t " +
+                    " FROM TagConectcar t " +
+                    " WHERE t.id  = :idTag ";
 	
     /**
      * Instancia o repositório
@@ -104,6 +107,13 @@ public class OracleTagConectcarDados extends OracleRepositorioBoleiaDados<TagCon
         
         return pesquisarUnicoSemIsolamentoDados(QUERY_QUANTIDADE_TOTAL_TAGS, parametros.toArray(new ParametroPesquisa[parametros.size()]));
 	}
+
+    public TagConectcar obterTagPorId(Long idTag) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaIgual("idTag", idTag));
+
+        return pesquisarUnicoSemIsolamentoDados(QUERY_TAG, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
 
 	@Override
 	public long obterQuantidadeTotalTagsAtivas(Long codigoFrota) {
