@@ -98,6 +98,8 @@ public class UnidadeSd {
         unidadeMatriz.setLogradouroEndereco(frota.getLogradouro());
         unidadeMatriz.setNumeroEndereco(frota.getNumero());
         unidadeMatriz.setComplementoEndereco(frota.getComplemento());
+        unidadeMatriz.setLatitude(frota.getLatitude());
+        unidadeMatriz.setLongitude(frota.getLongitude());
 
         unidadeMatriz.setDddTelefone(frota.getDddTelefone());
         unidadeMatriz.setTelefone(frota.getTelefone());
