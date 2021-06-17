@@ -3,6 +3,8 @@ package ipp.aci.boleia.dados;
 import ipp.aci.boleia.dominio.TransacaoConectcar;
 import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
+import ipp.aci.boleia.dominio.vo.DiaValePedagioVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaExtratoValePedagioVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaTransacaoConsolidadaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaUtilizacaoTagVo;
 
@@ -106,4 +108,12 @@ public interface ITransacaoConectcarDados extends IRepositorioBoleiaDados<Transa
      */
     TransacaoConectcar obterPrimeiraTransacaoPorFrota(Long idFrota);
 
+    /**
+     * Obtém o extrato do vale pedágio
+     *
+     * @param filtro parâmetros utilizados na consulta
+     * @param usuarioLogado usuario logado que solicita a pesquisa
+     * @return extrato do vale pedágio
+     */
+    ResultadoPaginado<DiaValePedagioVo> obterExtratoValePedagio(FiltroPesquisaExtratoValePedagioVo filtro, Usuario usuarioLogado);
 }
