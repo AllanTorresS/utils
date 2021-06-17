@@ -176,8 +176,14 @@ public interface IFrotaDados extends IRepositorioBoleiaDados<Frota> {
      * @param dataUltimoEnvio a data do último envio de dados bem sucedido
      * @return Lista de Frotas para exportacao
      */
-    List<ClienteProFrotaVo> obterClienteFrotaAPCO(Date dataUltimoEnvio);
+    List<Frota> obterFrotaClientesApcoPorData(Date dataUltimoEnvio);
 
+    /**
+     * Retorna os dados de todas das frotas clientes que não estejam em Pré Cadastro
+     * para realizar uma integração com a APCO.
+     * @return Lista de Frotas para exportacao
+     */
+    List<Frota> obterFrotaClientesApco();
     /**
      * Altera o estado da entidade Frota para desanexado
      *
