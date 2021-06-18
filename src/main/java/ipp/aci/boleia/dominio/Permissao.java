@@ -69,6 +69,7 @@ public class Permissao implements IPersistente {
     @Column(name = "ID_MODULO_INTERNO")
     private boolean moduloInterno;
 
+    //O mapeamento como EAGER se deve ao fato da categoria ser necessária ao se buscar uma permissão
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "CD_CATEGORIA_PERMISSAO")
     private CategoriaPermissao categoria;
