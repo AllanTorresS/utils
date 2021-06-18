@@ -1,12 +1,7 @@
 package ipp.aci.boleia.dominio;
 
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
-import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
-import ipp.aci.boleia.dominio.interfaces.IPertenceRevendedor;
-import org.apache.commons.collections4.CollectionUtils;
-import org.hibernate.envers.AuditJoinTable;
 import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,19 +9,12 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
