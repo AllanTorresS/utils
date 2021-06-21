@@ -30,7 +30,6 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgualIgnoreCase;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
-import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaiorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
 import ipp.aci.boleia.dominio.vo.CoordenadaVo;
@@ -41,7 +40,6 @@ import ipp.aci.boleia.dominio.vo.FiltroPesquisaFinanceiroVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFrotaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialFrotaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaPostoInternoRotaVo;
-import ipp.aci.boleia.dominio.vo.apco.ClienteProFrotaVo;
 import ipp.aci.boleia.util.Ordenacao;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
@@ -570,17 +568,17 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
     }
 
     @Override
-    public List<Frota> obterFrotaClientesApcoPorData(Date dataUltimoEnvio){
+    public List<Frota> obterFrotasClienteApcoPorData(Date dataUltimoEnvio){
         List<ParametroPesquisa> parametros = new ArrayList<>();
         parametros.add(new ParametroPesquisaDataMaiorOuIgual("dataAtualizacao",dataUltimoEnvio));
-        parametros.add(new ParametroPesquisaDiferente("status",StatusFrota.PRE_CADASTRO));
+        parametros.add(new ParametroPesquisaDiferente("status",StatusFrota.PRE_CADASTRO.getValue()));
         return pesquisar(new ParametroOrdenacaoColuna("dataAtualizacao", Ordenacao.CRESCENTE), parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
     @Override
-    public List<Frota> obterFrotaClientesApco(){
+    public List<Frota> obterFrotasClienteApco(){
         List<ParametroPesquisa> parametros = new ArrayList<>();
-        parametros.add(new ParametroPesquisaDiferente("status",StatusFrota.PRE_CADASTRO));
+        parametros.add(new ParametroPesquisaDiferente("status",StatusFrota.PRE_CADASTRO.getValue()));
         return pesquisar(new ParametroOrdenacaoColuna("dataAtualizacao", Ordenacao.CRESCENTE), parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
     

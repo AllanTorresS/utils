@@ -11,7 +11,6 @@ import ipp.aci.boleia.dominio.vo.FiltroPesquisaFinanceiroVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFrotaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialFrotaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaPostoInternoRotaVo;
-import ipp.aci.boleia.dominio.vo.apco.ClienteProFrotaVo;
 
 import java.util.Date;
 import java.util.List;
@@ -176,14 +175,14 @@ public interface IFrotaDados extends IRepositorioBoleiaDados<Frota> {
      * @param dataUltimoEnvio a data do último envio de dados bem sucedido
      * @return Lista de Frotas para exportacao
      */
-    List<Frota> obterFrotaClientesApcoPorData(Date dataUltimoEnvio);
+    List<Frota> obterFrotasClienteApcoPorData(Date dataUltimoEnvio);
 
     /**
      * Retorna os dados de todas das frotas clientes que não estejam em Pré Cadastro
      * para realizar uma integração com a APCO.
      * @return Lista de Frotas para exportacao
      */
-    List<Frota> obterFrotaClientesApco();
+    List<Frota> obterFrotasClienteApco();
     /**
      * Altera o estado da entidade Frota para desanexado
      *
