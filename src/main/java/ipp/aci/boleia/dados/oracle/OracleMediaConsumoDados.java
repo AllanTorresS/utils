@@ -125,7 +125,7 @@ public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<Autori
                     "a.razaoSocialEmpresaVeiculo,   " +
                     "a.frota.id AS idFrota,         " +
                     "CASE WHEN MAX(a.hodometro) - MIN(a.hodometroAnterior) > 0 " +
-                    "THEN (MAX(a.hodometro) - MIN(a.hodometroAnterior)) " +
+                    "THEN cast( (MAX(a.hodometro) - MIN(a.hodometroAnterior))) as big_decimal) " +
                     "ELSE (MAX(a.horimetro) - MIN(a.horimetroAnterior))" +
                     "END AS mediaHorHod, " +
                     "SUM(a.totalLitrosAbastecimento) AS mediaTotalLitrosAbastecimento, " +
@@ -358,7 +358,7 @@ public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<Autori
             return null;
         }
 
-        vo.setMedia(BigDecimal.valueOf(vo.getMediaHorHod())
+        vo.setMedia(vo.getMediaHorHod()
                 .divide((vo.getMediaTotalLitrosAbastecimento()
                         .subtract(ultimosAbastecimentos.getRegistros().get(0).getTotalLitrosAbastecimento())), 3, RoundingMode.HALF_EVEN));
         return vo;
@@ -454,12 +454,12 @@ public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<Autori
         }
         switch (TipoConsumo.obterPorValor(vo.getTipoConsumo())) {
             case KML:
-                vo.setMedia(BigDecimal.valueOf(vo.getMediaHorHod())
+                vo.setMedia(vo.getMediaHorHod()
                         .divide((vo.getMediaTotalLitrosAbastecimento()), 3, RoundingMode.HALF_EVEN));
                 break;
             case LH:
                 vo.setMedia(vo.getMediaTotalLitrosAbastecimento()
-                        .divide(BigDecimal.valueOf(vo.getMediaHorHod()), 3, RoundingMode.HALF_EVEN));
+                        .divide(vo.getMediaHorHod(), 3, RoundingMode.HALF_EVEN));
                 break;
         }
 
@@ -570,7 +570,7 @@ public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<Autori
             return  null;
         }
 
-        vo.setMedia(BigDecimal.valueOf(vo.getMediaHorHod())
+        vo.setMedia(vo.getMediaHorHod()
                 .divide((vo.getMediaTotalLitrosAbastecimento()
                         .subtract(ultimosAbastecimentos.getRegistros().get(0).getTotalLitrosAbastecimento())), 3, RoundingMode.HALF_EVEN));
         return vo;
