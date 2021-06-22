@@ -11,6 +11,9 @@ public class RequisicaoRoteirizadorVo {
     private List<PontoRotaVo> pontosRota = new ArrayList<>();
     private VeiculoRotaVo infoVeiculo;
     private Long frota;
+    private List<Integer> parametrosFrota;
+    private List<Long> postosDesconsiderados;
+    private Integer postoUrbano;
 
     /**
      * Construtor padrão
@@ -22,11 +25,18 @@ public class RequisicaoRoteirizadorVo {
      * @param pontosRota Lista de pontos da rota
      * @param infoVeiculo Informações do veículo
      * @param frota Informações da Frota
+     * @param parametrosFrota Informações dos Parametros de Sistema da Frota
+     * @param postosDesconsiderados Lista de Postos a serem desconsiderados na Rota
+     * @param postoUrbano Flag que sinaliza a utilizacao de postos urbanos
      */
-    public RequisicaoRoteirizadorVo(List<PontoRotaVo> pontosRota, VeiculoRotaVo infoVeiculo, Long frota) {
+    public RequisicaoRoteirizadorVo(List<PontoRotaVo> pontosRota, VeiculoRotaVo infoVeiculo, Long frota,
+                                 List<Integer> parametrosFrota, List<Long> postosDesconsiderados, Integer postoUrbano  ) {
         this.pontosRota = pontosRota;
         this.infoVeiculo = infoVeiculo;
         this.frota = frota;
+        this.parametrosFrota = parametrosFrota;
+        this.postosDesconsiderados = postosDesconsiderados;
+        this.postoUrbano = postoUrbano;
     }
 
     public List<PontoRotaVo> getPontosRota() {
@@ -53,4 +63,27 @@ public class RequisicaoRoteirizadorVo {
         this.frota = frota;
     }
 
+    public List<Integer> getParametrosFrota() {
+        return parametrosFrota;
+    }
+
+    public void setParametrosFrota(List<Integer> parametrosFrota) {
+        this.parametrosFrota = parametrosFrota;
+    }
+
+    public List<Long> getPostosDesconsiderados() {
+        return postosDesconsiderados;
+    }
+
+    public void setPostosDesconsiderados(List<Long> postosDesconsiderados) {
+        this.postosDesconsiderados = postosDesconsiderados;
+    }
+
+    public Integer getPostoUrbano() {
+        return postoUrbano;
+    }
+
+    public void setPostoUrbano(Integer postoUrbano) {
+        this.postoUrbano = postoUrbano;
+    }
 }

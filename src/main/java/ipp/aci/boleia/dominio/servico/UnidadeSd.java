@@ -51,6 +51,15 @@ public class UnidadeSd {
     private IEmpresaAgregadaDados empresaAgregadaDados;
 
     /**
+     * Armazena os dados de uma unidade
+     * @param unidade A unidade  ser armazenada
+     * @return A unidade armazenada
+     */
+    public Unidade armazenar(Unidade unidade) {
+        return repositorio.armazenar(unidade);
+    }
+
+    /**
      * Obtem a unidade matriz para a frota logada
      * @return Unidade matriz
      */
@@ -79,6 +88,8 @@ public class UnidadeSd {
         unidadeMatriz.setLogradouroEndereco(frota.getLogradouro());
         unidadeMatriz.setNumeroEndereco(frota.getNumero());
         unidadeMatriz.setComplementoEndereco(frota.getComplemento());
+        unidadeMatriz.setLatitude(frota.getLatitude());
+        unidadeMatriz.setLongitude(frota.getLongitude());
 
         unidadeMatriz.setDddTelefone(frota.getDddTelefone());
         unidadeMatriz.setTelefone(frota.getTelefone());

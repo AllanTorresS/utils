@@ -24,6 +24,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
@@ -131,6 +132,15 @@ public class Unidade implements IPersistente, IExclusaoLogica, IPertenceFrota {
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "unidade")
     private EmpresaUnidade empresaUnidade;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "unidade")
+    private List<PostoInternoTipoCombustivelPreco> postoInternoTipoCombustivelPreco;
+
+    @Column(name = "QT_GRAU_LATIT")
+    private BigDecimal latitude;
+
+    @Column(name = "QT_GRAU_LONGIT")
+    private BigDecimal longitude;
 
     @Override
     public Long getId() {
@@ -340,6 +350,31 @@ public class Unidade implements IPersistente, IExclusaoLogica, IPertenceFrota {
         this.empresaUnidade = empresaUnidade;
     }
 
+    public List<PostoInternoTipoCombustivelPreco> getPostoInternoTipoCombustivelPreco() {
+        return postoInternoTipoCombustivelPreco;
+    }
+
+    public void setPostoInternoTipoCombustivelPreco(List<PostoInternoTipoCombustivelPreco> postoInternoTipoCombustivelPreco) {
+        this.postoInternoTipoCombustivelPreco = postoInternoTipoCombustivelPreco;
+    }
+
+    public BigDecimal getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(BigDecimal latitude) {
+        this.latitude = latitude;
+    }
+
+
+    public BigDecimal getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(BigDecimal longitude) {
+        this.longitude = longitude;
+    }
+
     @Transient
     @Override
     public List<Frota> getFrotas() {
@@ -360,5 +395,43 @@ public class Unidade implements IPersistente, IExclusaoLogica, IPertenceFrota {
         String nome = getNome();
         cnpj += " - ";
         return cnpj + nome;
+    }
+
+    @Transient
+    public String getLongitudeString() {
+        return UtilitarioFormatacao.formatarDecimal(this.longitude);
+    }
+
+    @Transient
+    public String getLatitudeString() {
+        return UtilitarioFormatacao.formatarDecimal(this.latitude);
+    }
+
+    /**
+     * Obtem o endereço completo
+     * @return endereço completo
+     */
+    @Transient
+    public String obterEnderecoCompleto(){
+        StringBuffer buffer = new StringBuffer();
+        if(this.logradouroEndereco != null){
+            buffer.append(this.logradouroEndereco).append(", ");
+        }
+        if(this.numeroEndereco != null){
+            buffer.append(this.numeroEndereco).append(", ");
+        }
+        if(this.complementoEndereco != null){
+            buffer .append(this.complementoEndereco).append(", ");
+        }
+        if(this.bairro != null){
+            buffer.append(this.bairro).append(", ");
+        }
+        if(this.uf != null){
+            buffer.append(this.uf).append(", ");
+        }
+        if(this.cep != null){
+            buffer.append("( ").append(UtilitarioFormatacao.formatarCepApresentacao(this.cep)).append(" )");
+        }
+        return buffer.toString();
     }
 }

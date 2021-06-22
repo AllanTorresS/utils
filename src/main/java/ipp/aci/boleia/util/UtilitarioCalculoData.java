@@ -190,7 +190,7 @@ public final class UtilitarioCalculoData {
      * @param unidadeTempo A unidade de tempo desejada
      * @return A data resultante da operacao
      */
-    private static Date definirTempoData(Date data, int valorCampoData, int unidadeTempo) {
+    public static Date definirTempoData(Date data, int valorCampoData, int unidadeTempo) {
         if (data == null) {
             return null;
         }
@@ -238,6 +238,26 @@ public final class UtilitarioCalculoData {
             numeroDiasParaDiaUtil = 1;
         } else if (dow == Calendar.SATURDAY) {
             numeroDiasParaDiaUtil = 2;
+        }
+        return adicionarDiasData(data, numeroDiasParaDiaUtil);
+    }
+
+    /**
+     * Calcula o último dia útil antes de uma data
+     *
+     * @param data data de referência
+     * @return último dia útil
+     */
+    public static Date obterUltimoDiaUtilSemFeriado(Date data) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(data);
+
+        int dow = c.get(Calendar.DAY_OF_WEEK);
+        int numeroDiasParaDiaUtil = 0;
+        if (dow == Calendar.SUNDAY) {
+            numeroDiasParaDiaUtil = -2;
+        } else if (dow == Calendar.SATURDAY) {
+            numeroDiasParaDiaUtil = -1;
         }
         return adicionarDiasData(data, numeroDiasParaDiaUtil);
     }
@@ -512,5 +532,60 @@ public final class UtilitarioCalculoData {
         calendar.add(Calendar.DAY_OF_MONTH, -qtdDias);
         return calendar.getTime();
     }
+
+    /**
+     * Verifica se o dia no Calendario é final de semana, Sábado ou Domingo
+     * @param calendario Data em calendario
+     * @return true se for final de semana, Sábado ou Domingo
+     */
+    public static boolean isFinalDeSemana(Calendar calendario) {
+        return calendario.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY || calendario.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY;
+    }
+
+    /**
+     * Diminui uma quantidade de meses da data
+     * @param data A data a ser subtraída
+     * @param qtdMeses A quantidade de meses a serem subtraídos
+     * @return A data subtraída do número de meses
+     */
+    public static Date diminuirMeses(Date data, int qtdMeses) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(data);
+        calendar.add(Calendar.MONTH, -qtdMeses);
+        return calendar.getTime();
+    }
+
+    /**
+     * Obtém o primeiro dia do mês anterior
+     * @param data A data base
+     * @return O primeiro dia do mês anterior à data
+     */
+    public static Date obterPrimeiroDiaMesAnterior(Date data) {
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.DAY_OF_MONTH, c.getActualMinimum(Calendar.DAY_OF_MONTH));
+        c.set(Calendar.HOUR_OF_DAY,c.getActualMinimum(Calendar.HOUR_OF_DAY));
+        c.set(Calendar.MINUTE,c.getActualMinimum(Calendar.MINUTE));
+        c.set(Calendar.SECOND,c.getActualMinimum(Calendar.SECOND));
+        c.set(Calendar.MILLISECOND,c.getActualMinimum(Calendar.MILLISECOND));
+        c.add(Calendar.MONTH, -1);
+        return c.getTime();
+    }
+
+    /**
+     * Obtém o último dia do mês anterior
+     * @param data A data base
+     * @return O último dia do mês anterior à data
+     */
+    public static Date obterUltimoDiaMesAnterior(Date data) {
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
+        c.set(Calendar.HOUR_OF_DAY,c.getActualMaximum(Calendar.HOUR_OF_DAY));
+        c.set(Calendar.MINUTE,c.getActualMaximum(Calendar.MINUTE));
+        c.set(Calendar.SECOND,c.getActualMaximum(Calendar.SECOND));
+        c.set(Calendar.MILLISECOND,c.getActualMaximum(Calendar.MILLISECOND));
+        c.add(Calendar.MONTH, -1);
+        return c.getTime();
+    }
+
 
 }

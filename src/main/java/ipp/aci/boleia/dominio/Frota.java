@@ -2,9 +2,12 @@ package ipp.aci.boleia.dominio;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import ipp.aci.boleia.dominio.enums.ClassificacaoStatusFrota;
 import ipp.aci.boleia.dominio.enums.ModalidadePagamento;
 import ipp.aci.boleia.dominio.enums.StatusContrato;
 import ipp.aci.boleia.dominio.enums.StatusFrota;
+import ipp.aci.boleia.dominio.enums.StatusVigenciaAlteracaoStatusFrota;
+import ipp.aci.boleia.dominio.enums.TipoAlteracaoStatusFrota;
 import ipp.aci.boleia.dominio.interfaces.IExclusaoLogica;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
@@ -37,10 +40,13 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 /**
  * Representa a tabela de Frota
@@ -338,19 +344,17 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @Column(name = "NO_SEQ_JDE")
     private Long numeroSequencialJde;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="DT_INI_ATIV_TEMP")
-    private Date inicioAtivacaoTemporaria;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="DT_FIM_ATIV_TEMP")
-    private Date fimAtivacaoTemporaria;
-
     @OneToMany(mappedBy = "frota")
     private List<FrotaParametroSistema> parametrosSistema;
 
     @Column(name="ID_SEM_NOTA_FISCAL")
     private Boolean semNotaFiscal;
+
+    @Column(name="ID_GERENCIA_NF_AGENDADA")
+    private Boolean gerenciaNfAgendada;
+
+    @Column(name="ID_GERENCIA_NF")
+    private Boolean gerenciaNf;
 
     @Column(name = "DT_ACEITE_TERMOS")
     @Temporal(TemporalType.TIMESTAMP)
@@ -399,22 +403,40 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
 
     @OneToOne(mappedBy = "frota")
     private CondicoesComerciais condicoesComerciais;
-    
+
     @OneToOne(mappedBy = "frota")
     private SituacaoConectCar situacaoConectCar;
-    
+
     @OneToOne(mappedBy = "frota")
     private Lead lead;
-  
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "frota")
+    private List<PostoInternoTipoCombustivelPreco> postoInternoTipoCombustivelPreco;
+
+    @Column(name = "QT_GRAU_LATIT")
+    private BigDecimal latitude;
+
+    @Column(name = "QT_GRAU_LONGIT")
+    private BigDecimal longitude;
+
+    @OneToOne(mappedBy = "frota")
+    private ParametroNotaFiscal parametroNotaFiscal;
+
+    @Column(name = "ID_LEMBRAR_PARAMETRIZACAO_NF")
+    private Boolean lembrarParametrizacaoNf;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "frota")
+    private List<MotivoAlteracaoStatusFrota> motivosAlteracaoStatus;
+
     @NotAudited
     @Formula("(SELECT NVL(COUNT(0), 0) FROM BOLEIA_SCHEMA.TAG_CONECTCAR T WHERE T.CD_FROTA = CD_FROTA)")
     private Integer totalTags;
-    
+
     @NotAudited
     @Formula("(SELECT NVL(COUNT(0), 0) FROM BOLEIA_SCHEMA.TAG_CONECTCAR T WHERE T.CD_FROTA = CD_FROTA AND T.DT_ATIVACAO IS NOT NULL)")
     private Integer totalTagsAtivas;
-    
-	/**
+
+    /**
      * Construtor default
      */
     public Frota() {
@@ -488,8 +510,6 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
      * @param versao Versao do registro no banco
      * @param postoInterno Informa se é posto interno
      * @param numeroSequencialJde Número sequencial do JDE
-     * @param inicioAtivacaoTemporaria Data de início da ativação temporária
-     * @param fimAtivacaoTemporaria Data fim da ativação temporária
      * @param parametrosSistema Parametros do sistema atrelados a frota
      * @param semNotaFiscal Informa se a frota não possui nota fiscal
      * @param dataAceiteTermos Data de aceite dos termos
@@ -501,7 +521,7 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
      * @param connectCTAToken Token do connect
      * @param condicoesComerciais Condições comerciais do contrato da Frota com o Pró-Frotas
      */
-    public Frota(Long id, Long cnpj, Integer status, String nomeRazaoFrota, String statusConvertido, String razaoSocial, String nomeFantasia, Long inscricaoEstadual, Long inscricaoMunicipal, Integer cep, String logradouro, Integer numero, String complemento, String bairro, String municipio, String unidadeFederativa, String assessorResponsavel, Usuario usuarioAssessorResponsavel, Integer dddTelefone, Long telefone, String email, String nomeResponsavelFrota, Long cpfResponsavelFrota, String cargoResponsavelFrota, Integer dddTelefoneResponsavelFrota, Long telefoneResponsavelFrota, String emailResponsavelFrota, Integer faixaQtdVeicPesados, Integer faixaQtdVeicLeves, Long volumeEstimadoDiesel, Long volumeEstimadoCicloOtto, Integer modoPagamento, Integer porte, Integer segmentoAtuacao, Integer statusContrato, String statusContratoConvertido, Date inicioContrato, Integer prazoContrato, Date dataHabilitacao, Date dataSaldoZerado, Boolean permiteAcordoEspecial, Boolean excluido, String codigoIBGE, String codCatBeneficioFiscal, Integer numeroJdeInterno, List<GrupoOperacional> gruposOperacionais, List<Veiculo> veiculos, List<Motorista> motoristas, List<Unidade> unidades, List<FrotaPontoVenda> negociacoes, ParametroCiclo parametroCiclo, SaldoFrota saldo, List<ApiToken> apiTokens, Long versao, Boolean postoInterno, Long numeroSequencialJde, Date inicioAtivacaoTemporaria, Date fimAtivacaoTemporaria, List<FrotaParametroSistema> parametrosSistema, Boolean semNotaFiscal, Date dataAceiteTermos, Boolean primeiraCompra, List<EmpresaAgregada> empresasAgregadas, List<Permissao> permissoes, Date dataCriacao, Date dataAtualizacao, String connectCTAToken, CondicoesComerciais condicoesComerciais, SituacaoConectCar situacaoConectCar, List<TagConectcar> tagsAtivas, List<TagConectcar> tagsInativas) {
+    public Frota(Long id, Long cnpj, Integer status, String nomeRazaoFrota, String statusConvertido, String razaoSocial, String nomeFantasia, Long inscricaoEstadual, Long inscricaoMunicipal, Integer cep, String logradouro, Integer numero, String complemento, String bairro, String municipio, String unidadeFederativa, String assessorResponsavel, Usuario usuarioAssessorResponsavel, Integer dddTelefone, Long telefone, String email, String nomeResponsavelFrota, Long cpfResponsavelFrota, String cargoResponsavelFrota, Integer dddTelefoneResponsavelFrota, Long telefoneResponsavelFrota, String emailResponsavelFrota, Integer faixaQtdVeicPesados, Integer faixaQtdVeicLeves, Long volumeEstimadoDiesel, Long volumeEstimadoCicloOtto, Integer modoPagamento, Integer porte, Integer segmentoAtuacao, Integer statusContrato, String statusContratoConvertido, Date inicioContrato, Integer prazoContrato, Date dataHabilitacao, Date dataSaldoZerado, Boolean permiteAcordoEspecial, Boolean excluido, String codigoIBGE, String codCatBeneficioFiscal, Integer numeroJdeInterno, List<GrupoOperacional> gruposOperacionais, List<Veiculo> veiculos, List<Motorista> motoristas, List<Unidade> unidades, List<FrotaPontoVenda> negociacoes, ParametroCiclo parametroCiclo, SaldoFrota saldo, List<ApiToken> apiTokens, Long versao, Boolean postoInterno, Long numeroSequencialJde, List<FrotaParametroSistema> parametrosSistema, Boolean semNotaFiscal, Date dataAceiteTermos, Boolean primeiraCompra, List<EmpresaAgregada> empresasAgregadas, List<Permissao> permissoes, Date dataCriacao, Date dataAtualizacao, String connectCTAToken, CondicoesComerciais condicoesComerciais, SituacaoConectCar situacaoConectCar, List<TagConectcar> tagsAtivas, List<TagConectcar> tagsInativas) {
         this.id = id;
         this.cnpj = cnpj;
         this.status = status;
@@ -558,8 +578,6 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
         this.versao = versao;
         this.postoInterno = postoInterno;
         this.numeroSequencialJde = numeroSequencialJde;
-        this.inicioAtivacaoTemporaria = inicioAtivacaoTemporaria;
-        this.fimAtivacaoTemporaria = fimAtivacaoTemporaria;
         this.parametrosSistema = parametrosSistema;
         this.semNotaFiscal = semNotaFiscal;
         this.dataAceiteTermos = dataAceiteTermos;
@@ -571,7 +589,6 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
         this.connectCTAToken = connectCTAToken;
         this.condicoesComerciais = condicoesComerciais;
         this.situacaoConectCar = situacaoConectCar;
-             
     }
 
     @Override
@@ -1100,23 +1117,23 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     }
 
     public ApiToken getApiToken() {
-        return apiTokens != null ? 
-            apiTokens
-                .stream()
-                .filter(a -> !a.isContingencia())
-                .findFirst()
-                .orElse(null)
-            : null;
+        return apiTokens != null ?
+                apiTokens
+                        .stream()
+                        .filter(a -> !a.isContingencia())
+                        .findFirst()
+                        .orElse(null)
+                : null;
     }
 
     public ApiToken getApiTokenContigencia() {
-        return apiTokens != null ? 
-            apiTokens
-                .stream()
-                .filter(ApiToken::isContingencia)
-                .findFirst()
-                .orElse(null)
-            : null;
+        return apiTokens != null ?
+                apiTokens
+                        .stream()
+                        .filter(ApiToken::isContingencia)
+                        .findFirst()
+                        .orElse(null)
+                : null;
     }
 
     @Transient
@@ -1128,22 +1145,6 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @Override
     public List<Frota> getFrotas() {
         return Collections.singletonList(this);
-    }
-
-    public Date getInicioAtivacaoTemporaria() {
-        return inicioAtivacaoTemporaria;
-    }
-
-    public void setInicioAtivacaoTemporaria(Date inicioAtivacaoTemporaria) {
-        this.inicioAtivacaoTemporaria = inicioAtivacaoTemporaria;
-    }
-
-    public Date getFimAtivacaoTemporaria() {
-        return fimAtivacaoTemporaria;
-    }
-
-    public void setFimAtivacaoTemporaria(Date fimAtivacaoTemporaria) {
-        this.fimAtivacaoTemporaria = fimAtivacaoTemporaria;
     }
 
     public List<FrotaParametroSistema> getParametrosSistema() {
@@ -1162,19 +1163,19 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
         this.semNotaFiscal = semNotaFiscal;
     }
 
-	/**
-	 * @return the apiTokens
-	 */
-	public List<ApiToken> getApiTokens() {
-		return apiTokens;
-	}
+    /**
+     * @return the apiTokens
+     */
+    public List<ApiToken> getApiTokens() {
+        return apiTokens;
+    }
 
-	/**
-	 * @param apiTokens the apiTokens to set
-	 */
-	public void setApiTokens(List<ApiToken> apiTokens) {
-		this.apiTokens = apiTokens;
-	}
+    /**
+     * @param apiTokens the apiTokens to set
+     */
+    public void setApiTokens(List<ApiToken> apiTokens) {
+        this.apiTokens = apiTokens;
+    }
 
     public Date getDataAceiteTermos() {
         return dataAceiteTermos;
@@ -1265,7 +1266,7 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
      * @return true, caso a frota seja pre paga e nao tenha realizado uma primeira compra, false caso contrario
      */
     public Boolean exigeCompraCredito() {
-	    return this.modoPagamento.equals(ModalidadePagamento.PRE_PAGO.getValue()) && (this.primeiraCompra == null || !this.primeiraCompra);
+        return this.modoPagamento.equals(ModalidadePagamento.PRE_PAGO.getValue()) && (this.primeiraCompra == null || !this.primeiraCompra);
     }
 
     /**
@@ -1320,13 +1321,11 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     }
 
     public void setCondicoesComerciais(CondicoesComerciais condicoesComerciais) {
-		this.condicoesComerciais = condicoesComerciais;
-	}
-    
+        this.condicoesComerciais = condicoesComerciais;
+    }
     public CondicoesComerciais getCondicoesComerciais() {
-		return condicoesComerciais;
-	}
-    
+        return condicoesComerciais;
+    }
     /**
      * Informa se a Matriz da frota exige nota fiscal.
      *
@@ -1337,6 +1336,18 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
         return semNotaFiscal == null || !semNotaFiscal;
     }
 
+    /**
+     * Existe uma frota ou unidade que exige nota fiscal?
+     * @return true se positivo
+     */
+    @Transient
+    public boolean isFrotaOuUmaDasUnidadesExigemNotaFiscal(){
+        return  this.exigeNotaFiscal()
+                || this.getUnidades() != null
+                && this.getUnidades()
+                .stream()
+                .anyMatch(u -> u.getExigeNotaFiscal() != null && u.getExigeNotaFiscal());
+    }
 
     /**
      * Verifica se frota tem parametro de ciclo para atualizar
@@ -1359,35 +1370,292 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
         }
     }
 
-	public SituacaoConectCar getSituacaoConectCar() {
-		return situacaoConectCar;
-	}
+    @Transient
+    public String getLongitudeString() {
+        return UtilitarioFormatacao.formatarDecimal(this.longitude);
+    }
 
-	public void setSituacaoConectCar(SituacaoConectCar situacaoConectCar) {
-		this.situacaoConectCar = situacaoConectCar;
-	}
+    @Transient
+    public String getLatitudeString() {
+        return UtilitarioFormatacao.formatarDecimal(this.latitude);
+    }
 
-	public Integer getTotalTags() {
-		return totalTags;
-	}
+    public SituacaoConectCar getSituacaoConectCar() {
+        return situacaoConectCar;
+    }
 
-	public void setTotalTags(Integer totalTags) {
-		this.totalTags = totalTags;
-	}
+    public void setSituacaoConectCar(SituacaoConectCar situacaoConectCar) {
+        this.situacaoConectCar = situacaoConectCar;
+    }
 
-	public Integer getTotalTagsAtivas() {
-		return totalTagsAtivas;
-	}
+    public ParametroNotaFiscal getParametroNotaFiscal() {
+        return parametroNotaFiscal;
+    }
 
-	public void setTotalTagsAtivas(Integer totalTagsAtivas) {
-		this.totalTagsAtivas = totalTagsAtivas;
-	}
+    public void setParametroNotaFiscal(ParametroNotaFiscal parametroNotaFiscal) {
+        this.parametroNotaFiscal = parametroNotaFiscal;
+    }
 
-	public Lead getLead() {
-		return lead;
-	}
+    public Integer getTotalTags() {
+        return totalTags;
+    }
 
-	public void setLead(Lead lead) {
-		this.lead = lead;
-	}    
+    public void setTotalTags(Integer totalTags) {
+        this.totalTags = totalTags;
+    }
+
+    public Integer getTotalTagsAtivas() {
+        return totalTagsAtivas;
+    }
+
+    public void setTotalTagsAtivas(Integer totalTagsAtivas) {
+        this.totalTagsAtivas = totalTagsAtivas;
+    }
+
+    public List<PostoInternoTipoCombustivelPreco> getPostoInternoTipoCombustivelPreco() {
+        return postoInternoTipoCombustivelPreco;
+    }
+
+    public void setPostoInternoTipoCombustivelPreco(List<PostoInternoTipoCombustivelPreco> postoInternoTipoCombustivelPreco) {
+        this.postoInternoTipoCombustivelPreco = postoInternoTipoCombustivelPreco;
+    }
+
+    public BigDecimal getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(BigDecimal latitude) {
+        this.latitude = latitude;
+    }
+
+    public BigDecimal getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(BigDecimal longitude) {
+        this.longitude = longitude;
+    }
+
+    public Lead getLead() {
+        return lead;
+    }
+
+    public void setLead(Lead lead) {
+        this.lead = lead;
+    }
+
+    public Boolean getGerenciaNfAgendada() {
+        return gerenciaNfAgendada;
+    }
+
+    public void setGerenciaNfAgendada(Boolean gerenciaNfAgendada) {
+        this.gerenciaNfAgendada = gerenciaNfAgendada;
+    }
+
+    public Boolean isGerenciaNf() {
+        return gerenciaNf;
+    }
+
+    public void setGerenciaNf(Boolean gerenciaNf) {
+        this.gerenciaNf = gerenciaNf;
+    }
+
+    public Boolean getLembrarParametrizacaoNf() {
+        return lembrarParametrizacaoNf;
+    }
+
+    public void setLembrarParametrizacaoNf(Boolean lembrarParametrizacaoNf) {
+        this.lembrarParametrizacaoNf = lembrarParametrizacaoNf;
+    }
+
+    /**
+     * Obtem o endereço completo
+     * @return endereço completo
+     */
+    @Transient
+    public String obterEnderecoCompleto(){
+        StringBuffer buffer = new StringBuffer();
+        if(this.logradouro != null){
+            buffer.append(this.logradouro).append(", ");
+        }
+        if(this.numero != null){
+            buffer.append(this.numero).append(", ");
+        }
+        if(this.complemento != null){
+            buffer .append(this.complemento).append(", ");
+        }
+        if(this.bairro != null){
+            buffer.append(this.bairro).append(", ");
+        }
+        if(this.unidadeFederativa != null){
+            buffer.append(this.unidadeFederativa).append(", ");
+        }
+        if(this.cep != null){
+            buffer.append("( ").append(UtilitarioFormatacao.formatarCepApresentacao(this.cep)).append(" )");
+        }
+        return buffer.toString();
+    }
+
+    public List<MotivoAlteracaoStatusFrota> getMotivosAlteracaoStatus() {
+       return motivosAlteracaoStatus;
+    }
+
+    public void setMotivosAlteracaoStatus(List<MotivoAlteracaoStatusFrota> motivosAlteracaoStatus) {
+        this.motivosAlteracaoStatus = motivosAlteracaoStatus;
+    }
+
+    /**
+     * Verifica se os debitos da frota em questao encontram-se pagos
+     * @return True caso os debitos da frota em questao encontrem-se pagos.
+     */
+    @Transient
+    public boolean isSemDebitosVencidos() {
+        return StatusFrota.ATIVO.getValue().equals(status)
+                && !motivosAlteracaoStatus.stream().anyMatch(
+                        motivo ->
+                                ClassificacaoStatusFrota.DEBITO_VENCIDO.getValue().equals(motivo.getTipoMotivo())
+                                && StatusVigenciaAlteracaoStatusFrota.VIGENTE.getValue().equals(motivo.getStatusVigenciaAlteracao())
+                );
+    }
+
+    /**
+     * Verifica se a frota possui alguma ativação temporária em andamento
+     *
+     * @return True caso a frota possua ativação temporária em andamento, false caso contrário
+     */
+    @Transient
+    public boolean possuiAtivacaoTemporariaAtiva() {
+        return motivosAlteracaoStatus.stream().anyMatch(
+                motivo -> StatusVigenciaAlteracaoStatusFrota.VIGENTE.getValue().equals(motivo.getStatusVigenciaAlteracao())
+                        && TipoAlteracaoStatusFrota.ATIVACAO.getValue().equals(motivo.getTipoAlteracaoStatus())
+                        && motivo.getDataInicio() != null
+                        && motivo.getDataFim() != null
+        );
+    }
+
+    /**
+     * Verifica se a frota possui alguma inativação temporária em andamento
+     *
+     * @return True caso a frota possua inativação temporária em andamento, false caso contrário
+     */
+    @Transient
+    public boolean possuiInativacaoTemporariaAtiva() {
+        return motivosAlteracaoStatus
+                .stream()
+                .anyMatch(
+                    motivo -> StatusVigenciaAlteracaoStatusFrota.VIGENTE.getValue().equals(motivo.getStatusVigenciaAlteracao())
+                            && TipoAlteracaoStatusFrota.INATIVACAO.getValue().equals(motivo.getTipoAlteracaoStatus())
+                            && motivo.getDataInicio() != null
+                            && motivo.getDataFim() != null
+                );
+    }
+
+    /**
+     * Obtém o último motivo de ativação da frota
+     * @return O último motivo de ativação encontrado
+     */
+    @Transient
+    public MotivoAlteracaoStatusFrota getUltimoMotivoAtivacao() {
+        return motivosAlteracaoStatus
+                .stream()
+                .filter(
+                        motivo -> StatusVigenciaAlteracaoStatusFrota.VIGENTE.getValue().equals(motivo.getStatusVigenciaAlteracao())
+                                && TipoAlteracaoStatusFrota.ATIVACAO.getValue().equals(motivo.getTipoAlteracaoStatus())
+                )
+                .max(Comparator.comparing(MotivoAlteracaoStatusFrota::getDataCriacao))
+                .orElse(null);
+    }
+
+    /**
+     * Obtém o último motivo de inativação da frota
+     * @return O último motivo de inativação encontrado
+     */
+    @Transient
+    public MotivoAlteracaoStatusFrota getUltimoMotivoInativacao() {
+        return motivosAlteracaoStatus
+                .stream()
+                .filter(
+                    motivo -> StatusVigenciaAlteracaoStatusFrota.VIGENTE.getValue().equals(motivo.getStatusVigenciaAlteracao())
+                            && TipoAlteracaoStatusFrota.INATIVACAO.getValue().equals(motivo.getTipoAlteracaoStatus())
+                )
+                .max(Comparator.comparing(MotivoAlteracaoStatusFrota::getDataCriacao))
+                .orElse(null);
+    }
+
+    /**
+     * Obtém o último motivo de alteração de status da frota
+     * @return O último motivo de alteração de status encontrado
+     */
+    @Transient
+    public MotivoAlteracaoStatusFrota getUltimoMotivoAlteracaoStatus() {
+        return motivosAlteracaoStatus
+                .stream()
+                .filter(
+                        motivo -> StatusVigenciaAlteracaoStatusFrota.VIGENTE.getValue().equals(motivo.getStatusVigenciaAlteracao())
+                )
+                .max(Comparator.comparing(MotivoAlteracaoStatusFrota::getDataCriacao))
+                .orElse(null);
+    }
+
+    /**
+     * Obtém o último motivo vigente de débito vencido
+     * @return O motivo
+     */
+    @Transient
+    public MotivoAlteracaoStatusFrota getUltimoMotivoDebitoVencidoVigente() {
+        return motivosAlteracaoStatus
+                .stream()
+                .filter(
+                        motivo -> StatusVigenciaAlteracaoStatusFrota.VIGENTE.getValue().equals(motivo.getStatusVigenciaAlteracao())
+                                && ClassificacaoStatusFrota.DEBITO_VENCIDO.getValue().equals(motivo.getTipoMotivo())
+                )
+                .max(Comparator.comparing(MotivoAlteracaoStatusFrota::getDataCriacao))
+                .orElse(null);
+    }
+
+    /**
+     * Obtém o último motivo vigente de saldo zerado
+     * @return O motivo
+     */
+    @Transient
+    public MotivoAlteracaoStatusFrota getUltimoMotivoSaldoZeradoVigente() {
+        return motivosAlteracaoStatus
+                .stream()
+                .filter(
+                        motivo -> StatusVigenciaAlteracaoStatusFrota.VIGENTE.getValue().equals(motivo.getStatusVigenciaAlteracao())
+                                && ClassificacaoStatusFrota.SALDO_ZERADO.getValue().equals(motivo.getTipoMotivo())
+                                && StatusFrota.INATIVO.getValue().equals(status)
+                                && dataSaldoZerado != null
+                ).max(Comparator.comparing(MotivoAlteracaoStatusFrota::getDataCriacao))
+                .orElse(null);
+    }
+
+    /**
+     * Obtém o último motivo de alteração de status da frota
+     * @return O último motivo de alteração de status encontrado
+     */
+    @Transient
+    public MotivoAlteracaoStatusFrota getUltimoMotivoDefinitivo() {
+        return motivosAlteracaoStatus
+                .stream()
+                .filter(
+                        motivo -> StatusVigenciaAlteracaoStatusFrota.VIGENTE.getValue().equals(motivo.getStatusVigenciaAlteracao())
+                        && motivo.getDataInicio() == null
+                        && motivo.getDataFim() == null
+                )
+                .max(Comparator.comparing(MotivoAlteracaoStatusFrota::getDataCriacao))
+                .orElse(null);
+    }
+
+    /**
+     * Obtém a lista de motivos da frota ordenados por data de criação
+     * @return A lista ordenada
+     */
+    @Transient
+    public List<MotivoAlteracaoStatusFrota> getMotivosAlteracaoStatusFrotaOrdenados() {
+        return motivosAlteracaoStatus
+                .stream()
+                .sorted(Comparator.comparing(MotivoAlteracaoStatusFrota::getDataCriacao))
+                .collect(Collectors.toList());
+    }
 }
