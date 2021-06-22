@@ -15,7 +15,6 @@ import ipp.aci.boleia.dominio.enums.StatusFrotaConectcar;
 import ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso;
 import ipp.aci.boleia.dominio.enums.StatusVigenciaAlteracaoStatusFrota;
 import ipp.aci.boleia.dominio.enums.TipoAcumuloKmv;
-import ipp.aci.boleia.dominio.enums.TipoAlteracaoStatusFrota;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
