@@ -617,4 +617,12 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
         List<ParametroPesquisa> parametros = new ArrayList<>();
         return pesquisar(null, CONSULTA_FROTAS_MULTIPLOS_MOTIVOS, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
+
+    @Override
+    public List<Frota> obterFrotasPorDiaDeDistribuicaoAutomatica(Integer dia) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaIgual("distribuicoesAutomaticas.diaDistribuicao", dia));
+        return pesquisar((ParametroOrdenacaoColuna) null, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
 }
