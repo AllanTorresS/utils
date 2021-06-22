@@ -79,6 +79,9 @@ public class Beneficiario implements IPersistente, IExclusaoLogica, IPertenceFro
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "beneficiario")
     private ContaBeneficiario contaBeneficiario;
 
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "beneficiario")
+    private DistribuicaoAutomatica distribuicaoAutomatica;
+
     @Override
     public Long getId() {
         return id;
@@ -169,6 +172,14 @@ public class Beneficiario implements IPersistente, IExclusaoLogica, IPertenceFro
 
     public void setContaBeneficiario(ContaBeneficiario contaBeneficiario) {
         this.contaBeneficiario = contaBeneficiario;
+    }
+
+    public DistribuicaoAutomatica getDistribuicaoAutomatica() {
+        return distribuicaoAutomatica;
+    }
+
+    public void setDistribuicaoAutomatica(DistribuicaoAutomatica distribuicaoAutomatica) {
+        this.distribuicaoAutomatica = distribuicaoAutomatica;
     }
 
     @Transient
