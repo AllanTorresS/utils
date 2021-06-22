@@ -11,7 +11,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RespostaRoteirizadorVo {
 
-    private List<PontoRoteirizadorVo> postos = new ArrayList<>();
+    private List<PontoRoteirizadorVo> pontos = new ArrayList<>();
     private Integer codigo;
     private String mensagem;
     private Integer statusRequisicao;
@@ -23,13 +23,13 @@ public class RespostaRoteirizadorVo {
         // Construtor padrão para serialização
     }
 
-    public RespostaRoteirizadorVo(List<PontoRoteirizadorVo> postos) {
-        this.postos = postos;
+    public RespostaRoteirizadorVo(List<PontoRoteirizadorVo> pontos) {
+        this.pontos = pontos;
     }
 
-    public List<PontoRoteirizadorVo> getPostos() { return postos; }
+    public List<PontoRoteirizadorVo> getPontos() { return pontos; }
 
-    public void setPostos(List<PontoRoteirizadorVo> postos) { this.postos = postos; }
+    public void setPontos(List<PontoRoteirizadorVo> pontos) { this.pontos = pontos; }
 
     public Integer getCodigo() {
         return codigo;
@@ -50,5 +50,4 @@ public class RespostaRoteirizadorVo {
     public Integer getStatusRequisicao() { return statusRequisicao; }
 
     public void setStatusRequisicao(Integer statusRequisicao) { this.statusRequisicao = statusRequisicao; }
-
 }

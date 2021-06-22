@@ -10,6 +10,7 @@ import ipp.aci.boleia.dominio.PrecoBase;
 import ipp.aci.boleia.dominio.PrecoMicromercado;
 import ipp.aci.boleia.dominio.enums.StatusAlteracaoPrecoPosto;
 import ipp.aci.boleia.dominio.enums.StatusPreco;
+import ipp.aci.boleia.util.UtilitarioLambda;
 import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.excecao.ExcecaoValidacao;
 import ipp.aci.boleia.util.i18n.Mensagens;
@@ -89,6 +90,16 @@ public class PrecoSd {
     public Set<Long> propagarAtualizacaoPrecoBase(PrecoBase precoBase) {
         return propagarAtualizacaoPrecoBase(precoBase,false);
     }
+
+    /**
+     * Propaga a exclusão do Preço Base
+     * @param precoBase Preco base a propagar
+     */
+    public void propagarExclusao(PrecoBase precoBase){
+        List<Preco> precoListaAtual = repositorioPreco.buscarPrecosAtuais(precoBase.getIdPontoVenda(), precoBase.getPrecoMicromercado().getTipoCombustivel().getId());
+        precoListaAtual.forEach(precos->precoNegociadoSd.criarApartirDaExclusaoDePrecoBase(precos));
+    }
+
 
     /**
      * Propaga as atualizações de preço base para preços patricados pelo PV em relacao as frotas que com ele negociam
@@ -215,5 +226,25 @@ public class PrecoSd {
         if(precoSolicitado.compareTo(BigDecimal.ZERO) == 0 || precoSolicitado.equals(preco.getPreco())){
             throw new ExcecaoValidacao(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("precoBase.aprovacao.validacao.preco.invalido"));
         }
+    }
+
+    /**
+     * Obtem o preço negociado entre uma frota e um ponto de venda, caso exista.
+     * Caso não exista um preço negociado retorna o preço base do combustível caso o mesmo seja comercializado pelo ponto de venda informado.
+     * @param idFrota id da frota da negociação
+     * @param idPontoDeVenda id do ponto de venda da negociação
+     * @param idTipoCombustivel id do combustível a ser consultado
+     * @return o preço do combustível
+     */
+    public BigDecimal obterPrecoPraticadoCombustivel(Long idFrota, Long idPontoDeVenda, Long idTipoCombustivel) {
+        List<PrecoBase> precos = repositorioPrecoBase.buscarPrecosVigentes(idPontoDeVenda, idTipoCombustivel);
+        if(precos == null || precos.isEmpty()) {
+            return null;
+        }
+        Preco preco = repositorioPreco.obterAtualPorFrotaPvCombustivel(idFrota, idPontoDeVenda, idTipoCombustivel);
+        if(preco != null) {
+            return preco.getPreco();
+        }
+        return UtilitarioLambda.obterPrimeiroObjetoDaLista(precos).getPreco();
     }
 }

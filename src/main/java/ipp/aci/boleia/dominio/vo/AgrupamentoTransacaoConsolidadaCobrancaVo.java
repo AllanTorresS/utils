@@ -41,6 +41,7 @@ public class AgrupamentoTransacaoConsolidadaCobrancaVo {
     private Date dataUltimoAjusteVencimento;
     private Boolean totalmenteEmitida;
     private String ultimaJustificativaAjuste;
+    private Boolean passivelDeEmissao;
 
     /**
      * Construtor default
@@ -77,6 +78,7 @@ public class AgrupamentoTransacaoConsolidadaCobrancaVo {
      * @param dataUltimoAjusteVencimento Data do ultimo ajuste na data de vencimento da cobrança
      * @param totalmenteEmitida Indica se todos os ciclos do agrupamento foram totalmente emitidos
      * @param ultimaJustificativaAjuste a Ultima justificativa do ajuste da cobrança
+     * @param passivelDeEmissao indica se ao menos um ciclo do agrupamaneto é passível de emissão de NF
      */
     public AgrupamentoTransacaoConsolidadaCobrancaVo(Long idFrota, String nomeEmpresa, Long cnpjEmpresa, Date dataInicioPeriodo, Date dataFimPeriodo,
                                                      BigDecimal valorTotal, BigDecimal valorDesconto, BigDecimal valorCobrancaAjustado,
@@ -85,7 +87,8 @@ public class AgrupamentoTransacaoConsolidadaCobrancaVo {
                                                      Date dataLimiteEmissao, Integer statusIntegracao, String mensagemErroIntegracao,
                                                      Long idCobranca, Boolean ultimaCobrancaFrota, Long numeroDocumento,
                                                      Integer exigeNota, BigDecimal valorEmitidoNotaFiscal, BigDecimal valorTotalNotaFiscal,
-                                                     String usuarioUltimoAjusteValor, Date dataUltimoAjusteValor, String usuarioUltimoAjusteVencimento, Date dataUltimoAjusteVencimento, Integer totalmenteEmitida, String ultimaJustificativaAjuste) {
+                                                     String usuarioUltimoAjusteValor, Date dataUltimoAjusteValor, String usuarioUltimoAjusteVencimento,
+                                                     Date dataUltimoAjusteVencimento, Integer totalmenteEmitida, String ultimaJustificativaAjuste, Integer passivelDeEmissao) {
         this.idFrota = idFrota;
         this.nomeEmpresa = nomeEmpresa;
         this.cnpjEmpresa = cnpjEmpresa;
@@ -117,6 +120,7 @@ public class AgrupamentoTransacaoConsolidadaCobrancaVo {
         this.dataUltimoAjusteVencimento = dataUltimoAjusteVencimento;
         this.totalmenteEmitida = totalmenteEmitida == 1;
         this.ultimaJustificativaAjuste = ultimaJustificativaAjuste;
+        this.passivelDeEmissao = passivelDeEmissao == 1;
     }
 
     public Long getIdFrota() {
@@ -350,6 +354,10 @@ public class AgrupamentoTransacaoConsolidadaCobrancaVo {
     public void setUltimaJustificativaAjuste(String ultimaJustificativaAjuste) {
         this.ultimaJustificativaAjuste = ultimaJustificativaAjuste;
     }
+
+    public Boolean getPassivelDeEmissao() { return passivelDeEmissao; }
+
+    public void setPassivelDeEmissao(Boolean passivelDeEmissao) { this.passivelDeEmissao = passivelDeEmissao;}
 
     @Transient
     public String getPercentualEmissao() {
