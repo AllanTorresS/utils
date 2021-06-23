@@ -621,6 +621,7 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
     @Override
     public List<Frota> obterFrotasPorDiaDeDistribuicaoAutomatica(Integer dia) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaDiferente("beneficiarios", null));
         parametros.add(new ParametroPesquisaIgual("configuracaoDistribuicaoAutomatica.diaDistribuicao", dia));
         return pesquisar((ParametroOrdenacaoColuna) null, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
