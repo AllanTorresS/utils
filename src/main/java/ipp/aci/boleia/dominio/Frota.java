@@ -420,7 +420,7 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "frota")
     private List<MotivoAlteracaoStatusFrota> motivosAlteracaoStatus;
 
-    @OneToOne(mappedBy = "frota")
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "frota")
     private ConfiguracaoDistribuicaoAutomatica configuracaoDistribuicaoAutomatica;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "frota")
