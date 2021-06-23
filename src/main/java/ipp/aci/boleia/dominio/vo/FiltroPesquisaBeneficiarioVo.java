@@ -10,7 +10,7 @@ import java.util.List;
 public class FiltroPesquisaBeneficiarioVo extends BaseFiltroPaginado {
 
     private EntidadeVo beneficiario;
-    private List<Long> idsBeneficios;
+    private List<EntidadeVo> beneficios;
 
     public EntidadeVo getBeneficiario() {
         return beneficiario;
@@ -20,12 +20,12 @@ public class FiltroPesquisaBeneficiarioVo extends BaseFiltroPaginado {
         this.beneficiario = beneficiario;
     }
 
-    public List<Long> getIdsBeneficios() {
-        return idsBeneficios;
+    public List<EntidadeVo> getBeneficios() {
+        return beneficios;
     }
 
-    public void setIdsBeneficios(List<Long> idsBeneficios) {
-        this.idsBeneficios = idsBeneficios;
+    public void setBeneficios(List<EntidadeVo> beneficios) {
+        this.beneficios = beneficios;
     }
 
 }

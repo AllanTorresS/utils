@@ -2,6 +2,8 @@ package ipp.aci.boleia.dominio;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import ipp.aci.boleia.dominio.beneficios.Beneficiario;
+import ipp.aci.boleia.dominio.beneficios.ConfiguracaoDistribuicaoAutomatica;
 import ipp.aci.boleia.dominio.enums.ClassificacaoStatusFrota;
 import ipp.aci.boleia.dominio.enums.ModalidadePagamento;
 import ipp.aci.boleia.dominio.enums.StatusContrato;
@@ -417,6 +419,12 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "frota")
     private List<MotivoAlteracaoStatusFrota> motivosAlteracaoStatus;
+
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "frota")
+    private ConfiguracaoDistribuicaoAutomatica configuracaoDistribuicaoAutomatica;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "frota")
+    private List<Beneficiario> beneficiarios;
 
     @NotAudited
     @Formula("(SELECT NVL(COUNT(0), 0) FROM BOLEIA_SCHEMA.TAG_CONECTCAR T WHERE T.CD_FROTA = CD_FROTA)")
@@ -1461,6 +1469,22 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
 
     public void setMotivosAlteracaoStatus(List<MotivoAlteracaoStatusFrota> motivosAlteracaoStatus) {
         this.motivosAlteracaoStatus = motivosAlteracaoStatus;
+    }
+
+    public ConfiguracaoDistribuicaoAutomatica getConfiguracaoDistribuicaoAutomatica() {
+        return configuracaoDistribuicaoAutomatica;
+    }
+
+    public void setConfiguracaoDistribuicaoAutomatica(ConfiguracaoDistribuicaoAutomatica configuracaoDistribuicaoAutomatica) {
+        this.configuracaoDistribuicaoAutomatica = configuracaoDistribuicaoAutomatica;
+    }
+
+    public List<Beneficiario> getBeneficiarios() {
+        return beneficiarios;
+    }
+
+    public void setBeneficiarios(List<Beneficiario> beneficiarios) {
+        this.beneficiarios = beneficiarios;
     }
 
     /**
