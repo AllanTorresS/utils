@@ -16,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -73,6 +74,10 @@ public class ReembolsoAntecipado extends ReembolsoBase {
             joinColumns = {@JoinColumn(name = "CD_REEMB_ANTECIP")},
             inverseJoinColumns={@JoinColumn(name = "CD_AUTORIZACAO_PAGAMENTO")})
     private List<AutorizacaoPagamento> autorizacoesPagamento;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_PROPOSTA_ANTECIPACAO")
+    private PropostaAntecipacao propostaAntecipacao;
 
     @Override
     public Long getId() {
@@ -162,6 +167,14 @@ public class ReembolsoAntecipado extends ReembolsoBase {
 
     public void setAutorizacoesPagamento(List<AutorizacaoPagamento> autorizacoesPagamento) {
         this.autorizacoesPagamento = autorizacoesPagamento;
+    }
+
+    public PropostaAntecipacao getPropostaAntecipacao() {
+        return propostaAntecipacao;
+    }
+
+    public void setPropostaAntecipacao(PropostaAntecipacao propostaAntecipacao) {
+        this.propostaAntecipacao = propostaAntecipacao;
     }
 
     @Override
