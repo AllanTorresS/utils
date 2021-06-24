@@ -2,6 +2,8 @@ package ipp.aci.boleia.dados;
 
 import ipp.aci.boleia.dominio.beneficios.DistribuicaoAutomatica;
 
+import java.util.List;
+
 /**
  * Repositório de dados da entidade DistribuicaoAutomatica.
  */
@@ -13,4 +15,11 @@ public interface IDistribuicaoAutomaticaDados extends IRepositorioBoleiaDados<Di
      * @return A distribuição automática
      */
     DistribuicaoAutomatica obterPorIdBeneficiario(Long idBeneficiario);
+
+    /**
+     * Obtém todas as distribuições automáticas ativas de um certo dia.
+     * @param dia Dia da distribuição.
+     * @return Distribuições automáticas do dia.
+     */
+    List<DistribuicaoAutomatica> obterDistribuicoesPorDia(Integer dia);
 }

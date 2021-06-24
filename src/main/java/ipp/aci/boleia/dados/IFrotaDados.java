@@ -215,11 +215,4 @@ public interface IFrotaDados extends IRepositorioBoleiaDados<Frota> {
      * @return As frotas encontradas
      */
     List<Frota> buscarFrotasComMultiplosMotivosAlteracaoVigentes();
-
-    /**
-     * Obtém todas as frotas que possuem uma distribuição automatica agendada para um certo dia
-     * @param dia dia do mês agendado para a a distribuição automatica de benefícios
-     * @return todas as frotas com distribuição automatica pra esse dia
-     */
-    List<Frota> obterFrotasPorDiaDeDistribuicaoAutomatica(Integer dia);
 }
