@@ -50,6 +50,9 @@ public class ConfiguracaoDistribuicaoAutomatica implements IPersistente, IPerten
     @Column(name = "VA_DIA_DISTRIBUICAO")
     private Integer diaDistribuicao;
 
+    @Column(name = "DT_DISTRIBUICAO")
+    private Date dataDistribuicao;
+
     @NotNull
     @Column(name = "DT_CRIACAO")
     @Temporal(TemporalType.TIMESTAMP)
@@ -96,6 +99,14 @@ public class ConfiguracaoDistribuicaoAutomatica implements IPersistente, IPerten
 
     public void setDiaDistribuicao(Integer diaDistribuicao) {
         this.diaDistribuicao = diaDistribuicao;
+    }
+
+    public Date getDataDistribuicao() {
+        return dataDistribuicao;
+    }
+
+    public void setDataDistribuicao(Date dataDistribuicao) {
+        this.dataDistribuicao = dataDistribuicao;
     }
 
     public Date getDataCriacao() {
