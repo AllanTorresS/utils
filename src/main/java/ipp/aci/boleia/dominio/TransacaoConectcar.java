@@ -143,7 +143,15 @@ public class TransacaoConectcar implements IPersistente, IPertenceFrota {
 	
 	@Column(name = "DS_NOME_PRACA")
 	private String nomePraca;
-	
+
+	@Column(name = "DT_INICIO_VIAGEM", columnDefinition = "DATE")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date dataInicioViagem;
+
+	@Column(name = "DT_FIM_VIAGEM", columnDefinition = "DATE")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date dataFimViagem;
+
 	@Override
 	public Long getId() {
 		return id;
@@ -382,6 +390,22 @@ public class TransacaoConectcar implements IPersistente, IPertenceFrota {
 
 	public void setNomePraca(String nomePraca) {
 		this.nomePraca = nomePraca;
+	}
+
+	public Date getDataInicioViagem() {
+		return dataInicioViagem;
+	}
+
+	public void setDataInicioViagem(Date dataInicioViagem) {
+		this.dataInicioViagem = dataInicioViagem;
+	}
+
+	public Date getDataFimViagem() {
+		return dataFimViagem;
+	}
+
+	public void setDataFimViagem(Date dataFimViagem) {
+		this.dataFimViagem = dataFimViagem;
 	}
 
 }

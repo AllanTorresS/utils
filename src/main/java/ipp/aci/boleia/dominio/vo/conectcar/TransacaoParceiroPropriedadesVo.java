@@ -49,6 +49,12 @@ public class TransacaoParceiroPropriedadesVo {
 	@JsonProperty("NumeroEixo")
 	private String numeroEixo;
 
+	@JsonProperty("DataInicioViagem")
+	private String dataInicioViagem;
+
+	@JsonProperty("DataFimViagem")
+	private String dataFimViagem;
+
 	public TransacaoParceiroPropriedadesVo() {
 	}
 
@@ -154,6 +160,22 @@ public class TransacaoParceiroPropriedadesVo {
 
 	public void setNumeroEixo(String numeroEixo) {
 		this.numeroEixo = numeroEixo;
+	}
+
+	public String getDataInicioViagem() {
+		return dataInicioViagem;
+	}
+
+	public void setDataInicioViagem(String dataInicioViagem) {
+		this.dataInicioViagem = dataInicioViagem;
+	}
+
+	public String getDataFimViagem() {
+		return dataFimViagem;
+	}
+
+	public void setDataFimViagem(String dataFimViagem) {
+		this.dataFimViagem = dataFimViagem;
 	}
 
 }
