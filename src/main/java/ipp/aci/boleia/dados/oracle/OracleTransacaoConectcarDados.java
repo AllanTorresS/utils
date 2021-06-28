@@ -116,7 +116,7 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
 
     private static final String QUERY_EXTRATO_VALE_PEDAGIO = 
     		"SELECT DISTINCT new ipp.aci.boleia.dominio.vo.DiaValePedagioVo(TRUNC(tc.dataTransacao) as dia, " +
-    		"((SELECT creditoTotal FROM CondicoesComerciais WHERE frota.id = tc.frota.id) + " +
+    		"((SELECT creditoTotal FROM CondicoesComerciais WHERE frota.id = tc.frota.id) - " +
     		"(SELECT NVL(SUM(valorTotal), 0) from TransacaoConectcar where frota.id = tc.frota.id and dataTransacao < trunc(tc.dataTransacao)) + " +
     		"(SELECT NVL(SUM(valorTotal - valorMensalidade), 0) FROM CobrancaConectcar WHERE frota.id = tc.frota.id AND dataPagamento < trunc(tc.dataTransacao))) as saldoInicial, " +
 
@@ -125,7 +125,7 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
     		"(SELECT NVL(SUM(valorTotal), 0) from TransacaoConectcar where tipoTransacao IN (8,9) AND frota.id = tc.frota.id and trunc(dataTransacao) = trunc(tc.dataTransacao)) as passagensValePedagio, " +
     		"(SELECT NVL(SUM(valorTotal), 0) from TransacaoConectcar where tipoTransacao = 10 AND frota.id = tc.frota.id and trunc(dataTransacao) = trunc(tc.dataTransacao)) as estornosValePegadio, " +
 
-    		"((SELECT creditoTotal FROM CondicoesComerciais WHERE frota.id = tc.frota.id) + " +  
+    		"((SELECT creditoTotal FROM CondicoesComerciais WHERE frota.id = tc.frota.id) - " +  
     		"(SELECT NVL(SUM(valorTotal), 0) from TransacaoConectcar where frota.id = tc.frota.id and trunc(dataTransacao) <= trunc(tc.dataTransacao)) + " +
     		"(SELECT NVL(SUM(valorTotal - valorMensalidade), 0) FROM CobrancaConectcar WHERE frota.id = tc.frota.id AND trunc(dataPagamento) <= trunc(tc.dataTransacao))) as saldoFinal) " +
     		"FROM TransacaoConectcar tc " + 
