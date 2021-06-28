@@ -55,6 +55,12 @@ public class TransacaoParceiroPropriedadesVo {
 	@JsonProperty("DataFimViagem")
 	private String dataFimViagem;
 
+	@JsonProperty("DataCadastroViagem")
+	private String dataCadastroViagem;
+
+	@JsonProperty("DataCancelamentoRecargaValePedagio")
+	private String dataCancelamentoRecargaValePedagio;
+
 	public TransacaoParceiroPropriedadesVo() {
 	}
 
@@ -176,6 +182,22 @@ public class TransacaoParceiroPropriedadesVo {
 
 	public void setDataFimViagem(String dataFimViagem) {
 		this.dataFimViagem = dataFimViagem;
+	}
+
+	public String getDataCadastroViagem() {
+		return dataCadastroViagem;
+	}
+
+	public void setDataCadastroViagem(String dataCadastroViagem) {
+		this.dataCadastroViagem = dataCadastroViagem;
+	}
+
+	public String getDataCancelamentoRecargaValePedagio() {
+		return dataCancelamentoRecargaValePedagio;
+	}
+
+	public void setDataCancelamentoRecargaValePedagio(String dataCancelamentoRecargaValePedagio) {
+		this.dataCancelamentoRecargaValePedagio = dataCancelamentoRecargaValePedagio;
 	}
 
 }
