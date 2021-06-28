@@ -125,7 +125,7 @@ public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<Autori
                     "a.razaoSocialEmpresaVeiculo,   " +
                     "a.frota.id AS idFrota,         " +
                     "CASE WHEN MAX(a.hodometro) - MIN(a.hodometroAnterior) > 0 " +
-                    "THEN cast( (MAX(a.hodometro) - MIN(a.hodometroAnterior))) as big_decimal) " +
+                    "THEN cast( (MAX(a.hodometro) - MIN(a.hodometroAnterior) ) as big_decimal) " +
                     "ELSE (MAX(a.horimetro) - MIN(a.horimetroAnterior))" +
                     "END AS mediaHorHod, " +
                     "SUM(a.totalLitrosAbastecimento) AS mediaTotalLitrosAbastecimento, " +
