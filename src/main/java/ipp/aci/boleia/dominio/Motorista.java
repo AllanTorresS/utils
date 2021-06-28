@@ -203,6 +203,10 @@ public class Motorista implements IPersistente, IExclusaoLogica, IPertenceFrota,
     @OneToMany(mappedBy = "motorista", fetch = FetchType.LAZY)
     private List<AutorizacaoPagamento> autorizacoesPagamento;
 
+    @Column(name="DT_INATIVACAO")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataInativacao;
+
     /**
      * Construtor padrão da entidade.
      */
@@ -587,6 +591,14 @@ public class Motorista implements IPersistente, IExclusaoLogica, IPertenceFrota,
 
     public void setAutorizacoesPagamento(List<AutorizacaoPagamento> autorizacoesPagamento) {
         this.autorizacoesPagamento = autorizacoesPagamento;
+    }
+
+    public Date getDataInativacao() {
+        return dataInativacao;
+    }
+
+    public void setDataInativacao(Date dataInativacao) {
+        this.dataInativacao = dataInativacao;
     }
 
     /**
