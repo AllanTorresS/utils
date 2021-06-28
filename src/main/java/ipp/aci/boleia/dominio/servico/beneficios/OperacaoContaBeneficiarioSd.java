@@ -50,6 +50,7 @@ public class OperacaoContaBeneficiarioSd {
         operacao = operacaoContaBeneficiarioDados.armazenar(operacao);
 
         contaBeneficiario.setSaldo(operacao.getSaldoResultante());
+        contaBeneficiario.setDataAtualizacao(utilitarioAmbiente.buscarDataAmbiente());
         contaBeneficiarioDados.armazenar(contaBeneficiario);
 
         return operacao;
