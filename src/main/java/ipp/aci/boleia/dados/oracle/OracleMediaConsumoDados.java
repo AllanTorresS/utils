@@ -452,7 +452,6 @@ public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<Autori
         if(primeiroAbastecimento.getRegistros() == null || vo.getMediaTotalLitrosAbastecimento().compareTo(BigDecimal.ZERO) == 0 ) {
             return  null;
         }
-        System.out.println(vo.getPlacaVeiculo() + " ->  " + vo.getMediaHorHod() + " ->  " + vo.getMediaTotalLitrosAbastecimento()  );
         switch (TipoConsumo.obterPorValor(vo.getTipoConsumo())) {
             case KML:
                 vo.setMedia(vo.getMediaHorHod()
