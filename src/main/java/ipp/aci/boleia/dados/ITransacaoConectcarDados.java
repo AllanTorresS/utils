@@ -85,6 +85,14 @@ public interface ITransacaoConectcarDados extends IRepositorioBoleiaDados<Transa
     BigDecimal obterValorUtilizadoCiclo(Long idFrota);
 
     /**
+     * Obtem o crédito Vale Pedágio da frota
+     *
+     * @param idFrota código identificador da frota
+     * @return crédito Vale Pedágio da frota
+     */
+    BigDecimal obterCreditoValePedagio(Long idFrota);
+
+    /**
      * Executa a consulta de registros baseado em um filtro de pesquisa
      *
      * @param filtro parâmetros utilizados na consulta

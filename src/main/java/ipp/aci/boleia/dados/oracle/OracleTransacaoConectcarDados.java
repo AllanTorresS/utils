@@ -77,6 +77,16 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
                     " FROM TransacaoConectcar tc " +
                     " LEFT JOIN tc.cobranca c " +
                     "WHERE tc.frota.id  = :idFrota " +
+                    "  AND (tc.dataFimViagem < SYSDATE OR tc.tipoTransacao NOT IN (7,8,9,10))" + 
+                    "  AND c.dataPagamento is null";
+
+    private static final String QUERY_CREDITO_VALE_PEDAGIO =
+            "SELECT NVL(SUM(tc.valorTotal),0) * -1 " +
+                    " FROM TransacaoConectcar tc " +
+                    " LEFT JOIN tc.cobranca c " +
+                    "WHERE tc.frota.id  = :idFrota " +
+                    "  AND tc.tipoTransacao IN (7,8,9,10)" +
+                    "  AND tc.dataFimViagem > SYSDATE" +
                     "  AND c.dataPagamento is null";
 
     private static final String QUERY_ULTIMA_TRANSACAO =
@@ -107,18 +117,16 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
     private static final String QUERY_EXTRATO_VALE_PEDAGIO = 
     		"SELECT DISTINCT new ipp.aci.boleia.dominio.vo.DiaValePedagioVo(TRUNC(tc.dataTransacao) as dia, " +
     		"((SELECT creditoTotal FROM CondicoesComerciais WHERE frota.id = tc.frota.id) + " +
-    		"(SELECT NVL(SUM(valorTotal), 0) from TransacaoConectcar where tipoTransacao IN (1,2,8) AND frota.id = tc.frota.id and dataTransacao < trunc(tc.dataTransacao)) * -1 + " + 
-    		"(SELECT NVL(SUM(valorTotal), 0) from TransacaoConectcar where tipoTransacao NOT IN (1,2,8) AND frota.id = tc.frota.id and dataTransacao < trunc(tc.dataTransacao)) + " +
+    		"(SELECT NVL(SUM(valorTotal), 0) from TransacaoConectcar where frota.id = tc.frota.id and dataTransacao < trunc(tc.dataTransacao)) + " +
     		"(SELECT NVL(SUM(valorTotal - valorMensalidade), 0) FROM CobrancaConectcar WHERE frota.id = tc.frota.id AND dataPagamento < trunc(tc.dataTransacao))) as saldoInicial, " +
 
-    		"(SELECT NVL(SUM(valorTotal), 0) from TransacaoConectcar where tipoTransacao = 7 AND frota.id = tc.frota.id and trunc(dataTransacao) = trunc(tc.dataTransacao)) as creditosValePedagio, " +
-    		"(SELECT NVL(SUM(valorTotal), 0) from TransacaoConectcar where tipoTransacao NOT IN (7,8,9) AND frota.id = tc.frota.id and trunc(dataTransacao) = trunc(tc.dataTransacao)) as transacoesPfGo, " +
-    		"(SELECT NVL(SUM(valorTotal), 0) from TransacaoConectcar where tipoTransacao = 8 AND frota.id = tc.frota.id and trunc(dataTransacao) = trunc(tc.dataTransacao)) as passagensValePedagio, " +
-    		"(SELECT NVL(SUM(valorTotal), 0) from TransacaoConectcar where tipoTransacao = 9 AND frota.id = tc.frota.id and trunc(dataTransacao) = trunc(tc.dataTransacao)) as estornosValePegadio, " +
+    		"(SELECT NVL(SUM(valorTotal), 0) from TransacaoConectcar where tipoTransacao IN (7) AND frota.id = tc.frota.id and trunc(dataTransacao) = trunc(tc.dataTransacao)) * -1 as creditosValePedagio, " +
+    		"(SELECT NVL(SUM(valorTotal), 0) from TransacaoConectcar where tipoTransacao NOT IN (7,8,9,10) AND frota.id = tc.frota.id and trunc(dataTransacao) = trunc(tc.dataTransacao)) as transacoesPfGo, " +
+    		"(SELECT NVL(SUM(valorTotal), 0) from TransacaoConectcar where tipoTransacao IN (8,9) AND frota.id = tc.frota.id and trunc(dataTransacao) = trunc(tc.dataTransacao)) as passagensValePedagio, " +
+    		"(SELECT NVL(SUM(valorTotal), 0) from TransacaoConectcar where tipoTransacao = 10 AND frota.id = tc.frota.id and trunc(dataTransacao) = trunc(tc.dataTransacao)) as estornosValePegadio, " +
 
     		"((SELECT creditoTotal FROM CondicoesComerciais WHERE frota.id = tc.frota.id) + " +  
-    		"(SELECT NVL(SUM(valorTotal), 0) from TransacaoConectcar where tipoTransacao IN (1,2,8) AND frota.id = tc.frota.id and trunc(dataTransacao) <= trunc(tc.dataTransacao)) * -1 + " +
-    		"(SELECT NVL(SUM(valorTotal), 0) from TransacaoConectcar where tipoTransacao NOT IN (1,2,8) AND frota.id = tc.frota.id and trunc(dataTransacao) <= trunc(tc.dataTransacao)) + " +
+    		"(SELECT NVL(SUM(valorTotal), 0) from TransacaoConectcar where frota.id = tc.frota.id and trunc(dataTransacao) <= trunc(tc.dataTransacao)) + " +
     		"(SELECT NVL(SUM(valorTotal - valorMensalidade), 0) FROM CobrancaConectcar WHERE frota.id = tc.frota.id AND trunc(dataPagamento) <= trunc(tc.dataTransacao))) as saldoFinal) " +
     		"FROM TransacaoConectcar tc " + 
     		"WHERE tc.frota.id = :idFrota " + 
@@ -299,6 +307,16 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
     @Override
     public BigDecimal obterValorUtilizadoCiclo(Long idFrota) {
         StringBuilder query = new StringBuilder(QUERY_VALOR_UTILIZADO);
+
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaIgual("idFrota", idFrota));
+
+        return pesquisarUnicoSemIsolamentoDados(query.toString(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+    @Override
+    public BigDecimal obterCreditoValePedagio(Long idFrota) {
+        StringBuilder query = new StringBuilder(QUERY_CREDITO_VALE_PEDAGIO);
 
         List<ParametroPesquisa> parametros = new ArrayList<>();
         parametros.add(new ParametroPesquisaIgual("idFrota", idFrota));
