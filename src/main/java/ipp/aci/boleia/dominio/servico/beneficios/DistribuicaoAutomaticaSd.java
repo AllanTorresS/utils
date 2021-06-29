@@ -72,11 +72,28 @@ public class DistribuicaoAutomaticaSd {
             return null;
         }
 
-        Date hoje = ambiente.buscarDataAmbiente();
-        Date dataDistribuicao = UtilitarioCalculoData.definirDiaData(hoje, diaDistribuicao);
-        if(UtilitarioCalculoData.obterCampoDia(hoje) <= diaDistribuicao) {
-            dataDistribuicao = UtilitarioCalculoData.adicionarMesesData(dataDistribuicao, 1);
+        Date mesProximaDistribuicao = definirMesProximaDataDistribuicaoAutomatica(diaDistribuicao);
+        Integer ultimoDiaMesProximaDistribuicao = UtilitarioCalculoData.obterCampoDia(UtilitarioCalculoData.obterUltimoDiaMes(mesProximaDistribuicao));
+        if(diaDistribuicao > ultimoDiaMesProximaDistribuicao) {
+            return UtilitarioCalculoData.definirDiaData(mesProximaDistribuicao, ultimoDiaMesProximaDistribuicao);
         }
-        return dataDistribuicao;
+        return UtilitarioCalculoData.definirDiaData(mesProximaDistribuicao, diaDistribuicao);
+    }
+
+    /**
+     * Define o mês da próxima data de distribuição automática.
+     *
+     * @param diaDistribuicao Dia configurado para a distribuição automática.
+     * @return Objeto date com o mês da próxima data de distribuição automática.
+     */
+    private Date definirMesProximaDataDistribuicaoAutomatica(Integer diaDistribuicao) {
+        Date hoje = ambiente.buscarDataAmbiente();
+        Integer diaHoje = UtilitarioCalculoData.obterCampoDia(hoje);
+        Integer ultimoDiaMesAtual = UtilitarioCalculoData.obterCampoDia(UtilitarioCalculoData.obterUltimoDiaMes(hoje));
+
+        if(diaHoje >= diaDistribuicao || (diaDistribuicao > ultimoDiaMesAtual && diaHoje == ultimoDiaMesAtual)) {
+            return UtilitarioCalculoData.adicionarMesesData(hoje, 1);
+        }
+        return hoje;
     }
 }

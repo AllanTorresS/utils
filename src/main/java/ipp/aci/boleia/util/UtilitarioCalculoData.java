@@ -66,6 +66,15 @@ public final class UtilitarioCalculoData {
     }
 
     /**
+     * Retorna o mês de uma data.
+     * @param data Data utilizada.
+     * @return O mês da data.
+     */
+    public static Integer obterCampoMes(Date data) {
+        return obterCampoData(data, Calendar.MONTH);
+    }
+
+    /**
      * Obtem um campo da data, de acordo com o numero do campo no Calendar
      *
      * @param data  A data base
