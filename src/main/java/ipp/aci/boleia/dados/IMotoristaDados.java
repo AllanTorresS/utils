@@ -140,4 +140,11 @@ public interface IMotoristaDados extends IRepositorioBoleiaDados<Motorista> {
      */
     List<Motorista> obterMotoristasSemAbastecimento(Integer diasDeVerificacao);
 
+    /**
+     * Obtem motoristas que realizaram abastecimentos e estão inativos
+     * @param diasDeVerificacao quantidade de dias que os motoristas estão cadastrados
+     * @return os motoristas encontrados
+     */
+    List<Motorista> obterMotoristasInativosComAbastecimento(Integer diasDeVerificacao);
+
 }
