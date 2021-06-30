@@ -57,9 +57,6 @@ public class TransacaoConectcar implements IPersistente, IPertenceFrota {
 	@Column(name = "VR_TOTAL")
 	private BigDecimal valorTotal;
 
-	@DecimalMin("-999999999999.9999")
-	@DecimalMax("999999999999.9999")
-	@Digits(integer = 12, fraction = 4)
 	@Formula("VR_TOTAL * -1")
 	private BigDecimal valorInvertido;
 	
