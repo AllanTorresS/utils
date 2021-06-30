@@ -1,6 +1,7 @@
 package ipp.aci.boleia.dominio;
 
 
+import ipp.aci.boleia.dominio.enums.StatusPropostaXP;
 import ipp.aci.boleia.dominio.interfaces.IExclusaoLogica;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import org.hibernate.envers.Audited;
@@ -39,7 +40,7 @@ public class PropostaAntecipacao implements IPersistente, IExclusaoLogica {
     private String idParceiro;
 
     @Column(name = "ID_STATUS")
-    private Integer status;
+    private StatusPropostaXP status;
 
     @Column(name = "ID_ACEITE_USUARIO")
     private Boolean isAceito;
@@ -51,8 +52,13 @@ public class PropostaAntecipacao implements IPersistente, IExclusaoLogica {
     @OneToOne(mappedBy = "propostaAntecipacao", fetch = FetchType.LAZY)
     private ReembolsoAntecipado reembolsoAntecipado;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "DT_DESEMBOLSO")
+    private Date dataDesembolso;
+
     @Column(name = "ID_EXCLUIDO")
     private Boolean excluido;
+
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="DT_CRIACAO")
@@ -80,11 +86,11 @@ public class PropostaAntecipacao implements IPersistente, IExclusaoLogica {
         this.idParceiro = idParceiro;
     }
 
-    public Integer getStatus() {
+    public StatusPropostaXP getStatus() {
         return status;
     }
 
-    public void setStatus(Integer status) {
+    public void setStatus(StatusPropostaXP status) {
         this.status = status;
     }
 
@@ -136,5 +142,23 @@ public class PropostaAntecipacao implements IPersistente, IExclusaoLogica {
 
     public void setDataAtualizacao(Date dataAtualizacao) {
         this.dataAtualizacao = dataAtualizacao;
+    }
+
+    public Date getDataDesembolso() {
+        return dataDesembolso;
+    }
+
+    public void setDataDesembolso(Date dataDesembolso) {
+        this.dataDesembolso = dataDesembolso;
+    }
+
+    /**
+     * Atualiza o status da proposta de crédito
+     * @param novoStatus o novo status da proposta
+     * @param dataReferencia a data de alteração do status
+     */
+    public void atualizarStatus(StatusPropostaXP novoStatus, Date dataReferencia) {
+        this.setStatus(novoStatus);
+        this.setDataAtualizacao(dataReferencia);
     }
 }
