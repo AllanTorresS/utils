@@ -25,6 +25,7 @@ import javax.validation.constraints.Digits;
 
 import org.hibernate.annotations.Formula;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
@@ -57,6 +58,7 @@ public class TransacaoConectcar implements IPersistente, IPertenceFrota {
 	@Column(name = "VR_TOTAL")
 	private BigDecimal valorTotal;
 
+	@NotAudited
 	@Formula("VR_TOTAL * -1")
 	private BigDecimal valorInvertido;
 	
