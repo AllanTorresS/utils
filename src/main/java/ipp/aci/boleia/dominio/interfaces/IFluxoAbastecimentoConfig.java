@@ -60,6 +60,8 @@ public interface IFluxoAbastecimentoConfig {
      */
     default Veiculo getVeiculo() { return null; }
 
+    default Veiculo getVeiculoClimatizador() { return null; }
+
 
     /**
      * Verifica se a configuração de fluxo tem a mesma placa do veículo parametrizado.
@@ -67,8 +69,28 @@ public interface IFluxoAbastecimentoConfig {
      * @param veiculo parametrizado
      * @return true se a cofiguração não tem veiculo associado ou tem a mesma placa que o veículo parametrizado.
      */
-    default boolean possuiMesmaPlacaDoFluxo(Veiculo veiculo) {
+    default boolean verificaRestricaoPlacaNoFluxo(Veiculo veiculo) {
         return this.getVeiculo() == null || Objects.equals(veiculo.getPlaca(), this.getVeiculo().getPlaca());
+    }
+
+    /**
+     * Verifica se existe restrição de abastecimento para veículo não climatizador
+     * e se a placa informada corresponde à placa esperada.
+     * @param veiculo veículo que será abastecido.
+     * @return flag indicando se a restrição foi satisfeita caso exista.
+     */
+    default boolean possuiMesmaPlacaDoFluxo(Veiculo veiculo) {
+        return this.getVeiculo() != null && Objects.equals(veiculo.getPlaca(), this.getVeiculo().getPlaca());
+    }
+
+    /**
+     * Verifica se existe restrição de abastecimento para veículo climatizador
+     * e se a placa informada corresponde à placa esperada.
+     * @param veiculo climatizador que será abastecido.
+     * @return flag indicando se a restrição foi satisfeita caso exista.
+     */
+    default boolean possuiMesmoClimatizadorDoFluxo(Veiculo veiculo) {
+        return this.getVeiculoClimatizador() != null && Objects.equals(veiculo.getPlaca(), this.getVeiculoClimatizador().getPlaca());
     }
 
     /**
