@@ -23,6 +23,7 @@ import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Digits;
 
+import org.hibernate.annotations.Formula;
 import org.hibernate.envers.Audited;
 
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
@@ -56,6 +57,12 @@ public class TransacaoConectcar implements IPersistente, IPertenceFrota {
 	@Column(name = "VR_TOTAL")
 	private BigDecimal valorTotal;
 
+	@DecimalMin("-999999999999.9999")
+	@DecimalMax("999999999999.9999")
+	@Digits(integer = 12, fraction = 4)
+	@Formula("VR_TOTAL * -1")
+	private BigDecimal valorInvertido;
+	
 	@Column(name = "CD_TIPO_TRANSACAO")
 	private Integer tipoTransacao;
 
@@ -406,6 +413,14 @@ public class TransacaoConectcar implements IPersistente, IPertenceFrota {
 
 	public void setDataFimViagem(Date dataFimViagem) {
 		this.dataFimViagem = dataFimViagem;
+	}
+
+	public BigDecimal getValorInvertido() {
+		return valorInvertido;
+	}
+
+	public void setValorInvertido(BigDecimal valorInvertido) {
+		this.valorInvertido = valorInvertido;
 	}
 
 }
