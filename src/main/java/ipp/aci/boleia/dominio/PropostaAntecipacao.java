@@ -1,7 +1,6 @@
 package ipp.aci.boleia.dominio;
 
 
-import ipp.aci.boleia.dominio.enums.StatusPropostaXP;
 import ipp.aci.boleia.dominio.interfaces.IExclusaoLogica;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import org.hibernate.envers.Audited;
@@ -40,10 +39,10 @@ public class PropostaAntecipacao implements IPersistente, IExclusaoLogica {
     private String idParceiro;
 
     @Column(name = "ID_STATUS")
-    private StatusPropostaXP status;
+    private Integer status;
 
     @Column(name = "ID_ACEITE_USUARIO")
-    private boolean isAceito;
+    private Boolean isAceito;
 
     @Lob
     @Column(name = "DS_PROPOSTA_JSON")
@@ -81,19 +80,19 @@ public class PropostaAntecipacao implements IPersistente, IExclusaoLogica {
         this.idParceiro = idParceiro;
     }
 
-    public StatusPropostaXP getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(StatusPropostaXP status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 
-    public boolean isAceito() {
+    public Boolean isAceito() {
         return isAceito;
     }
 
-    public void setAceito(boolean aceito) {
+    public void setAceito(Boolean aceito) {
         isAceito = aceito;
     }
 

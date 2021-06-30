@@ -13,4 +13,16 @@ public interface IPropostaXpDados {
      * @return O id da proposta de empréstimo
      */
     String criarProposta(ReembolsoAntecipado reembolsoAntecipado);
+
+    /**
+     * Aprova uma proposta de empréstimo
+     * @param idProposta
+     */
+    void aprovarProposta(String idProposta);
+
+    /**
+     * Cancela uma proposta de empréstimo
+     * @param idProposta
+     */
+    void cancelarProposta(String idProposta);
 }
