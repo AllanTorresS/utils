@@ -42,6 +42,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -410,6 +411,15 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
 
     @OneToOne(mappedBy = "frota")
     private Lead lead;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "frota")
+    private List<PostoInternoTipoCombustivelPreco> postoInternoTipoCombustivelPreco;
+
+    @Column(name = "QT_GRAU_LATIT")
+    private BigDecimal latitude;
+
+    @Column(name = "QT_GRAU_LONGIT")
+    private BigDecimal longitude;
 
     @OneToOne(mappedBy = "frota")
     private ParametroNotaFiscal parametroNotaFiscal;
@@ -1371,6 +1381,16 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
         }
     }
 
+    @Transient
+    public String getLongitudeString() {
+        return UtilitarioFormatacao.formatarDecimal(this.longitude);
+    }
+
+    @Transient
+    public String getLatitudeString() {
+        return UtilitarioFormatacao.formatarDecimal(this.latitude);
+    }
+
     public SituacaoConectCar getSituacaoConectCar() {
         return situacaoConectCar;
     }
@@ -1401,6 +1421,30 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
 
     public void setTotalTagsAtivas(Integer totalTagsAtivas) {
         this.totalTagsAtivas = totalTagsAtivas;
+    }
+
+    public List<PostoInternoTipoCombustivelPreco> getPostoInternoTipoCombustivelPreco() {
+        return postoInternoTipoCombustivelPreco;
+    }
+
+    public void setPostoInternoTipoCombustivelPreco(List<PostoInternoTipoCombustivelPreco> postoInternoTipoCombustivelPreco) {
+        this.postoInternoTipoCombustivelPreco = postoInternoTipoCombustivelPreco;
+    }
+
+    public BigDecimal getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(BigDecimal latitude) {
+        this.latitude = latitude;
+    }
+
+    public BigDecimal getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(BigDecimal longitude) {
+        this.longitude = longitude;
     }
 
     public Lead getLead() {

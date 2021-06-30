@@ -5,18 +5,18 @@ import java.math.BigDecimal;
 /**
  * VO usado para obter pontos de rotas calculadas
  */
-public class PontoRotaVo {
+public class PontoRotaPostoVo {
 
     private BigDecimal latitude;
     private BigDecimal longitude;
     private Integer ordem;
     private String nome;
-    private Integer tipo;
+    private Long litros;
 
     /**
      * Construtor padrão
      */
-    public PontoRotaVo() { }
+    public PontoRotaPostoVo() { }
 
     /**
      * Constroi um ponto geográfico para requisição ao roteirizador
@@ -24,14 +24,14 @@ public class PontoRotaVo {
      * @param longitude Longitude do ponto da rota
      * @param ordem Ordem do ponto na rota
      * @param nome Nome do ponto na rota
-     * @param tipo Tipo do ponto na rota
+     * @param litros Quantos litros serão abastecidos
      */
-    public PontoRotaVo(BigDecimal latitude, BigDecimal longitude, Integer ordem, String nome, Integer tipo) {
+    public PontoRotaPostoVo(BigDecimal latitude, BigDecimal longitude, Integer ordem, String nome, Long litros) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.ordem = ordem;
         this.nome = nome;
-        this.tipo = tipo;
+        this.litros = litros;
     }
 
     public BigDecimal getLatitude() {
@@ -66,11 +66,11 @@ public class PontoRotaVo {
         this.nome = nome;
     }
 
-    public Integer getTipo() {
-        return tipo;
+    public Long getLitros() {
+        return litros;
     }
 
-    public void setTipo(Integer tipo) {
-        this.tipo = tipo;
+    public void setLitros(Long litros) {
+        this.litros = litros;
     }
 }

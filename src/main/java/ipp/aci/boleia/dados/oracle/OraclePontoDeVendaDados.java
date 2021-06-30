@@ -4,11 +4,14 @@ import ipp.aci.boleia.dados.IPontoDeVendaDados;
 import ipp.aci.boleia.dominio.AtividadeComponente;
 import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.Usuario;
+import ipp.aci.boleia.dominio.enums.RestricaoVisibilidadePontoVenda;
 import ipp.aci.boleia.dominio.enums.StatusAlteracaoPrecoPosto;
 import ipp.aci.boleia.dominio.enums.StatusAtivacao;
+import ipp.aci.boleia.dominio.enums.StatusBloqueio;
 import ipp.aci.boleia.dominio.enums.StatusHabilitacaoPontoVenda;
 import ipp.aci.boleia.dominio.enums.StatusPermissaoPreco;
 import ipp.aci.boleia.dominio.enums.StatusPosse;
+import ipp.aci.boleia.dominio.enums.StatusVinculoFrotaPontoVenda;
 import ipp.aci.boleia.dominio.enums.TipoFiltroPontoVendaPrimario;
 import ipp.aci.boleia.dominio.enums.TipoFiltroPontoVendaSecundario;
 import ipp.aci.boleia.dominio.enums.TipoServico;
@@ -16,7 +19,9 @@ import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaAnd;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDiferente;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaEmpty;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaEntre;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaFetch;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
@@ -25,13 +30,14 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaior;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMenor;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
-import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaEntre;
-import ipp.aci.boleia.dominio.vo.EntidadeVo;
-import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialPtovVo;
-import ipp.aci.boleia.dominio.vo.FiltroPesquisaLocalizacaoVo;
-import ipp.aci.boleia.dominio.vo.FiltroPesquisaPontoDeVendaVo;
-import ipp.aci.boleia.dominio.vo.FiltroPesquisaRotaPontoVendaServicosVo;
 import ipp.aci.boleia.dominio.vo.CoordenadaVo;
+import ipp.aci.boleia.dominio.vo.EntidadeVo;
+import ipp.aci.boleia.dominio.vo.FiltroAutoCompletePostoRotaVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaLocalizacaoVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialPtovVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaPontoDeVendaVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaRIPontoVendaServicosVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaRotaPontoVendaServicosVo;
 import ipp.aci.boleia.util.Ordenacao;
 import ipp.aci.boleia.util.UtilitarioLambda;
 import ipp.aci.boleia.util.UtilitarioParse;
@@ -186,7 +192,6 @@ public class OraclePontoDeVendaDados extends OracleRepositorioBoleiaDados<PontoD
 
     @Override
     public List<PontoDeVenda> pesquisarPontosVendaComServicos(FiltroPesquisaRotaPontoVendaServicosVo filtro) {
-
         List<ParametroPesquisa> params = new ArrayList<>();
         params.add(new ParametroPesquisaNulo("latitude", true));
         params.add(new ParametroPesquisaNulo("longitude", true));
@@ -239,13 +244,13 @@ public class OraclePontoDeVendaDados extends OracleRepositorioBoleiaDados<PontoD
                 if(tipoFiltro.getServicos().count() > 1) {
                     parametrosServicos.add(new ParametroPesquisaOr(
                             tipoFiltro.getServicos()
-                                        .map(t -> new ParametroPesquisaIgual("respostaQuestionario.servico.id", t.getValue()))
-                                        .toArray(ParametroPesquisaIgual[]::new)
+                                    .map(t -> new ParametroPesquisaIgual("respostaQuestionario.servico.id", t.getValue()))
+                                    .toArray(ParametroPesquisaIgual[]::new)
                     ));
                 } else {
                     TipoServico tipoServico = tipoFiltro.getServicos()
-                                                        .findFirst()
-                                                        .get();
+                            .findFirst()
+                            .get();
                     parametrosServicos.add(
                             new ParametroPesquisaIgual("respostaQuestionario.servico.id", tipoServico.getValue())
                     );
@@ -285,6 +290,85 @@ public class OraclePontoDeVendaDados extends OracleRepositorioBoleiaDados<PontoD
         }
 
         params.add(new ParametroPesquisaFetch("avaliacao"));
+
+        return pesquisar((ParametroOrdenacaoColuna)null, params.toArray(new ParametroPesquisa[params.size()]));
+    }
+
+    @Override
+    public List<PontoDeVenda> pesquisarPontosVendaComServicos(FiltroPesquisaRIPontoVendaServicosVo filtro) {
+
+        List<ParametroPesquisa> params = new ArrayList<>();
+        params.add(new ParametroPesquisaNulo("latitude", true));
+        params.add(new ParametroPesquisaNulo("longitude", true));
+
+        if (filtro.getPostoUrbano() != null && !filtro.getPostoUrbano()){
+            params.add(new ParametroPesquisaDiferente("perfilVenda", "Urbano"));
+        }
+
+        if (!CollectionUtils.isEmpty(filtro.getPostosParametizados())){
+            params.add(new ParametroPesquisaIn("id", filtro.getPostosParametizados()));
+        }
+
+        if(CollectionUtils.isNotEmpty(filtro.getTiposCombustivel())) {
+            List<Long> idsCombustiveis = UtilitarioLambda.converterLista(filtro.getTiposCombustivel(), EntidadeVo::getId);
+            params.add(new ParametroPesquisaIn("precosBase.precoMicromercado.tipoCombustivel.id", idsCombustiveis));
+        }
+
+        params.add(new ParametroPesquisaOr(
+            new ParametroPesquisaAnd(
+                    new ParametroPesquisaIgual("restricaoVisibilidade", RestricaoVisibilidadePontoVenda.SEM_RESTRICAO.getValue()),
+                    new ParametroPesquisaIgual("negociacoes.statusBloqueio", StatusBloqueio.DESBLOQUEADO.getValue()),
+                    new ParametroPesquisaIgual("negociacoes.frota.id", filtro.getIdFrota())
+            ),
+            new ParametroPesquisaAnd(
+                    new ParametroPesquisaIgual("restricaoVisibilidade", RestricaoVisibilidadePontoVenda.VISIVEL_APENAS_PARA_FROTAS_COM_VINCULO_ATIVO.getValue()),
+                    new ParametroPesquisaIgual("negociacoes.statusVinculo", StatusVinculoFrotaPontoVenda.ATIVO.getValue()),
+                    new ParametroPesquisaIgual("negociacoes.statusBloqueio", StatusBloqueio.DESBLOQUEADO.getValue()),
+                    new ParametroPesquisaIgual("negociacoes.frota.id", filtro.getIdFrota())
+            ),
+            new ParametroPesquisaAnd(
+                    new ParametroPesquisaIgual("restricaoVisibilidade", RestricaoVisibilidadePontoVenda.SEM_RESTRICAO.getValue()),
+                    new ParametroPesquisaNulo("negociacoes", false),
+                    new ParametroPesquisaIn("precosBase.status", Arrays.asList(
+                            StatusAlteracaoPrecoPosto.VIGENTE.getValue(),
+                            StatusAlteracaoPrecoPosto.ACEITE_PENDENTE_INTERNO.getValue(),
+                            StatusAlteracaoPrecoPosto.ACEITE_PENDENTE_REVENDA.getValue(),
+                            StatusAlteracaoPrecoPosto.ACEITO.getValue()
+                    )),
+                    new ParametroPesquisaNulo("precosBase.preco", true)
+            )
+        ));
+
+        params.add(new ParametroPesquisaIgual("status",StatusAtivacao.ATIVO.getValue()));
+        params.add(new ParametroPesquisaIgual("statusHabilitacao",StatusHabilitacaoPontoVenda.HABILITADO.getValue()));
+        params.add(new ParametroPesquisaIgual("excluido",false));
+
+        if(CollectionUtils.isNotEmpty(filtro.getFiltrosCoordenadas())) {
+            ParametroPesquisaOr condicoesOr = new ParametroPesquisaOr();
+            BigDecimal margem = filtro.getMargemGrausFiltroCoordenadas() != null ? filtro.getMargemGrausFiltroCoordenadas() : BigDecimal.valueOf(0);
+
+            for (List<CoordenadaVo> listaCoordenadas: filtro.getFiltrosCoordenadas()) {
+                for (int i = 0; i < listaCoordenadas.size() - 1; i++) {
+                    CoordenadaVo ca = listaCoordenadas.get(i);
+                    BigDecimal caLat = ca.getLatitude();
+                    BigDecimal caLong = ca.getLongitude();
+                    CoordenadaVo cb = listaCoordenadas.get(i+1);
+                    BigDecimal cbLat = cb.getLatitude();
+                    BigDecimal cbLong = cb.getLongitude();
+                    BigDecimal xa = (cbLat.compareTo(caLat) > 0 ? caLat : cbLat).subtract(margem);
+                    BigDecimal xb = (cbLat.compareTo(caLat) > 0 ? cbLat : caLat).add(margem);
+                    BigDecimal ya = (cbLong.compareTo(caLong) > 0 ? caLong : cbLong).subtract(margem);
+                    BigDecimal yb = (cbLong.compareTo(caLong) > 0 ? cbLong : caLong).add(margem);
+
+                    condicoesOr.addParametro(new ParametroPesquisaAnd(
+                            new ParametroPesquisaEntre("latitude", xa, xb),
+                            new ParametroPesquisaEntre("longitude", ya, yb)
+                    ));
+                }
+            }
+
+            params.add(condicoesOr);
+        }
 
         return pesquisar((ParametroOrdenacaoColuna)null, params.toArray(new ParametroPesquisa[params.size()]));
     }
@@ -389,6 +473,58 @@ public class OraclePontoDeVendaDados extends OracleRepositorioBoleiaDados<PontoD
         return pesquisarUnicoSemIsolamentoDados(new ParametroPesquisaIgual("numeroAbadi", numeroAbadi));
     }
 
+    @Override
+    public List<PontoDeVenda> pesquisarParaAutocompleteRota(FiltroAutoCompletePostoRotaVo filtro){
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+
+        parametros.add(new ParametroPesquisaNulo("latitude", true));
+        parametros.add(new ParametroPesquisaNulo("longitude", true));
+
+        if (!filtro.getPostoUrbano()){
+            parametros.add(new ParametroPesquisaDiferente("perfilVenda", "Urbano"));
+        }
+
+        if (!CollectionUtils.isEmpty(filtro.getPostosParametizados())){
+            parametros.add(new ParametroPesquisaIn("id", filtro.getPostosParametizados()));
+        }
+
+        parametros.add(new ParametroPesquisaOr(
+                new ParametroPesquisaAnd(
+                    new ParametroPesquisaIgual("restricaoVisibilidade", RestricaoVisibilidadePontoVenda.SEM_RESTRICAO.getValue()),
+                    new ParametroPesquisaIgual("negociacoes.statusBloqueio", StatusBloqueio.DESBLOQUEADO.getValue()),
+                    new ParametroPesquisaIgual("negociacoes.frota.id", filtro.getIdFrota())
+                ),
+                new ParametroPesquisaAnd(
+                        new ParametroPesquisaIgual("restricaoVisibilidade", RestricaoVisibilidadePontoVenda.VISIVEL_APENAS_PARA_FROTAS_COM_VINCULO_ATIVO.getValue()),
+                        new ParametroPesquisaIgual("negociacoes.statusVinculo", StatusVinculoFrotaPontoVenda.ATIVO.getValue()),
+                        new ParametroPesquisaIgual("negociacoes.statusBloqueio", StatusBloqueio.DESBLOQUEADO.getValue()),
+                        new ParametroPesquisaIgual("negociacoes.frota.id", filtro.getIdFrota())
+                ),
+                new ParametroPesquisaAnd(
+                        new ParametroPesquisaIgual("restricaoVisibilidade", RestricaoVisibilidadePontoVenda.SEM_RESTRICAO.getValue()),
+                        new ParametroPesquisaNulo("negociacoes", false),
+                        new ParametroPesquisaIn("precosBase.status", Arrays.asList(
+                                StatusAlteracaoPrecoPosto.VIGENTE.getValue(),
+                                StatusAlteracaoPrecoPosto.ACEITE_PENDENTE_INTERNO.getValue(),
+                                StatusAlteracaoPrecoPosto.ACEITE_PENDENTE_REVENDA.getValue(),
+                                StatusAlteracaoPrecoPosto.ACEITO.getValue()
+                        )),
+                        new ParametroPesquisaNulo("precosBase.preco", true)
+                )
+        ));
+
+        parametros.add(new ParametroPesquisaIgual("precosBase.precoMicromercado.tipoCombustivel.id", filtro.getTipoCombustivel()));
+
+        parametros.add(new ParametroPesquisaIgual("status",StatusAtivacao.ATIVO.getValue()));
+        parametros.add(new ParametroPesquisaIgual("statusHabilitacao",StatusHabilitacaoPontoVenda.HABILITADO.getValue()));
+        parametros.add(new ParametroPesquisaIgual("excluido",false));
+
+        parametros.add(new ParametroPesquisaLike("nome", filtro.getTermo()));
+
+
+        return pesquisar(new ParametroOrdenacaoColuna("nome"), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
     /**
      * Povoa os parametros de pesquisa referentes ao filtro revendedor da consulta
      * @param filtro O filtro da consulta
@@ -413,5 +549,4 @@ public class OraclePontoDeVendaDados extends OracleRepositorioBoleiaDados<PontoD
             parametros.add(new ParametroPesquisaEmpty(FOTOS, possuiFotos));
         }
     }
-
 }
