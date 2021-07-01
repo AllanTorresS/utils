@@ -17,6 +17,8 @@ public class FiltroPesquisaPerfilVo extends BaseFiltroPaginado {
 
     private Long idRede;
 
+    private Long idUsuario;
+
     public Boolean getTemplate() {
         return template;
     }
@@ -55,5 +57,13 @@ public class FiltroPesquisaPerfilVo extends BaseFiltroPaginado {
 
     public void setIdRede(Long idRede) {
         this.idRede = idRede;
+    }
+
+    public Long getIdUsuario() {
+        return idUsuario;
+    }
+
+    public void setIdUsuario(Long idUsuario) {
+        this.idUsuario = idUsuario;
     }
 }
