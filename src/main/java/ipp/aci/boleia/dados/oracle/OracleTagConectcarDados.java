@@ -46,6 +46,11 @@ public class OracleTagConectcarDados extends OracleRepositorioBoleiaDados<TagCon
          " AND t.dataAtivacao IS NOT NULL " +
          " AND t.dataExclusao IS NULL " +
          " ORDER BY t.id ASC ";
+
+    private static final String QUERY_TAG =
+            " SELECT t " +
+                    " FROM TagConectcar t " +
+                    " WHERE t.id  = :idTag ";
 	
     /**
      * Instancia o repositório
@@ -104,6 +109,13 @@ public class OracleTagConectcarDados extends OracleRepositorioBoleiaDados<TagCon
         
         return pesquisarUnicoSemIsolamentoDados(QUERY_QUANTIDADE_TOTAL_TAGS, parametros.toArray(new ParametroPesquisa[parametros.size()]));
 	}
+
+    public TagConectcar obterTagPorId(Long idTag) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaIgual("idTag", idTag));
+
+        return pesquisarUnicoSemIsolamentoDados(QUERY_TAG, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
 
 	@Override
 	public long obterQuantidadeTotalTagsAtivas(Long codigoFrota) {

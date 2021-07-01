@@ -64,7 +64,7 @@ public class OracleCobrancaDados extends OracleRepositorioBoleiaDados<Cobranca> 
             ") ";
 
     private static final String CONSULTA_COBRANCAS_EM_UM_PERIODO =
-            "SELECT COUNT(0) " +
+            "SELECT COUNT(DISTINCT C) " +
                     "FROM Cobranca C " +
                     "JOIN C.transacoesConsolidadas TC " +
                     "JOIN TC.frotaPtov FPV " +

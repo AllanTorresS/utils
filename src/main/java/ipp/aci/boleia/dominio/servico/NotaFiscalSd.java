@@ -75,6 +75,7 @@ public class NotaFiscalSd {
 
     private static final Logger LOG = LoggerFactory.getLogger(NotaFiscalSd.class);
     private static final int LIMITE_NO_SERIE = 10;
+    private static final String MODELO_PERMITIDO = "55";
     private static final List<Erro> ERROS_BLOQUEANTES = ImmutableList.of(Erro.NOTA_FISCAL_UPLOAD_VERSAO_INVALIDA, Erro.NOTA_FISCAL_UPLOAD_NOTA_REPETIDA);
 
     @Autowired
@@ -222,6 +223,7 @@ public class NotaFiscalSd {
     public List<ValidacaoUploadNotaFiscalVo> validarDadosNovaNotaFiscal(List<Document> documentos, List<AutorizacaoPagamento> autorizacoesPagamento) {
         List<ValidacaoUploadNotaFiscalVo> validacoesNotas = new ArrayList<>();
         validarVersaoNota(documentos, validacoesNotas);
+        validarModeloDeNota(documentos, validacoesNotas);
         if (validacoesNotas.isEmpty()){
             validarNumeroSerieNota(documentos, validacoesNotas);
             validarNumeroNota(documentos, validacoesNotas);
@@ -229,6 +231,21 @@ public class NotaFiscalSd {
             validarDadosNota(documentos, autorizacoesPagamento, validacoesNotas);
         }
         return validacoesNotas;
+    }
+
+    /**
+     * Verifica se o modelo da nota é igual ao modelo permitido.
+     *
+     * @param documentos Documento quem contém os dados da nota fiscal
+     * @param validacoesNotas Lista de erros das validacoes
+     */
+    private void validarModeloDeNota(List<Document> documentos, List<ValidacaoUploadNotaFiscalVo> validacoesNotas) {
+        for(Document documento : documentos) {
+            String nNfe = notaFiscalParserSd.getString(documento, ConstantesNotaFiscalParser.MODELO);
+            if (!nNfe.equals(MODELO_PERMITIDO)) {
+                this.addErroValidacao(validacoesNotas, documento, Erro.MODELO_DE_NOTA_FISCAL_INVALIDO);
+            }
+        }
     }
 
     /**
@@ -793,12 +810,12 @@ public class NotaFiscalSd {
         final long divisorDaRaiz = 1000000;
         for(AutorizacaoPagamento abastecimento : autorizacoesPagamento) {
             if(abastecimento.getParametroNotaFiscal() == null){
-                final Long cnpjValidacao = abastecimento.getFrota().getCnpj()/divisorDaRaiz;
+                final Long cnpjRaizValidacao = abastecimento.getFrota().getCnpj()/divisorDaRaiz;
                 documentos.forEach(nota -> {
                     Long destCnpj = notaFiscalParserSd.getLong(nota, ConstantesNotaFiscalParser.DEST_CNPJ)/divisorDaRaiz;
-                    boolean destinoConfiguradoIgualDestinoNFe = cnpjValidacao.equals(destCnpj);
+                    boolean destinoConfiguradoIgualDestinoNFe = cnpjRaizValidacao.equals(destCnpj);
                     if(!destinoConfiguradoIgualDestinoNFe){
-                        this.addErroValidacao(validacoesNotas, nota, Erro.NOTA_FISCAL_UPLOAD_CNPJ_DESTINATARIO_INVALIDO, cnpjValidacao.toString());
+                        this.addErroValidacao(validacoesNotas, nota, Erro.NOTA_FISCAL_UPLOAD_CNPJ_DESTINATARIO_INVALIDO, abastecimento.getFrota().getCnpj().toString());
                     }
                 });
             } else {
@@ -1161,6 +1178,7 @@ public class NotaFiscalSd {
         ItemDanfeVo item = new ItemDanfeVo();
         item.setCodigoProduto(UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.ITEM_CODIGO_PRODUTO, itens.item(i)));
         item.setDescProdutoServico(UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.ITEM_DESCR_PRODUTO, itens.item(i)));
+        item.setInfAdProd(UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.ITEM_INFO_ADICIONAIS, itens.item(i)));
         item.setNcmsh(UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.ITEM_NCM, itens.item(i)));
         item.setCst(UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.ITEM_CST, itens.item(i)));
         item.setCfop(UtilitarioXml.getString(documento, ConstantesNotaFiscalParser.ITEM_CFOP, itens.item(i)));
