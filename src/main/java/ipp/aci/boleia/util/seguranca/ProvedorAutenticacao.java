@@ -97,8 +97,8 @@ public class ProvedorAutenticacao implements AuthenticationProvider {
                 usuario = servicoUsuario.obterPorEmailComPermissoes(auth.getName());
             }
 
-
             if(usuario != null) {
+                usuario = servicoUsuario.desvincularPerfisTemporariosExpirados(usuario);
                 validarUsuario(usuario);
             } else {
                 registrarTentativaAcesso(auth.getName());

@@ -32,6 +32,8 @@ import java.util.List;
 @Table(name = "CONFIG_DISTRIBUICAO_AUTO")
 public class ConfiguracaoDistribuicaoAutomatica implements IPersistente, IPertenceFrota {
 
+    private static final long serialVersionUID = 161084160262908392L;
+
     @Id
     @Column(name = "CD_CONFIG_DISTRIBUICAO_AUTO")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_CONFIG_DISTRIBUICAO_AUTO")
@@ -49,6 +51,9 @@ public class ConfiguracaoDistribuicaoAutomatica implements IPersistente, IPerten
 
     @Column(name = "VA_DIA_DISTRIBUICAO")
     private Integer diaDistribuicao;
+
+    @Column(name = "DT_DISTRIBUICAO")
+    private Date dataDistribuicao;
 
     @NotNull
     @Column(name = "DT_CRIACAO")
@@ -96,6 +101,14 @@ public class ConfiguracaoDistribuicaoAutomatica implements IPersistente, IPerten
 
     public void setDiaDistribuicao(Integer diaDistribuicao) {
         this.diaDistribuicao = diaDistribuicao;
+    }
+
+    public Date getDataDistribuicao() {
+        return dataDistribuicao;
+    }
+
+    public void setDataDistribuicao(Date dataDistribuicao) {
+        this.dataDistribuicao = dataDistribuicao;
     }
 
     public Date getDataCriacao() {

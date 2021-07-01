@@ -5,6 +5,7 @@ import ipp.aci.boleia.dominio.interfaces.IExclusaoLogica;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import org.hibernate.envers.Audited;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -36,7 +37,7 @@ public class PlanoViagem implements IPersistente, IExclusaoLogica {
     @Column(name = "ID_EXCLUIDO")
     private Boolean excluido;
 
-    @OneToMany(mappedBy = "planoViagem", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "planoViagem", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Rota> rotas;
 
     public PlanoViagem() { }

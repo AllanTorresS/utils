@@ -7,12 +7,21 @@ import ipp.aci.boleia.dominio.pesquisa.comum.BaseFiltroPaginado;
  */
 public class FiltroPesquisaRotaVo extends BaseFiltroPaginado {
 
+    private Long id;
     private String nome;
     private String origem;
     private String destino;
     private Boolean possuiPostos;
     private EntidadeVo pontoVenda;
     private Boolean rotaInteligente;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getNome() {
         return nome;

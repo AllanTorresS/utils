@@ -97,4 +97,20 @@ public interface IChamadoDados {
      * @return Lista com os módulos.
      */
     List<ValorPicklistVo> listarModulosPorSistemaDeOrigem(String sistemaDeOrigem);
+
+    /**
+     * Retorna uma lista com os motivos de cancelamento de chamado.
+     *
+     * @return Lista com os motivos de cancelamento.
+     */
+    List<ValorPicklistVo> listarMotivosCancelamento();
+
+    /**
+     * Realiza o cancelamento de um chamado no salesforce.
+     *
+     * @param idSalesforce Identificador interno do chamado no salesforce.
+     * @param motivoCancelamento Motivo do cancelamento.
+     * @param descricaoCancelamento Descrição sobre o cancelamento que está sendo feito.
+     */
+    void cancelarChamado(String idSalesforce, String motivoCancelamento, String descricaoCancelamento);
 }

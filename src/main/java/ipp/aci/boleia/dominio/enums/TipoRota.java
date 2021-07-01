@@ -6,7 +6,9 @@ package ipp.aci.boleia.dominio.enums;
 public enum TipoRota {
 
     MAIS_CURTA(0),
-    MELHOR_CUSTO(1);
+    MELHOR_CUSTO(1),
+    PRE_CALCULO(2),
+    CUSTOMIZADA(3);
 
     private final Integer value;
 
