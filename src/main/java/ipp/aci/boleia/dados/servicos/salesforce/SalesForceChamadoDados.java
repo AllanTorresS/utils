@@ -8,6 +8,7 @@ import ipp.aci.boleia.dominio.ChamadoSistema;
 import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
+import ipp.aci.boleia.dominio.vo.salesforce.CancelamentoChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.ChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.ConsultaChamadosVo;
 import ipp.aci.boleia.dominio.vo.salesforce.CriacaoChamadoVo;
@@ -119,6 +120,9 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
 
     @Value("${salesforce.chamados.criacao.url}")
     private String urlCriacao;
+
+    @Value("${salesforce.chamados.cancelamento.url}")
+    private String urlCancelamento;
 
     @Value("${salesforce.chamados.listar.picklists}")
     private String urlListarPicklists;
@@ -256,6 +260,29 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
         });
     }
 
+    @Override
+    public List<ValorPicklistVo> listarMotivosCancelamento() {
+        return listarValoresPicklist(ConstantesSalesForce.CAMPO_MOTIVO_CANCELAMENTO, resposta -> {
+            prepararResposta(resposta);
+            if(this.statusCode == HttpStatus.OK.value()) {
+                PicklistVo picklist = UtilitarioJson.toObjectWithConfigureFailOnUnknowProperties(this.responseBody.toString(), PicklistVo.class, false);
+                return picklist.getValores();
+            }
+            return new ArrayList<>();
+        });
+    }
+
+    @Override
+    public void cancelarChamado(String idSalesforce, String motivoCancelamento, String descricaoCancelamento) {
+        CancelamentoChamadoVo vo = new CancelamentoChamadoVo();
+        vo.setStatus(ConstantesSalesForce.STATUS_CANCELAMENTO);
+        vo.setMotivoCancelamento(motivoCancelamento);
+        vo.setDescricaoCancelamento(descricaoCancelamento);
+
+        prepararRequisicao(urlCancelamento, vo);
+        enviarRequisicaoPost(this::trataRespostaCancelamento);
+    }
+
     /**
      * Lista os valores de um picklist do salesforce.
      *
@@ -300,6 +327,20 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
         if (this.statusCode != HttpStatus.CREATED.value()) {
             LOGGER.error(this.responseBody.toString());
             throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("chamado.criacao.erro.integracao"));
+        }
+        return true;
+    }
+
+    /***
+     * Trata a resposta do cancelamento de chamado
+     * @param response a resposta
+     * @return true em caso de sucesso
+     */
+    private boolean trataRespostaCancelamento(CloseableHttpResponse response) {
+        prepararResposta(response);
+        if (this.statusCode != HttpStatus.NO_CONTENT.value()) {
+            LOGGER.error(this.responseBody.toString());
+            throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("chamado.cancelamento.erro.integracao"));
         }
         return true;
     }
