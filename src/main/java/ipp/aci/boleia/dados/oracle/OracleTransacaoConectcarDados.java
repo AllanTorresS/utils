@@ -72,6 +72,14 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
                     " ORDER BY " +
                     "   TC.dataFimPeriodo";
 
+    private static final String CONSULTA_PESQUISA_DETALHE_VALE_PEDAGIO =
+            "SELECT TC " +
+                    " FROM TransacaoConectcar TC " +
+                    "   LEFT JOIN TC.frota F " +
+                    " WHERE TC.dataTransacao BETWEEN :inicioDia AND :fimDia " +
+                    "   AND F.id = :idFrota " +
+    				"   AND TC.tipoTransacao IN (7, 10)";
+
     private static final String QUERY_VALOR_UTILIZADO =
             "SELECT NVL(SUM(tc.valorTotal),0) " +
                     " FROM TransacaoConectcar tc " +
@@ -433,12 +441,30 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
         parametros.add(parametroAte);
         parametros.add(parametroFrota);
     	
-        String ordenacao = criarParametroOrdenacao(filtro.getPaginacao().getParametrosOrdenacaoColuna());
+        String ordenacao = criarParametroOrdenacao(filtro.getPaginacao() != null ? filtro.getPaginacao().getParametrosOrdenacaoColuna() : null);
         String consultaPesquisa = String.format(QUERY_EXTRATO_VALE_PEDAGIO, ordenacao);
         
     	return pesquisar(filtro.getPaginacao(), consultaPesquisa, DiaValePedagioVo.class, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
-    
+
+    /**
+     * Realiza a pesquisa de Transacoes Consolidadas através de um filtor
+     *
+     * @param filtro        parâmetros utilizados na consulta
+     * @param usuarioLogado usuário que está realizando a consulta
+     * @return retorna o resultado paginado da consulta
+     */
+    @Override
+    public List<TransacaoConectcar> obterDetalheValePedagio(FiltroPesquisaExtratoValePedagioVo filtro) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+
+        parametros.add(new ParametroPesquisaIgual("inicioDia", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe())));
+        parametros.add(new ParametroPesquisaIgual("fimDia", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte())));
+        parametros.add(new ParametroPesquisaIgual("idFrota", filtro.getFrota().getId()));
+
+        return pesquisar(null, CONSULTA_PESQUISA_DETALHE_VALE_PEDAGIO, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+    }
+
     /**
      * Cria o parâmetro de ordenação para extrato Vale Pedágio
      *
@@ -454,12 +480,10 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
 
     @Override
     public List<TransacaoConectcar> obterValesPedagioAtivos(Long idFrota) {
-        StringBuilder query = new StringBuilder(QUERY_VALE_PEDAGIO_ATIVO);
-
         List<ParametroPesquisa> parametros = new ArrayList<>();
         parametros.add(new ParametroPesquisaIgual("idFrota", idFrota));
 
-        return pesquisar(null, query.toString(), parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+        return pesquisar(null, QUERY_VALE_PEDAGIO_ATIVO, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
 
 }

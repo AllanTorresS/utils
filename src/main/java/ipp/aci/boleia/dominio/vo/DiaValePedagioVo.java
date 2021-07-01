@@ -2,6 +2,7 @@ package ipp.aci.boleia.dominio.vo;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Classe com informações referentes à um dia de transações de vale pedágio
@@ -15,6 +16,7 @@ public class DiaValePedagioVo {
     private BigDecimal passagensValePedagio;
     private BigDecimal estornosValePegadio;
     private BigDecimal saldoFinal;
+    private List<TransacaoValePedagioVo> transacoes;
 
     /**
      * Serializacao json
@@ -91,6 +93,14 @@ public class DiaValePedagioVo {
 
 	public void setSaldoFinal(BigDecimal saldoFinal) {
 		this.saldoFinal = saldoFinal;
+	}
+
+	public List<TransacaoValePedagioVo> getTransacoes() {
+		return transacoes;
+	}
+
+	public void setTransacoes(List<TransacaoValePedagioVo> transacoes) {
+		this.transacoes = transacoes;
 	}
 
 }
