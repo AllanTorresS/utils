@@ -3,6 +3,7 @@ package ipp.aci.boleia.dados;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.salesforce.ChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.CriacaoChamadoVo;
+import ipp.aci.boleia.dominio.vo.salesforce.EdicaoChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.FiltroConsultaChamadosVo;
 import ipp.aci.boleia.dominio.vo.salesforce.ValorPicklistVo;
 import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
@@ -50,6 +51,15 @@ public interface IChamadoDados {
      * @throws ExcecaoBoleiaRuntime Caso ocorra algum erro
      */
     void criarChamado(CriacaoChamadoVo chamadoVo)  throws ExcecaoBoleiaRuntime;
+
+    /**
+     * Altera um chamado no SalesForce
+     *
+     * @param vo os dados do chamado
+     * @param idSalesforce o id do chamado a ser alterado
+     * @throws ExcecaoBoleiaRuntime Caso ocorra algum erro
+     */
+    void editarChamado(EdicaoChamadoVo vo, String idSalesforce)  throws ExcecaoBoleiaRuntime;
 
     /**
      * Retorna uma lista com os status possíveis de um chamado.
