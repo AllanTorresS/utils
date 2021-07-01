@@ -475,7 +475,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
                     .collect(Collectors.toList())
             );
         } else if(usuario.isInterno()) {
-            contatos.add(cpfUsuario.concat(cnpjContatoUsuarioInterno));
+            contatos.add(cpfUsuario.concat(formatarCnpjApresentacao(cnpjContatoUsuarioInterno)));
         }
         return contatos;
     }
