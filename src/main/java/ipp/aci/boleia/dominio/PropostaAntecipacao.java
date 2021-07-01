@@ -40,7 +40,7 @@ public class PropostaAntecipacao implements IPersistente, IExclusaoLogica {
     private String idParceiro;
 
     @Column(name = "ID_STATUS")
-    private StatusPropostaXP status;
+    private Integer status;
 
     @Column(name = "ID_ACEITE_USUARIO")
     private Boolean isAceito;
@@ -87,11 +87,11 @@ public class PropostaAntecipacao implements IPersistente, IExclusaoLogica {
     }
 
     public StatusPropostaXP getStatus() {
-        return status;
+        return StatusPropostaXP.obterPorValor(status);
     }
 
     public void setStatus(StatusPropostaXP status) {
-        this.status = status;
+        this.status = status.getValue();
     }
 
     public Boolean isAceito() {
