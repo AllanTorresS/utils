@@ -6,19 +6,18 @@ import java.util.List;
 /**
  * Representa uma requisição para cálculo de uma Rota
  */
-public class RequisicaoRoteirizadorVo {
+public class RequisicaoRoteirizadorValidarVo {
 
     private List<PontoRotaVo> pontosRota = new ArrayList<>();
     private VeiculoRotaVo infoVeiculo;
     private Long frota;
     private List<Integer> parametrosFrota;
-    private List<Long> postosDesconsiderados;
-    private Integer postoUrbano;
+    private List<PontoRotaPostoVo> postos;
 
     /**
      * Construtor padrão
      */
-    public RequisicaoRoteirizadorVo() { }
+    public RequisicaoRoteirizadorValidarVo() { }
 
     /**
      * Constrói uma requisição para envio ao algoritmo de roteirização
@@ -26,17 +25,15 @@ public class RequisicaoRoteirizadorVo {
      * @param infoVeiculo Informações do veículo
      * @param frota Informações da Frota
      * @param parametrosFrota Informações dos Parametros de Sistema da Frota
-     * @param postosDesconsiderados Lista de Postos a serem desconsiderados na Rota
-     * @param postoUrbano Flag que sinaliza a utilizacao de postos urbanos
+     * @param postos Lista de Postos a serem utilizados na Rota
      */
-    public RequisicaoRoteirizadorVo(List<PontoRotaVo> pontosRota, VeiculoRotaVo infoVeiculo, Long frota,
-                                 List<Integer> parametrosFrota, List<Long> postosDesconsiderados, Integer postoUrbano  ) {
+    public RequisicaoRoteirizadorValidarVo(List<PontoRotaVo> pontosRota, VeiculoRotaVo infoVeiculo, Long frota,
+                                           List<Integer> parametrosFrota, List<PontoRotaPostoVo> postos) {
         this.pontosRota = pontosRota;
         this.infoVeiculo = infoVeiculo;
         this.frota = frota;
         this.parametrosFrota = parametrosFrota;
-        this.postosDesconsiderados = postosDesconsiderados;
-        this.postoUrbano = postoUrbano;
+        this.postos = postos;
     }
 
     public List<PontoRotaVo> getPontosRota() {
@@ -71,19 +68,11 @@ public class RequisicaoRoteirizadorVo {
         this.parametrosFrota = parametrosFrota;
     }
 
-    public List<Long> getPostosDesconsiderados() {
-        return postosDesconsiderados;
+    public List<PontoRotaPostoVo> getPostos() {
+        return postos;
     }
 
-    public void setPostosDesconsiderados(List<Long> postosDesconsiderados) {
-        this.postosDesconsiderados = postosDesconsiderados;
-    }
-
-    public Integer getPostoUrbano() {
-        return postoUrbano;
-    }
-
-    public void setPostoUrbano(Integer postoUrbano) {
-        this.postoUrbano = postoUrbano;
+    public void setPostos(List<PontoRotaPostoVo> postos) {
+        this.postos = postos;
     }
 }

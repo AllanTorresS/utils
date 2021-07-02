@@ -4,12 +4,13 @@ import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
+import ipp.aci.boleia.dominio.vo.FiltroAutoCompletePostoRotaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaAbastecimentoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheCicloVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFinanceiroVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaFrotaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialFrotaVo;
-import ipp.aci.boleia.dominio.vo.apco.ClienteProFrotaVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaPostoInternoRotaVo;
 
 import java.util.Date;
 import java.util.List;
@@ -174,8 +175,14 @@ public interface IFrotaDados extends IRepositorioBoleiaDados<Frota> {
      * @param dataUltimoEnvio a data do último envio de dados bem sucedido
      * @return Lista de Frotas para exportacao
      */
-    List<ClienteProFrotaVo> obterClienteFrotaAPCO(Date dataUltimoEnvio);
+    List<Frota> obterFrotasClienteApcoPorData(Date dataUltimoEnvio);
 
+    /**
+     * Retorna os dados de todas das frotas clientes que não estejam em Pré Cadastro
+     * para realizar uma integração com a APCO.
+     * @return Lista de Frotas para exportacao
+     */
+    List<Frota> obterFrotasClienteApco();
     /**
      * Altera o estado da entidade Frota para desanexado
      *
@@ -208,6 +215,23 @@ public interface IFrotaDados extends IRepositorioBoleiaDados<Frota> {
      */
     List<Frota> pesquisarFrotasParaDetalheCiclo(FiltroPesquisaDetalheCicloVo filtro, Usuario usuarioLogado);
 
+    /**
+     * Obtém a lista das frotas a serem exibidas apos o autocomplete de busca de posto no roteirizador inteligente, caso posto interno esteja habilitado
+     *
+     * @param filtro O filtro de pesquisa com o termo do autocomplete
+     * @return lista das frotas que atendem aos criterios de busca
+     */
+    List<Frota> pesquisarParaAutocompleteRota(FiltroAutoCompletePostoRotaVo filtro);
+
+
+    /**
+     * Obtém a lista das frotas a serem exibidas que possuem Posto Interno na proximidade da Rota
+     *
+     * @param filtro O filtro de pesquisa com as posições da Rota
+     * @return lista das frotas que atendem aos criterios de busca
+     */
+    List<Frota> pesquisarPostoInternoNaRota(FiltroPesquisaPostoInternoRotaVo filtro);
+    
     /**
      * Busca frotas com mais de um motivo de alteração vigentes
      * @return As frotas encontradas
