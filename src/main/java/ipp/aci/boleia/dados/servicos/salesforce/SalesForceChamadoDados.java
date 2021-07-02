@@ -280,7 +280,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
         vo.setDescricaoCancelamento(descricaoCancelamento);
 
         prepararRequisicao(urlCancelamento, vo);
-        enviarRequisicaoPost(this::trataRespostaCancelamento);
+        enviarRequisicaoPatch(this::trataRespostaCancelamento);
     }
 
     /**
