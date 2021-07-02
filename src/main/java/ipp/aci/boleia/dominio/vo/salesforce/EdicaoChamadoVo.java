@@ -17,6 +17,15 @@ public class EdicaoChamadoVo {
         // serializacao JSON
     }
 
+    /**
+     * Construtor da classe.
+     *
+     * @param descricao A nova descrição do chamado 
+     */
+    public EdicaoChamadoVo(String descricao) {
+        this.descricao = descricao;
+    }
+
     public String getDescricao() {
         return descricao;
     }
