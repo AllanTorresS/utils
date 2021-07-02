@@ -86,12 +86,16 @@ public class PropostaAntecipacao implements IPersistente, IExclusaoLogica {
         this.idParceiro = idParceiro;
     }
 
-    public StatusPropostaXP getStatus() {
-        return StatusPropostaXP.obterPorValor(status);
+    public Integer getStatus() {
+        return status;
     }
 
-    public void setStatus(StatusPropostaXP status) {
-        this.status = status.getValue();
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public StatusPropostaXP getStatusEnum() {
+        return StatusPropostaXP.obterPorValor(status);
     }
 
     public Boolean isAceito() {
@@ -158,7 +162,7 @@ public class PropostaAntecipacao implements IPersistente, IExclusaoLogica {
      * @param dataReferencia a data de alteração do status
      */
     public void atualizarStatus(StatusPropostaXP novoStatus, Date dataReferencia) {
-        this.setStatus(novoStatus);
+        this.setStatus(novoStatus.getValue());
         this.setDataAtualizacao(dataReferencia);
     }
 }
