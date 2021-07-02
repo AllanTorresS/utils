@@ -291,7 +291,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
         vo.setDescricaoCancelamento(descricaoCancelamento);
 
         prepararRequisicao(urlCancelamento, vo);
-        enviarRequisicaoPost(this::trataRespostaCancelamento);
+        enviarRequisicaoPatch(this::trataRespostaCancelamento);
     }
 
     /**
@@ -541,7 +541,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
                     .collect(Collectors.toList())
             );
         } else if(usuario.isInterno()) {
-            contatos.add(cpfUsuario.concat(cnpjContatoUsuarioInterno));
+            contatos.add(cpfUsuario.concat(formatarCnpjApresentacao(cnpjContatoUsuarioInterno)));
         }
         return contatos;
     }

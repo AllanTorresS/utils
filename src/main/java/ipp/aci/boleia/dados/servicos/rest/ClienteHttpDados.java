@@ -145,8 +145,16 @@ public class ClienteHttpDados implements IClienteHttpDados {
     @Override
     public <T> T doPatchJson(String url, Object body, Header[] headers, ConsumidorHttp<T> consumidorHttp){
         HttpPatch request = prepararRequest(new HttpPatch(url), null, null, APPLICATION_JSON_CHARSET_UTF_8, headers);
-        StringEntity params = new StringEntity(UtilitarioJson.toJSON(body), StandardCharsets.UTF_8);
-        request.setEntity(params);
+        if(body != null) {
+            String requestBody;
+            if(body instanceof String) {
+                requestBody = (String) body;
+            } else {
+                requestBody = UtilitarioJson.toJSON(body);
+            }
+            StringEntity params = new StringEntity(requestBody, StandardCharsets.UTF_8);
+            request.setEntity(params);
+        }
         return executar(request, consumidorHttp);
     }
 
