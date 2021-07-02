@@ -138,6 +138,7 @@ public final  class Rotas {
     public static final  String UTILIZACAO_TAG_API                   = BASE_API + "/utilizacaoTag";
     public static final  String FROTA_CONECTCAR_API                  = BASE_API + "/frota/conectcar";
     public static final  String VALE_PEDAGIO_API                     = BASE_API + "/valePedagio";
+    public static final  String DETALHE_VALE_PEDAGIO_API             = BASE_API + "/detalheValePedagio";
     
     public static final String CAMPANHA_API                          = BASE_API + "/campanha";
     public static final String BANDEIRA_API                          = BASE_API + "/bandeira";
