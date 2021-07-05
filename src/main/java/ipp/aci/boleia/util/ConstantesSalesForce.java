@@ -27,7 +27,7 @@ public final class ConstantesSalesForce {
     public static final String ACCOUNT_FROTA = "-CL";
     public static final String ACCOUNT_PV = "-PV";
     public static final String STATUS_CANCELAMENTO = "Cancelado";
-    public static final String STATUS_AGUARDANDO_ATENDIMENTO = "Aguardando Atendimento";
+    public static final String STATUS_AGUARDANDO_ATENDIMENTO = "Aguardando atendimento";
     public static final String STATUS_PENDENTE_EXTERNO = "Pendente Externo";
 
     public static final String CAMPO_STATUS = "Status";
@@ -36,6 +36,7 @@ public final class ConstantesSalesForce {
     public static final String CAMPO_MOTIVO = "Motivo__c";
     public static final String CAMPO_MODULO = "MotivoSolicitacao__c";
     public static final String CAMPO_MOTIVO_CANCELAMENTO = "MotivoCancelamento__c";
+    public static final String CAMPO_MOTIVO_CANCELAMENTO_VALOR_DUPLICADO = "Duplicado";
 
     /**
      * Impede instanciacao

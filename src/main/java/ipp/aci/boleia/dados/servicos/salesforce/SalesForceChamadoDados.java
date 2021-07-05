@@ -266,7 +266,9 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
             prepararResposta(resposta);
             if(this.statusCode == HttpStatus.OK.value()) {
                 PicklistVo picklist = UtilitarioJson.toObjectWithConfigureFailOnUnknowProperties(this.responseBody.toString(), PicklistVo.class, false);
-                return picklist.getValores();
+                return picklist.getValores().stream()
+                        .filter(p -> p.getValor().equals(ConstantesSalesForce.CAMPO_MOTIVO_CANCELAMENTO_VALOR_DUPLICADO) == false)
+                        .collect(Collectors.toList());
             }
             return new ArrayList<>();
         });
@@ -279,8 +281,15 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
         vo.setMotivoCancelamento(motivoCancelamento);
         vo.setDescricaoCancelamento(descricaoCancelamento);
 
-        prepararRequisicao(urlCancelamento, vo);
+        String urlCancelamentoComIdSalesforce = formatarQueryParaCancelamento(urlCancelamento, idSalesforce);
+
+        prepararRequisicao(urlCancelamentoComIdSalesforce, vo);
+
         enviarRequisicaoPatch(this::trataRespostaCancelamento);
+    }
+
+    private String formatarQueryParaCancelamento(String urlCancelamento, String idSalesforce) {
+        return format(urlCancelamento, idSalesforce);
     }
 
     /**
