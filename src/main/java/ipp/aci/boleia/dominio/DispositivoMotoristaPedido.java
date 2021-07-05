@@ -1,8 +1,10 @@
 package ipp.aci.boleia.dominio;
 
+import ipp.aci.boleia.dominio.enums.StatusAtivacao;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
 import ipp.aci.boleia.dominio.interfaces.IPertenceMotorista;
+import ipp.aci.boleia.dominio.vo.TokenVo;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.Column;
@@ -126,11 +128,35 @@ public class DispositivoMotoristaPedido implements IPersistente, IPertenceFrota,
     @JoinColumn(name = "CD_DISPOSITIVO_MOTORISTA")
     private DispositivoMotorista dispositivoMotorista;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_PEDIDO_ADICIONAL")
+    private DispositivoMotoristaPedido pedidoAbastecimentoAdicional;
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "pedido")
     private List<TransacaoFrotaLeve> transacoesFrotasLeves;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "pedido")
     private List<AutorizacaoPagamento> abastecimentos;
+
+    /**
+     * Habilita o pedido conforme token
+     *
+     * @param token token com data expiração para pedido
+     */
+    public void habilitaPedidoPorToken(TokenVo token) {
+        this.setNumero(token.getToken());
+        this.setDataExpiracao(token.getDataExpiracaoToken());
+        this.setHabilitado(StatusAtivacao.ATIVO.getValue());
+    }
+
+    /**
+     * Quando um pedido tem abastecimento adicional associado.
+     *
+     * @return true quando existe um pedido além do pedido original
+     */
+    public boolean temPedidoAbastecimentoAdicional() {
+        return pedidoAbastecimentoAdicional != null;
+    }
 
     @Override
     public Long getId() {
@@ -279,5 +305,13 @@ public class DispositivoMotoristaPedido implements IPersistente, IPertenceFrota,
 
     public void setAbastecimentos(List<AutorizacaoPagamento> abastecimentos) {
         this.abastecimentos = abastecimentos;
+    }
+
+    public DispositivoMotoristaPedido getPedidoAbastecimentoAdicional() {
+        return pedidoAbastecimentoAdicional;
+    }
+
+    public void setPedidoAbastecimentoAdicional(DispositivoMotoristaPedido pedidoAbastecimentoAdicional) {
+        this.pedidoAbastecimentoAdicional = pedidoAbastecimentoAdicional;
     }
 }
