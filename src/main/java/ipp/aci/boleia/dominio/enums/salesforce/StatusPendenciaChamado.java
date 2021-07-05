@@ -1,4 +1,6 @@
-package ipp.aci.boleia.dominio.enums;
+package ipp.aci.boleia.dominio.enums.salesforce;
+
+import ipp.aci.boleia.dominio.enums.IEnumComValor;
 
 /**
  * Enum com os status da pendencia de um usuário com um chamado salesforce.
@@ -9,7 +11,7 @@ public enum StatusPendenciaChamado implements IEnumComValor {
     EM_ABERTO(0),
     RESOLVIDA(1);
 
-    private Integer value;
+    private final Integer value;
 
     /**
      * Construtor do enum.
