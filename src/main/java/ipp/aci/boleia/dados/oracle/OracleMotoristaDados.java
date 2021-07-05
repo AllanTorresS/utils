@@ -56,8 +56,7 @@ public class OracleMotoristaDados extends OracleRepositorioBoleiaDados<Motorista
                     "WHERE trunc(m.dataCriacao) = trunc(:diasDeVerificacao) and " +
                     "NOT EXISTS (" +
                     " 	SELECT 1 " +
-                    " 	FROM AbastecimentoCta ac " +
-                    " 	JOIN ac.autorizacaoPagamentoImportada ap " +
+                    " 	FROM AutorizacaoPagamento ap " +
                     " 	WHERE ap.motorista.id = m.id " +
                     ") " +
                     "ORDER BY m.frota, m.dataCriacao ";
