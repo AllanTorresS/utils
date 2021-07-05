@@ -47,9 +47,9 @@
 
     <repositories>
         <repository>
-            <id>project.local</id>
-            <name>project</name>
-            <url>file://${project.basedir}/../repo</url>
+            <id>jaspersoft</id>
+            <name>jaspersoft</name>
+            <url>https://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts/</url>
         </repository>
         <repository>
             <id>boleia-maven-snapshot</id>
