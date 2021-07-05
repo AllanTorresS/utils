@@ -15,7 +15,7 @@ public class MediaConsumoVo implements IPertenceFrota {
 
     private Long idFrota;
     private BigDecimal media;
-    private Long mediaHorHod;
+    private BigDecimal mediaHorHod;
     private BigDecimal mediaTotalLitrosAbastecimento;
     private Integer tipoConsumo;
 
@@ -58,7 +58,7 @@ public class MediaConsumoVo implements IPertenceFrota {
      * @param razaoSocialFrota  A razão social da Frota
      * @param cnpjFrota O CNPJ da Frota
      */
-    protected MediaConsumoVo(Long idFrota, Long mediaHorHod, BigDecimal mediaTotalLitrosAbastecimento, Integer tipoConsumo, String razaoSocialFrota, Long cnpjFrota) {
+    protected MediaConsumoVo(Long idFrota, BigDecimal mediaHorHod, BigDecimal mediaTotalLitrosAbastecimento, Integer tipoConsumo, String razaoSocialFrota, Long cnpjFrota) {
         this.idFrota = idFrota;
         this.mediaHorHod = mediaHorHod;
         this.mediaTotalLitrosAbastecimento = mediaTotalLitrosAbastecimento;
@@ -87,7 +87,7 @@ public class MediaConsumoVo implements IPertenceFrota {
      */
     public MediaConsumoVo(
             String nomeMotorista, Long cpfMotorista, Long cnpjUnidadeMotorista, String nomeUnidadeMotorista,
-            String codigoGrupoMotorista, String nomeGrupoMotorista, Integer classificacaoMotorista, String razaoSocialEmpresaMotorista, Long idFrota,  Long mediaHorHod, BigDecimal mediaTotalLitrosAbastecimento, Integer tipoConsumo,
+            String codigoGrupoMotorista, String nomeGrupoMotorista, Integer classificacaoMotorista, String razaoSocialEmpresaMotorista, Long idFrota, BigDecimal mediaHorHod, BigDecimal mediaTotalLitrosAbastecimento, Integer tipoConsumo,
             String razaoSocialFrota, Long cnpjFrota) {
         this(idFrota, mediaHorHod, mediaTotalLitrosAbastecimento, tipoConsumo, razaoSocialFrota, cnpjFrota);
         this.nomeMotorista = nomeMotorista;
@@ -120,7 +120,7 @@ public class MediaConsumoVo implements IPertenceFrota {
      */
     public MediaConsumoVo(
             String placaVeiculo, String nomeUnidadeVeiculo, Long cnpjUnidadeVeiculo, String codigoGrupoVeiculo,
-            String nomeGrupoVeiculo, String subTipoVeiculo, Integer classificacaoVeiculo, String razaoSocialEmpresaVeiculo, Long idFrota, Long mediaHorHod, BigDecimal mediaTotalLitrosAbastecimento, Integer tipoConsumo,
+            String nomeGrupoVeiculo, String subTipoVeiculo, Integer classificacaoVeiculo, String razaoSocialEmpresaVeiculo, Long idFrota, BigDecimal mediaHorHod, BigDecimal mediaTotalLitrosAbastecimento, Integer tipoConsumo,
             String razaoSocialFrota, Long cnpjFrota) {
         this(idFrota, mediaHorHod, mediaTotalLitrosAbastecimento, tipoConsumo, razaoSocialFrota, cnpjFrota);
         this.placaVeiculo = placaVeiculo;
@@ -160,7 +160,7 @@ public class MediaConsumoVo implements IPertenceFrota {
             String codigoGrupoMotorista, String nomeGrupoMotorista, String placaVeiculo, String subTipoVeiculo,
             Integer classificaoMotorista, String razaoSocialEmpresaMotorista,
             Integer classificaoVeiculo, String razaoSocialEmpresaVeiculo,
-            Long idFrota, Long mediaHorHod, BigDecimal mediaTotalLitrosAbastecimento, Integer tipoConsumo,
+            Long idFrota, BigDecimal mediaHorHod, BigDecimal mediaTotalLitrosAbastecimento, Integer tipoConsumo,
             String razaoSocialFrota, Long cnpjFrota ) {
         this(nomeMotorista, cpfMotorista, cnpjUnidadeMotorista, nomeUnidadeMotorista, codigoGrupoMotorista,
                 nomeGrupoMotorista, classificaoMotorista, razaoSocialEmpresaMotorista,  idFrota, mediaHorHod, mediaTotalLitrosAbastecimento, tipoConsumo, razaoSocialFrota, cnpjFrota);
@@ -234,11 +234,11 @@ public class MediaConsumoVo implements IPertenceFrota {
         this.media = media;
     }
 
-    public Long getMediaHorHod() {
+    public BigDecimal getMediaHorHod() {
         return mediaHorHod;
     }
 
-    public void setMediaHorHod(Long mediaHorHod) {
+    public void setMediaHorHod(BigDecimal mediaHorHod) {
         this.mediaHorHod = mediaHorHod;
     }
 
