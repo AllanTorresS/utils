@@ -2,6 +2,7 @@ package ipp.aci.boleia.dados.oracle;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -26,6 +27,7 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgu
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgualIgnoreCase;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.vo.DiaValePedagioVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaExtratoValePedagioVo;
@@ -336,7 +338,10 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
     public ResultadoPaginado<TransacaoConectcar> pesquisarUtilizacaoTag(
             FiltroPesquisaUtilizacaoTagVo filtro) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
-
+        parametros.add(new ParametroPesquisaIn("tipoTransacao", Arrays.asList(new Integer[] {
+        		TipoTransacaoConectcar.RECARGA_VALE_PEDAGIO.getValue(), 
+        		TipoTransacaoConectcar.CANCELAMENTO_VALE_PEDAGIO.getValue()
+        }), true));
 
         if (filtro.getFrota() != null) {
             parametros.add(new ParametroPesquisaIgual("frota.id", filtro.getFrota().getId()));
