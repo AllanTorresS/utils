@@ -8,4 +8,12 @@ import ipp.aci.boleia.dominio.PendenciaChamado;
  * @author pedro.silva
  */
 public interface IPendenciaChamadoDados  extends IRepositorioBoleiaDados<PendenciaChamado> {
+
+    /**
+     * Retorna a ultima pendencia de chamado de um usuário.
+     *
+     * @param idUsuario Identificador do usuário.
+     * @return Pendencia encontrada.
+     */
+    PendenciaChamado obterUltimaPendencia(Long idUsuario);
 }
