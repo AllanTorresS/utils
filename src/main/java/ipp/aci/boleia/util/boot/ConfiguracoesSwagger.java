@@ -3,6 +3,7 @@ package ipp.aci.boleia.util.boot;
 import com.fasterxml.classmate.ResolvedType;
 import com.fasterxml.classmate.TypeResolver;
 import ipp.aci.boleia.util.excecao.MensagemErro;
+import ipp.aci.boleia.util.i18n.Mensagens;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -16,14 +17,17 @@ import springfox.documentation.builders.ResponseMessageBuilder;
 import springfox.documentation.schema.ModelRef;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.ResponseMessage;
+import springfox.documentation.service.Tag;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
-import java.util.Date;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+
+import static ipp.aci.boleia.util.SwaggerTags.CHAMADO_TAG;
 
 /**
  * Classe responsável pela subidas configurações da geracao da documentação dos arquivos das apis
@@ -40,7 +44,6 @@ public class ConfiguracoesSwagger {
     public static final String API_EXTERNO_GROUP_NAME = "api-externo";
     public static final String API_AGENCIADOR_FRETE_GROUP_NAME = "api-agenciadorfrete";
     private static final String PACOTE_API_AGENCIADOR_FRETE = "ipp.aci.boleia.visao.agenciadorfrete";
-
 
     @Value(value="${docs.api.frotista.titulo}")
     private String apiFrotistaTitulo;
@@ -69,9 +72,11 @@ public class ConfiguracoesSwagger {
     @Value(value="${docs.api.agenciadorfrete.versao}")
     private String apiAgenciadorDeFreteVersao;
 
-
     @Autowired
     private TypeResolver typeResolver;
+
+    @Autowired
+    private Mensagens mensagens;
 
     /**
      * Configuracao Swagger para a api do frotista
@@ -113,7 +118,10 @@ public class ConfiguracoesSwagger {
                 .globalResponseMessage(RequestMethod.DELETE, getGlobalResponseMessages())
                 .apiInfo(getApiExternoInfo())
                 .additionalModels(getAditionalModel())
-                .directModelSubstitute(Date.class, String.class);
+                .directModelSubstitute(Date.class, String.class)
+                .tags(
+                    new Tag(CHAMADO_TAG, obterDescricaoTag(CHAMADO_TAG))
+                );
     }
 
     /**
@@ -219,4 +227,13 @@ public class ConfiguracoesSwagger {
         return typeResolver.resolve(MensagemErro.class);
     }
 
+    /**
+     * Retorna a descrição de uma tag.
+     *
+     * @param tag Tag swagger.
+     * @return Descrição da tag.
+     */
+    private String obterDescricaoTag(String tag) {
+        return mensagens.obterMensagem("swagger.tags." + tag + ".descricao");
+    }
 }
