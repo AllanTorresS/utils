@@ -47,8 +47,7 @@
 
     <repositories>
         <repository>
-            <id>jaspersoft</id>
-            <name>jaspersoft</name>
+            <id>jaspersoft-third-party</id>
             <url>https://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts/</url>
         </repository>
         <repository>
