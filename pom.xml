@@ -47,8 +47,14 @@
 
     <repositories>
         <repository>
-            <id>jaspersoft-third-party</id>
-            <url>https://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts/</url>
+            <id>nexus-jaspersoft-third-party-ce-artifacts</id>
+            <name>nexus-jaspersoft-third-party-ce-artifacts</name>
+            <url>http://repositorio.profrotas.com.br:8081/repository/boleia-jaspersoft-third-party-ce-artifacts/</url>
+        </repository>
+        <repository>
+            <id>nexus</id>
+            <name>nexus</name>
+            <url>http://repositorio.profrotas.com.br:8081/repository/boleia-maven-proxy/</url>
         </repository>
         <repository>
             <id>boleia-maven-snapshot</id>
