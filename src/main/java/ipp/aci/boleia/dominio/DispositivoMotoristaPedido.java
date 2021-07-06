@@ -150,6 +150,23 @@ public class DispositivoMotoristaPedido implements IPersistente, IPertenceFrota,
     }
 
     /**
+     * Habilita pedido como pedido adicional de outro pedido
+     *
+     * @param pedido que será pedido principal
+     */
+    public void habilitaPorPedido(DispositivoMotoristaPedido pedido) {
+        if (pedido.getNumero() == null && pedido.getDataCriacao() == null && pedido.getDataExpiracao() == null) {
+            return;
+        }
+        // numero do pedido adicional deve ser diferente do pedido principal
+        this.setNumero("_" + pedido.getNumero().substring(1));
+        this.setDataExpiracao(pedido.getDataExpiracao());
+        this.setHabilitado(StatusAtivacao.ATIVO.getValue());
+        this.setDataCriacao(pedido.getDataCriacao());
+        pedido.setPedidoAbastecimentoAdicional(this);
+    }
+
+    /**
      * Quando um pedido tem abastecimento adicional associado.
      *
      * @return true quando existe um pedido além do pedido original
