@@ -22,6 +22,9 @@ import javax.persistence.Version;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Digits;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Formula;
 import org.hibernate.envers.Audited;
@@ -157,6 +160,16 @@ public class TransacaoConectcar implements IPersistente, IPertenceFrota {
 	@Column(name = "DT_FIM_VIAGEM", columnDefinition = "DATE")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dataFimViagem;
+
+    @NotNull
+    @Max(99999999999999L)
+    @Column(name = "CD_CNPJ_EMBARCADOR")
+    private Long cnpjEmbarcador;
+
+    @NotNull
+    @Size(max=250)
+    @Column(name = "NM_EMBARCADOR")
+    private String embarcador;
 
 	@Override
 	public Long getId() {
@@ -420,6 +433,22 @@ public class TransacaoConectcar implements IPersistente, IPertenceFrota {
 
 	public void setValorInvertido(BigDecimal valorInvertido) {
 		this.valorInvertido = valorInvertido;
+	}
+
+	public Long getCnpjEmbarcador() {
+		return cnpjEmbarcador;
+	}
+
+	public void setCnpjEmbarcador(Long cnpjEmbarcador) {
+		this.cnpjEmbarcador = cnpjEmbarcador;
+	}
+
+	public String getEmbarcador() {
+		return embarcador;
+	}
+
+	public void setEmbarcador(String embarcador) {
+		this.embarcador = embarcador;
 	}
 
 }

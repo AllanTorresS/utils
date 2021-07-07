@@ -61,6 +61,12 @@ public class TransacaoParceiroPropriedadesVo {
 	@JsonProperty("DataCancelamentoRecargaValePedagio")
 	private String dataCancelamentoRecargaValePedagio;
 
+	@JsonProperty("Embarcador")
+	private String embarcador;
+
+	@JsonProperty("CnpjEmbarcador")
+	private String cnpjEmbarcador;
+
 	public TransacaoParceiroPropriedadesVo() {
 	}
 
@@ -198,6 +204,22 @@ public class TransacaoParceiroPropriedadesVo {
 
 	public void setDataCancelamentoRecargaValePedagio(String dataCancelamentoRecargaValePedagio) {
 		this.dataCancelamentoRecargaValePedagio = dataCancelamentoRecargaValePedagio;
+	}
+
+	public String getEmbarcador() {
+		return embarcador;
+	}
+
+	public void setEmbarcador(String embarcador) {
+		this.embarcador = embarcador;
+	}
+
+	public String getCnpjEmbarcador() {
+		return cnpjEmbarcador;
+	}
+
+	public void setCnpjEmbarcador(String cnpjEmbarcador) {
+		this.cnpjEmbarcador = cnpjEmbarcador;
 	}
 
 }

@@ -5,12 +5,15 @@ import java.util.Date;
 
 import ipp.aci.boleia.dominio.TransacaoConectcar;
 import ipp.aci.boleia.dominio.enums.TipoTransacaoConectcar;
+import ipp.aci.boleia.util.UtilitarioFormatacao;
 
 /**
  * Representa a transação (assunto) do SMS enviado ao motorista
  */
 public class TransacaoValePedagioVo {
 
+	private String cnpjEmbarcador;
+	private String embarcador;
 	private String placa;
 	private String tipoTransacao;
 	private BigDecimal valorTotal;
@@ -22,6 +25,8 @@ public class TransacaoValePedagioVo {
 	}
 	
 	public TransacaoValePedagioVo(TransacaoConectcar transacao) {
+		this.cnpjEmbarcador = transacao.getCnpjEmbarcador() != null ? UtilitarioFormatacao.formatarCnpjApresentacao(transacao.getCnpjEmbarcador()) : null;
+		this.embarcador = transacao.getEmbarcador();
 		this.placa = transacao.getPlaca();
 		this.tipoTransacao = TipoTransacaoConectcar.obterPorValor(transacao.getTipoTransacao()).getLabel();
 		this.valorTotal = transacao.getValorInvertido();
@@ -67,6 +72,22 @@ public class TransacaoValePedagioVo {
 
 	public void setDataFimViagem(Date dataFimViagem) {
 		this.dataFimViagem = dataFimViagem;
+	}
+
+	public String getCnpjEmbarcador() {
+		return cnpjEmbarcador;
+	}
+
+	public void setCnpjEmbarcador(String cnpjEmbarcador) {
+		this.cnpjEmbarcador = cnpjEmbarcador;
+	}
+
+	public String getEmbarcador() {
+		return embarcador;
+	}
+
+	public void setEmbarcador(String embarcador) {
+		this.embarcador = embarcador;
 	}
 
 }
