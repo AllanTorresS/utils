@@ -113,4 +113,12 @@ public interface IChamadoDados {
      * @param descricaoCancelamento Descrição sobre o cancelamento que está sendo feito.
      */
     void cancelarChamado(String idSalesforce, String motivoCancelamento, String descricaoCancelamento);
+
+    /**
+     * Adiciona um comentário em um chamado específico.
+     *
+     * @param idSalesforce Identificador salesforce do chamado.
+     * @param comentario Comentário que será adicionado.
+     */
+    void adicionarComentario(String idSalesforce, String comentario);
 }

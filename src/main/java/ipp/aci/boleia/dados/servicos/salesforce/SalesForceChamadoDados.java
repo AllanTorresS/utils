@@ -134,6 +134,9 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     @Value("${salesforce.chamados.edicao.url}")
     private String urlEdicao;
 
+    @Value("${salesforce.chamados.adicionarComentario.url}")
+    private String urlAdicionarComentario;
+
     @Autowired
     private IMotivoChamadoDados motivoChamadoDados;
 
@@ -295,8 +298,24 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
         String urlCancelamentoComIdSalesforce = format(urlCancelamento, idSalesforce);
 
         prepararRequisicao(urlCancelamentoComIdSalesforce, vo);
-
         enviarRequisicaoPatch(this::trataRespostaCancelamento);
+    }
+
+    @Override
+    public void adicionarComentario(String idSalesforce, String comentario) {
+        Map<String, String> responseBody = new HashMap<>();
+        responseBody.put(ConstantesSalesForce.CAMPO_CHAMADO_COMENTARIO, idSalesforce);
+        responseBody.put(ConstantesSalesForce.CAMPO_CORPO_COMENTARIO, comentario);
+
+        prepararRequisicao(urlAdicionarComentario, responseBody);
+        enviarRequisicaoPost(response -> {
+            prepararResposta(response);
+            if (this.statusCode != HttpStatus.CREATED.value()) {
+                LOGGER.error(this.responseBody.toString());
+                throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("chamado.edicao.erro.integracao"));
+            }
+            return true;
+        });
     }
 
     /**
@@ -360,7 +379,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
         }
         return true;
     }
-    
+
     /***
      * Trata a resposta do cancelamento de chamado
      * @param response a resposta
