@@ -67,7 +67,7 @@ public abstract class LogicaParametroIntervaloBase {
                             minimoKm = intervalo.getQuilometrosIntervaloAbastecimento();
                         }
                         Long ultimoHodometro = ultimo.getHodometro();
-                        long diferenca = hodometro - ultimoHodometro;
+                        long diferenca = ultimoHodometro != null ? hodometro - ultimoHodometro : hodometro;
                         if (minimoKm > 0 && diferenca < minimoKm) {
                             resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
                             resultado.setCodigoErro(Erro.ERRO_AUTORIZACAO_INTERVALO_PERMITIDO_KM);
