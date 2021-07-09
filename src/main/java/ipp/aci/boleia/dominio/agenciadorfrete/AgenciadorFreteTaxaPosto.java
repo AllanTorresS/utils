@@ -20,13 +20,13 @@ import java.math.BigDecimal;
 
 @Entity
 @Audited
-@Table(name = "AGENCIADOR_FRETE_TAXA_POSTO")
+@Table(name = "AG_FRETE_TAXA_POSTO")
 public class AgenciadorFreteTaxaPosto implements IPersistente {
 
     @Id
-    @Column(name = "CD_AGENCIADOR_FRETE_TAXA_POSTO")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_AGENCIADOR_FRETE_TAXA_POSTO")
-    @SequenceGenerator(name = "SEQ_AGENCIADOR_FRETE_TAXA", sequenceName = "SEQ_AGENCIADOR_FRETE_TAXA_POSTO", allocationSize = 1)
+    @Column(name = "CD_AG_FRETE_TAXA_POSTO")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_AG_FRETE_TAXA_POSTO")
+    @SequenceGenerator(name = "SEQ_AG_FRETE_TAXA_POSTO", sequenceName = "SEQ_AG_FRETE_TAXA_POSTO", allocationSize = 1)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
