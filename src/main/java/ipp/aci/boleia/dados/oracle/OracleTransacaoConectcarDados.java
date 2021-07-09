@@ -50,6 +50,7 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
                     " where " +
                     "     t.cobranca is null " +
                     "     and t.dataFimPeriodo < :hoje " +
+                    "     and (t.dataFimViagem is null or t.dataFimViagem < SYSDATE) " +
                     " order by t.dataFimPeriodo";
 
     private static final String CONSULTA_CONSOLIDADO_SEM_REEMBOLSO =
@@ -58,7 +59,8 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
                     "     JOIN FETCH t.frota fr  " +
                     " WHERE " +
                     "     t.reembolso IS NULL " +
-                    "     AND t.dataFimPeriodo < :primeiroDiaDoMes";
+                    "     AND t.dataFimPeriodo < :primeiroDiaDoMes " +
+                    "     AND (t.dataFimViagem is null or t.dataFimViagem < SYSDATE)";
 
     private static final String CONSULTA_PESQUISA_GRID =
             "SELECT TC " +
