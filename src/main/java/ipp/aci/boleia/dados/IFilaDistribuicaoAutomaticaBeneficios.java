@@ -13,9 +13,4 @@ public interface IFilaDistribuicaoAutomaticaBeneficios {
      * @param idDistribuicaoAutomatica Identificador da distribuição automática
      */
     void enviarParaDistribuicaoAutomatica(Long idDistribuicaoAutomatica);
-
-    /**
-     * Envia 
-     */
-    void enviarParaFilaErroDistribuicaoAutomatica();
 }
