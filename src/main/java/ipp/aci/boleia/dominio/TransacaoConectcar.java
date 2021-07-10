@@ -161,12 +161,10 @@ public class TransacaoConectcar implements IPersistente, IPertenceFrota {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dataFimViagem;
 
-    @NotNull
     @Max(99999999999999L)
     @Column(name = "CD_CNPJ_EMBARCADOR")
     private Long cnpjEmbarcador;
 
-    @NotNull
     @Size(max=250)
     @Column(name = "NM_EMBARCADOR")
     private String embarcador;
