@@ -6,7 +6,7 @@
 
     <groupId>ipp.aci.boleia</groupId>
     <artifactId>boleia-dominioUtil</artifactId>
-    <version>4.21.0-Kanban-SNAPSHOT</version>
+    <version>4.21.2</version>
 
     <properties>
         <main.basedir>${project.basedir}</main.basedir>

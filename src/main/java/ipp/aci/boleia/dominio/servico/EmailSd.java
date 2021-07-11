@@ -807,7 +807,6 @@ public class EmailSd {
      * Envia email com as crÃ­ticas da recolha automÃ¡tica de notas fiscais
      * @param anexosNaoConciliados Todas as notas nÃ£o conciliadas de uma revenda em um dia
      * @param emailsDestinatarios E-mails dos gestores da revenda
-     * @param cnpj O CNPJ
      */
     public void enviarEmailDeCriticasRecolhaAutomatica(List<NfeAnexosArmazem> anexosNaoConciliados, List<String> emailsDestinatarios) {
         Date date = utilitarioAmbiente.buscarDataAmbiente();
