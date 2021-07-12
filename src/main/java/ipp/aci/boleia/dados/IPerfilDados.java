@@ -1,6 +1,7 @@
 package ipp.aci.boleia.dados;
 
 import ipp.aci.boleia.dominio.Perfil;
+import ipp.aci.boleia.dominio.UsuarioPerfil;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaPerfilVo;
 
@@ -32,4 +33,10 @@ public interface IPerfilDados extends IRepositorioBoleiaDados<Perfil> {
      * @param idUsuario Identificador do usuário.
      */
     void desvincularPerfisTemporariosExpirados(Long idUsuario);
+
+    /**
+     * Armazena um registro na tabela UsuarioPerfil.
+     * @param usuarioPerfil O registro a ser armazenado.
+     */
+    void armazenarUsuarioPerfil(UsuarioPerfil usuarioPerfil);
 }
