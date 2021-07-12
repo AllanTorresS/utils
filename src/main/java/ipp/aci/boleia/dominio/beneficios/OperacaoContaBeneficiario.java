@@ -1,7 +1,9 @@
 package ipp.aci.boleia.dominio.beneficios;
 
 import ipp.aci.boleia.dominio.AutorizacaoPagamento;
+import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
+import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.Column;
@@ -16,9 +18,12 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Representa a tabela de operação conta beneficiário
@@ -26,7 +31,7 @@ import java.util.Date;
 @Audited
 @Entity
 @Table(name = "OPER_CONTA_BENEFICIARIO")
-public class OperacaoContaBeneficiario implements IPersistente {
+public class OperacaoContaBeneficiario implements IPersistente, IPertenceFrota {
 
     @Id
     @Column(name = "CD_OPER_CONTA_BENEFICIARIO")
@@ -115,5 +120,11 @@ public class OperacaoContaBeneficiario implements IPersistente {
 
     public void setDataAtualizacao(Date dataAtualizacao) {
         this.dataAtualizacao = dataAtualizacao;
+    }
+
+    @Transient
+    @Override
+    public List<Frota> getFrotas() {
+        return  Collections.singletonList(contaBeneficiario.getBeneficiario().getFrota());
     }
 }
