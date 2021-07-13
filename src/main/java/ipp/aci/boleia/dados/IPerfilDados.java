@@ -1,7 +1,6 @@
 package ipp.aci.boleia.dados;
 
 import ipp.aci.boleia.dominio.Perfil;
-import ipp.aci.boleia.dominio.UsuarioPerfil;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaPerfilVo;
 
