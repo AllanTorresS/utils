@@ -23,24 +23,6 @@ import java.util.List;
 @Repository
 public class OraclePerfilDados extends OracleRepositorioBoleiaDados<Perfil> implements IPerfilDados {
 
-    /**
-     * Query utilizada para desvincular os perfis temporários
-     * já expirados para um usuário.
-     */
-    private static final String DESVINCULAR_PERFIS_EXPIRADOS =
-            "DELETE FROM UsuarioPerfil up " +
-            "WHERE up.idUsuario = :idUsuario AND " +
-            "      up.dataExpiracao IS NOT NULL AND " +
-            "      up.dataExpiracao < :hoje";
-
-    /**
-     * Query utilizada para armazenar um registro na tabela UsuarioPerfil
-     * já expirados para um usuário.
-     */
-    private static final String ARMAZENAR_USUARIO_PERFIL =
-            "INSERT INTO BOLEIA_SCHEMA.USUARIO_PERFIL (CD_USUARIO, CD_PERFIL, DT_EXPIRACAO)  " +
-            "VALUES (?1, ?2, ?3)";
-
     @Autowired
     private UtilitarioAmbiente ambiente;
 
@@ -89,30 +71,4 @@ public class OraclePerfilDados extends OracleRepositorioBoleiaDados<Perfil> impl
 
         return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
-
-    @Override
-    public void desvincularPerfisTemporariosExpirados(Long idUsuario) {
-        Query query = getGerenciadorDeEntidade().createQuery(DESVINCULAR_PERFIS_EXPIRADOS);
-        query.setParameter("idUsuario", idUsuario);
-        query.setParameter("hoje", ambiente.buscarDataAmbiente());
-        query.executeUpdate();
-    }
-
-    @Override
-    public void armazenarUsuarioPerfil(UsuarioPerfil usuarioPerfil) {
-        String queryArmazenar = ARMAZENAR_USUARIO_PERFIL;
-        String[] st = {", DT_EXPIRACAO", ", ?3"};
-        String[] rp = {"",""};
-        if(usuarioPerfil.getDataExpiracao() == null) {
-            queryArmazenar = StringUtils.replaceEach(queryArmazenar, st, rp);
-        }
-        Query query = getGerenciadorDeEntidade().createNativeQuery(queryArmazenar);
-        query.setParameter(1, usuarioPerfil.getIdUsuario());
-        query.setParameter(2, usuarioPerfil.getIdPerfil());
-        if(usuarioPerfil.getDataExpiracao() != null) {
-            query.setParameter(3, usuarioPerfil.getDataExpiracao());
-        }
-        query.executeUpdate();
-    }
-
 }
