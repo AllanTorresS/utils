@@ -8,9 +8,9 @@ import ipp.aci.boleia.util.i18n.IEnumComLabel;
  */
 public enum TipoUtilizacao implements IEnumComLabel<TipoUtilizacao> {
 
-    PEDAGIO(1),
-    ESTACIONAMENTO(2),
-    ESTACIONAMENTO_PEDAGIO(3);
+    PEDAGIO(3),
+    ESTACIONAMENTO(1),
+    ESTACIONAMENTO_PEDAGIO(2);
 
     private final Integer value;
 

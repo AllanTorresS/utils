@@ -1,6 +1,8 @@
 package ipp.aci.boleia.dados;
 
+import ipp.aci.boleia.dominio.vo.RequisicaoRoteirizadorValidarVo;
 import ipp.aci.boleia.dominio.vo.RequisicaoRoteirizadorVo;
+import ipp.aci.boleia.dominio.vo.RespostaRoteirizadorValidarVo;
 import ipp.aci.boleia.dominio.vo.RespostaRoteirizadorVo;
 
 /**
@@ -13,5 +15,12 @@ public interface IRoteirizadorDados {
      * @return Pontos geográficos da rota e informações adicionais
      */
     RespostaRoteirizadorVo calcularRota(RequisicaoRoteirizadorVo requisicao);
+
+    /**
+     * Valida rota com base e parâmetros informados e postos escolhidos
+     * @param requisicao Rota a ser validada
+     * @return Status se a rota informada é uma rota valida
+     */
+    RespostaRoteirizadorValidarVo validarRota(RequisicaoRoteirizadorValidarVo requisicao);
 
 }

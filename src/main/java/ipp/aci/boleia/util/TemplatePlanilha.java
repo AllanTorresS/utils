@@ -74,6 +74,7 @@ public enum TemplatePlanilha {
     TEMPLATE_RELATORIO_DETALHAMENTO_COBRANCA_INTERNO("template-relatorio-detalhamento-cobranca-interno.xlsx"),
     TEMPLATE_RELATORIO_REEMBOLSO("template-relatorio-reembolso.xlsx"),
     TEMPLATE_RELATORIO_DETALHAMENTO_REEMBOLSO("template-relatorio-detalhamento-reembolso.xlsx"),
+    TEMPLATE_RELATORIO_ROTAS_INTELIGENTES("template-relatorio-rotas-inteligentes.xlsx"),
 	TEMPLATE_EXTRATO_VALE_PEDAGIO("template-extrato-vale-pedagio.xlsx"),
 	TEMPLATE_DETALHE_VALE_PEDAGIO("template-detalhe-vale-pedagio.xlsx");
 
