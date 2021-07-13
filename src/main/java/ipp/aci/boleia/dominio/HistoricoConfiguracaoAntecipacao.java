@@ -2,6 +2,7 @@ package ipp.aci.boleia.dominio;
 
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -44,14 +45,13 @@ public class HistoricoConfiguracaoAntecipacao implements IPersistente {
     @Column(name = "VA_TAXA_PROFROTAS_PERC")
     private BigDecimal taxaProfrotasPercentual;
 
-    @Column(name = "VA_TAXA_PARCEIRO_PERC")
-    private BigDecimal taxaParceiroPercentual;
-
     @Column(name = "VA_TAXA_PROFROTAS_VAL")
     private BigDecimal taxaProfrotasFixa;
 
-    @Column(name = "VA_TAXA_PARCEIRO_VAL")
-    private BigDecimal taxaParceiroFixa;
+    @NotAudited
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_TAXA_XP")
+    private TaxaXp taxaParceiro;
 
     @Column(name = "VA_ANTECIPACAO_MIN")
     private BigDecimal valorAntecipacaoMinimo;
@@ -114,14 +114,6 @@ public class HistoricoConfiguracaoAntecipacao implements IPersistente {
         this.taxaProfrotasPercentual = taxaProfrotasPercentual;
     }
 
-    public BigDecimal getTaxaParceiroPercentual() {
-        return taxaParceiroPercentual;
-    }
-
-    public void setTaxaParceiroPercentual(BigDecimal taxaParceiroPercentual) {
-        this.taxaParceiroPercentual = taxaParceiroPercentual;
-    }
-
     public BigDecimal getTaxaProfrotasFixa() {
         return taxaProfrotasFixa;
     }
@@ -130,12 +122,12 @@ public class HistoricoConfiguracaoAntecipacao implements IPersistente {
         this.taxaProfrotasFixa = taxaProfrotasFixa;
     }
 
-    public BigDecimal getTaxaParceiroFixa() {
-        return taxaParceiroFixa;
+    public TaxaXp getTaxaParceiro() {
+        return taxaParceiro;
     }
 
-    public void setTaxaParceiroFixa(BigDecimal taxaParceiroFixa) {
-        this.taxaParceiroFixa = taxaParceiroFixa;
+    public void setTaxaParceiro(TaxaXp taxaParceiro) {
+        this.taxaParceiro = taxaParceiro;
     }
 
     public BigDecimal getValorAntecipacaoMinimo() {

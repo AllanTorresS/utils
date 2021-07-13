@@ -4,6 +4,7 @@ package ipp.aci.boleia.dominio;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,6 +24,7 @@ import java.util.Date;
 
 import static ipp.aci.boleia.util.UtilitarioCalculoData.adicionarSegundosData;
 import static ipp.aci.boleia.util.UtilitarioCalculoData.obterPrimeiroInstanteDia;
+import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
 
 /**
  * Representa a tabela de Configuração de Antecipação
@@ -47,14 +49,14 @@ public class ConfiguracaoAntecipacaoRecebiveis implements IPersistente {
     @Column(name = "VA_TAXA_PROFROTAS_PERC")
     private BigDecimal taxaProFrotasPercentual;
 
-    @Column(name = "VA_TAXA_PARCEIRO_PERC")
-    private BigDecimal taxaParceiroPercentual;
-
     @Column(name = "VA_TAXA_PROFROTAS_VAL")
     private BigDecimal taxaProFrotasFixa;
 
-    @Column(name = "VA_TAXA_PARCEIRO_VAL")
-    private BigDecimal taxaParceiroFixa;
+    @NotNull
+    @NotAudited
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_TAXA_XP")
+    private TaxaXp taxaParceiro;
 
     @Column(name = "VA_ANTECIPACAO_MIN")
     private BigDecimal valorAntecipacaoMinimo;
@@ -117,14 +119,6 @@ public class ConfiguracaoAntecipacaoRecebiveis implements IPersistente {
         this.taxaProFrotasPercentual = taxaProFrotasPercentual;
     }
 
-    public BigDecimal getTaxaParceiroPercentual() {
-        return taxaParceiroPercentual;
-    }
-
-    public void setTaxaParceiroPercentual(BigDecimal taxaParceiroPercentual) {
-        this.taxaParceiroPercentual = taxaParceiroPercentual;
-    }
-
     public BigDecimal getTaxaProFrotasFixa() {
         return taxaProFrotasFixa;
     }
@@ -133,12 +127,12 @@ public class ConfiguracaoAntecipacaoRecebiveis implements IPersistente {
         this.taxaProFrotasFixa = taxaProFrotasFixa;
     }
 
-    public BigDecimal getTaxaParceiroFixa() {
-        return taxaParceiroFixa;
+    public TaxaXp getTaxaParceiro() {
+        return taxaParceiro;
     }
 
-    public void setTaxaParceiroFixa(BigDecimal taxaParceiroFixa) {
-        this.taxaParceiroFixa = taxaParceiroFixa;
+    public void setTaxaParceiro(TaxaXp taxaParceiro) {
+        this.taxaParceiro = taxaParceiro;
     }
 
     public BigDecimal getValorAntecipacaoMinimo() {
@@ -232,27 +226,25 @@ public class ConfiguracaoAntecipacaoRecebiveis implements IPersistente {
     /**
      * Atualiza a taxa percentual do Pró-Frotas e do Parceiro
      * @param taxaProFrotasPercentual a taxa do Pró-Frotas
-     * @param taxaParceiroPercentual a taxa do Parceiro
+     * @param taxaParceiro a taxa do Parceiro
      */
-    public void atualizarTaxaPercentual(BigDecimal taxaProFrotasPercentual, BigDecimal taxaParceiroPercentual) {
+    public void atualizarTaxaPercentual(BigDecimal taxaProFrotasPercentual, TaxaXp taxaParceiro) {
         this.setTaxaPercentual(true);
         this.setTaxaProFrotasPercentual(taxaProFrotasPercentual);
-        this.setTaxaParceiroPercentual(taxaParceiroPercentual);
         this.setTaxaProFrotasFixa(null);
-        this.setTaxaParceiroFixa(null);
+        this.setTaxaParceiro(taxaParceiro);
     }
 
     /**
      * Atualiza a taxa fixa do Pró-Frotas e do Parceiro
      * @param taxaProFrotasFixa a taxa do Pró-Frotas
-     * @param taxaParceiroFixa a taxa do Parceiro
+     * @param taxaParceiro a taxa do Parceiro
      */
-    public void atualizarTaxaFixa(BigDecimal taxaProFrotasFixa, BigDecimal taxaParceiroFixa) {
+    public void atualizarTaxaFixa(BigDecimal taxaProFrotasFixa, TaxaXp taxaParceiro) {
         this.setTaxaPercentual(false);
         this.setTaxaProFrotasFixa(taxaProFrotasFixa);
-        this.setTaxaParceiroFixa(taxaParceiroFixa);
         this.setTaxaProFrotasPercentual(null);
-        this.setTaxaParceiroPercentual(null);
+        this.setTaxaParceiro(taxaParceiro);
     }
 
     /**
