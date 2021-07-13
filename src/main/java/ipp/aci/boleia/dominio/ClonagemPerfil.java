@@ -108,12 +108,12 @@ public class ClonagemPerfil implements IPersistente{
         this.usuarioDestino = usuarioDestino;
     }
 
-    public Boolean getDefinitiva() {
+    public Boolean getIsDefinitiva() {
         return isDefinitiva;
     }
 
-    public void setDefinitiva(Boolean definitiva) {
-        isDefinitiva = definitiva;
+    public void setIsDefinitiva(Boolean isDefinitiva) {
+        this.isDefinitiva = isDefinitiva;
     }
 
     public Integer getMotivo() {
