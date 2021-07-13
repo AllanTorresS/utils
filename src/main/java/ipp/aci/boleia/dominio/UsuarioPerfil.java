@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -33,6 +34,14 @@ public class UsuarioPerfil implements Serializable {
 
     @Column(name = "DT_EXPIRACAO")
     private Date dataExpiracao;
+
+    @Transient
+    public UsuarioPerfilPk getId() {
+        if(idUsuario != null && idPerfil != null) {
+            return new UsuarioPerfilPk(idUsuario, idPerfil);
+        }
+        return null;
+    }
 
     public Long getIdUsuario() {
         return idUsuario;

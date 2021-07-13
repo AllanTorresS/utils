@@ -21,16 +21,6 @@ import java.util.List;
 @Repository
 public class OraclePerfilDados extends OracleRepositorioBoleiaDados<Perfil> implements IPerfilDados {
 
-    /**
-     * Query utilizada para desvincular os perfis temporários
-     * já expirados para um usuário.
-     */
-    private static final String DESVINCULAR_PERFIS_EXPIRADOS =
-            "DELETE FROM UsuarioPerfil up " +
-            "WHERE up.idUsuario = :idUsuario AND " +
-            "      up.dataExpiracao IS NOT NULL AND " +
-            "      up.dataExpiracao < :hoje";
-
     @Autowired
     private UtilitarioAmbiente ambiente;
 
@@ -78,13 +68,5 @@ public class OraclePerfilDados extends OracleRepositorioBoleiaDados<Perfil> impl
         }
 
         return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
-    }
-
-    @Override
-    public void desvincularPerfisTemporariosExpirados(Long idUsuario) {
-        Query query = getGerenciadorDeEntidade().createQuery(DESVINCULAR_PERFIS_EXPIRADOS);
-        query.setParameter("idUsuario", idUsuario);
-        query.setParameter("hoje", ambiente.buscarDataAmbiente());
-        query.executeUpdate();
     }
 }

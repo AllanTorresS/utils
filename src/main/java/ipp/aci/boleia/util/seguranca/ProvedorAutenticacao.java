@@ -98,13 +98,13 @@ public class ProvedorAutenticacao implements AuthenticationProvider {
             }
 
             if(usuario != null) {
-                usuario = servicoUsuario.desvincularPerfisTemporariosExpirados(usuario);
                 validarUsuario(usuario);
             } else {
                 registrarTentativaAcesso(auth.getName());
                 throw new UsernameNotFoundException(null, new ExcecaoBoleiaRuntime(Erro.AUTENTICACAO_CREDENCIAIS_INVALIDAS));
             }
 
+            usuario = servicoUsuario.desvincularPerfisTemporariosExpirados(usuario);
             return autenticarUsuario(usuario, auth.getCredentials());
         } catch (ExcecaoBoleiaRuntime e) {
             throw new AuthenticationServiceException(null, e);
