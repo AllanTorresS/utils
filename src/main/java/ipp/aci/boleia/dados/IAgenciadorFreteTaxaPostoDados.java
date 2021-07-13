@@ -7,4 +7,11 @@ import ipp.aci.boleia.dominio.agenciadorfrete.AgenciadorFreteTaxaPosto;
  */
 public interface IAgenciadorFreteTaxaPostoDados extends IRepositorioBoleiaDados<AgenciadorFreteTaxaPosto> {
 
+    /**
+     * Obtem o AgenciadorFreteTaxaPosto pelo ponto de venda
+     * @param id O id do ponto de venda
+     * @return Um AgenciadorFreteTaxaPosto, caso localizado. Nulo caso contrário.
+     */
+    AgenciadorFreteTaxaPosto obterPorPontoVenda(Long id);
+
 }
