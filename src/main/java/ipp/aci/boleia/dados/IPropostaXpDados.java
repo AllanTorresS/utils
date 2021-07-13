@@ -1,5 +1,6 @@
 package ipp.aci.boleia.dados;
 
+import ipp.aci.boleia.dominio.ConfiguracaoAntecipacaoRecebiveis;
 import ipp.aci.boleia.dominio.PropostaAntecipacao;
 import ipp.aci.boleia.dominio.ReembolsoAntecipado;
 
@@ -11,9 +12,10 @@ public interface IPropostaXpDados {
     /**
      * Cria uma proposta de empréstimo com base em uma antecipação
      * @param reembolsoAntecipado o reembolso antecipado
+     * @param configuracao a configuração vigente do programa de antecipação
      * @return O id da proposta de empréstimo
      */
-    String criarProposta(ReembolsoAntecipado reembolsoAntecipado);
+    String criarProposta(ReembolsoAntecipado reembolsoAntecipado, ConfiguracaoAntecipacaoRecebiveis configuracao);
 
     /**
      * Atualiza os dados de uma proposta de crédito
