@@ -26,10 +26,4 @@ public interface IPerfilDados extends IRepositorioBoleiaDados<Perfil> {
      * @return Uma lista de entidades localizadas
      */
     ResultadoPaginado<Perfil> pesquisaPaginada(FiltroPesquisaPerfilVo filtro);
-
-    /**
-     * Desvincula os perfis temporários já expirados para um usuário.
-     * @param idUsuario Identificador do usuário.
-     */
-    void desvincularPerfisTemporariosExpirados(Long idUsuario);
 }
