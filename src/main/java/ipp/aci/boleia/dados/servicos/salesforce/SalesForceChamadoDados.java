@@ -12,6 +12,7 @@ import ipp.aci.boleia.dominio.vo.salesforce.CancelamentoChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.ChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.ConsultaChamadosVo;
 import ipp.aci.boleia.dominio.vo.salesforce.CriacaoChamadoVo;
+import ipp.aci.boleia.dominio.vo.salesforce.EdicaoChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.FiltroConsultaChamadosVo;
 import ipp.aci.boleia.dominio.vo.salesforce.PicklistVo;
 import ipp.aci.boleia.dominio.vo.salesforce.ValorPicklistVo;
@@ -82,7 +83,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
             "WHERE Id=':idSalesforce'";
 
     private static final String CONSULTAR_CHAMADOS =
-            "SELECT Id,CaseNumber,CreatedDate,CNPJPosto__c,CNPJFrota__c,Solicitante__c,Motivo__c,Status,ClassificacaoPerfil__c,Type " +
+            "SELECT Id,CaseNumber,CreatedDate,CNPJPosto__c,CNPJFrota__c,Solicitante__c,Motivo__c,Status,ClassificacaoPerfil__c,Type,Description,MotivoSolicitacao__c,Subject " +
             FROM_CONSULTAR_CHAMADOS +
             ORDER_BY_CONSULTA_CHAMADOS +
             "LIMIT :limit OFFSET :offset";
@@ -129,6 +130,12 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
 
     @Value("${salesforce.chamados.cnpj.interno}")
     private String cnpjContatoUsuarioInterno;
+
+    @Value("${salesforce.chamados.edicao.url}")
+    private String urlEdicao;
+
+    @Value("${salesforce.chamados.adicionarComentario.url}")
+    private String urlAdicionarComentario;
 
     @Autowired
     private IMotivoChamadoDados motivoChamadoDados;
@@ -186,6 +193,13 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     public void criarChamado(CriacaoChamadoVo chamadoVo) throws ExcecaoBoleiaRuntime {
         prepararRequisicao(urlCriacao, chamadoVo);
         enviarRequisicaoPost(this::trataRespostaCriacao);
+    }
+
+    @Override
+    public void editarChamado(EdicaoChamadoVo vo, String idSalesforce) throws ExcecaoBoleiaRuntime {
+        String urlEdicaoFormatada = MessageFormat.format(this.urlEdicao, idSalesforce);
+        prepararRequisicao(urlEdicaoFormatada, vo);
+        enviarRequisicaoPatch(this::trataRespostaEdicao);
     }
 
     @Override
@@ -266,7 +280,9 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
             prepararResposta(resposta);
             if(this.statusCode == HttpStatus.OK.value()) {
                 PicklistVo picklist = UtilitarioJson.toObjectWithConfigureFailOnUnknowProperties(this.responseBody.toString(), PicklistVo.class, false);
-                return picklist.getValores();
+                return picklist.getValores().stream()
+                        .filter(p -> !p.getValor().equals(ConstantesSalesForce.CAMPO_MOTIVO_CANCELAMENTO_VALOR_DUPLICADO))
+                        .collect(Collectors.toList());
             }
             return new ArrayList<>();
         });
@@ -279,8 +295,27 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
         vo.setMotivoCancelamento(motivoCancelamento);
         vo.setDescricaoCancelamento(descricaoCancelamento);
 
-        prepararRequisicao(urlCancelamento, vo);
+        String urlCancelamentoComIdSalesforce = format(urlCancelamento, idSalesforce);
+
+        prepararRequisicao(urlCancelamentoComIdSalesforce, vo);
         enviarRequisicaoPatch(this::trataRespostaCancelamento);
+    }
+
+    @Override
+    public void adicionarComentario(String idSalesforce, String comentario) {
+        Map<String, String> responseBody = new HashMap<>();
+        responseBody.put(ConstantesSalesForce.CAMPO_CHAMADO_COMENTARIO, idSalesforce);
+        responseBody.put(ConstantesSalesForce.CAMPO_CORPO_COMENTARIO, comentario);
+
+        prepararRequisicao(urlAdicionarComentario, responseBody);
+        enviarRequisicaoPost(response -> {
+            prepararResposta(response);
+            if (this.statusCode != HttpStatus.CREATED.value()) {
+                LOGGER.error(this.responseBody.toString());
+                throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("chamado.edicao.erro.integracao"));
+            }
+            return true;
+        });
     }
 
     /**
@@ -327,6 +362,20 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
         if (this.statusCode != HttpStatus.CREATED.value()) {
             LOGGER.error(this.responseBody.toString());
             throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("chamado.criacao.erro.integracao"));
+        }
+        return true;
+    }
+
+    /***
+     * Trata a resposta de criacao
+     * @param response a resposta
+     * @return true em caso de sucesso
+     */
+    private boolean trataRespostaEdicao(CloseableHttpResponse response) {
+        prepararResposta(response);
+        if (this.statusCode != HttpStatus.NO_CONTENT.value()) {
+            LOGGER.error(this.responseBody.toString());
+            throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("chamado.edicao.erro.integracao"));
         }
         return true;
     }

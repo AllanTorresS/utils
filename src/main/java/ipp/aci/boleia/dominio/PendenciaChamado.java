@@ -46,6 +46,13 @@ public class PendenciaChamado implements IPersistente {
     private String idChamadoSalesforce;
 
     @NotNull
+    @Column(name = "NO_CHAMADO")
+    private String numeroChamado;
+
+    @Column(name = "ID_NAO_LEMBRAR")
+    private Integer naoLembrar;
+
+    @NotNull
     @Column(name = "DT_PENDENCIA")
     private Date dataPendencia;
 
@@ -81,6 +88,22 @@ public class PendenciaChamado implements IPersistente {
 
     public void setIdChamadoSalesforce(String idChamadoSalesforce) {
         this.idChamadoSalesforce = idChamadoSalesforce;
+    }
+
+    public String getNumeroChamado() {
+        return numeroChamado;
+    }
+
+    public void setNumeroChamado(String numeroChamado) {
+        this.numeroChamado = numeroChamado;
+    }
+
+    public Integer getNaoLembrar() {
+        return naoLembrar;
+    }
+
+    public void setNaoLembrar(Integer naoLembrar) {
+        this.naoLembrar = naoLembrar;
     }
 
     public Date getDataPendencia() {

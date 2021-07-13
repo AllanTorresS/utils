@@ -1,6 +1,7 @@
 package ipp.aci.boleia.dados.oracle;
 
 import ipp.aci.boleia.dados.IUsuarioDados;
+import ipp.aci.boleia.dominio.TipoPerfil;
 import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.enums.StatusAtivacao;
 import ipp.aci.boleia.dominio.enums.TipoPerfilUsuario;
@@ -72,6 +73,32 @@ public class OracleUsuarioDados extends OracleRepositorioBoleiaDados<Usuario> im
      */
     public OracleUsuarioDados() {
         super(Usuario.class);
+    }
+
+    @Override
+    public Usuario obterFrotistaPorCpfECnpj(Long cpfUsuario, Long cnpjFrota) {
+        List<ParametroPesquisa> parametrosPesquisa = new ArrayList<>();
+        parametrosPesquisa.add(new ParametroPesquisaIgual("tipoPerfil.id", TipoPerfilUsuario.FROTA.getValue()));
+        parametrosPesquisa.add(new ParametroPesquisaIgual("cpf", cpfUsuario));
+        parametrosPesquisa.add(new ParametroPesquisaIgual("frota.cnpj", cnpjFrota));
+        return pesquisarUnicoSemIsolamentoDados(parametrosPesquisa.toArray(new ParametroPesquisa[parametrosPesquisa.size()]));
+    }
+
+    @Override
+    public Usuario obterRevendedorPorCpfECnpj(Long cpfUsuario, Long cnpjRevenda) {
+        List<ParametroPesquisa> parametrosPesquisa = new ArrayList<>();
+        parametrosPesquisa.add(new ParametroPesquisaIgual("tipoPerfil.id", TipoPerfilUsuario.REVENDA.getValue()));
+        parametrosPesquisa.add(new ParametroPesquisaIgual("cpf", cpfUsuario));
+        parametrosPesquisa.add(new ParametroPesquisaIgual("pontosDeVenda.cnpj", cnpjRevenda));
+        return pesquisarUnicoSemIsolamentoDados(parametrosPesquisa.toArray(new ParametroPesquisa[parametrosPesquisa.size()]));
+    }
+
+    @Override
+    public Usuario obterInternoPorCpf(Long cpfUsuario) {
+        List<ParametroPesquisa> parametrosPesquisa = new ArrayList<>();
+        parametrosPesquisa.add(new ParametroPesquisaIgual("tipoPerfil.id", TipoPerfilUsuario.INTERNO.getValue()));
+        parametrosPesquisa.add(new ParametroPesquisaIgual("cpf", cpfUsuario));
+        return pesquisarUnicoSemIsolamentoDados(parametrosPesquisa.toArray(new ParametroPesquisa[parametrosPesquisa.size()]));
     }
 
     @Override
