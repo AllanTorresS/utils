@@ -124,12 +124,12 @@ public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<Autori
                     "a.agregadoVeiculo,             " +
                     "a.razaoSocialEmpresaVeiculo,   " +
                     "a.frota.id AS idFrota,         " +
-                    "CASE WHEN MAX(a.hodometro) - MIN(a.hodometro) > 0 " +
-                    "THEN (MAX(a.hodometro) - MIN(a.hodometro)) " +
-                    "ELSE (MAX(a.horimetro) - MIN(a.horimetro))" +
+                    "CASE WHEN MAX(a.hodometro) - MIN(a.hodometroAnterior) > 0 " +
+                    "THEN cast( (MAX(a.hodometro) - MIN(a.hodometroAnterior) ) as big_decimal) " +
+                    "ELSE (MAX(a.horimetro) - MIN(a.horimetroAnterior))" +
                     "END AS mediaHorHod, " +
                     "SUM(a.totalLitrosAbastecimento) AS mediaTotalLitrosAbastecimento, " +
-                    "CASE WHEN MAX(a.hodometro) - MIN(a.hodometro) > 0 " +
+                    "CASE WHEN MAX(a.hodometro) - MIN(a.hodometroAnterior) > 0 " +
                     "THEN " + TipoConsumo.KML.getValue() + " " +
                     "ELSE " + TipoConsumo.LH.getValue() + " " +
                     "END AS tipoConsumo, " +
@@ -153,12 +153,12 @@ public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<Autori
                     " %s " +
                     "GROUP BY a.placaVeiculo, a.nomeUnidadeVeiculo, a.cnpjUnidadeVeiculo, a.razaoSocialFrota, a.cnpjFrota, " +
                     "a.codigoGrupoVeiculo, a.nomeGrupoVeiculo, a.subTipoVeiculo, a.agregadoVeiculo,  a.razaoSocialEmpresaVeiculo, a.frota.id " +
-                    "HAVING (MAX(a.hodometro) - MIN(a.hodometro) > 0 OR MAX(a.horimetro) - MIN(a.horimetro) > 0) AND " +
+                    "HAVING (MAX(a.hodometro) - MIN(a.hodometroAnterior) > 0 OR MAX(a.horimetro) - MIN(a.horimetroAnterior) > 0) AND " +
                     "( :tipoConsumo IS NULL OR " +
                     ":tipoConsumo = " + TipoConsumo.KML.getValue() + " AND " +
-                    "(MAX(a.hodometro) - MIN(a.hodometro) > 0) " +
+                    "(MAX(a.hodometro) - MIN(a.hodometroAnterior) > 0) " +
                     "OR :tipoConsumo = " + TipoConsumo.LH.getValue() + " AND " +
-                    "(MAX(a.horimetro) - MIN(a.horimetro) > 0) ) " +
+                    "(MAX(a.horimetro) - MIN(a.horimetroAnterior) > 0) ) " +
                     "ORDER BY  ";
 
 
@@ -359,7 +359,7 @@ public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<Autori
             return null;
         }
 
-        vo.setMedia(BigDecimal.valueOf(vo.getMediaHorHod())
+        vo.setMedia(vo.getMediaHorHod()
                 .divide((vo.getMediaTotalLitrosAbastecimento()
                         .subtract(ultimosAbastecimentos.getRegistros().get(0).getTotalLitrosAbastecimento())), 3, RoundingMode.HALF_EVEN));
         return vo;
@@ -468,12 +468,12 @@ public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<Autori
 
         switch (TipoConsumo.obterPorValor(vo.getTipoConsumo())) {
             case KML:
-                vo.setMedia(BigDecimal.valueOf(vo.getMediaHorHod())
+                vo.setMedia(vo.getMediaHorHod()
                         .divide(difMediaTotalLitrosAbastPorTotalPrimeiroAbast, 3, RoundingMode.HALF_EVEN));
                 break;
             case LH:
                 vo.setMedia(difMediaTotalLitrosAbastPorTotalPrimeiroAbast
-                        .divide(BigDecimal.valueOf(vo.getMediaHorHod()), 3, RoundingMode.HALF_EVEN));
+                        .divide(vo.getMediaHorHod(), 3, RoundingMode.HALF_EVEN));
                 break;
         }
 
@@ -584,7 +584,7 @@ public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<Autori
             return  null;
         }
 
-        vo.setMedia(BigDecimal.valueOf(vo.getMediaHorHod())
+        vo.setMedia(vo.getMediaHorHod()
                 .divide((vo.getMediaTotalLitrosAbastecimento()
                         .subtract(ultimosAbastecimentos.getRegistros().get(0).getTotalLitrosAbastecimento())), 3, RoundingMode.HALF_EVEN));
         return vo;
