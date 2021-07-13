@@ -40,9 +40,9 @@ public class OraclePendenciaChamadoDados extends OracleRepositorioBoleiaDados<Pe
     }
 
     @Override
-    public List<PendenciaChamado> listarPendenciasEmAberto(Long idUsuario) {
+    public List<PendenciaChamado> listarPendenciasEmAberto(String idSalesforce) {
         List<ParametroPesquisa> parametrosPesquisa = new ArrayList<>();
-        parametrosPesquisa.add(new ParametroPesquisaIgual("usuario.id", idUsuario));
+        parametrosPesquisa.add(new ParametroPesquisaIgual("idChamadoSalesforce", idSalesforce));
         parametrosPesquisa.add(new ParametroPesquisaIgual("statusPendencia", StatusPendenciaChamado.EM_ABERTO.getValue()));
         return pesquisar((ParametroOrdenacaoColuna) null, parametrosPesquisa.toArray(new ParametroPesquisa[parametrosPesquisa.size()]));
     }

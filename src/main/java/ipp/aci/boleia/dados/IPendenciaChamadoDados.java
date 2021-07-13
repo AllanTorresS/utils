@@ -20,9 +20,9 @@ public interface IPendenciaChamadoDados  extends IRepositorioBoleiaDados<Pendenc
     PendenciaChamado obterUltimaPendencia(Long idUsuario);
 
     /**
-     * Retorna as pendências de chamado ainda não resolvidas para um usuário específico.
-     * @param idUsuario Identificador do usuário.
+     * Retorna as pendências ainda não resolvidas para um chamado.
+     * @param idSalesforce Identificador salesforce do chamado.
      * @return Lista com as pendencias.
      */
-    List<PendenciaChamado> listarPendenciasEmAberto(Long idUsuario);
+    List<PendenciaChamado> listarPendenciasEmAberto(String idSalesforce);
 }
