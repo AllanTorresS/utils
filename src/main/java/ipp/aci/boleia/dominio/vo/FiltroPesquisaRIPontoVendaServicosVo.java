@@ -4,9 +4,9 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * Filtro para pesquisa de pvs em rotas
+ * Filtro para pesquisa de pvs no roteirizador inteligente
  */
-public class FiltroPesquisaRotaPontoVendaServicosVo {
+public class FiltroPesquisaRIPontoVendaServicosVo {
 
     private String nome;
     private Long idFrota;
@@ -14,8 +14,6 @@ public class FiltroPesquisaRotaPontoVendaServicosVo {
     private List<Integer> parametrosDeUso;
     private List<Long> postosParametizados;
     private List<EntidadeVo> tiposCombustivel;
-    private List<EnumVo> opcoesPrimarias;
-    private List<EnumVo> opcoesSecundarias;
     private List<PontoRotaPostoPesquisaVo> pontosRotaPostoPesquisa;
     private List<List<CoordenadaVo>> filtrosCoordenadas;
     private BigDecimal margemGrausFiltroCoordenadas;
@@ -64,15 +62,6 @@ public class FiltroPesquisaRotaPontoVendaServicosVo {
     public List<EntidadeVo> getTiposCombustivel() { return tiposCombustivel; }
 
     public void setTiposCombustivel(List<EntidadeVo> tiposCombustivel) { this.tiposCombustivel = tiposCombustivel; }
-
-    public List<EnumVo> getOpcoesPrimarias() { return opcoesPrimarias; }
-
-    public void setOpcoesPrimarias(List<EnumVo> opcoesPrimarias) { this.opcoesPrimarias = opcoesPrimarias; }
-
-    public List<EnumVo> getOpcoesSecundarias() { return opcoesSecundarias; }
-
-    public void setOpcoesSecundarias(List<EnumVo> opcoesSecundarias) { this.opcoesSecundarias = opcoesSecundarias; }
-
 
     public List<List<CoordenadaVo>> getFiltrosCoordenadas() {
         return filtrosCoordenadas;

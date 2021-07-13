@@ -7,6 +7,9 @@ public class ValidadorInscricaoMatoGrosso extends ValidadorInscricaoEstadualGene
 
     @Override
     public boolean validar(String ie) {
+
+        ie = preencherComZerosAEsquerda(ie);
+
         if (!validarDigitos(ie,11)) {
             return false; 
         }
@@ -36,4 +39,13 @@ public class ValidadorInscricaoMatoGrosso extends ValidadorInscricaoEstadualGene
         String dv = Integer.toString(d);
         return ie.substring(ie.length() - 1, ie.length()).equals(dv);
     }
+
+    public String preencherComZerosAEsquerda(String ie) {
+        try {
+            return String.format("%011d", Integer.parseInt(ie));
+        } catch (NumberFormatException e) {
+            return ie;
+        }
+    }
+
 }

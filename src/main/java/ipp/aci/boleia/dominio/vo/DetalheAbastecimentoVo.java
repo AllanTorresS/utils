@@ -46,7 +46,7 @@ public class DetalheAbastecimentoVo {
         this.setNomeItemAbastecimento(autorizacao.getNomeItemAbastecimento());
         this.setTotalLitrosAbastecimento(UtilitarioFormatacao.formatarDecimal(autorizacao.getTotalLitrosAbastecimento().setScale(3, RoundingMode.HALF_UP)));
         this.setValorUnitarioAbastecimento(UtilitarioFormatacao.formatarDecimal(autorizacao.getValorUnitarioAbastecimento().setScale(3, RoundingMode.HALF_UP)));
-        this.setIdTransacao(UtilitarioFormatacao.obterDigitosMascara(autorizacao.getTransacaoFrota().getId()));
+        this.setIdTransacao(UtilitarioFormatacao.obterDigitosMascara(autorizacao.getId()));
         if(autorizacao.getValorDescontoTotal() != null){
             if(BigDecimal.ZERO.equals(autorizacao.getValorDescontoTotal()) || BigDecimal.ZERO.compareTo(autorizacao.getValorDescontoTotal().setScale(2,RoundingMode.HALF_UP)) == 0){
               this.setValorDescontoTotal("");
