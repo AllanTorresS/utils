@@ -2,14 +2,12 @@ package ipp.aci.boleia.dados.oracle;
 
 import ipp.aci.boleia.dados.IPerfilDados;
 import ipp.aci.boleia.dominio.Perfil;
-import ipp.aci.boleia.dominio.UsuarioPerfil;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaPerfilVo;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
