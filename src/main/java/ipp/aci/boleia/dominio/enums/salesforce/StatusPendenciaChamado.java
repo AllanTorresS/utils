@@ -9,7 +9,8 @@ import ipp.aci.boleia.dominio.enums.IEnumComValor;
  */
 public enum StatusPendenciaChamado implements IEnumComValor {
     EM_ABERTO(0),
-    RESOLVIDA(1);
+    RESOLVIDA(1),
+    VENCIDA(2);
 
     private final Integer value;
 
