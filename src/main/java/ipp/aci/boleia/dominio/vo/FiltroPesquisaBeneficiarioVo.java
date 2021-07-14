@@ -1,3 +1,4 @@
+
 package ipp.aci.boleia.dominio.vo;
 
 import ipp.aci.boleia.dominio.pesquisa.comum.BaseFiltroPaginado;
@@ -11,6 +12,7 @@ public class FiltroPesquisaBeneficiarioVo extends BaseFiltroPaginado {
 
     private EntidadeVo beneficiario;
     private List<EntidadeVo> beneficios;
+    private EnumVo possuiSaldo;
 
     public EntidadeVo getBeneficiario() {
         return beneficiario;
@@ -28,4 +30,11 @@ public class FiltroPesquisaBeneficiarioVo extends BaseFiltroPaginado {
         this.beneficios = beneficios;
     }
 
+    public EnumVo getPossuiSaldo() {
+        return possuiSaldo;
+    }
+
+    public void setPossuiSaldo(EnumVo possuiSaldo) {
+        this.possuiSaldo = possuiSaldo;
+    }
 }
