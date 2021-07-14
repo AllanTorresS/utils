@@ -25,4 +25,18 @@ public interface IPendenciaChamadoDados  extends IRepositorioBoleiaDados<Pendenc
      * @return Lista com as pendencias.
      */
     List<PendenciaChamado> listarPendenciasEmAberto(String idSalesforce);
+
+    /**
+     * Retorna uma lista com as pendências não resolvidas a mais de 7 dias.
+     * @return Lista com as pendencias.
+     */
+    List<PendenciaChamado> listarPendenciasVencidas();
+
+    /**
+     * Retorna uma lista com as pendências não resolvidas a mais de 7 dias para um chamado.
+     *
+     * @param idSalesforce Identificador salesforce do chamado.
+     * @return Lista com as pendencias.
+     */
+    List<PendenciaChamado> listarPendenciasVencidas(String idSalesforce);
 }
