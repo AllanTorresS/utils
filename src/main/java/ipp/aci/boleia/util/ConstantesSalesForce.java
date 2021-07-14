@@ -37,6 +37,7 @@ public final class ConstantesSalesForce {
     public static final String CAMPO_MODULO = "MotivoSolicitacao__c";
     public static final String CAMPO_MOTIVO_CANCELAMENTO = "MotivoCancelamento__c";
     public static final String CAMPO_MOTIVO_CANCELAMENTO_VALOR_DUPLICADO = "Duplicado";
+    public static final String CAMPO_MOTIVO_CANCELAMENTO_SEM_RETORNO= "Sem Retorno";
     public static final String CAMPO_CORPO_COMENTARIO = "CommentBody";
     public static final String CAMPO_CHAMADO_COMENTARIO = "ParentId";
 

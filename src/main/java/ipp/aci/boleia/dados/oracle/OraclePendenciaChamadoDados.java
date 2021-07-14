@@ -5,7 +5,11 @@ import ipp.aci.boleia.dominio.PendenciaChamado;
 import ipp.aci.boleia.dominio.enums.salesforce.StatusPendenciaChamado;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenor;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
+import ipp.aci.boleia.util.UtilitarioCalculoData;
+import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -27,6 +31,9 @@ public class OraclePendenciaChamadoDados extends OracleRepositorioBoleiaDados<Pe
             "      (pc.naoLembrar IS NULL OR pc.naoLembrar = 0) " +
             "ORDER BY pc.dataPendencia DESC";
 
+    @Autowired
+    private UtilitarioAmbiente ambiente;
+
     /**
      * Instancia o repositorio
      */
@@ -44,6 +51,22 @@ public class OraclePendenciaChamadoDados extends OracleRepositorioBoleiaDados<Pe
         List<ParametroPesquisa> parametrosPesquisa = new ArrayList<>();
         parametrosPesquisa.add(new ParametroPesquisaIgual("idChamadoSalesforce", idSalesforce));
         parametrosPesquisa.add(new ParametroPesquisaIgual("statusPendencia", StatusPendenciaChamado.EM_ABERTO.getValue()));
+        return pesquisar((ParametroOrdenacaoColuna) null, parametrosPesquisa.toArray(new ParametroPesquisa[parametrosPesquisa.size()]));
+    }
+
+    @Override
+    public List<PendenciaChamado> listarPendenciasVencidas() {
+        return listarPendenciasVencidas(null);
+    }
+
+    @Override
+    public List<PendenciaChamado> listarPendenciasVencidas(String idSalesforce) {
+        List<ParametroPesquisa> parametrosPesquisa = new ArrayList<>();
+        if(idSalesforce != null) {
+            parametrosPesquisa.add(new ParametroPesquisaIgual("idChamadoSalesforce", idSalesforce));
+        }
+        parametrosPesquisa.add(new ParametroPesquisaIgual("statusPendencia", StatusPendenciaChamado.EM_ABERTO.getValue()));
+        parametrosPesquisa.add(new ParametroPesquisaDataMenor("dataPendencia", UtilitarioCalculoData.obterPrimeiroInstanteDia(UtilitarioCalculoData.adicionarDiasData(ambiente.buscarDataAmbiente(), -7))));
         return pesquisar((ParametroOrdenacaoColuna) null, parametrosPesquisa.toArray(new ParametroPesquisa[parametrosPesquisa.size()]));
     }
 }
