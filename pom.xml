@@ -6,7 +6,7 @@
 
     <groupId>ipp.aci.boleia</groupId>
     <artifactId>boleia-dominioUtil</artifactId>
-    <version>4.19.11</version>
+    <version>4.21.2</version>
 
 
     <properties>
