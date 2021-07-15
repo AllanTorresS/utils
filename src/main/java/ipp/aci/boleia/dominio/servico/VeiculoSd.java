@@ -6,13 +6,22 @@ import ipp.aci.boleia.dados.IPrecoDados;
 import ipp.aci.boleia.dados.IVeiculoDados;
 import ipp.aci.boleia.dominio.AbastecimentoVeiculoMes;
 import ipp.aci.boleia.dominio.Frota;
+import ipp.aci.boleia.dominio.Motorista;
 import ipp.aci.boleia.dominio.Preco;
 import ipp.aci.boleia.dominio.PrecoBase;
 import ipp.aci.boleia.dominio.Veiculo;
+import ipp.aci.boleia.dominio.enums.GrupoExecucaoParametroSistema;
 import ipp.aci.boleia.dominio.enums.StatusAtivacao;
 import ipp.aci.boleia.dominio.enums.StatusFrota;
+import ipp.aci.boleia.dominio.interfaces.IFluxoAbastecimentoConfig;
+import ipp.aci.boleia.dominio.vo.PreAutorizacaoPedidoVo;
+import ipp.aci.boleia.util.excecao.Erro;
+import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
 import ipp.aci.boleia.util.excecao.ExcecaoValidacao;
 import ipp.aci.boleia.util.i18n.Mensagens;
+import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
+import ipp.aci.boleia.util.seguranca.UtilitarioJwt;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -41,7 +50,22 @@ public class VeiculoSd {
     private IPrecoBaseDados precoBaseDados;
 
     @Autowired
+    private DispositivoMotoristaSd dispositivoMotoristaSd;
+
+    @Autowired
+    protected FluxoAbastecimentoSd fluxoAbastecimentoSd;
+
+    @Autowired
+    private ExecucaoParametrosSistemaSd execucaoParametrosSistemaSd;
+
+    @Autowired
     private Mensagens mensagens;
+
+    @Autowired
+    private UtilitarioAmbiente utilitarioAmbiente;
+
+    @Autowired
+    private UtilitarioJwt utilitarioJwt;
 
     /**
      * Método que obtém valor negociado para abastecimento em um ponto de venda.
@@ -193,4 +217,55 @@ public class VeiculoSd {
         return veiculo.getHorimetro() != null ? veiculo.getHorimetro() : BigDecimal.ZERO;
     }
 
+    /**
+     * Verifica se o veiculo pertence a frota em questao
+     * @param placaVeiculo placa enviado para pré-autorização
+     * @param idFrotaEnviada identificador da frota enviada para pré-autorização
+     * @param frota A frota
+     * @return O veiculo, caso localizado
+     * @throws ExcecaoValidacao veiculo não está ativo OU não pertence a frota em questão
+     */
+    public Veiculo verificarValidadeVeiculoPreAutorizarAbastecimento(String placaVeiculo, Long idFrotaEnviada, Frota frota) throws ExcecaoValidacao {
+        if (StringUtils.isBlank(placaVeiculo)) {
+            throw new ExcecaoValidacao(Erro.ERRO_GENERICO);
+        }
+        Veiculo veiculo = veiculoDados.buscarPorPlacaFrotaSemIsolamento(placaVeiculo, idFrotaEnviada);
+        if (veiculo == null) {
+            throw new ExcecaoBoleiaRuntime(Erro.VEICULO_NAO_CADASTRADO_FROTA, placaVeiculo, frota.getNomeFantasia());
+        }
+        if (!frota.getId().equals(veiculo.getFrota().getId())) {
+            throw new ExcecaoBoleiaRuntime(Erro.VEICULO_NAO_CADASTRADO_FROTA, placaVeiculo, frota.getNomeFantasia());
+        }
+        if (!frota.getStatus().equals(StatusAtivacao.ATIVO.getValue()) || !veiculo.getStatus().equals(StatusAtivacao.ATIVO.getValue())) {
+            throw new ExcecaoValidacao(Erro.PRE_AUTORIZACAO_ABASTECIMENTO_INVALIDA, placaVeiculo);
+        }
+        return veiculo;
+    }
+
+    /**
+     * Verifica a validade do contexto de abastecimento das placas com o motorista
+     *
+     * @param placaVeiculo placa do primeiro veiculo
+     * @param segundaPlacaVeiculo placa do segundo veiculo a ser avaliado (opcional)
+     * @param idFrota identificador da frota
+     * @param cpfMotorista cpf do motorista a ser validado
+     * @throws ExcecaoValidacao quando a verificação não obteve sucesso
+     */
+    public void verificarValidadeAbastecimentoPorPlacas(String placaVeiculo, String segundaPlacaVeiculo, Long idFrota, Long cpfMotorista) throws ExcecaoValidacao {
+        Motorista motorista = dispositivoMotoristaSd.validarFrotaMotorista(idFrota, cpfMotorista);
+        Frota frota = motorista.getFrota();
+        Date dataCriacao = utilitarioAmbiente.buscarDataAmbiente() ;
+
+        Veiculo primeiroVeiculo = verificarValidadeVeiculoPreAutorizarAbastecimento(placaVeiculo, frota.getId(), frota);
+        Veiculo segundoVeiculo = (segundaPlacaVeiculo != null) ? verificarValidadeVeiculoPreAutorizarAbastecimento(segundaPlacaVeiculo, frota.getId(), frota) : null;
+
+        IFluxoAbastecimentoConfig fluxoAbastecimentoConfig = fluxoAbastecimentoSd.obterParaAbastecimento(frota, motorista, dataCriacao);
+        execucaoParametrosSistemaSd.executarParametros(frota, GrupoExecucaoParametroSistema.PRE_AUTORIZACAO_PLACA, new PreAutorizacaoPedidoVo(frota, primeiroVeiculo, dataCriacao));
+        if (segundoVeiculo == null){
+            fluxoAbastecimentoSd.validarVeiculoConformeFluxoMotorista(fluxoAbastecimentoConfig,primeiroVeiculo);
+        } else {
+            fluxoAbastecimentoSd.validarVeiculosConformeFluxoMotorista(fluxoAbastecimentoConfig,primeiroVeiculo,segundoVeiculo);
+            execucaoParametrosSistemaSd.executarParametros(frota, GrupoExecucaoParametroSistema.PRE_AUTORIZACAO_PLACA, new PreAutorizacaoPedidoVo(frota, segundoVeiculo, dataCriacao));
+        }
+    }
 }
