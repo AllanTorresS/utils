@@ -162,6 +162,14 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     }
 
     @Override
+    public ChamadoVo obterPorIdSalesforceSemIsolamento(String idSalesforce) {
+        Map<String, Object> parametros = new HashMap<>();
+        parametros.put("idSalesforce", idSalesforce);
+        List<ChamadoVo> chamados = executarQuerySalesforce(formatarQueryParaConsulta(OBTER_CHAMADO_POR_ID, parametros));
+        return chamados != null ? chamados.stream().findFirst().orElse(null) : null;
+    }
+
+    @Override
     public ResultadoPaginado<ChamadoVo> consultarChamados(FiltroConsultaChamadosVo filtro) {
         String queryConsulta = formatarQueryParaPesquisa(CONSULTAR_CHAMADOS, true, filtro);
         String queryCount = formatarQueryParaPesquisa(COUNT_CONSULTAR_CHAMADOS, false, filtro);
