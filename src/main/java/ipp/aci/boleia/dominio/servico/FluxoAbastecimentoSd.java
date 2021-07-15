@@ -136,34 +136,62 @@ public class FluxoAbastecimentoSd {
         boolean subtipoClimatizador = veiculo.getSubtipoVeiculo().utilizaHorimetro();
         //Tem restrição de placa principal?
         if(!subtipoClimatizador && fluxoAbastecimentoConfig.getVeiculo() != null && !fluxoAbastecimentoConfig.possuiMesmaPlacaDoFluxo(veiculo)){
-            throw new ExcecaoValidacao(Erro.VEICULO_NAO_AUTORIZADO_PELO_FLUXO, veiculo.getPlaca());
+            throw new ExcecaoValidacao(Erro.VEICULO_NAO_AUTORIZADO_PELO_FLUXO_APP, veiculo.getPlaca());
         }
 
         //Tem restrição de placa climatizador?
         if(subtipoClimatizador && fluxoAbastecimentoConfig.getVeiculoClimatizador() != null && !fluxoAbastecimentoConfig.possuiMesmoClimatizadorDoFluxo(veiculo)){
-            throw new ExcecaoValidacao(Erro.VEICULO_NAO_AUTORIZADO_PELO_FLUXO, veiculo.getPlaca());
+            throw new ExcecaoValidacao(Erro.VEICULO_NAO_AUTORIZADO_PELO_FLUXO_APP, veiculo.getPlaca());
         }
     }
 
+    /**
+     * Realiza a validação de veículos de acordo com o fluxo de abastecimento.
+     *
+     * @param fluxoAbastecimentoConfig Configuração do fluxo de abastecimento.
+     * @param veiculo Primeiro veículo.
+     * @param segundoVeiculo Segundo veículo.
+     * @throws ExcecaoValidacao Exceção lançada em caso de erro de validação.
+     */
     public void validarVeiculosConformeFluxoMotorista(IFluxoAbastecimentoConfig fluxoAbastecimentoConfig, Veiculo veiculo, Veiculo segundoVeiculo) throws ExcecaoValidacao {
-
         validarVeiculoConformeFluxoMotorista(fluxoAbastecimentoConfig, veiculo);
         validarVeiculoConformeFluxoMotorista(fluxoAbastecimentoConfig, segundoVeiculo);
+        validarClimatizadorParaDuasPlacas(veiculo, segundoVeiculo);
+    }
 
+    /**
+     * Realiza as validações de climatizador para o fluxo com duas placas.
+     *
+     * @param veiculo Primeiro veículo.
+     * @param segundoVeiculo Segundo veículo.
+     * @throws ExcecaoValidacao Exceção lançada em caso de erro de validação.
+     */
+    public void validarClimatizadorParaDuasPlacas(Veiculo veiculo, Veiculo segundoVeiculo) throws ExcecaoValidacao {
         //Os dois são climatizadores?
         if(veiculo.utilizaHorimetro() && segundoVeiculo.utilizaHorimetro()){
-            throw new ExcecaoValidacao(Erro.ABAST_DOIS_CLIMATIZADORES, segundoVeiculo.getPlaca());
+            throw new ExcecaoValidacao(Erro.ABAST_DOIS_CLIMATIZADORES_APP, segundoVeiculo.getPlaca());
         }
 
         //Nenhum deles é climatizador?
         if(!veiculo.utilizaHorimetro() && !segundoVeiculo.utilizaHorimetro()){
-            throw new ExcecaoValidacao(Erro.ABAST_DUAS_PLACAS_SEM_CLIMATIZADOR, segundoVeiculo.getPlaca());
+            throw new ExcecaoValidacao(Erro.ABAST_DUAS_PLACAS_SEM_CLIMATIZADOR_APP, segundoVeiculo.getPlaca());
         }
 
         //O veículo não climatizador está habilitado para abastecer com duas placas?
-        Veiculo principal = !veiculo.utilizaHorimetro() ? veiculo : segundoVeiculo;
+        Veiculo principal = definirVeiculoPrincipal(veiculo, segundoVeiculo);
         if(!principal.getHabilitadoAbastecerDuasPlacas()){
-            throw new ExcecaoValidacao(Erro.VEICULO_N_HABILITADO_DUAS_PLACAS, principal.getPlaca());
+            throw new ExcecaoValidacao(Erro.VEICULO_N_HABILITADO_DUAS_PLACAS_APP, principal.getPlaca());
         }
+    }
+
+    /**
+     * Define qual o veículo principal para um fluxo de abastecimento com 2 placas.
+     *
+     * @param primeiroVeiculo Primeiro veículo.
+     * @param segundoVeiculo Segundo veículo.
+     * @return O veículo principal;
+     */
+    public Veiculo definirVeiculoPrincipal(Veiculo primeiroVeiculo, Veiculo segundoVeiculo) {
+        return !primeiroVeiculo.utilizaHorimetro() ? primeiroVeiculo : segundoVeiculo;
     }
 }
