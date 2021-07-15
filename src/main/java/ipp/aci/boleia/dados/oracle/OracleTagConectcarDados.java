@@ -58,6 +58,13 @@ public class OracleTagConectcarDados extends OracleRepositorioBoleiaDados<TagCon
 		            " WHERE t.frota.id  = :idFrota " +
 		            " AND t.dataBloqueio IS NULL AND t.dataExclusao IS NULL ";
 
+	private static final String QUERY_TAGS_BLOQUEADAS_EM_LOTE =
+			" SELECT t " +
+		            " FROM TagConectcar t " +
+		            " WHERE t.frota.id  = :idFrota " +
+		            " AND t.dataBloqueio IS NOT NULL " +
+		            " AND t.tipoBloqueio = 'L'";
+
     /**
      * Instancia o repositório
      */
@@ -150,6 +157,14 @@ public class OracleTagConectcarDados extends OracleRepositorioBoleiaDados<TagCon
         parametros.add(new ParametroPesquisaIgual("idFrota", codigoFrota));
         
         return pesquisar(null, QUERY_TAGS_ATIVAS, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+	}
+
+	@Override
+	public List<TagConectcar> obterTagsBloqueadasEmLote(Long codigoFrota) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaIgual("idFrota", codigoFrota));
+        
+        return pesquisar(null, QUERY_TAGS_BLOQUEADAS_EM_LOTE, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
 	}
 
 }

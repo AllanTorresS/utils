@@ -20,8 +20,7 @@ public interface ITagConectcarDados extends IRepositorioBoleiaDados<TagConectcar
      * @return quantidade de tags
      */
     long obterQuantidadeTotalTags(Long codigoFrota);
-    
-    
+
     /**
      * Pesquisa a quantidade total de tags de uma frota
      *
@@ -54,5 +53,13 @@ public interface ITagConectcarDados extends IRepositorioBoleiaDados<TagConectcar
      * @return tags ativas
      */
     List<TagConectcar> obterTagsAtivas(Long codigoFrota);
+
+    /**
+     * Obtem as tags bloqueadas em lote de uma frota
+     *
+     * @param codigoFrota código identificador
+     * @return tags bloqueadas em lote
+     */
+    List<TagConectcar> obterTagsBloqueadasEmLote(Long codigoFrota);
 
 }

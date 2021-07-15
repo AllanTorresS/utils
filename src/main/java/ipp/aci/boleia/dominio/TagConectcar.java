@@ -60,6 +60,9 @@ public class TagConectcar implements IPersistente, IExclusaoLogicaComData{
     @Column(name = "ID_TIPO_UTILIZACAO")
     private Integer tipoUtilizacao;
 
+    @Column(name = "ID_TIPO_BLOQUEIO")
+    private String tipoBloqueio;
+
 	/**
 	 * Construtor padrão da entidade.
 	 */
@@ -182,6 +185,14 @@ public class TagConectcar implements IPersistente, IExclusaoLogicaComData{
 
 	public void setTipoUtilizacao(Integer tipoUtilizacao) {
 		this.tipoUtilizacao = tipoUtilizacao;
+	}
+
+	public String getTipoBloqueio() {
+		return tipoBloqueio;
+	}
+
+	public void setTipoBloqueio(String tipoBloqueio) {
+		this.tipoBloqueio = tipoBloqueio;
 	}
 
 }
