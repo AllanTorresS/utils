@@ -368,6 +368,15 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     }
 
     @Override
+    public AutorizacaoPagamento obterPorCodigoPagamentoAutorizadoEPlaca(String codigoPagamento, String placaVeiculo) {
+        return pesquisarUnico(
+                new ParametroPesquisaIgual("codigoPagamento", codigoPagamento),
+                new ParametroPesquisaIgual("status", StatusAutorizacao.AUTORIZADO.getValue()),
+                new ParametroPesquisaIgual("veiculo.placa", placaVeiculo)
+        );
+    }
+
+    @Override
     public AutorizacaoPagamento obterSimilarAutorizada(Long idMotorista, Long idVeiculo, Long idPv, Long idFrota, BigDecimal valorTotal, Date dataLimite) {
         return pesquisarUnico(  new ParametroPesquisaIgual("status", StatusAutorizacao.AUTORIZADO.getValue()), new ParametroPesquisaIgual("motorista.id", idMotorista),
                 new ParametroPesquisaIgual("veiculo.id", idVeiculo), new ParametroPesquisaIgual("pontoVenda.id", idPv),
