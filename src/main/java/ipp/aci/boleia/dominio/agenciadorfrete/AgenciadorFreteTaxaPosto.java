@@ -13,10 +13,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 @Entity
 @Audited
@@ -37,6 +40,14 @@ public class AgenciadorFreteTaxaPosto implements IPersistente {
     @DecimalMin("00.00")
     @DecimalMax("99.99")
     private BigDecimal mdr;
+
+    @Column(name = "DT_INICIO")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataInicio;
+
+    @Column(name = "DT_FIM")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataFim;
 
     public Long getId() {
         return id;
@@ -60,6 +71,22 @@ public class AgenciadorFreteTaxaPosto implements IPersistente {
 
     public void setMdr(BigDecimal mdr) {
         this.mdr = mdr;
+    }
+
+    public Date getDataInicio() {
+        return dataInicio;
+    }
+
+    public void setDataInicio(Date dataInicio) {
+        this.dataInicio = dataInicio;
+    }
+
+    public Date getDataFim() {
+        return dataFim;
+    }
+
+    public void setDataFim(Date dataFim) {
+        this.dataFim = dataFim;
     }
 
 }
