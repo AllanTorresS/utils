@@ -125,6 +125,14 @@ public interface ITransacaoConectcarDados extends IRepositorioBoleiaDados<Transa
     List<TransacaoConectcar> obterValesPedagioAtivos(Long idFrota);
 
     /**
+     * Obtém os vales pedágio que estão ativos para uma frota
+     *
+     * @param data data para pesquisa de início de vale pedágio
+     * @return lista de vales pedágio iniciando na data
+     */
+    List<TransacaoConectcar> obterValesPedagioTrocandoStatus();
+
+    /**
      * Obtém os detalhes de um dia de vale pedágio
      *
      * @param idFrota código identificador da frota

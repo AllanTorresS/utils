@@ -117,8 +117,14 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
             "SELECT tc " +
                     " FROM TransacaoConectcar tc " +
                     " WHERE tc.frota.id = :idFrota " +
-                    " AND tc.dataInicioViagem <= SYSDATE" +
-                    " AND tc.dataFimViagem >= SYSDATE";
+                    " AND TRUNC(tc.dataInicioViagem) <= TRUNC(SYSDATE)" +
+                    " AND TRUNC(tc.dataFimViagem) >= TRUNC(SYSDATE)";
+
+    private static final String QUERY_VALE_PEDAGIO_TROCANDO_STATUS =
+            "SELECT tc " +
+                    " FROM TransacaoConectcar tc " +
+                    " WHERE TRUNC(tc.dataInicioViagem) = TRUNC(SYSDATE)" +
+                    " OR TRUNC(tc.dataFimViagem) = TRUNC(SYSDATE) - 1";
 
     private static final String QUERY_TRANSACOES_DETALHE_COBRANCA =
             "SELECT tc " +
@@ -491,6 +497,12 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
         parametros.add(new ParametroPesquisaIgual("idFrota", idFrota));
 
         return pesquisar(null, QUERY_VALE_PEDAGIO_ATIVO, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+    }
+
+    @Override
+    public List<TransacaoConectcar> obterValesPedagioTrocandoStatus() {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        return pesquisar(null, QUERY_VALE_PEDAGIO_TROCANDO_STATUS, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
 
 }
