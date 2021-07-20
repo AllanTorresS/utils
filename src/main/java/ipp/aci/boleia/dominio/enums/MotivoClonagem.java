@@ -8,30 +8,37 @@ import ipp.aci.boleia.util.i18n.IEnumComLabel;
  */
 public enum MotivoClonagem implements IEnumComLabel<MotivoClonagem>, IEnumComValor {
 
-    FALTA(0),
-    LICENCA_MEDICA(1),
-    LICENCA_MATERNIDADE(2),
-    FERIAS(3),
-    SUSPENSAO(4),
-    PERFIL_TEMPORARIO(5),
-    PERFIL_DEFINITIVO(6),
-    OUTROS(7);
+    FALTA(0, false),
+    LICENCA_MEDICA(1, true),
+    LICENCA_MATERNIDADE(2, true),
+    FERIAS(3, true),
+    SUSPENSAO(4, false),
+    PERFIL_TEMPORARIO(5, false),
+    PERFIL_DEFINITIVO(6, false),
+    OUTROS(7, true);
 
     private final Integer value;
+    private final Boolean validoInterno;
 
     /**
      * Construtor
      *
      * @param value O value do status
+     * @param validoInterno Indica se o motivo é válido para usuário interno
      */
-    MotivoClonagem(Integer value) {
+    MotivoClonagem(Integer value, Boolean validoInterno) {
         this.value = value;
+        this.validoInterno = validoInterno;
     }
 
     public Integer getValue() {
         return value;
     }
-    
+
+    public Boolean getValidoInterno() {
+        return validoInterno;
+    }
+
     /**
      * Obtem por valor
      * @param value value
