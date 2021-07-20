@@ -6,12 +6,11 @@ import ipp.aci.boleia.dominio.enums.StatusAtivacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaAnd;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
-import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaior;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
-import ipp.aci.boleia.dominio.vo.EntidadeVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaBeneficiarioVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialVo;
 import ipp.aci.boleia.util.UtilitarioLambda;
@@ -20,7 +19,6 @@ import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Repositório de entidades Beneficiario
@@ -62,9 +60,15 @@ public class OracleBeneficiarioDados extends OracleRepositorioBoleiaDados<Benefi
         }
 
         if(filtro.getBeneficios() != null && !filtro.getBeneficios().isEmpty()){
-            parametros.add(new ParametroPesquisaIn("contaBeneficiario.contasBeneficio.beneficio.id",
-                    filtro.getBeneficios().stream().map(EntidadeVo::getId).collect(Collectors.toList())));
-        }
+            ParametroPesquisaOr parametrosBeneficios = new ParametroPesquisaOr();
+            filtro.getBeneficios().forEach(beneficio -> {
+                ParametroPesquisaAnd parametroBeneficio = new ParametroPesquisaAnd(
+                        new ParametroPesquisaIgual("contaBeneficiario.contasBeneficio.beneficio.id", beneficio.getId()),
+                        new ParametroPesquisaIgual("contaBeneficiario.contasBeneficio.beneficioConfigurado", true)
+                );
+                parametrosBeneficios.addParametro(parametroBeneficio);
+            });
+            parametros.add(parametrosBeneficios);        }
         parametros.add(new ParametroPesquisaIgual("status", StatusAtivacao.ATIVO.getValue()));
         parametros.add(new ParametroPesquisaIgual("excluido", false));
 
