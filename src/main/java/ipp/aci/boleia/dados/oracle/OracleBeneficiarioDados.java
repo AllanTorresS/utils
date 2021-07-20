@@ -13,6 +13,7 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaior;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaBeneficiarioVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialVo;
+import ipp.aci.boleia.util.Ordenacao;
 import ipp.aci.boleia.util.UtilitarioLambda;
 import org.springframework.stereotype.Repository;
 
@@ -73,11 +74,7 @@ public class OracleBeneficiarioDados extends OracleRepositorioBoleiaDados<Benefi
         parametros.add(new ParametroPesquisaIgual("excluido", false));
 
         if(filtro.getPossuiSaldo() != null && filtro.getPossuiSaldo().getValue() != null) {
-            if(filtro.getPossuiSaldo().getValue() == 1) {
-                parametros.add(new ParametroPesquisaMaior("contaBeneficiario.saldo", BigDecimal.ZERO));
-            } else {
-                parametros.add(new ParametroPesquisaIgual("contaBeneficiario.saldo", BigDecimal.ZERO));
-            }
+            parametros.add(new ParametroPesquisaIgual("possuiSaldo", filtro.getPossuiSaldo().getValue() == 1));
         }
 
         if(filtro.getPaginacao() != null && filtro.getPaginacao().getParametrosOrdenacaoColuna().isEmpty()) {
