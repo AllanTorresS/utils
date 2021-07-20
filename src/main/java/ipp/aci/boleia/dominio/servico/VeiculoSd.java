@@ -50,9 +50,6 @@ public class VeiculoSd {
     private IPrecoBaseDados precoBaseDados;
 
     @Autowired
-    private DispositivoMotoristaSd dispositivoMotoristaSd;
-
-    @Autowired
     protected FluxoAbastecimentoSd fluxoAbastecimentoSd;
 
     @Autowired
@@ -247,25 +244,22 @@ public class VeiculoSd {
      *
      * @param placaVeiculo placa do primeiro veiculo
      * @param segundaPlacaVeiculo placa do segundo veiculo a ser avaliado (opcional)
-     * @param idFrota identificador da frota
-     * @param cpfMotorista cpf do motorista a ser validado
+     * @param motorista motorista a ser validado
      * @throws ExcecaoValidacao quando a verificação não obteve sucesso
      */
-    public void verificarValidadeAbastecimentoPorPlacas(String placaVeiculo, String segundaPlacaVeiculo, Long idFrota, Long cpfMotorista) throws ExcecaoValidacao {
-        Motorista motorista = dispositivoMotoristaSd.validarFrotaMotorista(idFrota, cpfMotorista);
-        Frota frota = motorista.getFrota();
+    public void verificarValidadeAbastecimentoPorPlacas(String placaVeiculo, String segundaPlacaVeiculo, Motorista motorista) throws ExcecaoValidacao {
         Date dataCriacao = utilitarioAmbiente.buscarDataAmbiente() ;
 
-        Veiculo primeiroVeiculo = verificarValidadeVeiculoPreAutorizarAbastecimento(placaVeiculo, frota.getId(), frota);
-        Veiculo segundoVeiculo = (segundaPlacaVeiculo != null) ? verificarValidadeVeiculoPreAutorizarAbastecimento(segundaPlacaVeiculo, frota.getId(), frota) : null;
+        Veiculo primeiroVeiculo = verificarValidadeVeiculoPreAutorizarAbastecimento(placaVeiculo, motorista.getFrota().getId(), motorista.getFrota());
+        Veiculo segundoVeiculo = (segundaPlacaVeiculo != null) ? verificarValidadeVeiculoPreAutorizarAbastecimento(segundaPlacaVeiculo, motorista.getFrota().getId(), motorista.getFrota()) : null;
 
-        IFluxoAbastecimentoConfig fluxoAbastecimentoConfig = fluxoAbastecimentoSd.obterParaAbastecimento(frota, motorista, dataCriacao);
-        execucaoParametrosSistemaSd.executarParametros(frota, GrupoExecucaoParametroSistema.PRE_AUTORIZACAO_PLACA, new PreAutorizacaoPedidoVo(frota, primeiroVeiculo, dataCriacao));
+        IFluxoAbastecimentoConfig fluxoAbastecimentoConfig = fluxoAbastecimentoSd.obterParaAbastecimento(motorista.getFrota(), motorista, dataCriacao);
+        execucaoParametrosSistemaSd.executarParametros(motorista.getFrota(), GrupoExecucaoParametroSistema.PRE_AUTORIZACAO_PLACA, new PreAutorizacaoPedidoVo(motorista.getFrota(), primeiroVeiculo, dataCriacao));
         if (segundoVeiculo == null){
             fluxoAbastecimentoSd.validarVeiculoConformeFluxoMotorista(fluxoAbastecimentoConfig,primeiroVeiculo);
         } else {
             fluxoAbastecimentoSd.validarVeiculosConformeFluxoMotorista(fluxoAbastecimentoConfig,primeiroVeiculo,segundoVeiculo);
-            execucaoParametrosSistemaSd.executarParametros(frota, GrupoExecucaoParametroSistema.PRE_AUTORIZACAO_PLACA, new PreAutorizacaoPedidoVo(frota, segundoVeiculo, dataCriacao));
+            execucaoParametrosSistemaSd.executarParametros(motorista.getFrota(), GrupoExecucaoParametroSistema.PRE_AUTORIZACAO_PLACA, new PreAutorizacaoPedidoVo(motorista.getFrota(), segundoVeiculo, dataCriacao));
         }
     }
 }

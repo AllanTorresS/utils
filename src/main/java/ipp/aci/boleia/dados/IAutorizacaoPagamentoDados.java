@@ -48,6 +48,16 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
      */
     AutorizacaoPagamento obterPorCodigoPagamentoAutorizado(String codigoPagamento);
 
+
+    /**
+     * Pesquisa autorização de pagamento autorizada a partir do código de pagamento e placa.
+     * @param codigoPagamento código de pagamento da transação.
+     * @param placa a placa do veículo a ser abastecido.
+     * @return a autorização de abastecimento localizada caso exista.
+     */
+    AutorizacaoPagamento obterPorCodigoPagamentoAutorizadoEPlaca(String codigoPagamento, String placa);
+
+
     /**
      * Obtem transacoes similares dentro da data limite informada
      * @param idMotorista id do motorista

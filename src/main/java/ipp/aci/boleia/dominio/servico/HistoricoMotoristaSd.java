@@ -1,7 +1,6 @@
 package ipp.aci.boleia.dominio.servico;
 
 
-import ipp.aci.boleia.dados.IFluxoAbastecimentoMotoristaDados;
 import ipp.aci.boleia.dados.IHistoricoMotoristaDados;
 import ipp.aci.boleia.dominio.HistoricoMotorista;
 import ipp.aci.boleia.dominio.Motorista;
