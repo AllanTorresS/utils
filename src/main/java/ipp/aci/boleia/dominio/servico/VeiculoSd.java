@@ -228,13 +228,16 @@ public class VeiculoSd {
         }
         Veiculo veiculo = veiculoDados.buscarPorPlacaFrotaSemIsolamento(placaVeiculo, idFrotaEnviada);
         if (veiculo == null) {
-            throw new ExcecaoBoleiaRuntime(Erro.VEICULO_NAO_CADASTRADO_FROTA, placaVeiculo, frota.getNomeFantasia());
+            throw new ExcecaoBoleiaRuntime(Erro.VEICULO_NAO_CADASTRADO, placaVeiculo, frota.getNomeFantasia());
         }
         if (!frota.getId().equals(veiculo.getFrota().getId())) {
             throw new ExcecaoBoleiaRuntime(Erro.VEICULO_NAO_CADASTRADO_FROTA, placaVeiculo, frota.getNomeFantasia());
         }
-        if (!frota.getStatus().equals(StatusAtivacao.ATIVO.getValue()) || !veiculo.getStatus().equals(StatusAtivacao.ATIVO.getValue())) {
-            throw new ExcecaoValidacao(Erro.PRE_AUTORIZACAO_ABASTECIMENTO_INVALIDA, placaVeiculo);
+        if (!frota.getStatus().equals(StatusAtivacao.ATIVO.getValue())) {
+            throw new ExcecaoValidacao(Erro.ERRO_EDICAO_FROTA_INATIVA, placaVeiculo);
+        }
+        if (!veiculo.getStatus().equals(StatusAtivacao.ATIVO.getValue())) {
+            throw new ExcecaoValidacao(Erro.ERRO_EDICAO_VEICULO_INATIVO, placaVeiculo, frota.getCnpj(), frota.getNomeFantasia());
         }
         return veiculo;
     }
