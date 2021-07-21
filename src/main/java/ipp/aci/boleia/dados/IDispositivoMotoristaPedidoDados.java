@@ -34,4 +34,12 @@ public interface IDispositivoMotoristaPedidoDados extends IRepositorioBoleiaDado
      * @return Uma lista com os identificadores dos combustiveis
      */
     List<Long> buscarCombustiveisPedidosAnteriores(Long idMotorista, Long idVeiculo);
+
+    /**
+     * Pesquisa pedidos do motorista.
+     *
+     * @param motorista Identificador do Motorista
+     * @return A lista de pedido
+     */
+    List<DispositivoMotoristaPedido> obterPorMotorista(Motorista motorista);
 }
