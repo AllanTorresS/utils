@@ -21,7 +21,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
- * Entidade que mantém o histórico de {@link ParametroNotaFiscalUf}.
+ * Entidade que mantém o histórico de {@link HistoricoParametroNotaFiscal}.
  */
 @Entity
 @Table(name = "HISTORICO_PARAM_NF_UF")
