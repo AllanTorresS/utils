@@ -95,10 +95,8 @@ public class OraclePropostaAntecipacaoDados extends OracleRepositorioBoleiaDados
         }
 
         if(filtro.getPontoDeVenda() != null) {
-            PontoDeVenda ptov = repositorioPv.obterPorCnpjAreaAbastecimento(Long.parseLong(filtro.getPontoDeVenda()));
-            idptov = ptov!=null ? ptov.getId() :null;
             clausulaPontoVenda = " AND PV.id = :idptov ";
-            parametros.add(new ParametroPesquisaIgual("idptov", idptov));
+            parametros.add(new ParametroPesquisaIgual("idptov", filtro.getPontoDeVenda().getId()));
         } else if(usuarioLogado.isRevendedor()) {
             clausulaPontoVenda = " AND PV.id in :idsptov ";
             parametros.add(new ParametroPesquisaIn("idsptov", usuarioLogado.getPontosDeVenda().stream()
