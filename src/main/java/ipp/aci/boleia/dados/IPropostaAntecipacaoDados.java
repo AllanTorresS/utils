@@ -9,7 +9,19 @@ import ipp.aci.boleia.dominio.vo.FiltroPesquisaAntecipacaoVo;
  */
 public interface IPropostaAntecipacaoDados extends IRepositorioBoleiaDados<PropostaAntecipacao> {
 
+    /**
+     * Obtém uma proposta de antecipação dado um identificador da proposta
+     *
+     * @param idProposta id da proposta de antecipação
+     * @return a proposta de antecipação localizada
+     */
     PropostaAntecipacao obterPorIdParceiro(String idProposta);
 
+    /**
+     * Pesquisa antecipação paginado a partir do filtro informado
+     *
+     * @param filtro o filtro da busca
+     * @return uma lista de resultado paginado localizadas
+     */
     ResultadoPaginado<PropostaAntecipacao> pesquisarAntecipacoesReembolso(FiltroPesquisaAntecipacaoVo filtro);
 }
