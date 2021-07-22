@@ -248,21 +248,26 @@ public class VeiculoSd {
      * @param placaVeiculo placa do primeiro veiculo
      * @param segundaPlacaVeiculo placa do segundo veiculo a ser avaliado (opcional)
      * @param motorista motorista a ser validado
+     * @param validarParametros flag para executar validação de parâmetros
      * @throws ExcecaoValidacao quando a verificação não obteve sucesso
      */
-    public void verificarValidadeAbastecimentoPorPlacas(String placaVeiculo, String segundaPlacaVeiculo, Motorista motorista) throws ExcecaoValidacao {
+    public void verificarValidadeAbastecimentoPorPlacas(String placaVeiculo, String segundaPlacaVeiculo, Motorista motorista, boolean validarParametros) throws ExcecaoValidacao {
         Date dataCriacao = utilitarioAmbiente.buscarDataAmbiente() ;
 
         Veiculo primeiroVeiculo = verificarValidadeVeiculoPreAutorizarAbastecimento(placaVeiculo, motorista.getFrota().getId(), motorista.getFrota());
         Veiculo segundoVeiculo = (segundaPlacaVeiculo != null) ? verificarValidadeVeiculoPreAutorizarAbastecimento(segundaPlacaVeiculo, motorista.getFrota().getId(), motorista.getFrota()) : null;
 
         IFluxoAbastecimentoConfig fluxoAbastecimentoConfig = fluxoAbastecimentoSd.obterParaAbastecimento(motorista.getFrota(), motorista, dataCriacao);
-        execucaoParametrosSistemaSd.executarParametros(motorista.getFrota(), GrupoExecucaoParametroSistema.PRE_AUTORIZACAO_PLACA, new PreAutorizacaoPedidoVo(motorista.getFrota(), primeiroVeiculo, dataCriacao));
+        if (validarParametros) {
+            execucaoParametrosSistemaSd.executarParametros(motorista.getFrota(), GrupoExecucaoParametroSistema.PRE_AUTORIZACAO_PLACA, new PreAutorizacaoPedidoVo(motorista.getFrota(), primeiroVeiculo, dataCriacao));
+        }
         if (segundoVeiculo == null){
             fluxoAbastecimentoSd.validarVeiculoConformeFluxoMotorista(fluxoAbastecimentoConfig,primeiroVeiculo);
         } else {
             fluxoAbastecimentoSd.validarVeiculosConformeFluxoMotorista(fluxoAbastecimentoConfig,primeiroVeiculo,segundoVeiculo);
-            execucaoParametrosSistemaSd.executarParametros(motorista.getFrota(), GrupoExecucaoParametroSistema.PRE_AUTORIZACAO_PLACA, new PreAutorizacaoPedidoVo(motorista.getFrota(), segundoVeiculo, dataCriacao));
+            if (validarParametros) {
+                execucaoParametrosSistemaSd.executarParametros(motorista.getFrota(), GrupoExecucaoParametroSistema.PRE_AUTORIZACAO_PLACA, new PreAutorizacaoPedidoVo(motorista.getFrota(), segundoVeiculo, dataCriacao));
+            }
         }
     }
 }
