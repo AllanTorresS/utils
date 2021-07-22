@@ -223,6 +223,7 @@ public final class ChavePermissao {
     public static final String FINANCEIRO_EXPORTAR_XLS                      = SPRING_ROLE_PREFIX + "FINANCEIRO_EXPORTAR_XLS" + SPRING_ROLE_SUFFIX;
     public static final String FINANCEIRO_EXPORTAR_PDF                      = SPRING_ROLE_PREFIX + "FINANCEIRO_EXPORTAR_PDF" + SPRING_ROLE_SUFFIX;
     public static final String FINANCEIRO_ANTECIPAR_RECEBIVEIS              = SPRING_ROLE_PREFIX + "FINANCEIRO_ANTECIPAR_RECEBIVEIS" + SPRING_ROLE_SUFFIX;
+    public static final String CONSULTAR_ANTECIPACAO                        = SPRING_ROLE_PREFIX + "CONSULTAR_ANTECIPACAO" + SPRING_ROLE_SUFFIX;
 
     public static final String DETALHAMENTO_COBRANCA                        = SPRING_ROLE_PREFIX + "DETALHAMENTO_COBRANCA" + SPRING_ROLE_SUFFIX;
 
