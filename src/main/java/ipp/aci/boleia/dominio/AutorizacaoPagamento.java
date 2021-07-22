@@ -505,6 +505,10 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     @ManyToMany(mappedBy = "autorizacoesPagamento", fetch = FetchType.LAZY)
     private List<ReembolsoAntecipado> antecipacoesReembolso;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_AUT_PAG_ASSOCIADA")
+    private AutorizacaoPagamento autorizacaoPagamentoAssociada;
+
     @Transient
     private TipoErroAutorizacaoPagamento tipoErroAutorizacaoPagamento;
 
@@ -1228,6 +1232,14 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
 
     public void setDataPostergacao(Date dataPostergacao) {
         this.dataPostergacao = dataPostergacao;
+    }
+
+    public AutorizacaoPagamento getAutorizacaoPagamentoAssociada() {
+        return autorizacaoPagamentoAssociada;
+    }
+
+    public void setAutorizacaoPagamentoAssociada(AutorizacaoPagamento autorizacaoPagamentoAssociada) {
+        this.autorizacaoPagamentoAssociada = autorizacaoPagamentoAssociada;
     }
 
     @Transient
