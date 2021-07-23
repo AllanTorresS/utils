@@ -650,9 +650,9 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "JOIN ra.autorizacoesPagamento a1 " +
                     "JOIN ra.propostaAntecipacao pa " +
                     "WHERE a.id = a1.id " +
-                    "AND (pa.isAceito IS NULL OR pa.isAceito = 1 )) " +
+                    "AND (pa.isAceito IS NULL OR pa.isAceito = 1) " +
                     "AND pa.status IS NOT NULL AND pa.status <> " + StatusPropostaXP.CANCELED.getValue() +
-                    " AND NOT EXISTS ( " +
+                    ") AND NOT EXISTS ( " +
                     "SELECT 1 " +
                     "FROM AutorizacaoPagamento a2 " +
                     "JOIN a2.notasFiscais nf " +
