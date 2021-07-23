@@ -166,6 +166,7 @@ public class HistoricoFluxoAbastecimentoMotoristaConfig implements IPersistente,
         this.excluido = excluido;
     }
 
+    @Override
     public Motorista getMotorista() {
         return motorista;
     }
@@ -174,6 +175,7 @@ public class HistoricoFluxoAbastecimentoMotoristaConfig implements IPersistente,
         this.motorista = motorista;
     }
 
+    @Override
     public Veiculo getVeiculo() {
         return veiculo;
     }
@@ -182,6 +184,7 @@ public class HistoricoFluxoAbastecimentoMotoristaConfig implements IPersistente,
         this.veiculo = veiculo;
     }
 
+    @Override
     public Veiculo getVeiculoClimatizador() {
         return veiculoClimatizador;
     }
