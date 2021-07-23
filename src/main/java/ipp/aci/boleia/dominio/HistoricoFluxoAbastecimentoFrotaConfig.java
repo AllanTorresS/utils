@@ -25,6 +25,8 @@ import java.util.Date;
 @Table(name = "HIST_FLUXO_ABAS_FROTA")
 public class HistoricoFluxoAbastecimentoFrotaConfig implements IPersistente, IFluxoAbastecimentoConfig {
 
+    private static final long serialVersionUID = 1L;
+
     @Id
     @Column(name = "CD_HIST_FLUXO_FROTA")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_HIST_FLUXO_ABAS_FROTA")
