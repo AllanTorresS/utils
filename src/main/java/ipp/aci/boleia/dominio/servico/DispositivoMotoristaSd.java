@@ -478,26 +478,6 @@ public class DispositivoMotoristaSd {
     }
 
     /**
-     * Verifica se existe algum posto permitido para abastecimentos em um determinado raio de proximidade do posto em questao
-     * @param restricaoPosto O parametro de autorizacao do posto em questao
-     * @param postosHabilitados Lista de postos dentro do raio de proximidade que estejam habilitados
-     * @throws ExcecaoValidacao Quando nao ha nenhum posto autorizado proximo a localizacao informada
-     */
-    private void temPostoPermitidoProximo(FrotaParametroSistema restricaoPosto, List<PontoDeVenda> postosHabilitados) throws ExcecaoValidacao {
-        for (PontoDeVenda pv : postosHabilitados){
-            for (FrotaParametroSistemaPostoAutorizadoAbastecimento pvs : restricaoPosto.getPostosAutorizadosAbastecimento()) {
-                if (pvs.getPontoVenda().getId().equals(pv.getId())) {
-                    return;
-                }
-            }
-        }
-
-        if (restricaoPosto.isAtivo() && restricaoPosto.isRestritivo()) {
-            throw new ExcecaoValidacao(Erro.SEM_PV_PERMITIDO_PROXIMO);
-        }
-    }
-
-    /**
      * Valida o dispositivo para usuários da versão antiga do aplicativo do motorista,
      * onde o JWT está vinculado a um registro de {@link DispositivoMotorista}.
      *
