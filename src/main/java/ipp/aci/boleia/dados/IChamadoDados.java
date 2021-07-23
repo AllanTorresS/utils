@@ -5,6 +5,7 @@ import ipp.aci.boleia.dominio.vo.salesforce.ChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.CriacaoChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.EdicaoChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.FiltroConsultaChamadosVo;
+import ipp.aci.boleia.dominio.vo.salesforce.UploadAnexoChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.ValorPicklistVo;
 import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
 
@@ -130,4 +131,12 @@ public interface IChamadoDados {
      * @param comentario Comentário que será adicionado.
      */
     void adicionarComentario(String idSalesforce, String comentario);
+
+    /**
+     * Adiciona uma lista de anexos em um chamado do salesforce.
+     *
+     * @param idChamado Identificador do chamado no salesforce.
+     * @param anexos Lista com os anexos.
+     */
+    void adicionarAnexos(String idChamado, List<UploadAnexoChamadoVo> anexos);
 }

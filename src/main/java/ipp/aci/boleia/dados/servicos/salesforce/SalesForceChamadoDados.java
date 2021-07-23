@@ -1,5 +1,6 @@
 package ipp.aci.boleia.dados.servicos.salesforce;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import ipp.aci.boleia.dados.IChamadoDados;
 import ipp.aci.boleia.dados.IChamadoSistemaDados;
 import ipp.aci.boleia.dados.IMotivoChamadoDados;
@@ -15,9 +16,9 @@ import ipp.aci.boleia.dominio.vo.salesforce.CriacaoChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.EdicaoChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.FiltroConsultaChamadosVo;
 import ipp.aci.boleia.dominio.vo.salesforce.PicklistVo;
+import ipp.aci.boleia.dominio.vo.salesforce.UploadAnexoChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.ValorPicklistVo;
 import ipp.aci.boleia.util.ConstantesSalesForce;
-import ipp.aci.boleia.util.UtilitarioFormatacao;
 import ipp.aci.boleia.util.UtilitarioJson;
 import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
@@ -35,14 +36,17 @@ import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static ipp.aci.boleia.util.ConstantesSalesForce.CAMPO_ID_CHAMADO_ANEXO;
+import static ipp.aci.boleia.util.ConstantesSalesForce.CAMPO_ID_DOCUMENTO;
+import static ipp.aci.boleia.util.ConstantesSalesForce.CAMPO_VISIBILIDADE_ANEXO;
 import static ipp.aci.boleia.util.ConstantesSalesForce.SOLICITANTE_FROTA;
 import static ipp.aci.boleia.util.ConstantesSalesForce.SOLICITANTE_INTERNO;
 import static ipp.aci.boleia.util.ConstantesSalesForce.SOLICITANTE_REVENDA;
+import static ipp.aci.boleia.util.ConstantesSalesForce.VALOR_CAMPO_VISIBILIDADE_ANEXO;
 import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarCpfApresentacao;
 import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarCnpjApresentacao;
 import static ipp.aci.boleia.util.UtilitarioCalculoData.obterPrimeiroInstanteDia;
@@ -100,8 +104,6 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
             "      Motivo__c=':motivo' AND " +
             "      MotivoSolicitacao__c=':modulo'";
 
-
-    private static final String CAMPO_TOTAL_ITEMS = "totalSize";
     private static final String CAMPO_DONE = "done";
 
     @Value("${salesforce.chamados.authorization.client.id}")
@@ -136,6 +138,15 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
 
     @Value("${salesforce.chamados.adicionarComentario.url}")
     private String urlAdicionarComentario;
+
+    @Value("${salesforce.chamados.adicionarArquivo}")
+    private String urlAdicionarArquivo;
+
+    @Value("${salesforce.chamados.obterArquivo}")
+    private String urlObterArquivo;
+
+    @Value("${salesforce.chamados.vincularArquivo}")
+    private String urlVincularArquivo;
 
     @Autowired
     private IMotivoChamadoDados motivoChamadoDados;
@@ -326,6 +337,77 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
         });
     }
 
+    @Override
+    public void adicionarAnexos(String idChamado, List<UploadAnexoChamadoVo> anexos) {
+        anexos.forEach(anexo -> {
+            String idUpload = realizarUploadAnexo(anexo);
+            String idAnexo = obterIdentificadorDocumentoAnexo(idUpload);
+            vincularAnexoComChamado(idAnexo, idChamado);
+        });
+    }
+
+    /**
+     * Realiza o upload de um anexo para o salesforce.
+     *
+     * @param anexo Objeto com os dados do anexo.
+     * @return Identificador do anexo.
+     */
+    private String realizarUploadAnexo(UploadAnexoChamadoVo anexo) {
+        prepararRequisicao(urlAdicionarArquivo, anexo);
+        return enviarRequisicaoPost(response -> {
+            prepararResposta(response);
+            if(this.statusCode != HttpStatus.CREATED.value()) {
+                LOGGER.error(this.responseBody.toString());
+                throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("chamado.edicao.erro.integracao"));
+            }
+            return this.responseBody.get(ConstantesSalesForce.CAMPO_ID).toString();
+        });
+    }
+
+    /**
+     * Obtém o identificador do documento do anexo utilizado para vincular o anexo com o chamado.
+     *
+     * @param idUpload Identificador obtido na integração de upload do anexo.
+     * @return Identificador do anexo encontrado.
+     */
+    private String obterIdentificadorDocumentoAnexo(String idUpload) {
+        prepararRequisicao(MessageFormat.format(urlObterArquivo, idUpload), null);
+        return enviarRequisicaoGet(response -> {
+            prepararResposta(response);
+            if(this.statusCode != HttpStatus.OK.value() || this.responseBody.get(ConstantesSalesForce.CAMPO_TOTAL_ITEMS).asInt(0) != 1) {
+                LOGGER.error(this.responseBody.toString());
+                throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("chamado.edicao.erro.integracao"));
+            }
+
+            JsonNode registros = this.responseBody.get(ConstantesSalesForce.CAMPO_REGISTROS);
+            return registros.get(0).get(ConstantesSalesForce.CAMPO_ID_DOCUMENTO).toString();
+        });
+    }
+
+    /**
+     * Vincula um anexo com um chamado no salesforce.
+     *
+     * @param idAnexo Identificador do anexo.
+     * @param idChamado Identificador do chamado.
+     */
+    private void vincularAnexoComChamado(String idAnexo, String idChamado) {
+        Map<String, String> request = new HashMap<>();
+        request.put(CAMPO_ID_DOCUMENTO, idAnexo);
+        request.put(CAMPO_ID_CHAMADO_ANEXO, idChamado);
+        request.put(CAMPO_VISIBILIDADE_ANEXO, VALOR_CAMPO_VISIBILIDADE_ANEXO);
+
+        prepararRequisicao(urlVincularArquivo, request);
+        enviarRequisicaoPost(response -> {
+            prepararResposta(response);
+            if(this.statusCode != HttpStatus.CREATED.value()) {
+                LOGGER.error(this.responseBody.toString());
+                throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("chamado.edicao.erro.integracao"));
+            }
+            return true;
+        });
+    }
+
+
     /**
      * Lista os valores de um picklist do salesforce.
      *
@@ -466,7 +548,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
         prepararResposta(response);
         if (this.statusCode == HttpStatus.OK.value()) {
             if (this.responseBody.get(CAMPO_DONE) != null && this.responseBody.get(CAMPO_DONE).asBoolean(false)) {
-                return this.responseBody.get(CAMPO_TOTAL_ITEMS).asInt(0);
+                return this.responseBody.get(ConstantesSalesForce.CAMPO_TOTAL_ITEMS).asInt(0);
             }
         }
         return 0;
