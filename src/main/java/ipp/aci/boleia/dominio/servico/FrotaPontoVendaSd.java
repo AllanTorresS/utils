@@ -1,5 +1,6 @@
 package ipp.aci.boleia.dominio.servico;
 
+import ipp.aci.boleia.dados.IFrotaDados;
 import ipp.aci.boleia.dados.IFrotaPontoVendaDados;
 import ipp.aci.boleia.dados.IHistoricoBloqueioFrotaPontoVendaDados;
 import ipp.aci.boleia.dados.IHistoricoFrotaPontoVendaDados;
@@ -14,6 +15,7 @@ import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.enums.RestricaoVisibilidadePontoVenda;
 import ipp.aci.boleia.dominio.enums.StatusBloqueio;
 import ipp.aci.boleia.dominio.enums.StatusVinculoFrotaPontoVenda;
+import ipp.aci.boleia.util.UtilitarioFormatacao;
 import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.excecao.ExcecaoValidacao;
 import ipp.aci.boleia.util.i18n.Mensagens;
@@ -47,10 +49,13 @@ public class FrotaPontoVendaSd {
     
     @Autowired
     private IPontoDeVendaDados pontoDeVendaDados;
+
+    @Autowired
+    private IFrotaDados frotaDados;
     
     @Autowired
     private PontoDeVendaSd pontoDeVendaSd;
-    
+
     @Autowired
     private IHistoricoPontoVendaDados historicoPontoVendaDados;
 
@@ -217,6 +222,20 @@ public class FrotaPontoVendaSd {
             }
         }
         return false;
+    }
+
+    /**
+     * Realiza validação se um {@link PontoDeVenda} deve estar vinculado com a {@link Frota}
+     * Faz uso de valores básicos (cnpjFrota e codigoPv) para obter Frota e Ponto de venda.
+     *
+     * @param cnpjFrota CNPJ da frota
+     * @param codigoPv o código corporativo do Ponto de venda
+     * @return true caso o posto esteja vinculado com a frota.
+     */
+    public boolean validarCercaParaFrotasVinculadas(String cnpjFrota, String codigoPv) {
+        Frota frota = this.frotaDados.pesquisarPorCnpj(UtilitarioFormatacao.obterLongMascara(cnpjFrota));
+        PontoDeVenda pv = this.pontoDeVendaDados.buscarPorCodigoCorporativo(UtilitarioFormatacao.obterLongMascara(codigoPv));
+        return pv.isVisivelApenasParaFrotasVinculadas() && !this.validarCerca(frota.getId(), pv);
     }
 
     /**
