@@ -75,6 +75,9 @@ public class HistoricoFluxoAbastecimentoMotoristaConfig implements IPersistente,
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataAlteracao;
 
+    /**
+     * Construtor default.
+     */
     public HistoricoFluxoAbastecimentoMotoristaConfig() {}
 
     public HistoricoFluxoAbastecimentoMotoristaConfig(FluxoAbastecimentoMotoristaConfig fluxo, Usuario usuario, Date dataAlteracao) {
