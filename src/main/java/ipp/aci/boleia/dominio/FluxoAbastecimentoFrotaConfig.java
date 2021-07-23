@@ -25,6 +25,8 @@ import java.util.List;
 @Table(name = "FLUXO_ABAS_FROTA")
 public class FluxoAbastecimentoFrotaConfig implements IPersistente, IPertenceFrota, IFluxoAbastecimentoConfig {
 
+    private static final long serialVersionUID = 5839521117393904391L;
+
     @Id
     @Column(name = "CD_FLUXO_FROTA")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_FLUXO_ABAS_FROTA")
