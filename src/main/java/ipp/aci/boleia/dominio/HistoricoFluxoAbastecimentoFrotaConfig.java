@@ -20,6 +20,9 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
+/**
+ * Entidade que guarda o histórico do fluxo de abastecimento da frota.
+ */
 @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 @Entity
 @Table(name = "HIST_FLUXO_ABAS_FROTA")
