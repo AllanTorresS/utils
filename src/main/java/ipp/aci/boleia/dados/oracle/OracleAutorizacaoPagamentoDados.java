@@ -14,6 +14,7 @@ import ipp.aci.boleia.dominio.enums.StatusEdicao;
 import ipp.aci.boleia.dominio.enums.StatusFrota;
 import ipp.aci.boleia.dominio.enums.StatusInteresseAntecipacao;
 import ipp.aci.boleia.dominio.enums.StatusNotaFiscalAbastecimento;
+import ipp.aci.boleia.dominio.enums.StatusPropostaXP;
 import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
 import ipp.aci.boleia.dominio.enums.TipoAutorizacaoPagamento;
 import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
@@ -356,9 +357,12 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
             "     AND NOT EXISTS ( " +
             "         SELECT 1 " +
             "         FROM ReembolsoAntecipado ra " +
+            "         JOIN ra.propostaAntecipacao pa " +
             "         JOIN ra.autorizacoesPagamento a1 " +
             "         WHERE " +
             "             a.id = a1.id " +
+            "             AND (pa.isAceito IS NULL OR pa.isAceito = 1) " +
+            "             AND pa.status IS NOT NULL AND pa.status <> " + StatusPropostaXP.CANCELED.getValue() +
             "     ) AND NOT EXISTS ( " +
             "         SELECT 1 " +
             "         FROM AutorizacaoPagamento a1 " +

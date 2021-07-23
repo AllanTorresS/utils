@@ -4,6 +4,7 @@ package ipp.aci.boleia.dominio;
 import ipp.aci.boleia.dominio.enums.StatusPropostaXP;
 import ipp.aci.boleia.dominio.interfaces.IExclusaoLogica;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
+import ipp.aci.boleia.dominio.interfaces.IPertenceRevendedor;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.Column;
@@ -12,13 +13,16 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Representa a tabela de Proposta Antecipação
@@ -26,7 +30,7 @@ import java.util.Date;
 @Entity
 @Audited
 @Table(name = "PROPOSTA_ANTECIPACAO")
-public class PropostaAntecipacao implements IPersistente, IExclusaoLogica {
+public class PropostaAntecipacao implements IPersistente, IPertenceRevendedor, IExclusaoLogica {
 
     private static final long serialVersionUID = -2504208956728309180L;
 
@@ -67,6 +71,19 @@ public class PropostaAntecipacao implements IPersistente, IExclusaoLogica {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="DT_ATUALIZACAO")
     private Date dataAtualizacao;
+
+    @Lob
+    @Column(name = "DS_TEXTO_CONTRATO")
+    private String textoContrato;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="DT_CIENCIA_ERRO")
+    private Date dataCienciaErro;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_USUARIO")
+    @Column(name="CD_USUARIO_CIENTE")
+    private Usuario usuarioCienteErro;
 
     @Override
     public Long getId() {
@@ -154,6 +171,35 @@ public class PropostaAntecipacao implements IPersistente, IExclusaoLogica {
 
     public void setDataDesembolso(Date dataDesembolso) {
         this.dataDesembolso = dataDesembolso;
+    }
+
+    public String getTextoContrato() {
+        return textoContrato;
+    }
+
+    public void setTextoContrato(String textoContrato) {
+        this.textoContrato = textoContrato;
+    }
+
+    public Date getDataCienciaErro() {
+        return dataCienciaErro;
+    }
+
+    public void setDataCienciaErro(Date dataCienciaErro) {
+        this.dataCienciaErro = dataCienciaErro;
+    }
+
+    public Usuario getUsuarioCienteErro() {
+        return usuarioCienteErro;
+    }
+
+    public void setUsuarioCienteErro(Usuario usuarioCienteErro) {
+        this.usuarioCienteErro = usuarioCienteErro;
+    }
+
+    @Override
+    public List<PontoDeVenda> getPontosDeVenda() {
+        return this.reembolsoAntecipado.getPontosDeVenda();
     }
 
     /**
