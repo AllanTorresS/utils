@@ -3,7 +3,6 @@ package ipp.aci.boleia.dados;
 
 import ipp.aci.boleia.dominio.AutorizacaoPagamento;
 import ipp.aci.boleia.dominio.EmpresaAgregada;
-import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.TransacaoConsolidada;
 import ipp.aci.boleia.dominio.Unidade;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
@@ -322,7 +321,7 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
     /**
      * Obtém abastecimentos com o qual a nota pode ser consolidada
      *
-     * @param cnpjDest CPNJ do destinatário da nota
+     * @param cnpjEmit CPNJ do emitente da nota
      * @param dataEmissao Data de emissão da nota
      * @param valorTotalNota O valor total da nota
      * @return Os abastecimentos encontrados
