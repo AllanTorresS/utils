@@ -20,6 +20,9 @@ import javax.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Entidade que mantém as informações do fluxo de abastecimento da frota.
+ */
 @Audited
 @Entity
 @Table(name = "FLUXO_ABAS_FROTA")
