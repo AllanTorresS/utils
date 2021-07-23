@@ -25,7 +25,7 @@ import java.util.Date;
 @Table(name = "HIST_FLUXO_ABAS_FROTA")
 public class HistoricoFluxoAbastecimentoFrotaConfig implements IPersistente, IFluxoAbastecimentoConfig {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -5552633964580822448L;
 
     @Id
     @Column(name = "CD_HIST_FLUXO_FROTA")
