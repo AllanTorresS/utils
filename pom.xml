@@ -6,7 +6,7 @@
 
     <groupId>ipp.aci.boleia</groupId>
     <artifactId>boleia-dominioUtil</artifactId>
-    <version>4.21.2-1-PROJETOS-2021-SNAPSHOT</version>
+    <version>4.22.0</version>
 
     <properties>
         <main.basedir>${project.basedir}</main.basedir>
