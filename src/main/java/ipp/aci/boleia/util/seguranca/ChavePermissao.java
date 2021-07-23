@@ -234,6 +234,7 @@ public final class ChavePermissao {
 
     public static final String BENEFICIOS_CONSULTAR                       = SPRING_ROLE_PREFIX + "BENEFICIOS_CONSULTAR" + SPRING_ROLE_SUFFIX;
     public static final String BENEFICIOS_DISTRIBUIR                      = SPRING_ROLE_PREFIX + "BENEFICIOS_DISTRIBUIR" + SPRING_ROLE_SUFFIX;
+    public static final String BENEFICOS_COMPRA_DE_CREDITO                = SPRING_ROLE_PREFIX + "BENEFICOS_COMPRA_DE_CREDITO" + SPRING_ROLE_SUFFIX;
 
     // Permissão da API de Frotistas.
     public static final String API_FROTISTA                                         = SPRING_ROLE_PREFIX + "API_FROTISTA" + SPRING_ROLE_SUFFIX;
