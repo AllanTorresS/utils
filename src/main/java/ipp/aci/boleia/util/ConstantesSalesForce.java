@@ -29,7 +29,10 @@ public final class ConstantesSalesForce {
     public static final String STATUS_CANCELAMENTO = "Cancelado";
     public static final String STATUS_AGUARDANDO_ATENDIMENTO = "Aguardando atendimento";
     public static final String STATUS_PENDENTE_EXTERNO = "Pendente Externo";
+    public static final String LOCALIZACAO_CONTEUDO_ANEXO = "S";
+    public static final String VALOR_CAMPO_VISIBILIDADE_ANEXO = "AllUsers";
 
+    public static final String CAMPO_ID = "id";
     public static final String CAMPO_STATUS = "Status";
     public static final String CAMPO_TIPO = "Type";
     public static final String CAMPO_SISTEMA_ORIGEM = "ClassificacaoPerfil__c";
@@ -40,6 +43,11 @@ public final class ConstantesSalesForce {
     public static final String CAMPO_MOTIVO_CANCELAMENTO_SEM_RETORNO= "Sem Retorno";
     public static final String CAMPO_CORPO_COMENTARIO = "CommentBody";
     public static final String CAMPO_CHAMADO_COMENTARIO = "ParentId";
+    public static final String CAMPO_TOTAL_ITEMS = "totalSize";
+    public static final String CAMPO_REGISTROS = "records";
+    public static final String CAMPO_ID_DOCUMENTO = "ContentDocumentId";
+    public static final String CAMPO_ID_CHAMADO_ANEXO = "LinkedEntityId";
+    public static final String CAMPO_VISIBILIDADE_ANEXO = "Visibility";
 
     /**
      * Impede instanciacao
