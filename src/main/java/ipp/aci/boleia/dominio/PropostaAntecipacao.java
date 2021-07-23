@@ -81,8 +81,7 @@ public class PropostaAntecipacao implements IPersistente, IPertenceRevendedor, I
     private Date dataCienciaErro;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CD_USUARIO")
-    @Column(name="CD_USUARIO_CIENTE")
+    @JoinColumn(name = "CD_USUARIO_CIENTE", referencedColumnName = "CD_USUARIO")
     private Usuario usuarioCienteErro;
 
     @Override
