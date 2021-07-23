@@ -1,6 +1,6 @@
 package ipp.aci.boleia.dados.oracle;
 
-import ipp.aci.boleia.dados.IHistoricoFrotaParametroSistemaPostoAutorizadoAbastecimento;
+import ipp.aci.boleia.dados.IHistoricoFrotaParametroSistemaPostoAutorizadoAbastecimentoDados;
 import ipp.aci.boleia.dominio.HistoricoFrotaParametroSistemaPostoAutorizadoAbastecimento;
 import org.springframework.stereotype.Repository;
 
@@ -10,9 +10,9 @@ import org.springframework.stereotype.Repository;
  * @author felipe.chaves
  */
 @Repository
-public class OracleHistoricoFrotaParametroSistemaPostoAutorizadoAbastecimento extends OracleRepositorioBoleiaDados<HistoricoFrotaParametroSistemaPostoAutorizadoAbastecimento> implements IHistoricoFrotaParametroSistemaPostoAutorizadoAbastecimento {
+public class OracleHistoricoFrotaParametroSistemaPostoAutorizadoAbastecimentoDados extends OracleRepositorioBoleiaDados<HistoricoFrotaParametroSistemaPostoAutorizadoAbastecimento> implements IHistoricoFrotaParametroSistemaPostoAutorizadoAbastecimentoDados {
 
-    public OracleHistoricoFrotaParametroSistemaPostoAutorizadoAbastecimento() {
+    public OracleHistoricoFrotaParametroSistemaPostoAutorizadoAbastecimentoDados() {
         super(HistoricoFrotaParametroSistemaPostoAutorizadoAbastecimento.class);
     }
 }

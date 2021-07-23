@@ -11,12 +11,12 @@ import org.springframework.stereotype.Repository;
  * @author rafael.laranjeiro
  */
 @Repository
-public class OracleHistoricoSaldoVeiculo extends OracleRepositorioBoleiaDados<HistoricoSaldoVeiculo> implements IHistoricoSaldoVeiculosDados {
+public class OracleHistoricoSaldoVeiculoDados extends OracleRepositorioBoleiaDados<HistoricoSaldoVeiculo> implements IHistoricoSaldoVeiculosDados {
 
     /**
      * Construtor do repositório.
      */
-    public OracleHistoricoSaldoVeiculo() {
+    public OracleHistoricoSaldoVeiculoDados() {
         super(HistoricoSaldoVeiculo.class);
     }
 }
