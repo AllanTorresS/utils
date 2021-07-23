@@ -7,7 +7,7 @@ import ipp.aci.boleia.dominio.pesquisa.comum.FiltroBasePeriodoPaginado;
  */
 public class FiltroPesquisaAntecipacaoVo extends FiltroBasePeriodoPaginado {
     private EnumVo statusAntecipacao;
-    private String pontoDeVenda;
+    private EntidadeVo pontoDeVenda;
 
     public EnumVo getStatusAntecipacao() {
         return statusAntecipacao;
@@ -17,11 +17,11 @@ public class FiltroPesquisaAntecipacaoVo extends FiltroBasePeriodoPaginado {
         this.statusAntecipacao = statusAntecipacao;
     }
 
-    public String getPontoDeVenda() {
+    public EntidadeVo getPontoDeVenda() {
         return pontoDeVenda;
     }
 
-    public void setPontoDeVenda(String pontoDeVenda) {
+    public void setPontoDeVenda(EntidadeVo pontoDeVenda) {
         this.pontoDeVenda = pontoDeVenda;
     }
 }
