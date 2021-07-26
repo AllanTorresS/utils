@@ -12,7 +12,6 @@ import ipp.aci.boleia.dominio.AutorizacaoPagamento;
 import ipp.aci.boleia.dominio.DispositivoMotorista;
 import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.FrotaParametroSistema;
-import ipp.aci.boleia.dominio.FrotaParametroSistemaPostoAutorizadoAbastecimento;
 import ipp.aci.boleia.dominio.ItemAutorizacaoPagamento;
 import ipp.aci.boleia.dominio.Motorista;
 import ipp.aci.boleia.dominio.PontoDeVenda;
