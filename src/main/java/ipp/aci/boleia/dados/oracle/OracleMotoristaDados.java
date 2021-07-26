@@ -5,6 +5,7 @@ import ipp.aci.boleia.dominio.Motorista;
 import ipp.aci.boleia.dominio.enums.ClassificacaoAgregado;
 import ipp.aci.boleia.dominio.enums.PeriodoVencimentoCnh;
 import ipp.aci.boleia.dominio.enums.StatusAtivacao;
+import ipp.aci.boleia.dominio.enums.StatusExcluido;
 import ipp.aci.boleia.dominio.enums.StatusFrota;
 import ipp.aci.boleia.dominio.enums.UtilizaAppMotorista;
 import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
@@ -30,6 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -79,6 +81,15 @@ public class OracleMotoristaDados extends OracleRepositorioBoleiaDados<Motorista
             "WHERE (ap.transacaoConsolidadaPostergada.id = :idConsolidado OR ap.transacaoConsolidada.id = :idConsolidado) AND " +
             "       upper(m.nome) LIKE :nome AND " +
             "       m.excluido = false";
+
+    private  static final String LISTA_MOTORISTAS_EXCLUIDOS =
+            "SELECT m FROM Motorista m " +
+                "WHERE m.excluido = true";
+
+    private  static final String OBTEM_MOTORISTA_EXCLUIDO_POR_ID =
+            "SELECT m FROM Motorista m " +
+                "WHERE m.excluido = true AND " +
+                "m.id = :idMotorista";
 
     @Autowired
     private UtilitarioAmbiente utilitarioAmbiente;
@@ -394,6 +405,21 @@ public class OracleMotoristaDados extends OracleRepositorioBoleiaDados<Motorista
     public List<Motorista> obterMotoristasInativosComAbastecimento(Integer diasDeVerificacao) {
         ParametroPesquisaIgual parametroDiasDeVerificacao = new ParametroPesquisaIgual("diasDeVerificacao", UtilitarioCalculoData.adicionarDiasData(utilitarioAmbiente.buscarDataAmbiente(), -diasDeVerificacao));
         return pesquisar(null, LISTAR_MOTORISTAS_INATIVOS_COM_ABASTECIMENTO, parametroDiasDeVerificacao).getRegistros();
+    }
+
+    @Override
+    public List<Motorista> obterMotoristasExcluidos() {
+       Query query = getGerenciadorDeEntidade().createQuery(LISTA_MOTORISTAS_EXCLUIDOS);
+       return query.getResultList();
+    }
+
+    @Override
+    public Motorista obterMotoristaExcluidoPorId(Long idMotorista) {
+        Query query = getGerenciadorDeEntidade().createQuery(OBTEM_MOTORISTA_EXCLUIDO_POR_ID);
+        query.setParameter("idMotorista", idMotorista);
+        query.setMaxResults(1);
+        List<Motorista> motoristas = query.getResultList();
+        return motoristas.isEmpty() ? null : motoristas.get(0);
     }
 
 }

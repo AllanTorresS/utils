@@ -47,6 +47,9 @@ public class OracleNotificacaoUsuarioDados extends OracleRepositorioBoleiaDados<
             "FROM ipp.aci.boleia.dominio.Notificacao n " +
             "WHERE n.dataEnvio <= :dataLimite ) ";
 
+    private static final String EXCLUIR_NOTIFICACOES_POR_USUARIO = "DELETE FROM ipp.aci.boleia.dominio.NotificacaoUsuario AS nu " +
+            "WHERE nu.usuario.id = :idUsuario ";
+
     @Autowired
     private UtilitarioAmbiente utilitarioAmbiente;
 
@@ -146,6 +149,13 @@ public class OracleNotificacaoUsuarioDados extends OracleRepositorioBoleiaDados<
     public void excluirNotificacoesAteUmaDataLimite(Date dataLimite) {
         Query query = getGerenciadorDeEntidade().createQuery(EXCLUIR_NOTIFICACOES_POR_DATA_LIMITE);
         query.setParameter("dataLimite", dataLimite);
+        query.executeUpdate();
+    }
+
+    @Override
+    public void excluirNotificacoesPorUsuario(Usuario usuario) {
+        Query query = getGerenciadorDeEntidade().createQuery(EXCLUIR_NOTIFICACOES_POR_USUARIO);
+        query.setParameter("idUsuario", usuario.getId());
         query.executeUpdate();
     }
 }

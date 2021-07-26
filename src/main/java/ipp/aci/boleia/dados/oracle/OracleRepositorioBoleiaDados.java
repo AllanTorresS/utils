@@ -225,15 +225,19 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
         }
     }
 
+    @Override
+    public void exluirPermanentementerSemIsolamentoDeDados(Long... ids) {
+        excluirPorIds(false, true, ids);
+    }
 
     @Override
     public void excluir(Long... ids) {
-        excluirPorIds(true, ids);
+        excluirPorIds(true, false, ids);
     }
 
     @Override
     public void excluirSemIsolamentoDeDados(Long... ids) {
-        excluirPorIds(false, ids);
+        excluirPorIds(false, false, ids);
     }
 
     /**
@@ -242,7 +246,7 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
      * @param ids                os identificadores dos registros a serem removidos
      * @param comIsolamentoDados True caso se deseje isolamento de dados
      */
-    private void excluirPorIds(Boolean comIsolamentoDados, Long... ids) {
+    private void excluirPorIds(Boolean comIsolamentoDados, Boolean permanentemente, Long... ids) {
         for (Long id : ids) {
             T t = getGerenciadorDeEntidade().find(getClassePersistente(), id);
             if (t == null) {
@@ -251,10 +255,10 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
             if (comIsolamentoDados) {
                 UtilitarioIsolamentoInformacoes.exigirPermissaoAcesso(t, ambiente.getUsuarioLogado());
             }
-            if (t instanceof IExclusaoLogica) {
+            if (t instanceof IExclusaoLogica && !permanentemente) {
                 ((IExclusaoLogica) t).setExcluido(true);
                 getGerenciadorDeEntidade().merge(t);
-            } else if (t instanceof IExclusaoLogicaComData) {
+            } else if (t instanceof IExclusaoLogicaComData && !permanentemente) {
                 ((IExclusaoLogicaComData) t).setDataExclusao(new Date());
                 getGerenciadorDeEntidade().merge(t);
             } else {

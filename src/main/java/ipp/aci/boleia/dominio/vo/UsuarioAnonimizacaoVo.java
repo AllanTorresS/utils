@@ -50,6 +50,7 @@ public class UsuarioAnonimizacaoVo {
     private List<Long> idFrotasAssessoradasConsultorFarmerLeve;
     private Date dataCriacao;
     private Integer status;
+    private List<DocumentoAceiteAnonimizacaoVo> documentoAceiteAnonimizacaoVo;
 
     /**
      * Construtor básico para serialização JSON
@@ -66,7 +67,6 @@ public class UsuarioAnonimizacaoVo {
         if (usuario == null) {
             return;
         }
-
         this.id = usuario.getId();
         this.nome = usuario.getNome();
         this.tipoPerfilId = usuario.getTipoPerfil() != null ? usuario.getTipoPerfil().getId() : null;
@@ -409,5 +409,13 @@ public class UsuarioAnonimizacaoVo {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public List<DocumentoAceiteAnonimizacaoVo> getDocumentoAceiteAnonimizacaoVo() {
+        return documentoAceiteAnonimizacaoVo;
+    }
+
+    public void setDocumentoAceiteAnonimizacaoVo(List<DocumentoAceiteAnonimizacaoVo> documentoAceiteAnonimizacaoVo) {
+        this.documentoAceiteAnonimizacaoVo = documentoAceiteAnonimizacaoVo;
     }
 }

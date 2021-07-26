@@ -7,6 +7,7 @@ import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.enums.DocumentoTipo;
 import ipp.aci.boleia.dominio.enums.StatusAtivacao;
 import ipp.aci.boleia.dominio.enums.TipoPerfilUsuario;
+import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import org.springframework.stereotype.Repository;
@@ -62,5 +63,10 @@ public class OracleDocumentoAceiteDados extends OracleRepositorioBoleiaDados<Doc
     public DocumentoAceite obterAceite(Documento documento, Usuario usuario) {
         return pesquisarUnico(new ParametroPesquisaIgual("documento.id", documento.getId()),
                 new ParametroPesquisaIgual("usuario.id", usuario.getId()));
+    }
+
+    @Override
+    public List<DocumentoAceite> obterPorUsuario(Usuario usuario) {
+        return this.pesquisar(new ParametroOrdenacaoColuna(), new ParametroPesquisa[]{new ParametroPesquisaIgual("usuario", usuario)});
     }
 }

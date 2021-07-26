@@ -56,5 +56,59 @@ public class MotoristaEnvioEmailVo{
         this.dataExclusao = dataExclusao;
     }
 
+    public Long getIdFrota() {
+        return idFrota;
+    }
 
+    public void setIdFrota(Long idFrota) {
+        this.idFrota = idFrota;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public Integer getDddTelefoneCelular() {
+        return dddTelefoneCelular;
+    }
+
+    public void setDddTelefoneCelular(Integer dddTelefoneCelular) {
+        this.dddTelefoneCelular = dddTelefoneCelular;
+    }
+
+    public Integer getTelefoneCelular() {
+        return telefoneCelular;
+    }
+
+    public void setTelefoneCelular(Integer telefoneCelular) {
+        this.telefoneCelular = telefoneCelular;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Date getDataCriacao() {
+        return dataCriacao;
+    }
+
+    public void setDataCriacao(Date dataCriacao) {
+        this.dataCriacao = dataCriacao;
+    }
+
+    public Date getDataExclusao() {
+        return dataExclusao;
+    }
+
+    public void setDataExclusao(Date dataExclusao) {
+        this.dataExclusao = dataExclusao;
+    }
 }

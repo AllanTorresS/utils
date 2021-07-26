@@ -75,4 +75,9 @@ public class OracleUsuarioMotoristaDados extends OracleRepositorioBoleiaDados<Us
 
         return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
+
+    @Override
+    public List<UsuarioMotorista> obterUsuariosMotoristas(Usuario usuario) {
+        return this.pesquisar(new ParametroOrdenacaoColuna(), new ParametroPesquisa[]{new ParametroPesquisaIgual("usuario", usuario)});
+    }
 }
