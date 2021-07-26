@@ -4,8 +4,11 @@ import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.interfaces.IExclusaoLogica;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
+import org.hibernate.annotations.Formula;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -32,6 +35,17 @@ import java.util.List;
 @Entity
 @Table(name = "BENEFICIARIO")
 public class Beneficiario implements IPersistente, IExclusaoLogica, IPertenceFrota {
+
+    /**
+     * Formula utilizada para permitir a ordenação direta pelo "Possui Saldo".
+     */
+    private static final String POSSUI_SALDO_FORMULA =
+            "(SELECT " +
+            "   CASE WHEN CB.VA_SALDO > 0 THEN 1 ELSE 0 END " +
+            "FROM " +
+            "   BOLEIA_SCHEMA.CONTA_BENEFICIARIO CB " +
+            "WHERE " +
+            "   CB.CD_BENEFICIARIO = CD_BENEFICIARIO)";
 
     @Id
     @Column(name = "CD_BENEFICIARIO")
@@ -81,6 +95,11 @@ public class Beneficiario implements IPersistente, IExclusaoLogica, IPertenceFro
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "beneficiario")
     private DistribuicaoAutomatica distribuicaoAutomatica;
+
+    @NotAudited
+    @Formula(POSSUI_SALDO_FORMULA)
+    @Basic(fetch = FetchType.LAZY)
+    private Boolean possuiSaldo;
 
     @Override
     public Long getId() {
@@ -180,6 +199,14 @@ public class Beneficiario implements IPersistente, IExclusaoLogica, IPertenceFro
 
     public void setDistribuicaoAutomatica(DistribuicaoAutomatica distribuicaoAutomatica) {
         this.distribuicaoAutomatica = distribuicaoAutomatica;
+    }
+
+    public Boolean getPossuiSaldo() {
+        return possuiSaldo;
+    }
+
+    public void setPossuiSaldo(Boolean possuiSaldo) {
+        this.possuiSaldo = possuiSaldo;
     }
 
     @Transient

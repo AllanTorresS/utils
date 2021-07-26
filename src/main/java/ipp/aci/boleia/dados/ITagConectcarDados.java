@@ -37,4 +37,12 @@ public interface ITagConectcarDados extends IRepositorioBoleiaDados<TagConectcar
      * @return tag encontrada
      */
     TagConectcar obtemPrimeiraTagAtivaPorFrota(Long idFrota);
+
+    /**
+     * Obtem a tag pelo Id
+     *
+     * param idTag código identificador da TAG
+     * @return tag encontrada
+     */
+    TagConectcar obterTagPorId(Long idTag);
 }
