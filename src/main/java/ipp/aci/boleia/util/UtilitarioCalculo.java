@@ -14,6 +14,8 @@ import java.util.stream.Stream;
 public final class UtilitarioCalculo {
 
     private static final int RAIO_TERRA = 6371;
+    private static final float BASE_CALCULO_BASE64 = 0.75f;
+    private static final float VALOR_1_MB = (1024 * 1024);
 
 	/**
 	 * Impede a instanciacao e a heranca
@@ -128,5 +130,24 @@ public final class UtilitarioCalculo {
         double distanciaGraus = 2 * Math.atan2(Math.sqrt(distanciaRadianos), Math.sqrt(1 - distanciaRadianos));
         double distanciaMetros = Math.pow(RAIO_TERRA * distanciaGraus * 1000, 2);
         return BigDecimal.valueOf(Math.sqrt(distanciaMetros)).setScale(2, RoundingMode.HALF_UP);
+    }
+
+    /**
+     * Calcula o tamanho em bytes de um arquivo em base64.
+     * @param base64 Conteúdo base64.
+     * @return Tamanho do conteúdo em bytes.
+     */
+    public static float calcularTamanhoBase64(String base64) {
+        return (base64.length() * BASE_CALCULO_BASE64) - base64.chars().filter(ch -> ch == '=').count();
+    }
+
+    /**
+     * Converte um valor em bytes para megabytes.
+     *
+     * @param bytes Valor em bytes.
+     * @return Valor em megabytes.
+     */
+    public static long converterBytesParaMB(float bytes) {
+        return (long) (bytes / VALOR_1_MB);
     }
 }

@@ -360,7 +360,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
                 LOGGER.error(this.responseBody.toString());
                 throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("chamado.edicao.erro.integracao"));
             }
-            return this.responseBody.get(ConstantesSalesForce.CAMPO_ID).toString();
+            return this.responseBody.get(ConstantesSalesForce.CAMPO_ID).asText();
         });
     }
 
@@ -380,7 +380,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
             }
 
             JsonNode registros = this.responseBody.get(ConstantesSalesForce.CAMPO_REGISTROS);
-            return registros.get(0).get(ConstantesSalesForce.CAMPO_ID_DOCUMENTO).toString();
+            return registros.get(0).get(ConstantesSalesForce.CAMPO_ID_DOCUMENTO).asText();
         });
     }
 
