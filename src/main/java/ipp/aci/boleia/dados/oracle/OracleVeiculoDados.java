@@ -9,6 +9,7 @@ import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgual;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDiferente;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaFetch;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgualIgnoreCase;
@@ -225,6 +226,8 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
 
         if(filtro.getApenasClimatizador()){
             parametros.add(new ParametroPesquisaIgual("subtipoVeiculo.descricao", "Climatizador"));
+        } else {
+            parametros.add(new ParametroPesquisaDiferente("subtipoVeiculo.descricao", "Climatizador"));
         }
         if(filtro.getApenasHabilitadoAbastecerDuasPlacas()){
             parametros.add(new ParametroPesquisaIgual("habilitadoAbastecerDuasPlacas", true));
