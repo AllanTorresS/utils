@@ -35,6 +35,8 @@ public class MundipaggCheckoutPedidoVo {
     @JsonProperty("success_url")
     private String successUrl;
 
+    private MundipaggPixCheckoutPedidoVo pix;
+
     public MundipaggCheckoutPedidoVo() {
 
     }
@@ -56,6 +58,7 @@ public class MundipaggCheckoutPedidoVo {
         customerEditable = false;
         // cinco dias, em minutos
         expiresIn = 5 * 24 * 60;
+        pix = new MundipaggPixCheckoutPedidoVo();
         successUrl = "/";
     }
 
