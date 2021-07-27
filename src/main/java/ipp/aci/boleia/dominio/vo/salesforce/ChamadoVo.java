@@ -1,6 +1,12 @@
 package ipp.aci.boleia.dominio.vo.salesforce;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
+import ipp.aci.boleia.util.UtilitarioJson;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * VO com as informações de um chamado do salesforce.
@@ -36,6 +42,7 @@ public class ChamadoVo {
     private String assunto;
     @JsonProperty("Description")
     private String descricao;
+    private List<ComentarioChamadoVo> comentarios;
 
     /**
      * Construtor default
@@ -154,5 +161,30 @@ public class ChamadoVo {
 
     public void setDescricao(String descricao) {
         this.descricao = descricao;
+    }
+
+    public List<ComentarioChamadoVo> getComentarios() {
+        return comentarios;
+    }
+
+    public void setComentarios(List<ComentarioChamadoVo> comentarios) {
+        this.comentarios = comentarios;
+    }
+
+    /**
+     * Realiza o mapeamento dos comentários do chamado.
+     *
+     * @param caseComments Mapa com os comentários.
+     */
+    @JsonProperty("CaseComments")
+    private void mapearComentarios(Map<String, Object> caseComments) {
+        this.comentarios = new ArrayList<>();
+        if(caseComments != null) {
+            List<Map<String, Object>> records = (ArrayList) caseComments.get("records");
+            records.forEach(comentario -> {
+                ComentarioChamadoVo comentarioVo = UtilitarioJson.toObject(UtilitarioJson.toJSON(comentario), ComentarioChamadoVo.class);
+                this.comentarios.add(comentarioVo);
+            });
+        }
     }
 }

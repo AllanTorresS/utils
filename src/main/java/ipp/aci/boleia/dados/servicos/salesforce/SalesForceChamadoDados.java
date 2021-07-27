@@ -81,13 +81,39 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
                     CLAUSULA_DATA_ABERTURA;
 
     private static final String OBTER_CHAMADO_POR_ID =
-            "SELECT Id,CreatedDate,CNPJPosto__c,CNPJFrota__c,Solicitante__c,CaseNumber,Status," +
-            "       Priority,Type,ClassificacaoPerfil__c,Motivo__c,MotivoSolicitacao__c,Subject,Description " +
+            "SELECT Id," +
+            "       CreatedDate," +
+            "       CNPJPosto__c," +
+            "       CNPJFrota__c," +
+            "       Solicitante__c," +
+            "       CaseNumber," +
+            "       Status," +
+            "       Priority," +
+            "       Type," +
+            "       ClassificacaoPerfil__c," +
+            "       Motivo__c," +
+            "       MotivoSolicitacao__c," +
+            "       Subject," +
+            "       Description," +
+            "       (SELECT Id,CommentBody,CreatedBy.Name,CreatedBy.Email,CreatedDate FROM Casecomments) " +
             "FROM Case " +
             "WHERE Id=':idSalesforce'";
 
     private static final String CONSULTAR_CHAMADOS =
-            "SELECT Id,CaseNumber,CreatedDate,CNPJPosto__c,CNPJFrota__c,Solicitante__c,Motivo__c,Status,ClassificacaoPerfil__c,Type,Description,MotivoSolicitacao__c,Subject " +
+            "SELECT Id," +
+            "       CaseNumber," +
+            "       CreatedDate," +
+            "       CNPJPosto__c," +
+            "       CNPJFrota__c," +
+            "       Solicitante__c," +
+            "       Motivo__c," +
+            "       Status," +
+            "       ClassificacaoPerfil__c," +
+            "       Type," +
+            "       Description," +
+            "       MotivoSolicitacao__c," +
+            "       Subject," +
+            "       (SELECT Id,CommentBody,CreatedBy.Name,CreatedBy.Email,CreatedDate FROM Casecomments) " +
             FROM_CONSULTAR_CHAMADOS +
             ORDER_BY_CONSULTA_CHAMADOS +
             "LIMIT :limit OFFSET :offset";
@@ -360,7 +386,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
                 LOGGER.error(this.responseBody.toString());
                 throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("chamado.edicao.erro.integracao"));
             }
-            return this.responseBody.get(ConstantesSalesForce.CAMPO_ID).toString();
+            return this.responseBody.get(ConstantesSalesForce.CAMPO_ID).asText();
         });
     }
 
@@ -380,7 +406,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
             }
 
             JsonNode registros = this.responseBody.get(ConstantesSalesForce.CAMPO_REGISTROS);
-            return registros.get(0).get(ConstantesSalesForce.CAMPO_ID_DOCUMENTO).toString();
+            return registros.get(0).get(ConstantesSalesForce.CAMPO_ID_DOCUMENTO).asText();
         });
     }
 
