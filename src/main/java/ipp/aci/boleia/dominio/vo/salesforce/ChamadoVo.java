@@ -171,6 +171,11 @@ public class ChamadoVo {
         this.comentarios = comentarios;
     }
 
+    /**
+     * Realiza o mapeamento dos comentários do chamado.
+     *
+     * @param caseComments Mapa com os comentários.
+     */
     @JsonProperty("CaseComments")
     private void mapearComentarios(Map<String, Object> caseComments) {
         this.comentarios = new ArrayList<>();
