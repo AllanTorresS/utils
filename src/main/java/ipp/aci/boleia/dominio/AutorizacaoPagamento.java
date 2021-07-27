@@ -1840,9 +1840,19 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
 
     @Transient
     public boolean possuiAntecipacaoReembolsoRealizada() {
+        return possuiAntecipacaoSolucaoRealizada() || possuiAntecipacaoParceriaRealizada();
+    }
+
+    @Transient 
+    public boolean possuiAntecipacaoParceriaRealizada() {
         return antecipacoesReembolso != null && antecipacoesReembolso.stream()
-                .anyMatch(r -> (r.getTipoAntecipacao().equals(TipoAntecipacao.SOLUCAO) && r.isIntegracaoRealizada()) ||
-                        (r.getTipoAntecipacao().equals(TipoAntecipacao.PARCEIRO_XP)));
+                .anyMatch(r -> r.getTipoAntecipacao().equals(TipoAntecipacao.PARCEIRO_XP) && r.isIntegracaoRealizada());
+    }
+
+    @Transient 
+    public boolean possuiAntecipacaoSolucaoRealizada() {
+        return antecipacoesReembolso != null && antecipacoesReembolso.stream()
+        .anyMatch(r -> (r.getTipoAntecipacao().equals(TipoAntecipacao.SOLUCAO) && r.isIntegracaoRealizada()));
     }
 
     /**
