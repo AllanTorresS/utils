@@ -117,5 +117,9 @@ public class MundipaggCheckoutPedidoVo {
     public void setSuccessUrl(String successUrl) {
         this.successUrl = successUrl;
     }
+
+    public MundipaggPixCheckoutPedidoVo getPix() { return pix; }
+
+    public void setPix(MundipaggPixCheckoutPedidoVo pix) { this.pix = pix; }
 }
  
