@@ -48,7 +48,7 @@ public class MundipaggCheckoutPedidoVo {
      */
     public MundipaggCheckoutPedidoVo(Frota frota, Date vencimentoBoleto) {
         List<String> paymentMethods = new ArrayList<String>();
-        paymentMethods.add(PIX_PAYMENT_METHOD);
+        //paymentMethods.add(PIX_PAYMENT_METHOD);
         paymentMethods.add(BOLETO_PAYMENT_METHOD);
 
         acceptedPaymentMethods = paymentMethods;
