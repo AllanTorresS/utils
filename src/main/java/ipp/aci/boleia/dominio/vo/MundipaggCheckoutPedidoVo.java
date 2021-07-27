@@ -3,7 +3,7 @@ package ipp.aci.boleia.dominio.vo;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ipp.aci.boleia.dominio.Frota;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -13,6 +13,7 @@ import java.util.List;
 public class MundipaggCheckoutPedidoVo {
 
     private static final String BOLETO_PAYMENT_METHOD = "boleto";
+    private static final String PIX_PAYMENT_METHOD = "pix";
 
     @JsonProperty("accepted_payment_methods")
     private List<String> acceptedPaymentMethods;
@@ -44,7 +45,11 @@ public class MundipaggCheckoutPedidoVo {
      * @param vencimentoBoleto A data de vencimetno do boleto
      */
     public MundipaggCheckoutPedidoVo(Frota frota, Date vencimentoBoleto) {
-        acceptedPaymentMethods = Collections.singletonList(BOLETO_PAYMENT_METHOD);
+        List<String> paymentMethods = new ArrayList<String>();
+        paymentMethods.add(PIX_PAYMENT_METHOD);
+        paymentMethods.add(BOLETO_PAYMENT_METHOD);
+
+        acceptedPaymentMethods = paymentMethods;
         billingAddressEditable = false;
         billingAddress = new MundipaggEnderecoVo(frota);
         boleto = new MundipaggBoletoCheckoutPedidoVo(vencimentoBoleto);
