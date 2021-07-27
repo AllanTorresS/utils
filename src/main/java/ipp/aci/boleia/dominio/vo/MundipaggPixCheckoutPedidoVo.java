@@ -7,21 +7,21 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class MundipaggPixCheckoutPedidoVo {
 
-    @JsonProperty("expiresIn")
-    private String expiresIn;
+    @JsonProperty("expires_in")
+    private Integer expiresIn;
 
     /**
      * Construtor do boleto Mundipagg
      */
     public MundipaggPixCheckoutPedidoVo() {
-        expiresIn = "60";
+        expiresIn = 60;
     }
 
-    public void setExpiresIn(String expiresIn) {
+    public void setExpiresIn(Integer expiresIn) {
         this.expiresIn = expiresIn;
     }
 
-    public String getExpiresIn() {
+    public Integer getExpiresIn() {
         return expiresIn;
     }
 }
