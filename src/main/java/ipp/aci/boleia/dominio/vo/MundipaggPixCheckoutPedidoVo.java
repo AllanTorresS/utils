@@ -14,7 +14,7 @@ public class MundipaggPixCheckoutPedidoVo {
      * Construtor do boleto Mundipagg
      */
     public MundipaggPixCheckoutPedidoVo() {
-        expiresIn = 60;
+        expiresIn = 60 * 60;
     }
 
     public void setExpiresIn(Integer expiresIn) {
