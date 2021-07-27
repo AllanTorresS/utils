@@ -764,6 +764,15 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     public ReembolsoAntecipado getAntecipacaoRealizada() {
         if(antecipacoes != null) {
             return antecipacoes.stream().filter(antecipacao -> StatusIntegracaoReembolsoJde.REALIZADO.getValue()
+                    .equals(antecipacao.getStatusIntegracao())).findFirst().orElse(null);
+        }
+        return null;
+    }
+
+    @Transient
+    public ReembolsoAntecipado getAntecipacaoSolucaoRealizada() {
+        if(antecipacoes != null) {
+            return antecipacoes.stream().filter(antecipacao -> StatusIntegracaoReembolsoJde.REALIZADO.getValue()
                     .equals(antecipacao.getStatusIntegracao()) && antecipacao.getTipoAntecipacao().equals(TipoAntecipacao.SOLUCAO)).findFirst().orElse(null);
         }
         return null;
@@ -782,7 +791,16 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
 
     @Transient
     public Boolean possuiAntecipacaoRealizada() {
-        return getAntecipacaoRealizada() != null;
+        return possuiAntecipacaoSolucaoRealizada() || possuiAntecipacaoParceriaRealizada();
+    }
+
+    @Transient
+    public Boolean possuiAntecipacaoSolucaoRealizada() {return getAntecipacaoSolucaoRealizada() != null; }
+
+    @Transient
+    public Boolean possuiAntecipacaoParceriaRealizada() {
+        return getAntecipacoesParceria() != null && getAntecipacoesParceria().stream()
+            .anyMatch(antecipacao -> StatusIntegracaoReembolsoJde.REALIZADO.getValue().equals(antecipacao.getStatusIntegracao()));
     }
 
     @Transient

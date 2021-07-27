@@ -84,6 +84,14 @@ public class PropostaAntecipacao implements IPersistente, IPertenceRevendedor, I
     @JoinColumn(name = "CD_USUARIO_CIENTE", referencedColumnName = "CD_USUARIO")
     private Usuario usuarioCienteErro;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_COBRANCA_XP")
+    private CobrancaXP cobrancaXp;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_REEMBOLSO_XP")
+    private ReembolsoXP reembolsoXp;
+
     @Override
     public Long getId() {
         return this.id;
@@ -194,6 +202,22 @@ public class PropostaAntecipacao implements IPersistente, IPertenceRevendedor, I
 
     public void setUsuarioCienteErro(Usuario usuarioCienteErro) {
         this.usuarioCienteErro = usuarioCienteErro;
+    }
+
+    public CobrancaXP getCobrancaXp() {
+        return cobrancaXp;
+    }
+
+    public void setCobrancaXp(CobrancaXP cobrancaXp) {
+        this.cobrancaXp = cobrancaXp;
+    }
+
+    public ReembolsoXP getReembolsoXp() {
+        return reembolsoXp;
+    }
+
+    public void setReembolsoXp(ReembolsoXP reembolsoXp) {
+        this.reembolsoXp = reembolsoXp;
     }
 
     @Override
