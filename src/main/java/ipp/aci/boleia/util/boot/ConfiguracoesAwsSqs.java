@@ -119,6 +119,9 @@ public class ConfiguracoesAwsSqs {
     @Value("${aws.sqs.transacao-consolidada.processar-ciclo-postergacao}")
     private String nomeFilaProcessarCicloPostergacao;
 
+    @Value("${aws.sqs.anonimizacao.motorista}")
+    private String nomeFilaExclusaoMotorista;
+
     /**
      * Carrega as mensagens do sistema
      */
@@ -164,7 +167,8 @@ public class ConfiguracoesAwsSqs {
                         ,nomeFilaFrotaParamCiclo
                         ,nomeFilaTransacaoConsolidacaoAgFrete
                         ,nomeFilaPostergacaoAbastecimentos
-                        ,nomeFilaProcessarCicloPostergacao);
+                        ,nomeFilaProcessarCicloPostergacao
+                        ,nomeFilaExclusaoMotorista);
         criaFilaSeNaoExistem(amazonSQSAsync, nomeFilas);
         return new QueueMessagingTemplate(amazonSQSAsync);
     }

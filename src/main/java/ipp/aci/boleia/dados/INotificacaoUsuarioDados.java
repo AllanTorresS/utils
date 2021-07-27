@@ -59,4 +59,10 @@ public interface INotificacaoUsuarioDados extends IRepositorioBoleiaDados<Notifi
      * @param dataLimite a data limite
      */
     void excluirNotificacoesAteUmaDataLimite(Date dataLimite);
+
+    /**
+     * Excluir as notificações por usuário
+     * @param usuario o usuario
+     */
+    void excluirNotificacoesPorUsuario(Usuario usuario);
 }

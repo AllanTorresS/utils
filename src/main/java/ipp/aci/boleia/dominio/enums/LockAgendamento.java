@@ -49,7 +49,7 @@ public enum LockAgendamento {
 	AVISO_DE_CREDITO_CONECTCAR                      (ConstantesDuracao.UMA_HORA, ConstantesDuracao.UM_SEGUNDO),
 	EXCLUSAO_DADOS_PESSOAIS_MOTORISTAS              (ConstantesDuracao.CINCO_MINUTO, ConstantesDuracao.UM_SEGUNDO),
     AVISO_MOTORISTAS_INAVAVOS_E_SEM_ABASTECIMENTO   (ConstantesDuracao.CINCO_MINUTO, ConstantesDuracao.UM_SEGUNDO),
-    EXCLUSAO_DADOS_MOTORISTAS_SEM_ABASTECIMENTO     (ConstantesDuracao.CINCO_MINUTO, ConstantesDuracao.UM_SEGUNDO);
+    EXCLUSAO_DADOS_MOTORISTAS                       (ConstantesDuracao.CINCO_MINUTO, ConstantesDuracao.UM_SEGUNDO);
 
 	private final long duracao;
     private final long duracaoMinima;

@@ -3,8 +3,11 @@ package ipp.aci.boleia.dados;
 
 import ipp.aci.boleia.dominio.AutorizacaoPagamento;
 import ipp.aci.boleia.dominio.AutorizacaoPagamentoEdicao;
+import ipp.aci.boleia.dominio.Motorista;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaAutorizacaoPagamentoEdicaoVo;
+
+import java.util.List;
 
 /**
  * Contrato para implementacao de repositorios de entidades AutorizacaoPagamentoEdicao
@@ -44,4 +47,13 @@ public interface IAutorizacaoPagamentoEdicaoDados extends IRepositorioBoleiaDado
      * @return true caso possua uma edição aprovada e false caso contrário.
      */
     boolean verificarSeAbastecimentoPossuiEdicaoEfetuada(Long id);
+
+
+    /**
+     * Obtém abastecimentos editados de um
+     *motorista
+     * @param motorista o motorista
+     * @return Os abastecimentos encontrados
+     */
+    List<AutorizacaoPagamentoEdicao> obterPorMotorista(Motorista motorista);
 }

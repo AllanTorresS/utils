@@ -147,4 +147,16 @@ public interface IMotoristaDados extends IRepositorioBoleiaDados<Motorista> {
      */
     List<Motorista> obterMotoristasInativosComAbastecimento(Integer diasDeVerificacao);
 
+    /**
+     * Obtem motoristas que estão excluídos
+     * @return os motoristas encontrados
+     */
+    List<Motorista> obterMotoristasExcluidos();
+
+    /**
+     * Obtem motorista excluido por id
+     * @return o motorista encontrado
+     */
+    Motorista obterMotoristaExcluidoPorId(Long idMotorista);
+
 }

@@ -3,6 +3,7 @@ package ipp.aci.boleia.dados;
 
 import ipp.aci.boleia.dominio.AutorizacaoPagamento;
 import ipp.aci.boleia.dominio.EmpresaAgregada;
+import ipp.aci.boleia.dominio.Motorista;
 import ipp.aci.boleia.dominio.TransacaoConsolidada;
 import ipp.aci.boleia.dominio.Unidade;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
@@ -454,4 +455,12 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
      * @return Os abastecimentos encontrados
      */
     List<AutorizacaoPagamento> obterAbastecimentoParaConciliacaoPorValorDeProduto(Long cnpjEmit, Date dataEmissao, BigDecimal valorTotalNota);
+
+    /**
+     * Obtém abastecimentos de um motorista
+     *
+     * @param motorista o motorista
+     * @return Os abastecimentos encontrados
+     */
+    List<AutorizacaoPagamento> obterPorMotorista(Motorista motorista);
 }

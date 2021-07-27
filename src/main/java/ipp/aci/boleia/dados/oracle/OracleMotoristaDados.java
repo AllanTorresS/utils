@@ -80,6 +80,15 @@ public class OracleMotoristaDados extends OracleRepositorioBoleiaDados<Motorista
             "       upper(m.nome) LIKE :nome AND " +
             "       m.excluido = false";
 
+    private  static final String LISTA_MOTORISTAS_EXCLUIDOS =
+            "SELECT m FROM Motorista m " +
+                "WHERE m.excluido = true";
+
+    private  static final String OBTEM_MOTORISTA_EXCLUIDO_POR_ID =
+            "SELECT m FROM Motorista m " +
+                "WHERE m.excluido = true AND " +
+                "m.id = :idMotorista";
+
     @Autowired
     private UtilitarioAmbiente utilitarioAmbiente;
 
@@ -394,6 +403,21 @@ public class OracleMotoristaDados extends OracleRepositorioBoleiaDados<Motorista
     public List<Motorista> obterMotoristasInativosComAbastecimento(Integer diasDeVerificacao) {
         ParametroPesquisaIgual parametroDiasDeVerificacao = new ParametroPesquisaIgual("diasDeVerificacao", UtilitarioCalculoData.adicionarDiasData(utilitarioAmbiente.buscarDataAmbiente(), -diasDeVerificacao));
         return pesquisar(null, LISTAR_MOTORISTAS_INATIVOS_COM_ABASTECIMENTO, parametroDiasDeVerificacao).getRegistros();
+    }
+
+    @Override
+    public List<Motorista> obterMotoristasExcluidos() {
+       Query query = getGerenciadorDeEntidade().createQuery(LISTA_MOTORISTAS_EXCLUIDOS);
+       return query.getResultList();
+    }
+
+    @Override
+    public Motorista obterMotoristaExcluidoPorId(Long idMotorista) {
+        Query query = getGerenciadorDeEntidade().createQuery(OBTEM_MOTORISTA_EXCLUIDO_POR_ID);
+        query.setParameter("idMotorista", idMotorista);
+        query.setMaxResults(1);
+        List<Motorista> motoristas = query.getResultList();
+        return motoristas.isEmpty() ? null : motoristas.get(0);
     }
 
 }
