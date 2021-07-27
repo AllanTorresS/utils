@@ -50,8 +50,7 @@ public interface IAutorizacaoPagamentoEdicaoDados extends IRepositorioBoleiaDado
 
 
     /**
-     * Obtém abastecimentos editados de um
-     *motorista
+     * Obtém abastecimentos editados de um motorista
      * @param motorista o motorista
      * @return Os abastecimentos encontrados
      */
