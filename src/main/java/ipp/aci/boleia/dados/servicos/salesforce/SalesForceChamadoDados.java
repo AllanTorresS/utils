@@ -182,6 +182,9 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     @Value("${salesforce.chamados.vincularArquivo}")
     private String urlVincularArquivo;
 
+    @Value("${salesforce.chamados.emailIntegracao}")
+    private String emailIntegracao;
+
     @Autowired
     private IMotivoChamadoDados motivoChamadoDados;
 
@@ -194,7 +197,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
         List<String> contatos = obterContatosPorUsuario(usuarioLogado);
         Map<String, Object> parametros = new HashMap<>();
         parametros.put("idSalesforce", idSalesforce);
-        parametros.put("emailIntegracao", ConstantesSalesForce.PREFIXO_COMENTARIO_PENDENTE_EXTERNO);
+        parametros.put("emailIntegracao", emailIntegracao);
 
         String query = OBTER_CHAMADO_POR_ID;
         if(usuarioLogado.isFrotista() || usuarioLogado.isInterno()) {
@@ -603,7 +606,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
         parametros.put("numeroChamado", tratarParametroLikeNulo(filtro.getNumeroChamado()));
         parametros.put("status", tratarParametroLikeNulo(filtro.getStatus()));
         parametros.put("solicitante", obterParametroSolicitante(filtro));
-        parametros.put("emailIntegracao", ConstantesSalesForce.PREFIXO_COMENTARIO_PENDENTE_EXTERNO);
+        parametros.put("emailIntegracao", emailIntegracao);
 
         List<String> contatos = obterContatosParaConsulta(filtro);
         if(filtro.isContatoFrota() || filtro.isContatoInterno()) {
