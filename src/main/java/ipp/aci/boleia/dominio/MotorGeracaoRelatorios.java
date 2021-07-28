@@ -103,7 +103,7 @@ public class MotorGeracaoRelatorios implements IPersistente {
 
     @Transient
     @JsonIgnore
-    private Object filtroTipado;
+    private transient Object filtroTipado;
 
     /**
      * Obtém o filtro conforme tipagem parametrizada, guarda filtro para operações futuras.
@@ -230,5 +230,15 @@ public class MotorGeracaoRelatorios implements IPersistente {
 
     public void setRotaEmProcessamento(Integer rotaEmProcessamento) {
         this.rotaEmProcessamento = rotaEmProcessamento;
+    }
+
+    @Transient
+    @JsonIgnore
+    public Object getFiltroTipado() {
+        return filtroTipado;
+    }
+
+    public void setFiltroTipado(Object filtroTipado) {
+        this.filtroTipado = filtroTipado;
     }
 }
