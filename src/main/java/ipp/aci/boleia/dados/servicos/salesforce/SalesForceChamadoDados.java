@@ -248,9 +248,9 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     }
 
     @Override
-    public void criarChamado(CriacaoChamadoVo chamadoVo) throws ExcecaoBoleiaRuntime {
+    public String criarChamado(CriacaoChamadoVo chamadoVo) throws ExcecaoBoleiaRuntime {
         prepararRequisicao(urlCriacao, chamadoVo);
-        enviarRequisicaoPost(this::trataRespostaCriacao);
+        return enviarRequisicaoPost(this::trataRespostaCriacao);
     }
 
     @Override
@@ -486,13 +486,13 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
      * @param response a resposta
      * @return true em caso de sucesso
      */
-    private boolean trataRespostaCriacao(CloseableHttpResponse response) {
+    private String trataRespostaCriacao(CloseableHttpResponse response) {
         prepararResposta(response);
         if (this.statusCode != HttpStatus.CREATED.value()) {
             LOGGER.error(this.responseBody.toString());
             throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("chamado.criacao.erro.integracao"));
         }
-        return true;
+        return this.responseBody.get(ConstantesSalesForce.CAMPO_ID).asText();
     }
 
     /***
