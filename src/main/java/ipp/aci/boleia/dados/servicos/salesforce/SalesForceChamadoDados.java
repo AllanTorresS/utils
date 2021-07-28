@@ -80,6 +80,14 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
                     CLAUSULA_CONTATO_REVENDA +
                     CLAUSULA_DATA_ABERTURA;
 
+    private static final String SUBQUERY_COMENTARIOS =
+            "(SELECT " +
+            "   Id,CommentBody,CreatedBy.Name,CreatedBy.Email,CreatedDate " +
+            "FROM " +
+            "   Casecomments " +
+            "WHERE " +
+            "   CommentBody LIKE '" + ConstantesSalesForce.PREFIXO_COMENTARIO_PENDENTE_EXTERNO + "%' OR CreatedBy.Email=':emailIntegracao') ";
+
     private static final String OBTER_CHAMADO_POR_ID =
             "SELECT Id," +
             "       CreatedDate," +
@@ -95,7 +103,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
             "       MotivoSolicitacao__c," +
             "       Subject," +
             "       Description," +
-            "       (SELECT Id,CommentBody,CreatedBy.Name,CreatedBy.Email,CreatedDate FROM Casecomments) " +
+                    SUBQUERY_COMENTARIOS +
             "FROM Case " +
             "WHERE Id=':idSalesforce'";
 
@@ -113,7 +121,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
             "       Description," +
             "       MotivoSolicitacao__c," +
             "       Subject," +
-            "       (SELECT Id,CommentBody,CreatedBy.Name,CreatedBy.Email,CreatedDate FROM Casecomments) " +
+                    SUBQUERY_COMENTARIOS +
             FROM_CONSULTAR_CHAMADOS +
             ORDER_BY_CONSULTA_CHAMADOS +
             "LIMIT :limit OFFSET :offset";
@@ -186,6 +194,8 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
         List<String> contatos = obterContatosPorUsuario(usuarioLogado);
         Map<String, Object> parametros = new HashMap<>();
         parametros.put("idSalesforce", idSalesforce);
+        parametros.put("emailIntegracao", ConstantesSalesForce.PREFIXO_COMENTARIO_PENDENTE_EXTERNO);
+
         String query = OBTER_CHAMADO_POR_ID;
         if(usuarioLogado.isFrotista() || usuarioLogado.isInterno()) {
             parametros.put("contato", contatos.stream().findFirst().orElse(""));
@@ -593,6 +603,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
         parametros.put("numeroChamado", tratarParametroLikeNulo(filtro.getNumeroChamado()));
         parametros.put("status", tratarParametroLikeNulo(filtro.getStatus()));
         parametros.put("solicitante", obterParametroSolicitante(filtro));
+        parametros.put("emailIntegracao", ConstantesSalesForce.PREFIXO_COMENTARIO_PENDENTE_EXTERNO);
 
         List<String> contatos = obterContatosParaConsulta(filtro);
         if(filtro.isContatoFrota() || filtro.isContatoInterno()) {
