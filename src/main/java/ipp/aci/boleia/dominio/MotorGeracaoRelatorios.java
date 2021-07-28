@@ -232,6 +232,8 @@ public class MotorGeracaoRelatorios implements IPersistente {
         this.rotaEmProcessamento = rotaEmProcessamento;
     }
 
+    @Transient
+    @JsonIgnore
     public Object getFiltroTipado() {
         return filtroTipado;
     }
