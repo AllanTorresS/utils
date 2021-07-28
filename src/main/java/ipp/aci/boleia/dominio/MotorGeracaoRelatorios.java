@@ -1,7 +1,9 @@
 package ipp.aci.boleia.dominio;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
+import ipp.aci.boleia.util.UtilitarioJson;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.CascadeType;
@@ -18,6 +20,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
@@ -97,6 +100,24 @@ public class MotorGeracaoRelatorios implements IPersistente {
 
     @Column(name = "NO_ROTA_EM_PROCESSAMENTO")
     private Integer rotaEmProcessamento;
+
+    @Transient
+    @JsonIgnore
+    private Object filtroTipado;
+
+    /**
+     * Obtém o filtro conforme tipagem parametrizada, guarda filtro para operações futuras.
+     *
+     * @param classeFiltro Classe que representa o filtro
+     * @return instância do filtro tipado
+     */
+    @JsonIgnore
+    public <T> T obterFiltro(Class<T> classeFiltro) {
+        if (filtroTipado == null) {
+            filtroTipado = UtilitarioJson.toObject(filtro, classeFiltro);
+        }
+        return (T) filtroTipado;
+    }
 
     @Override
     public Long getId() {
