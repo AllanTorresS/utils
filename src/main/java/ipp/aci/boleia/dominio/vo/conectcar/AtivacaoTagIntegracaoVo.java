@@ -17,6 +17,9 @@ public class AtivacaoTagIntegracaoVo {
 	@JsonProperty("Placa")
 	private String placa;
 
+	/**
+	 * Devem ser informados os serviços que serão desbloqueados. Embora o nome do campo seja 'servicosBloqueio' funciona como 'servicosDesbloqueio'
+	 */
 	@JsonProperty("ServicosBloqueio")
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private String[] servicosBloqueio;
@@ -34,10 +37,10 @@ public class AtivacaoTagIntegracaoVo {
 		}
 		if(TipoUtilizacao.ESTACIONAMENTO.getValue().equals(tipoUtilizacaoTag)) {
 			this.servicosBloqueio = new String[1];
-			this.servicosBloqueio[0] = TipoUtilizacao.PEDAGIO.name();
+			this.servicosBloqueio[0] = TipoUtilizacao.ESTACIONAMENTO.name();
 		} else if(TipoUtilizacao.PEDAGIO.getValue().equals(tipoUtilizacaoTag)) {
 			this.servicosBloqueio = new String[1];
-			this.servicosBloqueio[0] = TipoUtilizacao.ESTACIONAMENTO.name();
+			this.servicosBloqueio[0] = TipoUtilizacao.PEDAGIO.name();
 		}
 	}
 
