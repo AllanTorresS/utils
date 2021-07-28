@@ -111,6 +111,7 @@ public class MotorGeracaoRelatorios implements IPersistente {
      * @param classeFiltro Classe que representa o filtro
      * @return instância do filtro tipado
      */
+    @Transient
     @JsonIgnore
     public <T> T obterFiltro(Class<T> classeFiltro) {
         if (filtroTipado == null) {
