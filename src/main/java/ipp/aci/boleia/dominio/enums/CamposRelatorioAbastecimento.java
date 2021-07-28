@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
  */
 public enum CamposRelatorioAbastecimento {
     ID_TRANSACAO(100,100,"enum.CamposRelatorioAbastecimento.ID_TRANSACAO.label", true, true, true, 1, 20, false),
-    NUMERO_NOTA_FISCAL(101,734,"enum.CamposRelatorioAbastecimento.NUMERO_NOTA_FISCAL.label", true, true,true, 1, 20, false),
+    NUMERO_NOTA_FISCAL(101,736,"enum.CamposRelatorioAbastecimento.NUMERO_NOTA_FISCAL.label", true, true,true, 1, 20, false),
     CODIGO_AUTORIZACAO(102, 102, "enum.CamposRelatorioAbastecimento.CODIGO_AUTORIZACAO.label", false, true,true, 1, 50, false),
     HORA_TRANSACAO(103, 103, "enum.CamposRelatorioAbastecimento.HORA_TRANSACAO.label", false, true,true, 1, 20, false),
     DATA_TRANSACAO(104, 104, "enum.CamposRelatorioAbastecimento.DATA_TRANSACAO.label", false, true,true, 1, 20, false),
@@ -92,12 +92,12 @@ public enum CamposRelatorioAbastecimento {
     TROCA_OLEO_VALOR_UNITARO_SERVICO(730, 730, "enum.CamposRelatorioAbastecimento.TROCA_OLEO_VALOR_UNITARIO_SERVICO.label", true, true, true,7, 30, false),
     TROCA_OLEO_VALOR_TOTAL_SERVICO(731, 731, "enum.CamposRelatorioAbastecimento.TROCA_OLEO_VALOR_TOTAL_SERVICO.label", true, true, true,7, 30, false),
     VALOR_TOTAL_TRANSACAO(732, 732, "enum.CamposRelatorioAbastecimento.VALOR_TOTAL_TRANSACAO.label", true, true, true,7, 30, false),
-    STATUS(733, 733, "enum.CamposRelatorioAbastecimento.STATUS.label", true, true, true,7, 25, false),
+    VALOR_DESCONTO_FROTAS_LEVES(736, 733, "enum.CamposRelatoriosAbastecimento.VALOR_DESCONTO_FROTAS_LEVES.label", false, true, true,7, 30, true),
+    VALOR_COM_DESCONTO_FROTAS_LEVES(737, 734, "enum.CamposRelatorioAbastecimento.VALOR_TOTAL_DESCONTO_FROTAS_LEVES.label", false, true, true,7, 30, true),
 
-    MOTIVO_RECUSA(734, 735, "enum.CamposRelatorioAbastecimento.MOTIVO_RECUSA.label", true, true, true,7, 30, false),
-    MOTIVO_CONTINGENCIA(735, 736, "enum.CamposRelatorioAbastecimento.MOTIVO_CONTINGENCIA.label", true, true, true,7, 30, false),
-    VALOR_DESCONTO_FROTAS_LEVES(736, 737, "enum.CamposRelatoriosAbastecimento.VALOR_DESCONTO_FROTAS_LEVES.label", false, true, true,7, 30, true),
-    VALOR_COM_DESCONTO_FROTAS_LEVES(737, 738, "enum.CamposRelatorioAbastecimento.VALOR_TOTAL_DESCONTO_FROTAS_LEVES.label", false, true, true,7, 30, true),
+    STATUS(733, 735, "enum.CamposRelatorioAbastecimento.STATUS.label", true, true, true,7, 25, false),
+    MOTIVO_RECUSA(734, 737, "enum.CamposRelatorioAbastecimento.MOTIVO_RECUSA.label", true, true, true,7, 30, false),
+    MOTIVO_CONTINGENCIA(735, 738, "enum.CamposRelatorioAbastecimento.MOTIVO_CONTINGENCIA.label", true, true, true,7, 30, false),
     RESUMO_OPERACAO(738, 739, "enum.CamposRelatorioAbastecimento.RESUMO_OPERACAO.label", true, true, true,7, 100, false);
 
     private final int codigo;
