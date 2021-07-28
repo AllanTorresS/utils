@@ -231,4 +231,12 @@ public class MotorGeracaoRelatorios implements IPersistente {
     public void setRotaEmProcessamento(Integer rotaEmProcessamento) {
         this.rotaEmProcessamento = rotaEmProcessamento;
     }
+
+    public Object getFiltroTipado() {
+        return filtroTipado;
+    }
+
+    public void setFiltroTipado(Object filtroTipado) {
+        this.filtroTipado = filtroTipado;
+    }
 }
