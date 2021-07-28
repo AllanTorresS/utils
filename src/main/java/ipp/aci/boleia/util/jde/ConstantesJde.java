@@ -100,7 +100,17 @@ public final class ConstantesJde {
     public static final String PEDIDO_VENDA_ITEM_CODIGO_PRODUTO = "791039";
     public static final String PEDIDO_VENDA_PRIMEIRO_ITEM_LISTA_KEY = "1";
     public static final String CONSULTA_NF_TIPO_DOCUMENTO = "VK";
-    
+
+    public static final String FATURA_XP_TIPO_DOCUMENTO = "F7";
+    public static final BigDecimal FATURA_XP_CODIGO_JDE_CLIENTE = new BigDecimal(8232093);
+
+    public static final Long VOUCHER_XP_CENARIO = 187L;
+    public static final Long VOUCHER_XP_CODIGO_JDE_FORNECEDOR = 7340608L;
+    public static final Long VOUCHER_XP_INDICE_CONTA_CONTABIL = 5L;
+    public static final String VOUCHER_XP_OBSERVACAO_REEMBOLSO = "REEMBOLSO XP";
+
+    public static final String VOUCHER_OBSERVACAO_ANTECIPACAO_XP = "ANTECIPACAO DE RECEBIVEIS";
+
     /**
      * Impede instanciacao e heranca
      */

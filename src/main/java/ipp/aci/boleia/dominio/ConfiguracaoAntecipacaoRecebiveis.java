@@ -24,7 +24,6 @@ import java.util.Date;
 
 import static ipp.aci.boleia.util.UtilitarioCalculoData.adicionarSegundosData;
 import static ipp.aci.boleia.util.UtilitarioCalculoData.obterPrimeiroInstanteDia;
-import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
 
 /**
  * Representa a tabela de Configuração de Antecipação
