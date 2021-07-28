@@ -1,6 +1,8 @@
 package ipp.aci.boleia.dominio;
 
 
+import ipp.aci.boleia.dominio.enums.StatusAntecipacao;
+import ipp.aci.boleia.dominio.enums.StatusIntegracaoReembolsoJde;
 import ipp.aci.boleia.dominio.enums.StatusPropostaXP;
 import ipp.aci.boleia.dominio.interfaces.IExclusaoLogica;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
@@ -21,8 +23,11 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import java.util.Date;
 import java.util.List;
+
+import static ipp.aci.boleia.util.UtilitarioCalculoData.obterUltimoInstanteDia;
 
 /**
  * Representa a tabela de Proposta Antecipação
@@ -233,5 +238,38 @@ public class PropostaAntecipacao implements IPersistente, IPertenceRevendedor, I
     public void atualizarStatus(StatusPropostaXP novoStatus, Date dataReferencia) {
         this.setStatus(novoStatus.getValue());
         this.setDataAtualizacao(dataReferencia);
+    }
+
+    /**
+     * Obtém o status da antecipação em uma data específica
+     * @param configuracao a configuração de antecipação vigente
+     * @param dataReferencia a data a ser usada como referência
+     * @return o status da antecipação
+     */
+    @Transient
+    public StatusAntecipacao getStatusAntecipacao(ConfiguracaoAntecipacaoRecebiveis configuracao, Date dataReferencia) {
+        if(isAceito == null) {
+            if(dataReferencia.after(obterUltimoInstanteDia(reembolsoAntecipado.getDataVencimentoPgto()))) {
+                return StatusAntecipacao.CANCELADO_SEM_RESPOSTA;
+            } else {
+                return StatusAntecipacao.AGUARDANDO_ACEITE;
+            }
+        } else if(!isAceito) {
+            return StatusAntecipacao.CANCELADO_CLIENTE;
+        } else {
+            if(reembolsoAntecipado.getStatusIntegracao() == null ||
+                    reembolsoAntecipado.getStatusIntegracao().equals(StatusIntegracaoReembolsoJde.ERRO_ENVIO.getValue()) ||
+                    reembolsoAntecipado.getStatusIntegracao().equals(StatusIntegracaoReembolsoJde.ERRO_LIBERACAO.getValue()) ||
+                    reembolsoAntecipado.getStatusIntegracao().equals(StatusIntegracaoReembolsoJde.PENDENTE.getValue())) {
+                return StatusAntecipacao.PENDENTE;
+            }
+            if (dataReferencia.before(obterUltimoInstanteDia(dataDesembolso))) {
+                return StatusAntecipacao.EM_ANDAMENTO;
+            }
+            if(reembolsoAntecipado.getStatusIntegracao().equals(StatusIntegracaoReembolsoJde.ANTECIPADO.getValue())) {
+                return StatusAntecipacao.ANTECIPADO;
+            }
+            return null;
+        }
     }
 }

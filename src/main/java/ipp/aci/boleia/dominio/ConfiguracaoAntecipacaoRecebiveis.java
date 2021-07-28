@@ -213,13 +213,23 @@ public class ConfiguracaoAntecipacaoRecebiveis implements IPersistente {
 
     /**
      * Obtém o prazo de vencimento correto baseado no horário limite para antecipação
-     * @param dataReferencia a data que deve ser usada como data ambiente
+     * @param dataReferencia a data que deve ser comparada ao horário limite
      * @return o prazo de vencimento, em dias
      */
     @Transient
     public Integer getPrazoVencimentoVigente(Date dataReferencia) {
+        return isHorarioLimiteAtingido(dataReferencia) ? prazoVencimento + 1 : prazoVencimento;
+    }
+
+    /**
+     * Verifica se uma data é posterior ao horário limite vigente
+     * @param dataReferencia a data que deve ser comparada ao horário limite
+     * @return true se o horário limite foi atingido, false caso contrário
+     */
+    @Transient
+    public boolean isHorarioLimiteAtingido(Date dataReferencia) {
         Date dataLimite = adicionarSegundosData(obterPrimeiroInstanteDia(dataReferencia), getHorarioLimiteVigente(dataReferencia));
-        return dataReferencia.after(dataLimite) ? prazoVencimento + 1 : prazoVencimento;
+        return dataReferencia.after(dataLimite);
     }
 
     /**
@@ -256,7 +266,7 @@ public class ConfiguracaoAntecipacaoRecebiveis implements IPersistente {
         Date dataLimite = adicionarSegundosData(obterPrimeiroInstanteDia(dataAmbiente), horarioLimiteVigente);
         if (!horarioLimiteVigente.equals(novoHorarioLimite)) {
             this.setDataAtualizacaoHorarioLimite(dataAmbiente);
-            if (dataAmbiente.after(dataLimite)) {
+            if (isHorarioLimiteAtingido(dataAmbiente)) {
                 this.setNovoHorarioLimite(novoHorarioLimite);
             } else {
                 this.setHorarioLimite(novoHorarioLimite);
