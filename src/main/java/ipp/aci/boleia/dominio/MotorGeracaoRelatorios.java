@@ -103,7 +103,7 @@ public class MotorGeracaoRelatorios implements IPersistente {
 
     @Transient
     @JsonIgnore
-    private Object filtroTipado;
+    private transient Object filtroTipado;
 
     /**
      * Obtém o filtro conforme tipagem parametrizada, guarda filtro para operações futuras.
