@@ -58,9 +58,10 @@ public interface IChamadoDados {
      * Abre chamado no SalesForce
      *
      * @param chamadoVo os dados do chamado
+     * @return O identificador salesforce do chamado criado.
      * @throws ExcecaoBoleiaRuntime Caso ocorra algum erro
      */
-    void criarChamado(CriacaoChamadoVo chamadoVo)  throws ExcecaoBoleiaRuntime;
+    String criarChamado(CriacaoChamadoVo chamadoVo)  throws ExcecaoBoleiaRuntime;
 
     /**
      * Altera um chamado no SalesForce
