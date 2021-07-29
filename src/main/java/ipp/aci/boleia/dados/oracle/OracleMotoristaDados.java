@@ -85,7 +85,7 @@ public class OracleMotoristaDados extends OracleRepositorioBoleiaDados<Motorista
 
     private  static final String LISTA_MOTORISTAS_EXCLUIDOS =
             "SELECT m FROM Motorista m " +
-                "WHERE m.excluido = true" +
+                "WHERE m.excluido = true " +
                     "AND m.cpf != " + CPF_ANONIMIZADO;
 
     private  static final String OBTEM_MOTORISTA_EXCLUIDO_POR_ID =
