@@ -11,6 +11,7 @@ import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaior;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
@@ -397,14 +398,20 @@ public class OracleMotoristaDados extends OracleRepositorioBoleiaDados<Motorista
     }
 
     @Override
-    public List<Motorista> obterMotoristasSemAbastecimento(Integer diasDeVerificacao) {
-        ParametroPesquisaIgual parametroDiasDeVerificacao = new ParametroPesquisaIgual("diasDeVerificacao", UtilitarioCalculoData.obterPrimeiroInstanteDia(UtilitarioCalculoData.adicionarDiasData(utilitarioAmbiente.buscarDataAmbiente(), -diasDeVerificacao)));
+    public List<Motorista> obterMotoristasSemAbastecimento(Integer diasDeVerificacao, boolean incluirPosteriores) {
+        Date dataDeVerificacao = UtilitarioCalculoData.obterPrimeiroInstanteDia(UtilitarioCalculoData.adicionarDiasData(utilitarioAmbiente.buscarDataAmbiente(), -diasDeVerificacao));
+        ParametroPesquisa parametroDiasDeVerificacao = incluirPosteriores ?
+                new ParametroPesquisaDataMaior("diasDeVerificacao", dataDeVerificacao)
+                : new ParametroPesquisaIgual("diasDeVerificacao", dataDeVerificacao);
         return pesquisar(null, LISTAR_MOTORISTAS_SEM_ABASTECIMENTO, parametroDiasDeVerificacao).getRegistros();
     }
 
     @Override
-    public List<Motorista> obterMotoristasInativosComAbastecimento(Integer diasDeVerificacao) {
-        ParametroPesquisaIgual parametroDiasDeVerificacao = new ParametroPesquisaIgual("diasDeVerificacao", UtilitarioCalculoData.adicionarDiasData(utilitarioAmbiente.buscarDataAmbiente(), -diasDeVerificacao));
+    public List<Motorista> obterMotoristasInativosComAbastecimento(Integer diasDeVerificacao, boolean incluirPosteriores) {
+        Date dataDeVerificacao = UtilitarioCalculoData.obterPrimeiroInstanteDia(UtilitarioCalculoData.adicionarDiasData(utilitarioAmbiente.buscarDataAmbiente(), -diasDeVerificacao));
+        ParametroPesquisa parametroDiasDeVerificacao = incluirPosteriores ?
+                new ParametroPesquisaDataMaior("diasDeVerificacao", dataDeVerificacao)
+                : new ParametroPesquisaIgual("diasDeVerificacao", dataDeVerificacao);
         return pesquisar(null, LISTAR_MOTORISTAS_INATIVOS_COM_ABASTECIMENTO, parametroDiasDeVerificacao).getRegistros();
     }
 
