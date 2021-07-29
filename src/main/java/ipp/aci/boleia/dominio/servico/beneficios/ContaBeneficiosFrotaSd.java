@@ -40,7 +40,7 @@ public class ContaBeneficiosFrotaSd {
 
         BigDecimal indiceLimite = frota.getLimiteCreditoBeneficiosFrota() != null ?
                 frota.getLimiteCreditoBeneficiosFrota().getValorIndiceLimite() :
-                new BigDecimal(repositorioConfiguracaoSistema.buscarConfiguracoes(ChaveConfiguracaoSistema.INDICE_LIMITE_BENEFICIOS).getParametro());
+                new BigDecimal(repositorioConfiguracaoSistema.buscarConfiguracoes(ChaveConfiguracaoSistema.INDICE_PADRAO_LIMITE_BENEFICIOS).getParametro());
 
         contaBeneficiosFrota.setSaldo(frota.getSaldo().getLimiteCredito().multiply(indiceLimite));
 
