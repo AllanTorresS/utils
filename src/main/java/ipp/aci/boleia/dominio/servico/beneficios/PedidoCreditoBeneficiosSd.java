@@ -2,6 +2,8 @@ package ipp.aci.boleia.dominio.servico.beneficios;
 
 import ipp.aci.boleia.dados.IContaBeneficiosFrotaDados;
 import ipp.aci.boleia.dados.IPedidoCreditoBeneficiosDados;
+import ipp.aci.boleia.dados.ISaldoFrotaDados;
+import ipp.aci.boleia.dominio.SaldoFrota;
 import ipp.aci.boleia.dominio.beneficios.ContaBeneficiosFrota;
 import ipp.aci.boleia.dominio.beneficios.PedidoCreditoBeneficios;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
@@ -25,6 +27,9 @@ public class PedidoCreditoBeneficiosSd {
     private IContaBeneficiosFrotaDados repositorioContaBeneficiosFrota;
 
     @Autowired
+    private ISaldoFrotaDados repositorioSaldoFrota;
+
+    @Autowired
     private UtilitarioAmbiente ambiente;
 
     /**
@@ -44,6 +49,9 @@ public class PedidoCreditoBeneficiosSd {
         contaBeneficiosFrota.setSaldo(contaBeneficiosFrota.getSaldo().add(valor));
         contaBeneficiosFrota.setDataAtualizacao(ambiente.buscarDataAmbiente());
         repositorioContaBeneficiosFrota.armazenar(contaBeneficiosFrota);
+        SaldoFrota saldoFrota = contaBeneficiosFrota.getFrota().getSaldo();
+        saldoFrota.setSaldoCorrente(saldoFrota.getSaldoCorrente().subtract(valor));
+        repositorioSaldoFrota.armazenar(saldoFrota);
         return pedidoCreditoBeneficios;
     }
 
