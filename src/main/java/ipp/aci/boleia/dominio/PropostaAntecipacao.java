@@ -24,9 +24,12 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
 
+import static ipp.aci.boleia.util.UtilitarioCalculoData.adicionarSegundosData;
+import static ipp.aci.boleia.util.UtilitarioCalculoData.obterPrimeiroInstanteDia;
 import static ipp.aci.boleia.util.UtilitarioCalculoData.obterUltimoInstanteDia;
 
 /**
@@ -68,7 +71,7 @@ public class PropostaAntecipacao implements IPersistente, IPertenceRevendedor, I
     @Column(name = "ID_EXCLUIDO")
     private Boolean excluido;
 
-
+    @NotNull
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="DT_CRIACAO")
     private Date dataCriacao;
@@ -96,6 +99,10 @@ public class PropostaAntecipacao implements IPersistente, IPertenceRevendedor, I
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_REEMBOLSO_XP")
     private ReembolsoXP reembolsoXp;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_HIST_CONFIG_ANTECIPACAO")
+    private HistoricoConfiguracaoAntecipacao configuracao;
 
     @Override
     public Long getId() {
@@ -225,6 +232,14 @@ public class PropostaAntecipacao implements IPersistente, IPertenceRevendedor, I
         this.reembolsoXp = reembolsoXp;
     }
 
+    public HistoricoConfiguracaoAntecipacao getConfiguracao() {
+        return configuracao;
+    }
+
+    public void setConfiguracao(HistoricoConfiguracaoAntecipacao configuracao) {
+        this.configuracao = configuracao;
+    }
+
     @Override
     public List<PontoDeVenda> getPontosDeVenda() {
         return this.reembolsoAntecipado.getPontosDeVenda();
@@ -242,12 +257,11 @@ public class PropostaAntecipacao implements IPersistente, IPertenceRevendedor, I
 
     /**
      * Obtém o status da antecipação em uma data específica
-     * @param configuracao a configuração de antecipação vigente
      * @param dataReferencia a data a ser usada como referência
      * @return o status da antecipação
      */
     @Transient
-    public StatusAntecipacao getStatusAntecipacao(ConfiguracaoAntecipacaoRecebiveis configuracao, Date dataReferencia) {
+    public StatusAntecipacao getStatusAntecipacao(Date dataReferencia) {
         if(isAceito == null) {
             if(dataReferencia.after(obterUltimoInstanteDia(reembolsoAntecipado.getDataVencimentoPgto()))) {
                 return StatusAntecipacao.CANCELADO_SEM_RESPOSTA;
@@ -271,5 +285,16 @@ public class PropostaAntecipacao implements IPersistente, IPertenceRevendedor, I
             }
             return null;
         }
+    }
+
+    /**
+     * Verifica se a proposta está disponível para aceite na data informada
+     * @param dataReferencia a data usada como referência
+     * @return true se a proposta pode receber aceite, false caso contrário
+     */
+    @Transient
+    public boolean isAceiteDisponivel(Date dataReferencia) {
+        Date dataLimite = adicionarSegundosData(obterPrimeiroInstanteDia(dataCriacao), configuracao.getHorarioLimiteVigente(dataCriacao));
+        return isAceito == null && dataReferencia.before(dataLimite);
     }
 }
