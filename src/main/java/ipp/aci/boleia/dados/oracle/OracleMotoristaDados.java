@@ -50,6 +50,8 @@ public class OracleMotoristaDados extends OracleRepositorioBoleiaDados<Motorista
     private static final String QUERY_EXCLUSAO_DADOS_MOTORISTA = "DELETE FROM AbastecimentoCta ac " +
             "WHERE ac.dataProcessamento <= :dataProcessamento";
 
+    private static final String CPF_ANONIMIZADO = "99999999999";
+
     private static final String LISTAR_MOTORISTAS_SEM_ABASTECIMENTO =
             "SELECT m " +
                     "FROM Motorista m " +
@@ -82,7 +84,8 @@ public class OracleMotoristaDados extends OracleRepositorioBoleiaDados<Motorista
 
     private  static final String LISTA_MOTORISTAS_EXCLUIDOS =
             "SELECT m FROM Motorista m " +
-                "WHERE m.excluido = true";
+                "WHERE m.excluido = true" +
+                    "AND m.cpf != " + CPF_ANONIMIZADO;
 
     private  static final String OBTEM_MOTORISTA_EXCLUIDO_POR_ID =
             "SELECT m FROM Motorista m " +
