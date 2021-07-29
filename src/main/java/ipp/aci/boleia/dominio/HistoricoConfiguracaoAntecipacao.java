@@ -1,6 +1,7 @@
 package ipp.aci.boleia.dominio;
 
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
+import ipp.aci.boleia.util.UtilitarioCalculoData;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 
@@ -14,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -184,5 +186,15 @@ public class HistoricoConfiguracaoAntecipacao implements IPersistente {
 
     public void setDataAtualizacao(Date dataAtualizacao) {
         this.dataAtualizacao = dataAtualizacao;
+    }
+
+    /**
+     * Obtém o horário limite vigente na data informada
+     * @param dataReferencia a data a ser usada como referência
+     * @return o horário limite vigente, em segundos
+     */
+    @Transient
+    public Integer getHorarioLimiteVigente(Date dataReferencia) {
+        return novoHorarioLimite != null && UtilitarioCalculoData.isPosterior(dataAtualizacaoHorarioLimite, dataReferencia) ? novoHorarioLimite : horarioLimite;
     }
 }

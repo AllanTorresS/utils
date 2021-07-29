@@ -206,6 +206,11 @@ public class ConfiguracaoAntecipacaoRecebiveis implements IPersistente {
         this.versao = versao;
     }
 
+    /**
+     * Obtém o horário limite vigente na data informada
+     * @param dataReferencia a data a ser usada como referência
+     * @return o horário limite vigente na data, em segundos
+     */
     @Transient
     public Integer getHorarioLimiteVigente(Date dataReferencia) {
         return novoHorarioLimite != null && UtilitarioCalculoData.isPosterior(dataAtualizacaoHorarioLimite, dataReferencia) ? novoHorarioLimite : horarioLimite;
@@ -222,9 +227,9 @@ public class ConfiguracaoAntecipacaoRecebiveis implements IPersistente {
     }
 
     /**
-     * Verifica se uma data é posterior ao horário limite vigente
+     * Verifica se o horário de uma data é posterior ao horário limite vigente
      * @param dataReferencia a data que deve ser comparada ao horário limite
-     * @return true se o horário limite foi atingido, false caso contrário
+     * @return true se o horário limite foi atingido na data referência, false caso contrário
      */
     @Transient
     public boolean isHorarioLimiteAtingido(Date dataReferencia) {
