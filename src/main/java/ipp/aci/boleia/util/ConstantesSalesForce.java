@@ -27,6 +27,8 @@ public final class ConstantesSalesForce {
     public static final String ACCOUNT_FROTA = "-CL";
     public static final String ACCOUNT_PV = "-PV";
     public static final String STATUS_CANCELAMENTO = "Cancelado";
+    public static final String STATUS_NOVO = "Novo";
+    public static final String STATUS_EM_ATENDIMENTO = "Em atendimento";
     public static final String STATUS_AGUARDANDO_ATENDIMENTO = "Aguardando atendimento";
     public static final String STATUS_PENDENTE_EXTERNO = "Pendente Externo";
     public static final String LOCALIZACAO_CONTEUDO_ANEXO = "S";
