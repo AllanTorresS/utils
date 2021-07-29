@@ -12,6 +12,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class OracleHistoricoFrotaParametroSistemaPostoAutorizadoAbastecimentoDados extends OracleRepositorioBoleiaDados<HistoricoFrotaParametroSistemaPostoAutorizadoAbastecimento> implements IHistoricoFrotaParametroSistemaPostoAutorizadoAbastecimentoDados {
 
+    /**
+     * Construtor do repositório.
+     */
     public OracleHistoricoFrotaParametroSistemaPostoAutorizadoAbastecimentoDados() {
         super(HistoricoFrotaParametroSistemaPostoAutorizadoAbastecimento.class);
     }
