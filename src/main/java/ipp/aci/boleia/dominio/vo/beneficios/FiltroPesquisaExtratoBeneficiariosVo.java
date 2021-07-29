@@ -1,24 +1,15 @@
 package ipp.aci.boleia.dominio.vo.beneficios;
 
 import ipp.aci.boleia.dominio.pesquisa.comum.BaseFiltroPaginado;
+import ipp.aci.boleia.dominio.pesquisa.comum.FiltroBasePeriodoPaginado;
 
 import java.util.Date;
 
 public class FiltroPesquisaExtratoBeneficiariosVo extends BaseFiltroPaginado {
-    String nomeBeneficiario;
-    String cpfBeneficiario;
-    Date de;
-    Date ate;
+    private String cpfBeneficiario;
+    private FiltroBasePeriodoPaginado dataBeneficio;
 
     public FiltroPesquisaExtratoBeneficiariosVo() {
-    }
-
-    public String getNomeBeneficiario() {
-        return nomeBeneficiario;
-    }
-
-    public void setNomeBeneficiario(String nomeBeneficiario) {
-        this.nomeBeneficiario = nomeBeneficiario;
     }
 
     public String getCpfBeneficiario() {
@@ -29,19 +20,11 @@ public class FiltroPesquisaExtratoBeneficiariosVo extends BaseFiltroPaginado {
         this.cpfBeneficiario = cpfBeneficiario;
     }
 
-    public Date getDe() {
-        return de;
+    public FiltroBasePeriodoPaginado getDataBeneficio() {
+        return dataBeneficio;
     }
 
-    public void setDe(Date de) {
-        this.de = de;
-    }
-
-    public Date getAte() {
-        return ate;
-    }
-
-    public void setAte(Date ate) {
-        this.ate = ate;
+    public void setDataBeneficio(FiltroBasePeriodoPaginado dataBeneficio) {
+        this.dataBeneficio = dataBeneficio;
     }
 }
