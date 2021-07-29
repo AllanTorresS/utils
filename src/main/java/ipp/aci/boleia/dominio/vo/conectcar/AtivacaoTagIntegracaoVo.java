@@ -23,7 +23,7 @@ public class AtivacaoTagIntegracaoVo {
 	@JsonProperty("ServicosBloqueio")
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private String[] servicosBloqueio;
-	
+
 	public AtivacaoTagIntegracaoVo() {
 
 	}
