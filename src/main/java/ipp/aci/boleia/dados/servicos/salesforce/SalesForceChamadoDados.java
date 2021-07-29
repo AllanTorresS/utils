@@ -547,6 +547,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
      *
      * @param queryConsulta Query utilizada para consultar os dados.
      * @param queryCount Query utilizada para realizar o count total dos dados.
+     * @param <T> Classe utilizada para mapear a resposta em json da integração.
      * @return Resultado paginado da consulta.
      */
     private <T> ResultadoPaginado<T> executarQuerySalesforcePaginada(String queryConsulta, String queryCount, Class<T> classeMapeadora) {
@@ -564,6 +565,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
      * Executa uma consulta SOQL pela API do Salesforce.
      *
      * @param queryConsulta Query utilizada para consultar os dados.
+     * @param <T> Classe utilizada para mapear a resposta em json da integração.
      * @return Resultado da consulta.
      */
     private <T> List<T> executarQuerySalesforce(String queryConsulta, Class<T> classeMapeamento) {
@@ -578,6 +580,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
      *
      * @param response Resposta da integração.
      * @param classeMapeamento Classe utilizada para fazer o mapeamento do json.
+     * @param <T> Classe utilizada para mapear a resposta em json da integração.
      * @return Objeto com o resultado da consulta.
      */
     private <T> List<T> tratarRespostaConsultaSalesforce(CloseableHttpResponse response, Class<T> classeMapeamento) {
