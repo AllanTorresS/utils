@@ -2,7 +2,9 @@ package ipp.aci.boleia.dados;
 
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.salesforce.ChamadoVo;
+import ipp.aci.boleia.dominio.vo.salesforce.ContatoSalesforceVo;
 import ipp.aci.boleia.dominio.vo.salesforce.CriacaoChamadoVo;
+import ipp.aci.boleia.dominio.vo.salesforce.CriacaoContatoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.EdicaoChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.FiltroConsultaChamadosVo;
 import ipp.aci.boleia.dominio.vo.salesforce.UploadAnexoChamadoVo;
@@ -58,9 +60,10 @@ public interface IChamadoDados {
      * Abre chamado no SalesForce
      *
      * @param chamadoVo os dados do chamado
+     * @return O identificador salesforce do chamado criado.
      * @throws ExcecaoBoleiaRuntime Caso ocorra algum erro
      */
-    void criarChamado(CriacaoChamadoVo chamadoVo)  throws ExcecaoBoleiaRuntime;
+    String criarChamado(CriacaoChamadoVo chamadoVo)  throws ExcecaoBoleiaRuntime;
 
     /**
      * Altera um chamado no SalesForce
@@ -139,4 +142,19 @@ public interface IChamadoDados {
      * @param anexos Lista com os anexos.
      */
     void adicionarAnexos(String idChamado, List<UploadAnexoChamadoVo> anexos);
+
+    /**
+     * Obtém um contato salesforce a partir do seu identificador externo.
+     *
+     * @param idExterno Identificador externo do contato.
+     * @return O contato encontrado.
+     */
+    ContatoSalesforceVo obterContato(String idExterno);
+
+    /**
+     * Cria um contato no salesforce.
+     *
+     * @param vo Objeto com as informações do contato.
+     */
+    void criarContato(CriacaoContatoVo vo);
 }
