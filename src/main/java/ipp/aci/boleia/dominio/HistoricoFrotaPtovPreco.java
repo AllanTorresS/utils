@@ -43,6 +43,10 @@ public class HistoricoFrotaPtovPreco  implements IPersistente, IPertenceRevended
     @JoinColumn(name = "CD_FROTA_PTOV")
     private FrotaPontoVenda frotaPtov;
 
+    @ManyToOne (fetch = FetchType.LAZY)
+    @JoinColumn(name="CD_TIPO_COMBUSTIVEL")
+    private TipoCombustivel tipoCombustivel;
+
     @NotNull
     @Column(name = "VA_PRECO")
     private BigDecimal preco;
@@ -82,6 +86,14 @@ public class HistoricoFrotaPtovPreco  implements IPersistente, IPertenceRevended
 
     public void setFrotaPtov(FrotaPontoVenda frotaPtov) {
         this.frotaPtov = frotaPtov;
+    }
+
+    public TipoCombustivel getTipoCombustivel() {
+        return tipoCombustivel;
+    }
+
+    public void setTipoCombustivel(TipoCombustivel tipoCombustivel) {
+        this.tipoCombustivel = tipoCombustivel;
     }
 
     public BigDecimal getPreco() {
