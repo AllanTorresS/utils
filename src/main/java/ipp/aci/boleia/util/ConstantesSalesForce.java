@@ -49,6 +49,7 @@ public final class ConstantesSalesForce {
     public static final String CAMPO_ID_DOCUMENTO = "ContentDocumentId";
     public static final String CAMPO_ID_CHAMADO_ANEXO = "LinkedEntityId";
     public static final String CAMPO_VISIBILIDADE_ANEXO = "Visibility";
+    public static final String CAMPO_DONE = "done";
 
     /**
      * Impede instanciacao
