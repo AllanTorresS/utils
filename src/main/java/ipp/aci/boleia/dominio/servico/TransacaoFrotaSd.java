@@ -63,6 +63,20 @@ public class TransacaoFrotaSd {
     private Mensagens mensagens;
 
     /**
+     * Valida uma transacao de pagamento de produto ou servico
+     *
+     * @param autorizacaoPagamento A autorizacao de pagamento dos produtos ou servicos
+     * @throws ExcecaoCreditoInsuficiente Quando nao ha saldo suficiente para a transacao informada
+     */
+    public void validarProdutoOuServico(AutorizacaoPagamento autorizacaoPagamento) throws ExcecaoCreditoInsuficiente {
+        TipoAutorizacaoPagamento tipoPagamento = TipoAutorizacaoPagamento.obterPorValor(autorizacaoPagamento.getTipoAutorizacaoPagamento());
+        TipoTransacao tipo = obterTipoTransacao(tipoPagamento, false);
+        if(tipo.isDebito() && autorizacaoPagamento.getFrota().getSaldo().getSaldoCorrente().compareTo(autorizacaoPagamento.getValorTotal()) < 0) {
+            throw new ExcecaoCreditoInsuficiente();
+        }
+    }
+
+    /**
      * Registra uma transacao de pagamento de produto ou servico
      *
      * @param autorizacaoPagamento A autorizacao de pagamento dos produtos ou servicos
@@ -72,9 +86,7 @@ public class TransacaoFrotaSd {
      */
     public TransacaoFrota pagarProdutoOuServico(AutorizacaoPagamento autorizacaoPagamento, TipoAutorizacaoPagamento tipoPagamento) throws ExcecaoCreditoInsuficiente {
         TipoTransacao tipo = obterTipoTransacao(tipoPagamento, false);
-        if(tipo.isDebito() && autorizacaoPagamento.getFrota().getSaldo().getSaldoCorrente().compareTo(autorizacaoPagamento.getValorTotal()) < 0) {
-            throw new ExcecaoCreditoInsuficiente();
-        }
+        validarProdutoOuServico(autorizacaoPagamento);
 
         SaldoVeiculo saldoVeiculo = transacaoVeiculoSd.registrarTransacaoAbastecimentoVeiculo(autorizacaoPagamento);
         autorizacaoPagamento.getVeiculo().setSaldoVeiculo(saldoVeiculo);
