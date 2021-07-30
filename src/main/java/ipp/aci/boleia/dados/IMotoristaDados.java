@@ -159,4 +159,10 @@ public interface IMotoristaDados extends IRepositorioBoleiaDados<Motorista> {
      */
     Motorista obterMotoristaExcluidoPorId(Long idMotorista);
 
+    /**
+     * Obtem motorista excluido por cpf e id de frota
+     * @return o motorista encontrado
+     */
+    Motorista obterExcluidoPorCpfFrota(Long cpf, Long idFrota);
+
 }
