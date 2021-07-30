@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import ipp.aci.boleia.dominio.beneficios.Beneficiario;
 import ipp.aci.boleia.dominio.beneficios.ConfiguracaoDistribuicaoAutomatica;
+import ipp.aci.boleia.dominio.beneficios.ContaBeneficiosFrota;
+import ipp.aci.boleia.dominio.beneficios.LimiteCreditoBeneficiosFrota;
 import ipp.aci.boleia.dominio.enums.ClassificacaoStatusFrota;
 import ipp.aci.boleia.dominio.enums.ModalidadePagamento;
 import ipp.aci.boleia.dominio.enums.StatusContrato;
@@ -435,6 +437,12 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "frota")
     private List<Beneficiario> beneficiarios;
+
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "frota")
+    private ContaBeneficiosFrota contaBeneficiosFrota;
+
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "frota")
+    private LimiteCreditoBeneficiosFrota limiteCreditoBeneficiosFrota;
 
     @NotAudited
     @Formula("(SELECT NVL(COUNT(0), 0) FROM BOLEIA_SCHEMA.TAG_CONECTCAR T WHERE T.CD_FROTA = CD_FROTA)")
@@ -1529,6 +1537,22 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
 
     public void setBeneficiarios(List<Beneficiario> beneficiarios) {
         this.beneficiarios = beneficiarios;
+    }
+
+    public ContaBeneficiosFrota getContaBeneficiosFrota() {
+        return contaBeneficiosFrota;
+    }
+
+    public void setContaBeneficiosFrota(ContaBeneficiosFrota contaBeneficiosFrota) {
+        this.contaBeneficiosFrota = contaBeneficiosFrota;
+    }
+
+    public LimiteCreditoBeneficiosFrota getLimiteCreditoBeneficiosFrota() {
+        return limiteCreditoBeneficiosFrota;
+    }
+
+    public void setLimiteCreditoBeneficiosFrota(LimiteCreditoBeneficiosFrota limiteCreditoBeneficiosFrota) {
+        this.limiteCreditoBeneficiosFrota = limiteCreditoBeneficiosFrota;
     }
 
     /**
