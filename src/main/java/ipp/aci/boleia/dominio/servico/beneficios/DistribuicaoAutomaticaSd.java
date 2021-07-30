@@ -10,6 +10,7 @@ import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -29,13 +30,14 @@ public class DistribuicaoAutomaticaSd {
     /**
      * Cria uma nova distribuição automática
      *
-     * @param distribuicaoBeneficioVo Objeto com as informações da distribuição.
+     * @param idBeneficiario Identificador do beneficiário que terá a distribuição.
+     * @param valorDistribuicao Valor da distribuição automática.
      * @return a distribuição automática preenchida.
      */
-    public DistribuicaoAutomatica criarNovaDistribuicaoAutomatica(DistribuicaoBeneficioVo distribuicaoBeneficioVo) {
+    public DistribuicaoAutomatica criarNovaDistribuicaoAutomatica(Long idBeneficiario, BigDecimal valorDistribuicao) {
         DistribuicaoAutomatica distribuicao = new DistribuicaoAutomatica();
-        distribuicao.setBeneficiario(repositorio.obterPorId(distribuicaoBeneficioVo.getIdBeneficiario()));
-        distribuicao.setValorBeneficio(distribuicaoBeneficioVo.getValorDistribuicao());
+        distribuicao.setBeneficiario(repositorio.obterPorId(idBeneficiario));
+        distribuicao.setValorBeneficio(valorDistribuicao);
         distribuicao.setDataCriacao(ambiente.buscarDataAmbiente());
         distribuicao.setDataAtualizacao(ambiente.buscarDataAmbiente());
 
