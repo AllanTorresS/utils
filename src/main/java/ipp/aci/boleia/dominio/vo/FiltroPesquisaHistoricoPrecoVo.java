@@ -2,6 +2,10 @@ package ipp.aci.boleia.dominio.vo;
 
 import ipp.aci.boleia.dominio.pesquisa.comum.BaseFiltroPaginado;
 
+/**
+ * Filtro de pesquisa de histórico de preços
+ *
+ */
 public class FiltroPesquisaHistoricoPrecoVo extends BaseFiltroPaginado {
 
     private EntidadeVo frota;

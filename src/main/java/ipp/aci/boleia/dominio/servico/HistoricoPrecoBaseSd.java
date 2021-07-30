@@ -7,6 +7,10 @@ import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**
+ * Serviços de domínio da entidade {@link ipp.aci.boleia.dominio.HistoricoPrecoBase}.
+ *
+ * */
 @Component
 public class HistoricoPrecoBaseSd {
 
