@@ -1,11 +1,11 @@
 package ipp.aci.boleia.dominio.servico.beneficios;
 
 import ipp.aci.boleia.dados.IBeneficiarioDados;
-import ipp.aci.boleia.dados.IBeneficioDados;
+import ipp.aci.boleia.dados.ITipoBeneficioDados;
 import ipp.aci.boleia.dados.IContaBeneficiarioDados;
 import ipp.aci.boleia.dados.IContaBeneficioDados;
 import ipp.aci.boleia.dominio.beneficios.Beneficiario;
-import ipp.aci.boleia.dominio.beneficios.Beneficio;
+import ipp.aci.boleia.dominio.beneficios.TipoBeneficio;
 import ipp.aci.boleia.dominio.beneficios.ContaBeneficiario;
 import ipp.aci.boleia.dominio.beneficios.ContaBeneficio;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
@@ -34,7 +34,7 @@ public class ContaBeneficiarioSd {
     private IContaBeneficioDados contaBeneficioDados;
 
     @Autowired
-    private IBeneficioDados beneficioDados;
+    private ITipoBeneficioDados tipoBeneficioDados;
 
     @Autowired
     private UtilitarioAmbiente utilitarioAmbiente;
@@ -53,7 +53,7 @@ public class ContaBeneficiarioSd {
         contaBeneficiario.setDataCriacao(utilitarioAmbiente.buscarDataAmbiente());
         contaBeneficiario.setDataAtualizacao(utilitarioAmbiente.buscarDataAmbiente());
         contaBeneficiario = contaBeneficiarioDados.armazenar(contaBeneficiario);
-        contaBeneficiario.setContasBeneficio(configurarBeneficiosIniciais(contaBeneficiario));
+        contaBeneficiario.setContasBeneficio(configurarTiposBeneficioIniciais(contaBeneficiario));
         return contaBeneficiario;
     }
 
@@ -61,14 +61,14 @@ public class ContaBeneficiarioSd {
      * Realiza a configuração padrão de benefícios para uma {@link ContaBeneficiario}.
      *
      * @param contaBeneficiario Conta que será configurada.
-     * @return a lista com os vinculos entre {@link ContaBeneficiario} e {@link Beneficio}.
+     * @return a lista com os vinculos entre {@link ContaBeneficiario} e {@link TipoBeneficio}.
      */
-    private List<ContaBeneficio> configurarBeneficiosIniciais(ContaBeneficiario contaBeneficiario) {
-        List<Beneficio> beneficios = beneficioDados.obterTodos(null);
+    private List<ContaBeneficio> configurarTiposBeneficioIniciais(ContaBeneficiario contaBeneficiario) {
+        List<TipoBeneficio> tiposBeneficio = tipoBeneficioDados.obterTodos(null);
         List<ContaBeneficio> listaContaBeneficio = new ArrayList<>();
-        beneficios.forEach(beneficio -> {
+        tiposBeneficio.forEach(tipoBeneficio -> {
             ContaBeneficio contaBeneficio = new ContaBeneficio();
-            contaBeneficio.setBeneficio(beneficio);
+            contaBeneficio.setTipoBeneficio(tipoBeneficio);
             contaBeneficio.setBeneficioConfigurado(true);
             contaBeneficio.setContaBeneficiario(contaBeneficiario);
             contaBeneficio.setDataCriacao(utilitarioAmbiente.buscarDataAmbiente());

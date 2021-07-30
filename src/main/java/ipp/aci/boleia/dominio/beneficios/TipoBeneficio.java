@@ -25,7 +25,7 @@ import java.util.List;
 @Audited
 @Entity
 @Table(name = "BENEFICIO")
-public class Beneficio implements IPersistente {
+public class TipoBeneficio implements IPersistente {
 
     @Id
     @Column(name = "CD_BENEFICIO")

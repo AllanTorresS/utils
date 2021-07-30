@@ -1,6 +1,6 @@
 package ipp.aci.boleia.dominio.servico.beneficios;
 
-import ipp.aci.boleia.dados.IBeneficioDados;
+import ipp.aci.boleia.dados.ITipoBeneficioDados;
 import ipp.aci.boleia.dados.IContaBeneficioDados;
 import ipp.aci.boleia.dominio.beneficios.ContaBeneficiario;
 import ipp.aci.boleia.dominio.beneficios.ContaBeneficio;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 public class ContaBeneficioSd {
 
     @Autowired
-    private IBeneficioDados repositorioBeneficios;
+    private ITipoBeneficioDados repositorioBeneficios;
     @Autowired
     private IContaBeneficioDados repositorio;
     @Autowired
@@ -32,7 +32,7 @@ public class ContaBeneficioSd {
     public ContaBeneficio criarContaBeneficio(ContaBeneficiario contaBeneficiario, Long idBeneficio){
         ContaBeneficio contaBeneficio = new ContaBeneficio();
         contaBeneficio.setContaBeneficiario(contaBeneficiario);
-        contaBeneficio.setBeneficio(repositorioBeneficios.obterPorId(idBeneficio));
+        contaBeneficio.setTipoBeneficio(repositorioBeneficios.obterPorId(idBeneficio));
         contaBeneficio.setDataCriacao(ambiente.buscarDataAmbiente());
         contaBeneficio.setDataAtualizacao(ambiente.buscarDataAmbiente());
         contaBeneficio.setBeneficioConfigurado(false);

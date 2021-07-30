@@ -39,7 +39,7 @@ public class ContaBeneficio implements IPersistente {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_BENEFICIO")
-    private Beneficio beneficio;
+    private TipoBeneficio tipoBeneficio;
 
     @NotNull
     @Column(name="ID_CONFIGURADO")
@@ -77,12 +77,12 @@ public class ContaBeneficio implements IPersistente {
         this.contaBeneficiario = contaBeneficiario;
     }
 
-    public Beneficio getBeneficio() {
-        return beneficio;
+    public TipoBeneficio getTipoBeneficio() {
+        return tipoBeneficio;
     }
 
-    public void setBeneficio(Beneficio beneficio) {
-        this.beneficio = beneficio;
+    public void setTipoBeneficio(TipoBeneficio tipoBeneficio) {
+        this.tipoBeneficio = tipoBeneficio;
     }
 
     public Boolean getBeneficioConfigurado() {
