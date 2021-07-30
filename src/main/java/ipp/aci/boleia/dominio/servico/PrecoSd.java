@@ -35,6 +35,12 @@ public class PrecoSd {
     private PrecoNegociadoSd precoNegociadoSd;
 
     @Autowired
+    private HistoricoFrotaPtovPrecoSd historicoFrotaPtovPrecoSd;
+
+    @Autowired
+    private HistoricoPrecoBaseSd historicoPrecoBaseSd;
+
+    @Autowired
     private IPrecoBaseDados repositorioPrecoBase;
 
     @Autowired
@@ -78,6 +84,7 @@ public class PrecoSd {
         novoPreco.setPreco(precoMicromercado.getPreco());
         novoPreco.setDataAtualizacao(precoMicromercado.getDataAtualizacao());
         novoPreco = repositorioPrecoBase.armazenarSemIsolamentoDeDados(novoPreco);
+        historicoPrecoBaseSd.armazenar(novoPreco);
         return novoPreco;
     }
 
@@ -126,6 +133,7 @@ public class PrecoSd {
                 novoPreco.setDataVigencia(precoBase.getDataAtualizacao());
                 novoPreco.setDataAtualizacao(precoBase.getDataAtualizacao());
                 repositorioPreco.armazenarSemIsolamentoDeDados(novoPreco);
+                historicoFrotaPtovPrecoSd.armazenar(novoPreco);
             }
             idFrotaPtov.add(preco.getFrotaPtov().getId());
             idFrotas.add(preco.getFrota().getId());
@@ -159,6 +167,7 @@ public class PrecoSd {
             preco.setDataAtualizacao(precoBase.getDataAtualizacao());
             preco.setDataVigencia(precoBase.getDataAtualizacao());
             repositorioPreco.armazenarSemIsolamentoDeDados(preco);
+            historicoFrotaPtovPrecoSd.armazenar(preco);
             idFrotas.add(frotaPtov.getFrota().getId());
         }
         return idFrotas;
@@ -191,6 +200,7 @@ public class PrecoSd {
 
         preco.entrarEmVigencia(ambiente.buscarDataAmbiente(), true);
         preco = repositorioPrecoBase.armazenarSemIsolamentoDeDados(preco);
+        historicoPrecoBaseSd.armazenar(preco);
         return propagarAtualizacaoPrecoBase(preco);
     }
 
