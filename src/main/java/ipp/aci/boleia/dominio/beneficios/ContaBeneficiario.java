@@ -58,7 +58,7 @@ public class ContaBeneficiario implements IPersistente {
     private Date dataEncerramento;
 
     @OneToMany(mappedBy = "contaBeneficiario", fetch = FetchType.LAZY)
-    private List<ContaBeneficio> contasBeneficio;
+    private List<TipoBeneficioConfiguracao> tiposBeneficioConfigurados;
 
     @OneToMany(mappedBy = "contaBeneficiario", fetch = FetchType.LAZY)
     private List<OperacaoContaBeneficiario> operacoesContaBeneficio;
@@ -93,12 +93,12 @@ public class ContaBeneficiario implements IPersistente {
         this.saldo = saldo;
     }
 
-    public List<ContaBeneficio> getContasBeneficio() {
-        return contasBeneficio;
+    public List<TipoBeneficioConfiguracao> getTiposBeneficioConfigurados() {
+        return tiposBeneficioConfigurados;
     }
 
-    public void setContasBeneficio(List<ContaBeneficio> contasBeneficio) {
-        this.contasBeneficio = contasBeneficio;
+    public void setTiposBeneficioConfigurados(List<TipoBeneficioConfiguracao> tiposBeneficioConfigurados) {
+        this.tiposBeneficioConfigurados = tiposBeneficioConfigurados;
     }
 
     public List<OperacaoContaBeneficiario> getOperacoesContaBeneficio() {

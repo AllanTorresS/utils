@@ -3,11 +3,11 @@ package ipp.aci.boleia.dominio.servico.beneficios;
 import ipp.aci.boleia.dados.IBeneficiarioDados;
 import ipp.aci.boleia.dados.ITipoBeneficioDados;
 import ipp.aci.boleia.dados.IContaBeneficiarioDados;
-import ipp.aci.boleia.dados.IContaBeneficioDados;
+import ipp.aci.boleia.dados.ITipoBeneficioConfiguracaoDados;
 import ipp.aci.boleia.dominio.beneficios.Beneficiario;
 import ipp.aci.boleia.dominio.beneficios.TipoBeneficio;
 import ipp.aci.boleia.dominio.beneficios.ContaBeneficiario;
-import ipp.aci.boleia.dominio.beneficios.ContaBeneficio;
+import ipp.aci.boleia.dominio.beneficios.TipoBeneficioConfiguracao;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -31,7 +31,7 @@ public class ContaBeneficiarioSd {
     private IContaBeneficiarioDados contaBeneficiarioDados;
 
     @Autowired
-    private IContaBeneficioDados contaBeneficioDados;
+    private ITipoBeneficioConfiguracaoDados tipoBeneficioConfiguracaoDados;
 
     @Autowired
     private ITipoBeneficioDados tipoBeneficioDados;
@@ -53,7 +53,7 @@ public class ContaBeneficiarioSd {
         contaBeneficiario.setDataCriacao(utilitarioAmbiente.buscarDataAmbiente());
         contaBeneficiario.setDataAtualizacao(utilitarioAmbiente.buscarDataAmbiente());
         contaBeneficiario = contaBeneficiarioDados.armazenar(contaBeneficiario);
-        contaBeneficiario.setContasBeneficio(configurarTiposBeneficioIniciais(contaBeneficiario));
+        contaBeneficiario.setTiposBeneficioConfigurados(configurarTiposBeneficioIniciais(contaBeneficiario));
         return contaBeneficiario;
     }
 
@@ -63,18 +63,18 @@ public class ContaBeneficiarioSd {
      * @param contaBeneficiario Conta que será configurada.
      * @return a lista com os vinculos entre {@link ContaBeneficiario} e {@link TipoBeneficio}.
      */
-    private List<ContaBeneficio> configurarTiposBeneficioIniciais(ContaBeneficiario contaBeneficiario) {
+    private List<TipoBeneficioConfiguracao> configurarTiposBeneficioIniciais(ContaBeneficiario contaBeneficiario) {
         List<TipoBeneficio> tiposBeneficio = tipoBeneficioDados.obterTodos(null);
-        List<ContaBeneficio> listaContaBeneficio = new ArrayList<>();
+        List<TipoBeneficioConfiguracao> tiposConfigurados = new ArrayList<>();
         tiposBeneficio.forEach(tipoBeneficio -> {
-            ContaBeneficio contaBeneficio = new ContaBeneficio();
-            contaBeneficio.setTipoBeneficio(tipoBeneficio);
-            contaBeneficio.setBeneficioConfigurado(true);
-            contaBeneficio.setContaBeneficiario(contaBeneficiario);
-            contaBeneficio.setDataCriacao(utilitarioAmbiente.buscarDataAmbiente());
-            contaBeneficio.setDataAtualizacao(utilitarioAmbiente.buscarDataAmbiente());
-            listaContaBeneficio.add(contaBeneficio);
+            TipoBeneficioConfiguracao tipoBeneficioConfiguracao = new TipoBeneficioConfiguracao();
+            tipoBeneficioConfiguracao.setTipoBeneficio(tipoBeneficio);
+            tipoBeneficioConfiguracao.setBeneficioConfigurado(true);
+            tipoBeneficioConfiguracao.setContaBeneficiario(contaBeneficiario);
+            tipoBeneficioConfiguracao.setDataCriacao(utilitarioAmbiente.buscarDataAmbiente());
+            tipoBeneficioConfiguracao.setDataAtualizacao(utilitarioAmbiente.buscarDataAmbiente());
+            tiposConfigurados.add(tipoBeneficioConfiguracao);
         });
-        return contaBeneficioDados.armazenarLista(listaContaBeneficio);
+        return tipoBeneficioConfiguracaoDados.armazenarLista(tiposConfigurados);
     }
 }
