@@ -69,7 +69,7 @@ public class ContaBeneficiarioSd {
         tiposBeneficio.forEach(tipoBeneficio -> {
             ConfiguracaoTipoBeneficio configuracaoTipoBeneficio = new ConfiguracaoTipoBeneficio();
             configuracaoTipoBeneficio.setTipoBeneficio(tipoBeneficio);
-            configuracaoTipoBeneficio.setBeneficioConfigurado(true);
+            configuracaoTipoBeneficio.setConfigurado(true);
             configuracaoTipoBeneficio.setContaBeneficiario(contaBeneficiario);
             configuracaoTipoBeneficio.setDataCriacao(utilitarioAmbiente.buscarDataAmbiente());
             configuracaoTipoBeneficio.setDataAtualizacao(utilitarioAmbiente.buscarDataAmbiente());

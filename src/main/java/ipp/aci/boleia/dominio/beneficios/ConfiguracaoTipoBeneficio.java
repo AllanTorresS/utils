@@ -43,7 +43,7 @@ public class ConfiguracaoTipoBeneficio implements IPersistente {
 
     @NotNull
     @Column(name="ID_CONFIGURADO")
-    private Boolean beneficioConfigurado;
+    private Boolean configurado;
 
     @NotNull
     @Column(name = "DT_CRIACAO")
@@ -85,12 +85,12 @@ public class ConfiguracaoTipoBeneficio implements IPersistente {
         this.tipoBeneficio = tipoBeneficio;
     }
 
-    public Boolean getBeneficioConfigurado() {
-        return beneficioConfigurado;
+    public Boolean isConfigurado() {
+        return configurado;
     }
 
-    public void setBeneficioConfigurado(Boolean beneficioConfigurado) {
-        this.beneficioConfigurado = beneficioConfigurado;
+    public void setConfigurado(Boolean configurado) {
+        this.configurado = configurado;
     }
 
     public Date getDataCriacao() {

@@ -35,7 +35,7 @@ public class ContaBeneficioSd {
         configuracaoTipoBeneficio.setTipoBeneficio(repositorioBeneficios.obterPorId(idBeneficio));
         configuracaoTipoBeneficio.setDataCriacao(ambiente.buscarDataAmbiente());
         configuracaoTipoBeneficio.setDataAtualizacao(ambiente.buscarDataAmbiente());
-        configuracaoTipoBeneficio.setBeneficioConfigurado(false);
+        configuracaoTipoBeneficio.setConfigurado(false);
         repositorio.armazenar(configuracaoTipoBeneficio);
         return configuracaoTipoBeneficio;
     }
