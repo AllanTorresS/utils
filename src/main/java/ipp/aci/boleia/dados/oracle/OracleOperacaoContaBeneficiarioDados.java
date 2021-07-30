@@ -32,7 +32,7 @@ public class OracleOperacaoContaBeneficiarioDados extends OracleRepositorioBolei
     }
 
     @Override
-    public ResultadoPaginado<OperacaoContaBeneficiario> pesquisarExtratos(FiltroPesquisaExtratoBeneficiariosVo filtro) {
+    public ResultadoPaginado<OperacaoContaBeneficiario> pesquisarExtratoFrota(FiltroPesquisaExtratoBeneficiariosVo filtro) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
         parametros.add(new ParametroPesquisaMaior("valorTotal", BigDecimal.ZERO));
         if (filtro.getDe() != null && filtro.getAte() != null) {

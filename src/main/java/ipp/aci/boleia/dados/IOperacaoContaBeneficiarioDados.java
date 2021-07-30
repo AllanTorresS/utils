@@ -17,5 +17,5 @@ public interface IOperacaoContaBeneficiarioDados extends IRepositorioBoleiaDados
      * @param filtro Filtro com as informações que devem ser consideradas na busca
      * @return Lista de operações de distribuição que foram realizadas
      */
-    ResultadoPaginado<OperacaoContaBeneficiario> pesquisarExtratos(FiltroPesquisaExtratoBeneficiariosVo filtro);
+    ResultadoPaginado<OperacaoContaBeneficiario> pesquisarExtratoFrota(FiltroPesquisaExtratoBeneficiariosVo filtro);
 }
