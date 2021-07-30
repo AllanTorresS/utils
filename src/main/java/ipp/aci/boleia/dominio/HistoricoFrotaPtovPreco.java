@@ -23,6 +23,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Representa a tabela de histórico de preços negociados entre Frotas e PVs
+ */
 @Entity
 @Table(name="HIST_FROTA_PTOV_PRECO")
 public class HistoricoFrotaPtovPreco  implements IPersistente, IPertenceRevendedor, IPertenceFrota {
