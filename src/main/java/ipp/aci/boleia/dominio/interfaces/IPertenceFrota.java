@@ -19,6 +19,7 @@ import ipp.aci.boleia.dominio.PontoRota;
 import ipp.aci.boleia.dominio.Preco;
 import ipp.aci.boleia.dominio.TransacaoConsolidada;
 import ipp.aci.boleia.dominio.TransacaoConsolidadaDetalhe;
+import ipp.aci.boleia.dominio.beneficios.OperacaoContaBeneficiario;
 
 import java.util.HashMap;
 import java.util.List;
@@ -41,6 +42,7 @@ public interface IPertenceFrota {
     String CAMPO_PARAMETRO_SISTEMA = "frotaParametroSistema." + NOME_CAMPO;
     String CAMPO_VEICULO = "veiculo." + NOME_CAMPO;
     String CAMPO_TRANSACAO_FROTA = "transacaoFrota." + NOME_CAMPO;
+    String CAMPO_FROTA_OPERACAO_CONTA_BENEFICIARIO = "contaBeneficiario.beneficiario." + NOME_CAMPO;
 
     Map<Class<?>, String> MAPA_RELACIONAMENTO_FROTA = inicializarMapaCaminhosFrota();
 
@@ -98,6 +100,7 @@ public interface IPertenceFrota {
         mapa.put(Cobranca.class, CAMPO_TRANSACOES_CONSOLIDADAS_FROTA);
         mapa.put(AbastecimentoVeiculoMes.class, CAMPO_VEICULO);
         mapa.put(ExtratoPedidoTransacao.class, CAMPO_TRANSACAO_FROTA);
+        mapa.put(OperacaoContaBeneficiario.class, CAMPO_FROTA_OPERACAO_CONTA_BENEFICIARIO);
         return mapa;
     }
 }
