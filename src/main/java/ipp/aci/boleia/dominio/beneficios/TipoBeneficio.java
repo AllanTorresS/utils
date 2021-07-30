@@ -20,22 +20,22 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Representa a tabela de benefícios
+ * Representa a tabela de tipos de benefício.
  */
 @Audited
 @Entity
-@Table(name = "BENEFICIO")
+@Table(name = "TIPO_BENEFICIO")
 public class TipoBeneficio implements IPersistente {
 
     @Id
-    @Column(name = "CD_BENEFICIO")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_BENEFICIOS")
-    @SequenceGenerator(name = "SEQ_BENEFICIOS", sequenceName = "SEQ_BENEFICIOS", allocationSize = 1)
+    @Column(name = "CD_TIPO_BENEFICIO")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_TIPO_BENEFICIO")
+    @SequenceGenerator(name = "SEQ_TIPO_BENEFICIO", sequenceName = "SEQ_TIPO_BENEFICIO", allocationSize = 1)
     private Long id;
 
     @NotNull
     @Size(max = 250)
-    @Column(name = "NM_BENEFICIO")
+    @Column(name = "NM_TIPO_BENEFICIO")
     private String nome;
 
     @NotNull
@@ -43,7 +43,7 @@ public class TipoBeneficio implements IPersistente {
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataCriacao;
 
-    @OneToMany(mappedBy = "beneficio", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "tipoBeneficio", fetch = FetchType.LAZY)
     private List<ConfiguracaoTipoBeneficio> configuracoesTipoBenficio;
 
     @Override

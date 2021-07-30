@@ -24,13 +24,13 @@ import java.util.Date;
  */
 @Audited
 @Entity
-@Table(name = "CONTA_BENEFICIO")
+@Table(name = "CONFIGURACAO_TIPO_BENEFICIO")
 public class ConfiguracaoTipoBeneficio implements IPersistente {
 
     @Id
-    @Column(name = "CD_CONTA_BENEFICIO")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_CONTA_BENEFICIO")
-    @SequenceGenerator(name = "SEQ_CONTA_BENEFICIO", sequenceName = "SEQ_CONTA_BENEFICIO", allocationSize = 1)
+    @Column(name = "CD_CONFIG_TIPO_BENEFICIO")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_CONFIG_TIPO_BENEFICIO")
+    @SequenceGenerator(name = "SEQ_CONFIG_TIPO_BENEFICIO", sequenceName = "SEQ_CONFIG_TIPO_BENEFICIO", allocationSize = 1)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -38,7 +38,7 @@ public class ConfiguracaoTipoBeneficio implements IPersistente {
     private ContaBeneficiario contaBeneficiario;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CD_BENEFICIO")
+    @JoinColumn(name = "CD_TIPO_BENEFICIO")
     private TipoBeneficio tipoBeneficio;
 
     @NotNull
