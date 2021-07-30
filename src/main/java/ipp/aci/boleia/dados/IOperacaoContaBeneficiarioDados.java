@@ -13,6 +13,7 @@ public interface IOperacaoContaBeneficiarioDados extends IRepositorioBoleiaDados
 
     /**
      * Busca a lista de todas operações de distribuição (valor total positivo) realizadas para os beneficiários
+     *
      * @param filtro Filtro com as informações que devem ser consideradas na busca
      * @return Lista de operações de distribuição que foram realizadas
      */

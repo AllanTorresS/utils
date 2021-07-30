@@ -5,9 +5,13 @@ import ipp.aci.boleia.dominio.pesquisa.comum.FiltroBasePeriodoPaginado;
 
 import java.util.Date;
 
-public class FiltroPesquisaExtratoBeneficiariosVo extends BaseFiltroPaginado {
+/**
+ * Vo com as informações usadas para buscar as operações relacionadas à conta de um beneficiário.
+ *
+ * @author luiz.viana
+ */
+public class FiltroPesquisaExtratoBeneficiariosVo extends FiltroBasePeriodoPaginado {
     private String cpfBeneficiario;
-    private FiltroBasePeriodoPaginado dataBeneficio;
 
     public FiltroPesquisaExtratoBeneficiariosVo() {
     }
@@ -18,13 +22,5 @@ public class FiltroPesquisaExtratoBeneficiariosVo extends BaseFiltroPaginado {
 
     public void setCpfBeneficiario(String cpfBeneficiario) {
         this.cpfBeneficiario = cpfBeneficiario;
-    }
-
-    public FiltroBasePeriodoPaginado getDataBeneficio() {
-        return dataBeneficio;
-    }
-
-    public void setDataBeneficio(FiltroBasePeriodoPaginado dataBeneficio) {
-        this.dataBeneficio = dataBeneficio;
     }
 }

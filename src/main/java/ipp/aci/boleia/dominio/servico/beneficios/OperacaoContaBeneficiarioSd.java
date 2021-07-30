@@ -37,7 +37,7 @@ public class OperacaoContaBeneficiarioSd {
      *
      * @throws ExcecaoValidacao lançada caso seja passado um valor menor ou igual a zero para a criação do crédito.
      */
-    public OperacaoContaBeneficiario criarOperacaoCreditoConta(ContaBeneficiario contaBeneficiario, BigDecimal valorOperacao, Usuario autor) throws ExcecaoValidacao {
+    public OperacaoContaBeneficiario criarOperacaoCreditoConta(ContaBeneficiario contaBeneficiario, BigDecimal valorOperacao) throws ExcecaoValidacao {
         if(valorOperacao.compareTo(BigDecimal.ZERO) <= 0) {
             throw new ExcecaoValidacao(Erro.ERRO_GENERICO);
         }
@@ -48,7 +48,7 @@ public class OperacaoContaBeneficiarioSd {
         operacao.setDataCriacao(utilitarioAmbiente.buscarDataAmbiente());
         operacao.setDataAtualizacao(utilitarioAmbiente.buscarDataAmbiente());
         operacao.setSaldoResultante(contaBeneficiario.getSaldo().add(valorOperacao));
-        operacao.setAutor(autor);
+        operacao.setAutor(utilitarioAmbiente.getUsuarioLogado());
         operacao = operacaoContaBeneficiarioDados.armazenar(operacao);
 
         contaBeneficiario.setSaldo(operacao.getSaldoResultante());

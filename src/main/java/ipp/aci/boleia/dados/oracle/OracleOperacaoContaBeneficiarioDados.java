@@ -35,11 +35,11 @@ public class OracleOperacaoContaBeneficiarioDados extends OracleRepositorioBolei
     public ResultadoPaginado<OperacaoContaBeneficiario> pesquisarExtratos(FiltroPesquisaExtratoBeneficiariosVo filtro) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
         parametros.add(new ParametroPesquisaMaior("valorTotal", BigDecimal.ZERO));
-        if (filtro.getDataBeneficio() != null) {
-            parametros.add(new ParametroPesquisaDataEntre("dataCriacao", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDataBeneficio().getDe()), UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getDataBeneficio().getAte())));
+        if (filtro.getDe() != null && filtro.getAte() != null) {
+            parametros.add(new ParametroPesquisaDataEntre("dataCriacao", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe()), UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte())));
         }
         if (filtro.getCpfBeneficiario() != null) {
-            parametros.add(new ParametroPesquisaIgual("contaBeneficiario.beneficiario.cpf", UtilitarioFormatacao.obterNumeracaoSemFormatacao(filtro.getCpfBeneficiario())));
+            parametros.add(new ParametroPesquisaIgual("contaBeneficiario.beneficiario.cpf", UtilitarioFormatacao.obterLongMascara(filtro.getCpfBeneficiario())));
         }
         return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
