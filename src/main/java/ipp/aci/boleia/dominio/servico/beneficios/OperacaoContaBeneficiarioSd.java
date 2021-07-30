@@ -2,6 +2,7 @@ package ipp.aci.boleia.dominio.servico.beneficios;
 
 import ipp.aci.boleia.dados.IContaBeneficiarioDados;
 import ipp.aci.boleia.dados.IOperacaoContaBeneficiarioDados;
+import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.beneficios.ContaBeneficiario;
 import ipp.aci.boleia.dominio.beneficios.OperacaoContaBeneficiario;
 import ipp.aci.boleia.util.excecao.Erro;
@@ -47,6 +48,7 @@ public class OperacaoContaBeneficiarioSd {
         operacao.setDataCriacao(utilitarioAmbiente.buscarDataAmbiente());
         operacao.setDataAtualizacao(utilitarioAmbiente.buscarDataAmbiente());
         operacao.setSaldoResultante(contaBeneficiario.getSaldo().add(valorOperacao));
+        operacao.setAutor(utilitarioAmbiente.getUsuarioLogado());
         operacao = operacaoContaBeneficiarioDados.armazenar(operacao);
 
         contaBeneficiario.setSaldo(operacao.getSaldoResultante());

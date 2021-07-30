@@ -3,7 +3,6 @@ package ipp.aci.boleia.dados.servicos.salesforce;
 import com.fasterxml.jackson.databind.JsonNode;
 import ipp.aci.boleia.dados.IChamadoDados;
 import ipp.aci.boleia.dados.IChamadoSistemaDados;
-import ipp.aci.boleia.dados.IMotivoChamadoDados;
 import ipp.aci.boleia.dados.servicos.rest.ConsumidorHttp;
 import ipp.aci.boleia.dominio.ChamadoSistema;
 import ipp.aci.boleia.dominio.Usuario;
@@ -12,7 +11,9 @@ import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.salesforce.CancelamentoChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.ChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.ConsultaChamadosVo;
+import ipp.aci.boleia.dominio.vo.salesforce.ContatoSalesforceVo;
 import ipp.aci.boleia.dominio.vo.salesforce.CriacaoChamadoVo;
+import ipp.aci.boleia.dominio.vo.salesforce.CriacaoContatoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.EdicaoChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.FiltroConsultaChamadosVo;
 import ipp.aci.boleia.dominio.vo.salesforce.PicklistVo;
@@ -40,17 +41,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static ipp.aci.boleia.util.ConstantesSalesForce.CAMPO_DONE;
 import static ipp.aci.boleia.util.ConstantesSalesForce.CAMPO_ID_CHAMADO_ANEXO;
 import static ipp.aci.boleia.util.ConstantesSalesForce.CAMPO_ID_DOCUMENTO;
+import static ipp.aci.boleia.util.ConstantesSalesForce.CAMPO_REGISTROS;
 import static ipp.aci.boleia.util.ConstantesSalesForce.CAMPO_VISIBILIDADE_ANEXO;
 import static ipp.aci.boleia.util.ConstantesSalesForce.SOLICITANTE_FROTA;
 import static ipp.aci.boleia.util.ConstantesSalesForce.SOLICITANTE_INTERNO;
 import static ipp.aci.boleia.util.ConstantesSalesForce.SOLICITANTE_REVENDA;
 import static ipp.aci.boleia.util.ConstantesSalesForce.VALOR_CAMPO_VISIBILIDADE_ANEXO;
-import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarCpfApresentacao;
-import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarCnpjApresentacao;
 import static ipp.aci.boleia.util.UtilitarioCalculoData.obterPrimeiroInstanteDia;
 import static ipp.aci.boleia.util.UtilitarioCalculoData.obterUltimoInstanteDia;
+import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarCnpjApresentacao;
+import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarCpfApresentacao;
 import static ipp.aci.boleia.util.UtilitarioFormatacaoData.formatarDataIso8601ComTimeZoneMillis;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.text.MessageFormat.format;
@@ -138,7 +141,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
             "      Motivo__c=':motivo' AND " +
             "      MotivoSolicitacao__c=':modulo'";
 
-    private static final String CAMPO_DONE = "done";
+    private static final String OBTER_ID_CONTATO = "SELECT Id FROM Contact WHERE IdExterno__c=':idExterno'";
 
     @Value("${salesforce.chamados.authorization.client.id}")
     private String clientId;
@@ -151,6 +154,9 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
 
     @Value("${salesforce.chamados.authorization.password}")
     private String password;
+
+    @Value("${salesforce.chamados.emailIntegracao}")
+    private String emailIntegracao;
 
     @Value("${salesforce.chamados.consulta.url}")
     private String urlConsulta;
@@ -182,11 +188,8 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     @Value("${salesforce.chamados.vincularArquivo}")
     private String urlVincularArquivo;
 
-    @Value("${salesforce.chamados.emailIntegracao}")
-    private String emailIntegracao;
-
-    @Autowired
-    private IMotivoChamadoDados motivoChamadoDados;
+    @Value("${salesforce.chamados.criarContato}")
+    private String urlCriarContato;
 
     @Autowired
     private IChamadoSistemaDados chamadoSistemaDados;
@@ -207,7 +210,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
             parametros.put("contato", contatos.stream().collect(joining("','", "'", "'")));
             query += CLAUSULA_CONTATO_REVENDA;
         }
-        List<ChamadoVo> chamados = executarQuerySalesforce(formatarQueryParaConsulta(query, parametros));
+        List<ChamadoVo> chamados = executarQuerySalesforce(formatarQueryParaConsulta(query, parametros), ChamadoVo.class);
         return chamados != null ? chamados.stream().findFirst().orElse(null) : null;
     }
 
@@ -215,7 +218,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     public ChamadoVo obterPorIdSalesforceSemIsolamento(String idSalesforce) {
         Map<String, Object> parametros = new HashMap<>();
         parametros.put("idSalesforce", idSalesforce);
-        List<ChamadoVo> chamados = executarQuerySalesforce(formatarQueryParaConsulta(OBTER_CHAMADO_POR_ID, parametros));
+        List<ChamadoVo> chamados = executarQuerySalesforce(formatarQueryParaConsulta(OBTER_CHAMADO_POR_ID, parametros), ChamadoVo.class);
         return chamados != null ? chamados.stream().findFirst().orElse(null) : null;
     }
 
@@ -224,7 +227,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
         String queryConsulta = formatarQueryParaPesquisa(CONSULTAR_CHAMADOS, true, filtro);
         String queryCount = formatarQueryParaPesquisa(COUNT_CONSULTAR_CHAMADOS, false, filtro);
 
-        return executarQuerySalesforcePaginada(queryConsulta, queryCount);
+        return executarQuerySalesforcePaginada(queryConsulta, queryCount, ChamadoVo.class);
     }
 
     @Override
@@ -244,7 +247,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
             parametros.put("contato", "'" + criacaoChamadoVo.getContactPosto().getIdExterno() + "'");
             query += CLAUSULA_CONTATO_REVENDA;
         }
-        return executarQuerySalesforce(formatarQueryParaConsulta(query, parametros));
+        return executarQuerySalesforce(formatarQueryParaConsulta(query, parametros), ChamadoVo.class);
     }
 
     @Override
@@ -383,6 +386,22 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
             String idAnexo = obterIdentificadorDocumentoAnexo(idUpload);
             vincularAnexoComChamado(idAnexo, idChamado);
         });
+    }
+
+    @Override
+    public ContatoSalesforceVo obterContato(String idExterno) {
+        Map<String, Object> parametros = new HashMap<>();
+        parametros.put("idExterno", idExterno);
+
+        String query = formatarQueryParaConsulta(OBTER_ID_CONTATO, parametros);
+        List<ContatoSalesforceVo> contatos = executarQuerySalesforce(query, ContatoSalesforceVo.class);
+        return contatos.stream().findFirst().orElse(null);
+    }
+
+    @Override
+    public void criarContato(CriacaoContatoVo vo) {
+        prepararRequisicao(urlCriarContato, vo);
+        enviarRequisicaoPost(this::trataRespostaCriacao);
     }
 
     /**
@@ -528,62 +547,61 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
      *
      * @param queryConsulta Query utilizada para consultar os dados.
      * @param queryCount Query utilizada para realizar o count total dos dados.
+     * @param <T> Classe utilizada para mapear a resposta em json da integração.
      * @return Resultado paginado da consulta.
      */
-    private ResultadoPaginado<ChamadoVo> executarQuerySalesforcePaginada(String queryConsulta, String queryCount) {
+    private <T> ResultadoPaginado<T> executarQuerySalesforcePaginada(String queryConsulta, String queryCount, Class<T> classeMapeadora) {
         prepararRequisicao(urlConsulta, null);
 
         String endpointConsulta = this.instanceUrl.concat(format(this.urlConsulta, queryConsulta));
         String endpointCount = this.instanceUrl.concat(format(this.urlConsulta, queryCount));
-        ConsultaChamadosVo consultaChamadosVo = enviarRequisicaoGet(endpointConsulta, this::tratarRespostaConsultaChamados);
-        Integer totalItems = enviarRequisicaoGet(endpointCount, this::tratarRespostaCountChamados);
+        List<T> resultado = enviarRequisicaoGet(endpointConsulta, response -> tratarRespostaConsultaSalesforce(response, classeMapeadora));
+        Integer totalItems = enviarRequisicaoGet(endpointCount, this::tratarRespostaCountConsultaSalesforce);
 
-        ResultadoPaginado<ChamadoVo> resultadoPaginado = new ResultadoPaginado<>();
-        resultadoPaginado.setTotalItems(totalItems);
-        resultadoPaginado.setRegistros(consultaChamadosVo.getChamados() != null ? consultaChamadosVo.getChamados() : new ArrayList<>());
-        return resultadoPaginado;
+        return new ResultadoPaginado<T>(resultado, totalItems);
     }
 
     /**
      * Executa uma consulta SOQL pela API do Salesforce.
      *
      * @param queryConsulta Query utilizada para consultar os dados.
+     * @param <T> Classe utilizada para mapear a resposta em json da integração.
      * @return Resultado da consulta.
      */
-    private List<ChamadoVo> executarQuerySalesforce(String queryConsulta) {
+    private <T> List<T> executarQuerySalesforce(String queryConsulta, Class<T> classeMapeamento) {
         prepararRequisicao(urlConsulta, null);
 
         String endpointConsulta = this.instanceUrl.concat(format(this.urlConsulta, queryConsulta));
-        ConsultaChamadosVo consultaChamadosVo = enviarRequisicaoGet(endpointConsulta, this::tratarRespostaConsultaChamados);
-        return consultaChamadosVo.getChamados() != null ? consultaChamadosVo.getChamados() : new ArrayList<>();
+        return enviarRequisicaoGet(endpointConsulta, response -> tratarRespostaConsultaSalesforce(response, classeMapeamento));
     }
 
     /**
-     * Trata a resposta da consulta de chamados realizada pela API do Salesforce.
+     * Trata a resposta de uma consulta feita para a API do Salesforce.
      *
      * @param response Resposta da integração.
+     * @param classeMapeamento Classe utilizada para fazer o mapeamento do json.
+     * @param <T> Classe utilizada para mapear a resposta em json da integração.
      * @return Objeto com o resultado da consulta.
      */
-    private ConsultaChamadosVo tratarRespostaConsultaChamados(CloseableHttpResponse response) {
+    private <T> List<T> tratarRespostaConsultaSalesforce(CloseableHttpResponse response, Class<T> classeMapeamento) {
         prepararResposta(response);
         if (this.statusCode == HttpStatus.OK.value()) {
             if (this.responseBody.get(CAMPO_DONE) != null && this.responseBody.get(CAMPO_DONE).asBoolean(false)) {
-                return UtilitarioJson.toObjectWithConfigureFailOnUnknowProperties(this.responseBody.toString(), ConsultaChamadosVo.class, false);
-            } else {
-                return new ConsultaChamadosVo();
+                return UtilitarioJson.toListObjectWithConfigureFailOnUnknowProperties(this.responseBody.get(CAMPO_REGISTROS).toString(), classeMapeamento, false);
             }
+            return new ArrayList<>();
         } else {
             throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("Erro.SERVICO_EXTERNO_INDISPONIVEL"));
         }
     }
 
     /**
-     * Trata a resposta do count de chamados.
+     * Trata a resposta do count de uma consulta do salesforce.
      *
      * @param response Response da integração.
      * @return Total de itens encontrados.
      */
-    private Integer tratarRespostaCountChamados(CloseableHttpResponse response) {
+    private Integer tratarRespostaCountConsultaSalesforce(CloseableHttpResponse response) {
         prepararResposta(response);
         if (this.statusCode == HttpStatus.OK.value()) {
             if (this.responseBody.get(CAMPO_DONE) != null && this.responseBody.get(CAMPO_DONE).asBoolean(false)) {
