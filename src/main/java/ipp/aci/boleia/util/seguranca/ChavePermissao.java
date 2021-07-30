@@ -143,6 +143,7 @@ public final class ChavePermissao {
     public static final String COBRANCA_AJUSTE_BOLETO                       = SPRING_ROLE_PREFIX + "COBRANCA_AJUSTE_BOLETO" + SPRING_ROLE_SUFFIX;
     public static final String REEMBOLSO_CONSULTAR                          = SPRING_ROLE_PREFIX + "REEMBOLSO_CONSULTAR" + SPRING_ROLE_SUFFIX;
     public static final String REEMBOLSO_EXPORTAR                           = SPRING_ROLE_PREFIX + "REEMBOLSO_EXPORTAR" + SPRING_ROLE_SUFFIX;
+    public static final String REEMBOLSO_ANTECIPADO_EXPORTAR                = SPRING_ROLE_PREFIX + "REEMBOLSO_ANTECIPADO_EXPORTAR" + SPRING_ROLE_SUFFIX;
     public static final String REEMBOLSO_GERAR_VOUCHER                      = SPRING_ROLE_PREFIX + "REEMBOLSO_GERAR_VOUCHER" + SPRING_ROLE_SUFFIX;
     public static final String REEMBOLSO_ANTECIPAR_VOUCHER                  = SPRING_ROLE_PREFIX + "REEMBOLSO_ANTECIPAR_VOUCHER" + SPRING_ROLE_SUFFIX;
     public static final String ACEITAR_TERMO_USO_PV                         = SPRING_ROLE_PREFIX + "ACEITAR_TERMO_USO_PV" + SPRING_ROLE_SUFFIX;

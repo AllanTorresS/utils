@@ -74,7 +74,9 @@ public enum TemplatePlanilha {
     TEMPLATE_RELATORIO_DETALHAMENTO_COBRANCA_INTERNO("template-relatorio-detalhamento-cobranca-interno.xlsx"),
     TEMPLATE_RELATORIO_REEMBOLSO("template-relatorio-reembolso.xlsx"),
     TEMPLATE_RELATORIO_DETALHAMENTO_REEMBOLSO("template-relatorio-detalhamento-reembolso.xlsx"),
-    TEMPLATE_RELATORIO_ROTAS_INTELIGENTES("template-relatorio-rotas-inteligentes.xlsx");
+    TEMPLATE_RELATORIO_ROTAS_INTELIGENTES("template-relatorio-rotas-inteligentes.xlsx"),
+    TEMPLATE_RELATORIO_REEMBOLSO_ANTECIPADO_SOLUCAO("template-relatorio-reembolso-antecipado-solucao.xlsx"),
+    TEMPLATE_RELATORIO_REEMBOLSO_ANTECIPADO_REVENDA("template-relatorio-reembolso-antecipado-revenda.xlsx");
 
 
     private static final String BASE_TEMPLATE = "/template-planilhas/";
