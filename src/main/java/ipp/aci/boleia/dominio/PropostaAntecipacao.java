@@ -2,6 +2,8 @@ package ipp.aci.boleia.dominio;
 
 
 import ipp.aci.boleia.dominio.enums.StatusAntecipacao;
+import ipp.aci.boleia.dominio.enums.StatusIntegracaoAntecipacaoJde;
+import ipp.aci.boleia.dominio.enums.StatusIntegracaoJde;
 import ipp.aci.boleia.dominio.enums.StatusIntegracaoReembolsoJde;
 import ipp.aci.boleia.dominio.enums.StatusPropostaXP;
 import ipp.aci.boleia.dominio.interfaces.IExclusaoLogica;
@@ -28,6 +30,8 @@ import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
 
+import static ipp.aci.boleia.dominio.enums.StatusIntegracaoJde.ERRO_ENVIO;
+import static ipp.aci.boleia.dominio.enums.StatusIntegracaoJde.REALIZADO;
 import static ipp.aci.boleia.util.UtilitarioCalculoData.adicionarSegundosData;
 import static ipp.aci.boleia.util.UtilitarioCalculoData.obterPrimeiroInstanteDia;
 import static ipp.aci.boleia.util.UtilitarioCalculoData.obterUltimoInstanteDia;
@@ -296,5 +300,28 @@ public class PropostaAntecipacao implements IPersistente, IPertenceRevendedor, I
     public boolean isAceiteDisponivel(Date dataReferencia) {
         Date dataLimite = adicionarSegundosData(obterPrimeiroInstanteDia(dataCriacao), configuracao.getHorarioLimiteVigente(dataCriacao));
         return isAceito == null && dataReferencia.before(dataLimite);
+    }
+
+    /**
+     * Obtém o status da integração dos documentos de antecipação no JDE
+     * @return o status da integração
+     */
+    @Transient
+    public StatusIntegracaoAntecipacaoJde getStatusIntegracao() {
+        StatusIntegracaoJde statusFaturaXp = cobrancaXp != null ? StatusIntegracaoJde.obterPorValor(cobrancaXp.getStatusIntegracaoJDE()) : null;
+        StatusIntegracaoJde statusVoucherXp = reembolsoXp != null ? StatusIntegracaoJde.obterPorValor(reembolsoXp.getStatusIntegracao()) : null;
+        StatusIntegracaoReembolsoJde statusVoucherPv = StatusIntegracaoReembolsoJde.obterPorValor(reembolsoAntecipado.getStatusIntegracao());
+
+        if (statusVoucherPv == null && statusFaturaXp == null && statusVoucherXp == null) {
+            return StatusIntegracaoAntecipacaoJde.PREVISTO;
+        } else if (statusVoucherPv == StatusIntegracaoReembolsoJde.REALIZADO && statusFaturaXp == REALIZADO && statusVoucherXp == REALIZADO) {
+            return StatusIntegracaoAntecipacaoJde.ANTECIPADO;
+        } else if (statusFaturaXp == ERRO_ENVIO && (statusVoucherPv == StatusIntegracaoReembolsoJde.ERRO_ENVIO || statusVoucherXp == REALIZADO)) {
+            return StatusIntegracaoAntecipacaoJde.ERRO_ENVIO_F7_PV;
+        } else if (statusFaturaXp == ERRO_ENVIO) {
+            return StatusIntegracaoAntecipacaoJde.ERRO_ENVIO_F7;
+        } else {
+            return StatusIntegracaoAntecipacaoJde.ERRO_ENVIO_PV;
+        }
     }
 }
