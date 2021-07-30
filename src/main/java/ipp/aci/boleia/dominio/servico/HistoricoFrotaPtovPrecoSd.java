@@ -32,6 +32,7 @@ public class HistoricoFrotaPtovPrecoSd {
         historico.setDataVigencia(preco.getDataVigencia());
         historico.setDescontoSolicitado(preco.getDescontoSolicitado());
         historico.setDescontoVigente(preco.getDescontoVigente());
+        historico.setTipoCombustivel(preco.getPrecoBase().getPrecoMicromercado().getTipoCombustivel());
         historico.setFrotaPtov(preco.getFrotaPtov());
 
         return repositorio.armazenarSemIsolamentoDeDados(historico);
