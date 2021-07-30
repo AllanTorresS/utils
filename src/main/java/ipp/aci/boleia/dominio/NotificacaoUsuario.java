@@ -3,7 +3,6 @@ package ipp.aci.boleia.dominio;
 
 import ipp.aci.boleia.dominio.interfaces.IExclusaoLogica;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
-import org.hibernate.envers.Audited;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,7 +24,6 @@ import java.util.Date;
  * Representa a tabela de Notificacao Usuario
  */
 @Entity
-@Audited
 @Table(name = "NOTIFICACAO_USUARIO")
 public class NotificacaoUsuario implements IPersistente, IExclusaoLogica {
 
