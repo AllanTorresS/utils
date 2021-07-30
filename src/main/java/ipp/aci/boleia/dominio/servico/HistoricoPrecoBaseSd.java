@@ -20,6 +20,11 @@ public class HistoricoPrecoBaseSd {
     @Autowired
     private IHistoricoPrecoBaseDados repositorio;
 
+    /**
+     * Armazena no histórico um novo registro de PrecoBase
+     * @param precoBase A entidade que deve ter registro histórico armazenado
+     * @return A entidade armazenada
+     */
     public HistoricoPrecoBase armazenar(PrecoBase precoBase){
         HistoricoPrecoBase historico = new HistoricoPrecoBase();
 

@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Respositorio de registro de histórico de preços negociados
+ */
 @Repository
 public class OracleHistoricoFrotaPtovPrecoDados extends OracleRepositorioBoleiaDados<HistoricoFrotaPtovPreco> implements IHistoricoFrotaPtovPrecoDados {
 
