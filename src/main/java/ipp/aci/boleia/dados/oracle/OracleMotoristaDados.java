@@ -93,6 +93,12 @@ public class OracleMotoristaDados extends OracleRepositorioBoleiaDados<Motorista
                 "WHERE m.excluido = true AND " +
                 "m.id = :idMotorista";
 
+    private  static final String OBTEM_MOTORISTA_EXCLUIDO_POR_CPF_E_FROTA =
+            "SELECT m FROM Motorista m " +
+                    "WHERE m.excluido = true AND " +
+                    "m.cpf = :cpf AND " +
+                    "m.frota.id = :idFrota";
+
     @Autowired
     private UtilitarioAmbiente utilitarioAmbiente;
 
@@ -425,6 +431,16 @@ public class OracleMotoristaDados extends OracleRepositorioBoleiaDados<Motorista
     public Motorista obterMotoristaExcluidoPorId(Long idMotorista) {
         Query query = getGerenciadorDeEntidade().createQuery(OBTEM_MOTORISTA_EXCLUIDO_POR_ID);
         query.setParameter("idMotorista", idMotorista);
+        query.setMaxResults(1);
+        List<Motorista> motoristas = query.getResultList();
+        return motoristas.isEmpty() ? null : motoristas.get(0);
+    }
+
+    @Override
+    public Motorista obterExcluidoPorCpfFrota(Long cpf, Long idFrota) {
+        Query query = getGerenciadorDeEntidade().createQuery(OBTEM_MOTORISTA_EXCLUIDO_POR_CPF_E_FROTA);
+        query.setParameter("cpf", cpf);
+        query.setParameter("idFrota", idFrota);
         query.setMaxResults(1);
         List<Motorista> motoristas = query.getResultList();
         return motoristas.isEmpty() ? null : motoristas.get(0);
