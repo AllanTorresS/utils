@@ -43,8 +43,8 @@ public class TipoBeneficio implements IPersistente {
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataCriacao;
 
-    @OneToMany(mappedBy = "tipoBeneficio", fetch = FetchType.LAZY)
-    private List<TipoBeneficioConfiguracao> contasBeneficio;
+    @OneToMany(mappedBy = "beneficio", fetch = FetchType.LAZY)
+    private List<ConfiguracaoTipoBeneficio> configuracoesTipoBenficio;
 
     @Override
     public Long getId() {
@@ -72,11 +72,11 @@ public class TipoBeneficio implements IPersistente {
         this.dataCriacao = dataCriacao;
     }
 
-    public List<TipoBeneficioConfiguracao> getContasBeneficio() {
-        return contasBeneficio;
+    public List<ConfiguracaoTipoBeneficio> getConfiguracoesTipoBenficio() {
+        return configuracoesTipoBenficio;
     }
 
-    public void setContasBeneficio(List<TipoBeneficioConfiguracao> contasBeneficio) {
-        this.contasBeneficio = contasBeneficio;
+    public void setConfiguracoesTipoBenficio(List<ConfiguracaoTipoBeneficio> configuracoesTipoBenficio) {
+        this.configuracoesTipoBenficio = configuracoesTipoBenficio;
     }
 }
