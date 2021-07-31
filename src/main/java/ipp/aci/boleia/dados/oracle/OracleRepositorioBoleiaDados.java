@@ -226,7 +226,7 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
     }
 
     @Override
-    public void exluirPermanentementerSemIsolamentoDeDados(Long... ids) {
+    public void excluirPermanentementeSemIsolamentoDeDados(Long... ids) {
         excluirPorIds(false, true, ids);
     }
 

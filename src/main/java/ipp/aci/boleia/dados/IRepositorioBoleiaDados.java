@@ -82,7 +82,7 @@ public interface IRepositorioBoleiaDados<T extends IPersistente> {
      * Exclui um conjunto de entidades permanentemente sem verificação de isolamento de dados
      * @param ids os ids das entidades a serem removidas
      */
-    void exluirPermanentementerSemIsolamentoDeDados(Long... ids);
+    void excluirPermanentementeSemIsolamentoDeDados(Long... ids);
 
     /**
      * Recupera a classe da entidade associada ao repositório.
