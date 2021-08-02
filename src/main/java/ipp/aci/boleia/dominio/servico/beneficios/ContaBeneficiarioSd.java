@@ -1,13 +1,13 @@
 package ipp.aci.boleia.dominio.servico.beneficios;
 
 import ipp.aci.boleia.dados.IBeneficiarioDados;
-import ipp.aci.boleia.dados.IBeneficioDados;
+import ipp.aci.boleia.dados.ITipoBeneficioDados;
 import ipp.aci.boleia.dados.IContaBeneficiarioDados;
-import ipp.aci.boleia.dados.IContaBeneficioDados;
+import ipp.aci.boleia.dados.IConfiguracaoTipoBeneficioDados;
 import ipp.aci.boleia.dominio.beneficios.Beneficiario;
-import ipp.aci.boleia.dominio.beneficios.Beneficio;
+import ipp.aci.boleia.dominio.beneficios.ConfiguracaoTipoBeneficio;
+import ipp.aci.boleia.dominio.beneficios.TipoBeneficio;
 import ipp.aci.boleia.dominio.beneficios.ContaBeneficiario;
-import ipp.aci.boleia.dominio.beneficios.ContaBeneficio;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -31,10 +31,10 @@ public class ContaBeneficiarioSd {
     private IContaBeneficiarioDados contaBeneficiarioDados;
 
     @Autowired
-    private IContaBeneficioDados contaBeneficioDados;
+    private IConfiguracaoTipoBeneficioDados configuracaoTipoBeneficioDados;
 
     @Autowired
-    private IBeneficioDados beneficioDados;
+    private ITipoBeneficioDados tipoBeneficioDados;
 
     @Autowired
     private UtilitarioAmbiente utilitarioAmbiente;
@@ -53,7 +53,7 @@ public class ContaBeneficiarioSd {
         contaBeneficiario.setDataCriacao(utilitarioAmbiente.buscarDataAmbiente());
         contaBeneficiario.setDataAtualizacao(utilitarioAmbiente.buscarDataAmbiente());
         contaBeneficiario = contaBeneficiarioDados.armazenar(contaBeneficiario);
-        contaBeneficiario.setContasBeneficio(configurarBeneficiosIniciais(contaBeneficiario));
+        contaBeneficiario.setConfiguracoesTipoBeneficio(configurarTiposBeneficioIniciais(contaBeneficiario));
         return contaBeneficiario;
     }
 
@@ -61,20 +61,20 @@ public class ContaBeneficiarioSd {
      * Realiza a configuração padrão de benefícios para uma {@link ContaBeneficiario}.
      *
      * @param contaBeneficiario Conta que será configurada.
-     * @return a lista com os vinculos entre {@link ContaBeneficiario} e {@link Beneficio}.
+     * @return a lista com os vinculos entre {@link ContaBeneficiario} e {@link TipoBeneficio}.
      */
-    private List<ContaBeneficio> configurarBeneficiosIniciais(ContaBeneficiario contaBeneficiario) {
-        List<Beneficio> beneficios = beneficioDados.obterTodos(null);
-        List<ContaBeneficio> listaContaBeneficio = new ArrayList<>();
-        beneficios.forEach(beneficio -> {
-            ContaBeneficio contaBeneficio = new ContaBeneficio();
-            contaBeneficio.setBeneficio(beneficio);
-            contaBeneficio.setBeneficioConfigurado(true);
-            contaBeneficio.setContaBeneficiario(contaBeneficiario);
-            contaBeneficio.setDataCriacao(utilitarioAmbiente.buscarDataAmbiente());
-            contaBeneficio.setDataAtualizacao(utilitarioAmbiente.buscarDataAmbiente());
-            listaContaBeneficio.add(contaBeneficio);
+    private List<ConfiguracaoTipoBeneficio> configurarTiposBeneficioIniciais(ContaBeneficiario contaBeneficiario) {
+        List<TipoBeneficio> tiposBeneficio = tipoBeneficioDados.obterTodos(null);
+        List<ConfiguracaoTipoBeneficio> configuracoesTipoBeneficio = new ArrayList<>();
+        tiposBeneficio.forEach(tipoBeneficio -> {
+            ConfiguracaoTipoBeneficio configuracaoTipoBeneficio = new ConfiguracaoTipoBeneficio();
+            configuracaoTipoBeneficio.setTipoBeneficio(tipoBeneficio);
+            configuracaoTipoBeneficio.setConfigurado(true);
+            configuracaoTipoBeneficio.setContaBeneficiario(contaBeneficiario);
+            configuracaoTipoBeneficio.setDataCriacao(utilitarioAmbiente.buscarDataAmbiente());
+            configuracaoTipoBeneficio.setDataAtualizacao(utilitarioAmbiente.buscarDataAmbiente());
+            configuracoesTipoBeneficio.add(configuracaoTipoBeneficio);
         });
-        return contaBeneficioDados.armazenarLista(listaContaBeneficio);
+        return configuracaoTipoBeneficioDados.armazenarLista(configuracoesTipoBeneficio);
     }
 }

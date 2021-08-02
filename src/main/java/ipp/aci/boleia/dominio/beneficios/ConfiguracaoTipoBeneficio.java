@@ -24,13 +24,13 @@ import java.util.Date;
  */
 @Audited
 @Entity
-@Table(name = "CONTA_BENEFICIO")
-public class ContaBeneficio implements IPersistente {
+@Table(name = "CONFIG_TIPO_BENEFICIO")
+public class ConfiguracaoTipoBeneficio implements IPersistente {
 
     @Id
-    @Column(name = "CD_CONTA_BENEFICIO")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_CONTA_BENEFICIO")
-    @SequenceGenerator(name = "SEQ_CONTA_BENEFICIO", sequenceName = "SEQ_CONTA_BENEFICIO", allocationSize = 1)
+    @Column(name = "CD_CONFIG_TIPO_BENEFICIO")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_CONFIG_TIPO_BENEFICIO")
+    @SequenceGenerator(name = "SEQ_CONFIG_TIPO_BENEFICIO", sequenceName = "SEQ_CONFIG_TIPO_BENEFICIO", allocationSize = 1)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -38,12 +38,12 @@ public class ContaBeneficio implements IPersistente {
     private ContaBeneficiario contaBeneficiario;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CD_BENEFICIO")
-    private Beneficio beneficio;
+    @JoinColumn(name = "CD_TIPO_BENEFICIO")
+    private TipoBeneficio tipoBeneficio;
 
     @NotNull
     @Column(name="ID_CONFIGURADO")
-    private Boolean beneficioConfigurado;
+    private Boolean configurado;
 
     @NotNull
     @Column(name = "DT_CRIACAO")
@@ -77,20 +77,20 @@ public class ContaBeneficio implements IPersistente {
         this.contaBeneficiario = contaBeneficiario;
     }
 
-    public Beneficio getBeneficio() {
-        return beneficio;
+    public TipoBeneficio getTipoBeneficio() {
+        return tipoBeneficio;
     }
 
-    public void setBeneficio(Beneficio beneficio) {
-        this.beneficio = beneficio;
+    public void setTipoBeneficio(TipoBeneficio tipoBeneficio) {
+        this.tipoBeneficio = tipoBeneficio;
     }
 
-    public Boolean getBeneficioConfigurado() {
-        return beneficioConfigurado;
+    public Boolean isConfigurado() {
+        return configurado;
     }
 
-    public void setBeneficioConfigurado(Boolean beneficioConfigurado) {
-        this.beneficioConfigurado = beneficioConfigurado;
+    public void setConfigurado(Boolean configurado) {
+        this.configurado = configurado;
     }
 
     public Date getDataCriacao() {
