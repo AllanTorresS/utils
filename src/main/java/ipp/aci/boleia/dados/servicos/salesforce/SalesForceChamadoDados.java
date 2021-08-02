@@ -1,5 +1,6 @@
 package ipp.aci.boleia.dados.servicos.salesforce;
 
+import com.amazonaws.util.IOUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import ipp.aci.boleia.dados.IChamadoDados;
 import ipp.aci.boleia.dados.IChamadoSistemaDados;
@@ -31,6 +32,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
@@ -95,7 +97,9 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
             "       MotivoSolicitacao__c," +
             "       Subject," +
             "       Description," +
-            "       (SELECT Id,CommentBody,CreatedBy.Name,CreatedBy.Email,CreatedDate FROM Casecomments) " +
+            "       (SELECT Id,CommentBody,CreatedBy.Name,CreatedBy.Email,CreatedDate FROM Casecomments), " +
+            "       (SELECT ContentDocumentId,contentdocument.LatestPublishedVersionId,contentdocument.Title,contentdocument.FileExtension," +
+            "       contentdocument.Owner.Name, contentdocument.Owner.Email, contentdocument.LatestPublishedVersion.CreatedDate FROM ContentDocumentLinks) " +
             "FROM Case " +
             "WHERE Id=':idSalesforce'";
 
@@ -113,7 +117,9 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
             "       Description," +
             "       MotivoSolicitacao__c," +
             "       Subject," +
-            "       (SELECT Id,CommentBody,CreatedBy.Name,CreatedBy.Email,CreatedDate FROM Casecomments) " +
+            "       (SELECT Id,CommentBody,CreatedBy.Name,CreatedBy.Email,CreatedDate FROM Casecomments), " +
+            "       (SELECT ContentDocumentId,contentdocument.LatestPublishedVersionId,contentdocument.Title,contentdocument.FileExtension," +
+            "       contentdocument.Owner.Name, contentdocument.Owner.Email, contentdocument.LatestPublishedVersion.CreatedDate FROM ContentDocumentLinks) " +
             FROM_CONSULTAR_CHAMADOS +
             ORDER_BY_CONSULTA_CHAMADOS +
             "LIMIT :limit OFFSET :offset";
@@ -173,6 +179,12 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
 
     @Value("${salesforce.chamados.vincularArquivo}")
     private String urlVincularArquivo;
+
+    @Value("${salesforce.chamados.excluirArquivo}")
+    private String urlExcluirArquivo;
+
+    @Value("${salesforce.chamados.downloadArquivo}")
+    private String urlDownloadArquivo;
 
     @Autowired
     private IMotivoChamadoDados motivoChamadoDados;
@@ -372,6 +384,22 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
         });
     }
 
+    @Override
+    public void excluirAnexo(String idSalesforce) {
+        String urlFormatado = format(urlExcluirArquivo, idSalesforce);
+
+        prepararRequisicao(urlFormatado, null);
+        enviarRequisicaoDelete(this::trataRespostaExclusaoAnexo);
+    }
+
+    @Override
+    public byte[] downloadAnexo(String idSalesforce) {
+        String urlFormatado = format(urlDownloadArquivo, idSalesforce);
+
+        prepararRequisicao(urlFormatado, null);
+        return enviarRequisicaoGet(this::trataRespostaDownloadAnexo);
+    }
+
     /**
      * Realiza o upload de um anexo para o salesforce.
      *
@@ -508,6 +536,38 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
             throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("chamado.cancelamento.erro.integracao"));
         }
         return true;
+    }
+
+    /***
+     * Trata a resposta da exclusão de um anexo
+     * @param response a resposta
+     * @return true em caso de sucesso
+     */
+    private boolean trataRespostaExclusaoAnexo(CloseableHttpResponse response) {
+        prepararResposta(response);
+        if (this.statusCode != HttpStatus.NO_CONTENT.value()) {
+            LOGGER.error(this.responseBody.toString());
+            throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("chamado.cancelamento.erro.integracao"));
+        }
+        return true;
+    }
+
+    /***
+     * Trata a resposta da busca de um anexo para download 
+     * @param response a resposta
+     * @return bytearray do arquivo a ser baixado
+     */
+    private byte[] trataRespostaDownloadAnexo(CloseableHttpResponse response) {
+        try{
+            prepararRespostaArquivo(response);
+            if (this.statusCode != HttpStatus.OK.value()) {
+                LOGGER.error(this.responseBody.toString());
+                throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("chamado.cancelamento.erro.integracao"));
+            }
+            return  IOUtils.toByteArray(this.inputStream);
+        } catch(Exception e) {
+            return null;
+        }
     }
 
     /**

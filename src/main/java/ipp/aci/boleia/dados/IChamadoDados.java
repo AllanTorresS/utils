@@ -139,4 +139,18 @@ public interface IChamadoDados {
      * @param anexos Lista com os anexos.
      */
     void adicionarAnexos(String idChamado, List<UploadAnexoChamadoVo> anexos);
+
+    /**
+     * Realiza a exclusão de um anexo.
+     *
+     * @param idSalesforce Identificador salesforce do anexo.
+     */
+    void excluirAnexo(String idSalesforce);
+
+    /**
+     * Realiza a busca de um anexo para download.
+     *
+     * @param idSalesforce Identificador salesforce do anexo.
+     */
+    byte[] downloadAnexo(String idSalesforce);
 }

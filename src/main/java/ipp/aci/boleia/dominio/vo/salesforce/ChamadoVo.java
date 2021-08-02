@@ -43,6 +43,7 @@ public class ChamadoVo {
     @JsonProperty("Description")
     private String descricao;
     private List<ComentarioChamadoVo> comentarios;
+    private List<AnexoChamadoVo> anexos;
 
     /**
      * Construtor default
@@ -171,6 +172,14 @@ public class ChamadoVo {
         this.comentarios = comentarios;
     }
 
+    public List<AnexoChamadoVo> getAnexos() {
+        return anexos;
+    }
+
+    public void setAnexos(List<AnexoChamadoVo> anexos) {
+        this.anexos = anexos;
+    }
+
     /**
      * Realiza o mapeamento dos comentários do chamado.
      *
@@ -184,6 +193,25 @@ public class ChamadoVo {
             records.forEach(comentario -> {
                 ComentarioChamadoVo comentarioVo = UtilitarioJson.toObject(UtilitarioJson.toJSON(comentario), ComentarioChamadoVo.class);
                 this.comentarios.add(comentarioVo);
+            });
+        }
+    }
+
+    
+
+    /**
+     * Realiza o mapeamento dos anexos do chamado.
+     *
+     * @param contentDocumentLinks Mapa com os anexos.
+     */
+    @JsonProperty("ContentDocumentLinks")
+    private void mapearAnexos(Map<String, Object> contentDocumentLinks) {
+        this.anexos = new ArrayList<>();
+        if(contentDocumentLinks != null) {
+            List<Map<String, Object>> records = (ArrayList) contentDocumentLinks.get("records");
+            records.forEach(anexo -> {
+                AnexoChamadoVo anexoVo = UtilitarioJson.toObject(UtilitarioJson.toJSON(anexo), AnexoChamadoVo.class);
+                this.anexos.add(anexoVo);
             });
         }
     }

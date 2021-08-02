@@ -1,5 +1,6 @@
 package ipp.aci.boleia.dados.servicos.salesforce;
 
+import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -77,6 +78,8 @@ public class AcessoSalesForceBase {
     protected String requestBody;
 
     protected JsonNode responseBody;
+
+    protected InputStream inputStream;
 
     /**
      * Prepara os dados de requisição para chamada dos serviços de integração com o Salesforce.
@@ -160,6 +163,22 @@ public class AcessoSalesForceBase {
         });
     }
 
+    /**
+     * Envia uma requisição DELETE da integração.
+     * @param <T> Tipo de retorno da chamada.
+     * @param consumidorRequisicao Objeto consumidor da requisição.
+     * @return Retorno da chamada.
+     */
+    protected <T> T enviarRequisicaoDelete(ConsumidorHttp<T> consumidorRequisicao) {
+        return restDados.doDelete(this.endpointUrl, this.authorizationHeaders, response -> {
+            if(response.getStatusLine().getStatusCode() == HttpStatus.UNAUTHORIZED.value()) {
+                autenticarSalesforce();
+                return restDados.doDelete(this.endpointUrl, this.authorizationHeaders, consumidorRequisicao);
+            }
+            return consumidorRequisicao.consumir(response);
+        });
+    }
+
 	/**
      * Prepara os dados de resposta da integração com o Salesforce.
      *
@@ -173,6 +192,20 @@ public class AcessoSalesForceBase {
         }
         this.mensagem = this.statusCode + " " + httpResponse.getStatusLine().getReasonPhrase();
     }
+
+    /**
+     * Prepara os dados de resposta da integração com o Salesforce.
+     *
+     * @param httpResponse A resposta recebida do Salesforce.
+     */
+    protected void prepararRespostaArquivo(CloseableHttpResponse httpResponse) throws Exception {
+        this.statusCode = httpResponse.getStatusLine().getStatusCode();
+        if (httpResponse.getEntity() != null) {
+            this.inputStream = httpResponse.getEntity().getContent();
+        }
+        this.mensagem = this.statusCode + " " + httpResponse.getStatusLine().getReasonPhrase();
+    }
+
 
     public String getClientId() {
         return clientId;
