@@ -2,6 +2,7 @@ package ipp.aci.boleia.dados.oracle;
 
 import ipp.aci.boleia.dados.IMotoristaDados;
 import ipp.aci.boleia.dominio.Motorista;
+import ipp.aci.boleia.dominio.UsuarioMotorista;
 import ipp.aci.boleia.dominio.enums.ClassificacaoAgregado;
 import ipp.aci.boleia.dominio.enums.PeriodoVencimentoCnh;
 import ipp.aci.boleia.dominio.enums.StatusAtivacao;
@@ -83,7 +84,7 @@ public class OracleMotoristaDados extends OracleRepositorioBoleiaDados<Motorista
             "       upper(m.nome) LIKE :nome AND " +
             "       m.excluido = false";
 
-    private  static final String LISTA_MOTORISTAS_EXCLUIDOS =
+    private  static final String LISTA_MOTORISTAS_EXCLUIDOS_SEM_ANONIMO =
             "SELECT m FROM Motorista m " +
                 "WHERE m.excluido = true " +
                     "AND m.cpf != " + CPF_ANONIMIZADO;
@@ -98,6 +99,11 @@ public class OracleMotoristaDados extends OracleRepositorioBoleiaDados<Motorista
                     "WHERE m.excluido = true AND " +
                     "m.cpf = :cpf AND " +
                     "m.frota.id = :idFrota";
+
+    private  static final String LISTA_MOTORISTAS_POR_ID_USUARIO_MOTORISTA_INCLUINDO_EXCLUIDOS_SEM_ANONIMO =
+            "SELECT m FROM Motorista m " +
+                    "WHERE m.usuarioMotorista.id = :idUsuarioMotorista " +
+                    "AND m.cpf != " + CPF_ANONIMIZADO;
 
     @Autowired
     private UtilitarioAmbiente utilitarioAmbiente;
@@ -423,7 +429,7 @@ public class OracleMotoristaDados extends OracleRepositorioBoleiaDados<Motorista
 
     @Override
     public List<Motorista> obterMotoristasExcluidos() {
-       Query query = getGerenciadorDeEntidade().createQuery(LISTA_MOTORISTAS_EXCLUIDOS);
+       Query query = getGerenciadorDeEntidade().createQuery(LISTA_MOTORISTAS_EXCLUIDOS_SEM_ANONIMO);
        return query.getResultList();
     }
 
@@ -446,4 +452,10 @@ public class OracleMotoristaDados extends OracleRepositorioBoleiaDados<Motorista
         return motoristas.isEmpty() ? null : motoristas.get(0);
     }
 
+    @Override
+    public List<Motorista> obterMotoristasIncluindoExcluidos(UsuarioMotorista usuarioMotorista) {
+        Query query = getGerenciadorDeEntidade().createQuery(LISTA_MOTORISTAS_POR_ID_USUARIO_MOTORISTA_INCLUINDO_EXCLUIDOS_SEM_ANONIMO);
+        query.setParameter("idUsuarioMotorista", usuarioMotorista.getId());
+        return query.getResultList();
+    }
 }
