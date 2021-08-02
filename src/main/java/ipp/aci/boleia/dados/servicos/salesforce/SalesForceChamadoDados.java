@@ -4,6 +4,7 @@ import com.amazonaws.util.IOUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import ipp.aci.boleia.dados.IChamadoDados;
 import ipp.aci.boleia.dados.IChamadoSistemaDados;
+import ipp.aci.boleia.dados.IMotivoChamadoDados;
 import ipp.aci.boleia.dados.servicos.rest.ConsumidorHttp;
 import ipp.aci.boleia.dominio.ChamadoSistema;
 import ipp.aci.boleia.dominio.Usuario;
@@ -109,13 +110,9 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
             "       MotivoSolicitacao__c," +
             "       Subject," +
             "       Description," +
-<<<<<<< HEAD
-            "       (SELECT Id,CommentBody,CreatedBy.Name,CreatedBy.Email,CreatedDate FROM Casecomments), " +
             "       (SELECT ContentDocumentId,contentdocument.LatestPublishedVersionId,contentdocument.Title,contentdocument.FileExtension," +
-            "       contentdocument.Owner.Name, contentdocument.Owner.Email, contentdocument.LatestPublishedVersion.CreatedDate FROM ContentDocumentLinks) " +
-=======
+            "       contentdocument.Owner.Name, contentdocument.Owner.Email, contentdocument.LatestPublishedVersion.CreatedDate FROM ContentDocumentLinks), " +
                     SUBQUERY_COMENTARIOS +
->>>>>>> dev/evolucao
             "FROM Case " +
             "WHERE Id=':idSalesforce'";
 
@@ -133,13 +130,9 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
             "       Description," +
             "       MotivoSolicitacao__c," +
             "       Subject," +
-<<<<<<< HEAD
-            "       (SELECT Id,CommentBody,CreatedBy.Name,CreatedBy.Email,CreatedDate FROM Casecomments), " +
             "       (SELECT ContentDocumentId,contentdocument.LatestPublishedVersionId,contentdocument.Title,contentdocument.FileExtension," +
-            "       contentdocument.Owner.Name, contentdocument.Owner.Email, contentdocument.LatestPublishedVersion.CreatedDate FROM ContentDocumentLinks) " +
-=======
+            "       contentdocument.Owner.Name, contentdocument.Owner.Email, contentdocument.LatestPublishedVersion.CreatedDate FROM ContentDocumentLinks), " +
                     SUBQUERY_COMENTARIOS +
->>>>>>> dev/evolucao
             FROM_CONSULTAR_CHAMADOS +
             ORDER_BY_CONSULTA_CHAMADOS +
             "LIMIT :limit OFFSET :offset";
@@ -203,19 +196,17 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     @Value("${salesforce.chamados.vincularArquivo}")
     private String urlVincularArquivo;
 
-<<<<<<< HEAD
     @Value("${salesforce.chamados.excluirArquivo}")
     private String urlExcluirArquivo;
 
     @Value("${salesforce.chamados.downloadArquivo}")
     private String urlDownloadArquivo;
 
-    @Autowired
-    private IMotivoChamadoDados motivoChamadoDados;
-=======
     @Value("${salesforce.chamados.criarContato}")
     private String urlCriarContato;
->>>>>>> dev/evolucao
+
+    @Autowired
+    private IMotivoChamadoDados motivoChamadoDados;
 
     @Autowired
     private IChamadoSistemaDados chamadoSistemaDados;
