@@ -54,14 +54,13 @@ public class ClonagemPerfil implements IPersistente{
     @Column(name = "ID_DEFINITIVA")
     private Boolean isDefinitiva;
 
-    @NotNull
     @Column(name = "ID_MOTIVO")
     private Integer motivo;
 
-    @NotNull
     @Size(max = 1080)
     @Column(name = "DS_DESCRICAO")
     private String descricao;
+
     @Column(name = "DT_INATIVACAO")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataInativacao;
