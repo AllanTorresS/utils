@@ -4,6 +4,7 @@ import ipp.aci.boleia.dados.IPontoDeVendaDados;
 import ipp.aci.boleia.dominio.AtividadeComponente;
 import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.Usuario;
+import ipp.aci.boleia.dominio.enums.PerfilPontoDeVenda;
 import ipp.aci.boleia.dominio.enums.RestricaoVisibilidadePontoVenda;
 import ipp.aci.boleia.dominio.enums.StatusAlteracaoPrecoPosto;
 import ipp.aci.boleia.dominio.enums.StatusAtivacao;
@@ -26,8 +27,6 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaFetch;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
-import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaior;
-import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMenor;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
 import ipp.aci.boleia.dominio.vo.CoordenadaVo;
@@ -344,29 +343,7 @@ public class OraclePontoDeVendaDados extends OracleRepositorioBoleiaDados<PontoD
         params.add(new ParametroPesquisaIgual("excluido",false));
 
         if(CollectionUtils.isNotEmpty(filtro.getFiltrosCoordenadas())) {
-            ParametroPesquisaOr condicoesOr = new ParametroPesquisaOr();
-            BigDecimal margem = filtro.getMargemGrausFiltroCoordenadas() != null ? filtro.getMargemGrausFiltroCoordenadas() : BigDecimal.valueOf(0);
-
-            for (List<CoordenadaVo> listaCoordenadas: filtro.getFiltrosCoordenadas()) {
-                for (int i = 0; i < listaCoordenadas.size() - 1; i++) {
-                    CoordenadaVo ca = listaCoordenadas.get(i);
-                    BigDecimal caLat = ca.getLatitude();
-                    BigDecimal caLong = ca.getLongitude();
-                    CoordenadaVo cb = listaCoordenadas.get(i+1);
-                    BigDecimal cbLat = cb.getLatitude();
-                    BigDecimal cbLong = cb.getLongitude();
-                    BigDecimal xa = (cbLat.compareTo(caLat) > 0 ? caLat : cbLat).subtract(margem);
-                    BigDecimal xb = (cbLat.compareTo(caLat) > 0 ? cbLat : caLat).add(margem);
-                    BigDecimal ya = (cbLong.compareTo(caLong) > 0 ? caLong : cbLong).subtract(margem);
-                    BigDecimal yb = (cbLong.compareTo(caLong) > 0 ? cbLong : caLong).add(margem);
-
-                    condicoesOr.addParametro(new ParametroPesquisaAnd(
-                            new ParametroPesquisaEntre("latitude", xa, xb),
-                            new ParametroPesquisaEntre("longitude", ya, yb)
-                    ));
-                }
-            }
-
+            ParametroPesquisaOr condicoesOr = povoarParametroLatLongEntreCoordenadas("latitude", "longitude", filtro.getFiltrosCoordenadas(), filtro.getMargemGrausFiltroCoordenadas());
             params.add(condicoesOr);
         }
 
@@ -438,25 +415,34 @@ public class OraclePontoDeVendaDados extends OracleRepositorioBoleiaDados<PontoD
 
     @Override
     public List<PontoDeVenda> obterPontoDeVendaPorLimitesLocalizacao(FiltroPesquisaLocalizacaoVo filtro) {
-
-        ParametroPesquisa[]  parametros = new ParametrosPesquisaBuilder()
-                .adicionarParametros(
-                        new ParametroPesquisaMaior("latitude", new BigDecimal(filtro.getLatitudeInicial())),
-                        new ParametroPesquisaMenor("latitude", new BigDecimal(filtro.getLatitudeFinal()))
-                        )
-                .adicionarParametros(
-                        new ParametroPesquisaMaior("longitude", new BigDecimal(filtro.getLongitudeInicial())),
-                        new ParametroPesquisaMenor("longitude", new BigDecimal(filtro.getLongitudeFinal()))
-                )
+        ParametrosPesquisaBuilder parametros = new ParametrosPesquisaBuilder()
                 .adicionarParametros(
                         new ParametroPesquisaIgual("status", StatusAtivacao.ATIVO.getValue())
-                )
-                .buildArray();
+                );
 
+        if(filtro.getPerfilPontoDeVenda() != null) {
+            switch (filtro.getPerfilPontoDeVenda()) {
+                case RODOVIA:
+                case URBANO:
+                    parametros.adicionarParametros(new ParametroPesquisaLike("perfilVenda", filtro.getPerfilPontoDeVenda().name()));
+                    break;
+                case OUTROS:
+                    parametros.adicionarParametros(new ParametroPesquisaOr(
+                            new ParametroPesquisaNulo("perfilVenda"),
+                            new ParametroPesquisaLike("perfilVenda", PerfilPontoDeVenda.RODO_REDE.name())
+                    ));
+                    break;
+            }
+        }
 
+        if(CollectionUtils.isNotEmpty(filtro.getFiltrosCoordenadas())) {
+            ParametroPesquisaOr condicoesOr = povoarParametroLatLongEntreCoordenadas("latitude", "longitude", filtro.getFiltrosCoordenadas(), filtro.getMargemGrausFiltroCoordenadas());
+            parametros.adicionarParametros(condicoesOr);
+        } else {
+            parametros.adicionarParametros(povoarParametroLatLongEntreIntervalo("latitude", "longitude", filtro));
+        }
         ParametroOrdenacaoColuna ordenacao = new ParametroOrdenacaoColuna("nome");
-
-        return pesquisar(ordenacao, parametros);
+        return pesquisar(ordenacao, parametros.buildArray());
     }
 
     @Override

@@ -13,13 +13,21 @@ import java.util.List;
  */
 public class ParametrosPesquisaBuilder {
 
-    private List<ParametroPesquisa> parametros;
+    private final List<ParametroPesquisa> parametros;
 
     /**
      * Construtor do builder
      */
     public ParametrosPesquisaBuilder() {
         parametros = new ArrayList<>();
+    }
+
+    /**
+     * Construtor do builder com parametros iniciais
+     */
+    public ParametrosPesquisaBuilder(ParametroPesquisa ... params) {
+        parametros = new ArrayList<>(params.length);
+        adicionarParametros(params);
     }
 
     /**

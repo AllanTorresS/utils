@@ -21,4 +21,15 @@ public interface IChaveValorDados<T> {
      * @return O valor armazenado
      */
     T obter(String nome, String chave);
+
+    /**
+     * Insere o valor na estrutura, com tempo de expiração em minutos
+     * Quando o tempo, após sua insersão, o valor automaticamente é apagado.
+     *
+     * @param nome O nome do mapa que armazena a chave/valor
+     * @param chave String unica que referencia o valor
+     * @param valor Valor generico a ser inserido
+     * @param minutosParaExpirar tempo em minutos para expirar
+     */
+    void inserirComExpiracao(String nome, String chave, T valor, long minutosParaExpirar);
 }

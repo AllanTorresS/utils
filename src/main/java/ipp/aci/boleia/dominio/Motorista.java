@@ -187,6 +187,9 @@ public class Motorista implements IPersistente, IExclusaoLogica, IPertenceFrota,
     @JoinColumn(name = "CD_USUARIO_MOTORISTA")
     private UsuarioMotorista usuarioMotorista;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "motorista")
+    private List<FluxoAbastecimentoMotoristaConfig> fluxoAbastecimentoMotoristaConfigs;
+
     @NotNull
     @Column(name = "ID_USA_APP")
     private Boolean utilizaAppMotorista;
@@ -543,6 +546,14 @@ public class Motorista implements IPersistente, IExclusaoLogica, IPertenceFrota,
 
     public void setDataCriacao(Date dataCriacao) {
         this.dataCriacao = dataCriacao;
+    }
+
+    public List<FluxoAbastecimentoMotoristaConfig> getFluxoAbastecimentoMotoristaConfigs() {
+        return fluxoAbastecimentoMotoristaConfigs;
+    }
+
+    public void setFluxoAbastecimentoMotoristaConfigs(List<FluxoAbastecimentoMotoristaConfig> fluxoAbastecimentoMotoristaConfigs) {
+        this.fluxoAbastecimentoMotoristaConfigs = fluxoAbastecimentoMotoristaConfigs;
     }
 
     public Date getDataAtualizacao() {
