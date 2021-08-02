@@ -64,8 +64,8 @@ public class OracleBeneficiarioDados extends OracleRepositorioBoleiaDados<Benefi
             ParametroPesquisaOr parametrosBeneficios = new ParametroPesquisaOr();
             filtro.getBeneficios().forEach(beneficio -> {
                 ParametroPesquisaAnd parametroBeneficio = new ParametroPesquisaAnd(
-                        new ParametroPesquisaIgual("contaBeneficiario.contasBeneficio.beneficio.id", beneficio.getId()),
-                        new ParametroPesquisaIgual("contaBeneficiario.contasBeneficio.beneficioConfigurado", true)
+                        new ParametroPesquisaIgual("contaBeneficiario.configuracoesTipoBeneficio.tipoBeneficio.id", beneficio.getId()),
+                        new ParametroPesquisaIgual("contaBeneficiario.configuracoesTipoBeneficio.configurado", true)
                 );
                 parametrosBeneficios.addParametro(parametroBeneficio);
             });
