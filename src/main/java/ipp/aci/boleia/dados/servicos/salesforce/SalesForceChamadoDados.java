@@ -89,7 +89,8 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
             "FROM " +
             "   Casecomments " +
             "WHERE " +
-            "   CommentBody LIKE '" + ConstantesSalesForce.PREFIXO_COMENTARIO_PENDENTE_EXTERNO + "%' OR CreatedBy.Email=':emailIntegracao') ";
+            "   CommentBody LIKE '" + ConstantesSalesForce.PREFIXO_COMENTARIO_PENDENTE_EXTERNO + "%' OR CreatedBy.Email=':emailIntegracao' " +
+            "ORDER BY CreatedDate) ";
 
     private static final String OBTER_CHAMADO_POR_ID =
             "SELECT Id," +
