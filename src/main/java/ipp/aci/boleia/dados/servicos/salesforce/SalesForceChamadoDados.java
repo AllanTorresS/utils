@@ -32,6 +32,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -547,7 +548,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
         prepararResposta(response);
         if (this.statusCode != HttpStatus.NO_CONTENT.value()) {
             LOGGER.error(this.responseBody.toString());
-            throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("chamado.cancelamento.erro.integracao"));
+            throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("chamado.erro.interno"));
         }
         return true;
     }
@@ -562,11 +563,11 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
             prepararRespostaArquivo(response);
             if (this.statusCode != HttpStatus.OK.value()) {
                 LOGGER.error(this.responseBody.toString());
-                throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("chamado.cancelamento.erro.integracao"));
+                throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("chamado.erro.interno"));
             }
             return  IOUtils.toByteArray(this.inputStream);
-        } catch(Exception e) {
-            return null;
+        } catch(IOException e) {
+            throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("chamado.erro.interno"));
         }
     }
 

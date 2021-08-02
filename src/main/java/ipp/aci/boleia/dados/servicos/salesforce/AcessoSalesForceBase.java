@@ -1,5 +1,6 @@
 package ipp.aci.boleia.dados.servicos.salesforce;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -198,7 +199,7 @@ public class AcessoSalesForceBase {
      *
      * @param httpResponse A resposta recebida do Salesforce.
      */
-    protected void prepararRespostaArquivo(CloseableHttpResponse httpResponse) throws Exception {
+    protected void prepararRespostaArquivo(CloseableHttpResponse httpResponse) throws IOException {
         this.statusCode = httpResponse.getStatusLine().getStatusCode();
         if (httpResponse.getEntity() != null) {
             this.inputStream = httpResponse.getEntity().getContent();
