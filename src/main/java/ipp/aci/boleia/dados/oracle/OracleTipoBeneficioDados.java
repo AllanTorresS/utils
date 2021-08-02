@@ -8,12 +8,12 @@ import org.springframework.stereotype.Repository;
  * Repositório de entidades de Tipo Benefício.
  */
 @Repository
-public class OracleTipoTipoBeneficioDados extends OracleRepositorioBoleiaDados<TipoBeneficio> implements ITipoBeneficioDados {
+public class OracleTipoBeneficioDados extends OracleRepositorioBoleiaDados<TipoBeneficio> implements ITipoBeneficioDados {
 
     /**
      * Instancia o repositório.
      */
-    public OracleTipoTipoBeneficioDados() {
+    public OracleTipoBeneficioDados() {
         super(TipoBeneficio.class);
     }
 }

@@ -24,7 +24,7 @@ import java.util.Date;
  */
 @Audited
 @Entity
-@Table(name = "CONFIGURACAO_TIPO_BENEFICIO")
+@Table(name = "CONFIG_TIPO_BENEFICIO")
 public class ConfiguracaoTipoBeneficio implements IPersistente {
 
     @Id
