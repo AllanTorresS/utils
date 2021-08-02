@@ -1,6 +1,7 @@
 package ipp.aci.boleia.dados;
 
 import ipp.aci.boleia.dominio.Motorista;
+import ipp.aci.boleia.dominio.UsuarioMotorista;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialMotoristaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaMotoristaVo;
@@ -164,5 +165,11 @@ public interface IMotoristaDados extends IRepositorioBoleiaDados<Motorista> {
      * @return o motorista encontrado
      */
     Motorista obterExcluidoPorCpfFrota(Long cpf, Long idFrota);
+
+    /**
+     * Obtem motoristas incluindo os excluídos pelo usuarioMotorista
+     * @return os motoristas encontrados
+     */
+    List<Motorista> obterMotoristasIncluindoExcluidos(UsuarioMotorista usuarioMotorista);
 
 }

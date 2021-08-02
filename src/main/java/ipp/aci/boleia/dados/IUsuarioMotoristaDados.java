@@ -30,12 +30,11 @@ public interface IUsuarioMotoristaDados extends IRepositorioBoleiaDados<UsuarioM
      */
     ResultadoPaginado<UsuarioMotorista> pesquisaPaginada(FiltroPesquisaUsuarioMotoristaVo filtro);
 
-
     /**
      * Obtém todos os usuarios motoristas a partir de um usuario.
      *
      * @param usuario o usuario logado
      * @return UsuarioMotorista do id dado
      */
-    List<UsuarioMotorista> obterUsuariosMotoristas(Usuario usuario);
+    List<UsuarioMotorista> obterUsuariosMotoristasIncluindoExcluidos(Usuario usuario);
 }
