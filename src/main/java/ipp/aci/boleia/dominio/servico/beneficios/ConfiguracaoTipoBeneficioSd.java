@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
  * @author lucas.santiago
  */
 @Component
-public class ContaBeneficioSd {
+public class ConfiguracaoTipoBeneficioSd {
 
     @Autowired
     private ITipoBeneficioDados repositorioBeneficios;
