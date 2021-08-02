@@ -274,20 +274,12 @@ public class PropostaAntecipacao implements IPersistente, IPertenceRevendedor, I
             }
         } else if(!isAceito) {
             return StatusAntecipacao.CANCELADO_CLIENTE;
+        } else if(reembolsoAntecipado.getStatusIntegracao().equals(StatusIntegracaoReembolsoJde.ANTECIPADO.getValue())) {
+            return StatusAntecipacao.ANTECIPADO;
+        } else if (getStatusIntegracao() == StatusIntegracaoAntecipacaoJde.REALIZADO) {
+            return StatusAntecipacao.EM_ANDAMENTO;
         } else {
-            if(reembolsoAntecipado.getStatusIntegracao() == null ||
-                    reembolsoAntecipado.getStatusIntegracao().equals(StatusIntegracaoReembolsoJde.ERRO_ENVIO.getValue()) ||
-                    reembolsoAntecipado.getStatusIntegracao().equals(StatusIntegracaoReembolsoJde.ERRO_LIBERACAO.getValue()) ||
-                    reembolsoAntecipado.getStatusIntegracao().equals(StatusIntegracaoReembolsoJde.PENDENTE.getValue())) {
-                return StatusAntecipacao.PENDENTE;
-            }
-            if (dataReferencia.before(obterUltimoInstanteDia(dataDesembolso))) {
-                return StatusAntecipacao.EM_ANDAMENTO;
-            }
-            if(reembolsoAntecipado.getStatusIntegracao().equals(StatusIntegracaoReembolsoJde.ANTECIPADO.getValue())) {
-                return StatusAntecipacao.ANTECIPADO;
-            }
-            return null;
+            return StatusAntecipacao.PENDENTE;
         }
     }
 
@@ -315,7 +307,7 @@ public class PropostaAntecipacao implements IPersistente, IPertenceRevendedor, I
         if (statusVoucherPv == null && statusFaturaXp == null && statusVoucherXp == null) {
             return StatusIntegracaoAntecipacaoJde.PREVISTO;
         } else if (statusVoucherPv == StatusIntegracaoReembolsoJde.REALIZADO && statusFaturaXp == REALIZADO && statusVoucherXp == REALIZADO) {
-            return StatusIntegracaoAntecipacaoJde.ANTECIPADO;
+            return StatusIntegracaoAntecipacaoJde.REALIZADO;
         } else if (statusFaturaXp == ERRO_ENVIO && (statusVoucherPv == StatusIntegracaoReembolsoJde.ERRO_ENVIO || statusVoucherXp == REALIZADO)) {
             return StatusIntegracaoAntecipacaoJde.ERRO_ENVIO_F7_PV;
         } else if (statusFaturaXp == ERRO_ENVIO) {

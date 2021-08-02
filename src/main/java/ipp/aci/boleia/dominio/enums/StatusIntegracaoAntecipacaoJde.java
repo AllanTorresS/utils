@@ -8,7 +8,7 @@ import ipp.aci.boleia.util.i18n.IEnumComLabel;
 public enum StatusIntegracaoAntecipacaoJde implements IEnumComLabel<StatusIntegracaoAntecipacaoJde> {
 
     PREVISTO(0),
-    ANTECIPADO(1),
+    REALIZADO(1),
     ERRO_ENVIO_F7(2),
     ERRO_ENVIO_PV(3),
     ERRO_ENVIO_F7_PV(4);
