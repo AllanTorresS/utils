@@ -34,4 +34,9 @@ public class OraclePedidoCreditoBeneficiosDados extends OracleRepositorioBoleiaD
 
         return pesquisar((ParametroOrdenacaoColuna) null, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
+
+    @Override
+    public List<PedidoCreditoBeneficios> obterPedidosAbertos() {
+        return pesquisar((ParametroOrdenacaoColuna) null, new ParametroPesquisaDiferente("status", StatusPedidoCreditoBeneficios.PAGO.getValue()));
+    }
 }
