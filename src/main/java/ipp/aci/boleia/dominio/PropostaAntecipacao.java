@@ -308,7 +308,7 @@ public class PropostaAntecipacao implements IPersistente, IPertenceRevendedor, I
             return StatusIntegracaoAntecipacaoJde.PREVISTO;
         } else if (statusVoucherPv == StatusIntegracaoReembolsoJde.REALIZADO && statusFaturaXp == REALIZADO && statusVoucherXp == REALIZADO) {
             return StatusIntegracaoAntecipacaoJde.REALIZADO;
-        } else if (statusFaturaXp == ERRO_ENVIO && (statusVoucherPv == StatusIntegracaoReembolsoJde.ERRO_ENVIO || statusVoucherXp == REALIZADO)) {
+        } else if (statusFaturaXp == ERRO_ENVIO && (statusVoucherPv == StatusIntegracaoReembolsoJde.ERRO_ENVIO || statusVoucherXp == ERRO_ENVIO)) {
             return StatusIntegracaoAntecipacaoJde.ERRO_ENVIO_F7_PV;
         } else if (statusFaturaXp == ERRO_ENVIO) {
             return StatusIntegracaoAntecipacaoJde.ERRO_ENVIO_F7;

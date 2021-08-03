@@ -33,6 +33,10 @@ public class TaxaXp implements IPersistente, IExclusaoLogica {
     private BigDecimal valorTaxa;
 
     @NotNull
+    @Column(name = "ID_PERCENTUAL")
+    private boolean percentual;
+
+    @NotNull
     @Column(name = "ID_EXCLUIDO")
     private Boolean excluido;
 
@@ -70,5 +74,13 @@ public class TaxaXp implements IPersistente, IExclusaoLogica {
 
     public void setValorTaxa(BigDecimal valorTaxa) {
         this.valorTaxa = valorTaxa;
+    }
+
+    public boolean isPercentual() {
+        return percentual;
+    }
+
+    public void setPercentual(boolean percentual) {
+        this.percentual = percentual;
     }
 }
