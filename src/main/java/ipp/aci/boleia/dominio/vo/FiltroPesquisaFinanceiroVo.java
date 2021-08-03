@@ -24,7 +24,8 @@ public class FiltroPesquisaFinanceiroVo extends FiltroBasePeriodoPaginado {
     private List<EnumVo> listaStatusIntegracao;
     private Long numeroDocumento;
     private List<EnumVo> statusNotaFiscal;
-    
+    private EnumVo modalidadePagamento;
+
 
     public EntidadeVo getFrota() {
         return frota;
@@ -152,6 +153,14 @@ public class FiltroPesquisaFinanceiroVo extends FiltroBasePeriodoPaginado {
 
     public void setStatusNotaFiscal(List<EnumVo> statusNotaFiscal) {
         this.statusNotaFiscal = statusNotaFiscal;
+    }
+
+    public EnumVo getModalidadePagamento() {
+        return modalidadePagamento;
+    }
+
+    public void setModalidadePagamento(EnumVo modalidadePagamento) {
+        this.modalidadePagamento = modalidadePagamento;
     }
 }
 
