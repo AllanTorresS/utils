@@ -274,7 +274,7 @@ public class PropostaAntecipacao implements IPersistente, IPertenceRevendedor, I
             }
         } else if(!isAceito) {
             return StatusAntecipacao.CANCELADO_CLIENTE;
-        } else if(reembolsoAntecipado.getStatusIntegracao().equals(StatusIntegracaoReembolsoJde.ANTECIPADO.getValue())) {
+        } else if(StatusIntegracaoReembolsoJde.ANTECIPADO.getValue().equals(reembolsoAntecipado.getStatusIntegracao())) {
             return StatusAntecipacao.ANTECIPADO;
         } else if (getStatusIntegracao() == StatusIntegracaoAntecipacaoJde.REALIZADO) {
             return StatusAntecipacao.EM_ANDAMENTO;
