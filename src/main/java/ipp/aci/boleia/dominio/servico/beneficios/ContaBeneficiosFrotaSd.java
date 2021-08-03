@@ -6,6 +6,7 @@ import ipp.aci.boleia.dados.IPedidoCreditoBeneficiosDados;
 import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.beneficios.ContaBeneficiosFrota;
 import ipp.aci.boleia.dominio.beneficios.PedidoCreditoBeneficios;
+import ipp.aci.boleia.dominio.vo.beneficios.ContaBeneficiosFrotaVo;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -58,12 +59,12 @@ public class ContaBeneficiosFrotaSd {
     }
 
     /**
-     * Obtém o saldo benefício de uma conta de benefícios da frota.
+     * Obtém um Vo com todos os valores necessários para o cálculo do saldo de benefício da conta.
      *
      * @param conta Conta de benefícios da frota.
-     * @return Retorna o saldo de benefícios.
+     * @return DTO com todos os valores necessários.
      */
-    public BigDecimal obterSaldoBeneficioConta(ContaBeneficiosFrota conta){
+    public ContaBeneficiosFrotaVo obterValoresContaBeneficioFrota(ContaBeneficiosFrota conta){
         List<PedidoCreditoBeneficios> pedidosPendentes = repositorioPedidoCreditoBeneficios.obterPedidosCreditoBeneficioAbertosPorFrota(conta.getFrota().getId());
 
         BigDecimal indiceLimiteDisponivel = conta.getFrota().getLimiteCreditoBeneficiosFrota() != null
@@ -75,6 +76,10 @@ public class ContaBeneficiosFrotaSd {
 
         BigDecimal pagamentoPendente = pedidosPendentes.stream().map(PedidoCreditoBeneficios::getValorPedido).reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal limiteDisponivel = creditoDisponivelFrota.multiply(indiceLimiteDisponivel);
-        return limiteDisponivel.subtract(pagamentoPendente).min(saldoDisponivelFrota);
+
+        BigDecimal saldoBeneficio = limiteDisponivel.subtract(pagamentoPendente).min(saldoDisponivelFrota);
+        BigDecimal saldoDisponivel = conta.getSaldo();
+
+        return new ContaBeneficiosFrotaVo(creditoDisponivelFrota, saldoDisponivelFrota, limiteDisponivel, indiceLimiteDisponivel, saldoBeneficio, saldoDisponivel, pagamentoPendente);
     }
 }
