@@ -6,6 +6,8 @@ import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.PropostaAntecipacao;
 import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.enums.StatusAntecipacao;
+import ipp.aci.boleia.dominio.enums.StatusIntegracaoAntecipacaoJde;
+import ipp.aci.boleia.dominio.enums.StatusIntegracaoJde;
 import ipp.aci.boleia.dominio.enums.StatusIntegracaoReembolsoJde;
 import ipp.aci.boleia.dominio.enums.StatusPropostaXP;
 import ipp.aci.boleia.dominio.enums.TipoAntecipacao;
@@ -33,12 +35,15 @@ public class OraclePropostaAntecipacaoDados extends OracleRepositorioBoleiaDados
             "SELECT PA " +
                 "FROM PropostaAntecipacao PA " +
                     "JOIN FETCH PA.reembolsoAntecipado RA " +
+                    "JOIN FETCH PA.cobrancaXp CXP " +
+                    "JOIN FETCH PA.reembolsoXp RXP " +
                     "JOIN FETCH RA.transacaoConsolidada TC " +
                     "JOIN FETCH TC.frotaPtov FPV " +
                     "JOIN FPV.frota F " +
                     "JOIN FPV.pontoVenda PV " +
                 "WHERE " +
                     " RA.tipoAntecipacao = " + TipoAntecipacao.PARCEIRO_XP.getValue() + " " +
+                    "%s " +
                     "%s " +
                     "%s " +
                     "%s " +
@@ -68,6 +73,7 @@ public class OraclePropostaAntecipacaoDados extends OracleRepositorioBoleiaDados
         String clausulaAssessorFrota = "";
         String clausulaPontoVenda = "";
         String clausulaStatus = "";
+        String clausulaStatusIntegracao = "";
         String clausulaPeriodo = "";
 
         Long idptov = null;
@@ -81,6 +87,10 @@ public class OraclePropostaAntecipacaoDados extends OracleRepositorioBoleiaDados
                     filtro.getStatusAntecipacao().getValue().equals(StatusAntecipacao.EM_ANDAMENTO.getValue())) {
                 parametros.add(new ParametroPesquisaIgual("dataAtual", ambiente.buscarDataAmbiente()));
             }
+        }
+
+        if(filtro.getStatusIntegracao().getValue() != null) {
+            clausulaStatusIntegracao = montarFiltroStatusIntegracao(filtro.getStatusIntegracao());
         }
 
         if(filtro.getDe() != null && filtro.getAte() != null) {
@@ -103,7 +113,7 @@ public class OraclePropostaAntecipacaoDados extends OracleRepositorioBoleiaDados
                     .map(PontoDeVenda::getId).collect(Collectors.toList())));
         }
 
-        return pesquisar(filtro.getPaginacao(), String.format(CONSULTA_PESQUISA_ANTECIPACAO_PARCERIA, clausulaPeriodo, clausulaStatus, clausulaAssessorFrota, clausulaPontoVenda),
+        return pesquisar(filtro.getPaginacao(), String.format(CONSULTA_PESQUISA_ANTECIPACAO_PARCERIA, clausulaPeriodo, clausulaStatus, clausulaStatusIntegracao, clausulaAssessorFrota, clausulaPontoVenda),
                 parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
@@ -141,5 +151,40 @@ public class OraclePropostaAntecipacaoDados extends OracleRepositorioBoleiaDados
                 break;
         }
         return clausulaStatus;
+    }
+
+    /**
+     * Monta o filtro de status de integração da antecipação baseado no status obtido na requisição
+     * @param statusIntegracao o status de integração recebido na requisição
+     * @return A clausula de filtro do status de integração da antecipação
+     */
+    private String montarFiltroStatusIntegracao(EnumVo statusIntegracao) {
+        String clausulaStatusIntegracao = null;
+        StatusIntegracaoAntecipacaoJde statusIntegracaoAntecipacaoJde = StatusIntegracaoAntecipacaoJde.valueOf(statusIntegracao.getName());
+        switch (statusIntegracaoAntecipacaoJde) {
+            case PREVISTO:
+                clausulaStatusIntegracao = " AND RA.statusIntegracao is null AND CXP is null AND RXP is null ";
+                break;
+            case REALIZADO:
+                clausulaStatusIntegracao = " AND RA.statusIntegracao = " + StatusIntegracaoReembolsoJde.REALIZADO.getValue() +
+                        " AND CXP.statusIntegracaoJDE = " + StatusIntegracaoJde.REALIZADO.getValue() +
+                        " AND RXP.statusIntegracao = " + StatusIntegracaoJde.REALIZADO.getValue() + " ";
+                break;
+            case ERRO_ENVIO_F7:
+                clausulaStatusIntegracao = " AND CXP.statusIntegracaoJDE = " + StatusIntegracaoJde.ERRO_ENVIO.getValue() + " ";
+                break;
+            case ERRO_ENVIO_PV:
+                clausulaStatusIntegracao = " AND RA.statusIntegracao = " + StatusIntegracaoReembolsoJde.ERRO_ENVIO.getValue() + " ";
+                break;
+            case ERRO_ENVIO_F7_PV:
+                clausulaStatusIntegracao = " AND CXP.statusIntegracaoJDE = " + StatusIntegracaoJde.ERRO_ENVIO.getValue() +
+                        " AND ( RA.statusIntegracao = " + StatusIntegracaoReembolsoJde.ERRO_ENVIO.getValue() +
+                        " OR RXP.statusIntegracao = " + StatusIntegracaoJde.ERRO_ENVIO.getValue() + " ) ";
+                break;
+            default:
+                clausulaStatusIntegracao = "";
+                break;
+        }
+        return clausulaStatusIntegracao;
     }
 }

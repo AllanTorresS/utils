@@ -7,6 +7,7 @@ import ipp.aci.boleia.dominio.pesquisa.comum.FiltroBasePeriodoPaginado;
  */
 public class FiltroPesquisaAntecipacaoVo extends FiltroBasePeriodoPaginado {
     private EnumVo statusAntecipacao;
+    private EnumVo statusIntegracao;
     private EntidadeVo pontoDeVenda;
 
     public EnumVo getStatusAntecipacao() {
@@ -15,6 +16,14 @@ public class FiltroPesquisaAntecipacaoVo extends FiltroBasePeriodoPaginado {
 
     public void setStatusAntecipacao(EnumVo statusAntecipacao) {
         this.statusAntecipacao = statusAntecipacao;
+    }
+
+    public EnumVo getStatusIntegracao() {
+        return statusIntegracao;
+    }
+
+    public void setStatusIntegracao(EnumVo statusIntegracao) {
+        this.statusIntegracao = statusIntegracao;
     }
 
     public EntidadeVo getPontoDeVenda() {
