@@ -2,6 +2,7 @@ package ipp.aci.boleia.dados;
 
 import ipp.aci.boleia.dominio.DispositivoMotoristaPedido;
 import ipp.aci.boleia.dominio.Motorista;
+import ipp.aci.boleia.dominio.vo.PedidoStatusAutorizacaoVo;
 
 import java.util.List;
 
@@ -42,4 +43,12 @@ public interface IDispositivoMotoristaPedidoDados extends IRepositorioBoleiaDado
      * @return A lista de pedido
      */
     List<DispositivoMotoristaPedido> obterPorMotorista(Motorista motorista);
+
+    /**
+     * Pesquisa por numero pedido com o status da autorização pagamento onde estão assiciados.
+     *
+     * @param numero do pedido
+     * @return lista com os status da autorização pagamento associadas ao pedido
+     */
+    List<PedidoStatusAutorizacaoVo> pesquisarStatusPorNumeroPedido(String numero);
 }

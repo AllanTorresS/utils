@@ -4,28 +4,16 @@ import ipp.aci.boleia.dominio.AutorizacaoPagamento;
 import ipp.aci.boleia.dominio.FrotaParametroSistema;
 import ipp.aci.boleia.dominio.ItemAutorizacaoPagamento;
 import ipp.aci.boleia.dominio.Veiculo;
-import ipp.aci.boleia.dominio.enums.StatusExecucaoParametroSistema;
 import ipp.aci.boleia.dominio.vo.ContextoExecucaoParametroSistemaVo;
 import ipp.aci.boleia.dominio.vo.ResultadoExecucaoParametroSistemaVo;
-import ipp.aci.boleia.util.UtilitarioCalculo;
-import ipp.aci.boleia.util.UtilitarioFormatacao;
-import ipp.aci.boleia.util.i18n.Mensagens;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.math.BigDecimal;
 
 /**
  * Verifica se o volume de produto do abastecimento condiz com tamanho do tanque do
- * veciulo em questao
+ * veciulo em questao, no contexto de autorizacao.
  */
 @Component
-public class LogicaParametroVolumeAbastecido implements ILogicaParametroSistema<AutorizacaoPagamento> {
-
-    private static final String FORMATACAO_EXCEDENTE = "##0.0000";
-
-    @Autowired
-    private Mensagens mensagens;
+public class LogicaParametroVolumeAbastecido extends LogicaParametroVolumeAbastecidoBase implements ILogicaParametroSistema<AutorizacaoPagamento> {
 
     @Override
     public ResultadoExecucaoParametroSistemaVo<AutorizacaoPagamento> executar(ContextoExecucaoParametroSistemaVo<AutorizacaoPagamento> contexto, FrotaParametroSistema frotaParam) {
@@ -35,15 +23,8 @@ public class LogicaParametroVolumeAbastecido implements ILogicaParametroSistema<
         if(veiculo.getCapacidadeTanque() != null) {
             for (ItemAutorizacaoPagamento item : autorizacao.getItems()) {
                 if (item.isAbastecimento()) {
-                    BigDecimal volumeAbastecido = item.getQuantidade();
-                    BigDecimal capacidadeTanque = new BigDecimal(veiculo.getCapacidadeTanque());
-                    if(volumeAbastecido.compareTo(capacidadeTanque) > 0){
-                        resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
-                        BigDecimal excedente = UtilitarioCalculo.calcularPorcentagemExcedente(volumeAbastecido, capacidadeTanque);
-                        resultado.setMensagemErro(
-                                mensagens.obterMensagem("parametro.sistema.erro.abastecimento.volume.abastecido",
-                                        UtilitarioFormatacao.formatarDecimal(excedente, FORMATACAO_EXCEDENTE),
-                                        veiculo.getPlaca()));
+                    boolean falhou = executarValidacao(veiculo, item.getQuantidade(), resultado);
+                    if (falhou) {
                         break;
                     }
                 }

@@ -1,8 +1,10 @@
 package ipp.aci.boleia.dominio;
 
+import ipp.aci.boleia.dominio.enums.StatusAtivacao;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
 import ipp.aci.boleia.dominio.interfaces.IPertenceMotorista;
+import ipp.aci.boleia.dominio.vo.TokenVo;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.Column;
@@ -71,7 +73,6 @@ public class DispositivoMotoristaPedido implements IPersistente, IPertenceFrota,
     @JoinColumn(name = "CD_VEICULO")
     private Veiculo veiculo;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_TIPO_COMBUSTIVEL")
     private TipoCombustivel tipoCombustivel;
@@ -127,8 +128,52 @@ public class DispositivoMotoristaPedido implements IPersistente, IPertenceFrota,
     @JoinColumn(name = "CD_DISPOSITIVO_MOTORISTA")
     private DispositivoMotorista dispositivoMotorista;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_PEDIDO_ADICIONAL")
+    private DispositivoMotoristaPedido pedidoAbastecimentoAdicional;
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "pedido")
     private List<TransacaoFrotaLeve> transacoesFrotasLeves;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "pedido")
+    private List<AutorizacaoPagamento> abastecimentos;
+
+    /**
+     * Habilita o pedido conforme token
+     *
+     * @param token token com data expiração para pedido
+     */
+    public void habilitaPedidoPorToken(TokenVo token) {
+        this.setNumero(token.getToken());
+        this.setDataExpiracao(token.getDataExpiracaoToken());
+        this.setHabilitado(StatusAtivacao.ATIVO.getValue());
+    }
+
+    /**
+     * Habilita pedido como pedido adicional de outro pedido
+     *
+     * @param pedido que será pedido principal
+     */
+    public void habilitaPorPedido(DispositivoMotoristaPedido pedido) {
+        if (pedido.getNumero() == null && pedido.getDataCriacao() == null && pedido.getDataExpiracao() == null) {
+            return;
+        }
+        // numero do pedido adicional deve ser diferente do pedido principal
+        this.setNumero("_" + pedido.getNumero().substring(1));
+        this.setDataExpiracao(pedido.getDataExpiracao());
+        this.setHabilitado(StatusAtivacao.ATIVO.getValue());
+        this.setDataCriacao(pedido.getDataCriacao());
+        pedido.setPedidoAbastecimentoAdicional(this);
+    }
+
+    /**
+     * Quando um pedido tem abastecimento adicional associado.
+     *
+     * @return true quando existe um pedido além do pedido original
+     */
+    public boolean temPedidoAbastecimentoAdicional() {
+        return pedidoAbastecimentoAdicional != null;
+    }
 
     @Override
     public Long getId() {
@@ -269,5 +314,21 @@ public class DispositivoMotoristaPedido implements IPersistente, IPertenceFrota,
 
     public void setDispositivoMotorista(DispositivoMotorista dispositivoMotorista) {
         this.dispositivoMotorista = dispositivoMotorista;
+    }
+
+    public List<AutorizacaoPagamento> getAbastecimentos() {
+        return abastecimentos;
+    }
+
+    public void setAbastecimentos(List<AutorizacaoPagamento> abastecimentos) {
+        this.abastecimentos = abastecimentos;
+    }
+
+    public DispositivoMotoristaPedido getPedidoAbastecimentoAdicional() {
+        return pedidoAbastecimentoAdicional;
+    }
+
+    public void setPedidoAbastecimentoAdicional(DispositivoMotoristaPedido pedidoAbastecimentoAdicional) {
+        this.pedidoAbastecimentoAdicional = pedidoAbastecimentoAdicional;
     }
 }

@@ -1,7 +1,13 @@
 package ipp.aci.boleia.util.excecao;
 
 /**
- * Erros de negócio lançados pela aplicação
+ * Erros de negócio lançados pela aplicação.
+ * Os Erros devem ser separados por intervalos de 1000
+ * quando são referênciados pelo código em plataformas Externas, como APP Mobile e API Externa.
+ * Como ocorre no caso do App do motorista, onde começam em 1000.
+ *
+ * Ao adicionar novo valor de erro, caso o código desse valor esteja
+ * sendo referênciado externamente, esse valor deverá ocupar uma faixa não existente.
  *
  */
 public enum Erro {
@@ -182,7 +188,25 @@ public enum Erro {
     NOTA_FISCAL_APENAS_JUSTIFICATIVAS(176),
     ERRO_ABERTURA_CHAMADO_PV_OBRIGATORIO(177),
     MODELO_DE_NOTA_FISCAL_INVALIDO(178),
-    ERRO_TRANSACAO_APOS_EXCLUSAO_TAG(179);
+    ERRO_TRANSACAO_APOS_EXCLUSAO_TAG(179),
+
+    // APP MOTORISTA 1000 - Erros mapeados no Aplicativo Motorista
+    ERRO_AUTORIZACAO_CONSUMO_ESTIMADO_MAX(1000),
+    ERRO_AUTORIZACAO_VOLUME_ABASTECIDO(1001),
+    ERRO_AUTORIZACAO_HODOMETRO_LIMITE(1002),
+    ERRO_AUTORIZACAO_HORIMETRO_LIMITE(1003),
+    ERRO_AUTORIZACAO_CONSUMO_ESTIMADO_MIN(1004),
+    ERRO_AUTORIZACAO_QUANTIDADE_MAX_PRODUTO(1005),
+    ERRO_AUTORIZACAO_FLUXO_PLACA_DIVERGENTE(1006),
+    PV_NAO_AUTORIZADO(1007),
+    ERRO_AUTORIZACAO_PRECO_MAX_PRODUTO(1008),
+    ERRO_VALIDACAO_GOEPIK(1009),
+    VEICULO_N_HABILITADO_DUAS_PLACAS_APP(1010),
+    VEICULO_NAO_AUTORIZADO_PELO_FLUXO_APP(1011),
+    ABAST_DUAS_PLACAS_SEM_CLIMATIZADOR_APP(1012),
+    ABAST_DOIS_CLIMATIZADORES_APP(1013),
+    VEICULO_NAO_CADASTRADO(1014),
+    ERRO_AUTORIZACAO_PV_PROXIMIDADE(1015);
 
     private final Integer codigo;
 

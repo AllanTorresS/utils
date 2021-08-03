@@ -7,6 +7,7 @@ import ipp.aci.boleia.dominio.Veiculo;
 import ipp.aci.boleia.dominio.enums.StatusExecucaoParametroSistema;
 import ipp.aci.boleia.dominio.vo.ContextoExecucaoParametroSistemaVo;
 import ipp.aci.boleia.dominio.vo.ResultadoExecucaoParametroSistemaVo;
+import ipp.aci.boleia.util.excecao.Erro;
 
 import java.math.BigDecimal;
 
@@ -30,6 +31,7 @@ public abstract class BaseLogicaParametroSaldoVeiculo implements ILogicaParametr
             BigDecimal montante = cotaEmLitros ? autorizacao.getTotalLitrosAbastecimento() : autorizacao.getValorTotalAbastecimento();
             if (saldoVeiculo != null && !saldoVeiculo.isSaldoSuficienteParaAutorizar(montante, cotaEmLitros, cotaMensal)) {
                 resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
+                resultado.setCodigoErro(Erro.VEICULO_SALDO_COTA_INSUFICIENTE);
                 resultado.setMensagemErro(obterMensagemRegraViolada(veiculo, cotaEmLitros, montante));
             }
         }

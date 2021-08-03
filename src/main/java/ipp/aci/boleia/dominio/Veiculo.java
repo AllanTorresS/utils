@@ -203,6 +203,9 @@ public class Veiculo implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @Column(name = "CD_IDENTIFICADOR_INTERNO")
     private String identificadorInterno;
 
+    @Column(name = "ID_ABAST_DUAS_PLACAS")
+    private Boolean habilitadoAbastecerDuasPlacas;
+
     @Override
     public Long getId() {
         return id;
@@ -481,6 +484,14 @@ public class Veiculo implements IPersistente, IExclusaoLogica, IPertenceFrota {
 
     public void setMotorista(Motorista motorista) {
         this.motorista = motorista;
+    }
+
+    public Boolean getHabilitadoAbastecerDuasPlacas() {
+        return habilitadoAbastecerDuasPlacas;
+    }
+
+    public void setHabilitadoAbastecerDuasPlacas(Boolean habilitadoAbastecerDuasPlacas) {
+        this.habilitadoAbastecerDuasPlacas = habilitadoAbastecerDuasPlacas;
     }
 
     @Transient
