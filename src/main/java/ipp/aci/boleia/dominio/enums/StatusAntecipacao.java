@@ -5,7 +5,7 @@ import ipp.aci.boleia.util.i18n.IEnumComLabel;
 /**
  * Indica o status de uma antecipação de reembolso
  */
-public enum StatusAntecipacao implements IEnumComLabel<StatusAntecipacao> {
+public enum StatusAntecipacao implements IEnumComLabel<StatusAntecipacao>, IEnumComValor {
 
     ANTECIPADO(1),
     AGUARDANDO_ACEITE(2),
