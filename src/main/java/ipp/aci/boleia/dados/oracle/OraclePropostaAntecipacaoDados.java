@@ -117,23 +117,23 @@ public class OraclePropostaAntecipacaoDados extends OracleRepositorioBoleiaDados
         StatusAntecipacao statusAntecipacao = StatusAntecipacao.valueOf(status.getName());
         switch (statusAntecipacao) {
             case ANTECIPADO:
-                clausulaStatus = "PA.status = " + StatusPropostaXP.APPROVED.getValue() +
-                        " and RA.statusIntegracao = " + StatusIntegracaoReembolsoJde.ANTECIPADO.getValue() + " ";
+                clausulaStatus = " AND PA.status = " + StatusPropostaXP.APPROVED.getValue() +
+                        " AND RA.statusIntegracao = " + StatusIntegracaoReembolsoJde.ANTECIPADO.getValue() + " ";
                 break;
             case AGUARDANDO_ACEITE:
-                clausulaStatus = " PA.isAceito is null and PA.dataDesembolso <= :dataAtual ";
+                clausulaStatus = " AND PA.isAceito is null AND PA.dataDesembolso <= :dataAtual ";
                 break;
             case CANCELADO_CLIENTE:
-                clausulaStatus = " PA.isAceito = false ";
+                clausulaStatus = " AND PA.isAceito = false ";
                 break;
             case CANCELADO_SEM_RESPOSTA:
-                clausulaStatus = " PA.isAceito is null and PA.dataDesembolso > :dataAtual ";
+                clausulaStatus = " AND PA.isAceito is null AND PA.dataDesembolso > :dataAtual ";
                 break;
             case EM_ANDAMENTO:
-                clausulaStatus = " PA.isAceito = true and PA.dataDesembolso <= :dataAtual ";
+                clausulaStatus = " AND PA.isAceito = true AND PA.dataDesembolso <= :dataAtual ";
                 break;
             case PENDENTE:
-                clausulaStatus = " (RA.statusIntegracao is null or RA.statusIntegracao in (" + StatusIntegracaoReembolsoJde.ERRO_ENVIO.getValue() +
+                clausulaStatus = " AND (RA.statusIntegracao is null or RA.statusIntegracao in (" + StatusIntegracaoReembolsoJde.ERRO_ENVIO.getValue() +
                         ", " + StatusIntegracaoReembolsoJde.ERRO_LIBERACAO.getValue() + ", " + StatusIntegracaoReembolsoJde.PENDENTE.getValue()  + ")) ";
                 break;
             default:
