@@ -5,7 +5,7 @@ import ipp.aci.boleia.util.i18n.IEnumComLabel;
 /**
  * Indica o status da integração de uma proposta da XP
  */
-public enum StatusIntegracaoAntecipacaoJde implements IEnumComLabel<StatusIntegracaoAntecipacaoJde> {
+public enum StatusIntegracaoAntecipacaoJde implements IEnumComLabel<StatusIntegracaoAntecipacaoJde>, IEnumComValor {
 
     PREVISTO(0),
     REALIZADO(1),
