@@ -35,8 +35,8 @@ public class OraclePropostaAntecipacaoDados extends OracleRepositorioBoleiaDados
             "SELECT PA " +
                 "FROM PropostaAntecipacao PA " +
                     "JOIN FETCH PA.reembolsoAntecipado RA " +
-                    "JOIN FETCH PA.cobrancaXp CXP " +
-                    "JOIN FETCH PA.reembolsoXp RXP " +
+                    "LEFT JOIN FETCH PA.cobrancaXp CXP " +
+                    "LEFT JOIN FETCH PA.reembolsoXp RXP " +
                     "JOIN FETCH RA.transacaoConsolidada TC " +
                     "JOIN FETCH TC.frotaPtov FPV " +
                     "JOIN FPV.frota F " +
