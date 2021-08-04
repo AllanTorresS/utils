@@ -15,7 +15,7 @@ public class FiltroPesquisaDetalheAntecipacaoVo extends BaseFiltroPaginado {
     private String valorSolicitado;
     private String dataPagamento;
     private EnumVo status;
-    private Date dataSolicitacao;
+    private String dataSolicitacao;
 
     public Long getId() {
         return id;
@@ -65,11 +65,11 @@ public class FiltroPesquisaDetalheAntecipacaoVo extends BaseFiltroPaginado {
         this.status = status;
     }
 
-    public Date getDataSolicitacao() {
+    public String getDataSolicitacao() {
         return dataSolicitacao;
     }
 
-    public void setDataSolicitacao(Date dataSolicitacao) {
+    public void setDataSolicitacao(String dataSolicitacao) {
         this.dataSolicitacao = dataSolicitacao;
     }
 }
