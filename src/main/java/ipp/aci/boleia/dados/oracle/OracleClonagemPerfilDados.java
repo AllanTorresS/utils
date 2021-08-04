@@ -33,4 +33,18 @@ public class OracleClonagemPerfilDados extends OracleRepositorioBoleiaDados<Clon
                 new ParametroPesquisaIgual("usuarioDestino", idUsuario),
                 new ParametroPesquisaNulo("dataInativacao", true));
     }
+
+    /**
+     * Faz uma pesquisa filtrando por somente perfis temporarios, removendo os definitivo da pesquisa
+     * @param idUsuario
+     * @return retorna dados com clonagem temporaria
+     */
+    @Override
+    public List<ClonagemPerfil> obterClonagensSomentePerfisTemporariosPorUsuario(Long idUsuario) {
+        return pesquisarSemIsolamentoDados((ParametroOrdenacaoColuna) null,
+                new ParametroPesquisaIgual("usuarioDestino", idUsuario),
+                new ParametroPesquisaNulo("dataInativacao", true),
+                new ParametroPesquisaIgual("isDefinitiva", false));
+    }
+
 }
