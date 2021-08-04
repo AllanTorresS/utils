@@ -36,7 +36,9 @@ public class PrecoFreteSd {
      */
     public void propagarExclusao(PrecoBase precoBase){
         PrecoFrete precoFrete = repositorioFrete.obterPrecoFreteVigente(precoBase.getIdPontoVenda(), precoBase.getPrecoMicromercado().getTipoCombustivel().getId());
-        excluir(precoFrete);
+        if(precoFrete != null) {
+            excluir(precoFrete);
+        }
     }
 
     /**
