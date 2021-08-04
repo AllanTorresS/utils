@@ -17,4 +17,11 @@ public interface IPedidoCreditoBeneficiosDados extends IRepositorioBoleiaDados<P
      */
     List<PedidoCreditoBeneficios> obterPedidosCreditoBeneficioAbertosPorFrota(Long idFrota);
 
+    /**
+     * Obtém todos os pedidos de crédito para benefícios que estejam Pendentes ou Atrasados.
+     *
+     * @return Retorna todos os pedidos abertos.
+     */
+    List<PedidoCreditoBeneficios> obterPedidosAbertos();
+
 }
