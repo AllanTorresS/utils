@@ -197,9 +197,9 @@ public class ValidadorAbastecimentoSd {
         Veiculo veiculo = repositorioVeiculo.buscarPorPlacaFrota(placaVeiculo, abastecimentoOriginal.getFrota().getId());
 
         if (isHodometro) {
-            Long novoHodometro = novoValor != null? UtilitarioFormatacao.obterLongMascara(novoValor) : null;
+            Long novoHodometro = novoValor != null ? UtilitarioFormatacao.obterLongMascara(novoValor) : null;
             boolean hodometroValidoInformado = novoHodometro != null && novoHodometro > 0;
-            Long hodometroAnterior = abastecimentoOriginal.getHodometroAnterior() != null? abastecimentoOriginal.getHodometroAnterior() : veiculo.getHodometro();
+            Long hodometroAnterior = abastecimentoOriginal.getHodometroAnterior() != null ? abastecimentoOriginal.getHodometroAnterior() : veiculo.getHodometro();
 
             if (hodometroValidoInformado && (novoHodometro <= hodometroAnterior)) {
                 hodometroValidoInformado = false;
@@ -208,7 +208,7 @@ public class ValidadorAbastecimentoSd {
             if(hodometroValidoInformado && abastecimentoPosterior != null) {
                 Long hodometroPosterior = abastecimentoPosterior.getHodometro();
 
-                if(novoHodometro >= hodometroPosterior) {
+                if(hodometroPosterior != null && novoHodometro >= hodometroPosterior) {
                     hodometroValidoInformado = false;
                 }
             }
@@ -228,7 +228,7 @@ public class ValidadorAbastecimentoSd {
             if(horimetroValidoInformado && abastecimentoPosterior != null) {
                 BigDecimal horimetroPosterior = abastecimentoPosterior.getHorimetro();
 
-                if(novoHorimetro.compareTo(horimetroPosterior) >= 0) {
+                if(horimetroPosterior != null && novoHorimetro.compareTo(horimetroPosterior) >= 0) {
                     horimetroValidoInformado = false;
                 }
             }

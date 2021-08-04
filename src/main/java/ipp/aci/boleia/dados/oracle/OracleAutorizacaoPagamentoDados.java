@@ -417,6 +417,15 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     }
 
     @Override
+    public AutorizacaoPagamento obterPorCodigoPagamentoAutorizadoEPlaca(String codigoPagamento, String placaVeiculo) {
+        return pesquisarUnico(
+                new ParametroPesquisaIgual("codigoPagamento", codigoPagamento),
+                new ParametroPesquisaIgual("status", StatusAutorizacao.AUTORIZADO.getValue()),
+                new ParametroPesquisaIgual("veiculo.placa", placaVeiculo)
+        );
+    }
+
+    @Override
     public AutorizacaoPagamento obterSimilarAutorizada(Long idMotorista, Long idVeiculo, Long idPv, Long idFrota, BigDecimal valorTotal, Date dataLimite) {
         return pesquisarUnico(  new ParametroPesquisaIgual("status", StatusAutorizacao.AUTORIZADO.getValue()), new ParametroPesquisaIgual("motorista.id", idMotorista),
                 new ParametroPesquisaIgual("veiculo.id", idVeiculo), new ParametroPesquisaIgual("pontoVenda.id", idPv),
@@ -1503,6 +1512,41 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         return pesquisar((InformacaoPaginacao) null, CONSULTA_ABASTECIMENTOS_SEM_EMISSAO_PROD_POR_NFE, AutorizacaoPagamento.class,
                 parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
+
+    @Override
+    public AutorizacaoPagamento obterUltimoAbastecimentoVeiculoHodometroValido(Long idVeiculo) {
+        InformacaoPaginacao paginacao = new InformacaoPaginacao(1, 1, new ParametroOrdenacaoColuna("dataProcessamento", Ordenacao.DECRESCENTE));
+
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaIgual("status", StatusAutorizacao.AUTORIZADO.getValue()));
+        parametros.add(new ParametroPesquisaIgual("veiculo.id", idVeiculo));
+        parametros.add(new ParametroPesquisaDiferente("hodometro", null));
+        parametros.add(new ParametroPesquisaNulo("idAutorizacaoEstorno"));
+        parametros.add(new ParametroPesquisaMaior("valorTotal",BigDecimal.ZERO));
+
+        ResultadoPaginado<AutorizacaoPagamento> resultado = pesquisarSemIsolamentoDados(paginacao,
+                parametros.toArray(new ParametroPesquisa[parametros.size()]));
+
+        return resultado.getRegistros().isEmpty() ? null : resultado.getRegistros().get(0);
+    }
+
+    @Override
+    public AutorizacaoPagamento obterUltimoAbastecimentoVeiculoHorimetroValido(Long idVeiculo) {
+        InformacaoPaginacao paginacao = new InformacaoPaginacao(1, 1, new ParametroOrdenacaoColuna("dataProcessamento", Ordenacao.DECRESCENTE));
+
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaIgual("status", StatusAutorizacao.AUTORIZADO.getValue()));
+        parametros.add(new ParametroPesquisaIgual("veiculo.id", idVeiculo));
+        parametros.add(new ParametroPesquisaDiferente("horimetro", null));
+        parametros.add(new ParametroPesquisaNulo("idAutorizacaoEstorno"));
+        parametros.add(new ParametroPesquisaMaior("valorTotal",BigDecimal.ZERO));
+
+        ResultadoPaginado<AutorizacaoPagamento> resultado = pesquisarSemIsolamentoDados(paginacao,
+                parametros.toArray(new ParametroPesquisa[parametros.size()]));
+
+        return resultado.getRegistros().isEmpty() ? null : resultado.getRegistros().get(0);
+    }
+
 
     @Override
     public ResultadoPaginado<AutorizacaoPagamento> obterAbastecimentosAntecipaveis(FiltroAbastecimentoAntecipavelVo filtro) {
