@@ -30,6 +30,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -70,10 +71,12 @@ public class TransacaoFrotaSd {
      */
     public void validarProdutoOuServico(AutorizacaoPagamento autorizacaoPagamento) throws ExcecaoCreditoInsuficiente {
         TipoAutorizacaoPagamento tipoPagamento = TipoAutorizacaoPagamento.obterPorValor(autorizacaoPagamento.getTipoAutorizacaoPagamento());
-        TipoTransacao tipo = obterTipoTransacao(tipoPagamento, false);
-        if(tipo.isDebito() && autorizacaoPagamento.getFrota().getSaldo().getSaldoCorrente().compareTo(autorizacaoPagamento.getValorTotal()) < 0) {
-            throw new ExcecaoCreditoInsuficiente();
-        }
+       if(!Objects.equals(tipoPagamento, TipoAutorizacaoPagamento.MAN_PI)){
+           TipoTransacao tipo = obterTipoTransacao(tipoPagamento, false);
+           if(tipo.isDebito() && autorizacaoPagamento.getFrota().getSaldo().getSaldoCorrente().compareTo(autorizacaoPagamento.getValorTotal()) < 0) {
+               throw new ExcecaoCreditoInsuficiente();
+           }
+       }
     }
 
     /**
