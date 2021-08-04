@@ -154,6 +154,7 @@ public interface IChamadoDados {
      * Realiza a busca de um anexo para download.
      *
      * @param idSalesforce Identificador salesforce do anexo.
+     * @return O conteúdo do anexo
      */
     byte[] downloadAnexo(String idSalesforce);
 

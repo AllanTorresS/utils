@@ -95,6 +95,15 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
             "WHERE " +
             "   CommentBody LIKE '" + ConstantesSalesForce.PREFIXO_COMENTARIO_PENDENTE_EXTERNO + "%' OR CreatedBy.Email=':emailIntegracao') ";
 
+    private static final String SUBQUERY_ANEXOS = 
+            " (SELECT ContentDocumentId, " +
+            "       contentdocument.LatestPublishedVersionId, " +
+            "       contentdocument.Title,contentdocument.FileExtension, " +
+            "       contentdocument.Owner.Name, " +
+            "       contentdocument.Owner.Email, " +
+            "       contentdocument.LatestPublishedVersion.CreatedDate " +
+            "FROM ContentDocumentLinks), ";            
+
     private static final String OBTER_CHAMADO_POR_ID =
             "SELECT Id," +
             "       CreatedDate," +
@@ -110,8 +119,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
             "       MotivoSolicitacao__c," +
             "       Subject," +
             "       Description," +
-            "       (SELECT ContentDocumentId,contentdocument.LatestPublishedVersionId,contentdocument.Title,contentdocument.FileExtension," +
-            "       contentdocument.Owner.Name, contentdocument.Owner.Email, contentdocument.LatestPublishedVersion.CreatedDate FROM ContentDocumentLinks), " +
+                    SUBQUERY_ANEXOS +
                     SUBQUERY_COMENTARIOS +
             "FROM Case " +
             "WHERE Id=':idSalesforce'";
