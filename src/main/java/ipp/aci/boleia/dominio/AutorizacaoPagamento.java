@@ -506,6 +506,10 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     @ManyToMany(mappedBy = "autorizacoesPagamento", fetch = FetchType.LAZY)
     private List<ReembolsoAntecipado> antecipacoesReembolso;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_AUT_PAG_ASSOCIADA")
+    private AutorizacaoPagamento autorizacaoPagamentoAssociada;
+
     @Transient
     private TipoErroAutorizacaoPagamento tipoErroAutorizacaoPagamento;
 
@@ -1231,6 +1235,14 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
         this.dataPostergacao = dataPostergacao;
     }
 
+    public AutorizacaoPagamento getAutorizacaoPagamentoAssociada() {
+        return autorizacaoPagamentoAssociada;
+    }
+
+    public void setAutorizacaoPagamentoAssociada(AutorizacaoPagamento autorizacaoPagamentoAssociada) {
+        this.autorizacaoPagamentoAssociada = autorizacaoPagamentoAssociada;
+    }
+
     @Transient
     @Override
     public List<PontoDeVenda> getPontosDeVenda() {
@@ -1726,6 +1738,27 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     }
 
     /**
+     * Informa se abastecimento tem hodometro ou horimetro definido.
+     * @return true se tem hodometro ou horimetro definido.
+     */
+    @JsonIgnore
+    @Transient
+    public boolean temHodometroOuHorimetro() {
+        return this.hodometro != null || this.horimetro != null;
+    }
+
+    /**
+     * Informa se abastecimento tem hodometro anterior ou horimetro anterior definido.
+     * @return true se tem hodometro ou horimetro definido.
+     */
+    @JsonIgnore
+    @Transient
+    public boolean temHodometroOuHorimetroAnterior() {
+        return this.hodometroAnterior != null || this.horimetroAnterior != null;
+    }
+
+
+    /**
      * Calcula o consumo relativo a autorizacao de pagamento.
      * @return consumo relativo a autorizacao de pagamento.
      */
@@ -1758,6 +1791,45 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
         if (horimetro != null) {
             if (horimetroAnterior != null && !horimetroAnterior.equals(BigDecimal.ZERO)) {
                 return horimetro.subtract(horimetroAnterior);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Calcula o consumo usando essa autorizacao pagamento como base usando valores parametrizados para estimar consumo.
+     * Usado para obter consumo estimado com base em valores externos ao abastecimento.
+     *
+     * @param litragem total de litros
+     * @param hodometro valor do hodometro
+     * @param horimetro valor do horimetro
+     * @return consumo tendo a autorizacao pagamento como base, relativo as valores parametrizados
+     */
+    @JsonIgnore
+    public BigDecimal obterConsumo(BigDecimal litragem, Long hodometro, BigDecimal horimetro) {
+        final BigDecimal diferencaHodometroHorimetro = obterDiferencaHodometroHorimetro(hodometro, horimetro);
+        return diferencaHodometroHorimetro == null || litragem == null ? null :
+                diferencaHodometroHorimetro.divide(litragem, 3, BigDecimal.ROUND_HALF_UP);
+    }
+
+    /**
+     * Obtem a diferenca de hodometro ou horimetro da autorizacao de pagamento com valores parametrizados.
+     * Usado para obter consumo estimado com base em valores externos ao abastecimento.
+     *
+     * @param novoHodometro valor do hodometro
+     * @param novoHorimetro valor do horimetro
+     * @return a diferenca de hodometro ou horimetro da autorizacao de pagamento em relacao aos valores parametrizados
+     */
+    @JsonIgnore
+    private BigDecimal obterDiferencaHodometroHorimetro(Long novoHodometro,BigDecimal novoHorimetro) {
+        if (novoHodometro != null) {
+            if (this.hodometro != null && this.hodometro != BigDecimal.ZERO.longValue()) {
+                return new BigDecimal(novoHodometro - this.hodometro);
+            }
+        }
+        if (novoHorimetro != null) {
+            if (this.horimetro != null && !this.horimetro.equals(BigDecimal.ZERO)) {
+                return novoHorimetro.subtract(this.horimetro);
             }
         }
         return null;

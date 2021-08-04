@@ -6,7 +6,7 @@
 
     <groupId>ipp.aci.boleia</groupId>
     <artifactId>boleia-dominioUtil</artifactId>
-    <version>4.19.5-antecipacao-SNAPSHOT</version>
+    <version>4.22.2-antecipacao-SNAPSHOT</version>
 
     <properties>
         <main.basedir>${project.basedir}</main.basedir>
@@ -48,7 +48,7 @@
         <repository>
             <id>project.local</id>
             <name>project</name>
-            <url>file://${project.basedir}/../repo</url>
+            <url>https://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts/</url>
         </repository>
         <repository>
             <id>boleia-maven-snapshot</id>

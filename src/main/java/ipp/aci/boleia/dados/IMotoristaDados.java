@@ -2,8 +2,8 @@ package ipp.aci.boleia.dados;
 
 import ipp.aci.boleia.dominio.Motorista;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
-import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialMotoristaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaMotoristaVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialMotoristaVo;
 import ipp.aci.boleia.dominio.vo.externo.FiltroPesquisaMotoristaExtVo;
 import ipp.aci.boleia.dominio.vo.frotista.FiltroPesquisaMotoristaFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.ResultadoPaginadoFrtVo;
@@ -140,4 +140,10 @@ public interface IMotoristaDados extends IRepositorioBoleiaDados<Motorista> {
      */
     List<Motorista> obterMotoristasSemAbastecimento(Integer diasDeVerificacao);
 
+
+    /**
+     * Pesquisa motoristas pela unidade
+     * @param unidadeId o id da unidade em questão
+     */
+    List<Motorista>  obterPorUnidade(Long unidadeId);
 }

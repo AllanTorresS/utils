@@ -42,8 +42,8 @@ import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -833,5 +833,23 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
             return reembolso.getValorDescontoAntecipacao() != null && reembolso.getValorDescontoAntecipacao().compareTo(BigDecimal.ZERO) > 0 && reembolso.getValorDescontoAntecipacao().equals(reembolso.getValorTotal());
         }
         return false;
+    }
+
+    /**
+     * Obtém o CNPJ da empresa que realizou os abastecimentos do consolidado
+     * @return O CNPJ da empresa
+     */
+    @Transient
+    public Long getCnpjEmpresa() {
+        return empresaAgregada != null ? empresaAgregada.getCnpj() : unidade != null ? unidade.getCnpj() : getFrota().getCnpj();
+    }
+
+    /**
+     * Obtém a razão social da empresa que realizou os abastecimentos do consolidado
+     * @return A razão social da empresa
+     */
+    @Transient
+    public String getRazaoSocialEmpresa() {
+        return empresaAgregada != null ? empresaAgregada.getRazaoSocial() : unidade != null ? unidade.getNome() : getFrota().getRazaoSocial();
     }
 }

@@ -124,7 +124,6 @@ public class AutorizacaoPagamentoEdicaoSd {
         abastecimento.setHodometroHorimetroAnteriorEdicao(null);
         abastecimento.setHodometroHorimetroUsuarioEdicao(null);
         abastecimento.setHodometroHorimetroDataHoraEdicao(null);
-
     }
 
     /**

@@ -2,6 +2,7 @@ package ipp.aci.boleia.dados.oracle;
 
 import ipp.aci.boleia.dados.ITipoCombustivelDados;
 import ipp.aci.boleia.dominio.TipoCombustivel;
+import ipp.aci.boleia.dominio.enums.ParametroSistema;
 import ipp.aci.boleia.dominio.enums.StatusAlteracaoPrecoPosto;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
@@ -41,6 +42,22 @@ public class OracleTipoCombustivelDados extends OracleRepositorioBoleiaDados<Tip
 					" ) " +
 					" ORDER BY c.descricao ";
 
+	private static final String CONSULTA_COMBUSTIVEIS_PERMITIDOS_PARA_O_VEICULO =
+			"SELECT DISTINCT tipoCombustivel " +
+			" FROM FrotaParametroSistema frotaParametroSistema  " +
+			" INNER JOIN frotaParametroSistema.combustiveisPermitidos frotaParamSisProdAbast " +
+			" INNER JOIN frotaParamSisProdAbast.tipoCombustivel tipoCombustivel " +
+			" INNER JOIN frotaParamSisProdAbast.veiculo veiculo " +
+			" WHERE ( " +
+			"           veiculo.id = :idVeiculo " +
+			"           AND frotaParametroSistema.frota.id = :idFrota " +
+			"           AND frotaParametroSistema.ativo = " + Boolean.TRUE +
+			"           AND frotaParametroSistema.parametroSistema = " + ParametroSistema.PRODUTO_ABASTECIMENTO.getCodigo() +
+			"           AND frotaParamSisProdAbast.permitido = " + Boolean.TRUE +
+			"       ) ";
+
+
+
 	/**
 	 * Instancia o repositorio
 	 */
@@ -71,5 +88,10 @@ public class OracleTipoCombustivelDados extends OracleRepositorioBoleiaDados<Tip
 	@Override
 	public List<TipoCombustivel> buscarPorCodigoNcm(Long codigoNcm) {
 		return pesquisar(new ParametroOrdenacaoColuna("id"), new ParametroPesquisaIgual("codigosNcm.codigoNcm", codigoNcm));
+	}
+
+	@Override
+	public List<TipoCombustivel> buscarCombustivelPermitidoParaVeiculo(Long idVeiculo, Long idFrota){
+		return pesquisar(null, CONSULTA_COMBUSTIVEIS_PERMITIDOS_PARA_O_VEICULO, new ParametroPesquisaIgual("idVeiculo",idVeiculo ), new ParametroPesquisaIgual("idFrota",idFrota )).getRegistros();
 	}
 }

@@ -49,6 +49,16 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
      */
     AutorizacaoPagamento obterPorCodigoPagamentoAutorizado(String codigoPagamento);
 
+
+    /**
+     * Pesquisa autorização de pagamento autorizada a partir do código de pagamento e placa.
+     * @param codigoPagamento código de pagamento da transação.
+     * @param placa a placa do veículo a ser abastecido.
+     * @return a autorização de abastecimento localizada caso exista.
+     */
+    AutorizacaoPagamento obterPorCodigoPagamentoAutorizadoEPlaca(String codigoPagamento, String placa);
+
+
     /**
      * Obtem transacoes similares dentro da data limite informada
      * @param idMotorista id do motorista
@@ -455,6 +465,20 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
      * @return Os abastecimentos encontrados
      */
     List<AutorizacaoPagamento> obterAbastecimentoParaConciliacaoPorValorDeProduto(Long cnpjEmit, Date dataEmissao, BigDecimal valorTotalNota);
+
+    /**
+     * Obtem o ultimo abastecimento ou estorno autorizado do veiculo com valor de Hodometro diferente de nulo
+     * @param idVeiculo O id do veiculo
+     * @return O ultimo abastecimento
+     */
+    AutorizacaoPagamento obterUltimoAbastecimentoVeiculoHodometroValido(Long idVeiculo);
+
+    /**
+     * Obtem o ultimo abastecimento ou estorno autorizado do veiculo com valor de Horimetro diferente de nulo
+     * @param idVeiculo O id do veiculo
+     * @return O ultimo abastecimento
+     */
+    AutorizacaoPagamento obterUltimoAbastecimentoVeiculoHorimetroValido(Long idVeiculo);
 
     /**
      * Busca abastecimentos que podem ser reembolsados antecipadamente

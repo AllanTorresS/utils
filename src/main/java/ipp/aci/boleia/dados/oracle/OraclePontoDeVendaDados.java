@@ -4,6 +4,7 @@ import ipp.aci.boleia.dados.IPontoDeVendaDados;
 import ipp.aci.boleia.dominio.AtividadeComponente;
 import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.Usuario;
+import ipp.aci.boleia.dominio.enums.PerfilPontoDeVenda;
 import ipp.aci.boleia.dominio.enums.RestricaoVisibilidadePontoVenda;
 import ipp.aci.boleia.dominio.enums.StatusAlteracaoPrecoPosto;
 import ipp.aci.boleia.dominio.enums.StatusAtivacao;
@@ -12,6 +13,9 @@ import ipp.aci.boleia.dominio.enums.StatusHabilitacaoPontoVenda;
 import ipp.aci.boleia.dominio.enums.StatusPermissaoPreco;
 import ipp.aci.boleia.dominio.enums.StatusPosse;
 import ipp.aci.boleia.dominio.enums.StatusVinculoFrotaPontoVenda;
+import ipp.aci.boleia.dominio.enums.TipoFiltroPontoVendaPrimario;
+import ipp.aci.boleia.dominio.enums.TipoFiltroPontoVendaSecundario;
+import ipp.aci.boleia.dominio.enums.TipoServico;
 import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
@@ -24,8 +28,6 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaFetch;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
-import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaior;
-import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMenor;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
 import ipp.aci.boleia.dominio.vo.CoordenadaVo;
@@ -34,6 +36,7 @@ import ipp.aci.boleia.dominio.vo.FiltroAutoCompletePostoRotaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaLocalizacaoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialPtovVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaPontoDeVendaVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaRIPontoVendaServicosVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaRotaPontoVendaServicosVo;
 import ipp.aci.boleia.util.Ordenacao;
 import ipp.aci.boleia.util.UtilitarioLambda;
@@ -189,6 +192,110 @@ public class OraclePontoDeVendaDados extends OracleRepositorioBoleiaDados<PontoD
 
     @Override
     public List<PontoDeVenda> pesquisarPontosVendaComServicos(FiltroPesquisaRotaPontoVendaServicosVo filtro) {
+        List<ParametroPesquisa> params = new ArrayList<>();
+        params.add(new ParametroPesquisaNulo("latitude", true));
+        params.add(new ParametroPesquisaNulo("longitude", true));
+
+        if(StringUtils.isNotBlank(filtro.getNome())) {
+            params.add(new ParametroPesquisaOr(new ParametroPesquisaLike("nome", filtro.getNome()), new ParametroPesquisaLike("municipio", filtro.getNome())));
+        }
+
+        if(CollectionUtils.isNotEmpty(filtro.getTiposCombustivel())) {
+            List<Long> idsCombustiveis = UtilitarioLambda.converterLista(filtro.getTiposCombustivel(), EntidadeVo::getId);
+
+            params.add(new ParametroPesquisaAnd(
+                    new ParametroPesquisaIn("precosBase.precoMicromercado.tipoCombustivel.id", idsCombustiveis),
+                    new ParametroPesquisaIn("precosBase.status", Arrays.asList(
+                            StatusAlteracaoPrecoPosto.VIGENTE.getValue(),
+                            StatusAlteracaoPrecoPosto.ACEITE_PENDENTE_INTERNO.getValue(),
+                            StatusAlteracaoPrecoPosto.ACEITE_PENDENTE_REVENDA.getValue(),
+                            StatusAlteracaoPrecoPosto.ACEITO.getValue())),
+                    new ParametroPesquisaNulo("precosBase.preco", true)));
+
+        }
+
+        if(CollectionUtils.isNotEmpty(filtro.getOpcoesPrimarias())) {
+
+            List<ParametroPesquisa> servicos = new ArrayList<>();
+
+            filtro.getOpcoesPrimarias().forEach(o->{
+
+                if(TipoFiltroPontoVendaPrimario.RODO_REDE.name().equals(o.getName())) {
+                    servicos.add(new ParametroPesquisaIgual("rodoRede", true));
+                } else if (TipoFiltroPontoVendaPrimario.FUNCIONAMENTO_24H.name().equals(o.getName())) {
+                    servicos.add(new ParametroPesquisaIgual("funcionamento24h", true));
+                } else {
+                    TipoServico opcaoServico = TipoFiltroPontoVendaPrimario.valueOf(o.getName()).getServico();
+                    servicos.add(new ParametroPesquisaIgual("respostaQuestionario.servico.id", opcaoServico.getValue()));
+                }
+            });
+
+            if(!servicos.isEmpty()) {
+                params.add(new ParametroPesquisaOr(servicos.toArray(new ParametroPesquisa[servicos.size()])));
+            }
+        }
+
+        if(CollectionUtils.isNotEmpty(filtro.getOpcoesSecundarias())) {
+
+            List<ParametroPesquisa> parametrosServicos = new ArrayList<>();
+
+            filtro.getOpcoesSecundarias().forEach(o->{
+                TipoFiltroPontoVendaSecundario tipoFiltro = TipoFiltroPontoVendaSecundario.valueOf(o.getName());
+                if(tipoFiltro.getServicos().count() > 1) {
+                    parametrosServicos.add(new ParametroPesquisaOr(
+                            tipoFiltro.getServicos()
+                                    .map(t -> new ParametroPesquisaIgual("respostaQuestionario.servico.id", t.getValue()))
+                                    .toArray(ParametroPesquisaIgual[]::new)
+                    ));
+                } else {
+                    TipoServico tipoServico = tipoFiltro.getServicos()
+                            .findFirst()
+                            .get();
+                    parametrosServicos.add(
+                            new ParametroPesquisaIgual("respostaQuestionario.servico.id", tipoServico.getValue())
+                    );
+                }
+            });
+
+            if(!parametrosServicos.isEmpty()) {
+                params.add(new ParametroPesquisaOr(parametrosServicos.toArray(new ParametroPesquisa[parametrosServicos.size()])));
+            }
+        }
+
+        if(CollectionUtils.isNotEmpty(filtro.getFiltrosCoordenadas())) {
+            ParametroPesquisaOr condicoesOr = new ParametroPesquisaOr();
+            BigDecimal margem = filtro.getMargemGrausFiltroCoordenadas() != null ? filtro.getMargemGrausFiltroCoordenadas() : BigDecimal.valueOf(0);
+
+            for (List<CoordenadaVo> listaCoordenadas: filtro.getFiltrosCoordenadas()) {
+                for (int i = 0; i < listaCoordenadas.size() - 1; i++) {
+                    CoordenadaVo ca = listaCoordenadas.get(i);
+                    BigDecimal caLat = ca.getLatitude();
+                    BigDecimal caLong = ca.getLongitude();
+                    CoordenadaVo cb = listaCoordenadas.get(i+1);
+                    BigDecimal cbLat = cb.getLatitude();
+                    BigDecimal cbLong = cb.getLongitude();
+                    BigDecimal xa = (cbLat.compareTo(caLat) > 0 ? caLat : cbLat).subtract(margem);
+                    BigDecimal xb = (cbLat.compareTo(caLat) > 0 ? cbLat : caLat).add(margem);
+                    BigDecimal ya = (cbLong.compareTo(caLong) > 0 ? caLong : cbLong).subtract(margem);
+                    BigDecimal yb = (cbLong.compareTo(caLong) > 0 ? cbLong : caLong).add(margem);
+
+                    condicoesOr.addParametro(new ParametroPesquisaAnd(
+                            new ParametroPesquisaEntre("latitude", xa, xb),
+                            new ParametroPesquisaEntre("longitude", ya, yb)
+                    ));
+                }
+            }
+
+            params.add(condicoesOr);
+        }
+
+        params.add(new ParametroPesquisaFetch("avaliacao"));
+
+        return pesquisar((ParametroOrdenacaoColuna)null, params.toArray(new ParametroPesquisa[params.size()]));
+    }
+
+    @Override
+    public List<PontoDeVenda> pesquisarPontosVendaComServicos(FiltroPesquisaRIPontoVendaServicosVo filtro) {
 
         List<ParametroPesquisa> params = new ArrayList<>();
         params.add(new ParametroPesquisaNulo("latitude", true));
@@ -237,29 +344,7 @@ public class OraclePontoDeVendaDados extends OracleRepositorioBoleiaDados<PontoD
         params.add(new ParametroPesquisaIgual("excluido",false));
 
         if(CollectionUtils.isNotEmpty(filtro.getFiltrosCoordenadas())) {
-            ParametroPesquisaOr condicoesOr = new ParametroPesquisaOr();
-            BigDecimal margem = filtro.getMargemGrausFiltroCoordenadas() != null ? filtro.getMargemGrausFiltroCoordenadas() : BigDecimal.valueOf(0);
-
-            for (List<CoordenadaVo> listaCoordenadas: filtro.getFiltrosCoordenadas()) {
-                for (int i = 0; i < listaCoordenadas.size() - 1; i++) {
-                    CoordenadaVo ca = listaCoordenadas.get(i);
-                    BigDecimal caLat = ca.getLatitude();
-                    BigDecimal caLong = ca.getLongitude();
-                    CoordenadaVo cb = listaCoordenadas.get(i+1);
-                    BigDecimal cbLat = cb.getLatitude();
-                    BigDecimal cbLong = cb.getLongitude();
-                    BigDecimal xa = (cbLat.compareTo(caLat) > 0 ? caLat : cbLat).subtract(margem);
-                    BigDecimal xb = (cbLat.compareTo(caLat) > 0 ? cbLat : caLat).add(margem);
-                    BigDecimal ya = (cbLong.compareTo(caLong) > 0 ? caLong : cbLong).subtract(margem);
-                    BigDecimal yb = (cbLong.compareTo(caLong) > 0 ? cbLong : caLong).add(margem);
-
-                    condicoesOr.addParametro(new ParametroPesquisaAnd(
-                            new ParametroPesquisaEntre("latitude", xa, xb),
-                            new ParametroPesquisaEntre("longitude", ya, yb)
-                    ));
-                }
-            }
-
+            ParametroPesquisaOr condicoesOr = povoarParametroLatLongEntreCoordenadas("latitude", "longitude", filtro.getFiltrosCoordenadas(), filtro.getMargemGrausFiltroCoordenadas());
             params.add(condicoesOr);
         }
 
@@ -331,25 +416,34 @@ public class OraclePontoDeVendaDados extends OracleRepositorioBoleiaDados<PontoD
 
     @Override
     public List<PontoDeVenda> obterPontoDeVendaPorLimitesLocalizacao(FiltroPesquisaLocalizacaoVo filtro) {
-
-        ParametroPesquisa[]  parametros = new ParametrosPesquisaBuilder()
-                .adicionarParametros(
-                        new ParametroPesquisaMaior("latitude", new BigDecimal(filtro.getLatitudeInicial())),
-                        new ParametroPesquisaMenor("latitude", new BigDecimal(filtro.getLatitudeFinal()))
-                        )
-                .adicionarParametros(
-                        new ParametroPesquisaMaior("longitude", new BigDecimal(filtro.getLongitudeInicial())),
-                        new ParametroPesquisaMenor("longitude", new BigDecimal(filtro.getLongitudeFinal()))
-                )
+        ParametrosPesquisaBuilder parametros = new ParametrosPesquisaBuilder()
                 .adicionarParametros(
                         new ParametroPesquisaIgual("status", StatusAtivacao.ATIVO.getValue())
-                )
-                .buildArray();
+                );
 
+        if(filtro.getPerfilPontoDeVenda() != null) {
+            switch (filtro.getPerfilPontoDeVenda()) {
+                case RODOVIA:
+                case URBANO:
+                    parametros.adicionarParametros(new ParametroPesquisaLike("perfilVenda", filtro.getPerfilPontoDeVenda().name()));
+                    break;
+                case OUTROS:
+                    parametros.adicionarParametros(new ParametroPesquisaOr(
+                            new ParametroPesquisaNulo("perfilVenda"),
+                            new ParametroPesquisaLike("perfilVenda", PerfilPontoDeVenda.RODO_REDE.name())
+                    ));
+                    break;
+            }
+        }
 
+        if(CollectionUtils.isNotEmpty(filtro.getFiltrosCoordenadas())) {
+            ParametroPesquisaOr condicoesOr = povoarParametroLatLongEntreCoordenadas("latitude", "longitude", filtro.getFiltrosCoordenadas(), filtro.getMargemGrausFiltroCoordenadas());
+            parametros.adicionarParametros(condicoesOr);
+        } else {
+            parametros.adicionarParametros(povoarParametroLatLongEntreIntervalo("latitude", "longitude", filtro));
+        }
         ParametroOrdenacaoColuna ordenacao = new ParametroOrdenacaoColuna("nome");
-
-        return pesquisar(ordenacao, parametros);
+        return pesquisar(ordenacao, parametros.buildArray());
     }
 
     @Override
