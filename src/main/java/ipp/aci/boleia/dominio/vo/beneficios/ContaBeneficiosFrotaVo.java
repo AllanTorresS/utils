@@ -20,6 +20,17 @@ public class ContaBeneficiosFrotaVo {
         //Construtor default
     }
 
+    /**
+     * Construtor da classe ContaBeneficiosFrotaVo.
+     *
+     * @param creditoDisponivelFrota O total de crédito que uma frota pode gastar dentro de um ciclo.
+     * @param saldoDisponivelFrota O saldo corrente da frota.
+     * @param limiteDisponivel O total de crédito que uma frota pode comprar para benefícios.
+     * @param indiceLimiteDisponivel O percentual do crédito disponível usado para formar o limite disponível.
+     * @param saldoBeneficio O saldo corrente da frota para compra de crédito.
+     * @param saldoDisponivel O saldo corrente para distribuição de benefícios.
+     * @param pagamentoPendente O pagamento pendente da compra de créditos.
+     */
     public ContaBeneficiosFrotaVo(BigDecimal creditoDisponivelFrota, BigDecimal saldoDisponivelFrota, BigDecimal limiteDisponivel, BigDecimal indiceLimiteDisponivel, BigDecimal saldoBeneficio, BigDecimal saldoDisponivel, BigDecimal pagamentoPendente) {
         this.creditoDisponivelFrota = creditoDisponivelFrota;
         this.saldoDisponivelFrota = saldoDisponivelFrota;
