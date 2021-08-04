@@ -12,10 +12,12 @@ import ipp.aci.boleia.dominio.enums.StatusAutorizacao;
 import ipp.aci.boleia.dominio.enums.StatusConfirmacaoTransacao;
 import ipp.aci.boleia.dominio.enums.StatusEdicao;
 import ipp.aci.boleia.dominio.enums.StatusFrota;
+import ipp.aci.boleia.dominio.enums.StatusIntegracaoReembolsoJde;
 import ipp.aci.boleia.dominio.enums.StatusInteresseAntecipacao;
 import ipp.aci.boleia.dominio.enums.StatusNotaFiscalAbastecimento;
 import ipp.aci.boleia.dominio.enums.StatusPropostaXP;
 import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
+import ipp.aci.boleia.dominio.enums.TipoAntecipacao;
 import ipp.aci.boleia.dominio.enums.TipoAutorizacaoPagamento;
 import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
@@ -357,12 +359,15 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
             "     AND NOT EXISTS ( " +
             "         SELECT 1 " +
             "         FROM ReembolsoAntecipado ra " +
-            "         JOIN ra.propostaAntecipacao pa " +
+            "         LEFT JOIN ra.propostaAntecipacao pa " +
             "         JOIN ra.autorizacoesPagamento a1 " +
             "         WHERE " +
             "             a.id = a1.id " +
+            "             AND ((ra.tipoAntecipacao = " + TipoAntecipacao.PARCEIRO_XP.getValue() +
             "             AND (pa.isAceito IS NULL OR pa.isAceito = 1) " +
-            "             AND pa.status <> " + StatusPropostaXP.CANCELED.getValue() +
+            "             AND pa.status <> " + StatusPropostaXP.CANCELED.getValue() + ") " +
+            "             OR (ra.tipoAntecipacao = " + TipoAntecipacao.SOLUCAO.getValue() +
+            "                 AND ra.statusIntegracao = " + StatusIntegracaoReembolsoJde.REALIZADO.getValue() + "))" +
             "     ) AND NOT EXISTS ( " +
             "         SELECT 1 " +
             "         FROM AutorizacaoPagamento a1 " +
