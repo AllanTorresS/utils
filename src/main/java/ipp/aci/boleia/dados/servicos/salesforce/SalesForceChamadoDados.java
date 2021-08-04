@@ -1,8 +1,10 @@
 package ipp.aci.boleia.dados.servicos.salesforce;
 
+import com.amazonaws.util.IOUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import ipp.aci.boleia.dados.IChamadoDados;
 import ipp.aci.boleia.dados.IChamadoSistemaDados;
+import ipp.aci.boleia.dados.IMotivoChamadoDados;
 import ipp.aci.boleia.dados.servicos.rest.ConsumidorHttp;
 import ipp.aci.boleia.dominio.ChamadoSistema;
 import ipp.aci.boleia.dominio.Usuario;
@@ -32,6 +34,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
@@ -92,6 +96,15 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
             "   CommentBody LIKE '" + ConstantesSalesForce.PREFIXO_COMENTARIO_PENDENTE_EXTERNO + "%' OR CreatedBy.Email=':emailIntegracao' " +
             "ORDER BY CreatedDate) ";
 
+    private static final String SUBQUERY_ANEXOS = 
+            " (SELECT ContentDocumentId, " +
+            "       contentdocument.LatestPublishedVersionId, " +
+            "       contentdocument.Title,contentdocument.FileExtension, " +
+            "       contentdocument.Owner.Name, " +
+            "       contentdocument.Owner.Email, " +
+            "       contentdocument.LatestPublishedVersion.CreatedDate " +
+            "FROM ContentDocumentLinks), ";            
+
     private static final String OBTER_CHAMADO_POR_ID =
             "SELECT Id," +
             "       CreatedDate," +
@@ -107,6 +120,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
             "       MotivoSolicitacao__c," +
             "       Subject," +
             "       Description," +
+                    SUBQUERY_ANEXOS +
                     SUBQUERY_COMENTARIOS +
             "FROM Case " +
             "WHERE Id=':idSalesforce'";
@@ -125,6 +139,8 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
             "       Description," +
             "       MotivoSolicitacao__c," +
             "       Subject," +
+            "       (SELECT ContentDocumentId,contentdocument.LatestPublishedVersionId,contentdocument.Title,contentdocument.FileExtension," +
+            "       contentdocument.Owner.Name, contentdocument.Owner.Email, contentdocument.LatestPublishedVersion.CreatedDate FROM ContentDocumentLinks), " +
                     SUBQUERY_COMENTARIOS +
             FROM_CONSULTAR_CHAMADOS +
             ORDER_BY_CONSULTA_CHAMADOS +
@@ -189,8 +205,17 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     @Value("${salesforce.chamados.vincularArquivo}")
     private String urlVincularArquivo;
 
+    @Value("${salesforce.chamados.excluirArquivo}")
+    private String urlExcluirArquivo;
+
+    @Value("${salesforce.chamados.downloadArquivo}")
+    private String urlDownloadArquivo;
+
     @Value("${salesforce.chamados.criarContato}")
     private String urlCriarContato;
+
+    @Autowired
+    private IMotivoChamadoDados motivoChamadoDados;
 
     @Autowired
     private IChamadoSistemaDados chamadoSistemaDados;
@@ -390,6 +415,21 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     }
 
     @Override
+    public void excluirAnexo(String idSalesforce) {
+        String urlFormatado = format(urlExcluirArquivo, idSalesforce);
+
+        prepararRequisicao(urlFormatado, null);
+        enviarRequisicaoDelete(this::trataRespostaExclusaoAnexo);
+    }
+
+    @Override
+    public byte[] downloadAnexo(String idSalesforce) {
+        String urlFormatado = format(urlDownloadArquivo, idSalesforce);
+
+        prepararRequisicao(urlFormatado, null);
+        return enviarRequisicaoGet(this::trataRespostaDownloadAnexo);
+    }
+
     public ContatoSalesforceVo obterContato(String idExterno) {
         Map<String, Object> parametros = new HashMap<>();
         parametros.put("idExterno", idExterno);
@@ -541,6 +581,38 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
             throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("chamado.cancelamento.erro.integracao"));
         }
         return true;
+    }
+
+    /***
+     * Trata a resposta da exclusão de um anexo
+     * @param response a resposta
+     * @return true em caso de sucesso
+     */
+    private boolean trataRespostaExclusaoAnexo(CloseableHttpResponse response) {
+        prepararResposta(response);
+        if (this.statusCode != HttpStatus.NO_CONTENT.value()) {
+            LOGGER.error(this.responseBody.toString());
+            throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("chamado.erro.interno"));
+        }
+        return true;
+    }
+
+    /***
+     * Trata a resposta da busca de um anexo para download 
+     * @param response a resposta
+     * @return bytearray do arquivo a ser baixado
+     */
+    private byte[] trataRespostaDownloadAnexo(CloseableHttpResponse response) {
+        try{
+            prepararRespostaArquivo(response);
+            if (this.statusCode != HttpStatus.OK.value()) {
+                LOGGER.error(this.responseBody.toString());
+                throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("chamado.erro.interno"));
+            }
+            return  IOUtils.toByteArray(this.inputStream);
+        } catch(IOException e) {
+            throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("chamado.erro.interno"));
+        }
     }
 
     /**
