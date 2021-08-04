@@ -652,8 +652,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "LEFT JOIN ra.propostaAntecipacao pa " +
                     "WHERE a.id = a1.id " +
                     "AND ((ra.tipoAntecipacao = " + TipoAntecipacao.PARCEIRO_XP.getValue() +
-                    " AND (pa.isAceito IS NULL OR pa.isAceito = 1) " +
-                    "AND pa.status <> " + StatusPropostaXP.CANCELED.getValue() + ") " +
+                    " AND (pa.isAceito IS NULL OR pa.isAceito = true) " +
+                    "AND (pa.status IS NULL OR pa.status <> " + StatusPropostaXP.CANCELED.getValue() + ")) " +
                     "OR (ra.tipoAntecipacao = " + TipoAntecipacao.SOLUCAO.getValue() +
                     " AND ra.statusIntegracao = " + StatusIntegracaoReembolsoJde.REALIZADO.getValue() + ")) " +
                     ") AND NOT EXISTS ( " +
@@ -662,7 +662,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "JOIN a2.notasFiscais nf " +
                     "WHERE " +
                     "a.id = a2.id " +
-                    "AND nf.isJustificativa = 1 " +
+                    "AND nf.isJustificativa = true " +
                     ")) " +
                     "AND (tc.statusNotaFiscal = " + StatusNotaFiscal.EMITIDA.getValue() +
                     " OR tc.statusNotaFiscal = " + StatusNotaFiscal.PENDENTE.getValue() + ")" +

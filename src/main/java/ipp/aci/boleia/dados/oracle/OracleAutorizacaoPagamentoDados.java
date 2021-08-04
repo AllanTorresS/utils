@@ -364,8 +364,8 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
             "         WHERE " +
             "             a.id = a1.id " +
             "             AND ((ra.tipoAntecipacao = " + TipoAntecipacao.PARCEIRO_XP.getValue() +
-            "             AND (pa.isAceito IS NULL OR pa.isAceito = 1) " +
-            "             AND pa.status <> " + StatusPropostaXP.CANCELED.getValue() + ") " +
+            "             AND (pa.isAceito IS NULL OR pa.isAceito = true) " +
+            "             AND (pa.status IS NULL OR pa.status <> " + StatusPropostaXP.CANCELED.getValue() + ")) " +
             "             OR (ra.tipoAntecipacao = " + TipoAntecipacao.SOLUCAO.getValue() +
             "                 AND ra.statusIntegracao = " + StatusIntegracaoReembolsoJde.REALIZADO.getValue() + "))" +
             "     ) AND NOT EXISTS ( " +
@@ -374,7 +374,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
             "         JOIN a1.notasFiscais nf " +
             "         WHERE " +
             "             a.id = a1.id" +
-            "             AND nf.isJustificativa = 1 " +
+            "             AND nf.isJustificativa = true " +
             "     ) " +
             " ORDER BY %s ";
 
