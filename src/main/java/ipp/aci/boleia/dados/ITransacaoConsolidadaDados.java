@@ -347,8 +347,8 @@ public interface ITransacaoConsolidadaDados extends IRepositorioBoleiaDados<Tran
 
     /**
      * Busca uma lista de datas de vencimento disponíveis para antecipação
-     * @param idsPv id do ponto de venda
+     * @param idPv id do ponto de venda
      * @return a lista com as datas de vencimento
      */
-    List<Date> obterDatasVencimentoDisponiveisAntecipacao(List<Long> idsPv);
+    List<Date> obterDatasVencimentoDisponiveisAntecipacao(Long idPv);
 }

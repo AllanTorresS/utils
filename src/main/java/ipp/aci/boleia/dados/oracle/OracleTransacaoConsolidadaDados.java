@@ -663,7 +663,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "AND (tc.statusNotaFiscal = " + StatusNotaFiscal.EMITIDA.getValue() +
                     " OR tc.statusNotaFiscal = " + StatusNotaFiscal.PENDENTE.getValue() + ")" +
                     " AND (tc.valorTotalNotaFiscal > 0 OR tc.quantidadeAbastecimentos > 0) " +
-                    "AND fp.pontoVenda.id IN :idsPv " +
+                    "AND fp.pontoVenda.id = :idPv " +
                     "AND tc.statusConsolidacao <> " + StatusTransacaoConsolidada.FECHADA.getValue() +
                     " ORDER BY ptc.dataLimitePagamento ASC";
 
@@ -1959,11 +1959,11 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
     }
 
     @Override
-    public List<Date> obterDatasVencimentoDisponiveisAntecipacao(List<Long> idsPv) {
+    public List<Date> obterDatasVencimentoDisponiveisAntecipacao(Long idPv) {
         String consulta = CONSULTA_DATAS_VENCIMENTO_PARCEIRO_XP;
         List<ParametroPesquisa> parametros = new ArrayList<>();
 
-        parametros.add(new ParametroPesquisaIn("idsPv", idsPv));
+        parametros.add(new ParametroPesquisaIgual("idPv", idPv));
 
         List<Date> datasvencimento = pesquisar(null, consulta, Date.class,
                 parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
