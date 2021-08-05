@@ -12,6 +12,7 @@ import ipp.aci.boleia.dominio.FrotaParametroSistemaPostoAutorizadoAbastecimento;
 import ipp.aci.boleia.dominio.FrotaParametroSistemaPrecoMaximoAbastecimento;
 import ipp.aci.boleia.dominio.FrotaParametroSistemaPrecoMaximoProduto;
 import ipp.aci.boleia.dominio.FrotaParametroSistemaProduto;
+import ipp.aci.boleia.dominio.HistoricoFrotaPtovPreco;
 import ipp.aci.boleia.dominio.ItemAutorizacaoPagamento;
 import ipp.aci.boleia.dominio.Negociacao;
 import ipp.aci.boleia.dominio.NotaFiscal;
@@ -98,6 +99,7 @@ public interface IPertenceFrota {
         mapa.put(Cobranca.class, CAMPO_TRANSACOES_CONSOLIDADAS_FROTA);
         mapa.put(AbastecimentoVeiculoMes.class, CAMPO_VEICULO);
         mapa.put(ExtratoPedidoTransacao.class, CAMPO_TRANSACAO_FROTA);
+        mapa.put(HistoricoFrotaPtovPreco.class, CAMPO_FROTA_PONTOVENDA);
         return mapa;
     }
 }
