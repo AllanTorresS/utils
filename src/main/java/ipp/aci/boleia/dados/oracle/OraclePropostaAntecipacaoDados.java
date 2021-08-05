@@ -127,23 +127,23 @@ public class OraclePropostaAntecipacaoDados extends OracleRepositorioBoleiaDados
         StatusAntecipacao statusAntecipacao = StatusAntecipacao.valueOf(status.getName());
         switch (statusAntecipacao) {
             case ANTECIPADO:
-                clausulaStatus = " AND PA.status = " + StatusPropostaXP.APPROVED.getValue() +
+                clausulaStatus = " AND PA.isAceito = true AND PA.status = " + StatusPropostaXP.APPROVED.getValue() +
                         " AND RA.statusIntegracao = " + StatusIntegracaoReembolsoJde.ANTECIPADO.getValue() + " ";
                 break;
             case AGUARDANDO_ACEITE:
-                clausulaStatus = " AND PA.isAceito is null AND PA.dataDesembolso <= :dataAtual ";
+                clausulaStatus = " AND PA.isAceito IS NULL AND TRUNC(RA.dataVencimentoPgto) <= TRUNC(:dataAtual) ";
                 break;
             case CANCELADO_CLIENTE:
                 clausulaStatus = " AND PA.isAceito = false ";
                 break;
             case CANCELADO_SEM_RESPOSTA:
-                clausulaStatus = " AND PA.isAceito is null AND PA.dataDesembolso > :dataAtual ";
+                clausulaStatus = " AND PA.isAceito IS NULL AND TRUNC(RA.dataVencimentoPgto) > TRUNC(:dataAtual) ";
                 break;
             case EM_ANDAMENTO:
-                clausulaStatus = " AND PA.isAceito = true AND PA.dataDesembolso <= :dataAtual ";
+                clausulaStatus = " AND PA.isAceito = true AND TRUNC(RA.dataVencimentoPgto) <= TRUNC(:dataAtual) ";
                 break;
             case PENDENTE:
-                clausulaStatus = " AND (RA.statusIntegracao is null or RA.statusIntegracao in (" + StatusIntegracaoReembolsoJde.ERRO_ENVIO.getValue() +
+                clausulaStatus = " AND PA.isAceito = true AND (RA.statusIntegracao IS NULL OR RA.statusIntegracao IN (" + StatusIntegracaoReembolsoJde.ERRO_ENVIO.getValue() +
                         ", " + StatusIntegracaoReembolsoJde.ERRO_LIBERACAO.getValue() + ", " + StatusIntegracaoReembolsoJde.PENDENTE.getValue()  + ")) ";
                 break;
             default:
