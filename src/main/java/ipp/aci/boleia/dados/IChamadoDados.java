@@ -5,6 +5,7 @@ import ipp.aci.boleia.dominio.vo.salesforce.ChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.ContatoSalesforceVo;
 import ipp.aci.boleia.dominio.vo.salesforce.CriacaoChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.CriacaoContatoVo;
+import ipp.aci.boleia.dominio.vo.salesforce.DocumentoSalesforceVo;
 import ipp.aci.boleia.dominio.vo.salesforce.EdicaoChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.FiltroConsultaChamadosVo;
 import ipp.aci.boleia.dominio.vo.salesforce.UploadAnexoChamadoVo;
@@ -172,4 +173,12 @@ public interface IChamadoDados {
      * @param vo Objeto com as informações do contato.
      */
     void criarContato(CriacaoContatoVo vo);
+
+    /**
+     * Obtém as informações de um documento do salesforce.
+     *
+     * @param idSalesforce Identificador salesforce do documento.
+     * @return O documento encontrado..
+     */
+    DocumentoSalesforceVo obterDocumentoSalesforce(String idSalesforce);
 }
