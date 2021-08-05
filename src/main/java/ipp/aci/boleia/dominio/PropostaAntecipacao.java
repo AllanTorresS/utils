@@ -34,7 +34,6 @@ import static ipp.aci.boleia.dominio.enums.StatusIntegracaoJde.ERRO_ENVIO;
 import static ipp.aci.boleia.dominio.enums.StatusIntegracaoJde.REALIZADO;
 import static ipp.aci.boleia.util.UtilitarioCalculoData.adicionarSegundosData;
 import static ipp.aci.boleia.util.UtilitarioCalculoData.obterPrimeiroInstanteDia;
-import static ipp.aci.boleia.util.UtilitarioCalculoData.obterUltimoInstanteDia;
 
 /**
  * Representa a tabela de Proposta Antecipação
@@ -267,7 +266,7 @@ public class PropostaAntecipacao implements IPersistente, IPertenceRevendedor, I
     @Transient
     public StatusAntecipacao getStatusAntecipacao(Date dataReferencia) {
         if(isAceito == null) {
-            if(dataReferencia.after(obterUltimoInstanteDia(reembolsoAntecipado.getDataVencimentoPgto()))) {
+            if(dataReferencia.after(obterPrimeiroInstanteDia(reembolsoAntecipado.getDataVencimentoPgto()))) {
                 return StatusAntecipacao.CANCELADO_SEM_RESPOSTA;
             } else {
                 return StatusAntecipacao.AGUARDANDO_ACEITE;
