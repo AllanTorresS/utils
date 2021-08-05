@@ -123,6 +123,7 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
     private static final String QUERY_VALE_PEDAGIO_TROCANDO_STATUS =
             "SELECT tc " +
                     " FROM TransacaoConectcar tc " +
+            		" LEFT JOIN FETCH tc.frota " +
                     " WHERE TRUNC(tc.dataInicioViagem) = TRUNC(SYSDATE)" +
                     " OR TRUNC(tc.dataFimViagem) = TRUNC(SYSDATE) - 1";
 

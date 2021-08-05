@@ -8,16 +8,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class LoteAdesivosVo {
 
-	@JsonProperty("CodigoInternoParceiro")
 	private String codigoInternoParceiro;
-
-	@JsonProperty("Placa")
 	private String[] placas;
-
-	@JsonProperty("Motivo")
 	private String motivo;
-
-	@JsonProperty("ServicosBloqueio")
 	private String[] servicosBloqueio;
 
 	public String getCodigoInternoParceiro() {
