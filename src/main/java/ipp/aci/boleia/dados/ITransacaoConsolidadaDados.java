@@ -344,4 +344,11 @@ public interface ITransacaoConsolidadaDados extends IRepositorioBoleiaDados<Tran
      * @return O valor total
      */
     BigDecimal obterTotalReembolsoPeriodoSolucao(FiltroPesquisaFinanceiroVo filtro, Usuario usuarioLogado);
+
+    /**
+     * Busca uma lista de datas de vencimento disponíveis para antecipação
+     * @param idPv id do ponto de venda
+     * @return a lista com as datas de vencimento
+     */
+    List<Date> obterDatasVencimentoDisponiveisAntecipacao(Long idPv);
 }

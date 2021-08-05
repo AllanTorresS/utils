@@ -42,7 +42,9 @@ public enum TipoRelatorioMotorGerador implements IEnumComLabel<TipoRelatorioMoto
     RELATORIO_DETALHAMENTO_COBRANCA(27, obterMapaTemplatesDetalhamentoCobranca()),
     RELATORIO_REEMBOLSO(28, obterMapaTemplatesReembolso()),
     RELATORIO_DETALHAMENTO_REEMBOLSO(29, obterMapaTemplatesDetalhamentoReembolso()),
-    RELATORIO_ROTAS_INTELIGENTES(30, obterMapaTemplatesRotasInteligentes());
+    RELATORIO_ROTAS_INTELIGENTES(30, obterMapaTemplatesRotasInteligentes()),
+    RELATORIO_REEMBOLSO_ANTECIPADO(31, obterMapaTemplatesReembolsoAntecipado()),
+    RELATORIO_DETALHE_REEMBOLSO_ANTECIPADO(32, obterMapaTemplatesDetalheReembolsoAntecipado());
 
     private final Integer value;
     private final Map<TipoPerfilUsuario, TemplatePlanilha> templatePerfil;
@@ -447,6 +449,30 @@ public enum TipoRelatorioMotorGerador implements IEnumComLabel<TipoRelatorioMoto
         Map<TipoPerfilUsuario, TemplatePlanilha> mapa = new HashMap<>();
         mapa.put(TipoPerfilUsuario.INTERNO, TemplatePlanilha.TEMPLATE_RELATORIO_ROTAS_INTELIGENTES);
         mapa.put(TipoPerfilUsuario.FROTA, TemplatePlanilha.TEMPLATE_RELATORIO_ROTAS_INTELIGENTES);
+        return mapa;
+    }
+
+    /**
+     * Gera um mapa de templates por perfil para um tipo de relatório (Reembolso Antecipado)
+     *
+     * @return O mapa criado
+     */
+    private static Map<TipoPerfilUsuario, TemplatePlanilha> obterMapaTemplatesReembolsoAntecipado() {
+        Map<TipoPerfilUsuario, TemplatePlanilha> mapa = new HashMap<>();
+        mapa.put(TipoPerfilUsuario.INTERNO, TemplatePlanilha.TEMPLATE_RELATORIO_REEMBOLSO_ANTECIPADO_SOLUCAO);
+        mapa.put(TipoPerfilUsuario.REVENDA, TemplatePlanilha.TEMPLATE_RELATORIO_REEMBOLSO_ANTECIPADO_REVENDA);
+        return mapa;
+    }
+
+    /**
+     * Gera um mapa de templates por perfil para um tipo de relatório (Detalhe Reembolso Antecipado)
+     *
+     * @return O mapa criado
+     */
+    private static Map<TipoPerfilUsuario, TemplatePlanilha> obterMapaTemplatesDetalheReembolsoAntecipado() {
+        Map<TipoPerfilUsuario, TemplatePlanilha> mapa = new HashMap<>();
+        mapa.put(TipoPerfilUsuario.INTERNO, TemplatePlanilha.TEMPLATE_RELATORIO_DETALHE_REEMBOLSO_ANTECIPADO);
+        mapa.put(TipoPerfilUsuario.REVENDA, TemplatePlanilha.TEMPLATE_RELATORIO_DETALHE_REEMBOLSO_ANTECIPADO);
         return mapa;
     }
 }

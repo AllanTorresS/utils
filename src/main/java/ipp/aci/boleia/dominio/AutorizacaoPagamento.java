@@ -7,6 +7,7 @@ import ipp.aci.boleia.dominio.enums.StatusAutorizacao;
 import ipp.aci.boleia.dominio.enums.StatusEdicao;
 import ipp.aci.boleia.dominio.enums.StatusNotaFiscalAbastecimento;
 import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
+import ipp.aci.boleia.dominio.enums.TipoAntecipacao;
 import ipp.aci.boleia.dominio.enums.TipoErroAutorizacaoPagamento;
 import ipp.aci.boleia.dominio.enums.TipoItemAutorizacaoPagamento;
 import ipp.aci.boleia.dominio.enums.TipoPreenchimentoLitragem;
@@ -1911,7 +1912,19 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
 
     @Transient
     public boolean possuiAntecipacaoReembolsoRealizada() {
-        return antecipacoesReembolso != null && antecipacoesReembolso.stream().anyMatch(ReembolsoAntecipado::isIntegracaoRealizada);
+        return possuiAntecipacaoSolucaoRealizada() || possuiAntecipacaoParceriaRealizada();
+    }
+
+    @Transient 
+    public boolean possuiAntecipacaoParceriaRealizada() {
+        return antecipacoesReembolso != null && antecipacoesReembolso.stream()
+                .anyMatch(r -> r.getTipoAntecipacao().equals(TipoAntecipacao.PARCEIRO_XP) && r.isIntegracaoRealizada());
+    }
+
+    @Transient 
+    public boolean possuiAntecipacaoSolucaoRealizada() {
+        return antecipacoesReembolso != null && antecipacoesReembolso.stream()
+        .anyMatch(r -> (r.getTipoAntecipacao().equals(TipoAntecipacao.SOLUCAO) && r.isIntegracaoRealizada()));
     }
 
     /**
