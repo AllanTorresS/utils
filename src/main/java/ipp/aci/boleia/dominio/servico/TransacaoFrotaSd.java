@@ -29,8 +29,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -71,7 +71,7 @@ public class TransacaoFrotaSd {
      */
     public void validarProdutoOuServico(AutorizacaoPagamento autorizacaoPagamento) throws ExcecaoCreditoInsuficiente {
         TipoAutorizacaoPagamento tipoPagamento = TipoAutorizacaoPagamento.obterPorValor(autorizacaoPagamento.getTipoAutorizacaoPagamento());
-       if(!Objects.equals(tipoPagamento, TipoAutorizacaoPagamento.MAN_PI)){
+       if(!Arrays.asList(TipoAutorizacaoPagamento.ACPI, TipoAutorizacaoPagamento.MAN_PI, TipoAutorizacaoPagamento.CTA_PLUS).contains(tipoPagamento)) {
            TipoTransacao tipo = obterTipoTransacao(tipoPagamento, false);
            if(tipo.isDebito() && autorizacaoPagamento.getFrota().getSaldo().getSaldoCorrente().compareTo(autorizacaoPagamento.getValorTotal()) < 0) {
                throw new ExcecaoCreditoInsuficiente();
