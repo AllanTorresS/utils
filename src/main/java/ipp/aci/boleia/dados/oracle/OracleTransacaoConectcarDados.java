@@ -124,6 +124,7 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
             "SELECT tc " +
                     " FROM TransacaoConectcar tc " +
             		" LEFT JOIN FETCH tc.frota " +
+            		" LEFT JOIN FETCH tc.tag " +
                     " WHERE TRUNC(tc.dataInicioViagem) = TRUNC(SYSDATE)" +
                     " OR TRUNC(tc.dataFimViagem) = TRUNC(SYSDATE) - 1";
 
