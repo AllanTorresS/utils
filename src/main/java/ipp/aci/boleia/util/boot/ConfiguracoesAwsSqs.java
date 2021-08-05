@@ -123,6 +123,12 @@ public class ConfiguracoesAwsSqs {
     private String nomeFilaExclusaoMotorista;
 
     /**
+     * Nome da fila que processa propostas de antecipação
+     */
+    @Value("${aws.sqs.processar-proposta-antecipacao}")
+    private String nomeFilaProcessarPropostaAntecipacao;
+
+    /**
      * Carrega as mensagens do sistema
      */
     @Autowired
@@ -168,7 +174,8 @@ public class ConfiguracoesAwsSqs {
                         ,nomeFilaTransacaoConsolidacaoAgFrete
                         ,nomeFilaPostergacaoAbastecimentos
                         ,nomeFilaProcessarCicloPostergacao
-                        ,nomeFilaExclusaoMotorista);
+                        ,nomeFilaExclusaoMotorista
+                        ,nomeFilaProcessarPropostaAntecipacao);
         criaFilaSeNaoExistem(amazonSQSAsync, nomeFilas);
         return new QueueMessagingTemplate(amazonSQSAsync);
     }

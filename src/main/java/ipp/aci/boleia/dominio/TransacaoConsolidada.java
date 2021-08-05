@@ -6,12 +6,14 @@ import ipp.aci.boleia.dominio.enums.StatusIntegracaoReembolsoJde;
 import ipp.aci.boleia.dominio.enums.StatusNotaFiscal;
 import ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso;
 import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
+import ipp.aci.boleia.dominio.enums.TipoAntecipacao;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
 import ipp.aci.boleia.dominio.interfaces.IPertenceRevendedor;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioFormatacaoData;
 import ipp.aci.boleia.util.seguranca.UtilitarioCriptografia;
+import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.annotations.Formula;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
@@ -761,14 +763,44 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     @Transient
     public ReembolsoAntecipado getAntecipacaoRealizada() {
         if(antecipacoes != null) {
-            return antecipacoes.stream().filter(antecipacao -> StatusIntegracaoReembolsoJde.REALIZADO.getValue().equals(antecipacao.getStatusIntegracao())).findFirst().orElse(null);
+            return antecipacoes.stream().filter(antecipacao -> StatusIntegracaoReembolsoJde.REALIZADO.getValue()
+                    .equals(antecipacao.getStatusIntegracao())).findFirst().orElse(null);
+        }
+        return null;
+    }
+
+    @Transient
+    public ReembolsoAntecipado getAntecipacaoSolucaoRealizada() {
+        if(antecipacoes != null) {
+            return antecipacoes.stream().filter(antecipacao -> StatusIntegracaoReembolsoJde.REALIZADO.getValue()
+                    .equals(antecipacao.getStatusIntegracao()) && antecipacao.getTipoAntecipacao().equals(TipoAntecipacao.SOLUCAO)).findFirst().orElse(null);
+        }
+        return null;
+    }
+
+    @Transient
+    public List<ReembolsoAntecipado> getAntecipacoesParceria() {
+        if (antecipacoes != null) {
+            List<ReembolsoAntecipado> antecipacoesParceria = antecipacoes.stream()
+                    .filter(antecipacao -> antecipacao.getTipoAntecipacao().equals(TipoAntecipacao.PARCEIRO_XP))
+                    .collect(Collectors.toList());
+            return antecipacoesParceria != null && !CollectionUtils.isEmpty(antecipacoesParceria) ? antecipacoesParceria : null;
         }
         return null;
     }
 
     @Transient
     public Boolean possuiAntecipacaoRealizada() {
-        return getAntecipacaoRealizada() != null;
+        return possuiAntecipacaoSolucaoRealizada() || possuiAntecipacaoParceriaRealizada();
+    }
+
+    @Transient
+    public Boolean possuiAntecipacaoSolucaoRealizada() {return getAntecipacaoSolucaoRealizada() != null; }
+
+    @Transient
+    public Boolean possuiAntecipacaoParceriaRealizada() {
+        return getAntecipacoesParceria() != null && getAntecipacoesParceria().stream()
+            .anyMatch(antecipacao -> StatusIntegracaoReembolsoJde.REALIZADO.getValue().equals(antecipacao.getStatusIntegracao()));
     }
 
     @Transient

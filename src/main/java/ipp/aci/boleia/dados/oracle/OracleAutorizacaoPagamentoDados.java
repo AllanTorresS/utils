@@ -13,7 +13,12 @@ import ipp.aci.boleia.dominio.enums.StatusAutorizacao;
 import ipp.aci.boleia.dominio.enums.StatusConfirmacaoTransacao;
 import ipp.aci.boleia.dominio.enums.StatusEdicao;
 import ipp.aci.boleia.dominio.enums.StatusFrota;
+import ipp.aci.boleia.dominio.enums.StatusIntegracaoReembolsoJde;
+import ipp.aci.boleia.dominio.enums.StatusInteresseAntecipacao;
 import ipp.aci.boleia.dominio.enums.StatusNotaFiscalAbastecimento;
+import ipp.aci.boleia.dominio.enums.StatusPropostaXP;
+import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
+import ipp.aci.boleia.dominio.enums.TipoAntecipacao;
 import ipp.aci.boleia.dominio.enums.TipoAutorizacaoPagamento;
 import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
@@ -33,6 +38,7 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaior;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMenor;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
+import ipp.aci.boleia.dominio.vo.FiltroAbastecimentoAntecipavelVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaAbastecimentoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheCobrancaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheReembolsoVo;
@@ -329,6 +335,49 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                     "OR (A.dataPostergacao >= :dataInicioPeriodo AND A.dataPostergacao <= :dataFimPeriodo)) " +
                     "AND N.isJustificativa = 0 " +
                     CLAUSULA_COMUM_CONSULTAS_AGRUPAMENTOS;
+
+    private static final String QUERY_ABASTECIMENTOS_ANTECIPAVEIS =
+            " SELECT a " +
+            " FROM AutorizacaoPagamento a " +
+            " JOIN FETCH a.frota f " +
+            " LEFT JOIN FETCH a.unidade u " +
+            " LEFT JOIN FETCH a.empresaAgregada ea " +
+            " JOIN FETCH a.pontoVenda pv " +
+            " JOIN FETCH a.transacaoConsolidada tc " +
+            " JOIN FETCH tc.prazos ptc " +
+            " LEFT JOIN FETCH a.transacaoConsolidadaPostergada tcp " +
+            " LEFT JOIN FETCH tcp.prazos ptcp " +
+            " WHERE " +
+            "     pv.id IN :idsPontoVenda " +
+            "     AND (:statusCiclo IS NULL OR :statusCiclo = COALESCE(tcp.statusConsolidacao, tc.statusConsolidacao)) " +
+            "     AND (:dataInicioPeriodo IS NULL OR :dataInicioPeriodo = TO_CHAR(COALESCE(tcp.dataInicioPeriodo, tc.dataInicioPeriodo), 'DD/MM/YYYY')) " +
+            "     AND (:dataFimPeriodo IS NULL OR :dataFimPeriodo = TO_CHAR(COALESCE(tcp.dataFimPeriodo, tc.dataFimPeriodo), 'DD/MM/YYYY')) " +
+            "     AND (:dataPrazoPagamento IS NULL OR :dataPrazoPagamento = TO_CHAR(COALESCE(ptcp.dataLimitePagamento, ptc.dataLimitePagamento), 'DD/MM/YYYY')) " +
+            "     AND pv.statusInteresseAntecipacao = " + StatusInteresseAntecipacao.APROVADO.getValue() +
+            "     AND a.valorTotal > 0 " +
+            "     AND a.statusNotaFiscal = " + StatusNotaFiscalAbastecimento.EMITIDA.getValue() +
+            "     AND COALESCE(tcp.statusConsolidacao, tc.statusConsolidacao) <> " + StatusTransacaoConsolidada.FECHADA.getValue() +
+            "     AND NOT EXISTS ( " +
+            "         SELECT 1 " +
+            "         FROM ReembolsoAntecipado ra " +
+            "         LEFT JOIN ra.propostaAntecipacao pa " +
+            "         JOIN ra.autorizacoesPagamento a1 " +
+            "         WHERE " +
+            "             a.id = a1.id " +
+            "             AND ((ra.tipoAntecipacao = " + TipoAntecipacao.PARCEIRO_XP.getValue() +
+            "             AND (pa.isAceito IS NULL OR pa.isAceito = true) " +
+            "             AND (pa.status IS NULL OR pa.status <> " + StatusPropostaXP.CANCELED.getValue() + ")) " +
+            "             OR (ra.tipoAntecipacao = " + TipoAntecipacao.SOLUCAO.getValue() +
+            "                 AND ra.statusIntegracao = " + StatusIntegracaoReembolsoJde.REALIZADO.getValue() + "))" +
+            "     ) AND NOT EXISTS ( " +
+            "         SELECT 1 " +
+            "         FROM AutorizacaoPagamento a1 " +
+            "         JOIN a1.notasFiscais nf " +
+            "         WHERE " +
+            "             a.id = a1.id" +
+            "             AND nf.isJustificativa = true " +
+            "     ) " +
+            " ORDER BY %s ";
 
     /**
      * Instancia o repositorio
@@ -1505,4 +1554,25 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         return resultado.getRegistros().isEmpty() ? null : resultado.getRegistros().get(0);
     }
 
+
+    @Override
+    public ResultadoPaginado<AutorizacaoPagamento> obterAbastecimentosAntecipaveis(FiltroAbastecimentoAntecipavelVo filtro) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaIgual("idsPontoVenda", filtro.getIdsPontoVenda()));
+        parametros.add(new ParametroPesquisaIgual("statusCiclo", filtro.getStatusCiclo() != null? filtro.getStatusCiclo().getValue().intValue() : null));
+        parametros.add(new ParametroPesquisaIgual("dataInicioPeriodo", UtilitarioFormatacaoData.formatarDataCurta(filtro.getInicio())));
+        parametros.add(new ParametroPesquisaIgual("dataFimPeriodo", UtilitarioFormatacaoData.formatarDataCurta(filtro.getFim())));
+        parametros.add(new ParametroPesquisaIgual("dataPrazoPagamento", filtro.getDataVencimento() != null ? UtilitarioFormatacaoData.formatarDataCurta(UtilitarioCalculoData.adicionarDiasData(filtro.getDataVencimento(), -2)) : null));
+
+        String clausulaOrdenacao = null;
+        List<ParametroOrdenacaoColuna> parametrosOrdenacao = filtro.getPaginacao().getParametrosOrdenacaoColuna();
+        if (!CollectionUtils.isEmpty(parametrosOrdenacao)) {
+            ParametroOrdenacaoColuna parametroOrdenacao = parametrosOrdenacao.stream().findFirst().get();
+            clausulaOrdenacao = "a." + parametroOrdenacao.getNome() + (parametroOrdenacao.isDecrescente() ? " DESC" : "");
+        } else {
+            clausulaOrdenacao = "a.valorTotal DESC";
+        }
+
+        return pesquisar(filtro.getPaginacao(), String.format(QUERY_ABASTECIMENTOS_ANTECIPAVEIS, clausulaOrdenacao), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
 }
