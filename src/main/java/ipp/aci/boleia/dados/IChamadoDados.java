@@ -156,7 +156,7 @@ public interface IChamadoDados {
      * @param idSalesforce Identificador salesforce do anexo.
      * @return O conteúdo do anexo
      */
-    byte[] downloadAnexo(String idSalesforce);
+    byte[] obterAnexo(String idSalesforce);
 
     /** 
      * Obtém um contato salesforce a partir do seu identificador externo.

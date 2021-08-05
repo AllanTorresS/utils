@@ -12,7 +12,6 @@ import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.salesforce.CancelamentoChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.ChamadoVo;
-import ipp.aci.boleia.dominio.vo.salesforce.ConsultaChamadosVo;
 import ipp.aci.boleia.dominio.vo.salesforce.ContatoSalesforceVo;
 import ipp.aci.boleia.dominio.vo.salesforce.CriacaoChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.CriacaoContatoVo;
@@ -35,7 +34,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
@@ -423,7 +421,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     }
 
     @Override
-    public byte[] downloadAnexo(String idSalesforce) {
+    public byte[] obterAnexo(String idSalesforce) {
         String urlFormatado = format(urlDownloadArquivo, idSalesforce);
 
         prepararRequisicao(urlFormatado, null);
