@@ -23,7 +23,7 @@ public final class ConstantesCta {
     public static final String ERRO_MOTORISTA_INVALIDO = "Motorista inválido";
     public static final String ERRO_ID_ABASTECIMENTO_INVALIDO = "ID Abastecimento IpirangaConnect inválido";
     public static final String ERRO_COMBUSTIVEL_INVALIDO = "Abastecimento não é de COMBUSTIVEL, Categoria Produto = %s";
-    public static final String ERRO_ABASTECIMENTO_IMPORTADO = "Abastecimento já foi impotado";
+    public static final String ERRO_ABASTECIMENTO_IMPORTADO = "Abastecimento já foi importado";
 
 
     public static final String FORMATO_RESPOSTA = "json";

@@ -35,7 +35,9 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMenorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMultiJoin;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
+import ipp.aci.boleia.dominio.vo.CoordenadaVo;
 import ipp.aci.boleia.dominio.vo.EntidadeVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaLocalizacaoVo;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
@@ -362,6 +364,20 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
     }
 
     /**
+     * Realiza uma pesquisa a partir de uma queryString mapeando para tipo diretamente.
+     * Criado para obter Value Objets diretamente do banco.
+     *
+     * @param queryString A consulta em HQL
+     * @param tipoRetorno A classe do tipo do objeto de retorno
+     * @param parametros  Os parametros da busca
+     * @param <K> O tipo do objeto de retorno
+     * @return O resultado da consulta, contendo os dados de paginacao
+     */
+    protected <K> List<K> pesquisar(String queryString, Class<K> tipoRetorno, ParametroPesquisa... parametros) {
+        return pesquisar(queryString, true, false, tipoRetorno, parametros);
+    }
+
+    /**
      * Realiza uma pesquisa com paginação de uma servicos a partir de uma queryString considerando também os registros excluídos.
      *
      * @param paginacao   Os dados da paginacao
@@ -545,8 +561,10 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
      * @param paginacao   A paginacao  desejada
      * @param queryString A consulta a ser executada
      * @param isolamento  True caso se deseje isolamento de dados
+     * @param considerarExcluidos True caso deseje retornar os registros excluidos
      * @param tipoRetorno O tipo de retorno da consulta
      * @param parametros  Os parametros da consulta
+     * @param <K> O tipo do objeto de retorno
      * @return O resultado da consulta
      */
     private <K> ResultadoPaginado<K> pesquisar(InformacaoPaginacao paginacao, String queryString, boolean isolamento, boolean considerarExcluidos, Class<K> tipoRetorno, ParametroPesquisa... parametros) {
@@ -560,8 +578,10 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
      * @param queryString A consulta a ser executada
      * @param countQueryString A consulta de count a ser executada
      * @param isolamento  True caso se deseje isolamento de dados
+     * @param considerarExcluidos True caso deseje retornar os registros excluidos
      * @param tipoRetorno O tipo de retorno da consulta
      * @param parametros  Os parametros da consulta
+     * @param <K> O tipo do objeto de retorno
      * @return O resultado da consulta
      */
     private <K> ResultadoPaginado<K> pesquisar(InformacaoPaginacao paginacao, String queryString, String countQueryString, boolean isolamento, boolean considerarExcluidos, Class<K> tipoRetorno, ParametroPesquisa... parametros) {
@@ -601,6 +621,28 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
             UtilitarioIsolamentoInformacoes.exigirPermissaoAcesso((List<IPersistente>) resultado.getRegistros(), ambiente.getUsuarioLogado());
         }
         return resultado;
+    }
+
+    /**
+     * Executa uma pesquisa com ou sem isolamento de dados a partir dos parametros informados
+     *
+     * @param queryString A consulta a ser executada
+     * @param isolamento  True caso se deseje isolamento de dados
+     * @param considerarExcluidos True caso deseje retornar os registros excluidos
+     * @param tipoRetorno O tipo de retorno da consulta
+     * @param parametros  Os parametros da consulta
+     * @param <K> O tipo do objeto de retorno
+     * @return O resultado da consulta
+     */
+    private <K> List<K> pesquisar(String queryString, boolean isolamento, boolean considerarExcluidos, Class<K> tipoRetorno, ParametroPesquisa... parametros) {
+        List<K> registros = criarConsultaTipadaComParametros(queryString, tipoRetorno, parametros).getResultList();
+        if(!considerarExcluidos) {
+            registros = removerRegistrosExcluidos(registros, tipoRetorno);
+        }
+        if (isolamento && IPersistente.class.isAssignableFrom(tipoRetorno)) {
+            UtilitarioIsolamentoInformacoes.exigirPermissaoAcesso((List<IPersistente>)registros, ambiente.getUsuarioLogado());
+        }
+        return registros;
     }
 
     /**
@@ -679,6 +721,27 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
      */
     private Query criarConsultaComParametros(String queryString, ParametroPesquisa... parametros) {
         Query query = getGerenciadorDeEntidade().createQuery(queryString);
+        for (ParametroPesquisa param : parametros) {
+            if (param.getValor() != null && param.getValor().getClass().equals(Date.class)) {
+                query.setParameter(param.getNome(), (Date) param.getValor(), TemporalType.TIMESTAMP);
+            } else {
+                query.setParameter(param.getNome(), param.getValor());
+            }
+        }
+        return query;
+    }
+
+    /**
+     * Cria consulta HQL Tipada atraves de query em string e dados parametros
+     *
+     * @param queryString Query em string
+     * @param tipoRetorno tipo do retorno da consulta
+     * @param parametros  Parametro para preenchimento da consulta
+     * @param <K> O tipo do objeto de retorno
+     * @return Query preenchida
+     */
+    private <K> TypedQuery<K> criarConsultaTipadaComParametros(String queryString, Class<K> tipoRetorno, ParametroPesquisa... parametros) {
+        TypedQuery<K> query = getGerenciadorDeEntidade().createQuery(queryString, tipoRetorno);
         for (ParametroPesquisa param : parametros) {
             if (param.getValor() != null && param.getValor().getClass().equals(Date.class)) {
                 query.setParameter(param.getNome(), (Date) param.getValor(), TemporalType.TIMESTAMP);
@@ -1681,6 +1744,59 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
             parametros.add(new ParametroPesquisaNulo(nomeCampo, notNull));
         }
     }
+
+    /**
+     * Cria parametro para pesquisa entre intevalo de latitute e longitude em relação a varias coordenadas/pontos
+     *
+     * @param momeCampoLat nome da propriedade que representa latitude
+     * @param nomeCampoLong nome da propriedade que representa longitude
+     * @param conjutoDeCordenadas conjunto de coordenada/pontos
+     * @param margemGrausFiltroCoordenadas margem de tolerancia em graus do raio de interseção
+     * @return parametro representando a busca entre as coordedandas parametrizadas
+     */
+    protected ParametroPesquisaOr povoarParametroLatLongEntreCoordenadas(String momeCampoLat, String nomeCampoLong, List<List<CoordenadaVo>> conjutoDeCordenadas, BigDecimal margemGrausFiltroCoordenadas) {
+        ParametroPesquisaOr condicoesOr = new ParametroPesquisaOr();
+        BigDecimal margem = margemGrausFiltroCoordenadas != null ? margemGrausFiltroCoordenadas : BigDecimal.ZERO;
+        for (List<CoordenadaVo> listaCoordenadas : conjutoDeCordenadas) {
+            for (int i = 0; i < listaCoordenadas.size() - 1; i++) {
+                CoordenadaVo ca = listaCoordenadas.get(i);
+                BigDecimal caLat = ca.getLatitude();
+                BigDecimal caLong = ca.getLongitude();
+                CoordenadaVo cb = listaCoordenadas.get(i + 1);
+                BigDecimal cbLat = cb.getLatitude();
+                BigDecimal cbLong = cb.getLongitude();
+                BigDecimal xa = (cbLat.compareTo(caLat) > 0 ? caLat : cbLat).subtract(margem);
+                BigDecimal xb = (cbLat.compareTo(caLat) > 0 ? cbLat : caLat).add(margem);
+                BigDecimal ya = (cbLong.compareTo(caLong) > 0 ? caLong : cbLong).subtract(margem);
+                BigDecimal yb = (cbLong.compareTo(caLong) > 0 ? cbLong : caLong).add(margem);
+
+                condicoesOr.addParametro(new ParametroPesquisaAnd(
+                        new ParametroPesquisaEntre(momeCampoLat, xa, xb),
+                        new ParametroPesquisaEntre(nomeCampoLong, ya, yb)
+                ));
+            }
+        }
+        return condicoesOr;
+    }
+
+
+    /**
+     * Cria parametros para pesquisa entre intevalo de latitute e longitude
+     *
+     * @param momeCampoLat nome da propriedade que representa latitude
+     * @param nomeCampoLong nome da propriedade que representa longitude
+     * @param filtro com dados de lat long parametrizados
+     * @return conjunto dos parametros repesentando a busca
+     */
+    protected ParametroPesquisa[] povoarParametroLatLongEntreIntervalo(String momeCampoLat, String nomeCampoLong, FiltroPesquisaLocalizacaoVo filtro) {
+        return new ParametroPesquisa[] {
+            new ParametroPesquisaMaior(momeCampoLat, BigDecimal.valueOf(filtro.getLatitudeInicial())),
+            new ParametroPesquisaMenor(momeCampoLat, BigDecimal.valueOf(filtro.getLatitudeFinal())),
+            new ParametroPesquisaMaior(nomeCampoLong, BigDecimal.valueOf(filtro.getLongitudeInicial())),
+            new ParametroPesquisaMenor(nomeCampoLong, BigDecimal.valueOf(filtro.getLongitudeFinal()))
+        };
+    }
+
 
     /**
      * Extrai o id de uma entidade contida em um filtro de pesquisa

@@ -9,10 +9,13 @@ import ipp.aci.boleia.dados.IUnidadeDados;
 import ipp.aci.boleia.dados.IUsuarioDados;
 import ipp.aci.boleia.dados.IVeiculoDados;
 import ipp.aci.boleia.dominio.Frota;
+import ipp.aci.boleia.dominio.Motorista;
 import ipp.aci.boleia.dominio.Unidade;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * Serviços de domínio da entidade Unidade.
@@ -49,6 +52,13 @@ public class UnidadeSd {
 
     @Autowired
     private IEmpresaAgregadaDados empresaAgregadaDados;
+
+    @Autowired
+    private HistoricoMotoristaSd historicoMotoristaSd;
+
+    @Autowired
+    private FluxoAbastecimentoSd fluxoAbastecimentoSd;
+
 
     /**
      * Armazena os dados de uma unidade
@@ -147,11 +157,17 @@ public class UnidadeSd {
      */
     private void desvincularEntidadesRelacionadas(Long... ids) {
         for (Long id : ids) {
+            List<Motorista> motoristas = motoristaDados.obterPorUnidade(id);
+
             grupoOperacionalDados.desvincularUnidades(id);
             motoristaDados.desvincularUnidades(id);
             veiculoDados.desvincularUnidades(id);
             usuarioDados.desvincularUnidades(id);
             empresaAgregadaDados.desvincularUnidades(id);
+            if(motoristas != null){
+                historicoMotoristaSd.armazenarHistoricoMotoristaAoExcluirEmpresaAgregada(motoristas,ambiente);
+                motoristas.forEach(m -> fluxoAbastecimentoSd.excluirFluxoAbastecimentoMotorista(m, ambiente.getUsuarioLogado(), ambiente.buscarDataAmbiente()));
+            }
         }
     }
 }

@@ -2,6 +2,7 @@ package ipp.aci.boleia.dominio;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ipp.aci.boleia.dominio.enums.TipoRestricaoPostosPermitidos;
+import ipp.aci.boleia.dominio.interfaces.IExclusaoLogica;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
 import org.hibernate.envers.Audited;
@@ -29,7 +30,7 @@ import java.util.List;
 @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 @Entity
 @Table(name = "FROTA_PARAM_SIS_PV_AUTORIZ")
-public class FrotaParametroSistemaPostoAutorizadoAbastecimento implements IPersistente, IPertenceFrota {
+public class FrotaParametroSistemaPostoAutorizadoAbastecimento implements IPersistente, IPertenceFrota, IExclusaoLogica {
 
     private static final long serialVersionUID = -3372916190809838149L;
 
@@ -62,6 +63,9 @@ public class FrotaParametroSistemaPostoAutorizadoAbastecimento implements IPersi
     @Column(name = "NO_VERSAO")
     @Version
     private Long versao;
+
+    @Column(name = "ID_EXCLUIDO")
+    private Boolean excluido;
 
     @Override
     public Long getId() {
@@ -147,5 +151,15 @@ public class FrotaParametroSistemaPostoAutorizadoAbastecimento implements IPersi
             return TipoRestricaoPostosPermitidos.LITRAGEM;
         }
         return TipoRestricaoPostosPermitidos.VALOR;
+    }
+
+    @Override
+    public Boolean getExcluido() {
+        return excluido;
+    }
+
+    @Override
+    public void setExcluido(Boolean excluido) {
+        this.excluido = excluido;
     }
 }

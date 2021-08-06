@@ -17,6 +17,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
 /**
@@ -48,7 +49,7 @@ public class ExecucaoParametrosSistemaSd implements ApplicationContextAware {
         for (FrotaParametroSistema frotaParam : listaFrotaParams) {
             ParametroSistema param = ParametroSistema.obterPorCodigo(frotaParam.getParametroSistema());
             if(frotaParam.isAtivo() && grupo.contem(param)) {
-                ILogicaParametroSistema<D> logica = obterLogicaExecucao(param);
+                ILogicaParametroSistema<D> logica = obterLogicaExecucao(param, dados.getClass());
                 ResultadoExecucaoParametroSistemaVo<D> resultado = logica.executar(contexto, frotaParam);
                 resultado.setParametro(frotaParam);
                 contexto.acumularResultado(resultado);
@@ -76,12 +77,13 @@ public class ExecucaoParametrosSistemaSd implements ApplicationContextAware {
     }
 
     /**
-     * Obtem uma instancia da classe responsavel por processar a logica de execucao do parametro informado
+     * Obtem uma instancia da classe responsavel por processar a logica de execucao do parametro e tipo do contexto informado
      * @param parametro O parametro de sistema desejado
+     * @param tipoDoContexto tipo utilizado na lógica de execução
      * @return A logica de execucao do parametro
      */
-    private <D> ILogicaParametroSistema<D> obterLogicaExecucao(ParametroSistema parametro) {
-        Class<ILogicaParametroSistema<?>> classeLogicaExecucao = parametro.getLogicaExecucao();
+    private <D> ILogicaParametroSistema<D> obterLogicaExecucao(ParametroSistema parametro, Type tipoDoContexto) {
+        Class<? extends ILogicaParametroSistema<?>> classeLogicaExecucao = parametro.getLogicaExecucao(tipoDoContexto);
         return (ILogicaParametroSistema<D>) appContext.getBean(classeLogicaExecucao);
     }
 
@@ -91,7 +93,7 @@ public class ExecucaoParametrosSistemaSd implements ApplicationContextAware {
      * @return O tratador de violacoes
      */
     private <D> ITratadorViolacoesParametros<D> obterTratadorViolacoes(GrupoExecucaoParametroSistema grupoParametros) {
-        Class<ITratadorViolacoesParametros<?>> classeTratador = grupoParametros.getTratadorViolacoes();
+        Class<? extends ITratadorViolacoesParametros<?>> classeTratador = grupoParametros.getTratadorViolacoes();
         return (ITratadorViolacoesParametros<D>) appContext.getBean(classeTratador);
     }
     

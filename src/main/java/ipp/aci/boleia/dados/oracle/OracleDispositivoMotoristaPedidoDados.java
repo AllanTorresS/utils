@@ -9,6 +9,7 @@ import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaior;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
+import ipp.aci.boleia.dominio.vo.PedidoStatusAutorizacaoVo;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -29,6 +30,10 @@ public class OracleDispositivoMotoristaPedidoDados extends OracleRepositorioBole
             "WHERE motorista.id = :idMotorista AND veiculo.id = :idVeiculo " +
             "GROUP BY tipoCombustivel.id ORDER BY MAX(dataCriacao) DESC";
 
+    private static final String QUERY_PEDIDO_COM_STATUS_AUTORIZACAO =
+            "SELECT new ipp.aci.boleia.dominio.vo.PedidoStatusAutorizacaoVo(p.numero, ab.status, ab.motivoRecusa, p.dataExpiracao) " +
+            "FROM DispositivoMotoristaPedido p LEFT JOIN p.abastecimentos ab WHERE p.numero = :numero ORDER BY ab.dataRequisicao, p.dataExpiracao DESC";
+
     @Autowired
     private UtilitarioAmbiente utilitarioAmbiente;
 
@@ -46,6 +51,11 @@ public class OracleDispositivoMotoristaPedidoDados extends OracleRepositorioBole
         parametros.add(new ParametroPesquisaDataMaior("dataExpiracao", utilitarioAmbiente.buscarDataAmbiente()));
         parametros.add(new ParametroPesquisaIgual("habilitado", StatusAtivacao.ATIVO.getValue()));
         return pesquisarUnico(parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+    @Override
+    public List<PedidoStatusAutorizacaoVo> pesquisarStatusPorNumeroPedido(String numero) {
+        return pesquisar(QUERY_PEDIDO_COM_STATUS_AUTORIZACAO, PedidoStatusAutorizacaoVo.class, new ParametroPesquisaIgual("numero", numero));
     }
 
     @Override

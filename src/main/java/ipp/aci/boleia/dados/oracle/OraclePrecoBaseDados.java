@@ -4,6 +4,7 @@ import ipp.aci.boleia.dados.IPrecoBaseDados;
 import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.PrecoBase;
 import ipp.aci.boleia.dominio.Usuario;
+import ipp.aci.boleia.dominio.enums.PerfilPontoDeVenda;
 import ipp.aci.boleia.dominio.enums.StatusAlteracaoPrecoPosto;
 import ipp.aci.boleia.dominio.enums.StatusAtivacao;
 import ipp.aci.boleia.dominio.enums.StatusHabilitacaoPontoVenda;
@@ -21,8 +22,6 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaFetch;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
-import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaior;
-import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMenor;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaAlteracaoPrecoVo;
@@ -30,11 +29,12 @@ import ipp.aci.boleia.dominio.vo.FiltroPesquisaLocalizacaoVo;
 import ipp.aci.boleia.util.Ordenacao;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioLambda;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Repository;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -119,18 +119,32 @@ public class OraclePrecoBaseDados extends OracleOrdenacaoPrecosDados<PrecoBase> 
 
     @Override
     public List<PrecoBase> listarPrecosPorFrotaLocalizacao(FiltroPesquisaLocalizacaoVo filtro){
-
         List<ParametroPesquisa> parametros = new ArrayList<>();
-        parametros.add(new ParametroPesquisaMaior("pontoVenda.latitude", new BigDecimal(filtro.getLatitudeInicial())));
-        parametros.add(new ParametroPesquisaMenor("pontoVenda.latitude", new BigDecimal(filtro.getLatitudeFinal())));
 
-        parametros.add(new ParametroPesquisaMaior("pontoVenda.longitude", new BigDecimal(filtro.getLongitudeInicial())));
-        parametros.add(new ParametroPesquisaMenor("pontoVenda.longitude", new BigDecimal(filtro.getLongitudeFinal())));
+        if(filtro.getPerfilPontoDeVenda() != null) {
+            switch (filtro.getPerfilPontoDeVenda()) {
+                case RODOVIA:
+                case URBANO:
+                    parametros.add(new ParametroPesquisaLike("pontoVenda.perfilVenda", filtro.getPerfilPontoDeVenda().name()));
+                    break;
+                case OUTROS:
+                    parametros.add(new ParametroPesquisaOr(
+                            new ParametroPesquisaNulo("pontoVenda.perfilVenda"),
+                            new ParametroPesquisaLike("pontoVenda.perfilVenda", PerfilPontoDeVenda.RODO_REDE.name())
+                    ));
+                    break;
+            }
+        }
+
+        if(CollectionUtils.isNotEmpty(filtro.getFiltrosCoordenadas())) {
+            ParametroPesquisaOr condicoesOr = povoarParametroLatLongEntreCoordenadas("pontoVenda.latitude", "pontoVenda.longitude", filtro.getFiltrosCoordenadas(), filtro.getMargemGrausFiltroCoordenadas());
+            parametros.add(condicoesOr);
+        } else {
+            parametros.addAll(Arrays.asList(povoarParametroLatLongEntreIntervalo("pontoVenda.latitude", "pontoVenda.longitude", filtro)));
+        }
 
         parametros.add(new ParametroPesquisaIgual("pontoVenda.status", StatusAtivacao.ATIVO.getValue()));
-
         parametros.add(new ParametroPesquisaIgual("pontoVenda.statusHabilitacao", StatusHabilitacaoPontoVenda.HABILITADO.getValue()));
-
         parametros.add(new ParametroPesquisaIn("status", Arrays.asList(StatusAlteracaoPrecoPosto.VIGENTE.getValue(),
                 StatusAlteracaoPrecoPosto.ACEITO.getValue(),
                 StatusAlteracaoPrecoPosto.ACEITE_PENDENTE_REVENDA.getValue(),
@@ -189,7 +203,7 @@ public class OraclePrecoBaseDados extends OracleOrdenacaoPrecosDados<PrecoBase> 
 
     @Override
     public List<PrecoBase> buscarPendentes(List<Long> idsPv) {
-        return pesquisar((ParametroOrdenacaoColuna) null, new ParametroPesquisaIn("pontoVenda.id",idsPv), new ParametroPesquisaIn("status", Arrays.asList(StatusAlteracaoPrecoPosto.ACEITE_PENDENTE_REVENDA.getValue())));
+        return pesquisar((ParametroOrdenacaoColuna) null, new ParametroPesquisaIn("pontoVenda.id",idsPv), new ParametroPesquisaIn("status", Collections.singletonList(StatusAlteracaoPrecoPosto.ACEITE_PENDENTE_REVENDA.getValue())));
     }
 
     @Override
@@ -261,13 +275,29 @@ public class OraclePrecoBaseDados extends OracleOrdenacaoPrecosDados<PrecoBase> 
 
     @Override
     public List<PrecoBase> buscarPrecosPorFrotaLocalizacaoCombustivel(FiltroPesquisaLocalizacaoVo filtro, List<Long> idsTipoCombustivel ){
-
         List<ParametroPesquisa> parametros = new ArrayList<>();
-        parametros.add(new ParametroPesquisaMaior("pontoVenda.latitude", BigDecimal.valueOf(filtro.getLatitudeInicial())));
-        parametros.add(new ParametroPesquisaMenor("pontoVenda.latitude", BigDecimal.valueOf(filtro.getLatitudeFinal())));
 
-        parametros.add(new ParametroPesquisaMaior("pontoVenda.longitude", BigDecimal.valueOf(filtro.getLongitudeInicial())));
-        parametros.add(new ParametroPesquisaMenor("pontoVenda.longitude", BigDecimal.valueOf(filtro.getLongitudeFinal())));
+        if(filtro.getPerfilPontoDeVenda() != null) {
+            switch (filtro.getPerfilPontoDeVenda()) {
+                case RODOVIA:
+                case URBANO:
+                    parametros.add(new ParametroPesquisaLike("pontoVenda.perfilVenda", filtro.getPerfilPontoDeVenda().name()));
+                    break;
+                case OUTROS:
+                    parametros.add(new ParametroPesquisaOr(
+                            new ParametroPesquisaNulo("pontoVenda.perfilVenda"),
+                            new ParametroPesquisaLike("pontoVenda.perfilVenda", PerfilPontoDeVenda.RODO_REDE.name())
+                    ));
+                    break;
+            }
+        }
+
+        if(CollectionUtils.isNotEmpty(filtro.getFiltrosCoordenadas())) {
+            ParametroPesquisaOr condicoesOr = povoarParametroLatLongEntreCoordenadas("pontoVenda.latitude", "pontoVenda.longitude", filtro.getFiltrosCoordenadas(), filtro.getMargemGrausFiltroCoordenadas());
+            parametros.add(condicoesOr);
+        } else {
+            parametros.addAll(Arrays.asList(povoarParametroLatLongEntreIntervalo("pontoVenda.latitude", "pontoVenda.longitude", filtro)));
+        }
 
         parametros.add(new ParametroPesquisaIgual("pontoVenda.status", StatusAtivacao.ATIVO.getValue()));
 
@@ -287,11 +317,28 @@ public class OraclePrecoBaseDados extends OracleOrdenacaoPrecosDados<PrecoBase> 
     @Override
     public ResultadoPaginado<PrecoBase> buscarPrecosPorFrotaLocalizacaoCombustivel(FiltroPesquisaLocalizacaoVo filtro, Long idCombustivel, Integer pagina, Integer tamanho){
         List<ParametroPesquisa> parametros = new ArrayList<>();
-        parametros.add(new ParametroPesquisaMaior("pontoVenda.latitude", BigDecimal.valueOf(filtro.getLatitudeInicial())));
-        parametros.add(new ParametroPesquisaMenor("pontoVenda.latitude", BigDecimal.valueOf(filtro.getLatitudeFinal())));
 
-        parametros.add(new ParametroPesquisaMaior("pontoVenda.longitude", BigDecimal.valueOf(filtro.getLongitudeInicial())));
-        parametros.add(new ParametroPesquisaMenor("pontoVenda.longitude", BigDecimal.valueOf(filtro.getLongitudeFinal())));
+        if(filtro.getPerfilPontoDeVenda() != null) {
+            switch (filtro.getPerfilPontoDeVenda()) {
+                case RODOVIA:
+                case URBANO:
+                    parametros.add(new ParametroPesquisaLike("pontoVenda.perfilVenda", filtro.getPerfilPontoDeVenda().name()));
+                    break;
+                case OUTROS:
+                    parametros.add(new ParametroPesquisaOr(
+                            new ParametroPesquisaNulo("pontoVenda.perfilVenda"),
+                            new ParametroPesquisaLike("pontoVenda.perfilVenda", PerfilPontoDeVenda.RODO_REDE.name())
+                    ));
+                    break;
+            }
+        }
+
+        if(CollectionUtils.isNotEmpty(filtro.getFiltrosCoordenadas())) {
+            ParametroPesquisaOr condicoesOr = povoarParametroLatLongEntreCoordenadas("pontoVenda.latitude", "pontoVenda.longitude", filtro.getFiltrosCoordenadas(), filtro.getMargemGrausFiltroCoordenadas());
+            parametros.add(condicoesOr);
+        } else {
+            parametros.addAll(Arrays.asList(povoarParametroLatLongEntreIntervalo("pontoVenda.latitude", "pontoVenda.longitude", filtro)));
+        }
 
         parametros.add(new ParametroPesquisaIgual("pontoVenda.status", StatusAtivacao.ATIVO.getValue()));
 
@@ -334,5 +381,4 @@ public class OraclePrecoBaseDados extends OracleOrdenacaoPrecosDados<PrecoBase> 
     protected String getPrefixoCampoPrecoBase() {
         return null;
     }
-
 }
