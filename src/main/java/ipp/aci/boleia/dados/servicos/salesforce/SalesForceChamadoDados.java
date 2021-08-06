@@ -1,5 +1,6 @@
 package ipp.aci.boleia.dados.servicos.salesforce;
 
+import com.amazonaws.util.IOUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import ipp.aci.boleia.dados.IChamadoDados;
 import ipp.aci.boleia.dados.IChamadoSistemaDados;
@@ -11,8 +12,10 @@ import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.salesforce.CancelamentoChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.ChamadoVo;
-import ipp.aci.boleia.dominio.vo.salesforce.ConsultaChamadosVo;
+import ipp.aci.boleia.dominio.vo.salesforce.ContatoSalesforceVo;
 import ipp.aci.boleia.dominio.vo.salesforce.CriacaoChamadoVo;
+import ipp.aci.boleia.dominio.vo.salesforce.CriacaoContatoVo;
+import ipp.aci.boleia.dominio.vo.salesforce.DocumentoSalesforceVo;
 import ipp.aci.boleia.dominio.vo.salesforce.EdicaoChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.FiltroConsultaChamadosVo;
 import ipp.aci.boleia.dominio.vo.salesforce.PicklistVo;
@@ -31,26 +34,30 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static ipp.aci.boleia.util.ConstantesSalesForce.CAMPO_DONE;
 import static ipp.aci.boleia.util.ConstantesSalesForce.CAMPO_ID_CHAMADO_ANEXO;
 import static ipp.aci.boleia.util.ConstantesSalesForce.CAMPO_ID_DOCUMENTO;
+import static ipp.aci.boleia.util.ConstantesSalesForce.CAMPO_REGISTROS;
 import static ipp.aci.boleia.util.ConstantesSalesForce.CAMPO_VISIBILIDADE_ANEXO;
 import static ipp.aci.boleia.util.ConstantesSalesForce.SOLICITANTE_FROTA;
 import static ipp.aci.boleia.util.ConstantesSalesForce.SOLICITANTE_INTERNO;
 import static ipp.aci.boleia.util.ConstantesSalesForce.SOLICITANTE_REVENDA;
 import static ipp.aci.boleia.util.ConstantesSalesForce.VALOR_CAMPO_VISIBILIDADE_ANEXO;
-import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarCpfApresentacao;
-import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarCnpjApresentacao;
 import static ipp.aci.boleia.util.UtilitarioCalculoData.obterPrimeiroInstanteDia;
 import static ipp.aci.boleia.util.UtilitarioCalculoData.obterUltimoInstanteDia;
+import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarCnpjApresentacao;
+import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarCpfApresentacao;
 import static ipp.aci.boleia.util.UtilitarioFormatacaoData.formatarDataIso8601ComTimeZoneMillis;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.text.MessageFormat.format;
@@ -80,14 +87,61 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
                     CLAUSULA_CONTATO_REVENDA +
                     CLAUSULA_DATA_ABERTURA;
 
+    private static final String SUBQUERY_COMENTARIOS =
+            "(SELECT " +
+            "   Id,CommentBody,CreatedBy.Name,CreatedBy.Email,CreatedDate " +
+            "FROM " +
+            "   Casecomments " +
+            "WHERE " +
+            "   CommentBody LIKE '" + ConstantesSalesForce.PREFIXO_COMENTARIO_PENDENTE_EXTERNO + "%' OR CreatedBy.Email=':emailIntegracao' " +
+            "ORDER BY CreatedDate) ";
+
+    private static final String SUBQUERY_ANEXOS = 
+            " (SELECT ContentDocumentId, " +
+            "       contentdocument.LatestPublishedVersionId, " +
+            "       contentdocument.Title,contentdocument.FileExtension, " +
+            "       contentdocument.Owner.Name, " +
+            "       contentdocument.Owner.Email, " +
+            "       contentdocument.LatestPublishedVersion.CreatedDate " +
+            "FROM ContentDocumentLinks), ";            
+
     private static final String OBTER_CHAMADO_POR_ID =
-            "SELECT Id,CreatedDate,CNPJPosto__c,CNPJFrota__c,Solicitante__c,CaseNumber,Status," +
-            "       Priority,Type,ClassificacaoPerfil__c,Motivo__c,MotivoSolicitacao__c,Subject,Description " +
+            "SELECT Id," +
+            "       CreatedDate," +
+            "       CNPJPosto__c," +
+            "       CNPJFrota__c," +
+            "       Solicitante__c," +
+            "       CaseNumber," +
+            "       Status," +
+            "       Priority," +
+            "       Type," +
+            "       ClassificacaoPerfil__c," +
+            "       Motivo__c," +
+            "       MotivoSolicitacao__c," +
+            "       Subject," +
+            "       Description," +
+                    SUBQUERY_ANEXOS +
+                    SUBQUERY_COMENTARIOS +
             "FROM Case " +
             "WHERE Id=':idSalesforce'";
 
     private static final String CONSULTAR_CHAMADOS =
-            "SELECT Id,CaseNumber,CreatedDate,CNPJPosto__c,CNPJFrota__c,Solicitante__c,Motivo__c,Status,ClassificacaoPerfil__c,Type,Description,MotivoSolicitacao__c,Subject " +
+            "SELECT Id," +
+            "       CaseNumber," +
+            "       CreatedDate," +
+            "       CNPJPosto__c," +
+            "       CNPJFrota__c," +
+            "       Solicitante__c," +
+            "       Motivo__c," +
+            "       Status," +
+            "       ClassificacaoPerfil__c," +
+            "       Type," +
+            "       Description," +
+            "       MotivoSolicitacao__c," +
+            "       Subject," +
+            "       (SELECT ContentDocumentId,contentdocument.LatestPublishedVersionId,contentdocument.Title,contentdocument.FileExtension," +
+            "       contentdocument.Owner.Name, contentdocument.Owner.Email, contentdocument.LatestPublishedVersion.CreatedDate FROM ContentDocumentLinks), " +
+                    SUBQUERY_COMENTARIOS +
             FROM_CONSULTAR_CHAMADOS +
             ORDER_BY_CONSULTA_CHAMADOS +
             "LIMIT :limit OFFSET :offset";
@@ -104,7 +158,9 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
             "      Motivo__c=':motivo' AND " +
             "      MotivoSolicitacao__c=':modulo'";
 
-    private static final String CAMPO_DONE = "done";
+    private static final String OBTER_ID_CONTATO = "SELECT Id FROM Contact WHERE IdExterno__c=':idExterno'";
+
+    private static final String OBTER_EXTENSAO_ANEXO = "SELECT FileExtension FROM ContentDocument WHERE Id=':idAnexo'";
 
     @Value("${salesforce.chamados.authorization.client.id}")
     private String clientId;
@@ -117,6 +173,9 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
 
     @Value("${salesforce.chamados.authorization.password}")
     private String password;
+
+    @Value("${salesforce.chamados.emailIntegracao}")
+    private String emailIntegracao;
 
     @Value("${salesforce.chamados.consulta.url}")
     private String urlConsulta;
@@ -148,6 +207,15 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     @Value("${salesforce.chamados.vincularArquivo}")
     private String urlVincularArquivo;
 
+    @Value("${salesforce.chamados.excluirArquivo}")
+    private String urlExcluirArquivo;
+
+    @Value("${salesforce.chamados.downloadArquivo}")
+    private String urlDownloadArquivo;
+
+    @Value("${salesforce.chamados.criarContato}")
+    private String urlCriarContato;
+
     @Autowired
     private IMotivoChamadoDados motivoChamadoDados;
 
@@ -160,6 +228,8 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
         List<String> contatos = obterContatosPorUsuario(usuarioLogado);
         Map<String, Object> parametros = new HashMap<>();
         parametros.put("idSalesforce", idSalesforce);
+        parametros.put("emailIntegracao", emailIntegracao);
+
         String query = OBTER_CHAMADO_POR_ID;
         if(usuarioLogado.isFrotista() || usuarioLogado.isInterno()) {
             parametros.put("contato", contatos.stream().findFirst().orElse(""));
@@ -168,7 +238,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
             parametros.put("contato", contatos.stream().collect(joining("','", "'", "'")));
             query += CLAUSULA_CONTATO_REVENDA;
         }
-        List<ChamadoVo> chamados = executarQuerySalesforce(formatarQueryParaConsulta(query, parametros));
+        List<ChamadoVo> chamados = executarQuerySalesforce(formatarQueryParaConsulta(query, parametros), ChamadoVo.class);
         return chamados != null ? chamados.stream().findFirst().orElse(null) : null;
     }
 
@@ -176,7 +246,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     public ChamadoVo obterPorIdSalesforceSemIsolamento(String idSalesforce) {
         Map<String, Object> parametros = new HashMap<>();
         parametros.put("idSalesforce", idSalesforce);
-        List<ChamadoVo> chamados = executarQuerySalesforce(formatarQueryParaConsulta(OBTER_CHAMADO_POR_ID, parametros));
+        List<ChamadoVo> chamados = executarQuerySalesforce(formatarQueryParaConsulta(OBTER_CHAMADO_POR_ID, parametros), ChamadoVo.class);
         return chamados != null ? chamados.stream().findFirst().orElse(null) : null;
     }
 
@@ -185,7 +255,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
         String queryConsulta = formatarQueryParaPesquisa(CONSULTAR_CHAMADOS, true, filtro);
         String queryCount = formatarQueryParaPesquisa(COUNT_CONSULTAR_CHAMADOS, false, filtro);
 
-        return executarQuerySalesforcePaginada(queryConsulta, queryCount);
+        return executarQuerySalesforcePaginada(queryConsulta, queryCount, ChamadoVo.class);
     }
 
     @Override
@@ -205,13 +275,13 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
             parametros.put("contato", "'" + criacaoChamadoVo.getContactPosto().getIdExterno() + "'");
             query += CLAUSULA_CONTATO_REVENDA;
         }
-        return executarQuerySalesforce(formatarQueryParaConsulta(query, parametros));
+        return executarQuerySalesforce(formatarQueryParaConsulta(query, parametros), ChamadoVo.class);
     }
 
     @Override
-    public void criarChamado(CriacaoChamadoVo chamadoVo) throws ExcecaoBoleiaRuntime {
+    public String criarChamado(CriacaoChamadoVo chamadoVo) throws ExcecaoBoleiaRuntime {
         prepararRequisicao(urlCriacao, chamadoVo);
-        enviarRequisicaoPost(this::trataRespostaCriacao);
+        return enviarRequisicaoPost(this::trataRespostaCriacao);
     }
 
     @Override
@@ -346,6 +416,44 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
         });
     }
 
+    @Override
+    public void excluirAnexo(String idSalesforce) {
+        String urlFormatado = format(urlExcluirArquivo, idSalesforce);
+
+        prepararRequisicao(urlFormatado, null);
+        enviarRequisicaoDelete(this::trataRespostaExclusaoAnexo);
+    }
+
+    @Override
+    public byte[] obterAnexo(String idSalesforce) {
+        String urlFormatado = format(urlDownloadArquivo, idSalesforce);
+
+        prepararRequisicao(urlFormatado, null);
+        return enviarRequisicaoGet(this::trataRespostaDownloadAnexo);
+    }
+
+    public ContatoSalesforceVo obterContato(String idExterno) {
+        Map<String, Object> parametros = new HashMap<>();
+        parametros.put("idExterno", idExterno);
+
+        String query = formatarQueryParaConsulta(OBTER_ID_CONTATO, parametros);
+        List<ContatoSalesforceVo> contatos = executarQuerySalesforce(query, ContatoSalesforceVo.class);
+        return contatos.stream().findFirst().orElse(null);
+    }
+
+    @Override
+    public void criarContato(CriacaoContatoVo vo) {
+        prepararRequisicao(urlCriarContato, vo);
+        enviarRequisicaoPost(this::trataRespostaCriacao);
+    }
+
+    @Override
+    public DocumentoSalesforceVo obterDocumentoSalesforce(String idSalesforce) {
+        Map<String, Object> parametros = Collections.singletonMap("idAnexo", idSalesforce);
+        List<DocumentoSalesforceVo> documentos = executarQuerySalesforce(formatarQueryParaConsulta(OBTER_EXTENSAO_ANEXO, parametros), DocumentoSalesforceVo.class);
+        return documentos.stream().findFirst().orElse(null);
+    }
+
     /**
      * Realiza o upload de um anexo para o salesforce.
      *
@@ -447,13 +555,13 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
      * @param response a resposta
      * @return true em caso de sucesso
      */
-    private boolean trataRespostaCriacao(CloseableHttpResponse response) {
+    private String trataRespostaCriacao(CloseableHttpResponse response) {
         prepararResposta(response);
         if (this.statusCode != HttpStatus.CREATED.value()) {
             LOGGER.error(this.responseBody.toString());
             throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("chamado.criacao.erro.integracao"));
         }
-        return true;
+        return this.responseBody.get(ConstantesSalesForce.CAMPO_ID).asText();
     }
 
     /***
@@ -484,67 +592,98 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
         return true;
     }
 
+    /***
+     * Trata a resposta da exclusão de um anexo
+     * @param response a resposta
+     * @return true em caso de sucesso
+     */
+    private boolean trataRespostaExclusaoAnexo(CloseableHttpResponse response) {
+        prepararResposta(response);
+        if (this.statusCode != HttpStatus.NO_CONTENT.value()) {
+            LOGGER.error(this.responseBody.toString());
+            throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("chamado.erro.interno"));
+        }
+        return true;
+    }
+
+    /***
+     * Trata a resposta da busca de um anexo para download 
+     * @param response a resposta
+     * @return bytearray do arquivo a ser baixado
+     */
+    private byte[] trataRespostaDownloadAnexo(CloseableHttpResponse response) {
+        try{
+            prepararRespostaArquivo(response);
+            if (this.statusCode != HttpStatus.OK.value()) {
+                LOGGER.error(this.responseBody.toString());
+                throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("chamado.erro.interno"));
+            }
+            return  IOUtils.toByteArray(this.inputStream);
+        } catch(IOException e) {
+            throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("chamado.erro.interno"));
+        }
+    }
+
     /**
      * Executa uma consulta SOQL paginada pela API do Salesforce.
      *
      * @param queryConsulta Query utilizada para consultar os dados.
      * @param queryCount Query utilizada para realizar o count total dos dados.
+     * @param <T> Classe utilizada para mapear a resposta em json da integração.
      * @return Resultado paginado da consulta.
      */
-    private ResultadoPaginado<ChamadoVo> executarQuerySalesforcePaginada(String queryConsulta, String queryCount) {
+    private <T> ResultadoPaginado<T> executarQuerySalesforcePaginada(String queryConsulta, String queryCount, Class<T> classeMapeadora) {
         prepararRequisicao(urlConsulta, null);
 
         String endpointConsulta = this.instanceUrl.concat(format(this.urlConsulta, queryConsulta));
         String endpointCount = this.instanceUrl.concat(format(this.urlConsulta, queryCount));
-        ConsultaChamadosVo consultaChamadosVo = enviarRequisicaoGet(endpointConsulta, this::tratarRespostaConsultaChamados);
-        Integer totalItems = enviarRequisicaoGet(endpointCount, this::tratarRespostaCountChamados);
+        List<T> resultado = enviarRequisicaoGet(endpointConsulta, response -> tratarRespostaConsultaSalesforce(response, classeMapeadora));
+        Integer totalItems = enviarRequisicaoGet(endpointCount, this::tratarRespostaCountConsultaSalesforce);
 
-        ResultadoPaginado<ChamadoVo> resultadoPaginado = new ResultadoPaginado<>();
-        resultadoPaginado.setTotalItems(totalItems);
-        resultadoPaginado.setRegistros(consultaChamadosVo.getChamados() != null ? consultaChamadosVo.getChamados() : new ArrayList<>());
-        return resultadoPaginado;
+        return new ResultadoPaginado<T>(resultado, totalItems);
     }
 
     /**
      * Executa uma consulta SOQL pela API do Salesforce.
      *
      * @param queryConsulta Query utilizada para consultar os dados.
+     * @param <T> Classe utilizada para mapear a resposta em json da integração.
      * @return Resultado da consulta.
      */
-    private List<ChamadoVo> executarQuerySalesforce(String queryConsulta) {
+    private <T> List<T> executarQuerySalesforce(String queryConsulta, Class<T> classeMapeamento) {
         prepararRequisicao(urlConsulta, null);
 
         String endpointConsulta = this.instanceUrl.concat(format(this.urlConsulta, queryConsulta));
-        ConsultaChamadosVo consultaChamadosVo = enviarRequisicaoGet(endpointConsulta, this::tratarRespostaConsultaChamados);
-        return consultaChamadosVo.getChamados() != null ? consultaChamadosVo.getChamados() : new ArrayList<>();
+        return enviarRequisicaoGet(endpointConsulta, response -> tratarRespostaConsultaSalesforce(response, classeMapeamento));
     }
 
     /**
-     * Trata a resposta da consulta de chamados realizada pela API do Salesforce.
+     * Trata a resposta de uma consulta feita para a API do Salesforce.
      *
      * @param response Resposta da integração.
+     * @param classeMapeamento Classe utilizada para fazer o mapeamento do json.
+     * @param <T> Classe utilizada para mapear a resposta em json da integração.
      * @return Objeto com o resultado da consulta.
      */
-    private ConsultaChamadosVo tratarRespostaConsultaChamados(CloseableHttpResponse response) {
+    private <T> List<T> tratarRespostaConsultaSalesforce(CloseableHttpResponse response, Class<T> classeMapeamento) {
         prepararResposta(response);
         if (this.statusCode == HttpStatus.OK.value()) {
             if (this.responseBody.get(CAMPO_DONE) != null && this.responseBody.get(CAMPO_DONE).asBoolean(false)) {
-                return UtilitarioJson.toObjectWithConfigureFailOnUnknowProperties(this.responseBody.toString(), ConsultaChamadosVo.class, false);
-            } else {
-                return new ConsultaChamadosVo();
+                return UtilitarioJson.toListObjectWithConfigureFailOnUnknowProperties(this.responseBody.get(CAMPO_REGISTROS).toString(), classeMapeamento, false);
             }
+            return new ArrayList<>();
         } else {
             throw new ExcecaoBoleiaRuntime(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("Erro.SERVICO_EXTERNO_INDISPONIVEL"));
         }
     }
 
     /**
-     * Trata a resposta do count de chamados.
+     * Trata a resposta do count de uma consulta do salesforce.
      *
      * @param response Response da integração.
      * @return Total de itens encontrados.
      */
-    private Integer tratarRespostaCountChamados(CloseableHttpResponse response) {
+    private Integer tratarRespostaCountConsultaSalesforce(CloseableHttpResponse response) {
         prepararResposta(response);
         if (this.statusCode == HttpStatus.OK.value()) {
             if (this.responseBody.get(CAMPO_DONE) != null && this.responseBody.get(CAMPO_DONE).asBoolean(false)) {
@@ -567,6 +706,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
         parametros.put("numeroChamado", tratarParametroLikeNulo(filtro.getNumeroChamado()));
         parametros.put("status", tratarParametroLikeNulo(filtro.getStatus()));
         parametros.put("solicitante", obterParametroSolicitante(filtro));
+        parametros.put("emailIntegracao", emailIntegracao);
 
         List<String> contatos = obterContatosParaConsulta(filtro);
         if(filtro.isContatoFrota() || filtro.isContatoInterno()) {

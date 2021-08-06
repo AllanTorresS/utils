@@ -13,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -60,6 +61,9 @@ public class ContaBeneficiosFrota implements IPersistente, IPertenceFrota {
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataAtualizacao;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "contaBeneficiosFrota")
+    private List<PedidoCreditoBeneficios> pedidoCreditoBeneficios;
+
     @Version
     @Column(name = "NO_VERSAO")
     private Long versao;
@@ -104,6 +108,14 @@ public class ContaBeneficiosFrota implements IPersistente, IPertenceFrota {
 
     public void setDataAtualizacao(Date dataAtualizacao) {
         this.dataAtualizacao = dataAtualizacao;
+    }
+
+    public List<PedidoCreditoBeneficios> getPedidoCreditoBeneficios() {
+        return pedidoCreditoBeneficios;
+    }
+
+    public void setPedidoCreditoBeneficios(List<PedidoCreditoBeneficios> pedidoCreditoBeneficios) {
+        this.pedidoCreditoBeneficios = pedidoCreditoBeneficios;
     }
 
     public Long getVersao() {
