@@ -51,8 +51,7 @@ public class ContaBeneficiosFrotaSd {
                 ? frota.getLimiteCreditoBeneficiosFrota().getValorIndiceLimite()
                 : INDICE_PADRAO_LIMITE_BENEFICIOS;
 
-        contaBeneficiosFrota.setSaldo(frota.getSaldo().getLimiteCredito().multiply(indiceLimite));
-
+        contaBeneficiosFrota.setSaldo(BigDecimal.ZERO);
         contaBeneficiosFrota.setDataCriacao(ambiente.buscarDataAmbiente());
         contaBeneficiosFrota.setDataAtualizacao(ambiente.buscarDataAmbiente());
         return contaBeneficiosFrota;
@@ -65,7 +64,7 @@ public class ContaBeneficiosFrotaSd {
      * @return DTO com todos os valores necessários.
      */
     public ContaBeneficiosFrotaVo obterValoresContaBeneficioFrota(ContaBeneficiosFrota conta){
-        List<PedidoCreditoBeneficios> pedidosPendentes = repositorioPedidoCreditoBeneficios.obterPedidosCreditoBeneficioAbertosPorFrota(conta.getFrota().getId());
+        List<PedidoCreditoBeneficios> pedidosPendentes = repositorioPedidoCreditoBeneficios.obterPedidosCreditoBeneficioAbertos();
 
         BigDecimal indiceLimiteDisponivel = conta.getFrota().getLimiteCreditoBeneficiosFrota() != null
                 ? conta.getFrota().getLimiteCreditoBeneficiosFrota().getValorIndiceLimite()
