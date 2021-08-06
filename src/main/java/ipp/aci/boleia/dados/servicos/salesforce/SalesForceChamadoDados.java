@@ -12,10 +12,10 @@ import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.salesforce.CancelamentoChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.ChamadoVo;
-import ipp.aci.boleia.dominio.vo.salesforce.ConsultaChamadosVo;
 import ipp.aci.boleia.dominio.vo.salesforce.ContatoSalesforceVo;
 import ipp.aci.boleia.dominio.vo.salesforce.CriacaoChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.CriacaoContatoVo;
+import ipp.aci.boleia.dominio.vo.salesforce.DocumentoSalesforceVo;
 import ipp.aci.boleia.dominio.vo.salesforce.EdicaoChamadoVo;
 import ipp.aci.boleia.dominio.vo.salesforce.FiltroConsultaChamadosVo;
 import ipp.aci.boleia.dominio.vo.salesforce.PicklistVo;
@@ -35,11 +35,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -159,6 +159,8 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
             "      MotivoSolicitacao__c=':modulo'";
 
     private static final String OBTER_ID_CONTATO = "SELECT Id FROM Contact WHERE IdExterno__c=':idExterno'";
+
+    private static final String OBTER_EXTENSAO_ANEXO = "SELECT FileExtension FROM ContentDocument WHERE Id=':idAnexo'";
 
     @Value("${salesforce.chamados.authorization.client.id}")
     private String clientId;
@@ -423,7 +425,7 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     }
 
     @Override
-    public byte[] downloadAnexo(String idSalesforce) {
+    public byte[] obterAnexo(String idSalesforce) {
         String urlFormatado = format(urlDownloadArquivo, idSalesforce);
 
         prepararRequisicao(urlFormatado, null);
@@ -443,6 +445,13 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
     public void criarContato(CriacaoContatoVo vo) {
         prepararRequisicao(urlCriarContato, vo);
         enviarRequisicaoPost(this::trataRespostaCriacao);
+    }
+
+    @Override
+    public DocumentoSalesforceVo obterDocumentoSalesforce(String idSalesforce) {
+        Map<String, Object> parametros = Collections.singletonMap("idAnexo", idSalesforce);
+        List<DocumentoSalesforceVo> documentos = executarQuerySalesforce(formatarQueryParaConsulta(OBTER_EXTENSAO_ANEXO, parametros), DocumentoSalesforceVo.class);
+        return documentos.stream().findFirst().orElse(null);
     }
 
     /**
