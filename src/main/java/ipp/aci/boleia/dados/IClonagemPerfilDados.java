@@ -19,6 +19,12 @@ public interface IClonagemPerfilDados extends IRepositorioBoleiaDados<ClonagemPe
      */
     List<ClonagemPerfil> obterClonagensPerfisTemporariosPorUsuario(Long idUsuario);
 
+    /**
+     * Pesquisa as clonagens de perfis temporários de um usuário
+     *
+     * @param idUsuario o id do Usuario
+     * @return Uma lista de ClonagemPerfil que retorna somente perfis temporários
+     */
     List<ClonagemPerfil> obterClonagensSomentePerfisTemporariosPorUsuario(Long idUsuario);
 
 
