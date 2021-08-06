@@ -16,6 +16,7 @@ import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,10 @@ import java.util.List;
  */
 @Repository
 public class OracleFluxoAbastecimentoMotoristaDados extends OracleRepositorioBoleiaDados<FluxoAbastecimentoMotoristaConfig> implements IFluxoAbastecimentoMotoristaDados {
+
+    private  static final String LISTA_FLUXOS_POR_ID_MOTORISTA_INCLUINDO_EXCLUIDOS =
+            "SELECT fm FROM FluxoAbastecimentoMotoristaConfig fm " +
+                    "WHERE fm.motorista.id = :idMotorista";
 
     @Autowired
     private UtilitarioAmbiente ambiente;
@@ -44,6 +49,13 @@ public class OracleFluxoAbastecimentoMotoristaDados extends OracleRepositorioBol
     @Override
     public List<FluxoAbastecimentoMotoristaConfig> obterFluxosPorMotorista(Motorista motorista) {
         return pesquisar((ParametroOrdenacaoColuna) null, new ParametroPesquisaIgual("motorista.id", motorista.getId()));
+    }
+
+    @Override
+    public List<FluxoAbastecimentoMotoristaConfig> obterFluxosPorMotoristaIncluindoExcluidos(Motorista motorista) {
+        Query query = getGerenciadorDeEntidade().createQuery(LISTA_FLUXOS_POR_ID_MOTORISTA_INCLUINDO_EXCLUIDOS);
+        query.setParameter("idMotorista", motorista.getId());
+        return query.getResultList();
     }
 
     @Override
