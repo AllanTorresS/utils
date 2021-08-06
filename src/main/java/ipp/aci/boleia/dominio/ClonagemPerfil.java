@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
@@ -55,8 +56,9 @@ public class ClonagemPerfil implements IPersistente{
     private Boolean isDefinitiva;
 
     @NotNull
-    @Column(name = "ID_MOTIVO")
-    private Integer motivo;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_MOTIVO_CLONAGEM")
+    private MotivoClonagem motivo;
 
     @NotNull
     @Size(max = 1080)
@@ -116,14 +118,6 @@ public class ClonagemPerfil implements IPersistente{
         this.isDefinitiva = isDefinitiva;
     }
 
-    public Integer getMotivo() {
-        return motivo;
-    }
-
-    public void setMotivo(Integer motivo) {
-        this.motivo = motivo;
-    }
-
     public String getDescricao() {
         return descricao;
     }
@@ -162,5 +156,13 @@ public class ClonagemPerfil implements IPersistente{
 
     public void setVersao(Long versao) {
         this.versao = versao;
+    }
+
+    public MotivoClonagem getMotivo() {
+        return motivo;
+    }
+
+    public void setMotivo(MotivoClonagem motivo) {
+        this.motivo = motivo;
     }
 }
