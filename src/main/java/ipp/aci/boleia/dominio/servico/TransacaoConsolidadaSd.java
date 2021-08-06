@@ -1015,41 +1015,35 @@ public class TransacaoConsolidadaSd {
         //calcula o total de abastecimentos associados ao ciclo
         transacaoConsolidada.setQuantidadeAbastecimentos((long) calcularQuantidadeDeTransacoesAssociadasACiclo(transacaoConsolidada));
 
-        //Obtem todas as notas e justificativas associadas a abastecimentos postergados para o ciclo e realizados na vigencia do ciclo que nao foram postergados para outro ciclo
-        List<NotaFiscal> notas = repositorioNF.obterNotasEJustificativasPorAbastecimentos(abastecimentosParaCalculoDoValorEmitido.stream().map(AutorizacaoPagamento::getId).collect(Collectors.toList()));
+        //Lista somente os abastecimentos que tem justificativa associada
+        List<AutorizacaoPagamento> abastecimentosComJustificativa =
+                repositorioAutorizacaoPgto.obterAbastecimentosComJustificativaAssociadaPorAbastecimentos(
+                        abastecimentosParaCalculoDoValorEmitido.stream().map(AutorizacaoPagamento::getId).collect(Collectors.toList()));
+
+        //Lista somente os abastecimentos que não tem justificativa associada
+        List<AutorizacaoPagamento> abastecimentosSemJustificativa = abastecimentosParaCalculoDoValorEmitido.stream()
+                .filter(abastecimento -> !abastecimentosComJustificativa.stream().map(AutorizacaoPagamento::getId).collect(Collectors.toList()).contains(abastecimento.getId())).collect(Collectors.toList());
+        BigDecimal totalValoresEmitidos;
+
+        //Obtem todas as notas associadas a abastecimentos postergados para o ciclo e realizados na vigencia do ciclo que nao foram postergados para outro ciclo
+        // e que não possuem justificativas
+        List<NotaFiscal> notas = repositorioNF.obterNotaDeVariosAbastecimentos(abastecimentosSemJustificativa.stream().map(AutorizacaoPagamento::getId).collect(Collectors.toList()));
 
         //Obtem o valor total das notas fiscais emitidas no ciclo
         //Apesar de as justificativas se comportarem como NFs emitidas, essa soma nao as contempla
         //Para as justificativas, o valor da NF consta como zero
         BigDecimal valoresDeAbastecimentosComNotasFiscaisEmitidas = UtilitarioCalculo.somarValoresLista(notas, NotaFiscal::getValorTotal);
 
-        //Lista somente os abastecimentos que tem justificativa associada
-        List<AutorizacaoPagamento> abastecimentosComJustificativa =
-                repositorioAutorizacaoPgto.obterAbastecimentosComJustificativaAssociadaPorAbastecimentos(
-                        abastecimentosParaCalculoDoValorEmitido.stream().map(AutorizacaoPagamento::getId).collect(Collectors.toList()));
-
-        BigDecimal totalValoresEmitidos;
-
         //caso haja abastecimentos com justificativa associada no ciclo, as contempla no valor emitido
         if(!abastecimentosComJustificativa.isEmpty()){
 
             //Obtem o valor total dos abastecimentos que tem justificativa associada
-            BigDecimal valoresTotaisDeAbastecimentosComJustificativa = UtilitarioCalculo.somarValoresLista(
+            BigDecimal valorTotalDeAbastecimentosComJustificativa = UtilitarioCalculo.somarValoresLista(
                     abastecimentosComJustificativa, AutorizacaoPagamento::getValorTotal);
-
-            //Obtem o valor emitido (valor contemplado em NF(s)) dos abastecimentos que tem justificativa associada
-            BigDecimal valoresEmitidosDeAbastecimentosComJustificativa = UtilitarioCalculo.somarValoresLista(
-                    abastecimentosComJustificativa, AutorizacaoPagamento::getValorEmitido);
-
-            //Calcula o valor justificado dos abastecimentos do ciclo
-            //valor justificado = valor total - valor emitido
-            BigDecimal valoresJustificados =
-                    valoresTotaisDeAbastecimentosComJustificativa.
-                            subtract(valoresEmitidosDeAbastecimentosComJustificativa);
 
             //Soma os valores emitidos por meio de NFs e os valores justificados para os abastecimentos do ciclo
             totalValoresEmitidos =
-                    valoresDeAbastecimentosComNotasFiscaisEmitidas.add(valoresJustificados);
+                    valoresDeAbastecimentosComNotasFiscaisEmitidas.add(valorTotalDeAbastecimentosComJustificativa);
 
         }else{
             //o valor emitido total e somente referente as NFs emitidas, pois nao ha justificativas associadas aos abastecimentos do ciclo
