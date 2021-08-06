@@ -1273,14 +1273,6 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     }
 
     /**
-     * Metodo que verifica se a frota precisa comprar credito antes de utilizar o sistema
-     * @return true, caso a frota seja pre paga e nao tenha realizado uma primeira compra, false caso contrario
-     */
-    public Boolean exigeCompraCredito() {
-        return this.modoPagamento.equals(ModalidadePagamento.PRE_PAGO.getValue()) && (this.primeiraCompra == null || !this.primeiraCompra);
-    }
-
-    /**
      * Metodo que verifica se a frota precisa aceitar o termo de compromisso antes de utilizar o sistema
      * @return true, caso a frota seja pre paga e nao tenha aceitado o termo de compromisso, false caso contrario
      */
