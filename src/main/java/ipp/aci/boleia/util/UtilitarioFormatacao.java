@@ -301,6 +301,16 @@ public final class UtilitarioFormatacao {
     }
 
     /**
+     * Formata um decimal para apresentação na tela para o formato de porcentagem sem virgula.
+     *
+     * @param decimal valor decimal
+     * @return valor formatado
+     */
+    public static String formatarDecimalPercentualSemVirgula(BigDecimal decimal) {
+        return formatarDecimal(decimal, ConstantesFormatacao.FORMATO_PERCENTUAL_SEM_VRIGULA);
+    }
+
+    /**
      * Formata um decimal para apresentação na tela para o formato de distancia em kilometros
      *
      * @param decimal valor decimal
