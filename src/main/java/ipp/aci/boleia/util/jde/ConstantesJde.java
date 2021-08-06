@@ -102,7 +102,7 @@ public final class ConstantesJde {
     public static final String CONSULTA_NF_TIPO_DOCUMENTO = "VK";
 
     public static final String FATURA_XP_TIPO_DOCUMENTO = "F7";
-    public static final BigDecimal FATURA_XP_CODIGO_JDE_CLIENTE = new BigDecimal(8982668);
+    public static final BigDecimal FATURA_XP_CODIGO_JDE_CLIENTE = new BigDecimal(8232093);
 
     public static final Long VOUCHER_XP_CENARIO = 187L;
     public static final Long VOUCHER_XP_CODIGO_JDE_FORNECEDOR = 8982668L;
