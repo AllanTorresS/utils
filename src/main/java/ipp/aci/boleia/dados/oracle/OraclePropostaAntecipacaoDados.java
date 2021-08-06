@@ -17,6 +17,7 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.vo.EnumVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaAntecipacaoVo;
+import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -95,8 +96,8 @@ public class OraclePropostaAntecipacaoDados extends OracleRepositorioBoleiaDados
 
         if(filtro.getDe() != null && filtro.getAte() != null) {
             clausulaPeriodo = " AND PA.dataCriacao BETWEEN :de AND :ate ";
-            parametros.add(new ParametroPesquisaIgual("de", filtro.getDe()));
-            parametros.add(new ParametroPesquisaIgual("ate", filtro.getAte()));
+            parametros.add(new ParametroPesquisaIgual("de", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe())));
+            parametros.add(new ParametroPesquisaIgual("ate", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte())));
         }
 
         if(usuarioLogado.isInterno() && usuarioLogado.possuiFrotasAssociadas()) {
