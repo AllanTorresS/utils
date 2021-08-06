@@ -9,6 +9,13 @@ import ipp.aci.boleia.dominio.Motorista;
 public interface IFilaMotoristaDados {
 
     /**
+     * Envia o {@link Motorista} para a fila de anonimização
+     *
+     * @param motorista O motorista a ser excluído
+     */
+    void enviarMotoristaParaFilaDeAnonimizacao(Motorista motorista);
+
+    /**
      * Envia o {@link Motorista} para a fila de exclusão
      *
      * @param motorista O motorista a ser excluído

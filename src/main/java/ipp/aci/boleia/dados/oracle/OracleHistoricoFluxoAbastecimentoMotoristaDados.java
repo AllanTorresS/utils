@@ -11,6 +11,7 @@ import ipp.aci.boleia.util.negocio.ParametrosPesquisaBuilder;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
+import java.util.List;
 
 import static ipp.aci.boleia.util.UtilitarioLambda.obterPrimeiroObjetoDaLista;
 
@@ -34,5 +35,10 @@ public class OracleHistoricoFluxoAbastecimentoMotoristaDados extends OracleRepos
                 new ParametroPesquisaDataMenorOuIgual("dataAlteracao", dataRequisicao)
         );
         return obterPrimeiroObjetoDaLista(pesquisar(new ParametroOrdenacaoColuna("dataAlteracao", Ordenacao.DECRESCENTE), parametros.buildArray()));
+    }
+
+    @Override
+    public List<HistoricoFluxoAbastecimentoMotoristaConfig> obterFluxosPorMotorista(Motorista motorista) {
+        return pesquisar((ParametroOrdenacaoColuna) null, new ParametroPesquisaIgual("motorista.id", motorista.getId()));
     }
 }

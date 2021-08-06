@@ -120,6 +120,9 @@ public class ConfiguracoesAwsSqs {
     private String nomeFilaProcessarCicloPostergacao;
 
     @Value("${aws.sqs.anonimizacao.motorista}")
+    private String nomeFilaAnonimizacaMotorista;
+
+    @Value("${aws.sqs.exclusao.motorista}")
     private String nomeFilaExclusaoMotorista;
 
     /**
@@ -174,6 +177,7 @@ public class ConfiguracoesAwsSqs {
                         ,nomeFilaTransacaoConsolidacaoAgFrete
                         ,nomeFilaPostergacaoAbastecimentos
                         ,nomeFilaProcessarCicloPostergacao
+                        ,nomeFilaAnonimizacaMotorista
                         ,nomeFilaExclusaoMotorista
                         ,nomeFilaProcessarPropostaAntecipacao);
         criaFilaSeNaoExistem(amazonSQSAsync, nomeFilas);

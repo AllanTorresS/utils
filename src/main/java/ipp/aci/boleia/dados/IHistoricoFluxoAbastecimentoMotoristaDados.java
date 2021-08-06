@@ -4,6 +4,7 @@ import ipp.aci.boleia.dominio.HistoricoFluxoAbastecimentoMotoristaConfig;
 import ipp.aci.boleia.dominio.Motorista;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Contrato para implementacao de repositorios de entidades HistoricoFluxoAbastecimentoMotoristaConfig
@@ -18,4 +19,12 @@ public interface IHistoricoFluxoAbastecimentoMotoristaDados extends IRepositorio
      * @return configuração do fluxo com valores referentes a data parametrizada
      */
     HistoricoFluxoAbastecimentoMotoristaConfig obterFluxoPorData(Motorista motorista, Date data);
+
+    /**
+     * Obtém registros da configuração de fluxo.
+     *
+     * @param motorista da configuração de fluxo
+     * @return configurações do fluxo
+     */
+    List<HistoricoFluxoAbastecimentoMotoristaConfig> obterFluxosPorMotorista(Motorista motorista);
 }

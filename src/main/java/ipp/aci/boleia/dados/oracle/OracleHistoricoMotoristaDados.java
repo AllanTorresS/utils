@@ -2,6 +2,7 @@ package ipp.aci.boleia.dados.oracle;
 
 import ipp.aci.boleia.dados.IHistoricoMotoristaDados;
 import ipp.aci.boleia.dominio.HistoricoMotorista;
+import ipp.aci.boleia.dominio.Motorista;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
@@ -36,5 +37,12 @@ public class OracleHistoricoMotoristaDados extends OracleRepositorioBoleiaDados<
         parametros.add(new ParametroPesquisaIgual("motorista.id", cdMotorista));
         parametros.add(new ParametroPesquisaDataMenorOuIgual("dataAlteracao", data));
         return obterPrimeiroObjetoDaLista(pesquisar(new ParametroOrdenacaoColuna("dataAlteracao", Ordenacao.DECRESCENTE), parametros.toArray(new ParametroPesquisa[parametros.size()])));
+    }
+
+    @Override
+    public List<HistoricoMotorista> obterTodosPorMotorista(Motorista motorista) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaIgual("motorista.id", motorista.getId()));
+        return pesquisar(new ParametroOrdenacaoColuna("dataAlteracao", Ordenacao.DECRESCENTE), parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 }

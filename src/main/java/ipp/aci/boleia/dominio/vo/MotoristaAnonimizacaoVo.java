@@ -4,6 +4,7 @@ import ipp.aci.boleia.dominio.AutorizacaoPagamento;
 import ipp.aci.boleia.dominio.AutorizacaoPagamentoEdicao;
 import ipp.aci.boleia.dominio.DispositivoMotorista;
 import ipp.aci.boleia.dominio.DispositivoMotoristaPedido;
+import ipp.aci.boleia.dominio.FluxoAbastecimentoMotoristaConfig;
 import ipp.aci.boleia.dominio.Motorista;
 
 import java.util.Date;
@@ -59,6 +60,7 @@ public class MotoristaAnonimizacaoVo {
     private List<Long> idsDispositivoMotoristaPedido;
     private List<AutorizacaoPagamentoAnonimizacaoVo> autorizacoesPagamento;
     private List<AutorizacaoPagamentoEdicaoAnonimizacaoVo> autorizacoesPagamentoEdicao;
+    private List<FluxoAbastecimentoMotoristaConfigAnonimizacaoVo> fluxoAbastecimentoMotoristaConfigs;
     private Date dataInativacao;
 
     /**
@@ -75,8 +77,9 @@ public class MotoristaAnonimizacaoVo {
      * @param autorizacoesPagamentoEdicao as autorizaçãoEdições do motorista
      * @param dispositivosMotorista os dispositivos do motorista
      * @param dispositivoMotoristaPedidos os dispositivos pedido do motorista
+     * @param fluxoAbastecimentoMotoristaConfigs os fluxos de abastecimento de exceção configurados para o motorista
      */
-    public MotoristaAnonimizacaoVo(Motorista motorista, List<AutorizacaoPagamento> autorizacaoPagamentos, List<AutorizacaoPagamentoEdicao> autorizacoesPagamentoEdicao, List<DispositivoMotorista> dispositivosMotorista, List<DispositivoMotoristaPedido> dispositivoMotoristaPedidos ){
+    public MotoristaAnonimizacaoVo(Motorista motorista, List<AutorizacaoPagamento> autorizacaoPagamentos, List<AutorizacaoPagamentoEdicao> autorizacoesPagamentoEdicao, List<DispositivoMotorista> dispositivosMotorista, List<DispositivoMotoristaPedido> dispositivoMotoristaPedidos, List<FluxoAbastecimentoMotoristaConfig> fluxoAbastecimentoMotoristaConfigs){
         if(motorista == null){
             return;
         }
@@ -84,6 +87,7 @@ public class MotoristaAnonimizacaoVo {
         this.usuarioMotorista = new UsuarioMotoristaAnonimizacaoVo(motorista.getUsuarioMotorista());
         this.autorizacoesPagamento = autorizacaoPagamentos != null ? autorizacaoPagamentos.stream().map(a -> new AutorizacaoPagamentoAnonimizacaoVo(a)).collect(Collectors.toList()): null;
         this.autorizacoesPagamentoEdicao = autorizacaoPagamentos != null ? autorizacoesPagamentoEdicao.stream().map(a -> new AutorizacaoPagamentoEdicaoAnonimizacaoVo(a)).collect(Collectors.toList()): null;
+        this.fluxoAbastecimentoMotoristaConfigs = fluxoAbastecimentoMotoristaConfigs != null ? fluxoAbastecimentoMotoristaConfigs.stream().map(FluxoAbastecimentoMotoristaConfigAnonimizacaoVo::new).collect(Collectors.toList()) : null;
         this.idsDispositivoMotorista = dispositivosMotorista != null ? dispositivosMotorista.stream().map(d -> d.getId()).collect(Collectors.toList()) : null;
         this.idsDispositivoMotoristaPedido = dispositivoMotoristaPedidos != null ? dispositivoMotoristaPedidos.stream().map(d -> d.getId()).collect(Collectors.toList()) : null;
         this.id = motorista.getId();
@@ -479,6 +483,14 @@ public class MotoristaAnonimizacaoVo {
 
     public void setAutorizacoesPagamentoEdicao(List<AutorizacaoPagamentoEdicaoAnonimizacaoVo> autorizacoesPagamentoEdicao) {
         this.autorizacoesPagamentoEdicao = autorizacoesPagamentoEdicao;
+    }
+
+    public List<FluxoAbastecimentoMotoristaConfigAnonimizacaoVo> getFluxoAbastecimentoMotoristaConfigs() {
+        return fluxoAbastecimentoMotoristaConfigs;
+    }
+
+    public void setFluxoAbastecimentoMotoristaConfigs(List<FluxoAbastecimentoMotoristaConfigAnonimizacaoVo> fluxoAbastecimentoMotoristaConfigs) {
+        this.fluxoAbastecimentoMotoristaConfigs = fluxoAbastecimentoMotoristaConfigs;
     }
 
     public Date getDataInativacao() {
