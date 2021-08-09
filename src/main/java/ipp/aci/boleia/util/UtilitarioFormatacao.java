@@ -19,9 +19,6 @@ public final class UtilitarioFormatacao {
 
     public static final int TAMANHO_CPF = 11;
     public static final int TAMANHO_CNPJ = 14;
-    private static final int VALOR_INICIO_CAPTURA_DDD =1;
-    private static final int VALOR_FINAL_CAPTURA_DDD =3;
-    private static final int VALOR_INICIO_CAPTURA_NUMERO_TELEFONE =4;
 
     public static final String TO_LOWER = "LOWER(%s)";
 
@@ -719,25 +716,5 @@ public final class UtilitarioFormatacao {
     public static String formatarChaveEnum(String... items) {
         final String SEPARADOR = "_";
         return String.join(SEPARADOR, Arrays.stream(items).map(i -> i.toUpperCase()).collect(Collectors.toList()));
-    }
-    
-    /**
-     * Obtem o ddd  passado junto com o numero do telefone
-     * @param numeroTelefone
-     * @return numero do ddd
-     */
-    public static Integer recuperarDDDTelefone(String numeroTelefone) {
-    	String dddTelefone = numeroTelefone.substring(VALOR_INICIO_CAPTURA_DDD,VALOR_FINAL_CAPTURA_DDD);
-    	return Integer.valueOf(dddTelefone);
-    }
-    
-    /**
-     * Obtem  o numero do telefone
-     * @param numeroTelefone
-     * @return numero 
-     */
-    public static Long recuperarNumeroTelefone(String numeroTelefone) {
-    	String numero = numeroTelefone.substring(VALOR_INICIO_CAPTURA_NUMERO_TELEFONE).replace("-","").trim();
-    	return Long.valueOf(numero);
     }
 }
