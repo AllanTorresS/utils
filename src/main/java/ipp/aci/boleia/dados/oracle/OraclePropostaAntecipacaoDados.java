@@ -132,16 +132,19 @@ public class OraclePropostaAntecipacaoDados extends OracleRepositorioBoleiaDados
                         " AND RA.statusIntegracao = " + StatusIntegracaoReembolsoJde.ANTECIPADO.getValue() + " ";
                 break;
             case AGUARDANDO_ACEITE:
-                clausulaStatus = " AND PA.isAceito IS NULL AND TRUNC(RA.dataVencimentoPgto) <= TRUNC(:dataAtual) ";
+                clausulaStatus = " AND PA.isAceito IS NULL AND TRUNC(:dataAtual) < TRUNC(RA.dataVencimentoPgto) ";
                 break;
             case CANCELADO_CLIENTE:
                 clausulaStatus = " AND PA.isAceito = false ";
                 break;
             case CANCELADO_SEM_RESPOSTA:
-                clausulaStatus = " AND PA.isAceito IS NULL AND TRUNC(RA.dataVencimentoPgto) > TRUNC(:dataAtual) ";
+                clausulaStatus = " AND PA.isAceito IS NULL AND TRUNC(:dataAtual) >= TRUNC(RA.dataVencimentoPgto) ";
                 break;
             case EM_ANDAMENTO:
-                clausulaStatus = " AND PA.isAceito = true AND TRUNC(RA.dataVencimentoPgto) <= TRUNC(:dataAtual) ";
+                clausulaStatus = " AND PA.isAceito = true" +
+                        " AND RA.statusIntegracao = " + StatusIntegracaoReembolsoJde.REALIZADO.getValue() +
+                        " AND CXP.statusIntegracao = " + StatusIntegracaoJde.REALIZADO.getValue() +
+                        " AND RXP.statusIntegracao = " + StatusIntegracaoJde.REALIZADO.getValue() + " ";
                 break;
             case PENDENTE:
                 clausulaStatus = " AND PA.isAceito = true AND (RA.statusIntegracao IS NULL OR RA.statusIntegracao IN (" + StatusIntegracaoReembolsoJde.ERRO_ENVIO.getValue() +
