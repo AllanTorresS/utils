@@ -1336,10 +1336,10 @@ public class TransacaoConsolidadaSd {
      * @param transacaoConsolidada Transação consolidada que será verificada.
      * @return True, caso possa antecipar.
      */
-    public boolean podeRealizarAntecipacaoReembolso(TransacaoConsolidada transacaoConsolidada) {
-        boolean possuiAutorizacaoPagamentoDisponivelParaAntecipar = transacaoConsolidada.getAutorizacoesPagamentoAssociadas().stream().anyMatch(a -> autorizacaoPagamentoSd.estaDisponivelParaAntecipacaoReembolso(a));
+    public Boolean podeRealizarAntecipacaoReembolso(TransacaoConsolidada transacaoConsolidada) {
+        Boolean possuiAutorizacaoPagamentoDisponivelParaAntecipar = transacaoConsolidada.getAutorizacoesPagamentoAssociadas().stream().anyMatch(a -> autorizacaoPagamentoSd.estaDisponivelParaAntecipacaoReembolso(a));
         return !transacaoConsolidada.esta(FECHADA) &&
-                !transacaoConsolidada.possuiAntecipacaoRealizada() &&
+                !transacaoConsolidada.possuiAntecipacaoSolucaoRealizada() &&
                 possuiAutorizacaoPagamentoDisponivelParaAntecipar;
     }
 }
