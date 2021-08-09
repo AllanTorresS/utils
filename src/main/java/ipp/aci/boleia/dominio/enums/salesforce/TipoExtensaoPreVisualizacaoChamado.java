@@ -1,15 +1,16 @@
 package ipp.aci.boleia.dominio.enums.salesforce;
 
 /**
- * Enumera os tipos de extensão de documentos do salesforce manipulados pelo sistema.
+ * Enumera os tipos de extensão utilizados para pré-visualização de anexo do chamado.
  *
  * @author pedro.silva
  */
-public enum TipoExtensaoDocumentoSalesforce {
+public enum TipoExtensaoPreVisualizacaoChamado {
 
     JPG("jpg", "image/jpg"),
     JPEG("jpeg", "image/jpeg"),
     PNG("png", "image/png"),
+    GIF("gif", "image/gif"),
     PDF("pdf", "application/pdf");
 
     private String extensao;
@@ -21,7 +22,7 @@ public enum TipoExtensaoDocumentoSalesforce {
      * @param extensao String para representar a extensão.
      * @param contentType Content type da extensão.
      */
-    TipoExtensaoDocumentoSalesforce(String extensao, String contentType) {
+    TipoExtensaoPreVisualizacaoChamado(String extensao, String contentType) {
         this.extensao = extensao;
         this.contentType = contentType;
     }
@@ -40,8 +41,8 @@ public enum TipoExtensaoDocumentoSalesforce {
      * @param extensao Extensão usada na busca.
      * @return Item do enum encontrado.
      */
-    public static TipoExtensaoDocumentoSalesforce obterPorExtensao(String extensao) {
-        for(TipoExtensaoDocumentoSalesforce tipoExtensao : TipoExtensaoDocumentoSalesforce.values()) {
+    public static TipoExtensaoPreVisualizacaoChamado obterPorExtensao(String extensao) {
+        for(TipoExtensaoPreVisualizacaoChamado tipoExtensao : TipoExtensaoPreVisualizacaoChamado.values()) {
             if(tipoExtensao.getExtensao().equals(extensao)) {
                 return tipoExtensao;
             }
