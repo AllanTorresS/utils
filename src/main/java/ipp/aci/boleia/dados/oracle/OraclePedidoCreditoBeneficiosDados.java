@@ -6,7 +6,6 @@ import ipp.aci.boleia.dominio.enums.StatusPedidoCreditoBeneficios;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDiferente;
-import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -26,12 +25,10 @@ public class OraclePedidoCreditoBeneficiosDados extends OracleRepositorioBoleiaD
     }
 
     @Override
-    public List<PedidoCreditoBeneficios> obterPedidosCreditoBeneficioAbertosPorFrota(Long idFrota) {
+    public List<PedidoCreditoBeneficios> obterPedidosCreditoBeneficioAbertos() {
         List<ParametroPesquisa> parametros = new ArrayList<>();
 
-        parametros.add(new ParametroPesquisaIgual("frota", idFrota));
         parametros.add(new ParametroPesquisaDiferente("status", StatusPedidoCreditoBeneficios.PAGO.getValue()));
-
         return pesquisar((ParametroOrdenacaoColuna) null, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 

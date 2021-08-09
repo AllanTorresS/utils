@@ -51,15 +51,12 @@ public class PedidoCreditoBeneficios implements IPersistente, IPertenceFrota {
     @Column(name = "VA_PEDIDO")
     private BigDecimal valorPedido;
 
-    @NotNull
     @Column(name = "NO_DOC_JDE")
     private Long numeroDocumento;
 
-    @NotNull
     @Column(name = "NM_CIA_DOC")
     private String ciaDocumento;
 
-    @NotNull
     @Column(name = "ID_STATUS")
     private Integer status;
 
