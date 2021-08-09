@@ -10,12 +10,11 @@ import java.util.List;
 public interface IPedidoCreditoBeneficiosDados extends IRepositorioBoleiaDados<PedidoCreditoBeneficios> {
 
     /**
-     * Obtém os pedidos de crédito para benefícios de uma frota que estejam Pendentes ou Atrasados.
+     * Obtém os pedidos de crédito para benefícios que estejam Pendentes ou Atrasados da frota autenticada.
      *
-     * @param idFrota Id da frota pesquisada.
      * @return Retorna os pedidos da frota.
      */
-    List<PedidoCreditoBeneficios> obterPedidosCreditoBeneficioAbertosPorFrota(Long idFrota);
+    List<PedidoCreditoBeneficios> obterPedidosCreditoBeneficioAbertos();
 
     /**
      * Obtém todos os pedidos de crédito para benefícios que estejam Pendentes ou Atrasados.
