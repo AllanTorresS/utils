@@ -307,7 +307,7 @@ public final class UtilitarioFormatacao {
      * @return valor formatado
      */
     public static String formatarDecimalPercentualSemVirgula(BigDecimal decimal) {
-        return formatarDecimal(decimal, ConstantesFormatacao.FORMATO_PERCENTUAL_SEM_VRIGULA);
+        return formatarDecimal(decimal, ConstantesFormatacao.FORMATO_PERCENTUAL_SEM_VIRGULA);
     }
 
     /**

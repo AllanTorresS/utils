@@ -9,7 +9,7 @@ public final class ConstantesFormatacao {
     public static final String FORMATO_MOEDA_REAL_SEM_PREFIXO = "###,##0.";
     public static final String FORMATO_MOEDA_REAL_COM_SINAL = "+R$ ###,##0.00;-R$ ";
     public static final String FORMATO_PERCENTUAL = "##0.00%";
-    public static final String FORMATO_PERCENTUAL_SEM_VRIGULA = "##0%";
+    public static final String FORMATO_PERCENTUAL_SEM_VIRGULA = "##0%";
     public static final String FORMATO_KILOMETROS = "###,### Km";
     public static final String FORMATO_HORAS = "###,##0.00 H";
     public static final String FORMATO_LITROS = "###,##0.000 L";

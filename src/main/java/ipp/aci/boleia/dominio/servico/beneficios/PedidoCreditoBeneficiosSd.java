@@ -6,6 +6,7 @@ import ipp.aci.boleia.dados.ISaldoFrotaDados;
 import ipp.aci.boleia.dominio.SaldoFrota;
 import ipp.aci.boleia.dominio.beneficios.ContaBeneficiosFrota;
 import ipp.aci.boleia.dominio.beneficios.PedidoCreditoBeneficios;
+import ipp.aci.boleia.dominio.enums.StatusPedidoCreditoBeneficios;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -45,6 +46,8 @@ public class PedidoCreditoBeneficiosSd {
         pedidoCreditoBeneficios.setValorPedido(valor);
         pedidoCreditoBeneficios.setDataPedido(ambiente.buscarDataAmbiente());
         pedidoCreditoBeneficios.setDataAtualizacao(ambiente.buscarDataAmbiente());
+        pedidoCreditoBeneficios.setStatus(StatusPedidoCreditoBeneficios.PENDENTE.getValue());
+        repositorio.armazenar(pedidoCreditoBeneficios);
         contaBeneficiosFrota.setSaldo(contaBeneficiosFrota.getSaldo().add(valor));
         contaBeneficiosFrota.setDataAtualizacao(ambiente.buscarDataAmbiente());
         repositorioContaBeneficiosFrota.armazenar(contaBeneficiosFrota);
