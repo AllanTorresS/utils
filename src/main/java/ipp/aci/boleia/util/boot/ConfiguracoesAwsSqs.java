@@ -125,6 +125,9 @@ public class ConfiguracoesAwsSqs {
     @Value("${aws.sqs.exclusao.motorista}")
     private String nomeFilaExclusaoMotorista;
 
+    @Value("${aws.sqs.anonimizacao-exclusao.motorista-auditoria}")
+    private String nomeFilaAnonimizacaoExclusaoMotoristaAuditoria;
+
     /**
      * Nome da fila que processa propostas de antecipação
      */
@@ -179,6 +182,7 @@ public class ConfiguracoesAwsSqs {
                         ,nomeFilaProcessarCicloPostergacao
                         ,nomeFilaAnonimizacaMotorista
                         ,nomeFilaExclusaoMotorista
+                        ,nomeFilaAnonimizacaoExclusaoMotoristaAuditoria
                         ,nomeFilaProcessarPropostaAntecipacao);
         criaFilaSeNaoExistem(amazonSQSAsync, nomeFilas);
         return new QueueMessagingTemplate(amazonSQSAsync);
