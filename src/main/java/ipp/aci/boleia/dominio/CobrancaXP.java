@@ -50,7 +50,7 @@ public class CobrancaXP implements IPersistente {
     private Date dataFatura;
 
     @Column(name = "ID_STATUS_INT_JDE")
-    private Integer statusIntegracaoJDE;
+    private Integer statusIntegracao;
 
     @Column(name = "DS_MSG_ERRO")
     private String mensagemErro;
@@ -125,12 +125,12 @@ public class CobrancaXP implements IPersistente {
         this.dataFatura = dataFatura;
     }
 
-    public Integer getStatusIntegracaoJDE() {
-        return statusIntegracaoJDE;
+    public Integer getStatusIntegracao() {
+        return statusIntegracao;
     }
 
-    public void setStatusIntegracaoJDE(Integer statusIntegracaoJDE) {
-        this.statusIntegracaoJDE = statusIntegracaoJDE;
+    public void setStatusIntegracao(Integer statusIntegracao) {
+        this.statusIntegracao = statusIntegracao;
     }
 
     public String getMensagemErro() {

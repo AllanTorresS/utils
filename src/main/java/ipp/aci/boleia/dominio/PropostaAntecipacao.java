@@ -299,7 +299,7 @@ public class PropostaAntecipacao implements IPersistente, IPertenceRevendedor, I
      */
     @Transient
     public StatusIntegracaoAntecipacaoJde getStatusIntegracao() {
-        StatusIntegracaoJde statusFaturaXp = cobrancaXp != null ? StatusIntegracaoJde.obterPorValor(cobrancaXp.getStatusIntegracaoJDE()) : null;
+        StatusIntegracaoJde statusFaturaXp = cobrancaXp != null ? StatusIntegracaoJde.obterPorValor(cobrancaXp.getStatusIntegracao()) : null;
         StatusIntegracaoJde statusVoucherXp = reembolsoXp != null ? StatusIntegracaoJde.obterPorValor(reembolsoXp.getStatusIntegracao()) : null;
         StatusIntegracaoReembolsoJde statusVoucherPv = StatusIntegracaoReembolsoJde.obterPorValor(reembolsoAntecipado.getStatusIntegracao());
 

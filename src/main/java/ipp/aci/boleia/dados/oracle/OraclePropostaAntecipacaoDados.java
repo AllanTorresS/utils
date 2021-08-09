@@ -164,21 +164,27 @@ public class OraclePropostaAntecipacaoDados extends OracleRepositorioBoleiaDados
         StatusIntegracaoAntecipacaoJde statusIntegracaoAntecipacaoJde = StatusIntegracaoAntecipacaoJde.valueOf(statusIntegracao.getName());
         switch (statusIntegracaoAntecipacaoJde) {
             case PREVISTO:
-                clausulaStatusIntegracao = " AND RA.statusIntegracao is null AND CXP is null AND RXP is null ";
+                clausulaStatusIntegracao = " AND RA.statusIntegracao IS NULL" +
+                        " AND (CXP IS NULL OR CXP.statusIntegracao IS NULL)" +
+                        " AND (RXP IS NULL OR RXP.statusIntegracao IS NULL) ";
                 break;
             case REALIZADO:
                 clausulaStatusIntegracao = " AND RA.statusIntegracao = " + StatusIntegracaoReembolsoJde.REALIZADO.getValue() +
-                        " AND CXP.statusIntegracaoJDE = " + StatusIntegracaoJde.REALIZADO.getValue() +
+                        " AND CXP.statusIntegracao = " + StatusIntegracaoJde.REALIZADO.getValue() +
                         " AND RXP.statusIntegracao = " + StatusIntegracaoJde.REALIZADO.getValue() + " ";
                 break;
             case ERRO_ENVIO_F7:
-                clausulaStatusIntegracao = " AND CXP.statusIntegracaoJDE = " + StatusIntegracaoJde.ERRO_ENVIO.getValue() + " ";
+                clausulaStatusIntegracao = " AND CXP.statusIntegracao = " + StatusIntegracaoJde.ERRO_ENVIO.getValue() +
+                        " AND RA.statusIntegracao = " + StatusIntegracaoJde.REALIZADO.getValue() +
+                        " AND RXP.statusIntegracao = " + StatusIntegracaoJde.REALIZADO.getValue() + " ";
                 break;
             case ERRO_ENVIO_PV:
-                clausulaStatusIntegracao = " AND RA.statusIntegracao = " + StatusIntegracaoReembolsoJde.ERRO_ENVIO.getValue() + " ";
+                clausulaStatusIntegracao = " AND (RA.statusIntegracao = " + StatusIntegracaoReembolsoJde.ERRO_ENVIO.getValue() +
+                        " OR RXP.statusIntegracao = " + StatusIntegracaoJde.ERRO_ENVIO.getValue() + ")" +
+                        " AND CXP.statusIntegracao = " + StatusIntegracaoJde.REALIZADO.getValue() + " ";
                 break;
             case ERRO_ENVIO_F7_PV:
-                clausulaStatusIntegracao = " AND CXP.statusIntegracaoJDE = " + StatusIntegracaoJde.ERRO_ENVIO.getValue() +
+                clausulaStatusIntegracao = " AND CXP.statusIntegracao = " + StatusIntegracaoJde.ERRO_ENVIO.getValue() +
                         " AND ( RA.statusIntegracao = " + StatusIntegracaoReembolsoJde.ERRO_ENVIO.getValue() +
                         " OR RXP.statusIntegracao = " + StatusIntegracaoJde.ERRO_ENVIO.getValue() + " ) ";
                 break;
