@@ -56,7 +56,7 @@ public class ClonagemPerfil implements IPersistente{
     private Boolean isDefinitiva;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CD_USUARIO_ORIGEM")
+    @JoinColumn(name = "CD_MOTIVO_CLONAGEM")
     private MotivoClonagem motivo;
 
     @Size(max = 1080)
