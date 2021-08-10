@@ -40,7 +40,7 @@ public class DistribuicaoAutomaticaSd {
         distribuicao.setValorBeneficio(valorDistribuicao);
         distribuicao.setDataCriacao(ambiente.buscarDataAmbiente());
         distribuicao.setDataAtualizacao(ambiente.buscarDataAmbiente());
-
+        distribuicao.setAutor(ambiente.getUsuarioLogado());
         return distribuicao;
     }
 
