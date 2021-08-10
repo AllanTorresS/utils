@@ -3,9 +3,13 @@ package ipp.aci.boleia.dominio.servico;
 import ipp.aci.boleia.dados.IHistoricoFrotaPtovPrecoDados;
 import ipp.aci.boleia.dominio.HistoricoFrotaPtovPreco;
 import ipp.aci.boleia.dominio.Preco;
+import ipp.aci.boleia.dominio.Usuario;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaUltimosPrecosVo;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * Serviços de domínio da entidade HistoricoFrotaPtovPrecoSd.
@@ -36,5 +40,15 @@ public class HistoricoFrotaPtovPrecoSd {
         historico.setFrotaPtov(preco.getFrotaPtov());
 
         return repositorio.armazenarSemIsolamentoDeDados(historico);
+    }
+
+    /**
+     * Realiza uma pesquisa paginada sobre o histórico de preços acordados entre uma frota e pv
+     * @param filtro Filtro de pesquisa
+     * @param usuario Usuario usuário logado no sistema
+     * @return Os registros de histórico de preço encontrados
+     */
+    public List<HistoricoFrotaPtovPreco> pesquisar(FiltroPesquisaUltimosPrecosVo filtro, Usuario usuario){
+        return repositorio.pesquisar(filtro, usuario);
     }
 }
