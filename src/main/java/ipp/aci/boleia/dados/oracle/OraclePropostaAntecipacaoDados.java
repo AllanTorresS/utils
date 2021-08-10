@@ -13,8 +13,11 @@ import ipp.aci.boleia.dominio.enums.StatusPropostaXP;
 import ipp.aci.boleia.dominio.enums.TipoAntecipacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgual;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMenorOuIgual;
 import ipp.aci.boleia.dominio.vo.EnumVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaAntecipacaoVo;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
@@ -96,8 +99,8 @@ public class OraclePropostaAntecipacaoDados extends OracleRepositorioBoleiaDados
 
         if(filtro.getDe() != null && filtro.getAte() != null) {
             clausulaPeriodo = " AND PA.dataCriacao BETWEEN :de AND :ate ";
-            parametros.add(new ParametroPesquisaIgual("de", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe())));
-            parametros.add(new ParametroPesquisaIgual("ate", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte())));
+            parametros.add(new ParametroPesquisaDataMaiorOuIgual("de", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe())));
+            parametros.add(new ParametroPesquisaDataMenorOuIgual("ate", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte())));
         }
 
         if(usuarioLogado.isInterno() && usuarioLogado.possuiFrotasAssociadas()) {
