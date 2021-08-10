@@ -353,6 +353,8 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
             "     AND (:dataInicioPeriodo IS NULL OR :dataInicioPeriodo = TO_CHAR(COALESCE(tcp.dataInicioPeriodo, tc.dataInicioPeriodo), 'DD/MM/YYYY')) " +
             "     AND (:dataFimPeriodo IS NULL OR :dataFimPeriodo = TO_CHAR(COALESCE(tcp.dataFimPeriodo, tc.dataFimPeriodo), 'DD/MM/YYYY')) " +
             "     AND (:dataPrazoPagamento IS NULL OR :dataPrazoPagamento = TO_CHAR(COALESCE(ptcp.dataLimitePagamento, ptc.dataLimitePagamento), 'DD/MM/YYYY')) " +
+            "     AND (:idFrota IS NULL OR :idFrota = f.id) " +
+            "     AND (:statusNotaFiscal IS NULL OR :statusNotaFiscal = COALESCE(tcp.statusNotaFiscal, tc.statusNotaFiscal)) " +
             "     AND pv.statusInteresseAntecipacao = " + StatusInteresseAntecipacao.APROVADO.getValue() +
             "     AND a.valorTotal > 0 " +
             "     AND a.statusNotaFiscal = " + StatusNotaFiscalAbastecimento.EMITIDA.getValue() +
@@ -1563,6 +1565,8 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         parametros.add(new ParametroPesquisaIgual("dataInicioPeriodo", UtilitarioFormatacaoData.formatarDataCurta(filtro.getInicio())));
         parametros.add(new ParametroPesquisaIgual("dataFimPeriodo", UtilitarioFormatacaoData.formatarDataCurta(filtro.getFim())));
         parametros.add(new ParametroPesquisaIgual("dataPrazoPagamento", filtro.getDataVencimento() != null ? UtilitarioFormatacaoData.formatarDataCurta(UtilitarioCalculoData.adicionarDiasData(filtro.getDataVencimento(), -2)) : null));
+        parametros.add(new ParametroPesquisaIgual("idFrota", filtro.getFrota().getId()));
+        parametros.add(new ParametroPesquisaIgual("statusNotaFiscal", filtro.getStatusNf().getValue()));
 
         String clausulaOrdenacao = null;
         List<ParametroOrdenacaoColuna> parametrosOrdenacao = filtro.getPaginacao().getParametrosOrdenacaoColuna();
