@@ -65,7 +65,6 @@ public class PedidoCreditoBeneficios implements IPersistente, IPertenceFrota {
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataPedido;
 
-    @NotNull
     @Column(name = "DT_VENCIMENTO")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataVencimento;

@@ -7,5 +7,11 @@ import ipp.aci.boleia.dominio.beneficios.ContaBeneficiosFrota;
  */
 public interface IContaBeneficiosFrotaDados extends IRepositorioBoleiaDados<ContaBeneficiosFrota>{
 
-
+    /**
+     * Obtém a conta de benefícios de uma frota.
+     *
+     * @param idFrota Identificador da frota.
+     * @return A conta de benefícios da frota.
+     */
+    ContaBeneficiosFrota obterPorFrota(Long idFrota);
 }
