@@ -53,7 +53,6 @@ public class DistribuicaoAutomatica implements IPersistente {
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataAtualizacao;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_USUARIO_AUTOR")
     private Usuario autor;
