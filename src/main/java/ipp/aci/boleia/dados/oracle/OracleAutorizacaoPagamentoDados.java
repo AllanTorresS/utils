@@ -1566,7 +1566,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         parametros.add(new ParametroPesquisaIgual("dataFimPeriodo", UtilitarioFormatacaoData.formatarDataCurta(filtro.getFim())));
         parametros.add(new ParametroPesquisaIgual("dataPrazoPagamento", filtro.getDataVencimento() != null ? UtilitarioFormatacaoData.formatarDataCurta(UtilitarioCalculoData.adicionarDiasData(filtro.getDataVencimento(), -2)) : null));
         parametros.add(new ParametroPesquisaIgual("idFrota", filtro.getFrota().getId()));
-        parametros.add(new ParametroPesquisaIgual("statusNotaFiscal", filtro.getStatusNf().getValue()));
+        parametros.add(new ParametroPesquisaIgual("statusNotaFiscal", filtro.getStatusNf() != null ? filtro.getStatusNf().getValue() : null));
 
         String clausulaOrdenacao = null;
         List<ParametroOrdenacaoColuna> parametrosOrdenacao = filtro.getPaginacao().getParametrosOrdenacaoColuna();
