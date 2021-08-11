@@ -54,7 +54,7 @@ public class ContaBeneficiosFrotaSd {
         contaBeneficiosFrota.setSaldo(BigDecimal.ZERO);
         contaBeneficiosFrota.setDataCriacao(ambiente.buscarDataAmbiente());
         contaBeneficiosFrota.setDataAtualizacao(ambiente.buscarDataAmbiente());
-        return contaBeneficiosFrota;
+        return repositorio.armazenar(contaBeneficiosFrota);
     }
 
     /**
