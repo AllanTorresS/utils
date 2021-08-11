@@ -371,13 +371,13 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
             "             AND (pa.status IS NULL OR pa.status <> " + StatusPropostaXP.CANCELED.getValue() + ")) " +
             "             OR (ra.tipoAntecipacao = " + TipoAntecipacao.SOLUCAO.getValue() +
             "                 AND ra.statusIntegracao = " + StatusIntegracaoReembolsoJde.REALIZADO.getValue() + "))" +
-            "     ) AND NOT EXISTS ( " +
-            "         SELECT 1 " +
+            "     ) AND a.valorTotal - :margemErroNf <= ( " +
+            "         SELECT COALESCE(SUM(nf.valorTotal), 0) " +
             "         FROM AutorizacaoPagamento a1 " +
             "         JOIN a1.notasFiscais nf " +
             "         WHERE " +
-            "             a.id = a1.id" +
-            "             AND nf.isJustificativa = true " +
+            "             a.id = a1.id " +
+            "             AND nf.isJustificativa = false " +
             "     ) " +
             " ORDER BY %s ";
 
@@ -1560,6 +1560,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     @Override
     public ResultadoPaginado<AutorizacaoPagamento> obterAbastecimentosAntecipaveis(FiltroAbastecimentoAntecipavelVo filtro) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaIgual("margemErroNf", BigDecimal.valueOf(.05)));
         parametros.add(new ParametroPesquisaIgual("idsPontoVenda", filtro.getIdsPontoVenda()));
         parametros.add(new ParametroPesquisaIgual("statusCiclo", filtro.getStatusCiclo() != null? filtro.getStatusCiclo().getValue().intValue() : null));
         parametros.add(new ParametroPesquisaIgual("dataInicioPeriodo", UtilitarioFormatacaoData.formatarDataCurta(filtro.getInicio())));
