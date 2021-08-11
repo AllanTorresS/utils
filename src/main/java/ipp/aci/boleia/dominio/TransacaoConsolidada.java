@@ -45,6 +45,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -682,6 +683,47 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     }
 
     /**
+     * Retorna uma lista com todas as autorizações de pagamento vigentes.
+     *
+     * @return lista de autorizações de pagamento.
+     */
+    @Transient
+    public List<AutorizacaoPagamento> getAutorizacoesPagamentoVigentes() {
+        return Stream.concat(this.getAutorizacaoPagamentosStream().filter(a -> a.getTransacaoConsolidadaPostergada() == null), getAutorizacoesPagamentoPostergadasStream()).collect(Collectors.toList());
+    }
+
+    /**
+     * Obtém o valor antecipado pela revenda.
+     * @return valor antecipado
+     */
+    @Transient
+    public BigDecimal getValorAntecipadoRevenda() {
+        return this.getAutorizacoesPagamentoVigentes().stream()
+                    .filter(AutorizacaoPagamento::possuiAntecipacaoParceriaRealizada)
+                    .reduce(BigDecimal.ZERO, (soma, a) -> soma.add(a.getValorAntecipadoRevenda()), BigDecimal::add);
+    }
+
+    /**
+     * Obtém o valor antecipado pelo usuário interno.
+     * @return valor antecipado
+     */
+    @Transient
+    public BigDecimal getValorAntecipadoSolucao() {
+        return this.getAntecipacaoSolucaoRealizada() != null
+                ? this.getAntecipacaoSolucaoRealizada().getValorReembolso()
+                : BigDecimal.ZERO;
+    }
+
+    /**
+     * Obtém o valor total antecipado pela revenda e solução.
+     * @return valor antecipado
+     */
+    @Transient
+    public BigDecimal getValorTotalAntecipado() {
+        return this.getValorAntecipadoSolucao().add(this.getValorAntecipadoRevenda());
+    }
+
+    /**
      *  Verifica se todos os abastecimentos do consolidados são negativos ou não
      * @return true, caso todos sejam negativos, ou false, caso contrário
      */
@@ -778,15 +820,17 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
         return null;
     }
 
+    /**
+     * Obtém as antecipações das revendas que foram realizadas.
+     * @return antecipações
+     */
     @Transient
-    public List<ReembolsoAntecipado> getAntecipacoesParceria() {
-        if (antecipacoes != null) {
-            List<ReembolsoAntecipado> antecipacoesParceria = antecipacoes.stream()
-                    .filter(antecipacao -> antecipacao.getTipoAntecipacao().equals(TipoAntecipacao.PARCEIRO_XP))
-                    .collect(Collectors.toList());
-            return antecipacoesParceria != null && !CollectionUtils.isEmpty(antecipacoesParceria) ? antecipacoesParceria : null;
-        }
-        return null;
+    public List<ReembolsoAntecipado> getAntecipacoesParceriaRealizadas() {
+        List<ReembolsoAntecipado> antecipacoesParceria = this.getAutorizacoesPagamentoVigentes().stream()
+                .map(AutorizacaoPagamento::getAntecipacaoParceiroRealizada)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        return !CollectionUtils.isEmpty(antecipacoesParceria) ? antecipacoesParceria : null;
     }
 
     @Transient
@@ -799,8 +843,7 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
 
     @Transient
     public Boolean possuiAntecipacaoParceriaRealizada() {
-        return getAntecipacoesParceria() != null && getAntecipacoesParceria().stream()
-            .anyMatch(antecipacao -> StatusIntegracaoReembolsoJde.REALIZADO.getValue().equals(antecipacao.getStatusIntegracao()));
+        return getAntecipacoesParceriaRealizadas() != null;
     }
 
     @Transient

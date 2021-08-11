@@ -57,6 +57,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ipp.aci.boleia.util.UtilitarioCalculo.calcularPorcentagem;
+
 /**
  * Representa a tabela de Autorizacao Pagamento
  */
@@ -2013,4 +2015,42 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     public Boolean possuiEmissaoProdutos() {
         return this.notasFiscais.stream().anyMatch(nota -> nota.getValorProdutosServicos() != null);
     }
+
+    /**
+     * Obtém a antecipação feita pela revenda
+     * @return antecipação realizada
+     */
+    @Transient
+    public ReembolsoAntecipado getAntecipacaoParceiroRealizada(){
+        return this.getAntecipacoesReembolso().stream().filter(r ->
+            TipoAntecipacao.PARCEIRO_XP.equals(r.getTipoAntecipacao())
+                && r.getPropostaAntecipacao().isAceito() != null && r.getPropostaAntecipacao().isAceito())
+            .findFirst().orElse(null);
+    }
+
+    /**
+     * Obtém o valor antecipado pela revenda descontando as taxas de serviços.
+     * @return valor da antecipação
+     */
+    @Transient
+    public BigDecimal getValorAntecipadoRevenda(){
+        final ReembolsoAntecipado reembolso = this.getAntecipacaoParceiroRealizada();
+        if(reembolso != null && reembolso.getPropostaAntecipacao() != null){
+            HistoricoConfiguracaoAntecipacao configuracao = reembolso.getPropostaAntecipacao().getConfiguracao();
+            BigDecimal mdr = this.transacaoConsolidada.getMdr();
+            BigDecimal valorDescontoMdr = calcularPorcentagem(this.valorTotal, mdr).setScale(2, BigDecimal.ROUND_HALF_UP);
+            BigDecimal valorDescontoProFrotas, valorDescontoXp;
+            if(configuracao.getTaxaPercentual()) {
+                BigDecimal valorReembolsoSemMdr = this.valorTotal.subtract(valorDescontoMdr);
+                valorDescontoProFrotas = calcularPorcentagem(valorReembolsoSemMdr, configuracao.getTaxaProfrotasPercentual().multiply(BigDecimal.valueOf(100))).setScale(2, BigDecimal.ROUND_HALF_UP);
+                valorDescontoXp = calcularPorcentagem(valorReembolsoSemMdr, configuracao.getTaxaParceiro().getValorTaxa().multiply(BigDecimal.valueOf(100))).setScale(2, BigDecimal.ROUND_HALF_UP);
+            } else {
+                valorDescontoProFrotas = configuracao.getTaxaProfrotasFixa();
+                valorDescontoXp = configuracao.getTaxaParceiro().getValorTaxa();
+            }
+            return this.valorTotal.subtract(valorDescontoProFrotas.add(valorDescontoXp).add(valorDescontoMdr));
+        }
+        return BigDecimal.ZERO;
+    }
+
 }
