@@ -248,7 +248,6 @@ public class MotoristaSd {
     /**
      * Cria um motorista anônimo para a frota
      * @param frota a frota do motorista anônimo
-     * @return o motorista anônimo
      */
     public void criarMotoristaAnonimoSeNaoExistir(Frota frota) {
         Motorista motoristaAnonimoExistente = repositorio.obterExcluidoPorCpfFrota(Long.parseLong(CPF_ANONIMIZADO), frota.getId());
