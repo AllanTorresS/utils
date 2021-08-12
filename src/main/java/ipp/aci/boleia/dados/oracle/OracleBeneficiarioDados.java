@@ -14,6 +14,7 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaBeneficiarioVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialVo;
 import ipp.aci.boleia.util.Ordenacao;
+import ipp.aci.boleia.util.UtilitarioFormatacao;
 import ipp.aci.boleia.util.UtilitarioLambda;
 import org.springframework.stereotype.Repository;
 
@@ -56,8 +57,11 @@ public class OracleBeneficiarioDados extends OracleRepositorioBoleiaDados<Benefi
     public ResultadoPaginado<Beneficiario> obterBeneficiarios(FiltroPesquisaBeneficiarioVo filtro) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
 
-        if(filtro.getBeneficiario() != null && filtro.getBeneficiario().getId() != null) {
-            parametros.add(new ParametroPesquisaIgual("id", filtro.getBeneficiario().getId()));
+        if(filtro.getNomeBeneficiario() != null && filtro.getNomeBeneficiario().getNome() != null) {
+            parametros.add(new ParametroPesquisaIgual("nome", filtro.getNomeBeneficiario().getNome()));
+        }
+        if(filtro.getCpfBeneficiario() != null && filtro.getCpfBeneficiario().getCpf() != null) {
+            parametros.add(new ParametroPesquisaIgual("cpf", UtilitarioFormatacao.obterLongMascara(filtro.getCpfBeneficiario().getCpf())));
         }
 
         if(filtro.getBeneficios() != null && !filtro.getBeneficios().isEmpty()){
@@ -69,7 +73,8 @@ public class OracleBeneficiarioDados extends OracleRepositorioBoleiaDados<Benefi
                 );
                 parametrosBeneficios.addParametro(parametroBeneficio);
             });
-            parametros.add(parametrosBeneficios);        }
+            parametros.add(parametrosBeneficios);
+        }
         parametros.add(new ParametroPesquisaIgual("status", StatusAtivacao.ATIVO.getValue()));
         parametros.add(new ParametroPesquisaIgual("excluido", false));
 

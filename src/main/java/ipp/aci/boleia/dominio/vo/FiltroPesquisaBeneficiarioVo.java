@@ -10,16 +10,25 @@ import java.util.List;
  */
 public class FiltroPesquisaBeneficiarioVo extends BaseFiltroPaginado {
 
-    private EntidadeVo beneficiario;
+    private EntidadeVo nomeBeneficiario;
+    private EntidadeVo cpfBeneficiario;
     private List<EntidadeVo> beneficios;
     private EnumVo possuiSaldo;
 
-    public EntidadeVo getBeneficiario() {
-        return beneficiario;
+    public EntidadeVo getNomeBeneficiario() {
+        return nomeBeneficiario;
     }
 
-    public void setBeneficiario(EntidadeVo beneficiario) {
-        this.beneficiario = beneficiario;
+    public void setNomeBeneficiario(EntidadeVo nomeBeneficiario) {
+        this.nomeBeneficiario = nomeBeneficiario;
+    }
+
+    public EntidadeVo getCpfBeneficiario() {
+        return cpfBeneficiario;
+    }
+
+    public void setCpfBeneficiario(EntidadeVo cpfBeneficiario) {
+        this.cpfBeneficiario = cpfBeneficiario;
     }
 
     public List<EntidadeVo> getBeneficios() {
