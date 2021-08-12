@@ -17,7 +17,6 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgu
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
-import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMenorOuIgual;
 import ipp.aci.boleia.dominio.vo.EnumVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaAntecipacaoVo;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
@@ -87,8 +86,7 @@ public class OraclePropostaAntecipacaoDados extends OracleRepositorioBoleiaDados
         if(filtro.getStatusAntecipacao().getValue() != null) {
             clausulaStatus = montarFiltroStatus(filtro.getStatusAntecipacao());
             if(filtro.getStatusAntecipacao().getValue().equals(StatusAntecipacao.AGUARDANDO_ACEITE.getValue()) ||
-                    filtro.getStatusAntecipacao().getValue().equals(StatusAntecipacao.CANCELADO_SEM_RESPOSTA.getValue()) ||
-                    filtro.getStatusAntecipacao().getValue().equals(StatusAntecipacao.EM_ANDAMENTO.getValue())) {
+                    filtro.getStatusAntecipacao().getValue().equals(StatusAntecipacao.CANCELADO_SEM_RESPOSTA.getValue())) {
                 parametros.add(new ParametroPesquisaIgual("dataAtual", ambiente.buscarDataAmbiente()));
             }
         }
