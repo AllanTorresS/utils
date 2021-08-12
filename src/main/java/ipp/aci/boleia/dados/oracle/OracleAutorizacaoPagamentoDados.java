@@ -177,6 +177,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                     "LEFT JOIN A.transacaoConsolidada TC " +
                     "LEFT JOIN A.transacaoConsolidadaPostergada TCP " +
                     "LEFT JOIN A.items I " +
+                    "LEFT JOIN A.autorizacoesEditadas ED " +
                     " WHERE " +
                     " (:idConsolidado IS NULL OR A.transacaoConsolidada.id = :idConsolidado OR A.transacaoConsolidadaPostergada.id = :idConsolidado) " +
                     CLAUSULA_STATUS_AUTORIZACAO +
