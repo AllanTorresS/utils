@@ -2012,6 +2012,10 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
         return this.notasFiscais.stream().anyMatch(nota -> nota.getValorProdutosServicos() != null);
     }
 
+    /**
+     * Verifica se essa autorização pagamento foi editada e aprovada
+     * @return true se positivo
+     */
     @Transient
     public boolean isEdicaoAprovada(){
         return this.autorizacoesEditadas != null && this.autorizacoesEditadas.stream()
