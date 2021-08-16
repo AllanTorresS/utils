@@ -18,13 +18,6 @@ public interface IFilaMotoristaDados {
     void enviarMotoristaParaFilaDeAnonimizacao(Motorista motorista);
 
     /**
-     * Envia o {@link Motorista} para a fila de exclusão
-     *
-     * @param motorista O motorista a ser excluído
-     */
-    void enviarMotoristaParaFilaDeExclusao(Motorista motorista);
-
-    /**
      * Envia o {@link Motorista} para a fila de anonimização e exclusão de dados da auditoria
      *
      * @param motorista O motorista a ter os dados anonimizados e exlcuidos da auditoria
