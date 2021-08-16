@@ -1,7 +1,6 @@
 package ipp.aci.boleia.util.boot;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -11,10 +10,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.aws.messaging.config.QueueMessageHandlerFactory;
 import org.springframework.cloud.aws.messaging.core.QueueMessagingTemplate;
+import org.springframework.cloud.aws.messaging.listener.support.AcknowledgmentHandlerMethodArgumentResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.core.MethodParameter;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.support.HeaderMethodArgumentResolver;
 import org.springframework.messaging.handler.annotation.support.PayloadArgumentResolver;
 
 import com.amazonaws.auth.AWSCredentials;
@@ -197,7 +200,16 @@ public class ConfiguracoesAwsSqs {
         mappingJackson2MessageConverter.setObjectMapper(objectMapper);
         mappingJackson2MessageConverter.setStrictContentTypeMatch(false);
         QueueMessageHandlerFactory factory = new QueueMessageHandlerFactory();
-        factory.setArgumentResolvers(Collections.singletonList(new PayloadArgumentResolver(mappingJackson2MessageConverter)));
+        factory.setArgumentResolvers(Arrays.asList(
+                new AcknowledgmentHandlerMethodArgumentResolver("Acknowledgment"),
+                new HeaderMethodArgumentResolver(null, null),
+                new PayloadArgumentResolver(mappingJackson2MessageConverter, null, false) {
+                    @Override
+                    public boolean supportsParameter(MethodParameter parameter) {
+                        return parameter.hasParameterAnnotation(Payload.class) || !parameter.hasParameterAnnotations();
+                    }
+                }
+        ));
         return factory;
     }
 
