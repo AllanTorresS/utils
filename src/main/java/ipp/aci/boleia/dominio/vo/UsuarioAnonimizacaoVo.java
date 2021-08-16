@@ -1,7 +1,6 @@
 package ipp.aci.boleia.dominio.vo;
 
 import ipp.aci.boleia.dominio.Usuario;
-import ipp.aci.boleia.dominio.UsuarioMotorista;
 
 import java.util.Date;
 import java.util.List;
