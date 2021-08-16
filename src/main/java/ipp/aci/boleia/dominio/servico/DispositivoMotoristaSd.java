@@ -12,7 +12,6 @@ import ipp.aci.boleia.dominio.AutorizacaoPagamento;
 import ipp.aci.boleia.dominio.DispositivoMotorista;
 import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.FrotaParametroSistema;
-import ipp.aci.boleia.dominio.FrotaParametroSistemaPostoAutorizadoAbastecimento;
 import ipp.aci.boleia.dominio.ItemAutorizacaoPagamento;
 import ipp.aci.boleia.dominio.Motorista;
 import ipp.aci.boleia.dominio.PontoDeVenda;
@@ -262,9 +261,10 @@ public class DispositivoMotoristaSd {
      *
      * @param idFrota a frota selecionada no app motorista
      * @param cpf o cpf do usuário do app
+     * @return retorna o motorista validado
      * @throws ExcecaoValidacao caso o motorista esteja inativo na frota
      */
-    public void validarFrotaMotorista(Long idFrota, Long cpf) throws ExcecaoValidacao {
+    public Motorista validarFrotaMotorista(Long idFrota, Long cpf) throws ExcecaoValidacao {
         Motorista motorista = repositorioMotorista.obterPorCpfFrotaSemIsolamento(cpf, idFrota);
         if (motorista == null) {
             throw new ExcecaoValidacao(Erro.ERRO_VALIDACAO, mensagens.obterMensagem("dispositivo.servico.validacao.motorista.nao.encontrado"));
@@ -278,6 +278,7 @@ public class DispositivoMotoristaSd {
         if (motorista.getFrota().getStatus().equals(StatusAtivacao.INATIVO.getValue())) {
             throw new ExcecaoValidacao(Erro.ERRO_VALIDACAO_INATIVO, mensagens.obterMensagem("dispositivo.servico.validacao.frota.inativa"));
         }
+        return motorista;
     }
 
     /**
@@ -412,17 +413,15 @@ public class DispositivoMotoristaSd {
      * estiver ativo, verifica se há algum posto permitido para abastecimento próximo à localização do pedido.
      *
      * @param frota Frota do motorista
-     * @param restricaoPosto O parametro de autorizacao de abastecimento
      * @param ponto A localizacao
      * @param precisao Precisão da Localização do GPS
+     * @return A lista dos pontos de venda próximos habilitados
      * @throws ExcecaoValidacao Caso nao exista nenhum posto autorizado proximo
      */
-    public void validarPostoAutorizado(Frota frota, FrotaParametroSistema restricaoPosto, CoordenadaGeograficaVo ponto, BigDecimal precisao) throws ExcecaoValidacao {
+    public List<PontoDeVenda>  validarPostoAutorizado(Frota frota, CoordenadaGeograficaVo ponto, BigDecimal precisao) throws ExcecaoValidacao {
         List<PontoDeVenda> postosHabilitados = temPostoHabilitadoProximo(ponto, precisao, frota);
         validarPostosBloqueados(frota, postosHabilitados);
-        if (restricaoPosto != null) {
-            temPostoPermitidoProximo(restricaoPosto, postosHabilitados);
-        }
+        return postosHabilitados;
     }
 
     /**
@@ -431,6 +430,7 @@ public class DispositivoMotoristaSd {
      * @param frota Frota do motorista
      * @param postosHabilitados Lista de postos habilitados próximos ao motorista
      * @throws ExcecaoValidacao Exceção lançada caso possua algum posto bloqueado na lista dos habilitados
+     *
      */
     private void validarPostosBloqueados(Frota frota, List<PontoDeVenda> postosHabilitados) throws ExcecaoValidacao {
         List<PontoDeVenda> pvsBloqueados = postosHabilitados.stream().filter(pv -> frotaPontoVendaSd.validarBloqueio(frota.getId(), pv.getId())).collect(Collectors.toList());
@@ -452,10 +452,10 @@ public class DispositivoMotoristaSd {
      * @throws ExcecaoValidacao Quando não há nenhum posto dentro do raio de proximidade, ou nenhum habilitado.
      */
     private List<PontoDeVenda> temPostoHabilitadoProximo(CoordenadaGeograficaVo ponto, BigDecimal precisao, Frota frota) throws ExcecaoValidacao {
-        Double distancia = precisao != null && precisao.doubleValue() <= 250 ? 0.5 : 1.0;
+        double distancia = precisao != null && precisao.doubleValue() <= 250 ? 0.5 : 1.0;
         List<PontoDeVenda> postosProximos;
         FiltroPesquisaLocalizacaoVo filtro;
-        filtro = new FiltroPesquisaLocalizacaoVo(ponto, distancia);
+        filtro = new FiltroPesquisaLocalizacaoVo(ponto, distancia, null);
         postosProximos = repositorioPontoDeVenda.obterPontoDeVendaPorLimitesLocalizacao(filtro);
         postosProximos = postosProximos.stream().filter(p-> frotaPontoVendaSd.validarVisibilidade(frota.getId(), p)).collect(Collectors.toList());
         List<PontoDeVenda> postosHabilitados = new ArrayList<>();
@@ -474,26 +474,6 @@ public class DispositivoMotoristaSd {
         }
 
         return postosHabilitados;
-    }
-
-    /**
-     * Verifica se existe algum posto permitido para abastecimentos em um determinado raio de proximidade do posto em questao
-     * @param restricaoPosto O parametro de autorizacao do posto em questao
-     * @param postosHabilitados Lista de postos dentro do raio de proximidade que estejam habilitados
-     * @throws ExcecaoValidacao Quando nao ha nenhum posto autorizado proximo a localizacao informada
-     */
-    private void temPostoPermitidoProximo(FrotaParametroSistema restricaoPosto, List<PontoDeVenda> postosHabilitados) throws ExcecaoValidacao {
-        for (PontoDeVenda pv : postosHabilitados){
-            for (FrotaParametroSistemaPostoAutorizadoAbastecimento pvs : restricaoPosto.getPostosAutorizadosAbastecimento()) {
-                if (pvs.getPontoVenda().getId().equals(pv.getId())) {
-                    return;
-                }
-            }
-        }
-
-        if (restricaoPosto.isAtivo() && restricaoPosto.isRestritivo()) {
-            throw new ExcecaoValidacao(Erro.SEM_PV_PERMITIDO_PROXIMO);
-        }
     }
 
     /**

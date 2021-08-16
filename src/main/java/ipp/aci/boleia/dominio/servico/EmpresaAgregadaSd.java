@@ -4,6 +4,7 @@ import ipp.aci.boleia.dados.IEmpresaAgregadaDados;
 import ipp.aci.boleia.dados.IMotoristaDados;
 import ipp.aci.boleia.dados.IVeiculoDados;
 import ipp.aci.boleia.dominio.EmpresaAgregada;
+import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +22,18 @@ public class EmpresaAgregadaSd {
 
     @Autowired
     private IVeiculoDados veiculoDados;
+
+    @Autowired
+    private HistoricoMotoristaSd historicoMotoristaSd;
+
+    @Autowired
+    private FluxoAbastecimentoSd fluxoAbastecimentoSd;
+
+    @Autowired
+    private HistoricoVeiculoSd historicoVeiculoSd;
+
+    @Autowired
+    private UtilitarioAmbiente utilitarioAmbiente;
 
     /**
      * Exclui uma lista de empresas agregadas.
@@ -65,8 +78,15 @@ public class EmpresaAgregadaSd {
     private void corrigirDadosRelacionados(Long... id) {
         for (Long empresasAgregadaseId : id) {
             EmpresaAgregada empresaAgregada = repositorio.obterPorId(empresasAgregadaseId);
-            empresaAgregada.getMotoristas().forEach(n -> motoristaDados.excluir(n.getId()));
-            empresaAgregada.getVeiculos().forEach(n -> veiculoDados.excluir(n.getId()));
+            empresaAgregada.getMotoristas().forEach(n -> {
+                motoristaDados.excluir(n.getId());
+                historicoMotoristaSd.armazenarHistoricoMotorista(n, utilitarioAmbiente);
+                fluxoAbastecimentoSd.excluirFluxoAbastecimentoMotorista(n,utilitarioAmbiente.getUsuarioLogado(),utilitarioAmbiente.buscarDataAmbiente());
+            });
+            empresaAgregada.getVeiculos().forEach(n -> {
+                veiculoDados.excluir(n.getId());
+                historicoVeiculoSd.armazenarHistoricoVeiculo(n,utilitarioAmbiente);
+            });
         }
     }
 }
