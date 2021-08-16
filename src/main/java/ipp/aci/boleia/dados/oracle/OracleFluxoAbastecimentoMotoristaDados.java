@@ -30,6 +30,10 @@ public class OracleFluxoAbastecimentoMotoristaDados extends OracleRepositorioBol
             "SELECT fm FROM FluxoAbastecimentoMotoristaConfig fm " +
                     "WHERE fm.motorista.id = :idMotorista";
 
+    private static final String EXCLUSAO_POR_ID_MOTORISTA =
+            "DELETE FROM FluxoAbastecimentoMotoristaConfig fm " +
+            "WHERE fm.motorista.id = :idMotorista";
+
     @Autowired
     private UtilitarioAmbiente ambiente;
 
@@ -93,5 +97,12 @@ public class OracleFluxoAbastecimentoMotoristaDados extends OracleRepositorioBol
         parametros.add(new ParametroPesquisaFetch("veiculo"));
 
         return pesquisar(filtro.getPaginacao(),parametros.toArray(new ParametroPesquisa[0]));
+    }
+
+    @Override
+    public void excluirPermanentementePorIdMotorista(Long idMotorista) {
+        Query query = getGerenciadorDeEntidade().createQuery(EXCLUSAO_POR_ID_MOTORISTA);
+        query.setParameter("idMotorista", idMotorista);
+        query.executeUpdate();
     }
 }

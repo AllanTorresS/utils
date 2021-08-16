@@ -36,4 +36,11 @@ public interface IDocumentoAceiteDados extends IRepositorioBoleiaDados<Documento
      * @return A lista de documentos
      */
     List<DocumentoAceite> obterPorUsuario(Usuario usuario);
+
+    /**
+     * Exclui registros dos aceites de documento do usuário.
+     *
+     * @param idUsuario que será usado como filtro
+     */
+    void excluirPermanentementePorIdUsuario(Long idUsuario);
 }
