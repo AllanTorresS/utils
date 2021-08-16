@@ -8,6 +8,7 @@ import ipp.aci.boleia.dominio.enums.TipoRastreador;
 import ipp.aci.boleia.dominio.vo.ContextoExecucaoParametroSistemaVo;
 import ipp.aci.boleia.dominio.vo.ResultadoExecucaoParametroSistemaVo;
 import ipp.aci.boleia.util.UtilitarioCalculo;
+import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.i18n.Mensagens;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -57,6 +58,7 @@ public class LogicaParametroLocalizacaoAbastecimento implements ILogicaParametro
             BigDecimal distanciaPosto = UtilitarioCalculo.calcularDistanciaEntrePontos(latitudePosto, longitudePosto, latitudeOrigem, longitudeOrigem );
             if(distanciaPosto.doubleValue() > DISTANCIA_MAXIMA_PERMITIDA_RASTREADOR) {
                 resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
+                resultado.setCodigoErro(Erro.ERRO_AUTORIZACAO_PV_PROXIMIDADE);
                 resultado.setMensagemErro(mensagens.obterMensagem("parametro.sistema.erro.abastecimento.coordenadas.inconsistentes.posto", autorizacao.getPlacaVeiculo()));
             } else {
                 validarLocalizacaoRastreador(autorizacao, resultado, latitudeOrigem, longitudeOrigem, latitudeRastreador, longitudeRastreador);

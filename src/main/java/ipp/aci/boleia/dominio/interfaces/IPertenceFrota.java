@@ -3,6 +3,7 @@ package ipp.aci.boleia.dominio.interfaces;
 import ipp.aci.boleia.dominio.AbastecimentoVeiculoMes;
 import ipp.aci.boleia.dominio.Cobranca;
 import ipp.aci.boleia.dominio.ExtratoPedidoTransacao;
+import ipp.aci.boleia.dominio.FluxoAbastecimentoMotoristaConfig;
 import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.FrotaParametroSistemaConsumo;
 import ipp.aci.boleia.dominio.FrotaParametroSistemaHodometroHorimetro;
@@ -43,6 +44,7 @@ public interface IPertenceFrota {
     String CAMPO_PARAMETRO_SISTEMA = "frotaParametroSistema." + NOME_CAMPO;
     String CAMPO_VEICULO = "veiculo." + NOME_CAMPO;
     String CAMPO_TRANSACAO_FROTA = "transacaoFrota." + NOME_CAMPO;
+    String CAMPO_MOTORISTA = "motorista." + NOME_CAMPO;
     String CAMPO_FROTA_OPERACAO_CONTA_BENEFICIARIO = "contaBeneficiario.beneficiario." + NOME_CAMPO;
     String CAMPO_CONTA_BENEFICIOS_FROTA = "contaBeneficiosFrota." + NOME_CAMPO;
 
@@ -102,6 +104,7 @@ public interface IPertenceFrota {
         mapa.put(Cobranca.class, CAMPO_TRANSACOES_CONSOLIDADAS_FROTA);
         mapa.put(AbastecimentoVeiculoMes.class, CAMPO_VEICULO);
         mapa.put(ExtratoPedidoTransacao.class, CAMPO_TRANSACAO_FROTA);
+        mapa.put(FluxoAbastecimentoMotoristaConfig.class, CAMPO_MOTORISTA);
         mapa.put(OperacaoContaBeneficiario.class, CAMPO_FROTA_OPERACAO_CONTA_BENEFICIARIO);
         mapa.put(PedidoCreditoBeneficios.class, CAMPO_CONTA_BENEFICIOS_FROTA);
         return mapa;

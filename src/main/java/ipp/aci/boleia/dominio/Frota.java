@@ -379,6 +379,9 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "frota")
     private List<EmpresaAgregada> empresasAgregadas;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "frota")
+    private List<FluxoAbastecimentoFrotaConfig> fluxoAbastecimentoFrotaConfigs;
+
     @AuditJoinTable(name = "FROTA_PERMISSAO_AUD")
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "FROTA_PERMISSAO",
@@ -1238,6 +1241,14 @@ public class Frota implements IPersistente, IExclusaoLogica, IPertenceFrota {
 
     public void setEmpresasAgregadas(List<EmpresaAgregada> empresasAgregadas) {
         this.empresasAgregadas = empresasAgregadas;
+    }
+
+    public List<FluxoAbastecimentoFrotaConfig> getFluxoAbastecimentoFrotaConfigs() {
+        return fluxoAbastecimentoFrotaConfigs;
+    }
+
+    public void setFluxoAbastecimentoFrotaConfigs(List<FluxoAbastecimentoFrotaConfig> fluxoAbastecimentoFrotaConfigs) {
+        this.fluxoAbastecimentoFrotaConfigs = fluxoAbastecimentoFrotaConfigs;
     }
 
     public List<Permissao> getPermissoes() {
