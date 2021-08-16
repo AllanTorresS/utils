@@ -258,6 +258,26 @@ public class FiltroRequisicoes {
             ignorar = field.getAnnotation(IgnoreSanitizing.class) != null;
         } catch (NoSuchFieldException e) {
             LOGGER.debug(e.getMessage(), e);
+            if(objeto.getClass().getSuperclass() != null) {
+                ignorar = ignorarCampoSuperClasse(objeto, nome);
+            }
+        }
+        return ignorar;
+    }
+
+    /**
+     * Verifica se um campo da super classe(caso ela exista) deve ser ignorado na sanitizacao
+     * @param objeto O objeto alvo
+     * @param nome O campo a verificar
+     * @return True caso o campo deva ser ignorado na sanitizacao
+     */
+    private boolean ignorarCampoSuperClasse(Object objeto, String nome) {
+        boolean ignorar = false;
+        try {
+            Field field = objeto.getClass().getSuperclass().getDeclaredField(nome);
+            ignorar = field.getAnnotation(IgnoreSanitizing.class) != null;
+        } catch (NoSuchFieldException e) {
+            LOGGER.debug(e.getMessage(), e);
             // nada a fazer
         }
         return ignorar;
