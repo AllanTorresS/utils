@@ -1,10 +1,6 @@
 package ipp.aci.boleia.dominio.vo;
 
 import ipp.aci.boleia.dominio.DocumentoAceite;
-import ipp.aci.boleia.dominio.Usuario;
-import ipp.aci.boleia.dominio.UsuarioMotorista;
-
-import java.util.Date;
 
 /**
  * Classe de exibição que representa um usuário motorista anonimização
