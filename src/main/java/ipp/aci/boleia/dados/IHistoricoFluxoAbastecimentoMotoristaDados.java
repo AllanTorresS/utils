@@ -27,4 +27,11 @@ public interface IHistoricoFluxoAbastecimentoMotoristaDados extends IRepositorio
      * @return configurações do fluxo
      */
     List<HistoricoFluxoAbastecimentoMotoristaConfig> obterFluxosPorMotorista(Motorista motorista);
+
+    /**
+     * Exclui registros da configuração de fluxo pelo id do motorista.
+     *
+     * @param idMotorista da configuração de fluxo
+     */
+    void excluirPermanentementePorIdMotorista(Long idMotorista);
 }

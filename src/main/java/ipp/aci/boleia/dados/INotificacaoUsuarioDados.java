@@ -62,7 +62,7 @@ public interface INotificacaoUsuarioDados extends IRepositorioBoleiaDados<Notifi
 
     /**
      * Excluir as notificações por usuário
-     * @param usuario o usuario
+     * @param idUsuario o id do usuario
      */
-    void excluirNotificacoesPorUsuario(Usuario usuario);
+    void excluirNotificacoesPorIdUsuario(Long idUsuario);
 }

@@ -153,9 +153,9 @@ public class OracleNotificacaoUsuarioDados extends OracleRepositorioBoleiaDados<
     }
 
     @Override
-    public void excluirNotificacoesPorUsuario(Usuario usuario) {
+    public void excluirNotificacoesPorIdUsuario(Long idUsuario) {
         Query query = getGerenciadorDeEntidade().createQuery(EXCLUIR_NOTIFICACOES_POR_USUARIO);
-        query.setParameter("idUsuario", usuario.getId());
+        query.setParameter("idUsuario", idUsuario);
         query.executeUpdate();
     }
 }

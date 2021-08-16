@@ -10,6 +10,7 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.util.Ordenacao;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -23,6 +24,10 @@ import static ipp.aci.boleia.util.UtilitarioLambda.obterPrimeiroObjetoDaLista;
  */
 @Repository
 public class OracleHistoricoMotoristaDados extends OracleRepositorioBoleiaDados<HistoricoMotorista> implements IHistoricoMotoristaDados {
+
+    private static final String EXCLUSAO_POR_ID_MOTORISTA =
+            "DELETE FROM HistoricoMotorista hm " +
+            "WHERE hm.motorista.id = :idMotorista";
 
     /**
      * Construtor do repositorio.
@@ -44,5 +49,12 @@ public class OracleHistoricoMotoristaDados extends OracleRepositorioBoleiaDados<
         List<ParametroPesquisa> parametros = new ArrayList<>();
         parametros.add(new ParametroPesquisaIgual("motorista.id", motorista.getId()));
         return pesquisar(new ParametroOrdenacaoColuna("dataAlteracao", Ordenacao.DECRESCENTE), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+    @Override
+    public void excluirPermanentementePorIdMotorista(Long idMotorista) {
+        Query query = getGerenciadorDeEntidade().createQuery(EXCLUSAO_POR_ID_MOTORISTA);
+        query.setParameter("idMotorista", idMotorista);
+        query.executeUpdate();
     }
 }

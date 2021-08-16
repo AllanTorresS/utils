@@ -2,8 +2,6 @@ package ipp.aci.boleia.dados;
 
 
 import ipp.aci.boleia.dominio.Motorista;
-import ipp.aci.boleia.dominio.Usuario;
-import ipp.aci.boleia.dominio.UsuarioMotorista;
 
 /**
  * Contrato para envio de transações para consolidação
@@ -18,19 +16,12 @@ public interface IFilaMotoristaDados {
     void enviarMotoristaParaFilaDeAnonimizacao(Motorista motorista);
 
     /**
-     * Envia o {@link Motorista} para a fila de exclusão
-     *
-     * @param motorista O motorista a ser excluído
-     */
-    void enviarMotoristaParaFilaDeExclusao(Motorista motorista);
-
-    /**
      * Envia o {@link Motorista} para a fila de anonimização e exclusão de dados da auditoria
      *
-     * @param motorista O motorista a ter os dados anonimizados e exlcuidos da auditoria
-     * @param motoristaAnonimo O motorista anônimo a anonimizar os dados do motorista
-     * @param usuarioMotorista O usuario motorista a ter os dados anonimizados e exlcuidos da auditoria
-     * @param usuario O usuario a ter os dados anonimizados e exlcuidos da auditoria
+     * @param idMotorista O id motorista a ter os dados anonimizados e excluídos da auditoria
+     * @param idMotoristaAnonimo O id motorista anônimo a anonimizar os dados do motorista
+     * @param idUsuarioMotorista O id usuario motorista a ter os dados anonimizados e excluídos da auditoria
+     * @param idUsuario O id usuario a ter os dados anonimizados e excluídos da auditoria
      */
-    void enviarMotoristaParaFilaDeAnonimizacaoExclusaoAuditoria(Motorista motorista, Motorista motoristaAnonimo, UsuarioMotorista usuarioMotorista, Usuario usuario);
+    void enviarMotoristaParaFilaDeAnonimizacaoExclusaoAuditoria(Long idMotorista, Long idMotoristaAnonimo, Long idUsuarioMotorista, Long idUsuario);
 }

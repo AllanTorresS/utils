@@ -30,9 +30,9 @@ public class OracleCodigoValidacaoTokenJwtDados extends OracleRepositorioBoleiaD
     }
 
     @Override
-    public void excluirPorUsuario(Usuario usuario) {
+    public void excluirPorIdUsuario(Long idUsuario) {
         Query query = getGerenciadorDeEntidade().createQuery(EXCLUIR_TOKEN_POR_USUARIO);
-        query.setParameter("idUsuario", usuario.getId());
+        query.setParameter("idUsuario", idUsuario);
         query.executeUpdate();
     }
 }

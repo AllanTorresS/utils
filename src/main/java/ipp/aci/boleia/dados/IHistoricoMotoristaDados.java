@@ -30,4 +30,10 @@ public interface IHistoricoMotoristaDados extends IRepositorioBoleiaDados<Histor
      */
     List<HistoricoMotorista> obterTodosPorMotorista(Motorista motorista);
     
+    /**
+     * Exclui registros da configuração de fluxo pelo id do motorista.
+     *
+     * @param idMotorista da configuração de fluxo
+     */
+    void excluirPermanentementePorIdMotorista(Long idMotorista);
 }

@@ -68,4 +68,11 @@ public interface IFluxoAbastecimentoMotoristaDados extends IRepositorioBoleiaDad
      * @return resultados da pesquisa
      */
     ResultadoPaginado<FluxoAbastecimentoMotoristaConfig> pesquisarConfigMotorista(FiltroPesquisaMotoristaVo filtro);
+
+    /**
+     * Exclui registros da configuração de fluxo pelo id do motorista.
+     *
+     * @param idMotorista da configuração de fluxo
+     */
+    void excluirPermanentementePorIdMotorista(Long idMotorista);
 }
