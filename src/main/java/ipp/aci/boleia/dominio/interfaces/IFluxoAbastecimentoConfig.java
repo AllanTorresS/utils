@@ -77,9 +77,9 @@ public interface IFluxoAbastecimentoConfig {
         if (this.getVeiculo() == null  && this.getVeiculoClimatizador() == null) {
             return true;
         } else if (this.getVeiculo() != null  && this.getVeiculoClimatizador() == null) {
-            return Objects.equals(veiculo.getPlaca(), this.getVeiculo().getPlaca());
+            return veiculo.getSubtipoVeiculo().utilizaHorimetro() ? true : Objects.equals(veiculo.getPlaca(), this.getVeiculo().getPlaca());
         } else if (this.getVeiculo() == null && this.getVeiculoClimatizador() != null) {
-            return Objects.equals(veiculo.getPlaca(), this.getVeiculoClimatizador().getPlaca());
+            return veiculo.getSubtipoVeiculo().utilizaHorimetro() ? Objects.equals(veiculo.getPlaca(), this.getVeiculoClimatizador().getPlaca()) : true;
         } else {
             return Objects.equals(veiculo.getPlaca(), this.getVeiculo().getPlaca()) || Objects.equals(veiculo.getPlaca(), this.getVeiculoClimatizador().getPlaca());
         }
