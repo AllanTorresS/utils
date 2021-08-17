@@ -715,11 +715,11 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     }
 
     /**
-     * Obtém o valor total antecipado pela revenda e solução.
-     * @return valor antecipado
+     * Obtém o valor total antecipado pela revenda e solução, após desconto das taxas aplicáveis.
+     * @return valor antecipado líquido
      */
     @Transient
-    public BigDecimal getValorTotalAntecipado() {
+    public BigDecimal getValorAntecipadoLiquido() {
         return this.getValorAntecipadoSolucao().add(this.getValorAntecipadoRevenda());
     }
 

@@ -49,6 +49,7 @@ import ipp.aci.boleia.dominio.vo.apco.InformacoesVolumeVo;
 import ipp.aci.boleia.dominio.vo.frotista.FiltroPesquisaAbastecimentoFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.InformacaoPaginacaoFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.ResultadoPaginadoFrtVo;
+import ipp.aci.boleia.util.ConstantesNotaFiscal;
 import ipp.aci.boleia.util.Ordenacao;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
@@ -1560,7 +1561,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     @Override
     public ResultadoPaginado<AutorizacaoPagamento> obterAbastecimentosAntecipaveis(FiltroAbastecimentoAntecipavelVo filtro) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
-        parametros.add(new ParametroPesquisaIgual("margemErroNf", BigDecimal.valueOf(.05)));
+        parametros.add(new ParametroPesquisaIgual("margemErroNf", ConstantesNotaFiscal.MARGEM_VALOR_ABAST));
         parametros.add(new ParametroPesquisaIgual("idsPontoVenda", filtro.getIdsPontoVenda()));
         parametros.add(new ParametroPesquisaIgual("statusCiclo", filtro.getStatusCiclo() != null? filtro.getStatusCiclo().getValue().intValue() : null));
         parametros.add(new ParametroPesquisaIgual("dataInicioPeriodo", UtilitarioFormatacaoData.formatarDataCurta(filtro.getInicio())));
