@@ -1920,7 +1920,9 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     @Transient 
     public boolean possuiAntecipacaoParceriaRealizada() {
         return antecipacoesReembolso != null && antecipacoesReembolso.stream()
-                .anyMatch(r -> r.getTipoAntecipacao().equals(TipoAntecipacao.PARCEIRO_XP) && r.isIntegracaoRealizada());
+                .anyMatch(r -> r.getTipoAntecipacao().equals(TipoAntecipacao.PARCEIRO_XP)
+                        && r.getPropostaAntecipacao().isAceito() != null
+                        && r.getPropostaAntecipacao().isAceito());
     }
 
     @Transient 
@@ -2021,7 +2023,7 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
      * @return antecipação realizada
      */
     @Transient
-    public ReembolsoAntecipado getAntecipacaoParceiroRealizada(){
+    public ReembolsoAntecipado getAntecipacaoParceriaRealizada(){
         return this.getAntecipacoesReembolso().stream().filter(r ->
             TipoAntecipacao.PARCEIRO_XP.equals(r.getTipoAntecipacao())
                 && r.getPropostaAntecipacao().isAceito() != null && r.getPropostaAntecipacao().isAceito())
@@ -2034,12 +2036,13 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
      */
     @Transient
     public BigDecimal getValorAntecipadoRevenda(){
-        final ReembolsoAntecipado reembolso = this.getAntecipacaoParceiroRealizada();
+        final ReembolsoAntecipado reembolso = this.getAntecipacaoParceriaRealizada();
         if(reembolso != null && reembolso.getPropostaAntecipacao() != null){
             HistoricoConfiguracaoAntecipacao configuracao = reembolso.getPropostaAntecipacao().getConfiguracao();
             BigDecimal mdr = this.transacaoConsolidada.getMdr();
             BigDecimal valorDescontoMdr = calcularPorcentagem(this.valorTotal, mdr).setScale(2, BigDecimal.ROUND_HALF_UP);
-            BigDecimal valorDescontoProFrotas, valorDescontoXp;
+            BigDecimal valorDescontoProFrotas;
+            BigDecimal valorDescontoXp;
             if(configuracao.getTaxaPercentual()) {
                 BigDecimal valorReembolsoSemMdr = this.valorTotal.subtract(valorDescontoMdr);
                 valorDescontoProFrotas = calcularPorcentagem(valorReembolsoSemMdr, configuracao.getTaxaProfrotasPercentual().multiply(BigDecimal.valueOf(100))).setScale(2, BigDecimal.ROUND_HALF_UP);

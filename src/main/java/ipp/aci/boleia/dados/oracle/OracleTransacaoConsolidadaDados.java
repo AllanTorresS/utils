@@ -47,6 +47,7 @@ import ipp.aci.boleia.dominio.vo.ReembolsoTotalPeriodoVo;
 import ipp.aci.boleia.dominio.vo.frotista.FiltroPesquisaNotaFiscalFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.InformacaoPaginacaoFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.ResultadoPaginadoFrtVo;
+import ipp.aci.boleia.util.ConstantesNotaFiscal;
 import ipp.aci.boleia.util.Ordenacao;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioFormatacaoData;
@@ -190,7 +191,6 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "     JOIN FETCH t.frotaPtov fpv " +
                     "     JOIN fpv.pontoVenda pv  " +
                     "     JOIN fpv.frota fr " +
-                    "     LEFT JOIN FETCH t.antecipacoes a " +
                     " WHERE " +
                     "     t.reembolso IS NULL " +
                     "     AND t.valorReembolso IS NOT NULL " +
@@ -1460,7 +1460,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         List<TransacaoConsolidada> transacoesConsolidadas = pesquisar((ParametroOrdenacaoColuna) null, parametros.toArray(new ParametroPesquisa[parametros.size()]));
         BigDecimal totalReembolso = transacoesConsolidadas.stream().map(tc -> tc.getReembolso() != null ? tc.getReembolso().getValorReembolso() : tc.getValorReembolso())
                                                                     .reduce(BigDecimal.ZERO, BigDecimal::add);
-        BigDecimal totalAntecipado = transacoesConsolidadas.stream().map(tc -> tc.getAntecipacaoRealizada() != null ? tc.getAntecipacaoRealizada().getValorReembolso() : BigDecimal.ZERO)
+        BigDecimal totalAntecipado = transacoesConsolidadas.stream().map(TransacaoConsolidada::getValorAntecipadoLiquido)
                                                                     .reduce(BigDecimal.ZERO, BigDecimal::add);
         return new ReembolsoTotalPeriodoVo(totalReembolso, totalAntecipado);
     }
@@ -1985,7 +1985,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         String consulta = CONSULTA_DATAS_VENCIMENTO_PARCEIRO_XP;
         List<ParametroPesquisa> parametros = new ArrayList<>();
 
-        parametros.add(new ParametroPesquisaIgual("margemErroNf", BigDecimal.valueOf(.05)));
+        parametros.add(new ParametroPesquisaIgual("margemErroNf", ConstantesNotaFiscal.MARGEM_VALOR_ABAST));
         parametros.add(new ParametroPesquisaIgual("idPv", idPv));
 
         List<Date> datasvencimento = pesquisar(null, consulta, Date.class,
