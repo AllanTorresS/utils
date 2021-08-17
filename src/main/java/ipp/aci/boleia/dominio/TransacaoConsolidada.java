@@ -803,15 +803,6 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     }
 
     @Transient
-    public ReembolsoAntecipado getAntecipacaoRealizada() {
-        if(antecipacoes != null) {
-            return antecipacoes.stream().filter(antecipacao -> StatusIntegracaoReembolsoJde.REALIZADO.getValue()
-                    .equals(antecipacao.getStatusIntegracao())).findFirst().orElse(null);
-        }
-        return null;
-    }
-
-    @Transient
     public ReembolsoAntecipado getAntecipacaoSolucaoRealizada() {
         if(antecipacoes != null) {
             return antecipacoes.stream().filter(antecipacao -> StatusIntegracaoReembolsoJde.REALIZADO.getValue()
@@ -827,27 +818,29 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     @Transient
     public List<ReembolsoAntecipado> getAntecipacoesParceriaRealizadas() {
         List<ReembolsoAntecipado> antecipacoesParceria = this.getAutorizacoesPagamentoVigentes().stream()
-                .map(AutorizacaoPagamento::getAntecipacaoParceiroRealizada)
+                .map(AutorizacaoPagamento::getAntecipacaoParceriaRealizada)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         return !CollectionUtils.isEmpty(antecipacoesParceria) ? antecipacoesParceria : null;
     }
 
     @Transient
-    public Boolean possuiAntecipacaoRealizada() {
+    public boolean possuiAntecipacaoRealizada() {
         return possuiAntecipacaoSolucaoRealizada() || possuiAntecipacaoParceriaRealizada();
     }
 
     @Transient
-    public Boolean possuiAntecipacaoSolucaoRealizada() {return getAntecipacaoSolucaoRealizada() != null; }
+    public boolean possuiAntecipacaoSolucaoRealizada() {
+        return getAntecipacaoSolucaoRealizada() != null;
+    }
 
     @Transient
-    public Boolean possuiAntecipacaoParceriaRealizada() {
+    public boolean possuiAntecipacaoParceriaRealizada() {
         return getAntecipacoesParceriaRealizadas() != null;
     }
 
     @Transient
-    public Boolean possuiAntecipacaoComErro() {
+    public boolean possuiAntecipacaoComErro() {
         if(antecipacoes != null) {
             return antecipacoes.stream().anyMatch(antecipacao -> StatusIntegracaoReembolsoJde.ERRO_ENVIO.getValue().equals(antecipacao.getStatusIntegracao()));
         }

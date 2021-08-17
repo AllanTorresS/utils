@@ -1460,7 +1460,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         List<TransacaoConsolidada> transacoesConsolidadas = pesquisar((ParametroOrdenacaoColuna) null, parametros.toArray(new ParametroPesquisa[parametros.size()]));
         BigDecimal totalReembolso = transacoesConsolidadas.stream().map(tc -> tc.getReembolso() != null ? tc.getReembolso().getValorReembolso() : tc.getValorReembolso())
                                                                     .reduce(BigDecimal.ZERO, BigDecimal::add);
-        BigDecimal totalAntecipado = transacoesConsolidadas.stream().map(tc -> tc.getAntecipacaoRealizada() != null ? tc.getAntecipacaoRealizada().getValorReembolso() : BigDecimal.ZERO)
+        BigDecimal totalAntecipado = transacoesConsolidadas.stream().map(TransacaoConsolidada::getValorAntecipadoLiquido)
                                                                     .reduce(BigDecimal.ZERO, BigDecimal::add);
         return new ReembolsoTotalPeriodoVo(totalReembolso, totalAntecipado);
     }
