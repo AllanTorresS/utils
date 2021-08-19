@@ -148,8 +148,11 @@ public class OraclePropostaAntecipacaoDados extends OracleRepositorioBoleiaDados
                         " AND RXP.statusIntegracao = " + StatusIntegracaoJde.REALIZADO.getValue() + " ";
                 break;
             case PENDENTE:
-                clausulaStatus = " AND PA.isAceito = true AND (RA.statusIntegracao IS NULL OR RA.statusIntegracao IN (" + StatusIntegracaoReembolsoJde.ERRO_ENVIO.getValue() +
-                        ", " + StatusIntegracaoReembolsoJde.ERRO_LIBERACAO.getValue() + ", " + StatusIntegracaoReembolsoJde.PENDENTE.getValue()  + ")) ";
+                clausulaStatus = " AND PA.isAceito = true" +
+                        " AND (RA.statusIntegracao IS NULL OR RA.statusIntegracao <> " + StatusIntegracaoReembolsoJde.ANTECIPADO.getValue() + ") " +
+                        " AND (RA.statusIntegracao IS NULL OR RA.statusIntegracao <> " + StatusIntegracaoReembolsoJde.REALIZADO.getValue() +
+                        " OR CXP.statusIntegracao IS NULL OR CXP.statusIntegracao <> " + StatusIntegracaoJde.REALIZADO.getValue() +
+                        " OR RXP.statusIntegracao IS NULL OR RXP.statusIntegracao <> " + StatusIntegracaoJde.REALIZADO.getValue() + ") ";
                 break;
             default:
                 clausulaStatus = "";
