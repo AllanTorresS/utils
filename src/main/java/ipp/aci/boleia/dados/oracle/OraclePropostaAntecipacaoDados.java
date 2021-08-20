@@ -11,6 +11,7 @@ import ipp.aci.boleia.dominio.enums.StatusIntegracaoJde;
 import ipp.aci.boleia.dominio.enums.StatusIntegracaoReembolsoJde;
 import ipp.aci.boleia.dominio.enums.StatusPropostaXP;
 import ipp.aci.boleia.dominio.enums.TipoAntecipacao;
+import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgual;
@@ -19,6 +20,7 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.vo.EnumVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaAntecipacaoVo;
+import ipp.aci.boleia.util.Ordenacao;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +48,7 @@ public class OraclePropostaAntecipacaoDados extends OracleRepositorioBoleiaDados
                     "JOIN FPV.pontoVenda PV " +
                 "WHERE " +
                     " RA.tipoAntecipacao = " + TipoAntecipacao.PARCEIRO_XP.getValue() + " " +
+                    "%s " +
                     "%s " +
                     "%s " +
                     "%s " +
@@ -114,9 +117,29 @@ public class OraclePropostaAntecipacaoDados extends OracleRepositorioBoleiaDados
             parametros.add(new ParametroPesquisaIn("idsptov", usuarioLogado.getPontosDeVenda().stream()
                     .map(PontoDeVenda::getId).collect(Collectors.toList())));
         }
+        String clausulaOrdenacao = montarClausulaOrdenacao(filtro.getPaginacao());
 
-        return pesquisar(filtro.getPaginacao(), String.format(CONSULTA_PESQUISA_ANTECIPACAO_PARCERIA, clausulaPeriodo, clausulaStatus, clausulaStatusIntegracao, clausulaAssessorFrota, clausulaPontoVenda),
+        return pesquisar(filtro.getPaginacao(), String.format(CONSULTA_PESQUISA_ANTECIPACAO_PARCERIA, clausulaPeriodo, clausulaStatus, clausulaStatusIntegracao, clausulaAssessorFrota, clausulaPontoVenda, clausulaOrdenacao),
                 parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+    /**
+     * Monta a clausula de ordenação para a consulta de antecipacao
+     * @param paginacao informacao de paginacao e ordenacao recebido na requisicao
+     * @return QueryString de ordenacao
+     */
+    private String montarClausulaOrdenacao(InformacaoPaginacao paginacao) {
+        String clausulaOrdenacao = "";
+        if(paginacao != null && !paginacao.getParametrosOrdenacaoColuna().isEmpty()){
+            clausulaOrdenacao = "ORDER BY ";
+            List<String> parametrosOrdenacao = new ArrayList<>();
+            paginacao.getParametrosOrdenacaoColuna().forEach(parametroOrdenacaoColuna -> {
+                String sentidoOrdenacao = Ordenacao.DECRESCENTE.equals(parametroOrdenacaoColuna.getSentidoOrdenacao()) ? "DESC" : "ASC";
+                parametrosOrdenacao.add("PA." + parametroOrdenacaoColuna.getNome() + " " + sentidoOrdenacao);
+            });
+            clausulaOrdenacao += String.join(",", parametrosOrdenacao);
+        }
+        return clausulaOrdenacao;
     }
 
     /**
