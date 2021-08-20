@@ -512,6 +512,9 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     @JoinColumn(name = "CD_AUT_PAG_ASSOCIADA")
     private AutorizacaoPagamento autorizacaoPagamentoAssociada;
 
+    @OneToMany(mappedBy =  "autorizacaoPagamento", fetch = FetchType.LAZY)
+    private List<AutorizacaoPagamentoEdicao> autorizacoesEditadas;
+
     @Transient
     private TipoErroAutorizacaoPagamento tipoErroAutorizacaoPagamento;
 
@@ -1730,6 +1733,14 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
         return BigDecimal.ZERO.compareTo(this.getValorDescontoTotal()) != 0;
     }
 
+    public List<AutorizacaoPagamentoEdicao> getAutorizacoesEditadas() {
+        return autorizacoesEditadas;
+    }
+
+    public void setAutorizacoesEditadas(List<AutorizacaoPagamentoEdicao> autorizacoesEditadas) {
+        this.autorizacoesEditadas = autorizacoesEditadas;
+    }
+
     /**
      * Informa se a autorização de pagamento possui alguma nota fiscal com justificativa.
      * @return true, caso possua.
@@ -2056,4 +2067,13 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
         return BigDecimal.ZERO;
     }
 
+    /**
+     * Verifica se essa autorização pagamento foi editada e aprovada
+     * @return true se positivo
+     */
+    @Transient
+    public boolean isEdicaoAprovada(){
+        return this.autorizacoesEditadas != null && this.autorizacoesEditadas.stream()
+                .anyMatch(e -> e.getStatusEdicao().equals(StatusEdicao.EDITADO.getValue()));
+    }
 }

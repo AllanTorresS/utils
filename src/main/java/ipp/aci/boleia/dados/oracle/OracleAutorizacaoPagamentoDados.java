@@ -19,6 +19,7 @@ import ipp.aci.boleia.dominio.enums.StatusNotaFiscalAbastecimento;
 import ipp.aci.boleia.dominio.enums.StatusPropostaXP;
 import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
 import ipp.aci.boleia.dominio.enums.TipoAntecipacao;
+import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
 import ipp.aci.boleia.dominio.enums.TipoAutorizacaoPagamento;
 import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
@@ -185,6 +186,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                     "LEFT JOIN A.transacaoConsolidada TC " +
                     "LEFT JOIN A.transacaoConsolidadaPostergada TCP " +
                     "LEFT JOIN A.items I " +
+                    "LEFT JOIN A.autorizacoesEditadas ED " +
                     " WHERE " +
                     " (:idConsolidado IS NULL OR A.transacaoConsolidada.id = :idConsolidado OR A.transacaoConsolidadaPostergada.id = :idConsolidado) " +
                     CLAUSULA_STATUS_AUTORIZACAO +
@@ -216,8 +218,13 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
             " LEFT JOIN FETCH pnf.parametroNotaFiscalUfs pnfu" +
             " LEFT JOIN FETCH pnf.unidadeLocalDestinoPadrao uldp" +
             " LEFT JOIN FETCH pnfu.unidadeLocalDestino uld" +
+            " LEFT JOIN FETCH a.transacaoConsolidada tc" +
+            " LEFT JOIN FETCH a.transacaoConsolidadaPostergada tcp" +
             " WHERE a.status = " + StatusAutorizacao.AUTORIZADO.getValue() +
             "     AND a.statusNotaFiscal = " + PENDENTE.getValue() +
+            "     AND a.transacaoConsolidada IS NOT NULL " +
+            "     AND (tc.statusConsolidacao <> " + StatusTransacaoConsolidada.FECHADA.getValue() +
+            "     OR tcp.statusConsolidacao <> " + StatusTransacaoConsolidada.FECHADA.getValue() + ")" +
             "     AND a.dataRequisicao <= :dataEmissao" +
             "     AND a.valorTotal <= :limiteSuperiorTotalNf" +
             "     AND a.valorTotal >= :limiteInferiorTotalNf" +
@@ -243,8 +250,13 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                     " LEFT JOIN FETCH pnf.parametroNotaFiscalUfs pnfu" +
                     " LEFT JOIN FETCH pnf.unidadeLocalDestinoPadrao uldp" +
                     " LEFT JOIN FETCH pnfu.unidadeLocalDestino uld" +
+                    " LEFT JOIN FETCH a.transacaoConsolidada tc" +
+                    " LEFT JOIN FETCH a.transacaoConsolidadaPostergada tcp" +
                     " WHERE a.status = " + StatusAutorizacao.AUTORIZADO.getValue() +
                     "     AND a.statusNotaFiscal = " + PENDENTE.getValue() +
+                    "     AND a.transacaoConsolidada IS NOT NULL " +
+                    "     AND (tc.statusConsolidacao <> " + StatusTransacaoConsolidada.FECHADA.getValue() +
+                    "     OR tcp.statusConsolidacao <> " + StatusTransacaoConsolidada.FECHADA.getValue() + ")" +
                     "     AND a.dataRequisicao <= :dataEmissao" +
                     "     AND a.precoCombustivelTotal <= :limiteSuperiorTotalNf" +
                     "     AND a.precoCombustivelTotal >= :limiteInferiorTotalNf" +
@@ -269,8 +281,13 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                     " LEFT JOIN FETCH pnf.parametroNotaFiscalUfs pnfu" +
                     " LEFT JOIN FETCH pnf.unidadeLocalDestinoPadrao uldp" +
                     " LEFT JOIN FETCH pnfu.unidadeLocalDestino uld" +
+                    " LEFT JOIN FETCH a.transacaoConsolidada tc" +
+                    " LEFT JOIN FETCH a.transacaoConsolidadaPostergada tcp" +
                     " WHERE a.status = " + StatusAutorizacao.AUTORIZADO.getValue() +
                     "     AND a.statusNotaFiscal = " + PENDENTE.getValue() +
+                    "     AND a.transacaoConsolidada IS NOT NULL " +
+                    "     AND (tc.statusConsolidacao <> " + StatusTransacaoConsolidada.FECHADA.getValue() +
+                    "     OR tcp.statusConsolidacao <> " + StatusTransacaoConsolidada.FECHADA.getValue() + ")" +
                     "     AND a.dataRequisicao <= :dataEmissao" +
                     "     AND a.valorTotal - a.precoCombustivelTotal <= :limiteSuperiorTotalNf" +
                     "     AND a.valorTotal - a.precoCombustivelTotal >= :limiteInferiorTotalNf" +
