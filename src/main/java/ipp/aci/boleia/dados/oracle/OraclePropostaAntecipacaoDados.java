@@ -125,7 +125,7 @@ public class OraclePropostaAntecipacaoDados extends OracleRepositorioBoleiaDados
 
     /**
      * Monta a clausula de ordenação para a consulta de antecipacao
-     * @paginacao informacao de paginacao e ordenacao recebido na requisicao
+     * @param paginacao informacao de paginacao e ordenacao recebido na requisicao
      * @return QueryString de ordenacao
      */
     private String montarClausulaOrdenacao(InformacaoPaginacao paginacao) {
