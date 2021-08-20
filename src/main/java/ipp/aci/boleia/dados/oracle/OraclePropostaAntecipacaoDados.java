@@ -123,6 +123,11 @@ public class OraclePropostaAntecipacaoDados extends OracleRepositorioBoleiaDados
                 parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
+    /**
+     * Monta a clausula de ordenação para a consulta de antecipacao
+     * @paginacao informacao de paginacao e ordenacao recebido na requisicao
+     * @return QueryString de ordenacao
+     */
     private String montarClausulaOrdenacao(InformacaoPaginacao paginacao) {
         String clausulaOrdenacao = "";
         if(paginacao != null && !paginacao.getParametrosOrdenacaoColuna().isEmpty()){
