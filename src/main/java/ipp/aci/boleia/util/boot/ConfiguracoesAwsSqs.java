@@ -43,6 +43,7 @@ public class ConfiguracoesAwsSqs {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfiguracoesAwsSqs.class);
     
     private static final String MESSAGE_TIMEOUT_PADRAO = "30";
+    private static final String MESSAGE_RETENTION_PADRAO = "4";
     private static final String RECEIVE_MESSAGE_WAIT_TIME_PADRAO = "20";
 
     @Value("${aws.sqs.local.endpoint}")
@@ -254,6 +255,9 @@ public class ConfiguracoesAwsSqs {
                             QueueAttributeName.VisibilityTimeout.toString()
                             , getMessageTimeoutPorNomeFila(nomeFila))
                     .addAttributesEntry(
+                            QueueAttributeName.MessageRetentionPeriod.toString()
+                            , getMessageRetentionPorNomeFila(nomeFila))
+                    .addAttributesEntry(
                             QueueAttributeName.ReceiveMessageWaitTimeSeconds.toString()
                             , RECEIVE_MESSAGE_WAIT_TIME_PADRAO);
         amazonSQSAsync.createQueue(createQueueRequest);
@@ -302,8 +306,15 @@ public class ConfiguracoesAwsSqs {
 
     private String getMessageTimeoutPorNomeFila(String nomeFila) {
         if (nomeFilaAnonimizacaoExclusaoMotoristaAuditoria.equals(nomeFila)) {
-            return "300";
+            return "120";
         }
         return MESSAGE_TIMEOUT_PADRAO;
+    }
+
+    private String getMessageRetentionPorNomeFila(String nomeFila) {
+        if (nomeFilaAnonimizacaoExclusaoMotoristaAuditoria.equals(nomeFila)) {
+            return "14";
+        }
+        return MESSAGE_RETENTION_PADRAO;
     }
 }
