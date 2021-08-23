@@ -1,6 +1,11 @@
 package ipp.aci.boleia.dominio.vo;
 
-import ipp.aci.boleia.dominio.*;
+import ipp.aci.boleia.dominio.AutorizacaoPagamento;
+import ipp.aci.boleia.dominio.AutorizacaoPagamentoEdicao;
+import ipp.aci.boleia.dominio.DispositivoMotorista;
+import ipp.aci.boleia.dominio.DispositivoMotoristaPedido;
+import ipp.aci.boleia.dominio.FluxoAbastecimentoMotoristaConfig;
+import ipp.aci.boleia.dominio.Motorista;
 
 import java.util.Date;
 import java.util.List;
