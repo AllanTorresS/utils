@@ -1,11 +1,10 @@
 package ipp.aci.boleia.dominio.vo.conectcar;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import ipp.aci.boleia.dominio.TagConectcar;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import ipp.aci.boleia.dominio.TagConectcar;
 
 /**
  * Vo de integração dos lotes de adesivos com a conectcar 
