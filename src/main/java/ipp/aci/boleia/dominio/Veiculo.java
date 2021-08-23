@@ -487,7 +487,7 @@ public class Veiculo implements IPersistente, IExclusaoLogica, IPertenceFrota {
     }
 
     public Boolean getHabilitadoAbastecerDuasPlacas() {
-        return habilitadoAbastecerDuasPlacas;
+        return habilitadoAbastecerDuasPlacas != null && habilitadoAbastecerDuasPlacas;
     }
 
     public void setHabilitadoAbastecerDuasPlacas(Boolean habilitadoAbastecerDuasPlacas) {

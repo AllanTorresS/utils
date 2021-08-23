@@ -156,7 +156,6 @@ public class HistoricoVeiculo implements IPersistente , IPertenceFrota {
     @Column(name = "ID_ABAST_DUAS_PLACAS")
     private Boolean habilitadoAbastecerDuasPlacas;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_USUARIO")
     private Usuario usuario;
