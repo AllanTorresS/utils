@@ -8,11 +8,11 @@ import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
-import javax.annotation.PostConstruct;
 
 /**
  * Componente responsável pela configuração da conexão com servidor RabbitMQ utilizado para exportação de relatórios

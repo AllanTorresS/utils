@@ -58,6 +58,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static ipp.aci.boleia.util.UtilitarioCalculo.calcularPorcentagem;
+import static ipp.aci.boleia.util.UtilitarioCalculo.calcularValorTotalJuros;
 
 /**
  * Representa a tabela de Autorizacao Pagamento
@@ -2056,8 +2057,12 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
             BigDecimal valorDescontoXp;
             if(configuracao.getTaxaPercentual()) {
                 BigDecimal valorReembolsoSemMdr = this.valorTotal.subtract(valorDescontoMdr);
-                valorDescontoProFrotas = calcularPorcentagem(valorReembolsoSemMdr, configuracao.getTaxaProfrotasPercentual().multiply(BigDecimal.valueOf(100))).setScale(2, BigDecimal.ROUND_HALF_UP);
-                valorDescontoXp = calcularPorcentagem(valorReembolsoSemMdr, configuracao.getTaxaParceiro().getValorTaxa().multiply(BigDecimal.valueOf(100))).setScale(2, BigDecimal.ROUND_HALF_UP);
+                BigDecimal taxaFinal = configuracao.getTaxaProfrotasPercentual().add(configuracao.getTaxaParceiro().getValorTaxa());
+                int numeroDias = (int) UtilitarioCalculoData.diferencaEmDias(reembolso.getDataVencimentoPgto(), this.transacaoConsolidada.getPrazos().getDataLimitePagamento());
+
+                BigDecimal valorTotalTaxas = calcularValorTotalJuros(valorReembolsoSemMdr, taxaFinal, numeroDias);
+                valorDescontoXp = calcularValorTotalJuros(valorReembolsoSemMdr.subtract(valorTotalTaxas), configuracao.getTaxaParceiro().getValorTaxa(), numeroDias);
+                valorDescontoProFrotas = valorTotalTaxas.subtract(valorDescontoXp);
             } else {
                 valorDescontoProFrotas = configuracao.getTaxaProfrotasFixa();
                 valorDescontoXp = configuracao.getTaxaParceiro().getValorTaxa();

@@ -14,6 +14,7 @@ import java.util.stream.Stream;
 public final class UtilitarioCalculo {
 
     private static final int RAIO_TERRA = 6371;
+    private static final int MES_EM_DIAS = 30;
 
 	/**
 	 * Impede a instanciacao e a heranca
@@ -128,5 +129,28 @@ public final class UtilitarioCalculo {
         double distanciaGraus = 2 * Math.atan2(Math.sqrt(distanciaRadianos), Math.sqrt(1 - distanciaRadianos));
         double distanciaMetros = Math.pow(RAIO_TERRA * distanciaGraus * 1000, 2);
         return BigDecimal.valueOf(Math.sqrt(distanciaMetros)).setScale(2, RoundingMode.HALF_UP);
+    }
+
+    /**
+     * Obtém o valor de juros cobrados sobre um valor inicial, quando aplicada uma taxa mensal por um número de dias
+     *
+     * @param valorInicial O valor inicial sobre o qual serão aplicados os juros
+     * @param taxaMensal A taxa mensal que incide sobre o valor inicial
+     * @param numeroDias A quantidade de dias da aplicação
+     * @return o total de juros cobrados sobre o valor inicial
+     */
+    public static BigDecimal calcularValorTotalJuros(BigDecimal valorInicial, BigDecimal taxaMensal, int numeroDias) {
+        BigDecimal taxaDiaria = converterTaxaMensalParaDiaria(taxaMensal);
+        return valorInicial.multiply((BigDecimal.ONE.add(taxaDiaria)).pow(numeroDias)).setScale(2, BigDecimal.ROUND_HALF_UP).subtract(valorInicial);
+    }
+
+    /**
+     * Obtém a taxa de juros diária a partir de uma taxa de juros mensal
+     *
+     * @param taxaMensal a taxa de juros a ser convertida
+     * @return a taxa de juros diária
+     */
+    public static BigDecimal converterTaxaMensalParaDiaria(BigDecimal taxaMensal) {
+        return BigDecimal.valueOf(Math.pow((BigDecimal.ONE.add(taxaMensal)).doubleValue(), 1.0/MES_EM_DIAS)).subtract(BigDecimal.ONE);
     }
 }

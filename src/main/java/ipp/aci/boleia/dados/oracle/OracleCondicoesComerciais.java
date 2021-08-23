@@ -1,14 +1,13 @@
 package ipp.aci.boleia.dados.oracle;
 
-import java.util.List;
-
-import org.springframework.stereotype.Repository;
-
 import ipp.aci.boleia.dados.ICondicoesComerciaisDados;
 import ipp.aci.boleia.dominio.CondicoesComerciais;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.util.Ordenacao;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * Repositório de entidades Condicoes Comerciais

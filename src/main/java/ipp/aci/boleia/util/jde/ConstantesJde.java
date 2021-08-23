@@ -24,9 +24,12 @@ public final class ConstantesJde {
     public static final Long VOUCHER_INDICE_CONTA_CONTABIL_POS_PAGO = 1L;
     public static final Long VOUCHER_INDICE_CONTA_CONTABIL_PRE_PAGO = 3L;
     public static final Long VOUCHER_INDICE_CONTA_CONTABIL_MDR = 2L;
+    public static final Long VOUCHER_INDICE_CONTA_CONTABIL_TAXA_ANTECIPACAO = 4L;
     public static final String VOUCHER_OBSERVACAO_POS_PAGO = "REEMBOLSO PRO FROTAS";
     public static final String VOUCHER_OBSERVACAO_PRE_PAGO = "PRE PAGO PRO FROTAS";
     public static final String VOUCHER_OBSERVACAO_MDR_REEMBOLSO = "MDR";
+    public static final String VOUCHER_OBSERVACAO_TAXA_PROFROTAS = "TAXA PRO-FROTAS";
+    public static final String VOUCHER_OBSERVACAO_TAXA_XP = "TAXA XP";
     public static final Integer VOUCHER_TEMPO_HORA = 12;
     public static final Integer VOUCHER_TEMPO_MINUTO = 0;
     public static final Integer VOUCHER_TEMPO_SEGUNDO = 0;
