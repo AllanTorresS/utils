@@ -38,7 +38,7 @@ public class HistoricoVeiculoSd {
         historicoVeiculo.setId(null);
         historicoVeiculo.setAgregado(veiculoEntidade.getAgregado());
         historicoVeiculo.setDataCriacao(veiculoEntidade.getDataCriacao() != null ? veiculoEntidade.getDataCriacao(): ambiente.buscarDataAmbiente());
-        if(!ambiente.getUsuarioLogado().getTipoTokenJwt().equals(API_FROTISTA)){
+        if(!API_FROTISTA.equals(ambiente.getUsuarioLogado().getTipoTokenJwt())){
             historicoVeiculo.setUsuario(ambiente.getUsuarioLogado());
         }
         historicoVeiculo.setDataAlteracao(ambiente.buscarDataAmbiente());
