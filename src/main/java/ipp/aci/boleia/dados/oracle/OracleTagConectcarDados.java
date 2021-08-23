@@ -1,14 +1,5 @@
 package ipp.aci.boleia.dados.oracle;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-
-import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.stereotype.Repository;
-
 import ipp.aci.boleia.dados.ITagConectcarDados;
 import ipp.aci.boleia.dominio.TagConectcar;
 import ipp.aci.boleia.dominio.enums.StatusAtivacao;
@@ -19,6 +10,13 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgualIgnoreCase;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaTagConectcarVo;
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.stereotype.Repository;
+
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Repositório de entidades TagConectcar

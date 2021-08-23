@@ -1,9 +1,8 @@
 package ipp.aci.boleia.dados.oracle;
 
-import org.springframework.stereotype.Repository;
-
 import ipp.aci.boleia.dados.IAtividadeComponenteDados;
 import ipp.aci.boleia.dominio.AtividadeComponente;
+import org.springframework.stereotype.Repository;
 
 /**
  * Respositorio de entidade de {@link AtividadeComponente}
