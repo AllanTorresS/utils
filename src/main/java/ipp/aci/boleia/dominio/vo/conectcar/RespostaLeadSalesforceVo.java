@@ -1,8 +1,8 @@
 package ipp.aci.boleia.dominio.vo.conectcar;
 
-import java.math.BigDecimal;
-
 import ipp.aci.boleia.dominio.vo.agenciadorfrete.EnderecoVo;
+
+import java.math.BigDecimal;
 
 /**
  * Vo de retorno do serviço do sales force
