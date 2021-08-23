@@ -41,7 +41,7 @@ public class ConfiguracoesAwsSqs {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfiguracoesAwsSqs.class);
     
     private static final String MESSAGE_TIMEOUT_PADRAO = "30";
-    private static final String MESSAGE_RETENTION_PADRAO = "4";
+    private static final String MESSAGE_RETENTION_PADRAO = "345600";
     private static final String RECEIVE_MESSAGE_WAIT_TIME_PADRAO = "20";
 
     @Value("${aws.sqs.local.endpoint}")
@@ -311,7 +311,7 @@ public class ConfiguracoesAwsSqs {
 
     private String getMessageRetentionPorNomeFila(String nomeFila) {
         if (nomeFilaAnonimizacaoExclusaoMotoristaAuditoria.equals(nomeFila)) {
-            return "14";
+            return "1209600";
         }
         return MESSAGE_RETENTION_PADRAO;
     }
