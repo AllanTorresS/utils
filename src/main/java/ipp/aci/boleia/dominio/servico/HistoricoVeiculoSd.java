@@ -9,6 +9,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import static ipp.aci.boleia.dominio.enums.TipoTokenJwt.API_FROTISTA;
+
 /**
  * Serviços de domínio da entidade {@link HistoricoVeiculo}.
  *
@@ -36,7 +38,9 @@ public class HistoricoVeiculoSd {
         historicoVeiculo.setId(null);
         historicoVeiculo.setAgregado(veiculoEntidade.getAgregado());
         historicoVeiculo.setDataCriacao(veiculoEntidade.getDataCriacao() != null ? veiculoEntidade.getDataCriacao(): ambiente.buscarDataAmbiente());
-        historicoVeiculo.setUsuario(ambiente.getUsuarioLogado());
+        if(!API_FROTISTA.equals(ambiente.getUsuarioLogado().getTipoTokenJwt())){
+            historicoVeiculo.setUsuario(ambiente.getUsuarioLogado());
+        }
         historicoVeiculo.setDataAlteracao(ambiente.buscarDataAmbiente());
         repositorioHistoricoVeiculoDados.armazenar(historicoVeiculo);
     }
