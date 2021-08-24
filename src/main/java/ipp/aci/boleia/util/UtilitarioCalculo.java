@@ -87,12 +87,24 @@ public final class UtilitarioCalculo {
      * @return Valor da porcentagem calculado
      */
     public static BigDecimal calcularPorcentagem(BigDecimal valorOriginal, BigDecimal porcentagem) {
-        if (valorOriginal == null) {
+        return calcularPorcentagem(valorOriginal, porcentagem, 4);
+    }
+
+    /**
+     * Calcula o valor da porcentagem de um determinado valor
+     *
+     * @param valorOriginal Valor original que sera calculado a porcentagem
+     * @param porcentagem Valor da porcentagem que sera aplicada no calculo
+     * @param scale O número máximo de casas decimais a serem mantidos no resultado final
+     * @return Valor da porcentagem calculado
+     */
+    public static BigDecimal calcularPorcentagem(BigDecimal valorOriginal, BigDecimal porcentagem, int scale) {
+        if (valorOriginal == null || porcentagem == null) {
             return null;
-        } else if (porcentagem.equals(BigDecimal.ZERO)) {
+        } else if (BigDecimal.ZERO.equals(porcentagem)) {
             return BigDecimal.ZERO;
         }
-        return valorOriginal.multiply(porcentagem.divide(new BigDecimal("100"), 4, BigDecimal.ROUND_HALF_UP));
+        return valorOriginal.multiply(porcentagem.divide(new BigDecimal("100"), scale, BigDecimal.ROUND_HALF_UP));
     }
 
     /**
@@ -141,7 +153,7 @@ public final class UtilitarioCalculo {
      */
     public static BigDecimal calcularValorTotalJuros(BigDecimal valorInicial, BigDecimal taxaMensal, int numeroDias) {
         BigDecimal taxaDiaria = converterTaxaMensalParaDiaria(taxaMensal);
-        return valorInicial.multiply((BigDecimal.ONE.add(taxaDiaria)).pow(numeroDias)).setScale(2, BigDecimal.ROUND_HALF_UP).subtract(valorInicial);
+        return valorInicial.multiply((BigDecimal.ONE.add(taxaDiaria)).pow(numeroDias)).subtract(valorInicial);
     }
 
     /**
