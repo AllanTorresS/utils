@@ -99,9 +99,9 @@ public final class UtilitarioCalculo {
      * @return Valor da porcentagem calculado
      */
     public static BigDecimal calcularPorcentagem(BigDecimal valorOriginal, BigDecimal porcentagem, int scale) {
-        if (valorOriginal == null) {
+        if (valorOriginal == null || porcentagem == null) {
             return null;
-        } else if (porcentagem.equals(BigDecimal.ZERO)) {
+        } else if (BigDecimal.ZERO.equals(porcentagem)) {
             return BigDecimal.ZERO;
         }
         return valorOriginal.multiply(porcentagem.divide(new BigDecimal("100"), scale, BigDecimal.ROUND_HALF_UP));
