@@ -2051,8 +2051,7 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
         final ReembolsoAntecipado reembolso = this.getAntecipacaoParceriaRealizada();
         if(reembolso != null && reembolso.getPropostaAntecipacao() != null){
             HistoricoConfiguracaoAntecipacao configuracao = reembolso.getPropostaAntecipacao().getConfiguracao();
-            BigDecimal mdr = this.transacaoConsolidada.getMdr();
-            BigDecimal valorDescontoMdr = calcularPorcentagem(this.valorTotal, mdr).setScale(2, BigDecimal.ROUND_HALF_UP);
+            BigDecimal valorDescontoMdr = calcularPorcentagem(this.valorTotal, this.transacaoConsolidada.getMdr(), 15);
             BigDecimal valorDescontoProFrotas;
             BigDecimal valorDescontoXp;
             if(configuracao.getTaxaPercentual()) {
@@ -2067,7 +2066,7 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
                 valorDescontoProFrotas = configuracao.getTaxaProfrotasFixa();
                 valorDescontoXp = configuracao.getTaxaParceiro().getValorTaxa();
             }
-            return this.valorTotal.subtract(valorDescontoProFrotas.add(valorDescontoXp).add(valorDescontoMdr));
+            return this.valorTotal.subtract(valorDescontoProFrotas.add(valorDescontoXp).add(valorDescontoMdr)).setScale(2, BigDecimal.ROUND_HALF_UP);
         }
         return BigDecimal.ZERO;
     }
