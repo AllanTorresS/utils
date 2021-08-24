@@ -25,6 +25,13 @@ public abstract class LogicaParametroCotaVeiculoPreAutorizacaoBase implements IL
         ResultadoExecucaoParametroSistemaVo<PreAutorizacaoPedidoVo> resultado = new ResultadoExecucaoParametroSistemaVo<>(pedidoCota);
         Veiculo veiculo = pedidoCota.getVeiculo();
 
+        if (veiculo.isAgregado() && veiculo.getSaldoVeiculo() == null && frotaParam.getCotaVeiculoVisivelMotorista()) {
+            resultado.setStatusResultado(StatusExecucaoParametroSistema.ERRO);
+            resultado.setCodigoErro(Erro.VEICULO_SALDO_COTA_INSUFICIENTE);
+            resultado.setMensagemErro(mensagens.obterMensagem("parametro.sistema.erro.abastecimento.cota.veiculo.zero", veiculo.getPlaca()));
+            return resultado;
+        }
+
         if (aplicarRegraAoVeiculo(veiculo) && frotaParam.getCotaVeiculoVisivelMotorista() && veiculo.getSaldoVeiculo() != null) {
             boolean cotaMensal = frotaParam.getCotaVeiculoPorAbastecimento() == null || !frotaParam.getCotaVeiculoPorAbastecimento();
             boolean cotaEmLitros = frotaParam.getEmLitros() != null && frotaParam.getEmLitros();

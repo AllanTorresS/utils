@@ -7,10 +7,12 @@ import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.enums.DocumentoTipo;
 import ipp.aci.boleia.dominio.enums.StatusAtivacao;
 import ipp.aci.boleia.dominio.enums.TipoPerfilUsuario;
+import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +31,10 @@ public class OracleDocumentoAceiteDados extends OracleRepositorioBoleiaDados<Doc
             "AND u.status = :idStatusUsuario " +
             "AND u.excluido = :excluido " +
             "AND da.documento.id = :idDocumento ";
+
+    private static final String EXCLUSAO_POR_ID_USUARIO =
+            "DELETE FROM DocumentoAceite da " +
+            "WHERE da.usuario.id = :idUsuario";
 
     /**
      * Construtor default da classe.
@@ -62,5 +68,17 @@ public class OracleDocumentoAceiteDados extends OracleRepositorioBoleiaDados<Doc
     public DocumentoAceite obterAceite(Documento documento, Usuario usuario) {
         return pesquisarUnico(new ParametroPesquisaIgual("documento.id", documento.getId()),
                 new ParametroPesquisaIgual("usuario.id", usuario.getId()));
+    }
+
+    @Override
+    public List<DocumentoAceite> obterPorUsuario(Usuario usuario) {
+        return this.pesquisar(new ParametroOrdenacaoColuna(), new ParametroPesquisa[]{new ParametroPesquisaIgual("usuario", usuario)});
+    }
+
+    @Override
+    public void excluirPermanentementePorIdUsuario(Long idUsuario) {
+        Query query = getGerenciadorDeEntidade().createQuery(EXCLUSAO_POR_ID_USUARIO);
+        query.setParameter("idUsuario", idUsuario);
+        query.executeUpdate();
     }
 }

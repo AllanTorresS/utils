@@ -4,8 +4,11 @@ import ipp.aci.boleia.dados.IItemAutorizacaoPagamentoDados;
 import ipp.aci.boleia.dados.ISaldoVeiculoDados;
 import ipp.aci.boleia.dados.IVeiculoDados;
 import ipp.aci.boleia.dominio.AutorizacaoPagamento;
+import ipp.aci.boleia.dominio.Frota;
+import ipp.aci.boleia.dominio.FrotaParametroSistema;
 import ipp.aci.boleia.dominio.SaldoVeiculo;
 import ipp.aci.boleia.dominio.Veiculo;
+import ipp.aci.boleia.dominio.enums.ParametroSistema;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
@@ -148,12 +151,35 @@ public class TransacaoVeiculoSd {
      * @return O saldo do veiculo atualizado
      */
     private SaldoVeiculo registraTransacaoVeiculoAgregado(AutorizacaoPagamento autorizacaoPagamento, boolean debito, SaldoVeiculo saldo) {
+        if (!veiculoAgregadoAcumulaSaldo(autorizacaoPagamento, saldo))
+            return saldo;
+
         BigDecimal valorConsumidoAtual = calcularValorConsumidoAtual(autorizacaoPagamento, debito, saldo);
         valorConsumidoAtual = valorConsumidoAtual.add(calcularValorAgregadoExtra(autorizacaoPagamento));
         if (valorConsumidoAtual.compareTo(BigDecimal.ZERO) >= 0) {
             saldo.setValorConsumido(valorConsumidoAtual);
         }
         return saldo;
+    }
+
+    /**
+     * Verifica se o Parametro CREDITO_VEICULO_AGREGADO está Ativo
+     * E se a Cota do veiculo possui valor
+     *
+     * @param autorizacaoPagamento O abastecimento
+     * @param saldo O saldo do veiculo
+     * @return true para acumular saldo
+     */
+    private boolean veiculoAgregadoAcumulaSaldo(AutorizacaoPagamento autorizacaoPagamento, SaldoVeiculo saldo) {
+        Frota frota = autorizacaoPagamento.getFrota();
+        if (frota != null && frota.getParametrosSistema() != null && !frota.getParametrosSistema().isEmpty()) {
+            FrotaParametroSistema creditoVeiculoAgregado = frota.getParametrosSistema().stream()
+                    .filter(p-> p.getParametroSistema() == ParametroSistema.CREDITO_VEICULO_AGREGADO.getCodigo() ).findFirst().orElse(null);
+            if (creditoVeiculoAgregado != null && creditoVeiculoAgregado.getAtivo() && saldo.getCotaValor() != null) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

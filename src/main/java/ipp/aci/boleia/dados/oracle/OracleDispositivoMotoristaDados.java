@@ -2,6 +2,7 @@ package ipp.aci.boleia.dados.oracle;
 
 import ipp.aci.boleia.dados.IDispositivoMotoristaDados;
 import ipp.aci.boleia.dominio.DispositivoMotorista;
+import ipp.aci.boleia.dominio.Motorista;
 import ipp.aci.boleia.dominio.enums.ClassificacaoAgregado;
 import ipp.aci.boleia.dominio.enums.StatusBloqueio;
 import ipp.aci.boleia.dominio.enums.StatusHabilitacao;
@@ -73,6 +74,12 @@ public class OracleDispositivoMotoristaDados extends OracleRepositorioBoleiaDado
     @Override
     public List<DispositivoMotorista> obterPorMotorista(Long idMotorista) {
         return pesquisar((ParametroOrdenacaoColuna) null,new ParametroPesquisaIgual("motorista", idMotorista));
+    }
+
+    @Override
+    public List<DispositivoMotorista> obterPorMotorista(Motorista motorista) {
+        return pesquisar(new ParametroOrdenacaoColuna(),
+                new ParametroPesquisaIgual("motorista", motorista));
     }
 
     @Override

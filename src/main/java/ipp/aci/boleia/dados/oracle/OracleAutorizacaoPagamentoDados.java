@@ -4,6 +4,7 @@ import ipp.aci.boleia.dados.IAutorizacaoPagamentoDados;
 import ipp.aci.boleia.dominio.AtividadeComponente;
 import ipp.aci.boleia.dominio.AutorizacaoPagamento;
 import ipp.aci.boleia.dominio.EmpresaAgregada;
+import ipp.aci.boleia.dominio.Motorista;
 import ipp.aci.boleia.dominio.TransacaoConsolidada;
 import ipp.aci.boleia.dominio.Unidade;
 import ipp.aci.boleia.dominio.enums.ClassificacaoAgregado;
@@ -12,7 +13,12 @@ import ipp.aci.boleia.dominio.enums.StatusAutorizacao;
 import ipp.aci.boleia.dominio.enums.StatusConfirmacaoTransacao;
 import ipp.aci.boleia.dominio.enums.StatusEdicao;
 import ipp.aci.boleia.dominio.enums.StatusFrota;
+import ipp.aci.boleia.dominio.enums.StatusIntegracaoReembolsoJde;
+import ipp.aci.boleia.dominio.enums.StatusInteresseAntecipacao;
 import ipp.aci.boleia.dominio.enums.StatusNotaFiscalAbastecimento;
+import ipp.aci.boleia.dominio.enums.StatusPropostaXP;
+import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
+import ipp.aci.boleia.dominio.enums.TipoAntecipacao;
 import ipp.aci.boleia.dominio.enums.TipoAutorizacaoPagamento;
 import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
@@ -32,6 +38,7 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaior;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMenor;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
+import ipp.aci.boleia.dominio.vo.FiltroAbastecimentoAntecipavelVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaAbastecimentoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheCobrancaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheReembolsoVo;
@@ -42,6 +49,7 @@ import ipp.aci.boleia.dominio.vo.apco.InformacoesVolumeVo;
 import ipp.aci.boleia.dominio.vo.frotista.FiltroPesquisaAbastecimentoFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.InformacaoPaginacaoFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.ResultadoPaginadoFrtVo;
+import ipp.aci.boleia.util.ConstantesNotaFiscal;
 import ipp.aci.boleia.util.Ordenacao;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
@@ -177,6 +185,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                     "LEFT JOIN A.transacaoConsolidada TC " +
                     "LEFT JOIN A.transacaoConsolidadaPostergada TCP " +
                     "LEFT JOIN A.items I " +
+                    "LEFT JOIN A.autorizacoesEditadas ED " +
                     " WHERE " +
                     " (:idConsolidado IS NULL OR A.transacaoConsolidada.id = :idConsolidado OR A.transacaoConsolidadaPostergada.id = :idConsolidado) " +
                     CLAUSULA_STATUS_AUTORIZACAO +
@@ -208,8 +217,13 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
             " LEFT JOIN FETCH pnf.parametroNotaFiscalUfs pnfu" +
             " LEFT JOIN FETCH pnf.unidadeLocalDestinoPadrao uldp" +
             " LEFT JOIN FETCH pnfu.unidadeLocalDestino uld" +
+            " LEFT JOIN FETCH a.transacaoConsolidada tc" +
+            " LEFT JOIN FETCH a.transacaoConsolidadaPostergada tcp" +
             " WHERE a.status = " + StatusAutorizacao.AUTORIZADO.getValue() +
             "     AND a.statusNotaFiscal = " + PENDENTE.getValue() +
+            "     AND a.transacaoConsolidada IS NOT NULL " +
+            "     AND (tc.statusConsolidacao <> " + StatusTransacaoConsolidada.FECHADA.getValue() +
+            "     OR tcp.statusConsolidacao <> " + StatusTransacaoConsolidada.FECHADA.getValue() + ")" +
             "     AND a.dataRequisicao <= :dataEmissao" +
             "     AND a.valorTotal <= :limiteSuperiorTotalNf" +
             "     AND a.valorTotal >= :limiteInferiorTotalNf" +
@@ -235,8 +249,13 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                     " LEFT JOIN FETCH pnf.parametroNotaFiscalUfs pnfu" +
                     " LEFT JOIN FETCH pnf.unidadeLocalDestinoPadrao uldp" +
                     " LEFT JOIN FETCH pnfu.unidadeLocalDestino uld" +
+                    " LEFT JOIN FETCH a.transacaoConsolidada tc" +
+                    " LEFT JOIN FETCH a.transacaoConsolidadaPostergada tcp" +
                     " WHERE a.status = " + StatusAutorizacao.AUTORIZADO.getValue() +
                     "     AND a.statusNotaFiscal = " + PENDENTE.getValue() +
+                    "     AND a.transacaoConsolidada IS NOT NULL " +
+                    "     AND (tc.statusConsolidacao <> " + StatusTransacaoConsolidada.FECHADA.getValue() +
+                    "     OR tcp.statusConsolidacao <> " + StatusTransacaoConsolidada.FECHADA.getValue() + ")" +
                     "     AND a.dataRequisicao <= :dataEmissao" +
                     "     AND a.precoCombustivelTotal <= :limiteSuperiorTotalNf" +
                     "     AND a.precoCombustivelTotal >= :limiteInferiorTotalNf" +
@@ -261,8 +280,13 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                     " LEFT JOIN FETCH pnf.parametroNotaFiscalUfs pnfu" +
                     " LEFT JOIN FETCH pnf.unidadeLocalDestinoPadrao uldp" +
                     " LEFT JOIN FETCH pnfu.unidadeLocalDestino uld" +
+                    " LEFT JOIN FETCH a.transacaoConsolidada tc" +
+                    " LEFT JOIN FETCH a.transacaoConsolidadaPostergada tcp" +
                     " WHERE a.status = " + StatusAutorizacao.AUTORIZADO.getValue() +
                     "     AND a.statusNotaFiscal = " + PENDENTE.getValue() +
+                    "     AND a.transacaoConsolidada IS NOT NULL " +
+                    "     AND (tc.statusConsolidacao <> " + StatusTransacaoConsolidada.FECHADA.getValue() +
+                    "     OR tcp.statusConsolidacao <> " + StatusTransacaoConsolidada.FECHADA.getValue() + ")" +
                     "     AND a.dataRequisicao <= :dataEmissao" +
                     "     AND a.valorTotal - a.precoCombustivelTotal <= :limiteSuperiorTotalNf" +
                     "     AND a.valorTotal - a.precoCombustivelTotal >= :limiteInferiorTotalNf" +
@@ -328,6 +352,51 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
                     "OR (A.dataPostergacao >= :dataInicioPeriodo AND A.dataPostergacao <= :dataFimPeriodo)) " +
                     "AND N.isJustificativa = 0 " +
                     CLAUSULA_COMUM_CONSULTAS_AGRUPAMENTOS;
+
+    private static final String QUERY_ABASTECIMENTOS_ANTECIPAVEIS =
+            " SELECT a " +
+            " FROM AutorizacaoPagamento a " +
+            " JOIN FETCH a.frota f " +
+            " LEFT JOIN FETCH a.unidade u " +
+            " LEFT JOIN FETCH a.empresaAgregada ea " +
+            " JOIN FETCH a.pontoVenda pv " +
+            " JOIN FETCH a.transacaoConsolidada tc " +
+            " JOIN FETCH tc.prazos ptc " +
+            " LEFT JOIN FETCH a.transacaoConsolidadaPostergada tcp " +
+            " LEFT JOIN FETCH tcp.prazos ptcp " +
+            " WHERE " +
+            "     pv.id IN :idsPontoVenda " +
+            "     AND (:statusCiclo IS NULL OR :statusCiclo = COALESCE(tcp.statusConsolidacao, tc.statusConsolidacao)) " +
+            "     AND (:dataInicioPeriodo IS NULL OR :dataInicioPeriodo = TO_CHAR(COALESCE(tcp.dataInicioPeriodo, tc.dataInicioPeriodo), 'DD/MM/YYYY')) " +
+            "     AND (:dataFimPeriodo IS NULL OR :dataFimPeriodo = TO_CHAR(COALESCE(tcp.dataFimPeriodo, tc.dataFimPeriodo), 'DD/MM/YYYY')) " +
+            "     AND (:dataPrazoPagamento IS NULL OR :dataPrazoPagamento = TO_CHAR(COALESCE(ptcp.dataLimitePagamento, ptc.dataLimitePagamento), 'DD/MM/YYYY')) " +
+            "     AND (:idFrota IS NULL OR :idFrota = f.id) " +
+            "     AND (:statusNotaFiscal IS NULL OR :statusNotaFiscal = COALESCE(tcp.statusNotaFiscal, tc.statusNotaFiscal)) " +
+            "     AND pv.statusInteresseAntecipacao = " + StatusInteresseAntecipacao.APROVADO.getValue() +
+            "     AND a.valorTotal > 0 " +
+            "     AND a.statusNotaFiscal = " + StatusNotaFiscalAbastecimento.EMITIDA.getValue() +
+            "     AND COALESCE(tcp.statusConsolidacao, tc.statusConsolidacao) <> " + StatusTransacaoConsolidada.FECHADA.getValue() +
+            "     AND NOT EXISTS ( " +
+            "         SELECT 1 " +
+            "         FROM ReembolsoAntecipado ra " +
+            "         LEFT JOIN ra.propostaAntecipacao pa " +
+            "         JOIN ra.autorizacoesPagamento a1 " +
+            "         WHERE " +
+            "             a.id = a1.id " +
+            "             AND ((ra.tipoAntecipacao = " + TipoAntecipacao.PARCEIRO_XP.getValue() +
+            "             AND (pa.isAceito IS NULL OR pa.isAceito = true) " +
+            "             AND (pa.status IS NULL OR pa.status <> " + StatusPropostaXP.CANCELED.getValue() + ")) " +
+            "             OR (ra.tipoAntecipacao = " + TipoAntecipacao.SOLUCAO.getValue() +
+            "                 AND ra.statusIntegracao = " + StatusIntegracaoReembolsoJde.REALIZADO.getValue() + "))" +
+            "     ) AND a.valorTotal - :margemErroNf <= ( " +
+            "         SELECT COALESCE(SUM(nf.valorTotal), 0) " +
+            "         FROM AutorizacaoPagamento a1 " +
+            "         JOIN a1.notasFiscais nf " +
+            "         WHERE " +
+            "             a.id = a1.id " +
+            "             AND nf.isJustificativa = false " +
+            "     ) " +
+            " ORDER BY %s ";
 
     /**
      * Instancia o repositorio
@@ -1465,6 +1534,12 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
     }
 
     @Override
+    public List<AutorizacaoPagamento> obterPorMotorista(Motorista motorista){
+        return pesquisar(new ParametroOrdenacaoColuna(),
+                new ParametroPesquisaIgual("motorista", motorista));
+    }
+
+    @Override
     public AutorizacaoPagamento obterUltimoAbastecimentoVeiculoHodometroValido(Long idVeiculo) {
         InformacaoPaginacao paginacao = new InformacaoPaginacao(1, 1, new ParametroOrdenacaoColuna("dataProcessamento", Ordenacao.DECRESCENTE));
 
@@ -1498,4 +1573,28 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         return resultado.getRegistros().isEmpty() ? null : resultado.getRegistros().get(0);
     }
 
+
+    @Override
+    public ResultadoPaginado<AutorizacaoPagamento> obterAbastecimentosAntecipaveis(FiltroAbastecimentoAntecipavelVo filtro) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaIgual("margemErroNf", ConstantesNotaFiscal.MARGEM_VALOR_ABAST));
+        parametros.add(new ParametroPesquisaIgual("idsPontoVenda", filtro.getIdsPontoVenda()));
+        parametros.add(new ParametroPesquisaIgual("statusCiclo", filtro.getStatusCiclo() != null? filtro.getStatusCiclo().getValue().intValue() : null));
+        parametros.add(new ParametroPesquisaIgual("dataInicioPeriodo", UtilitarioFormatacaoData.formatarDataCurta(filtro.getInicio())));
+        parametros.add(new ParametroPesquisaIgual("dataFimPeriodo", UtilitarioFormatacaoData.formatarDataCurta(filtro.getFim())));
+        parametros.add(new ParametroPesquisaIgual("dataPrazoPagamento", filtro.getDataVencimento() != null ? UtilitarioFormatacaoData.formatarDataCurta(UtilitarioCalculoData.adicionarDiasData(filtro.getDataVencimento(), -2)) : null));
+        parametros.add(new ParametroPesquisaIgual("idFrota", filtro.getFrota() != null ? filtro.getFrota().getId() : null));
+        parametros.add(new ParametroPesquisaIgual("statusNotaFiscal", filtro.getStatusNf() != null ? filtro.getStatusNf().getValue() : null));
+
+        String clausulaOrdenacao = null;
+        List<ParametroOrdenacaoColuna> parametrosOrdenacao = filtro.getPaginacao().getParametrosOrdenacaoColuna();
+        if (!CollectionUtils.isEmpty(parametrosOrdenacao)) {
+            ParametroOrdenacaoColuna parametroOrdenacao = parametrosOrdenacao.stream().findFirst().get();
+            clausulaOrdenacao = "a." + parametroOrdenacao.getNome() + (parametroOrdenacao.isDecrescente() ? " DESC" : "");
+        } else {
+            clausulaOrdenacao = "a.valorTotal DESC";
+        }
+
+        return pesquisar(filtro.getPaginacao(), String.format(QUERY_ABASTECIMENTOS_ANTECIPAVEIS, clausulaOrdenacao), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
 }

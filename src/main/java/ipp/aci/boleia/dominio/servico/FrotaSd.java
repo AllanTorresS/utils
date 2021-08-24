@@ -220,12 +220,11 @@ public class FrotaSd {
     }
 
     /**
-     * Dispara emails e notificações informando sobre a alteração de status de uma frota.
+     * Dispara emails informando sobre a alteração de status de uma frota.
      *
      * @param motivo o motivo da alteração de status
      */
     public void notificarAlteracaoFrota(MotivoAlteracaoStatusFrota motivo) {
-        notificacaoUsuarioSd.enviarNotificacaoFrotaAlterada(motivo.getFrota());
         enviarEmailAlteracaoStatusFrota(motivo.getFrota(), motivo);
     }
 

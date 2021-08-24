@@ -15,6 +15,7 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaUsuarioMotoristaVo;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,6 +28,10 @@ import static ipp.aci.boleia.util.UtilitarioFormatacao.obterLongMascara;
  */
 @Repository
 public class OracleUsuarioMotoristaDados extends OracleRepositorioBoleiaDados<UsuarioMotorista> implements IUsuarioMotoristaDados {
+
+    private  static final String OBTEM_USUARIOS_MOTORISTAS_POR_ID_USUARIO_INCLUINDO_EXCLUIDOS =
+            "SELECT um FROM UsuarioMotorista um " +
+                    "WHERE um.usuario.id = :idUsuario";
 
     /**
      * Instancia o repositório
@@ -74,5 +79,12 @@ public class OracleUsuarioMotoristaDados extends OracleRepositorioBoleiaDados<Us
         }
 
         return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+    @Override
+    public List<UsuarioMotorista> obterUsuariosMotoristasIncluindoExcluidos(Usuario usuario) {
+        Query query = getGerenciadorDeEntidade().createQuery(OBTEM_USUARIOS_MOTORISTAS_POR_ID_USUARIO_INCLUINDO_EXCLUIDOS);
+        query.setParameter("idUsuario", usuario.getId());
+        return query.getResultList();
     }
 }

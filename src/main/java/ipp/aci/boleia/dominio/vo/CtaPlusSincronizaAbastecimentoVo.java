@@ -1,6 +1,7 @@
 package ipp.aci.boleia.dominio.vo;
 
 import ipp.aci.boleia.util.ConstantesCta;
+
 import java.util.List;
 
 /**

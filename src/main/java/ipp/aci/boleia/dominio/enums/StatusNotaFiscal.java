@@ -6,7 +6,7 @@ import ipp.aci.boleia.util.i18n.IEnumComLabel;
 /**
  * Indica o status de um contrato da Frota
  */
-public enum StatusNotaFiscal implements IEnumComLabel<StatusNotaFiscal> {
+public enum StatusNotaFiscal implements IEnumComLabel<StatusNotaFiscal>, IEnumComValor {
 
     PENDENTE(0),
     EMITIDA(1),

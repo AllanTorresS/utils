@@ -16,7 +16,8 @@ public enum TipoArquivo {
     NOTA_FISCAL_ARMAZEM("nfe_anexo_armazem/", ".xml", "text/xml", false, 120),
     DOWNLOAD_PRESIGNED_NOTA_FISCAL_PDF("download_presigned/nota_fiscal/pdf/", ".pdf", "application/pdf", false, 120),
     DOWNLOAD_PRESIGNED_NOTA_FISCAL_XML("download_presigned/nota_fiscal/xml/", ".xml", "text/xml", false, 120),
-    DOWNLOAD_PRESIGNED_JUSTIFICATIVA("download_presigned/justificativa/", "", "application/pdf", false, 120);
+    DOWNLOAD_PRESIGNED_JUSTIFICATIVA("download_presigned/justificativa/", "", "application/pdf", false, 120),
+    ANONIMIZACAO_MOTORISTA("anonimizacao/motorista/", ".json", "application/json", false, 0);
 
     public static final String PREFIXO_BASE64 = "base64,";
 

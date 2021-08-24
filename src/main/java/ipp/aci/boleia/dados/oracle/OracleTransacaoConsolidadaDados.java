@@ -11,10 +11,14 @@ import ipp.aci.boleia.dominio.Unidade;
 import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.enums.ModalidadePagamento;
 import ipp.aci.boleia.dominio.enums.StatusIntegracaoReembolsoJde;
+import ipp.aci.boleia.dominio.enums.StatusInteresseAntecipacao;
 import ipp.aci.boleia.dominio.enums.StatusNotaFiscal;
+import ipp.aci.boleia.dominio.enums.StatusNotaFiscalAbastecimento;
 import ipp.aci.boleia.dominio.enums.StatusPagamentoCobranca;
 import ipp.aci.boleia.dominio.enums.StatusPagamentoReembolso;
+import ipp.aci.boleia.dominio.enums.StatusPropostaXP;
 import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
+import ipp.aci.boleia.dominio.enums.TipoAntecipacao;
 import ipp.aci.boleia.dominio.enums.TipoEntidadeUnidadeEmpresaAgregada;
 import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
@@ -43,6 +47,7 @@ import ipp.aci.boleia.dominio.vo.ReembolsoTotalPeriodoVo;
 import ipp.aci.boleia.dominio.vo.frotista.FiltroPesquisaNotaFiscalFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.InformacaoPaginacaoFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.ResultadoPaginadoFrtVo;
+import ipp.aci.boleia.util.ConstantesNotaFiscal;
 import ipp.aci.boleia.util.Ordenacao;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.UtilitarioFormatacaoData;
@@ -73,6 +78,8 @@ import static ipp.aci.boleia.util.UtilitarioCalculoData.obterUltimoDiaMes;
 @Repository
 public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDados<TransacaoConsolidada>
         implements ITransacaoConsolidadaDados {
+
+    private static final int DIAS_PARA_CALCULO_DATA_PREVISTA_REEMBOLSO = 2;
 
     private static final String CLAUSULA_FROTA = "( F.id = :frotaId ) AND ";
     private static final String CLAUSULA_EMPRESA_AGREGADA = "( EA.id = :empresaAgregadaId ) AND ";
@@ -184,7 +191,6 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "     JOIN FETCH t.frotaPtov fpv " +
                     "     JOIN fpv.pontoVenda pv  " +
                     "     JOIN fpv.frota fr " +
-                    "     LEFT JOIN FETCH t.antecipacoes a " +
                     " WHERE " +
                     "     t.reembolso IS NULL " +
                     "     AND t.valorReembolso IS NOT NULL " +
@@ -376,11 +382,13 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "AND (C.numeroDocumento = :numeroDocumento OR :numeroDocumento is null) " +
                     "AND (U.id = :empresaUnidade OR EA.id = :empresaUnidade OR :empresaUnidade is null) " +
                     "AND (PV.id = :pontoVenda OR :pontoVenda is null) " +
+                    "AND (F.modoPagamento = :modoPagamento OR :modoPagamento is null) " +
                     "%s " +
                     "GROUP BY " +
                     "F.id, " +
                     "F.razaoSocial, " +
                     "F.cnpj, " +
+                    "F.modoPagamento, " +
                     "TC.dataInicioPeriodo, " +
                     "TC.dataFimPeriodo, " +
                     CLAUSULA_DATA_LIMITE_EMISSAO + ", " +
@@ -399,6 +407,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                         "F.id, " +
                         "F.razaoSocial, " +
                         "F.cnpj, " +
+                        "F.modoPagamento, " +
                         "TC.dataInicioPeriodo, " +
                         "TC.dataFimPeriodo, " +
                         "SUM(TC.valorTotal), " +
@@ -603,6 +612,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
     private static final String CONSULTA_COMUM_CONSOLIDADOS_GRID_REEMBOLSO =
             "FROM TransacaoConsolidada tc " +
             "LEFT JOIN tc.frotaPtov fpv " +
+            "LEFT JOIN fpv.frota f " +
             "LEFT JOIN tc.reembolso r " +
             "WHERE " +
             "(tc.dataInicioPeriodo >= :dataInicioPeriodo AND tc.dataFimPeriodo <= :dataFimPeriodo) " +
@@ -615,7 +625,8 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             "AND (r.numeroDocumento = :numeroDocumento  OR :numeroDocumento is null)" +
             "AND (tc.valorFaturamento <> 0 OR tc.valorReembolso <> 0 OR tc.valorTotalNotaFiscal <> 0 OR tc.quantidadeAbastecimentos <> 0) " +
             "AND (tc.unidade.id = :idUnidade OR :idUnidade is null) " +
-            "AND (tc.empresaAgregada.id = :idEmpresaAgregada OR :idEmpresaAgregada is null) ";
+            "AND (tc.empresaAgregada.id = :idEmpresaAgregada OR :idEmpresaAgregada is null) " +
+            "AND (f.modoPagamento = :modoPagamento OR :modoPagamento is null) ";
 
     private static final String CONSULTA_CONSOLIDADOS_GRID_REEMBOLSO_SOLUCAO =
             "SELECT tc " +
@@ -626,6 +637,45 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             " SELECT SUM(CASE WHEN r.valorReembolso IS NULL THEN tc.valorReembolso "+
                     "ELSE r.valorReembolso END) " +
                     CONSULTA_COMUM_CONSOLIDADOS_GRID_REEMBOLSO;
+
+    private static final String CONSULTA_DATAS_VENCIMENTO_PARCEIRO_XP =
+            " SELECT DISTINCT ptc.dataLimitePagamento" +
+            " FROM TransacaoConsolidada tc" +
+            " JOIN tc.prazos ptc" +
+            " JOIN tc.frotaPtov fp" +
+            " JOIN fp.pontoVenda pv" +
+            " WHERE" +
+            "     pv.statusInteresseAntecipacao = " + StatusInteresseAntecipacao.APROVADO.getValue() +
+            "     AND (tc.valorTotalNotaFiscal > 0 OR tc.quantidadeAbastecimentos > 0)" +
+            "     AND fp.pontoVenda.id = :idPv" +
+            "     AND tc.statusConsolidacao <> " + StatusTransacaoConsolidada.FECHADA.getValue() +
+            "     AND (tc.statusNotaFiscal = " + StatusNotaFiscal.EMITIDA.getValue() +
+            "     OR tc.statusNotaFiscal = " + StatusNotaFiscal.PENDENTE.getValue() + ")" +
+            "     AND EXISTS (" +
+            "         SELECT 1 FROM AutorizacaoPagamento a" +
+            "         JOIN a.transacaoConsolidada tc1" +
+            "         LEFT JOIN a.transacaoConsolidadaPostergada tcp" +
+            "         WHERE tc = COALESCE(tcp.id, tc1.id)" +
+            "             AND a.statusNotaFiscal = " + StatusNotaFiscalAbastecimento.EMITIDA.getValue() +
+            "             AND NOT EXISTS (" +
+            "                 SELECT 1 FROM ReembolsoAntecipado ra" +
+            "                 JOIN ra.autorizacoesPagamento a1" +
+            "                 LEFT JOIN ra.propostaAntecipacao pa" +
+            "                 WHERE a.id = a1.id" +
+            "                     AND ((ra.tipoAntecipacao = " + TipoAntecipacao.PARCEIRO_XP.getValue() +
+            "                     AND (pa.isAceito IS NULL OR pa.isAceito = true)" +
+            "                     AND (pa.status IS NULL OR pa.status <> " + StatusPropostaXP.CANCELED.getValue() + "))" +
+            "                     OR (ra.tipoAntecipacao = " + TipoAntecipacao.SOLUCAO.getValue() +
+            "                     AND ra.statusIntegracao = " + StatusIntegracaoReembolsoJde.REALIZADO.getValue() + "))" +
+            "             ) AND a.valorTotal - :margemErroNf <= (" +
+            "                 SELECT COALESCE(SUM(nf.valorTotal), 0)" +
+            "                 FROM AutorizacaoPagamento a1" +
+            "                 JOIN a1.notasFiscais nf" +
+            "                 WHERE" +
+            "                     a.id = a1.id" +
+            "                     AND nf.isJustificativa = false" +
+            "     ))" +
+            " ORDER BY ptc.dataLimitePagamento ASC";
 
     @Autowired
     private UtilitarioAmbiente ambiente;
@@ -1410,7 +1460,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         List<TransacaoConsolidada> transacoesConsolidadas = pesquisar((ParametroOrdenacaoColuna) null, parametros.toArray(new ParametroPesquisa[parametros.size()]));
         BigDecimal totalReembolso = transacoesConsolidadas.stream().map(tc -> tc.getReembolso() != null ? tc.getReembolso().getValorReembolso() : tc.getValorReembolso())
                                                                     .reduce(BigDecimal.ZERO, BigDecimal::add);
-        BigDecimal totalAntecipado = transacoesConsolidadas.stream().map(tc -> tc.getAntecipacaoRealizada() != null ? tc.getAntecipacaoRealizada().getValorReembolso() : BigDecimal.ZERO)
+        BigDecimal totalAntecipado = transacoesConsolidadas.stream().map(TransacaoConsolidada::getValorAntecipadoLiquido)
                                                                     .reduce(BigDecimal.ZERO, BigDecimal::add);
         return new ReembolsoTotalPeriodoVo(totalReembolso, totalAntecipado);
     }
@@ -1675,6 +1725,12 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             parametros.add(new ParametroPesquisaIgual("pontoVenda", null));
         }
 
+        if(filtro.getModalidadePagamento() != null && filtro.getModalidadePagamento().getValue() != null) {
+            parametros.add(new ParametroPesquisaIgual("modoPagamento", filtro.getModalidadePagamento().getValue()));
+        } else {
+            parametros.add(new ParametroPesquisaIgual("modoPagamento", null));
+        }
+
         String filtroStatus = " ";
         if(filtro.getStatusPagamento() != null && !filtro.getStatusPagamento().isEmpty()) {
             filtroStatus = "AND ((C.status IS NULL AND " + A_VENCER.getValue() + " IN :statusPagamento) OR C.status IN :statusPagamento) ";
@@ -1895,6 +1951,12 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             parametros.add(new ParametroPesquisaIgual("statusConsolidacao", null));
         }
 
+        if(filtro.getModalidadePagamento() != null && filtro.getModalidadePagamento().getValue() != null) {
+            parametros.add(new ParametroPesquisaIgual("modoPagamento", filtro.getModalidadePagamento().getValue()));
+        } else {
+            parametros.add(new ParametroPesquisaIgual("modoPagamento", null));
+        }
+
         return consulta;
     }
 
@@ -1916,5 +1978,20 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             parametrosPesquisa.add(new ParametroPesquisaIn("idsPvs", usuarioLogado.getPontosDeVenda().stream().map(PontoDeVenda::getId).collect(Collectors.toList())));
         }
 
+    }
+
+    @Override
+    public List<Date> obterDatasVencimentoDisponiveisAntecipacao(Long idPv) {
+        String consulta = CONSULTA_DATAS_VENCIMENTO_PARCEIRO_XP;
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+
+        parametros.add(new ParametroPesquisaIgual("margemErroNf", ConstantesNotaFiscal.MARGEM_VALOR_ABAST));
+        parametros.add(new ParametroPesquisaIgual("idPv", idPv));
+
+        List<Date> datasvencimento = pesquisar(null, consulta, Date.class,
+                parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+
+        return datasvencimento.stream()
+                .map(data -> UtilitarioCalculoData.adicionarDiasData(data, DIAS_PARA_CALCULO_DATA_PREVISTA_REEMBOLSO)).collect(Collectors.toList());
     }
 }

@@ -25,6 +25,9 @@ public class LeadCredenciamentoPostoIntegradorVo extends BaseLeadCredenciamentoI
 	@Size(max = 5)
 	@JsonProperty("BandeiraBranca__c")
 	private String bandeiraBranca;
+
+	@JsonProperty("ParticiparAntecipacaoRecebiveis__c")
+	private Boolean aceiteAntecipacao;
 	
 	@Size(max = 5)
 	@JsonProperty("AceiteTermo__c")
@@ -101,6 +104,10 @@ public class LeadCredenciamentoPostoIntegradorVo extends BaseLeadCredenciamentoI
 	public void setBandeiraBranca(String bandeiraBranca) {
 		this.bandeiraBranca = bandeiraBranca;
 	}
+
+	public Boolean isAceiteAntecipacao() { return aceiteAntecipacao; }
+
+	public void setAceiteAntecipacao(Boolean aceiteAntecipacao) { this.aceiteAntecipacao = aceiteAntecipacao; }
 
 	public String getAceiteTermo() {
 		return aceiteTermo;

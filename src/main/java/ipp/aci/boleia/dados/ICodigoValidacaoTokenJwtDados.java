@@ -17,4 +17,11 @@ public interface ICodigoValidacaoTokenJwtDados extends IRepositorioBoleiaDados<C
      * @return Objeto encontrado.
      */
     CodigoValidacaoTokenJwt obterPorUsuario(Usuario usuario);
+
+    /**
+     * excluir um objeto {@link CodigoValidacaoTokenJwt} a partir de um usuário.
+     *
+     * @param idUsuario Id do usuario utilizado para deletar o token
+     */
+    void excluirPorIdUsuario(Long idUsuario);
 }

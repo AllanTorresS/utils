@@ -76,4 +76,5 @@ public interface IReembolsoDados extends IReembolsoBaseDados<Reembolso> {
      * @return O próximo reembolso a ser feito para revenda.
      */
     Reembolso obterProximoReembolsoParaPagamento(List<Long> idsPontoVenda);
+
 }

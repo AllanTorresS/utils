@@ -1,6 +1,7 @@
 package ipp.aci.boleia.dominio.vo;
 
 import ipp.aci.boleia.util.excecao.Erro;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
