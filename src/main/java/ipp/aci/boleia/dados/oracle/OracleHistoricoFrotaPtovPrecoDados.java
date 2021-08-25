@@ -8,9 +8,12 @@ import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataEntre;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenor;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
+import ipp.aci.boleia.dominio.vo.EntidadeVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaUltimosPrecosVo;
 import ipp.aci.boleia.util.Ordenacao;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
+import ipp.aci.boleia.util.UtilitarioLambda;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -54,8 +57,9 @@ public class OracleHistoricoFrotaPtovPrecoDados extends OracleRepositorioBoleiaD
         }
         parametros.add(new ParametroPesquisaIgual("frotaPtov.pontoVenda.id", filtro.getPontoDeVenda().getId()));
 
-        if(filtro.getTipoCombustivel() != null && filtro.getTipoCombustivel().getId() != null){
-            parametros.add(new ParametroPesquisaIgual("tipoCombustivel.id", filtro.getTipoCombustivel().getId()));
+        if(filtro.getTipoCombustivel() != null && !filtro.getTipoCombustivel().isEmpty()){
+            List<Long> idsCombustiveis = UtilitarioLambda.converterLista(filtro.getTipoCombustivel(), EntidadeVo::getId);
+            parametros.add(new ParametroPesquisaIn("tipoCombustivel.id", idsCombustiveis));
         }
         parametros.add(new ParametroPesquisaDataEntre("dataVigencia", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe()),
                 UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte())));

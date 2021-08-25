@@ -2,6 +2,8 @@ package ipp.aci.boleia.dominio.vo;
 
 import ipp.aci.boleia.dominio.pesquisa.comum.FiltroBasePeriodoPaginado;
 
+import java.util.List;
+
 /**
  * Filtro para pesquisa de histórico de preços
  */
@@ -9,7 +11,7 @@ public class FiltroPesquisaUltimosPrecosVo extends FiltroBasePeriodoPaginado {
 
     private EntidadeVo frota;
     private EntidadeVo pontoDeVenda;
-    private EntidadeVo tipoCombustivel;
+    private List<EntidadeVo> tipoCombustivel;
 
     /**
      * Construtor padrão
@@ -33,11 +35,11 @@ public class FiltroPesquisaUltimosPrecosVo extends FiltroBasePeriodoPaginado {
         this.pontoDeVenda = pontoDeVenda;
     }
 
-    public EntidadeVo getTipoCombustivel() {
+    public List<EntidadeVo> getTipoCombustivel() {
         return tipoCombustivel;
     }
 
-    public void setTipoCombustivel(EntidadeVo tipoCombustivel) {
+    public void setTipoCombustivel(List<EntidadeVo> tipoCombustivel) {
         this.tipoCombustivel = tipoCombustivel;
     }
 }
