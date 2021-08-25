@@ -57,7 +57,7 @@ public class OracleHistoricoFrotaPtovPrecoDados extends OracleRepositorioBoleiaD
         }
         parametros.add(new ParametroPesquisaIgual("frotaPtov.pontoVenda.id", filtro.getPontoDeVenda().getId()));
 
-        if(filtro.getTipoCombustivel() != null && !filtro.getTipoCombustivel().isEmpty()){
+        if(filtro.getTipoCombustivel() != null && filtro.getTipoCombustivel().stream().anyMatch( t -> t.getId() != null)){
             List<Long> idsCombustiveis = UtilitarioLambda.converterLista(filtro.getTipoCombustivel(), EntidadeVo::getId);
             parametros.add(new ParametroPesquisaIn("tipoCombustivel.id", idsCombustiveis));
         }
