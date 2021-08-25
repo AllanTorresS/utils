@@ -139,14 +139,28 @@ public interface IMotoristaDados extends IRepositorioBoleiaDados<Motorista> {
      * @param diasDeVerificacao quantidade de dias que os motoristas estão cadastrados
      * @return os motoristas encontrados
      */
-    List<Motorista> obterMotoristasSemAbastecimento(Integer diasDeVerificacao, boolean incluirPosteriores);
+    List<Motorista> obterMotoristasSemAbastecimento(Integer diasDeVerificacao);
 
     /**
      * Obtem motoristas que realizaram abastecimentos e estão inativos
      * @param diasDeVerificacao quantidade de dias que os motoristas estão cadastrados
      * @return os motoristas encontrados
      */
-    List<Motorista> obterMotoristasInativosComAbastecimento(Integer diasDeVerificacao, boolean incluirPosteriores);
+    List<Motorista> obterMotoristasInativosComAbastecimento(Integer diasDeVerificacao);
+
+    /**
+     * Obtem motoristas que não realizaram abastecimentos até o momento
+     * @param diasDeVerificacao quantidade de dias que os motoristas estão cadastrados
+     * @return os motoristas encontrados
+     */
+    List<Motorista> obterMotoristasSemAbastecimentoAposPeriodo(Integer diasDeVerificacao);
+
+    /**
+     * Obtem motoristas que realizaram abastecimentos e estão inativos
+     * @param diasDeVerificacao quantidade de dias que os motoristas estão cadastrados
+     * @return os motoristas encontrados
+     */
+    List<Motorista> obterMotoristasInativosComAbastecimentoAposPeriodo(Integer diasDeVerificacao);
 
     /**
      * Obtem motoristas que estão excluídos
