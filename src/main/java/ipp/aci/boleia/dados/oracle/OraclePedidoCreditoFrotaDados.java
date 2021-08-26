@@ -205,4 +205,15 @@ public class OraclePedidoCreditoFrotaDados extends OracleRepositorioBoleiaDados<
             }
         }
     }
+
+    /**
+     * Obtem pedido de credito pelo codigo da Mundipagg
+     *
+     * @param codigoMundipagg O codigo do pedido
+     * @return
+     */
+    @Override
+    public PedidoCreditoFrota obterPorCodigoMundipagg(String codigoMundipagg) {
+        return pesquisarUnico(new ParametroPesquisaIgual("codigoPedidoMundipagg", codigoMundipagg));
+    }
 }
