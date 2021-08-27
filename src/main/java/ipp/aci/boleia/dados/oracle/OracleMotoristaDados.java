@@ -12,11 +12,12 @@ import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
-import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaior;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaior;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMenorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
 import ipp.aci.boleia.dominio.vo.EntidadeVo;
@@ -70,6 +71,28 @@ public class OracleMotoristaDados extends OracleRepositorioBoleiaDados<Motorista
             "SELECT m " +
                     "FROM Motorista m " +
                     "WHERE m.status = 0 AND trunc(m.dataInativacao) = trunc(:diasDeVerificacao) and " +
+                    "EXISTS (" +
+                    " 	SELECT 1 " +
+                    " 	FROM AutorizacaoPagamento ap " +
+                    " 	WHERE ap.motorista.id = m.id " +
+                    ") " +
+                    "ORDER BY m.frota, m.dataCriacao ";
+
+    private static final String LISTAR_MOTORISTAS_SEM_ABASTECIMENTO_APOS_PERIODO =
+            "SELECT m " +
+                    "FROM Motorista m " +
+                    "WHERE trunc(m.dataCriacao) <= trunc(:diasDeVerificacao) and " +
+                    "NOT EXISTS (" +
+                    " 	SELECT 1 " +
+                    " 	FROM AutorizacaoPagamento ap " +
+                    " 	WHERE ap.motorista.id = m.id " +
+                    ") " +
+                    "ORDER BY m.frota, m.dataCriacao ";
+
+    private static final String LISTAR_MOTORISTAS_INATIVOS_COM_ABASTECIMENTO_APOS_PERIODO =
+            "SELECT m " +
+                    "FROM Motorista m " +
+                    "WHERE m.status = 0 AND trunc(m.dataInativacao) <= trunc(:diasDeVerificacao) and " +
                     "EXISTS (" +
                     " 	SELECT 1 " +
                     " 	FROM AutorizacaoPagamento ap " +
@@ -411,21 +434,27 @@ public class OracleMotoristaDados extends OracleRepositorioBoleiaDados<Motorista
     }
 
     @Override
-    public List<Motorista> obterMotoristasSemAbastecimento(Integer diasDeVerificacao, boolean incluirPosteriores) {
-        Date dataDeVerificacao = UtilitarioCalculoData.obterPrimeiroInstanteDia(UtilitarioCalculoData.adicionarDiasData(utilitarioAmbiente.buscarDataAmbiente(), -diasDeVerificacao));
-        ParametroPesquisa parametroDiasDeVerificacao = incluirPosteriores ?
-                new ParametroPesquisaDataMaior("diasDeVerificacao", dataDeVerificacao)
-                : new ParametroPesquisaIgual("diasDeVerificacao", dataDeVerificacao);
+    public List<Motorista> obterMotoristasSemAbastecimento(Integer diasDeVerificacao) {
+        ParametroPesquisaIgual parametroDiasDeVerificacao = new ParametroPesquisaIgual("diasDeVerificacao", UtilitarioCalculoData.obterPrimeiroInstanteDia(UtilitarioCalculoData.adicionarDiasData(utilitarioAmbiente.buscarDataAmbiente(), -diasDeVerificacao)));
         return pesquisar(null, LISTAR_MOTORISTAS_SEM_ABASTECIMENTO, parametroDiasDeVerificacao).getRegistros();
     }
 
     @Override
-    public List<Motorista> obterMotoristasInativosComAbastecimento(Integer diasDeVerificacao, boolean incluirPosteriores) {
-        Date dataDeVerificacao = UtilitarioCalculoData.obterPrimeiroInstanteDia(UtilitarioCalculoData.adicionarDiasData(utilitarioAmbiente.buscarDataAmbiente(), -diasDeVerificacao));
-        ParametroPesquisa parametroDiasDeVerificacao = incluirPosteriores ?
-                new ParametroPesquisaDataMaior("diasDeVerificacao", dataDeVerificacao)
-                : new ParametroPesquisaIgual("diasDeVerificacao", dataDeVerificacao);
+    public List<Motorista> obterMotoristasInativosComAbastecimento(Integer diasDeVerificacao) {
+        ParametroPesquisaIgual parametroDiasDeVerificacao = new ParametroPesquisaIgual("diasDeVerificacao", UtilitarioCalculoData.adicionarDiasData(utilitarioAmbiente.buscarDataAmbiente(), -diasDeVerificacao));
         return pesquisar(null, LISTAR_MOTORISTAS_INATIVOS_COM_ABASTECIMENTO, parametroDiasDeVerificacao).getRegistros();
+    }
+
+    @Override
+    public List<Motorista> obterMotoristasSemAbastecimentoAposPeriodo(Integer diasDeVerificacao) {
+        ParametroPesquisaDataMenorOuIgual parametroDiasDeVerificacao = new ParametroPesquisaDataMenorOuIgual("diasDeVerificacao", UtilitarioCalculoData.obterPrimeiroInstanteDia(UtilitarioCalculoData.adicionarDiasData(utilitarioAmbiente.buscarDataAmbiente(), -diasDeVerificacao)));
+        return pesquisar(null, LISTAR_MOTORISTAS_SEM_ABASTECIMENTO_APOS_PERIODO, parametroDiasDeVerificacao).getRegistros();
+    }
+
+    @Override
+    public List<Motorista> obterMotoristasInativosComAbastecimentoAposPeriodo(Integer diasDeVerificacao) {
+        ParametroPesquisaDataMenorOuIgual parametroDiasDeVerificacao = new ParametroPesquisaDataMenorOuIgual("diasDeVerificacao", UtilitarioCalculoData.adicionarDiasData(utilitarioAmbiente.buscarDataAmbiente(), -diasDeVerificacao));
+        return pesquisar(null, LISTAR_MOTORISTAS_INATIVOS_COM_ABASTECIMENTO_APOS_PERIODO, parametroDiasDeVerificacao).getRegistros();
     }
 
     @Override

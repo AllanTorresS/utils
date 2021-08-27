@@ -304,7 +304,7 @@ public class ConfiguracoesAwsSqs {
 
     private String getMessageTimeoutPorNomeFila(String nomeFila) {
         if (nomeFilaAnonimizacaoExclusaoMotoristaAuditoria.equals(nomeFila)) {
-            return "120";
+            return "180";
         }
         return MESSAGE_TIMEOUT_PADRAO;
     }
