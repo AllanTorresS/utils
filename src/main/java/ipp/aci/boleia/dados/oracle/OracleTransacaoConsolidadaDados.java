@@ -638,11 +638,18 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
     private static final String CONSULTA_DATAS_VENCIMENTO_PARCEIRO_XP =
             " SELECT DISTINCT ptc.dataLimitePagamento" +
             " FROM TransacaoConsolidada tc" +
+            " JOIN tc.frotaPtov fpv " +
+            " JOIN fpv.frota f " +
             " JOIN tc.prazos ptc" +
             " JOIN tc.frotaPtov fp" +
             " JOIN fp.pontoVenda pv" +
             " WHERE" +
             "     pv.statusInteresseAntecipacao = " + StatusInteresseAntecipacao.APROVADO.getValue() +
+            "     AND (:statusCiclo IS NULL OR :statusCiclo = tc.statusConsolidacao) " +
+            "     AND (:dataInicioPeriodo IS NULL OR :dataInicioPeriodo = TO_CHAR(tc.dataInicioPeriodo, 'DD/MM/YYYY')) " +
+            "     AND (:dataFimPeriodo IS NULL OR :dataFimPeriodo = TO_CHAR(tc.dataFimPeriodo, 'DD/MM/YYYY')) " +
+            "     AND (:idFrota IS NULL OR :idFrota = f.id) " +
+            "     AND (:statusNotaFiscal IS NULL OR :statusNotaFiscal = tc.statusNotaFiscal) " +
             "     AND (tc.valorTotalNotaFiscal > 0 OR tc.quantidadeAbastecimentos > 0)" +
             "     AND fp.pontoVenda.id = :idPv" +
             "     AND tc.statusConsolidacao <> " + StatusTransacaoConsolidada.FECHADA.getValue() +
@@ -1978,12 +1985,17 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
     }
 
     @Override
-    public List<Date> obterDatasVencimentoDisponiveisAntecipacao(Long idPv) {
+    public List<Date> obterDatasVencimentoDisponiveisAntecipacao(FiltroPesquisaDetalheCicloVo filtro) {
         String consulta = CONSULTA_DATAS_VENCIMENTO_PARCEIRO_XP;
         List<ParametroPesquisa> parametros = new ArrayList<>();
 
         parametros.add(new ParametroPesquisaIgual("margemErroNf", ConstantesNotaFiscal.MARGEM_VALOR_ABAST));
-        parametros.add(new ParametroPesquisaIgual("idPv", idPv));
+        parametros.add(new ParametroPesquisaIgual("idPv", filtro.getIdPv()));
+        parametros.add(new ParametroPesquisaIgual("statusCiclo", filtro.getStatusCiclo() != null? filtro.getStatusCiclo().getValue().intValue() : null));
+        parametros.add(new ParametroPesquisaIgual("dataInicioPeriodo", UtilitarioFormatacaoData.formatarDataCurta(filtro.getInicio())));
+        parametros.add(new ParametroPesquisaIgual("dataFimPeriodo", UtilitarioFormatacaoData.formatarDataCurta(filtro.getFim())));
+        parametros.add(new ParametroPesquisaIgual("idFrota", filtro.getFrota() != null ? filtro.getFrota().getId() : null));
+        parametros.add(new ParametroPesquisaIgual("statusNotaFiscal", filtro.getStatusNf() != null ? filtro.getStatusNf().getValue() : null));
 
         List<Date> datasvencimento = pesquisar(null, consulta, Date.class,
                 parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
