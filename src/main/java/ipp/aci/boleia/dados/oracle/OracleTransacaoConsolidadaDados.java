@@ -537,6 +537,15 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "         END, " +
                     "         TC.dataInicioPeriodo, TC.dataFimPeriodo";
 
+    private static final String FILTRO_CONSULTA_DETALHAMENTO_PV =
+            "      FP.pontoVenda.id IN :idsPvs AND " +
+            "      TRUNC(TC.dataInicioPeriodo) >= TRUNC(:dataInicio) AND " +
+            "      TRUNC(TC.dataFimPeriodo) <= TRUNC(:dataFim) AND " +
+            "      (:frotaId IS NULL OR F.id = :frotaId) AND " +
+            "      (:unidadeId IS NULL OR TC.unidade.id = :unidadeId) AND " +
+            "      (:empresaAgregadaId IS NULL OR TC.empresaAgregada.id = :empresaAgregadaId) AND " +
+            "      (:statusNf IS NULL OR (TRUNC(TC.dataInicioPeriodo) = TRUNC(:dataInicioCicloAtual) AND (TC.statusNotaFiscal = :statusNf)) OR (TRUNC(TC.dataInicioPeriodo) < TRUNC(:dataInicioCicloAtual))) ";
+
     /**
      * Busca uma lista de transações consolidadas de um ponto de venda agrupadas por data e status.
      */
@@ -549,15 +558,39 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "LEFT JOIN TC.reembolso RM	" +
                     "LEFT JOIN TC.empresaAgregada EA " +
                     "LEFT JOIN TC.unidade U	" +
-                    "WHERE FP.pontoVenda.id IN :idsPvs AND " +
-                    "      TRUNC(TC.dataInicioPeriodo) >= TRUNC(:dataInicio) AND " +
-                    "      TRUNC(TC.dataFimPeriodo) <= TRUNC(:dataFim) AND " +
-                    "      (:frotaId IS NULL OR F.id = :frotaId) AND " +
-                    "      (:unidadeId IS NULL OR TC.unidade.id = :unidadeId) AND " +
-                    "      (:empresaAgregadaId IS NULL OR TC.empresaAgregada.id = :empresaAgregadaId) AND " +
-                    "      (:statusNf IS NULL OR (TRUNC(TC.dataInicioPeriodo) = TRUNC(:dataInicioCicloAtual) AND (TC.statusNotaFiscal = :statusNf)) OR (TRUNC(TC.dataInicioPeriodo) < TRUNC(:dataInicioCicloAtual))) " +
+                    "WHERE " +
+                    FILTRO_CONSULTA_DETALHAMENTO_PV +
                     "GROUP BY TC.dataInicioPeriodo, TC.dataFimPeriodo, TC.statusConsolidacao, " +
                     "         CASE WHEN TC.reembolso is NULL THEN " + StatusPagamentoReembolso.PREVISTO.getValue() + " ELSE RM.status END";
+
+    private static final String CONSULTA_TOTAL_ANTECIPADO_LIQUIDO =
+            "SELECT " +
+            "    SUM(COALESCE(SUM(AA.valorTotal), 0)) " +
+            "FROM " +
+            "    TransacaoConsolidada TC " +
+            "    JOIN TC.frotaPtov FP " +
+            "    JOIN FP.frota F " +
+            "    JOIN TC.prazos TCP " +
+            "    LEFT JOIN TC.reembolso RM " +
+            "    LEFT JOIN TC.empresaAgregada EA " +
+            "    LEFT JOIN TC.unidade U, " +
+            "    AutorizacaoPagamento AA " +
+            "    LEFT JOIN AA.antecipacoesReembolso A WITH A.statusIntegracao = 1 " +
+            "WHERE " +
+            "    COALESCE(AA.transacaoConsolidadaPostergada, AA.transacaoConsolidada) = TC.id AND " +
+            "    TRUNC(TC.dataInicioPeriodo) = TRUNC(:dataInicio) AND " +
+            "    TRUNC(TC.dataFimPeriodo) = TRUNC(:dataFim) AND " +
+            "    (:statusCiclo IS NULL OR :statusCiclo = TC.statusConsolidacao) AND " +
+            "    (RM.status IS NULL OR RM.status IN (" + StatusPagamentoReembolso.EM_ABERTO.getValue() + "," + StatusPagamentoReembolso.PREVISTO.getValue() + ")) AND " +
+            FILTRO_CONSULTA_DETALHAMENTO_PV +
+            "GROUP BY " +
+            "    TC.dataInicioPeriodo, " +
+            "    TC.dataFimPeriodo, " +
+            "    TC.statusConsolidacao, " +
+            "    CASE " +
+            "        WHEN TC.reembolso is NULL THEN 6 " +
+            "        ELSE RM.status " +
+            "    END";
 
     /**
      * Busca uma lista de consolidados
@@ -2002,5 +2035,39 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
 
         return datasvencimento.stream()
                 .map(data -> UtilitarioCalculoData.adicionarDiasData(data, DIAS_PARA_CALCULO_DATA_PREVISTA_REEMBOLSO)).collect(Collectors.toList());
+    }
+
+    @Override
+    public BigDecimal obterTotalAntecipadoNoPeriodo(FiltroPesquisaDetalheCicloVo filtro) {
+        List<ParametroPesquisa> parametrosPesquisa = new ArrayList<>();
+        popularParametrosDataEPvBoxFinanceiro(parametrosPesquisa, filtro.getIdPv(), filtro.getInicio(), filtro.getFim());
+
+        parametrosPesquisa.add(new ParametroPesquisaIgual("frotaId", filtro.getFrota() != null ? filtro.getFrota().getId() : null));
+        parametrosPesquisa.add(new ParametroPesquisaIgual("dataInicioCicloAtual", filtro.getInicio()));
+        if(filtro.getStatusNf() != null && filtro.getStatusNf().getName() != null) {
+            parametrosPesquisa.add(new ParametroPesquisaIgual("statusNf", StatusNotaFiscal.valueOf(filtro.getStatusNf().getName()).getValue()));
+        } else {
+            parametrosPesquisa.add(new ParametroPesquisaIgual("statusNf", null));
+        }
+
+        if (filtro.getEmpresaUnidade() != null && filtro.getEmpresaUnidade().getId() != null && filtro.getEmpresaUnidade().getTipo() != null && TipoEntidadeUnidadeEmpresaAgregada.UNIDADE.name().equals(filtro.getEmpresaUnidade().getTipo().getName())) {
+            parametrosPesquisa.add(new ParametroPesquisaIgual("unidadeId", filtro.getEmpresaUnidade().getIdUnidade()));
+        } else {
+            parametrosPesquisa.add(new ParametroPesquisaIgual("unidadeId", null));
+        }
+
+        if (filtro.getEmpresaUnidade() != null && filtro.getEmpresaUnidade().getId() != null && filtro.getEmpresaUnidade().getTipo() != null && TipoEntidadeUnidadeEmpresaAgregada.EMPRESA_AGREGADA.name().equals(filtro.getEmpresaUnidade().getTipo().getName())) {
+            parametrosPesquisa.add(new ParametroPesquisaIgual("empresaAgregadaId", filtro.getEmpresaUnidade().getIdEmpresaAgregada()));
+        } else {
+            parametrosPesquisa.add(new ParametroPesquisaIgual("empresaAgregadaId", null));
+        }
+
+        if (filtro.getStatusCiclo() != null && filtro.getStatusCiclo().getValue() != null) {
+            parametrosPesquisa.add(new ParametroPesquisaIgual("statusCiclo", filtro.getStatusCiclo().getValue()));
+        } else {
+            parametrosPesquisa.add(new ParametroPesquisaIgual("statusCiclo", null));
+        }
+
+        return pesquisar(null, CONSULTA_TOTAL_ANTECIPADO_LIQUIDO, BigDecimal.class, parametrosPesquisa.toArray(new ParametroPesquisa[parametrosPesquisa.size()])).getRegistros().stream().findFirst().orElse(BigDecimal.ZERO);
     }
 }
