@@ -115,6 +115,13 @@ public class PedidoCreditoFrota implements IPersistente,IPertenceFrota {
     @Column(name = "NM_CIA_DOC_JDE")
     private String ciaDocumentoJde;
 
+    @Column(name = "ID_TIPO_PAGAMENTO")
+    private Integer tipoPagamento;
+
+    @NotNull
+    @Column(name = "ID_VERSAO_MUNDIPAGG")
+    private Integer versaoMundipaggApi;
+
     @Transient
     private String idCobranca;
 
@@ -309,5 +316,21 @@ public class PedidoCreditoFrota implements IPersistente,IPertenceFrota {
 
     public String getFrotaCnpjRazaoSocial(){
         return this.frota.getCnpj() + " - " + this.frota.getNomeRazaoFrota();
+    }
+
+    public Integer getTipoPagamento() {
+        return tipoPagamento;
+    }
+
+    public void setTipoPagamento(Integer tipoPagamento) {
+        this.tipoPagamento = tipoPagamento;
+    }
+
+    public Integer getVersaoMundipaggApi() {
+        return versaoMundipaggApi;
+    }
+
+    public void setVersaoMundipaggApi(Integer versaoMundipaggApi) {
+        this.versaoMundipaggApi = versaoMundipaggApi;
     }
 }

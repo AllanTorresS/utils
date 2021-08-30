@@ -2,6 +2,7 @@ package ipp.aci.boleia.dados.oracle;
 
 import ipp.aci.boleia.dados.IPedidoCreditoFrotaDados;
 import ipp.aci.boleia.dominio.PedidoCreditoFrota;
+import ipp.aci.boleia.dominio.enums.MeioPagamentoPedidoCredito;
 import ipp.aci.boleia.dominio.enums.StatusIntegracaoJde;
 import ipp.aci.boleia.dominio.enums.StatusPedidoCredito;
 import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
@@ -143,6 +144,10 @@ public class OraclePedidoCreditoFrotaDados extends OracleRepositorioBoleiaDados<
         }
         if (filtro.getAte() != null) {
             parametros.add(new ParametroPesquisaDataMenorOuIgual("dataPedido", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte())));
+        }
+
+        if(filtro.getMeioPagamento() != null && filtro.getMeioPagamento().getName() != null)  {
+            parametros.add(new ParametroPesquisaIgual("tipoPagamento", MeioPagamentoPedidoCredito.valueOf(filtro.getMeioPagamento().getName()).getValue()));
         }
 
         if(filtro.getPaginacao().getParametrosOrdenacaoColuna() != null) {
