@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class MundipaggWebhookChargePedidoVo {
 
     @JsonProperty("payment_method")
-    public String meioDePagamento;;
+    private String meioDePagamento;;
 
 
     public MundipaggWebhookChargePedidoVo() {
