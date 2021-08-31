@@ -22,6 +22,7 @@ import ipp.aci.boleia.dominio.enums.StatusAtivacao;
 import ipp.aci.boleia.dominio.enums.TipoPerfilUsuario;
 import ipp.aci.boleia.dominio.enums.TipoTokenJwt;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
+import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarNumeroZerosEsquerda;
 import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
 import ipp.aci.boleia.util.excecao.ExcecaoTokenJwtExpirado;
 import org.apache.commons.lang3.StringUtils;
@@ -45,8 +46,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarNumeroZerosEsquerda;
-
 /**
  * Ferramentas para facilitar a manipulacao de tokens JWT
  */
@@ -57,6 +56,7 @@ public class UtilitarioJwt {
 
     private static final String AUTHORIZATION_HEADER_NAME = "Authorization";
     private static final String BEARER_NAMESPACE = "Bearer";
+    private static final String BASIC_NAMESPACE = "Basic";
     private static final String FINGERPRINT_HEADER_NAME = "Fingerprint";
 
     private static final String CAMPO_ISSUER                     = "Boleia";
@@ -103,17 +103,38 @@ public class UtilitarioJwt {
     }
 
     /**
-     * Recupera o token JWT a partir dos headers HTTP
+     * Recupera o token JWT (Bearer) a partir dos headers HTTP
      *
      * @param request A requisicao HTTP
      * @return O token codificado
      */
     public String extrairToken(HttpServletRequest request) {
+        return extrairToken(request, BEARER_NAMESPACE);
+    }
+
+    /**
+     * Recupera o token JWT (Bearer) a partir dos headers HTTP
+     *
+     * @param request A requisicao HTTP
+     * @return O token codificado
+     */
+    public String extrairTokenBasic(HttpServletRequest request) {
+        return extrairToken(request, BASIC_NAMESPACE);
+    }
+
+    /**
+     * Recupera o token JWT a partir dos headers HTTP
+     * Informando o tipo de token a extrair (Bearer ou Basic)
+     *
+     * @param request A requisicao HTTP
+     * @return O token codificado
+     */
+    public String extrairToken(HttpServletRequest request, String tipo) {
         String token = null;
         String authorization = request.getHeader(AUTHORIZATION_HEADER_NAME);
         if(!StringUtils.isEmpty(authorization)) {
-            if(authorization.contains(BEARER_NAMESPACE)) {
-                authorization = authorization.replace(BEARER_NAMESPACE, "");
+            if(authorization.contains(tipo)) {
+                authorization = authorization.replace(tipo, "");
                 token = StringUtils.trim(authorization);
             }
         }

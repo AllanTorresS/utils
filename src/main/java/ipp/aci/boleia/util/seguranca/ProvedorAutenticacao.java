@@ -4,12 +4,16 @@ import ipp.aci.boleia.dados.IAutenticacaoUsuarioDados;
 import ipp.aci.boleia.dados.IUsuarioMotoristaDados;
 import ipp.aci.boleia.dominio.CodigoValidacaoTokenJwt;
 import ipp.aci.boleia.dominio.Permissao;
+import ipp.aci.boleia.dominio.SistemaExterno;
 import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.UsuarioMotorista;
 import ipp.aci.boleia.dominio.enums.StatusAtivacao;
 import ipp.aci.boleia.dominio.enums.TipoAcesso;
 import ipp.aci.boleia.dominio.enums.TipoPerfilUsuario;
 import ipp.aci.boleia.dominio.enums.TipoTokenJwt;
+import ipp.aci.boleia.dominio.servico.SistemaExternoSd;
+import static ipp.aci.boleia.util.UtilitarioFormatacao.TAMANHO_CPF;
+import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarNumeroZerosEsquerda;
 import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.excecao.ExcecaoAutenticacaoRemota;
 import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
@@ -41,9 +45,6 @@ import java.util.Date;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static ipp.aci.boleia.util.UtilitarioFormatacao.TAMANHO_CPF;
-import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarNumeroZerosEsquerda;
-
 /**
  * Prove mecanismos para autenticacao do usuario
  */
@@ -56,6 +57,9 @@ public class ProvedorAutenticacao implements AuthenticationProvider {
 
     @Autowired
     private IServicosDeUsuario servicoUsuario;
+
+    @Autowired
+    private SistemaExternoSd sistemaExternoSd;
 
     @Autowired
     private IServicosDeControleAcessoPortal servicosDeControleAcessoPortal;
@@ -93,10 +97,17 @@ public class ProvedorAutenticacao implements AuthenticationProvider {
             } else {
                 usuario = servicoUsuario.obterPorLoginComPermissoes(auth.getName());
             }
+
+            if (usuario == null) {
+                SistemaExterno sistemaExterno = sistemaExternoSd.verificarAutorizacaoBasic(auth.getPrincipal().toString(), auth.getCredentials().toString());
+                if (sistemaExterno != null) {
+                    return autenticaSistemaExternoBasic(sistemaExterno);
+                }
+            }
+
             if (usuario == null || (!usuario.isInterno() && !usuario.isPrecos() && !isUsernameCpf && !isAutenticacaoMotorista)) {
                 usuario = servicoUsuario.obterPorEmailComPermissoes(auth.getName());
             }
-
 
             if(usuario != null) {
                 validarUsuario(usuario);
@@ -164,6 +175,16 @@ public class ProvedorAutenticacao implements AuthenticationProvider {
     @Override
     public boolean supports(Class<?> auth) {
         return auth.equals(UsernamePasswordAuthenticationToken.class);
+    }
+
+    /**
+     * Autentica um sistema externo com autenticação basic
+     *
+     */
+    public Authentication autenticaSistemaExternoBasic(SistemaExterno sistemaExterno) {
+
+        Usuario usuarioSistemaExterno = new Usuario();
+        return InformacoesAutenticacao.build(sistemaExterno.getClient(), sistemaExterno.getSecret(), usuarioSistemaExterno);
     }
 
     /**

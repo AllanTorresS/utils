@@ -30,6 +30,20 @@ public class OracleSistemaExternoDados extends OracleRepositorioBoleiaDados<Sist
         super(SistemaExterno.class);
     }
 
+    private static final String QUERY_SISTEMA_EXTERNO_PERMISSAO =
+            " SELECT DISTINCT(se) " +
+                    " FROM SistemaExterno se " +
+                    " LEFT JOIN FETCH se.permissoes pe " +
+                    " WHERE se.client = :client AND se.secret = :secret";
+    @Override
+    public SistemaExterno obterPorClientESecretComPermissao(String client, String secret) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaIgual("client", client));
+        parametros.add(new ParametroPesquisaIgual("secret", secret));
+        return pesquisarUnicoSemIsolamentoDados(QUERY_SISTEMA_EXTERNO_PERMISSAO, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+
     @Override
     public SistemaExterno obterPorClientESecret(String client, String secret) {
         List<ParametroPesquisa> parametros = new ArrayList<>();

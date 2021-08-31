@@ -340,6 +340,9 @@ public final class ChavePermissao {
 
     public static final String RELATORIO_NOTA_FISCAL_EXPORTAR                  = SPRING_ROLE_PREFIX + "RELATORIO_NOTA_FISCAL_EXPORTAR" + SPRING_ROLE_SUFFIX;
 
+    // Permissão da API de WebHook MundiPagg
+    public static final String API_MUNDIPAGG_WEBHOOK_CHECKOUT                  = SPRING_ROLE_PREFIX + "API_MUNDIPAGG_WEBHOOK_CHECKOUT" + SPRING_ROLE_SUFFIX;
+
     /**
      * Impede instanciacao e heranca
      */

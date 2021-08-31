@@ -1,16 +1,20 @@
 package ipp.aci.boleia.util.seguranca;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
+import ipp.aci.boleia.dominio.SistemaExterno;
 import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.enums.StatusAcessoSistemaExterno;
 import ipp.aci.boleia.dominio.enums.TipoPerfilUsuario;
+import ipp.aci.boleia.dominio.servico.SistemaExternoSd;
 import ipp.aci.boleia.dominio.vo.ResultadoValidacaoAcessoVo;
+import static ipp.aci.boleia.util.UtilitarioFormatacao.obterString;
 import ipp.aci.boleia.util.UtilitarioJson;
 import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.excecao.ExcecaoTokenJwtExpirado;
 import ipp.aci.boleia.util.excecao.MensagemErro;
 import ipp.aci.boleia.util.i18n.Mensagens;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
+import ipp.aci.boleia.util.rotas.ExternoRotas;
 import ipp.aci.boleia.util.rotas.Rotas;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -40,8 +44,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashSet;
-
-import static ipp.aci.boleia.util.UtilitarioFormatacao.obterString;
 
 
 /**
@@ -80,6 +82,9 @@ public class FiltroAutenticacaoJwt implements Filter {
     @Autowired
     private IFiltroInterceptacaoForwardJwt filtroInterceptacaoForwardJwt;
 
+    @Autowired
+    private SistemaExternoSd sistemaExternoSd;
+
     @Override
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
 
@@ -91,8 +96,20 @@ public class FiltroAutenticacaoJwt implements Filter {
         }
 
         if (isUrlProtegida(request) && isMetodoDiferenteDeOptions(request)) {
+            String encodedJwtToken;
+            if (isUrlWebHook(request)) {
+                String encodedBasicToken = utilitarioJwt.extrairTokenBasic(request);
+                SistemaExterno sistemaExterno = validarTokenJwt(response, encodedBasicToken);
 
-            String encodedJwtToken = utilitarioJwt.extrairToken(request);
+                if (sistemaExterno != null) {
+                    encodedJwtToken = utilitarioJwt.criarTokenSistemaExterno(sistemaExterno, 0L);
+                } else {
+                    return;
+                }
+            } else {
+                encodedJwtToken = utilitarioJwt.extrairToken(request);
+            }
+
             String fingerprint = utilitarioJwt.extrairFingerprint(request);
 
             if (StringUtils.isNotEmpty(request.getParameter(PARAM_DOWNLOAD_TOKEN))) {
@@ -117,6 +134,7 @@ public class FiltroAutenticacaoJwt implements Filter {
                 enviarTokenDownload(request, response);
                 return;
             }
+
         }
 
         if (isMetodoDiferenteDeOptions(request) && isObjetoEstatico(request)) {
@@ -212,6 +230,30 @@ public class FiltroAutenticacaoJwt implements Filter {
     }
 
     /**
+     * Valida o token de autenticação basic recebido no webhook
+     *
+     * @param response A resposta HTTP
+     * @param encodedJwtToken O token
+     * @return True caso o token seja valido. False caso contrario
+     * @throws IOException Em caso de erro no envio do response HTTP
+     */
+    private SistemaExterno validarTokenJwt(HttpServletResponse response, String encodedJwtToken) throws IOException {
+        try {
+            String token = new String(UtilitarioCriptografia.fromBase64(encodedJwtToken));
+            String[] clientSecret = token.split(":");
+            if (clientSecret.length != 2) {
+                enviarErroAutenticacao(response);
+                return null;
+            }
+            return sistemaExternoSd.verificarAutorizacaoBasic(clientSecret[0], clientSecret[1]);
+        } catch (Exception e) {
+            enviarErroAutenticacao(response);
+            LOGGER.debug(e.getMessage(), e);
+            return null;
+        }
+    }
+
+    /**
      * Valida o token jwt recebido
      *
      * @param response A resposta HTTP
@@ -290,6 +332,17 @@ public class FiltroAutenticacaoJwt implements Filter {
                 && !url.contains(Rotas.BASE_API_DOCS + "/")
                 && !url.contains(Rotas.BASE_API_PUBLICA + "/")
                 && !url.contains(Rotas.BASE_API_ESTATICA + "/");
+    }
+
+    /**
+     * Verifica se a url é de um webhook da solução.
+     * Webhooks respondem por uma autenticação do tipo basic
+     * @param request A requisicao
+     * @return true caso seja um webhook
+     */
+    private boolean isUrlWebHook(HttpServletRequest request) {
+        String url = request.getRequestURL().toString();
+        return (url.contains(ExternoRotas.WEBHOOK_API + "/"));
     }
 
     /**
