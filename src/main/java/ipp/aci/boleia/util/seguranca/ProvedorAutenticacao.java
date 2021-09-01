@@ -98,15 +98,15 @@ public class ProvedorAutenticacao implements AuthenticationProvider {
                 usuario = servicoUsuario.obterPorLoginComPermissoes(auth.getName());
             }
 
+            if (usuario == null || (!usuario.isInterno() && !usuario.isPrecos() && !isUsernameCpf && !isAutenticacaoMotorista)) {
+                usuario = servicoUsuario.obterPorEmailComPermissoes(auth.getName());
+            }
+
             if (usuario == null) {
                 SistemaExterno sistemaExterno = sistemaExternoSd.verificarAutorizacaoBasic(auth.getPrincipal().toString(), auth.getCredentials().toString());
                 if (sistemaExterno != null) {
                     return autenticaSistemaExternoBasic(sistemaExterno);
                 }
-            }
-
-            if (usuario == null || (!usuario.isInterno() && !usuario.isPrecos() && !isUsernameCpf && !isAutenticacaoMotorista)) {
-                usuario = servicoUsuario.obterPorEmailComPermissoes(auth.getName());
             }
 
             if(usuario != null) {
