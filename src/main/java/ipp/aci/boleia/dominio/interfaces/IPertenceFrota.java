@@ -42,6 +42,7 @@ public interface IPertenceFrota {
     String CAMPO_PARAMETRO_SISTEMA = "frotaParametroSistema." + NOME_CAMPO;
     String CAMPO_VEICULO = "veiculo." + NOME_CAMPO;
     String CAMPO_TRANSACAO_FROTA = "transacaoFrota." + NOME_CAMPO;
+    String CAMPO_MOTORISTA = "motorista." + NOME_CAMPO;
 
     Map<Class<?>, String> MAPA_RELACIONAMENTO_FROTA = inicializarMapaCaminhosFrota();
 
@@ -100,6 +101,7 @@ public interface IPertenceFrota {
         mapa.put(AbastecimentoVeiculoMes.class, CAMPO_VEICULO);
         mapa.put(ExtratoPedidoTransacao.class, CAMPO_TRANSACAO_FROTA);
         mapa.put(HistoricoFrotaPtovPreco.class, CAMPO_FROTA_PONTOVENDA);
+        mapa.put(FluxoAbastecimentoMotoristaConfig.class, CAMPO_MOTORISTA);
         return mapa;
     }
 }
