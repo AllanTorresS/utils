@@ -2,6 +2,7 @@ package ipp.aci.boleia.dados;
 
 
 import ipp.aci.boleia.dominio.DispositivoMotorista;
+import ipp.aci.boleia.dominio.Motorista;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaDispositivoMotoristaVo;
 
@@ -44,6 +45,13 @@ public interface IDispositivoMotoristaDados extends IRepositorioBoleiaDados<Disp
      * @return os dispositivos associados, se existirem
      */
     List<DispositivoMotorista> obterPorMotorista(Long idMotorista);
+
+    /**
+     * Obtem um dispositivo a partir do motorista
+     * @param motorista o motorista
+     * @return os dispositivos associados, se existirem
+     */
+    List<DispositivoMotorista> obterPorMotorista(Motorista motorista);
 
     /**
      * Exclui o dispositivo de um dado motorista

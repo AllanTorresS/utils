@@ -10,24 +10,26 @@ import java.util.List;
  */
 public enum DiaSemana {
 
-    ONTEM    (-1,                 "Ontem"),
-    HOJE     (0,                  "Hoje"),
+    ONTEM    (-1,             "Ontem",   "Ontem"),
+    HOJE     (0,              "Hoje",    "Hoje"),
 
-    DOMINGO  (Calendar.SUNDAY,    "Domingo"),
-    SEGUNDA  (Calendar.MONDAY,    "Segunda"),
-    TERCA    (Calendar.TUESDAY,   "Terça"),
-    QUARTA   (Calendar.WEDNESDAY, "Quarta"),
-    QUINTA   (Calendar.THURSDAY,  "Quinta"),
-    SEXTA    (Calendar.FRIDAY,    "Sexta"),
-    SABADO   (Calendar.SATURDAY,  "Sábado");
+    DOMINGO  (Calendar.SUNDAY,    "Domingo", "Domingo"),
+    SEGUNDA  (Calendar.MONDAY,    "Segunda", "Segunda-feira"),
+    TERCA    (Calendar.TUESDAY,   "Terça",   "Terça-feira"),
+    QUARTA   (Calendar.WEDNESDAY, "Quarta",  "Quarta-feira"),
+    QUINTA   (Calendar.THURSDAY,  "Quinta",  "Quinta-feira"),
+    SEXTA    (Calendar.FRIDAY,    "Sexta",   "Sexta-feira"),
+    SABADO   (Calendar.SATURDAY,  "Sábado",  "Sábado");
 
 
     private final Integer dia;
     private final String nome;
+    private final String nomeCompleto;
 
-    DiaSemana(Integer dia, String nome) {
+    DiaSemana(Integer dia, String nome, String nomeCompleto) {
         this.dia = dia;
         this.nome = nome;
+        this.nomeCompleto = nomeCompleto;
     }
 
     public Integer getDia() {
@@ -36,6 +38,10 @@ public enum DiaSemana {
 
     public String getNome() {
         return nome;
+    }
+
+    public String getNomeCompleto() {
+        return nomeCompleto;
     }
 
     /**
@@ -65,6 +71,17 @@ public enum DiaSemana {
     }
 
     /**
+     * Obtem o nome completo do dia da semana pelo numero do dia
+     *
+     * @param dia numero do dia
+     * @return nome completo do dia
+     */
+    public static String obterNomeCompletoPorDia(Integer dia) {
+        DiaSemana diaSemana = obterPorDia(dia);
+        return diaSemana != null ? diaSemana.getNomeCompleto() : null;
+    }
+
+    /**
      * Obtem o dia de semana de uma data
      * @param data a obter
      * @return dia semana
@@ -82,5 +99,15 @@ public enum DiaSemana {
      */
     public static List<String> diasAbsolutos() {
         return Arrays.asList(DOMINGO.name(), SEGUNDA.name(), TERCA.name(), QUARTA.name(), QUINTA.name(), SEXTA.name(), SABADO.name());
+    }
+
+    /**
+     * Retorna a lista de dias da semana com nome completo, desconsiderando os
+     * dias relativos (hoje e ontem).
+     *
+     * @return A lista de dias de domingo a sábado.
+     */
+    public static List<String> diasAbsolutosComNomeCompleto() {
+        return Arrays.asList(DOMINGO.getNomeCompleto(), SEGUNDA.getNomeCompleto(), TERCA.getNomeCompleto(), QUARTA.getNomeCompleto(), QUINTA.getNomeCompleto(), SEXTA.getNomeCompleto(), SABADO.getNomeCompleto());
     }
 }

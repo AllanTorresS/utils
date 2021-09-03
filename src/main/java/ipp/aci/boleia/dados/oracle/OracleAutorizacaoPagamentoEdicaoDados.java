@@ -3,8 +3,10 @@ package ipp.aci.boleia.dados.oracle;
 import ipp.aci.boleia.dados.IAutorizacaoPagamentoEdicaoDados;
 import ipp.aci.boleia.dominio.AutorizacaoPagamento;
 import ipp.aci.boleia.dominio.AutorizacaoPagamentoEdicao;
-import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
+import ipp.aci.boleia.dominio.Motorista;
 import ipp.aci.boleia.dominio.enums.StatusEdicao;
+import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
+import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
@@ -81,5 +83,11 @@ public class OracleAutorizacaoPagamentoEdicaoDados extends OracleRepositorioBole
         parametros.add(new ParametroPesquisaIgual("autorizacaoPagamento.id", id));
         parametros.add(new ParametroPesquisaIgual("statusEdicao", StatusEdicao.EDITADO.getValue()));
         return pesquisarTotalRegistros(parametros.toArray(new ParametroPesquisa[parametros.size()])).intValue() > 0;
+    }
+
+    @Override
+    public List<AutorizacaoPagamentoEdicao> obterPorMotorista(Motorista motorista){
+        return pesquisar(new ParametroOrdenacaoColuna(),
+                new ParametroPesquisaIgual("motorista", motorista));
     }
 }

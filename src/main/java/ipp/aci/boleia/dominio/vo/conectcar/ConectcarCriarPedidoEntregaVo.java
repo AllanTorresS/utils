@@ -1,8 +1,8 @@
 package ipp.aci.boleia.dominio.vo.conectcar;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.List;
 
 /**
  * Vo de integração de itens de uma criação de pedidos com a conectcar 

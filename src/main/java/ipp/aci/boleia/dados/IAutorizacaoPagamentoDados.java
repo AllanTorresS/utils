@@ -3,9 +3,11 @@ package ipp.aci.boleia.dados;
 
 import ipp.aci.boleia.dominio.AutorizacaoPagamento;
 import ipp.aci.boleia.dominio.EmpresaAgregada;
+import ipp.aci.boleia.dominio.Motorista;
 import ipp.aci.boleia.dominio.TransacaoConsolidada;
 import ipp.aci.boleia.dominio.Unidade;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
+import ipp.aci.boleia.dominio.vo.FiltroAbastecimentoAntecipavelVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaAbastecimentoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheCobrancaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheReembolsoVo;
@@ -47,6 +49,16 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
      * @return Uma entidade localizada
      */
     AutorizacaoPagamento obterPorCodigoPagamentoAutorizado(String codigoPagamento);
+
+
+    /**
+     * Pesquisa autorização de pagamento autorizada a partir do código de pagamento e placa.
+     * @param codigoPagamento código de pagamento da transação.
+     * @param placa a placa do veículo a ser abastecido.
+     * @return a autorização de abastecimento localizada caso exista.
+     */
+    AutorizacaoPagamento obterPorCodigoPagamentoAutorizadoEPlaca(String codigoPagamento, String placa);
+
 
     /**
      * Obtem transacoes similares dentro da data limite informada
@@ -320,7 +332,7 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
     /**
      * Obtém abastecimentos com o qual a nota pode ser consolidada
      *
-     * @param cnpjEmit CPNJ do destinatário da nota
+     * @param cnpjEmit CPNJ do emitente da nota
      * @param dataEmissao Data de emissão da nota
      * @param valorTotalNota O valor total da nota
      * @return Os abastecimentos encontrados
@@ -454,4 +466,33 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
      * @return Os abastecimentos encontrados
      */
     List<AutorizacaoPagamento> obterAbastecimentoParaConciliacaoPorValorDeProduto(Long cnpjEmit, Date dataEmissao, BigDecimal valorTotalNota);
+
+    /**
+     * Obtém abastecimentos de um motorista
+     *
+     * @param motorista o motorista
+     * @return Os abastecimentos encontrados
+     */
+    List<AutorizacaoPagamento> obterPorMotorista(Motorista motorista);
+
+    /**
+     * Obtem o ultimo abastecimento ou estorno autorizado do veiculo com valor de Hodometro diferente de nulo
+     * @param idVeiculo O id do veiculo
+     * @return O ultimo abastecimento
+     */
+    AutorizacaoPagamento obterUltimoAbastecimentoVeiculoHodometroValido(Long idVeiculo);
+
+    /**
+     * Obtem o ultimo abastecimento ou estorno autorizado do veiculo com valor de Horimetro diferente de nulo
+     * @param idVeiculo O id do veiculo
+     * @return O ultimo abastecimento
+     */
+    AutorizacaoPagamento obterUltimoAbastecimentoVeiculoHorimetroValido(Long idVeiculo);
+
+    /**
+     * Busca abastecimentos que podem ser reembolsados antecipadamente
+     * @param filtro o filtro a ser utilizado na busca
+     * @return lista de abastecimentos que podem ser antecipados
+     */
+    ResultadoPaginado<AutorizacaoPagamento> obterAbastecimentosAntecipaveis(FiltroAbastecimentoAntecipavelVo filtro);
 }

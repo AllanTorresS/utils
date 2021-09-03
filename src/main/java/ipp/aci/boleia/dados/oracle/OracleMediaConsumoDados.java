@@ -137,6 +137,7 @@ public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<Autori
                     "a.cnpjFrota) " +
                     "FROM AutorizacaoPagamento a " +
                     "WHERE a.status = " + StatusAutorizacao.AUTORIZADO.getValue() + " AND " +
+                    "(a.hodometro IS NOT NULL OR a.horimetro IS NOT NULL) AND "+
                     "(a.valorTotal IS NULL or a.valorTotal >= 0) AND " +
                     "(a.valorUnitarioAbastecimento IS NULL or a.valorUnitarioAbastecimento >= 0) AND " +
                     "a.dataRequisicao BETWEEN :de and :ate AND " +
@@ -449,16 +450,29 @@ public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<Autori
         InformacaoPaginacao infoPag=new InformacaoPaginacao();
         infoPag.setTamanhoPagina(1);
         ResultadoPaginado<AutorizacaoPagamento> primeiroAbastecimento = pesquisar(infoPag, String.format(QUERY_PESQUISAR_PRIMEIRO_ABASTECIMENTO_MEDIA_CONSUMO_VEICULO, outrasClausulas), AutorizacaoPagamento.class, builder.buildArray());
-        if(primeiroAbastecimento.getRegistros() == null || vo.getMediaTotalLitrosAbastecimento().compareTo(BigDecimal.ZERO) == 0 ) {
-            return  null;
+
+        boolean naoPossuiRegistrosPrimeiroAbast = primeiroAbastecimento.getRegistros() == null || primeiroAbastecimento.getTotalItems() < 1;
+        boolean naoPossuiMediaTotalLitrosAbast = vo.getMediaTotalLitrosAbastecimento() == null || vo.getMediaTotalLitrosAbastecimento().compareTo(BigDecimal.ZERO) == 0;
+        boolean naoPossuiMediaHorHod = vo.getMediaHorHod() == null || vo.getMediaHorHod().compareTo(BigDecimal.ZERO) == 0;
+
+        if (naoPossuiRegistrosPrimeiroAbast || naoPossuiMediaTotalLitrosAbast || naoPossuiMediaHorHod) {
+            return null;
         }
+
+        BigDecimal difMediaTotalLitrosAbastPorTotalPrimeiroAbast = vo.getMediaTotalLitrosAbastecimento()
+                .subtract(primeiroAbastecimento.getRegistros().get(0).getTotalLitrosAbastecimento());
+
+        if(difMediaTotalLitrosAbastPorTotalPrimeiroAbast.compareTo(BigDecimal.ZERO) == 0) {
+            return null;
+        }
+
         switch (TipoConsumo.obterPorValor(vo.getTipoConsumo())) {
             case KML:
                 vo.setMedia(vo.getMediaHorHod()
-                        .divide((vo.getMediaTotalLitrosAbastecimento()), 3, RoundingMode.HALF_EVEN));
+                        .divide(difMediaTotalLitrosAbastPorTotalPrimeiroAbast, 3, RoundingMode.HALF_EVEN));
                 break;
             case LH:
-                vo.setMedia(vo.getMediaTotalLitrosAbastecimento()
+                vo.setMedia(difMediaTotalLitrosAbastPorTotalPrimeiroAbast
                         .divide(vo.getMediaHorHod(), 3, RoundingMode.HALF_EVEN));
                 break;
         }
@@ -525,7 +539,7 @@ public class OracleMediaConsumoDados extends OracleRepositorioBoleiaDados<Autori
 
         InformacaoPaginacao infoPag = new InformacaoPaginacao();
 
-       return pesquisar(infoPag, String.format(QUERY_VOLUME_ABASTECIDO_POR_TIPO_COMBUSTIVEL_EM_PERIODO), VolumeAbastecidoTipoCombustivelVo.class, builder.buildArray());
+        return pesquisar(infoPag, String.format(QUERY_VOLUME_ABASTECIDO_POR_TIPO_COMBUSTIVEL_EM_PERIODO), VolumeAbastecidoTipoCombustivelVo.class, builder.buildArray());
     }
 
     /**

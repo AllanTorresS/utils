@@ -1,6 +1,7 @@
 package ipp.aci.boleia.dominio;
 
 import ipp.aci.boleia.dominio.enums.StatusLiberacaoReembolsoJde;
+import ipp.aci.boleia.dominio.enums.TipoAntecipacao;
 import org.hibernate.envers.AuditJoinTable;
 import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.Audited;
@@ -15,10 +16,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Date;
@@ -41,14 +44,20 @@ public class ReembolsoAntecipado extends ReembolsoBase {
     @SequenceGenerator(name = "SEQ_REEMB_ANTECIP", sequenceName = "SEQ_REEMB_ANTECIP", allocationSize = 1)
     private Long id;
 
+    @Column(name = "VR_TOTAL_ANTECIP")
+    private BigDecimal valorTotal;
+
     @Column(name = "VR_REEMB_ANTECIP")
     private BigDecimal valorReembolso;
 
     @Column(name = "VR_DESC_ANTECIP")
     private BigDecimal valorDesconto;
 
-    @Column(name = "VR_TOTAL_ANTECIP")
-    private BigDecimal valorTotal;
+    @Column(name = "VR_DESC_PROFROTAS")
+    private BigDecimal valorDescontoProFrotas;
+
+    @Column(name = "VR_DESC_XP")
+    private BigDecimal valorDescontoXp;
 
     @Column(name = "DT_ANTECIPACAO")
     private Date dataAntecipacao;
@@ -56,6 +65,10 @@ public class ReembolsoAntecipado extends ReembolsoBase {
     @Version
     @Column(name = "NO_VERSAO")
     private Long versao;
+
+    @NotNull
+    @Column(name = "ID_TIPO_ANTECIPACAO")
+    private TipoAntecipacao tipoAntecipacao;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_TRANS_CONSOL")
@@ -67,6 +80,10 @@ public class ReembolsoAntecipado extends ReembolsoBase {
             joinColumns = {@JoinColumn(name = "CD_REEMB_ANTECIP")},
             inverseJoinColumns={@JoinColumn(name = "CD_AUTORIZACAO_PAGAMENTO")})
     private List<AutorizacaoPagamento> autorizacoesPagamento;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_PROPOSTA_ANTECIPACAO")
+    private PropostaAntecipacao propostaAntecipacao;
 
     @Override
     public Long getId() {
@@ -108,6 +125,22 @@ public class ReembolsoAntecipado extends ReembolsoBase {
         this.valorTotal = valorTotal;
     }
 
+    public BigDecimal getValorDescontoProFrotas() {
+        return valorDescontoProFrotas;
+    }
+
+    public void setValorDescontoProFrotas(BigDecimal valorDescontoProFrotas) {
+        this.valorDescontoProFrotas = valorDescontoProFrotas;
+    }
+
+    public BigDecimal getValorDescontoXp() {
+        return valorDescontoXp;
+    }
+
+    public void setValorDescontoXp(BigDecimal valorDescontoXp) {
+        this.valorDescontoXp = valorDescontoXp;
+    }
+
     public Date getDataAntecipacao() {
         return dataAntecipacao;
     }
@@ -137,6 +170,14 @@ public class ReembolsoAntecipado extends ReembolsoBase {
         this.versao = versao;
     }
 
+    public TipoAntecipacao getTipoAntecipacao() {
+        return tipoAntecipacao;
+    }
+
+    public void setTipoAntecipacao(TipoAntecipacao tipoAntecipacao) {
+        this.tipoAntecipacao = tipoAntecipacao;
+    }
+
     @Override
     public List<PontoDeVenda> getPontosDeVenda() {
         return transacaoConsolidada != null ? transacaoConsolidada.getPontosDeVenda() : Collections.emptyList();
@@ -148,6 +189,14 @@ public class ReembolsoAntecipado extends ReembolsoBase {
 
     public void setAutorizacoesPagamento(List<AutorizacaoPagamento> autorizacoesPagamento) {
         this.autorizacoesPagamento = autorizacoesPagamento;
+    }
+
+    public PropostaAntecipacao getPropostaAntecipacao() {
+        return propostaAntecipacao;
+    }
+
+    public void setPropostaAntecipacao(PropostaAntecipacao propostaAntecipacao) {
+        this.propostaAntecipacao = propostaAntecipacao;
     }
 
     @Override
@@ -164,5 +213,26 @@ public class ReembolsoAntecipado extends ReembolsoBase {
     @Override
     public BigDecimal getValorBrutoVoucher() {
         return getValorTotal();
+    }
+
+    /**
+     * Retorna o total das taxas descontadas do reembolso
+     * @return O somatório dos descontos
+     */
+    @Transient
+    public BigDecimal getValorDescontoTotal() {
+        return valorDesconto.add(getValorDescontoTaxasServico());
+    }
+
+    /**
+     * Retorna o total das taxas de serviço descontadas do reembolso
+     * @return O somatório das taxas de serviço
+     */
+    @Transient
+    public BigDecimal getValorDescontoTaxasServico() {
+        if (valorDescontoProFrotas != null && valorDescontoXp != null) {
+            return valorDescontoProFrotas.add(valorDescontoXp);
+        }
+        return BigDecimal.ZERO;
     }
 }

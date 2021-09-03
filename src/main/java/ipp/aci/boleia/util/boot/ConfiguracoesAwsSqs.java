@@ -1,22 +1,5 @@
 package ipp.aci.boleia.util.boot;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.cloud.aws.messaging.config.QueueMessageHandlerFactory;
-import org.springframework.cloud.aws.messaging.core.QueueMessagingTemplate;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.messaging.converter.MappingJackson2MessageConverter;
-import org.springframework.messaging.handler.annotation.support.PayloadArgumentResolver;
-
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
@@ -28,8 +11,26 @@ import com.amazonaws.services.sqs.model.ListQueuesRequest;
 import com.amazonaws.services.sqs.model.ListQueuesResult;
 import com.amazonaws.services.sqs.model.QueueAttributeName;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import ipp.aci.boleia.util.i18n.Mensagens;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.cloud.aws.messaging.config.QueueMessageHandlerFactory;
+import org.springframework.cloud.aws.messaging.core.QueueMessagingTemplate;
+import org.springframework.cloud.aws.messaging.listener.support.AcknowledgmentHandlerMethodArgumentResolver;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.core.MethodParameter;
+import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.support.HeaderMethodArgumentResolver;
+import org.springframework.messaging.handler.annotation.support.PayloadArgumentResolver;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Configuração dos recursos de envio e recebimento de registros da nuvem
@@ -39,6 +40,8 @@ public class ConfiguracoesAwsSqs {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfiguracoesAwsSqs.class);
     
+    private static final String MESSAGE_TIMEOUT_PADRAO = "30";
+    private static final String MESSAGE_RETENTION_PADRAO = "345600";
     private static final String RECEIVE_MESSAGE_WAIT_TIME_PADRAO = "20";
 
     @Value("${aws.sqs.local.endpoint}")
@@ -119,6 +122,18 @@ public class ConfiguracoesAwsSqs {
     @Value("${aws.sqs.transacao-consolidada.processar-ciclo-postergacao}")
     private String nomeFilaProcessarCicloPostergacao;
 
+    @Value("${aws.sqs.anonimizacao.motorista}")
+    private String nomeFilaAnonimizacaMotorista;
+
+    @Value("${aws.sqs.anonimizacao-exclusao.motorista-auditoria}")
+    private String nomeFilaAnonimizacaoExclusaoMotoristaAuditoria;
+
+    /**
+     * Nome da fila que processa propostas de antecipação
+     */
+    @Value("${aws.sqs.processar-proposta-antecipacao}")
+    private String nomeFilaProcessarPropostaAntecipacao;
+
     /**
      * Carrega as mensagens do sistema
      */
@@ -164,7 +179,10 @@ public class ConfiguracoesAwsSqs {
                         ,nomeFilaFrotaParamCiclo
                         ,nomeFilaTransacaoConsolidacaoAgFrete
                         ,nomeFilaPostergacaoAbastecimentos
-                        ,nomeFilaProcessarCicloPostergacao);
+                        ,nomeFilaProcessarCicloPostergacao
+                        ,nomeFilaAnonimizacaMotorista
+                        ,nomeFilaAnonimizacaoExclusaoMotoristaAuditoria
+                        ,nomeFilaProcessarPropostaAntecipacao);
         criaFilaSeNaoExistem(amazonSQSAsync, nomeFilas);
         return new QueueMessagingTemplate(amazonSQSAsync);
     }
@@ -181,7 +199,16 @@ public class ConfiguracoesAwsSqs {
         mappingJackson2MessageConverter.setObjectMapper(objectMapper);
         mappingJackson2MessageConverter.setStrictContentTypeMatch(false);
         QueueMessageHandlerFactory factory = new QueueMessageHandlerFactory();
-        factory.setArgumentResolvers(Collections.singletonList(new PayloadArgumentResolver(mappingJackson2MessageConverter)));
+        factory.setArgumentResolvers(Arrays.asList(
+                new AcknowledgmentHandlerMethodArgumentResolver("Acknowledgment"),
+                new HeaderMethodArgumentResolver(null, null),
+                new PayloadArgumentResolver(mappingJackson2MessageConverter, null, false) {
+                    @Override
+                    public boolean supportsParameter(MethodParameter parameter) {
+                        return parameter.hasParameterAnnotation(Payload.class) || !parameter.hasParameterAnnotations();
+                    }
+                }
+        ));
         return factory;
     }
 
@@ -222,6 +249,12 @@ public class ConfiguracoesAwsSqs {
     private void criarFila(AmazonSQSAsync amazonSQSAsync, String nomeFila) {
         final CreateQueueRequest createQueueRequest = new CreateQueueRequest()
                     .withQueueName(nomeFila)
+                    .addAttributesEntry(
+                            QueueAttributeName.VisibilityTimeout.toString()
+                            , getMessageTimeoutPorNomeFila(nomeFila))
+                    .addAttributesEntry(
+                            QueueAttributeName.MessageRetentionPeriod.toString()
+                            , getMessageRetentionPorNomeFila(nomeFila))
                     .addAttributesEntry(
                             QueueAttributeName.ReceiveMessageWaitTimeSeconds.toString()
                             , RECEIVE_MESSAGE_WAIT_TIME_PADRAO);
@@ -267,5 +300,19 @@ public class ConfiguracoesAwsSqs {
                 //nada a fazer
             }
         };
+    }
+
+    private String getMessageTimeoutPorNomeFila(String nomeFila) {
+        if (nomeFilaAnonimizacaoExclusaoMotoristaAuditoria.equals(nomeFila)) {
+            return "180";
+        }
+        return MESSAGE_TIMEOUT_PADRAO;
+    }
+
+    private String getMessageRetentionPorNomeFila(String nomeFila) {
+        if (nomeFilaAnonimizacaoExclusaoMotoristaAuditoria.equals(nomeFila)) {
+            return "1209600";
+        }
+        return MESSAGE_RETENTION_PADRAO;
     }
 }

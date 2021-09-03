@@ -7,6 +7,7 @@ import ipp.aci.boleia.dominio.enums.StatusAutorizacao;
 import ipp.aci.boleia.dominio.enums.StatusEdicao;
 import ipp.aci.boleia.dominio.enums.StatusNotaFiscalAbastecimento;
 import ipp.aci.boleia.dominio.enums.StatusTransacaoConsolidada;
+import ipp.aci.boleia.dominio.enums.TipoAntecipacao;
 import ipp.aci.boleia.dominio.enums.TipoErroAutorizacaoPagamento;
 import ipp.aci.boleia.dominio.enums.TipoItemAutorizacaoPagamento;
 import ipp.aci.boleia.dominio.enums.TipoPreenchimentoLitragem;
@@ -55,6 +56,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static ipp.aci.boleia.util.UtilitarioCalculo.calcularPorcentagem;
+import static ipp.aci.boleia.util.UtilitarioCalculo.calcularValorTotalJuros;
 
 /**
  * Representa a tabela de Autorizacao Pagamento
@@ -504,6 +508,13 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
 
     @ManyToMany(mappedBy = "autorizacoesPagamento", fetch = FetchType.LAZY)
     private List<ReembolsoAntecipado> antecipacoesReembolso;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_AUT_PAG_ASSOCIADA")
+    private AutorizacaoPagamento autorizacaoPagamentoAssociada;
+
+    @OneToMany(mappedBy =  "autorizacaoPagamento", fetch = FetchType.LAZY)
+    private List<AutorizacaoPagamentoEdicao> autorizacoesEditadas;
 
     @Transient
     private TipoErroAutorizacaoPagamento tipoErroAutorizacaoPagamento;
@@ -1230,6 +1241,14 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
         this.dataPostergacao = dataPostergacao;
     }
 
+    public AutorizacaoPagamento getAutorizacaoPagamentoAssociada() {
+        return autorizacaoPagamentoAssociada;
+    }
+
+    public void setAutorizacaoPagamentoAssociada(AutorizacaoPagamento autorizacaoPagamentoAssociada) {
+        this.autorizacaoPagamentoAssociada = autorizacaoPagamentoAssociada;
+    }
+
     @Transient
     @Override
     public List<PontoDeVenda> getPontosDeVenda() {
@@ -1715,6 +1734,14 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
         return BigDecimal.ZERO.compareTo(this.getValorDescontoTotal()) != 0;
     }
 
+    public List<AutorizacaoPagamentoEdicao> getAutorizacoesEditadas() {
+        return autorizacoesEditadas;
+    }
+
+    public void setAutorizacoesEditadas(List<AutorizacaoPagamentoEdicao> autorizacoesEditadas) {
+        this.autorizacoesEditadas = autorizacoesEditadas;
+    }
+
     /**
      * Informa se a autorização de pagamento possui alguma nota fiscal com justificativa.
      * @return true, caso possua.
@@ -1723,6 +1750,27 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     public boolean possuiNotasFiscaisComJustificativa() {
         return notasFiscais != null && !getNotasFiscaisComJustificativa().isEmpty();
     }
+
+    /**
+     * Informa se abastecimento tem hodometro ou horimetro definido.
+     * @return true se tem hodometro ou horimetro definido.
+     */
+    @JsonIgnore
+    @Transient
+    public boolean temHodometroOuHorimetro() {
+        return this.hodometro != null || this.horimetro != null;
+    }
+
+    /**
+     * Informa se abastecimento tem hodometro anterior ou horimetro anterior definido.
+     * @return true se tem hodometro ou horimetro definido.
+     */
+    @JsonIgnore
+    @Transient
+    public boolean temHodometroOuHorimetroAnterior() {
+        return this.hodometroAnterior != null || this.horimetroAnterior != null;
+    }
+
 
     /**
      * Calcula o consumo relativo a autorizacao de pagamento.
@@ -1757,6 +1805,45 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
         if (horimetro != null) {
             if (horimetroAnterior != null && !horimetroAnterior.equals(BigDecimal.ZERO)) {
                 return horimetro.subtract(horimetroAnterior);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Calcula o consumo usando essa autorizacao pagamento como base usando valores parametrizados para estimar consumo.
+     * Usado para obter consumo estimado com base em valores externos ao abastecimento.
+     *
+     * @param litragem total de litros
+     * @param hodometro valor do hodometro
+     * @param horimetro valor do horimetro
+     * @return consumo tendo a autorizacao pagamento como base, relativo as valores parametrizados
+     */
+    @JsonIgnore
+    public BigDecimal obterConsumo(BigDecimal litragem, Long hodometro, BigDecimal horimetro) {
+        final BigDecimal diferencaHodometroHorimetro = obterDiferencaHodometroHorimetro(hodometro, horimetro);
+        return diferencaHodometroHorimetro == null || litragem == null ? null :
+                diferencaHodometroHorimetro.divide(litragem, 3, BigDecimal.ROUND_HALF_UP);
+    }
+
+    /**
+     * Obtem a diferenca de hodometro ou horimetro da autorizacao de pagamento com valores parametrizados.
+     * Usado para obter consumo estimado com base em valores externos ao abastecimento.
+     *
+     * @param novoHodometro valor do hodometro
+     * @param novoHorimetro valor do horimetro
+     * @return a diferenca de hodometro ou horimetro da autorizacao de pagamento em relacao aos valores parametrizados
+     */
+    @JsonIgnore
+    private BigDecimal obterDiferencaHodometroHorimetro(Long novoHodometro,BigDecimal novoHorimetro) {
+        if (novoHodometro != null) {
+            if (this.hodometro != null && this.hodometro != BigDecimal.ZERO.longValue()) {
+                return new BigDecimal(novoHodometro - this.hodometro);
+            }
+        }
+        if (novoHorimetro != null) {
+            if (this.horimetro != null && !this.horimetro.equals(BigDecimal.ZERO)) {
+                return novoHorimetro.subtract(this.horimetro);
             }
         }
         return null;
@@ -1839,7 +1926,21 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
 
     @Transient
     public boolean possuiAntecipacaoReembolsoRealizada() {
-        return antecipacoesReembolso != null && antecipacoesReembolso.stream().anyMatch(ReembolsoAntecipado::isIntegracaoRealizada);
+        return possuiAntecipacaoSolucaoRealizada() || possuiAntecipacaoParceriaRealizada();
+    }
+
+    @Transient 
+    public boolean possuiAntecipacaoParceriaRealizada() {
+        return antecipacoesReembolso != null && antecipacoesReembolso.stream()
+                .anyMatch(r -> r.getTipoAntecipacao().equals(TipoAntecipacao.PARCEIRO_XP)
+                        && r.getPropostaAntecipacao().isAceito() != null
+                        && r.getPropostaAntecipacao().isAceito());
+    }
+
+    @Transient 
+    public boolean possuiAntecipacaoSolucaoRealizada() {
+        return antecipacoesReembolso != null && antecipacoesReembolso.stream()
+        .anyMatch(r -> (r.getTipoAntecipacao().equals(TipoAntecipacao.SOLUCAO) && r.isIntegracaoRealizada()));
     }
 
     /**
@@ -1927,5 +2028,56 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     @Transient
     public Boolean possuiEmissaoProdutos() {
         return this.notasFiscais.stream().anyMatch(nota -> nota.getValorProdutosServicos() != null);
+    }
+
+    /**
+     * Obtém a antecipação feita pela revenda
+     * @return antecipação realizada
+     */
+    @Transient
+    public ReembolsoAntecipado getAntecipacaoParceriaRealizada(){
+        return this.getAntecipacoesReembolso().stream().filter(r ->
+            TipoAntecipacao.PARCEIRO_XP.equals(r.getTipoAntecipacao())
+                && r.getPropostaAntecipacao().isAceito() != null && r.getPropostaAntecipacao().isAceito())
+            .findFirst().orElse(null);
+    }
+
+    /**
+     * Obtém o valor antecipado pela revenda descontando as taxas de serviços.
+     * @return valor da antecipação
+     */
+    @Transient
+    public BigDecimal getValorAntecipadoRevenda(){
+        final ReembolsoAntecipado reembolso = this.getAntecipacaoParceriaRealizada();
+        if(reembolso != null && reembolso.getPropostaAntecipacao() != null){
+            HistoricoConfiguracaoAntecipacao configuracao = reembolso.getPropostaAntecipacao().getConfiguracao();
+            BigDecimal valorDescontoMdr = calcularPorcentagem(this.valorTotal, this.transacaoConsolidada.getMdr(), 15);
+            BigDecimal valorDescontoProFrotas;
+            BigDecimal valorDescontoXp;
+            if(configuracao.getTaxaPercentual()) {
+                BigDecimal valorReembolsoSemMdr = this.valorTotal.subtract(valorDescontoMdr);
+                BigDecimal taxaFinal = configuracao.getTaxaProfrotasPercentual().add(configuracao.getTaxaParceiro().getValorTaxa());
+                int numeroDias = (int) UtilitarioCalculoData.diferencaEmDias(reembolso.getDataVencimentoPgto(), this.transacaoConsolidada.getPrazos().getDataLimitePagamento());
+
+                BigDecimal valorTotalTaxas = calcularValorTotalJuros(valorReembolsoSemMdr, taxaFinal, numeroDias);
+                valorDescontoXp = calcularValorTotalJuros(valorReembolsoSemMdr.subtract(valorTotalTaxas), configuracao.getTaxaParceiro().getValorTaxa(), numeroDias);
+                valorDescontoProFrotas = valorTotalTaxas.subtract(valorDescontoXp);
+            } else {
+                valorDescontoProFrotas = configuracao.getTaxaProfrotasFixa();
+                valorDescontoXp = configuracao.getTaxaParceiro().getValorTaxa();
+            }
+            return this.valorTotal.subtract(valorDescontoProFrotas.add(valorDescontoXp).add(valorDescontoMdr)).setScale(2, BigDecimal.ROUND_HALF_UP);
+        }
+        return BigDecimal.ZERO;
+    }
+
+    /**
+     * Verifica se essa autorização pagamento foi editada e aprovada
+     * @return true se positivo
+     */
+    @Transient
+    public boolean isEdicaoAprovada(){
+        return this.autorizacoesEditadas != null && this.autorizacoesEditadas.stream()
+                .anyMatch(e -> e.getStatusEdicao().equals(StatusEdicao.EDITADO.getValue()));
     }
 }

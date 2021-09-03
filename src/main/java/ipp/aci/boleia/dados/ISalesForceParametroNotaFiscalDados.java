@@ -10,5 +10,5 @@ public interface ISalesForceParametroNotaFiscalDados {
      * @param exigeNotaFiscal exigencia de nota fiscal
      * @return  resposta do sales force
      */
-    AtualizarExigenciaNfeErroVo atualizarExigenciaNotaFiscal(String cnpj, boolean exigeNotaFiscal);
+    AtualizarExigenciaNfeErroVo atualizarExigenciaNotaFiscal(Long cnpj, boolean exigeNotaFiscal);
 }

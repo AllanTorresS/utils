@@ -136,7 +136,7 @@ public class NotaFiscalSd {
         BigDecimal valorEmitido = notasFiscais.stream().map(NotaFiscal::getValorTotal).reduce(BigDecimal::add).get();
         BigDecimal diferenca = valorTotalAbastecimento.subtract(valorEmitido);
         BigDecimal zero = BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_UP);
-        return diferenca.compareTo(zero) == 0 || diferenca.abs().compareTo(obterValorMargemTotal(1)) <= 0;
+        return diferenca.compareTo(zero) == 0 || diferenca.compareTo(obterValorMargemTotal(1)) <= 0;
     }
 
     /**

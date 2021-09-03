@@ -3,7 +3,6 @@ package ipp.aci.boleia.dominio;
 
 import ipp.aci.boleia.dominio.interfaces.IExclusaoLogica;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
-import org.hibernate.envers.Audited;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,9 +24,8 @@ import java.util.Date;
  * Representa a tabela de Notificacao Usuario
  */
 @Entity
-@Audited
 @Table(name = "NOTIFICACAO_USUARIO")
-public class NotificacaoUsuario implements IPersistente, IExclusaoLogica {
+public class NotificacaoUsuario implements IPersistente {
 
     private static final long serialVersionUID = -6966389704154743001L;
 
@@ -54,9 +52,6 @@ public class NotificacaoUsuario implements IPersistente, IExclusaoLogica {
     @Column(name = "DT_VISUALIZACAO")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataVisualizacao;
-
-    @Column(name = "ID_EXCLUIDO")
-    private Boolean excluido;
 
     @Version
     @Column(name = "NO_VERSAO")
@@ -110,15 +105,5 @@ public class NotificacaoUsuario implements IPersistente, IExclusaoLogica {
 
     public void setDataVisualizacao(Date dataVisualizacao) {
         this.dataVisualizacao = dataVisualizacao;
-    }
-
-    @Override
-    public Boolean getExcluido() {
-        return excluido;
-    }
-
-    @Override
-    public void setExcluido(Boolean excluido) {
-        this.excluido = excluido;
     }
 }

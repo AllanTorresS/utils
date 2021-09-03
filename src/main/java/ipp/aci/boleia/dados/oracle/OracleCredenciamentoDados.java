@@ -1,10 +1,9 @@
 package ipp.aci.boleia.dados.oracle;
 
-import org.springframework.stereotype.Repository;
-
 import ipp.aci.boleia.dados.ICredenciamentoDados;
 import ipp.aci.boleia.dominio.Credenciamento;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
+import org.springframework.stereotype.Repository;
 
 /**
  * Respositorio da entidade de {@link Credenciamento}.

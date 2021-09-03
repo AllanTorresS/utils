@@ -1,8 +1,8 @@
 package ipp.aci.boleia.dominio.vo.conectcar;
 
-import java.math.BigDecimal;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.math.BigDecimal;
 
 /**
  * Vo de integração de itens de uma criação de pedidos com a conectcar 

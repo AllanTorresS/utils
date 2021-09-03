@@ -103,6 +103,7 @@ public final  class Rotas {
     public static final  String ABASTECIMENTO_FROTA_API              = BASE_API + "/abastecimentoFrota";
     public static final  String ABASTECIMENTO_REVENDA_API            = BASE_API + "/abastecimentoRevenda";
     public static final  String ABASTECIMENTO_SOLUCAO_API            = BASE_API + "/abastecimentoSolucao";
+    public static final  String FLUXO_ABASTECIMENTO_API              = BASE_API + "/fluxoAbastecimento";
     public static final  String QUESTIONARIO_API                     = BASE_API + "/questionario";
     public static final  String CEP_API                              = BASE_API + "/cep";
     public static final  String ROTA_API                             = BASE_API + "/rota";
@@ -151,6 +152,9 @@ public final  class Rotas {
     public static final String VEICULO_COTA_RELATORIO_API            = BASE_API + "/veiculo/cota";
     public static final String DETALHE_COBRANCA_API                  = BASE_API + "/detalheCobranca";
     public static final String DETALHE_REEMBOLSO_API                 = BASE_API + "/detalheReembolso";
+    public static final String CONFIGURACAO_ANTECIPACAO_API          = BASE_API + "/configuracaoAntecipacao";
+    public static final String REEMBOLSO_ANTECIPADO_API              = BASE_API + "/antecipacao";
+    public static final String DETALHE_REEMBOLSO_ANTECIPADO_API      = BASE_API + "/detalheAntecipacao";
 
     public static final String RELATORIO_NOTA_FISCAL_API             = BASE_API + "/relatorioNotaFiscal";
     public static final String RELATORIO_ULTIMOS_PRECOS_API          = BASE_API + "/relatorioUltimosPrecos";

@@ -9,6 +9,7 @@ import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgual;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDiferente;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaFetch;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgualIgnoreCase;
@@ -210,6 +211,28 @@ public class OracleVeiculoDados extends OracleRepositorioBoleiaDados<Veiculo> im
         return pesquisar((ParametroOrdenacaoColuna) null,
                 new ParametroPesquisaIgual("frota.excluido", false),
                 new ParametroPesquisaIgualIgnoreCase("placa", placa));
+    }
+
+    @Override
+    public List<Veiculo> buscarVeiculosPorPlacaLike(String placa) {
+        return pesquisar((ParametroOrdenacaoColuna) null,
+                new ParametroPesquisaLike("placa", placa));
+    }
+
+    @Override
+    public List<Veiculo> buscarVeiculosPorPlacaLike(FiltroPesquisaParcialVeiculoVo filtro) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaLike("placa", filtro.getTermo()));
+
+        if(filtro.getApenasClimatizador()){
+            parametros.add(new ParametroPesquisaIgual("subtipoVeiculo.descricao", "Climatizador"));
+        } else {
+            parametros.add(new ParametroPesquisaDiferente("subtipoVeiculo.descricao", "Climatizador"));
+        }
+        if(filtro.getApenasHabilitadoAbastecerDuasPlacas()){
+            parametros.add(new ParametroPesquisaIgual("habilitadoAbastecerDuasPlacas", true));
+        }
+        return pesquisar((ParametroOrdenacaoColuna) null, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
     @Override
