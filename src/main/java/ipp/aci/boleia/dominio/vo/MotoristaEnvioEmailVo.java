@@ -16,6 +16,7 @@ public class MotoristaEnvioEmailVo{
     private String email;
     private Date dataCriacao;
     private Date dataExclusao;
+    private Date dataInativacao;
 
     /**
      * Construtor padrão da entidade.
@@ -31,14 +32,16 @@ public class MotoristaEnvioEmailVo{
      * @param telefoneCelular Número do telefone
      * @param dataCriacao Data de criação
      * @param dataExclusao Data de exclusão
+     * @param dataInativacao Data de inativação
      */
-    public MotoristaEnvioEmailVo(Long id, String nome, Frota frota, Integer dddTelefoneCelular, Integer telefoneCelular, Date dataCriacao, Date dataExclusao) {
+    public MotoristaEnvioEmailVo(Long id, String nome, Frota frota, Integer dddTelefoneCelular, Integer telefoneCelular, Date dataCriacao, Date dataExclusao, Date dataInativacao) {
         this.nome = nome;
         this.idFrota = frota.getId();
         this.dddTelefoneCelular = dddTelefoneCelular;
         this.telefoneCelular = telefoneCelular;
         this.dataCriacao = dataCriacao;
         this.dataExclusao = dataExclusao;
+        this.dataInativacao = dataInativacao;
     }
 
     public Long getIdFrota() {
@@ -95,5 +98,13 @@ public class MotoristaEnvioEmailVo{
 
     public void setDataExclusao(Date dataExclusao) {
         this.dataExclusao = dataExclusao;
+    }
+
+    public Date getDataInativacao() {
+        return dataInativacao;
+    }
+
+    public void setDataInativacao(Date dataInativacao) {
+        this.dataInativacao = dataInativacao;
     }
 }
