@@ -2,3 +2,5 @@
 .idea
 nb-configuration.xml
 nbactions.xml
+
+*.iml
