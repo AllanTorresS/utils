@@ -3,6 +3,7 @@ package ipp.aci.boleia.dominio.interfaces;
 import ipp.aci.boleia.dominio.AbastecimentoVeiculoMes;
 import ipp.aci.boleia.dominio.Cobranca;
 import ipp.aci.boleia.dominio.ExtratoPedidoTransacao;
+import ipp.aci.boleia.dominio.FluxoAbastecimentoMotoristaConfig;
 import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.FrotaParametroSistemaConsumo;
 import ipp.aci.boleia.dominio.FrotaParametroSistemaHodometroHorimetro;
