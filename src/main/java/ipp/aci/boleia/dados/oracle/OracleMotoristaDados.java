@@ -16,8 +16,6 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgu
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaLike;
-import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMaior;
-import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaMenorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaOr;
 import ipp.aci.boleia.dominio.vo.EntidadeVo;
@@ -27,6 +25,10 @@ import ipp.aci.boleia.dominio.vo.externo.FiltroPesquisaMotoristaExtVo;
 import ipp.aci.boleia.dominio.vo.frotista.FiltroPesquisaMotoristaFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.ResultadoPaginadoFrtVo;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
+import static ipp.aci.boleia.util.UtilitarioCalculoData.adicionarMesesData;
+import static ipp.aci.boleia.util.UtilitarioFormatacao.obterDigitosMascara;
+import static ipp.aci.boleia.util.UtilitarioFormatacao.obterInteiroMascara;
+import static ipp.aci.boleia.util.UtilitarioFormatacao.obterLongMascara;
 import ipp.aci.boleia.util.UtilitarioLambda;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.apache.commons.collections4.CollectionUtils;
@@ -39,11 +41,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-
-import static ipp.aci.boleia.util.UtilitarioCalculoData.adicionarMesesData;
-import static ipp.aci.boleia.util.UtilitarioFormatacao.obterDigitosMascara;
-import static ipp.aci.boleia.util.UtilitarioFormatacao.obterInteiroMascara;
-import static ipp.aci.boleia.util.UtilitarioFormatacao.obterLongMascara;
 
 /**
  * Respositorio de entidades Motorista
