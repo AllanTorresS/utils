@@ -386,7 +386,6 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "F.id, " +
                     "F.razaoSocial, " +
                     "F.cnpj, " +
-                    "F.modoPagamento, " +
                     "TC.dataInicioPeriodo, " +
                     "TC.dataFimPeriodo, " +
                     CLAUSULA_DATA_LIMITE_EMISSAO + ", " +
@@ -405,7 +404,6 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                         "F.id, " +
                         "F.razaoSocial, " +
                         "F.cnpj, " +
-                        "F.modoPagamento, " +
                         "TC.dataInicioPeriodo, " +
                         "TC.dataFimPeriodo, " +
                         "SUM(TC.valorTotal), " +
