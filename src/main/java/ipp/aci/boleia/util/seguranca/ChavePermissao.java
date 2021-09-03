@@ -56,6 +56,7 @@ public final class ChavePermissao {
     public static final String NOTA_FISCAL_DOWNLOAD                         = SPRING_ROLE_PREFIX + "NOTA_FISCAL_DOWNLOAD" + SPRING_ROLE_SUFFIX;
     public static final String NOTA_FISCAL_EXCLUIR                          = SPRING_ROLE_PREFIX + "NOTA_FISCAL_EXCLUIR" + SPRING_ROLE_SUFFIX;
     public static final String NOTA_FISCAL_UPLOAD                           = SPRING_ROLE_PREFIX + "NOTA_FISCAL_UPLOAD" + SPRING_ROLE_SUFFIX;
+    public static final String PARAMETROS_NF_GERENCIAR_NF                   = SPRING_ROLE_PREFIX + "PARAMETROS_NF_GERENCIAR_NF" + SPRING_ROLE_SUFFIX;
     public static final String JUSTIFICATIVA_NOTA_UPLOAD                    = SPRING_ROLE_PREFIX + "JUSTIFICATIVA_NOTA_UPLOAD" + SPRING_ROLE_SUFFIX;
     public static final String JUSTIFICATIVA_NOTA_EXCLUIR                   = SPRING_ROLE_PREFIX + "JUSTIFICATIVA_NOTA_EXCLUIR" + SPRING_ROLE_SUFFIX;
     public static final String PERFIL_ALTERAR                               = SPRING_ROLE_PREFIX + "PERFIL_ALTERAR" + SPRING_ROLE_SUFFIX;
