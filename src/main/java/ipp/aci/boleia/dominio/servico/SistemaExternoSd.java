@@ -48,7 +48,9 @@ public class SistemaExternoSd {
      */
     public SistemaExterno verificarAutorizacaoBasic(String client, String secret) {
         SistemaExterno sistemaExterno = this.repositorio.obterPorClientESecretComPermissao(client, secret);
-        Set<String> setPerms  = sistemaExterno.getPermissoes().stream().map(Permissao::getChave).collect(Collectors.toSet());
+       if(sistemaExterno != null){
+           Set<String> setPerms  = sistemaExterno.getPermissoes().stream().map(Permissao::getChave).collect(Collectors.toSet());
+       }
         return sistemaExterno;
     }
 }
