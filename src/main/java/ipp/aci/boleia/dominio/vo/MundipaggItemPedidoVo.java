@@ -12,7 +12,6 @@ public class MundipaggItemPedidoVo {
     private int amount;
     private String description;
     private int quantity;
-    private int quantity2;
 
     public MundipaggItemPedidoVo() {
 
