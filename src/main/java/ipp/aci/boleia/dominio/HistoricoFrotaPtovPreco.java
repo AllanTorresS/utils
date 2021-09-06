@@ -30,6 +30,8 @@ import java.util.List;
 @Table(name="HIST_FROTA_PTOV_PRECO")
 public class HistoricoFrotaPtovPreco  implements IPersistente, IPertenceRevendedor, IPertenceFrota {
 
+    private static final long serialVersionUID = -5362432477898350598L;
+
     @Id
     @Column(name = "CD_HIST_FROTA_PTOV_PRECO")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_HIST_FROTA_PTOV_PRECO")
