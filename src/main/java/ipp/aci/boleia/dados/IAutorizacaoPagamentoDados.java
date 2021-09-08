@@ -14,6 +14,7 @@ import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheReembolsoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaQtdTransacoesFrotaVo;
 import ipp.aci.boleia.dominio.vo.QuantidadeAbastecidaVeiculoVo;
 import ipp.aci.boleia.dominio.vo.TransacaoPendenteVo;
+import ipp.aci.boleia.dominio.vo.ValorAntecipavelPorDataVo;
 import ipp.aci.boleia.dominio.vo.apco.InformacoesVolumeVo;
 import ipp.aci.boleia.dominio.vo.frotista.FiltroPesquisaAbastecimentoFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.ResultadoPaginadoFrtVo;
@@ -495,4 +496,11 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
      * @return lista de abastecimentos que podem ser antecipados
      */
     ResultadoPaginado<AutorizacaoPagamento> obterAbastecimentosAntecipaveis(FiltroAbastecimentoAntecipavelVo filtro);
+
+    /**
+     * Obtém os valores disponíveis para antecipação para o usuário informado
+     * @param idUsuario o id do usuário
+     * @return lista de valores antecipáveis por data de vencimento
+     */
+    List<ValorAntecipavelPorDataVo> obterValoresDisponiveisAntecipacao(Long idUsuario);
 }
