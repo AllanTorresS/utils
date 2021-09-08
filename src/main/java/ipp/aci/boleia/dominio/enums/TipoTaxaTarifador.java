@@ -10,7 +10,7 @@ import java.util.Arrays;
 public enum TipoTaxaTarifador implements IEnumComValor {
     REAIS(1),
     LITRAGEM(2),
-    FIXO(3);
+    FIXO_REAIS(3);
 
     private final Integer value;
 

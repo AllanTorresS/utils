@@ -5,9 +5,9 @@ import ipp.aci.boleia.dominio.enums.IEnumComValor;
 import java.util.Arrays;
 
 /**
- * Indica se uma faixa de uma taxa do Tarifador é escolhida por valor monetário ou valor percentual
+ * Indica a forma como o valor da taxa é calculada
  */
-public enum TipoFaixaTarifador implements IEnumComValor {
+public enum TipoCalculoTaxa implements IEnumComValor {
     REAIS(1),
     PERCENTUAL(2);
 
@@ -17,7 +17,7 @@ public enum TipoFaixaTarifador implements IEnumComValor {
      * Construtor
      * @param value O valor do enum
      */
-    TipoFaixaTarifador(Integer value) {
+    TipoCalculoTaxa(Integer value) {
         this.value = value;
     }
 
@@ -27,8 +27,8 @@ public enum TipoFaixaTarifador implements IEnumComValor {
      * @param valor O valor
      * @return Enum para o valor
      */
-    public static TipoFaixaTarifador obterPorValor(Integer valor) {
-        return Arrays.stream(TipoFaixaTarifador.values())
+    public static TipoCalculoTaxa obterPorValor(Integer valor) {
+        return Arrays.stream(TipoCalculoTaxa.values())
                 .filter(s -> s.getValue().equals(valor))
                 .findFirst().orElse(null);
     }
@@ -39,7 +39,7 @@ public enum TipoFaixaTarifador implements IEnumComValor {
      * @param nome O nome do enumerado
      * @return Enum para o nome
      */
-    public static TipoFaixaTarifador obterPorNome(String nome) {
+    public static TipoCalculoTaxa obterPorNome(String nome) {
         return Arrays.stream(values())
                 .filter(e -> e.name().equals(nome))
                 .findAny()

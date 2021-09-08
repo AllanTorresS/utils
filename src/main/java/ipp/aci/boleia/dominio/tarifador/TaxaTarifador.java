@@ -1,6 +1,6 @@
 package ipp.aci.boleia.dominio.tarifador;
 
-import ipp.aci.boleia.dominio.Frota;
+import ipp.aci.boleia.dominio.Cobranca;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import org.hibernate.envers.Audited;
 
@@ -14,11 +14,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import java.util.Date;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * Representa a tabela de Taxa do Tarifador
+ * Representa a tabela de Faixa de Taxa do Tarifador
  */
 @Entity
 @Audited
@@ -31,24 +31,33 @@ public class TaxaTarifador implements IPersistente {
     @SequenceGenerator(name = "SEQ_TAXA_TARIFADOR", sequenceName = "SEQ_TAXA_TARIFADOR", allocationSize = 1)
     private Long id;
 
-    @Column(name = "NM_TAXA")
-    private String nome;
+    @Column(name = "ID_TIPO_CALCULO")
+    private Integer tipoCalculoTaxa;
+
+    @Column(name = "VA_INICIO_FAIXA_REAL")
+    private BigDecimal inicioFaixaReais;
+
+    @Column(name = "VA_FIM_FAIXA_REAL")
+    private BigDecimal fimFaixaReais;
+
+    @Column(name = "VA_INICIO_FAIXA_LIT")
+    private BigDecimal inicioFaixaLitragem;
+
+    @Column(name = "VA_FIM_FAIXA_LIT")
+    private BigDecimal fimFaixaLitragem;
+
+    @Column(name = "VA_PERCENTUAL")
+    private BigDecimal valorPercentual;
+
+    @Column(name = "VA_REAIS")
+    private BigDecimal valorEmReais;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "CD_FROTA")
-    private Frota frota;
+    @Column(name = "CD_TARIFADOR")
+    private Tarifador tarifador;
 
-    @Column(name = "DT_INI_VIGENCIA")
-    private Date dataInicioVigencia;
-
-    @Column(name = "DT_FIM_VIGENCIA")
-    private Date dataFimVigencia;
-
-    @Column(name = "ID_TIPO_TAXA")
-    private Integer tipoTaxa;
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "taxa")
-    private List<FaixaTaxaTarifador> faixas;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "taxaAplicada")
+    private List<Cobranca> cobrancas;
 
     public TaxaTarifador() {
         //construtor default
@@ -64,51 +73,75 @@ public class TaxaTarifador implements IPersistente {
         this.id = id;
     }
 
-    public String getNome() {
-        return nome;
+    public Integer getTipoCalculoTaxa() {
+        return tipoCalculoTaxa;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setTipoCalculoTaxa(Integer tipoCalculoTaxa) {
+        this.tipoCalculoTaxa = tipoCalculoTaxa;
     }
 
-    public Frota getFrota() {
-        return frota;
+    public BigDecimal getInicioFaixaLitragem() {
+        return inicioFaixaLitragem;
     }
 
-    public void setFrota(Frota frota) {
-        this.frota = frota;
+    public void setInicioFaixaLitragem(BigDecimal inicioFaixaLitragem) {
+        this.inicioFaixaLitragem = inicioFaixaLitragem;
     }
 
-    public Date getDataInicioVigencia() {
-        return dataInicioVigencia;
+    public BigDecimal getFimFaixaLitragem() {
+        return fimFaixaLitragem;
     }
 
-    public void setDataInicioVigencia(Date dataInicioVigencia) {
-        this.dataInicioVigencia = dataInicioVigencia;
+    public void setFimFaixaLitragem(BigDecimal fimFaixaLitragem) {
+        this.fimFaixaLitragem = fimFaixaLitragem;
     }
 
-    public Date getDataFimVigencia() {
-        return dataFimVigencia;
+    public BigDecimal getValorPercentual() {
+        return valorPercentual;
     }
 
-    public void setDataFimVigencia(Date dataFimVigencia) {
-        this.dataFimVigencia = dataFimVigencia;
+    public void setValorPercentual(BigDecimal valorPercentual) {
+        this.valorPercentual = valorPercentual;
     }
 
-    public Integer getTipoTaxa() {
-        return tipoTaxa;
+    public BigDecimal getValorEmReais() {
+        return valorEmReais;
     }
 
-    public void setTipoTaxa(Integer tipoTaxa) {
-        this.tipoTaxa = tipoTaxa;
+    public void setValorEmReais(BigDecimal valorEmReais) {
+        this.valorEmReais = valorEmReais;
     }
 
-    public List<FaixaTaxaTarifador> getFaixas() {
-        return faixas;
+    public BigDecimal getInicioFaixaReais() {
+        return inicioFaixaReais;
     }
 
-    public void setFaixas(List<FaixaTaxaTarifador> faixas) {
-        this.faixas = faixas;
+    public void setInicioFaixaReais(BigDecimal inicioFaixaReais) {
+        this.inicioFaixaReais = inicioFaixaReais;
+    }
+
+    public BigDecimal getFimFaixaReais() {
+        return fimFaixaReais;
+    }
+
+    public void setFimFaixaReais(BigDecimal fimFaixaReais) {
+        this.fimFaixaReais = fimFaixaReais;
+    }
+
+    public Tarifador getTarifador() {
+        return tarifador;
+    }
+
+    public void setTarifador(Tarifador tarifador) {
+        this.tarifador = tarifador;
+    }
+
+    public List<Cobranca> getCobrancas() {
+        return cobrancas;
+    }
+
+    public void setCobrancas(List<Cobranca> cobrancas) {
+        this.cobrancas = cobrancas;
     }
 }
