@@ -155,6 +155,7 @@ public final  class Rotas {
     public static final String CONFIGURACAO_ANTECIPACAO_API          = BASE_API + "/configuracaoAntecipacao";
     public static final String REEMBOLSO_ANTECIPADO_API              = BASE_API + "/antecipacao";
     public static final String DETALHE_REEMBOLSO_ANTECIPADO_API      = BASE_API + "/detalheAntecipacao";
+    public static final String TARIFADOR_API                         = BASE_API + "/tarifador";
 
     public static final String RELATORIO_NOTA_FISCAL_API             = BASE_API + "/relatorioNotaFiscal";
 

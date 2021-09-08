@@ -2,7 +2,7 @@ package ipp.aci.boleia.dominio;
 
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
-import ipp.aci.boleia.dominio.tarifador.FaixaTaxaTarifador;
+import ipp.aci.boleia.dominio.tarifador.TaxaTarifador;
 import org.hibernate.annotations.Formula;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
@@ -153,8 +153,8 @@ public class Cobranca implements IPersistente, IPertenceFrota {
     private String ultimaJustificativaAjuste;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "CD_FAIXA_TARIF_APLICADA")
-    private FaixaTaxaTarifador faixaTarifadorAplicada;
+    @Column(name = "CD_TAXA_APLICADA")
+    private TaxaTarifador taxaAplicada;
 
     @Override
     public Long getId() {
@@ -384,12 +384,12 @@ public class Cobranca implements IPersistente, IPertenceFrota {
         this.ultimaJustificativaAjuste = ultimaJustificativaAjuste;
     }
 
-    public FaixaTaxaTarifador getFaixaTarifadorAplicada() {
-        return faixaTarifadorAplicada;
+    public TaxaTarifador getTaxaAplicada() {
+        return taxaAplicada;
     }
 
-    public void setFaixaTarifadorAplicada(FaixaTaxaTarifador faixaTarifadorAplicada) {
-        this.faixaTarifadorAplicada = faixaTarifadorAplicada;
+    public void setTaxaAplicada(TaxaTarifador taxaAplicada) {
+        this.taxaAplicada = taxaAplicada;
     }
 
     /**
