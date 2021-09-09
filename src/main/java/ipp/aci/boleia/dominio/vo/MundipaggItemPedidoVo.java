@@ -24,7 +24,7 @@ public class MundipaggItemPedidoVo {
     public MundipaggItemPedidoVo(BigDecimal valor) {
         description = CREDITO_DESCRIPTION;
         quantity = 1;
-        amount = valor.intValue();
+        amount = valor.multiply(new BigDecimal(100)).intValue();
     }
 
     public int getAmount() {
