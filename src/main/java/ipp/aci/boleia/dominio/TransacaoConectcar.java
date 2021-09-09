@@ -168,6 +168,9 @@ public class TransacaoConectcar implements IPersistente, IPertenceFrota {
     @Size(max=250)
     @Column(name = "NM_EMBARCADOR")
     private String embarcador;
+    
+    @Column(name = "CD_VIAGEM")
+	private Long codigoViagem;
 
 	@Override
 	public Long getId() {
@@ -447,6 +450,14 @@ public class TransacaoConectcar implements IPersistente, IPertenceFrota {
 
 	public void setEmbarcador(String embarcador) {
 		this.embarcador = embarcador;
+	}
+
+	public Long getCodigoViagem() {
+		return codigoViagem;
+	}
+
+	public void setCodigoViagem(Long codigoViagem) {
+		this.codigoViagem = codigoViagem;
 	}
 
 }
