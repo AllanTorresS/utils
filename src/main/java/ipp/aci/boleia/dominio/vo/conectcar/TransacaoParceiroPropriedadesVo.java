@@ -66,6 +66,9 @@ public class TransacaoParceiroPropriedadesVo {
 
 	@JsonProperty("CnpjEmbarcador")
 	private String cnpjEmbarcador;
+	
+	@JsonProperty("ViagemId")
+	private Long viagemId;
 
 	public TransacaoParceiroPropriedadesVo() {
 	}
@@ -220,6 +223,14 @@ public class TransacaoParceiroPropriedadesVo {
 
 	public void setCnpjEmbarcador(String cnpjEmbarcador) {
 		this.cnpjEmbarcador = cnpjEmbarcador;
+	}
+
+	public Long getViagemId() {
+		return viagemId;
+	}
+
+	public void setViagemId(Long viagemId) {
+		this.viagemId = viagemId;
 	}
 
 }
