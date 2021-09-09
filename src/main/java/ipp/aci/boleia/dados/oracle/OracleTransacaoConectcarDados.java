@@ -117,16 +117,25 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
             "SELECT tc " +
                     " FROM TransacaoConectcar tc " +
                     " WHERE tc.frota.id = :idFrota " +
+                    " AND tc.tipoTransacao = 7" +
                     " AND TRUNC(tc.dataInicioViagem) <= TRUNC(SYSDATE)" +
-                    " AND TRUNC(tc.dataFimViagem) >= TRUNC(SYSDATE)";
+                    " AND TRUNC(tc.dataFimViagem) >= TRUNC(SYSDATE)" +
+    		        " AND tc.codigoViagem NOT IN (" +
+    		 		"      SELECT tc1.codigoViagem" +
+    				"	   FROM TransacaoConectcar tc1" +
+    				"	   WHERE tc1.tipoTransacao = 10 AND tc1.frota.id = tc.frota.id AND tc1.codigoViagem = tc.codigoViagem)";
 
     private static final String QUERY_VALE_PEDAGIO_TROCANDO_STATUS =
             "SELECT tc " +
                     " FROM TransacaoConectcar tc " +
             		" LEFT JOIN FETCH tc.frota " +
             		" LEFT JOIN FETCH tc.tag " +
-                    " WHERE TRUNC(tc.dataInicioViagem) = TRUNC(SYSDATE)" +
-                    " OR TRUNC(tc.dataFimViagem) = TRUNC(SYSDATE) - 1";
+                    " WHERE (TRUNC(tc.dataInicioViagem) = TRUNC(SYSDATE)" +
+                    " OR TRUNC(tc.dataFimViagem) = TRUNC(SYSDATE) - 1)" +
+                    " AND tc.codigoViagem NOT IN (" +
+    		 		"      SELECT tc1.codigoViagem" +
+    				"	   FROM TransacaoConectcar tc1" +
+    				"	   WHERE tc1.tipoTransacao = 10 AND tc1.frota.id = tc.frota.id AND tc1.codigoViagem = tc.codigoViagem)";
 
     private static final String QUERY_TRANSACOES_DETALHE_COBRANCA =
             "SELECT tc " +
