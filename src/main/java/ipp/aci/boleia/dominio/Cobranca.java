@@ -156,6 +156,9 @@ public class Cobranca implements IPersistente, IPertenceFrota {
     @Column(name = "CD_TAXA_APLICADA")
     private TaxaTarifador taxaAplicada;
 
+    @Column(name = "VR_TARIFADOR")
+    private BigDecimal valorTarifador;
+
     @Override
     public Long getId() {
         return id;
@@ -390,6 +393,14 @@ public class Cobranca implements IPersistente, IPertenceFrota {
 
     public void setTaxaAplicada(TaxaTarifador taxaAplicada) {
         this.taxaAplicada = taxaAplicada;
+    }
+
+    public BigDecimal getValorTarifador() {
+        return valorTarifador;
+    }
+
+    public void setValorTarifador(BigDecimal valorTarifador) {
+        this.valorTarifador = valorTarifador;
     }
 
     /**

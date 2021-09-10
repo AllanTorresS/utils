@@ -1,6 +1,7 @@
 package ipp.aci.boleia.dominio.tarifador;
 
 import ipp.aci.boleia.dominio.Cobranca;
+import ipp.aci.boleia.dominio.enums.tarifador.TipoCalculoTaxa;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import org.hibernate.envers.Audited;
 
@@ -14,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.List;
@@ -146,5 +148,15 @@ public class TaxaTarifador implements IPersistente {
 
     public void setCobrancas(List<Cobranca> cobrancas) {
         this.cobrancas = cobrancas;
+    }
+
+    @Transient
+    public BigDecimal getAcrescimoTarifador(BigDecimal totalEmReais) {
+        TipoCalculoTaxa tipoCalculoTaxaEnum = TipoCalculoTaxa.obterPorValor(tipoCalculoTaxa);
+        if (tipoCalculoTaxaEnum == TipoCalculoTaxa.REAIS) {
+            return valorEmReais;
+        } else {
+            return valorPercentual.multiply(totalEmReais).setScale(2, BigDecimal.ROUND_HALF_UP);
+        }
     }
 }
