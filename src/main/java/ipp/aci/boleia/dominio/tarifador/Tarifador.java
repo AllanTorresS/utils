@@ -2,18 +2,23 @@ package ipp.aci.boleia.dominio.tarifador;
 
 import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
+import org.hibernate.envers.AuditJoinTable;
 import org.hibernate.envers.Audited;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
 
@@ -34,21 +39,24 @@ public class Tarifador implements IPersistente {
     @Column(name = "NM_TARIFADOR")
     private String nome;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "CD_FROTA")
-    private Frota frota;
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
+    @AuditJoinTable(name = "TARIFADOR_FROTA_AUD")
+    @JoinTable(name="TARIFADOR_FROTA", joinColumns={@JoinColumn(name="CD_TARIFADOR")}, inverseJoinColumns={@JoinColumn(name="CD_FROTA")})
+    private List<Frota> frotas;
 
+    @NotNull
     @Column(name = "DT_INI_VIGENCIA")
     private Date dataInicioVigencia;
 
     @Column(name = "DT_FIM_VIGENCIA")
     private Date dataFimVigencia;
 
+    @NotNull
     @Column(name = "ID_TIPO_TAXA")
     private Integer tipoTaxa;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "tarifador")
-    private List<TaxaTarifador> faixas;
+    private List<TaxaTarifador> taxas;
 
     public Tarifador() {
         //construtor default
@@ -72,12 +80,12 @@ public class Tarifador implements IPersistente {
         this.nome = nome;
     }
 
-    public Frota getFrota() {
-        return frota;
+    public List<Frota> getFrotas() {
+        return frotas;
     }
 
-    public void setFrota(Frota frota) {
-        this.frota = frota;
+    public void setFrotas(List<Frota> frotas) {
+        this.frotas = frotas;
     }
 
     public Date getDataInicioVigencia() {
@@ -104,11 +112,11 @@ public class Tarifador implements IPersistente {
         this.tipoTaxa = tipoTaxa;
     }
 
-    public List<TaxaTarifador> getFaixas() {
-        return faixas;
+    public List<TaxaTarifador> getTaxas() {
+        return taxas;
     }
 
-    public void setFaixas(List<TaxaTarifador> faixas) {
-        this.faixas = faixas;
+    public void setTaxas(List<TaxaTarifador> taxas) {
+        this.taxas = taxas;
     }
 }
