@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -31,6 +32,7 @@ public class TaxaTarifador implements IPersistente {
     @SequenceGenerator(name = "SEQ_TAXA_TARIFADOR", sequenceName = "SEQ_TAXA_TARIFADOR", allocationSize = 1)
     private Long id;
 
+    @NotNull
     @Column(name = "ID_TIPO_CALCULO")
     private Integer tipoCalculoTaxa;
 
@@ -52,6 +54,7 @@ public class TaxaTarifador implements IPersistente {
     @Column(name = "VA_REAIS")
     private BigDecimal valorEmReais;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @Column(name = "CD_TARIFADOR")
     private Tarifador tarifador;
