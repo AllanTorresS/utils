@@ -207,6 +207,9 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "transacaoConsolidada")
     private List<ReembolsoAntecipado> antecipacoes;
 
+    @Column(name = "QT_TOTAL_LIT_ABAS")
+    private BigDecimal litragemTotalAbastecimentos;
+
     @NotAudited
     @Formula(FORMULA_POSSUI_ANTECIPACAO_REALIZADA)
     @Basic(fetch = FetchType.LAZY)
@@ -556,13 +559,16 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
         StringBuilder keyBuilder = new StringBuilder(key);
         if (empresaAgregada != null && empresaAgregada.getId() != null) {
             keyBuilder.append(empresaAgregada.getId() + empresaAgregada.getCnpj());
-        } else if(unidade != null && unidade.getId() != null) {
+        } else if (unidade != null && unidade.getId() != null) {
             keyBuilder.append(unidade.getId() + unidade.getCnpj());
         } else if (frotaExigeNF) {
             keyBuilder.append(frotaPtov.getFrota().getId() + frotaPtov.getFrota().getCnpj());
-        } else if(frotaGerenciaNf != null) {
+        }
+
+        if (frotaGerenciaNf != null) {
             keyBuilder.append(frotaGerenciaNf);
         }
+
         this.chave = UtilitarioCriptografia.calcularHashSHA256(keyBuilder.toString());
     }
 
@@ -588,6 +594,14 @@ public class TransacaoConsolidada implements IPersistente, IPertenceFrota, IPert
 
     public void setPossuiAntecipacaoComErro(Boolean possuiAntecipacaoComErro) {
         this.possuiAntecipacaoComErro = possuiAntecipacaoComErro;
+    }
+
+    public BigDecimal getLitragemTotalAbastecimentos() {
+        return litragemTotalAbastecimentos;
+    }
+
+    public void setLitragemTotalAbastecimentos(BigDecimal litragemTotalAbastecimentos) {
+        this.litragemTotalAbastecimentos = litragemTotalAbastecimentos;
     }
 
     /**
