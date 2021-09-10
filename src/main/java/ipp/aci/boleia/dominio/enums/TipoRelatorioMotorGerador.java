@@ -471,8 +471,8 @@ public enum TipoRelatorioMotorGerador implements IEnumComLabel<TipoRelatorioMoto
      */
     private static Map<TipoPerfilUsuario, TemplatePlanilha> obterMapaTemplatesDetalheReembolsoAntecipado() {
         Map<TipoPerfilUsuario, TemplatePlanilha> mapa = new HashMap<>();
-        mapa.put(TipoPerfilUsuario.INTERNO, TemplatePlanilha.TEMPLATE_RELATORIO_DETALHE_REEMBOLSO_ANTECIPADO);
-        mapa.put(TipoPerfilUsuario.REVENDA, TemplatePlanilha.TEMPLATE_RELATORIO_DETALHE_REEMBOLSO_ANTECIPADO);
+        mapa.put(TipoPerfilUsuario.INTERNO, TemplatePlanilha.TEMPLATE_RELATORIO_DETALHE_REEMBOLSO_ANTECIPADO_SOLUCAO);
+        mapa.put(TipoPerfilUsuario.REVENDA, TemplatePlanilha.TEMPLATE_RELATORIO_DETALHE_REEMBOLSO_ANTECIPADO_REVENDA);
         return mapa;
     }
 }
