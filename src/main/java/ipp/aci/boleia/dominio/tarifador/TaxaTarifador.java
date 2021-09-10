@@ -11,6 +11,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
@@ -18,6 +19,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 /**
@@ -58,7 +60,7 @@ public class TaxaTarifador implements IPersistente {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "CD_TARIFADOR")
+    @JoinColumn(name = "CD_TARIFADOR")
     private Tarifador tarifador;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "taxaAplicada")
@@ -156,7 +158,7 @@ public class TaxaTarifador implements IPersistente {
         if (tipoCalculoTaxaEnum == TipoCalculoTaxa.REAIS) {
             return valorEmReais;
         } else {
-            return valorPercentual.multiply(totalEmReais).setScale(2, BigDecimal.ROUND_HALF_UP);
+            return valorPercentual.multiply(totalEmReais).setScale(2, RoundingMode.HALF_UP);
         }
     }
 }

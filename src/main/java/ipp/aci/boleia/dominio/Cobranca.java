@@ -14,6 +14,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
@@ -153,7 +154,7 @@ public class Cobranca implements IPersistente, IPertenceFrota {
     private String ultimaJustificativaAjuste;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "CD_TAXA_APLICADA")
+    @JoinColumn(name = "CD_TAXA_APLICADA")
     private TaxaTarifador taxaAplicada;
 
     @Column(name = "VR_TARIFADOR")
