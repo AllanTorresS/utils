@@ -227,6 +227,10 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
                     new ParametroPesquisaIgual("motivosAlteracaoStatus.statusVigenciaAlteracao", StatusVigenciaAlteracaoStatusFrota.VIGENTE.getValue()))
             );
         }
+
+        if(filtro.getGerenciaNf() != null) {
+            parametros.add(new ParametroPesquisaIgual("gerenciaNf", filtro.getGerenciaNf()));
+        }
         
         povoarParametroApiToken(filtro, parametros);
 
