@@ -38,7 +38,7 @@ public class OracleTaxaTarifadorDados extends OracleRepositorioBoleiaDados<TaxaT
             "     AND NOT EXISTS (" +
             "         SELECT 1" +
             "         FROM Tarifador t_" +
-            "         JOIN t.frotas f_" +
+            "         LEFT JOIN t.frotas f_" +
             "         WHERE" +
             "             t.id <> t_.id" +
             "             AND ((f IS NULL AND f_ IS NULL) OR (f = f_))" +
