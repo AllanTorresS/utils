@@ -413,7 +413,8 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
             " JOIN a.transacaoConsolidada tc " +
             " JOIN tc.prazos ptc " +
             " LEFT JOIN a.transacaoConsolidadaPostergada tcp " +
-            " LEFT JOIN tcp.prazos ptcp " +
+            " LEFT JOIN tcp.prazos ptcp, " +
+            " ConfiguracaoAntecipacaoRecebiveis ca " +
             " WHERE " +
             "     u.id = :idUsuario " +
             "     AND pv.statusInteresseAntecipacao = " + StatusInteresseAntecipacao.APROVADO.getValue() +
@@ -442,6 +443,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
             "             AND nf.isJustificativa = false " +
             "     ) " +
             " GROUP BY COALESCE(ptcp.dataLimitePagamento, ptc.dataLimitePagamento) " +
+            " HAVING SUM(a.valorTotal) >= MAX(ca.valorAntecipacaoMinimo) " +
             " ORDER BY COALESCE(ptcp.dataLimitePagamento, ptc.dataLimitePagamento) ";
 
     /**
