@@ -7,6 +7,7 @@ import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaCobrancaVo;
 import ipp.aci.boleia.dominio.vo.frotista.FiltroPesquisaCobrancaFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.ResultadoPaginadoFrtVo;
+import ipp.aci.boleia.dominio.vo.tarifador.FiltroPesquisaRelatorioTarifadorVo;
 
 import java.util.List;
 
@@ -128,5 +129,14 @@ public interface ICobrancaDados extends IRepositorioBoleiaDados<Cobranca> {
      * @return As cobranças encontradas
      */
     List<Cobranca> buscarCobrancasAtrasadasDoisDiasUteis();
+
+    /**
+     * Obtém cobranças de frotas que utilizam o serviço de Tarifador (Recolha Manual de NF) de acordo
+     * com o filtro fornecido
+     *
+     * @param filtro O filtro de pesquisa
+     * @return A lista das cobranças encontradas
+     */
+    ResultadoPaginado<Cobranca> buscarCobrancasParaExportacaoTarifador(FiltroPesquisaRelatorioTarifadorVo filtro);
 
 }
