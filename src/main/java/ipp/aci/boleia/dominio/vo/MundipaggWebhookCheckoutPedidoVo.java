@@ -14,6 +14,7 @@ public class MundipaggWebhookCheckoutPedidoVo {
 
     @JsonProperty("data")
     private  MundipaggWebhookRespostaPedidoVo mundipaggWebhookRespostaPedidoVo;
+    private String type;
 
     public MundipaggWebhookCheckoutPedidoVo() {
     }
@@ -24,6 +25,14 @@ public class MundipaggWebhookCheckoutPedidoVo {
 
     public void setMundipaggWebhookRespostaPedidoVo(MundipaggWebhookRespostaPedidoVo mundipaggWebhookRespostaPedidoVo) {
         this.mundipaggWebhookRespostaPedidoVo = mundipaggWebhookRespostaPedidoVo;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }
  
