@@ -55,6 +55,7 @@ public class BoletoVo {
 	private AvisoDebitoVo avisoDebito;
 	private List<AjusteCobrancaVo> ajustes;
 	private PedidoTagVo pedidoTag;
+	private ServicoPrestadoVo servicoPrestado;
 
 	/**
 	 * Serializacao JSON
@@ -439,4 +440,11 @@ public class BoletoVo {
 		this.pedidoTag = pedidoTag;
 	}
 
+	public ServicoPrestadoVo getServicoPrestado() {
+		return servicoPrestado;
+	}
+
+	public void setServicoPrestado(ServicoPrestadoVo servicoPrestado) {
+		this.servicoPrestado = servicoPrestado;
+	}
 }
