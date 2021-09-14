@@ -16,6 +16,7 @@ public class MundipaggClientePedidoVo {
     private String document;
     private String code;
     private String type;
+    private MundipaggTelefoneVo phones;
 
     public MundipaggClientePedidoVo() {
     }
@@ -32,6 +33,7 @@ public class MundipaggClientePedidoVo {
         document = StringUtils.leftPad(frota.getCnpj().toString(), 14, "0");
         code = frota.getId().toString();
         type = COMPANY_CUSTOMER_TYPE;
+        phones = new MundipaggTelefoneVo(frota);
     }
 
     public String getName() {
@@ -72,5 +74,13 @@ public class MundipaggClientePedidoVo {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public MundipaggTelefoneVo getPhones() {
+        return phones;
+    }
+
+    public void setPhones(MundipaggTelefoneVo phones) {
+        this.phones = phones;
     }
 }

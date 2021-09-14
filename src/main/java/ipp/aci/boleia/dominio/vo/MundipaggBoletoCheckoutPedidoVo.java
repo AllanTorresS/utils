@@ -17,6 +17,7 @@ public class MundipaggBoletoCheckoutPedidoVo {
     @JsonProperty("due_at")
     private String dueAt;
 
+
     public MundipaggBoletoCheckoutPedidoVo() {
 
     }
@@ -45,5 +46,6 @@ public class MundipaggBoletoCheckoutPedidoVo {
     public void setDueAt(String dueAt) {
         this.dueAt = dueAt;
     }
+
 }
  

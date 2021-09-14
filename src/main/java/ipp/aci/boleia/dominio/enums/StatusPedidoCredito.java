@@ -103,7 +103,7 @@ public enum StatusPedidoCredito implements IEnumComLabel<StatusPedidoCredito> {
     public static List<StatusPedidoCredito> obterStatusPedidoCreditoSolucao() {
         return listarOrdenados()
                 .stream()
-                .filter(s -> !s.equals(PROCESSANDO) && !s.equals(PAGOAMAIS) &&!s.equals(FALHA))
+                .filter(s -> !s.equals(PROCESSANDO) && !s.equals(PAGOAMAIS))
                 .collect(Collectors.toList());
     }
 
