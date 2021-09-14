@@ -2,6 +2,7 @@ package ipp.aci.boleia.dominio.servico;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import ipp.aci.boleia.dados.IEmailEnvioDados;
+import ipp.aci.boleia.dados.IFilaEmailsAlteracaoStatusFrota;
 import ipp.aci.boleia.dados.IFrotaDados;
 import ipp.aci.boleia.dados.ILeadCredenciamentoDados;
 import ipp.aci.boleia.dados.IParametroCicloDados;
@@ -44,6 +45,9 @@ import java.util.List;
  */
 @Component
 public class FrotaSd {
+
+    @Autowired
+    private IFilaEmailsAlteracaoStatusFrota filaEmailsAlteracaoStatusFrota;
 
     @Autowired
     private Mensagens mensagens;
@@ -217,6 +221,11 @@ public class FrotaSd {
                 mensagens.obterMensagem("frota.servico.alteracao.email.mensagem", UtilitarioFormatacao.formatarCnpjApresentacao(frota.getCnpj()), frota.getRazaoSocial(),
                         StatusFrota.obterPorValor(frota.getStatus()).getLabel(), dataAlteracao, nomeUsuario, classificacao,
                         descricao, ambiente.getURLContextoAplicacao(), frota.getId()), destinatarios);
+
+    }
+
+    public void incluirMotivoNaFilaDeEnvio(Long idMotivoAlteracaoStatus){
+        filaEmailsAlteracaoStatusFrota.enviarMotivoParaFila(idMotivoAlteracaoStatus);
     }
 
     /**
