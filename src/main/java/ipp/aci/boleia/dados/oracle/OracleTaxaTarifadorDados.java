@@ -62,7 +62,6 @@ public class OracleTaxaTarifadorDados extends OracleRepositorioBoleiaDados<TaxaT
         parametros.add(new ParametroPesquisaIgual("valorLitragem", valorLitragem));
         parametros.add(new ParametroPesquisaIgual("idFrota", idFrota));
 
-        return pesquisar(null, QUERY_TAXA_VIGENTE_POR_VALOR_FROTA, parametros.toArray(new ParametroPesquisa[0]))
-                .getRegistros().stream().findFirst().orElse(null);
+        return pesquisar(QUERY_TAXA_VIGENTE_POR_VALOR_FROTA, TaxaTarifador.class, parametros.toArray(new ParametroPesquisa[0])).stream().findFirst().orElse(null);
     }
 }
