@@ -44,7 +44,8 @@ public enum TipoRelatorioMotorGerador implements IEnumComLabel<TipoRelatorioMoto
     RELATORIO_DETALHAMENTO_REEMBOLSO(29, obterMapaTemplatesDetalhamentoReembolso()),
     RELATORIO_ROTAS_INTELIGENTES(30, obterMapaTemplatesRotasInteligentes()),
     RELATORIO_REEMBOLSO_ANTECIPADO(31, obterMapaTemplatesReembolsoAntecipado()),
-    RELATORIO_DETALHE_REEMBOLSO_ANTECIPADO(32, obterMapaTemplatesDetalheReembolsoAntecipado());
+    RELATORIO_DETALHE_REEMBOLSO_ANTECIPADO(32, obterMapaTemplatesDetalheReembolsoAntecipado()),
+    RELATORIO_ULTIMOS_PRECOS(33, obterMapaTemplatesUltimosPrecos());
 
     private final Integer value;
     private final Map<TipoPerfilUsuario, TemplatePlanilha> templatePerfil;
@@ -451,9 +452,20 @@ public enum TipoRelatorioMotorGerador implements IEnumComLabel<TipoRelatorioMoto
         mapa.put(TipoPerfilUsuario.FROTA, TemplatePlanilha.TEMPLATE_RELATORIO_ROTAS_INTELIGENTES);
         return mapa;
     }
+    /**
+     * Gera um mapa de templates por perfil para um tipo de relatório (Últimos Preços)
+     *
+     * @return O mapa criado
+     */
+    private static Map<TipoPerfilUsuario, TemplatePlanilha> obterMapaTemplatesUltimosPrecos() {
+        Map<TipoPerfilUsuario, TemplatePlanilha> mapa = new HashMap<>();
+        mapa.put(TipoPerfilUsuario.INTERNO, TemplatePlanilha.TEMPLATE_RELATORIO_ULTIMOS_PRECOS_SOLUCAO);
+        mapa.put(TipoPerfilUsuario.FROTA, TemplatePlanilha.TEMPLATE_RELATORIO_ULTIMOS_PRECOS_FROTA);
+        return mapa;
+    }
 
     /**
-     * Gera um mapa de templates por perfil para um tipo de relatório (Reembolso Antecipado)
+     * Gera um mapa de templates por perfil para um tipo de relatÃ³rio (Reembolso Antecipado)
      *
      * @return O mapa criado
      */
@@ -465,7 +477,7 @@ public enum TipoRelatorioMotorGerador implements IEnumComLabel<TipoRelatorioMoto
     }
 
     /**
-     * Gera um mapa de templates por perfil para um tipo de relatório (Detalhe Reembolso Antecipado)
+     * Gera um mapa de templates por perfil para um tipo de relatÃ³rio (Detalhe Reembolso Antecipado)
      *
      * @return O mapa criado
      */
@@ -475,4 +487,5 @@ public enum TipoRelatorioMotorGerador implements IEnumComLabel<TipoRelatorioMoto
         mapa.put(TipoPerfilUsuario.REVENDA, TemplatePlanilha.TEMPLATE_RELATORIO_DETALHE_REEMBOLSO_ANTECIPADO);
         return mapa;
     }
+
 }
