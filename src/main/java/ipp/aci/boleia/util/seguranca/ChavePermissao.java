@@ -74,6 +74,7 @@ public final class ChavePermissao {
     public static final String PRECO_EXCLUIR                                = SPRING_ROLE_PREFIX + "PRECO_EXCLUIR" + SPRING_ROLE_SUFFIX;
     public static final String PRECO_APROVAR_REPROVAR                       = SPRING_ROLE_PREFIX + "PRECO_APROVAR_REPROVAR" + SPRING_ROLE_SUFFIX;
     public static final String PRECO_EXPORTAR                               = SPRING_ROLE_PREFIX + "PRECO_EXPORTAR" + SPRING_ROLE_SUFFIX;
+    public static final String U_PRECO_EXPORTAR                             = SPRING_ROLE_PREFIX + "U_PRECO_EXPORTAR" + SPRING_ROLE_SUFFIX;
     public static final String PRECO_MICROMERCADO_CONSULTAR_E_VISUALIZAR    = SPRING_ROLE_PREFIX + "PRECO_MICROMERCADO_CONSULTAR_E_VISUALIZAR" + SPRING_ROLE_SUFFIX;
     public static final String PRECO_MICROMERCADO_INCLUIR                   = SPRING_ROLE_PREFIX + "PRECO_MICROMERCADO_INCLUIR" + SPRING_ROLE_SUFFIX;
     public static final String PRECO_MICROMERCADO_EXPORTAR                  = SPRING_ROLE_PREFIX + "PRECO_MICROMERCADO_EXPORTAR" + SPRING_ROLE_SUFFIX;

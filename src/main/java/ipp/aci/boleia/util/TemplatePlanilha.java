@@ -75,6 +75,8 @@ public enum TemplatePlanilha {
     TEMPLATE_RELATORIO_REEMBOLSO("template-relatorio-reembolso.xlsx"),
     TEMPLATE_RELATORIO_DETALHAMENTO_REEMBOLSO("template-relatorio-detalhamento-reembolso.xlsx"),
     TEMPLATE_RELATORIO_ROTAS_INTELIGENTES("template-relatorio-rotas-inteligentes.xlsx"),
+    TEMPLATE_RELATORIO_ULTIMOS_PRECOS_FROTA("template-relatorio-ultimos-precos-frota.xlsx"),
+    TEMPLATE_RELATORIO_ULTIMOS_PRECOS_SOLUCAO("template-relatorio-ultimos-precos-interno.xlsx"),
     TEMPLATE_RELATORIO_REEMBOLSO_ANTECIPADO_SOLUCAO("template-relatorio-reembolso-antecipado-solucao.xlsx"),
     TEMPLATE_RELATORIO_REEMBOLSO_ANTECIPADO_REVENDA("template-relatorio-reembolso-antecipado-revenda.xlsx"),
     TEMPLATE_RELATORIO_DETALHE_REEMBOLSO_ANTECIPADO("template-relatorio-detalhe-reembolso-antecipado.xlsx"),

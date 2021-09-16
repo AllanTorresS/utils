@@ -82,6 +82,9 @@ public class Preco implements IPersistente, IPertenceRevendedor, IPertenceFrota 
     @Column(name = "VA_PRECO")
     private BigDecimal preco;
 
+    @Column(name = "VA_PRECO_ANTERIOR")
+    private BigDecimal precoAnterior;
+
     @Column(name = "VA_DESCONTO_VIGENTE")
     private BigDecimal descontoVigente;
 
@@ -184,6 +187,14 @@ public class Preco implements IPersistente, IPertenceRevendedor, IPertenceFrota 
 
     public void setPreco(BigDecimal preco) {
         this.preco = preco;
+    }
+
+    public BigDecimal getPrecoAnterior() {
+        return precoAnterior;
+    }
+
+    public void setPrecoAnterior(BigDecimal precoAnterior) {
+        this.precoAnterior = precoAnterior;
     }
 
     public String getJustificativa() {
