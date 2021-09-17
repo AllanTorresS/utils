@@ -5,6 +5,8 @@ import ipp.aci.boleia.dominio.Documento;
 import ipp.aci.boleia.dominio.DocumentoAceite;
 import ipp.aci.boleia.dominio.Usuario;
 
+import java.util.List;
+
 /**
  * Implementação do repositório de dados da entidade Documento.
  */
@@ -26,4 +28,19 @@ public interface IDocumentoAceiteDados extends IRepositorioBoleiaDados<Documento
      * @return O aceite de um documento por um usuário
      */
     DocumentoAceite obterAceite(Documento documento, Usuario usuario);
+
+    /**
+     * Obter todos os documentos do usuário
+     *
+     * @param usuario O usuario que será usado como filtro
+     * @return A lista de documentos
+     */
+    List<DocumentoAceite> obterPorUsuario(Usuario usuario);
+
+    /**
+     * Exclui registros dos aceites de documento do usuário.
+     *
+     * @param idUsuario que será usado como filtro
+     */
+    void excluirPermanentementePorIdUsuario(Long idUsuario);
 }

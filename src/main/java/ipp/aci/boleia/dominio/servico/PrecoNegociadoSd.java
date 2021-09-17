@@ -23,6 +23,9 @@ public class PrecoNegociadoSd {
     private IPrecoDados repositorioPreco;
 
     @Autowired
+    private HistoricoFrotaPtovPrecoSd historicoFrotaPtovPrecoSd;
+
+    @Autowired
     private UtilitarioAmbiente ambiente;
 
     @Autowired
@@ -47,6 +50,7 @@ public class PrecoNegociadoSd {
         novoPreco.setDataAtualizacao(dataAtualizacao);
         novoPreco.setDataVigencia(dataAtualizacao);
         repositorioPreco.armazenar(novoPreco);
+        historicoFrotaPtovPrecoSd.armazenar(novoPreco);
         return novoPreco;
     }
 
@@ -68,6 +72,7 @@ public class PrecoNegociadoSd {
         novoPreco.setDataAtualizacao(dataAtualizacao);
         novoPreco.setDataVigencia(dataAtualizacao);
         repositorioPreco.armazenar(novoPreco);
+        historicoFrotaPtovPrecoSd.armazenar(novoPreco);
         return novoPreco;
     }
 
@@ -131,7 +136,9 @@ public class PrecoNegociadoSd {
             preco.setDataVigencia(dataAtualizacao);
         }
         preco.setStatus(automatico ? StatusPreco.VIGENTE.getValue() : StatusPreco.ACEITO.getValue());
-        return repositorioPreco.armazenar(preco);
+        preco = repositorioPreco.armazenar(preco);
+        historicoFrotaPtovPrecoSd.armazenar(preco);
+        return preco;
     }
 
 

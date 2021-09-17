@@ -1,7 +1,13 @@
 package ipp.aci.boleia.util.excecao;
 
 /**
- * Erros de negócio lançados pela aplicação
+ * Erros de negócio lançados pela aplicação.
+ * Os Erros devem ser separados por intervalos de 1000
+ * quando são referênciados pelo código em plataformas Externas, como APP Mobile e API Externa.
+ * Como ocorre no caso do App do motorista, onde começam em 1000.
+ *
+ * Ao adicionar novo valor de erro, caso o código desse valor esteja
+ * sendo referênciado externamente, esse valor deverá ocupar uma faixa não existente.
  *
  */
 public enum Erro {
@@ -183,8 +189,9 @@ public enum Erro {
     ERRO_ABERTURA_CHAMADO_PV_OBRIGATORIO(177),
     MODELO_DE_NOTA_FISCAL_INVALIDO(178),
     ERRO_TRANSACAO_APOS_EXCLUSAO_TAG(179),
-    ERRO_TIPO_PASSAGEM_TAG_INVALIDO(180),
-    ERRO_VIAGEM_ID_OBRIGATORIO(181),
+    ERRO_INTEGRACAO_ANTECIPACAO(180),
+    ERRO_TIPO_PASSAGEM_TAG_INVALIDO(181),
+    ERRO_VIAGEM_ID_OBRIGATORIO(182), 
 
     // APP MOTORISTA 1000 - Erros mapeados no Aplicativo Motorista
     ERRO_AUTORIZACAO_CONSUMO_ESTIMADO_MAX(1000),

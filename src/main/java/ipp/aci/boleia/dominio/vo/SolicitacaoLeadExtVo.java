@@ -1,14 +1,13 @@
 package ipp.aci.boleia.dominio.vo;
 
-import javax.validation.constraints.NotNull;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import ipp.aci.boleia.util.ConstantesSalesForce;
 import ipp.aci.boleia.util.anotacoes.NotBlank;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * DTO com informações de uma solicitacao de um lead ao sales force.

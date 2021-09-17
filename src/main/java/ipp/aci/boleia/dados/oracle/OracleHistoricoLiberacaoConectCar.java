@@ -1,14 +1,13 @@
 package ipp.aci.boleia.dados.oracle;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.stereotype.Repository;
-
 import ipp.aci.boleia.dados.IHistoricoLiberacaoConectCar;
 import ipp.aci.boleia.dominio.HistoricoLiberacaoConectCar;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
+import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Repositório de entidades Historico Liberacao ConectCar

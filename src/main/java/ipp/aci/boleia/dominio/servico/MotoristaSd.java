@@ -61,6 +61,8 @@ public class MotoristaSd {
     private String prefixoLockFrotaImportacaoMotorista;
 
     private MapeadorLock<Long> mapeadorLockFrotaImportacaoMotorista;
+    private static final String CPF_ANONIMIZADO = "99999999999";
+    private static final String NOME_MOTORISTA_ANONIMIZADO = "Motorista Anônimo";
 
     /**
      * Configura o monitor de autorização de pagamento
@@ -241,5 +243,18 @@ public class MotoristaSd {
 
 
         return motorista;
+    }
+
+    /**
+     * Cria um motorista anônimo para a frota
+     * @param frota a frota do motorista anônimo
+     */
+    public void criarMotoristaAnonimoSeNaoExistir(Frota frota) {
+        Motorista motoristaAnonimoExistente = repositorio.obterExcluidoPorCpfFrota(Long.parseLong(CPF_ANONIMIZADO), frota.getId());
+        if (motoristaAnonimoExistente == null) {
+            Motorista novoMotoristaAnonimo = new Motorista(Long.parseLong(CPF_ANONIMIZADO), NOME_MOTORISTA_ANONIMIZADO,
+                    frota, StatusAtivacao.ATIVO, true, 0L, 0, false, true);
+            repositorio.armazenarSemIsolamentoDeDados(novoMotoristaAnonimo);
+        }
     }
 }

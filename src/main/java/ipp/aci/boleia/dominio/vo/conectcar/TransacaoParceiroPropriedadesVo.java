@@ -1,8 +1,8 @@
 package ipp.aci.boleia.dominio.vo.conectcar;
 
-import java.util.Date;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.Date;
 
 /**
  * Vo de integração de transação conectcar

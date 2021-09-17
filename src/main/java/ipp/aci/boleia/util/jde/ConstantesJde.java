@@ -24,9 +24,12 @@ public final class ConstantesJde {
     public static final Long VOUCHER_INDICE_CONTA_CONTABIL_POS_PAGO = 1L;
     public static final Long VOUCHER_INDICE_CONTA_CONTABIL_PRE_PAGO = 3L;
     public static final Long VOUCHER_INDICE_CONTA_CONTABIL_MDR = 2L;
+    public static final Long VOUCHER_INDICE_CONTA_CONTABIL_XP = 4L;
     public static final String VOUCHER_OBSERVACAO_POS_PAGO = "REEMBOLSO PRO FROTAS";
     public static final String VOUCHER_OBSERVACAO_PRE_PAGO = "PRE PAGO PRO FROTAS";
     public static final String VOUCHER_OBSERVACAO_MDR_REEMBOLSO = "MDR";
+    public static final String VOUCHER_OBSERVACAO_TAXA_PROFROTAS = "TAXA PRO-FROTAS";
+    public static final String VOUCHER_OBSERVACAO_TAXA_XP = "TAXA XP";
     public static final Integer VOUCHER_TEMPO_HORA = 12;
     public static final Integer VOUCHER_TEMPO_MINUTO = 0;
     public static final Integer VOUCHER_TEMPO_SEGUNDO = 0;
@@ -100,7 +103,17 @@ public final class ConstantesJde {
     public static final String PEDIDO_VENDA_ITEM_CODIGO_PRODUTO = "791039";
     public static final String PEDIDO_VENDA_PRIMEIRO_ITEM_LISTA_KEY = "1";
     public static final String CONSULTA_NF_TIPO_DOCUMENTO = "VK";
-    
+
+    public static final String FATURA_XP_TIPO_DOCUMENTO = "F7";
+    public static final BigDecimal FATURA_XP_CODIGO_JDE_CLIENTE = new BigDecimal(8982668);
+
+    public static final Long VOUCHER_XP_CENARIO = 187L;
+    public static final Long VOUCHER_XP_CODIGO_JDE_FORNECEDOR = 8982668L;
+    public static final Long VOUCHER_XP_INDICE_CONTA_CONTABIL = 5L;
+    public static final String VOUCHER_XP_OBSERVACAO_REEMBOLSO = "REEMBOLSO XP";
+
+    public static final String VOUCHER_OBSERVACAO_ANTECIPACAO_XP = "ANTECIPAÇÃO DE RECEBÍVEIS";
+
     /**
      * Impede instanciacao e heranca
      */

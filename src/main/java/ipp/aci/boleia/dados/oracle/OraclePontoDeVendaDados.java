@@ -16,6 +16,7 @@ import ipp.aci.boleia.dominio.enums.StatusVinculoFrotaPontoVenda;
 import ipp.aci.boleia.dominio.enums.TipoFiltroPontoVendaPrimario;
 import ipp.aci.boleia.dominio.enums.TipoFiltroPontoVendaSecundario;
 import ipp.aci.boleia.dominio.enums.TipoServico;
+import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
@@ -509,6 +510,11 @@ public class OraclePontoDeVendaDados extends OracleRepositorioBoleiaDados<PontoD
 
 
         return pesquisar(new ParametroOrdenacaoColuna("nome"), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+    @Override
+    public List<PontoDeVenda> obterPorIds(List<Long> ids) {
+        return pesquisar((InformacaoPaginacao) null, new ParametroPesquisaIn("id", ids)).getRegistros();
     }
 
     /**

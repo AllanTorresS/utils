@@ -1,9 +1,9 @@
 package ipp.aci.boleia.dominio.vo;
 
+import ipp.aci.boleia.dominio.PedidoTag;
+
 import java.math.BigDecimal;
 import java.util.Date;
-
-import ipp.aci.boleia.dominio.PedidoTag;
 
 /**
  * Classe com informações referentes à um pedido de tag.

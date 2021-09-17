@@ -1,11 +1,11 @@
 package ipp.aci.boleia.dominio.vo;
 
-import javax.validation.constraints.Size;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import javax.validation.constraints.Size;
 
 /**
  * Classe base para a criação de VOs de lead do Salesforce para credenciamento.

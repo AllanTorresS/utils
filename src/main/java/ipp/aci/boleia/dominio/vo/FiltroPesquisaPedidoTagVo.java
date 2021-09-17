@@ -1,8 +1,8 @@
 package ipp.aci.boleia.dominio.vo;
 
-import java.util.Date;
-
 import ipp.aci.boleia.dominio.pesquisa.comum.BaseFiltroPaginado;
+
+import java.util.Date;
 
 /**
  * Filtro para pesquisa de pedido de tag
