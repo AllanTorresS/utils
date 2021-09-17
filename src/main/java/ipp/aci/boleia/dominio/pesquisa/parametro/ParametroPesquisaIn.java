@@ -19,6 +19,7 @@ public class ParametroPesquisaIn extends ParametroPesquisa {
 	 */
 	public ParametroPesquisaIn(String nome, Collection<?> valor) {
 		super(nome, valor);
+		this.not = false;
 	}
 	
     /**
