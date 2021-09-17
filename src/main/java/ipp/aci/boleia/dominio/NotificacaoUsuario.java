@@ -1,7 +1,6 @@
 package ipp.aci.boleia.dominio;
 
 
-import ipp.aci.boleia.dominio.interfaces.IExclusaoLogica;
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 
 import javax.persistence.Column;

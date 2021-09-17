@@ -29,6 +29,8 @@ import java.util.List;
 @Table(name = "HISTORICO_PRECO_BASE")
 public class HistoricoPrecoBase  implements IPersistente, IPertenceRevendedor {
 
+    private static final long serialVersionUID = 3900487586075636938L;
+
     @Id
     @Column(name = "CD_HIST_PRECO_BASE")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_HISTORICO_PRECO_BASE")
