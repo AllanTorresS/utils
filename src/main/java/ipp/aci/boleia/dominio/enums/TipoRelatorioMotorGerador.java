@@ -45,7 +45,7 @@ public enum TipoRelatorioMotorGerador implements IEnumComLabel<TipoRelatorioMoto
     RELATORIO_ROTAS_INTELIGENTES(30, obterMapaTemplatesRotasInteligentes()),
     RELATORIO_REEMBOLSO_ANTECIPADO(31, obterMapaTemplatesReembolsoAntecipado()),
     RELATORIO_DETALHE_REEMBOLSO_ANTECIPADO(32, obterMapaTemplatesDetalheReembolsoAntecipado()),
-    RELATORIO_ULTIMOS_PRECOS(33, obterMapaTemplatesUltimosPrecos());
+    RELATORIO_ULTIMOS_PRECOS(33, obterMapaTemplatesUltimosPrecos()),
     RELATORIO_EXTRATO_VALE_PEDAGIO(34, obterMapaTemplatesExtratoValePedagio()),
 	RELATORIO_DETALHE_VALE_PEDAGIO(35, obterMapaTemplatesDetalheValePedagio());
 
