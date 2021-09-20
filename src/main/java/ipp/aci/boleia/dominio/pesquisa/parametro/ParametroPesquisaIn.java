@@ -22,13 +22,12 @@ public class ParametroPesquisaIn extends ParametroPesquisa {
 		this.not = false;
 	}
 	
-    /**
-     * Construtor
-     *
-     * @param nome O nome do parametro
-     * @param not  Se deve ser não nulo
-     *
-     */
+	/**
+	 * Construtor
+	 * @param nome  O nome do parametro
+	 * @param valor Um conjunto de valores aceitos
+	 * @param not   Se deve ser não nulo
+	 */
     public ParametroPesquisaIn(String nome, Collection<?> valor, Boolean not) {
         super(nome, valor);
         this.not = not;

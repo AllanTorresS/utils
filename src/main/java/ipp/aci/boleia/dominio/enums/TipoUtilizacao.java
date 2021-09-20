@@ -28,9 +28,9 @@ public enum TipoUtilizacao implements IEnumComLabel<TipoUtilizacao> {
     }
 
     /**
-     * Obtem por valor
-     * @param value value
-     * @return Enum para o valor
+     * Obtem o Tipo de Utilização por valor
+     * @param value Valor do tipo de utilização 
+     * @return Enum para o valor informado
      */
     public static TipoUtilizacao obterPorValor(Integer value) {
         for(TipoUtilizacao tipo : TipoUtilizacao.values()) {
@@ -41,6 +41,11 @@ public enum TipoUtilizacao implements IEnumComLabel<TipoUtilizacao> {
         return null;
     }
     
+    /**
+     * Obtem o Tipo de Utilização por nome
+     * @param name Nome do tipo de utilização
+     * @return Enum para o nome informado
+     */
     public static TipoUtilizacao obterPorNome(String name){
         for(TipoUtilizacao tipo : values()){
             if(tipo.name().equals(name)){

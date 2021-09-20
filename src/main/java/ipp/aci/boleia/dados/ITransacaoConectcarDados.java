@@ -135,8 +135,7 @@ public interface ITransacaoConectcarDados extends IRepositorioBoleiaDados<Transa
     /**
      * Obtém os detalhes de um dia de vale pedágio
      *
-     * @param idFrota código identificador da frota
-     * @param dia dia a ser pesquisado
+     * @param filtro parâmetros utilizados na consulta
      * @return lista de transações de vale pedágio do dia
      */
     List<TransacaoConectcar> obterDetalheValePedagio(FiltroPesquisaExtratoValePedagioVo filtro);

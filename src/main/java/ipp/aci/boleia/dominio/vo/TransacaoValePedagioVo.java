@@ -8,7 +8,7 @@ import ipp.aci.boleia.dominio.enums.TipoTransacaoConectcar;
 import ipp.aci.boleia.util.UtilitarioFormatacao;
 
 /**
- * Representa a transação (assunto) do SMS enviado ao motorista
+ * Representa uma transação de Vale Pedágio enviada pela ConectCar
  */
 public class TransacaoValePedagioVo {
 
@@ -20,10 +20,15 @@ public class TransacaoValePedagioVo {
 	private Date dataInicioViagem;
 	private Date dataFimViagem;
 
-	public TransacaoValePedagioVo() {
-		// TODO Auto-generated constructor stub
-	}
+	/**
+     * Construtor padrão
+     */
+	public TransacaoValePedagioVo() { }
 	
+	/**
+	 * Constroi uma transacao de Vale Pedagio
+	 * @param transacao Transação enviada pela ConectCar
+	 */
 	public TransacaoValePedagioVo(TransacaoConectcar transacao) {
 		this.cnpjEmbarcador = transacao.getCnpjEmbarcador() != null ? UtilitarioFormatacao.formatarCnpjApresentacao(transacao.getCnpjEmbarcador()) : null;
 		this.embarcador = transacao.getEmbarcador();

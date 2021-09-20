@@ -1,7 +1,5 @@
 package ipp.aci.boleia.dominio.vo.conectcar;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
  * Vo de integração dos lotes de adesivos com a conectcar 
  *

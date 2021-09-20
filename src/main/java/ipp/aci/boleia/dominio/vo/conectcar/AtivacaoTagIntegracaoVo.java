@@ -24,10 +24,17 @@ public class AtivacaoTagIntegracaoVo {
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private String[] servicosBloqueio;
 
-	public AtivacaoTagIntegracaoVo() {
+	/**
+     * Construtor padrão
+     */
+	public AtivacaoTagIntegracaoVo() { }
 
-	}
-
+	/**
+	 * Constroi um AtivacaoTagIntegracaoVo representando uma Ativação de Tag para a ConectCar
+	 * @param codigoInternoParceiro Código do parceiro
+	 * @param placa Placa do veículo
+	 * @param tipoUtilizacaoTag Inteiro representando o tipo de utilização para o qual a Tag deve ser ativada
+	 */
 	public AtivacaoTagIntegracaoVo(String codigoInternoParceiro, String placa, Integer tipoUtilizacaoTag) {
 		this.codigoInternoParceiro = codigoInternoParceiro;
 		if(placa != null && !placa.contains("-")) {

@@ -27,7 +27,13 @@ public class DiaValePedagioVo {
 
     /**
      * Constroi o VO de detalhe a partir de uma transação ConectCar
-     * @param transacao A autorizacao de pagamento
+     * @param dia Data desejada
+     * @param saldoInicial Valor referente ao saldo inicial da frota no dia
+     * @param creditosValePedagio Valor referente ao crédito total de vale pedágio no dia
+     * @param transacoesPfGo Valor referente ao total de transações de Pró-Frotas GO no dia
+     * @param passagensValePedagio Valor referente ao total de passagens de vale pedágio no dia
+     * @param estornosValePegadio Valor referente ao total de estornos de vale pedágio no dia
+     * @param saldoFinal Valor referente ao saldo final do dia
      */
     public DiaValePedagioVo(Date dia, BigDecimal saldoInicial, BigDecimal creditosValePedagio, BigDecimal transacoesPfGo, BigDecimal passagensValePedagio, BigDecimal estornosValePegadio, BigDecimal saldoFinal) {
         this.dia = dia;
