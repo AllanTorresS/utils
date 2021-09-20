@@ -39,7 +39,8 @@ import java.util.List;
 @Table(name = "AUTORIZACAO_PGTO_EDICAO")
 public class AutorizacaoPagamentoEdicao implements IPersistente {
 
-    public static final String VALOR_MAXIMO_AUTORIZACAO = "99999.999";
+    public static final String VALOR_MAXIMO_AUTORIZACAO = "9999999.999";
+    public static final String QUANTIDADE_LITROS_MAXIMO_AUTORIZACAO = "99999.999";
     private static final long serialVersionUID = -6015113337076066392L;
 
     @Id
@@ -131,7 +132,7 @@ public class AutorizacaoPagamentoEdicao implements IPersistente {
     @Column(name = "DS_BANDEIRA")
     private String bandeiraAreaAbastecimento;
 
-    @DecimalMax(VALOR_MAXIMO_AUTORIZACAO)
+    @DecimalMax(QUANTIDADE_LITROS_MAXIMO_AUTORIZACAO)
     @Column(name = "QT_TOTAL_LIT_ABAS")
     private BigDecimal totalLitrosAbastecimento;
 
