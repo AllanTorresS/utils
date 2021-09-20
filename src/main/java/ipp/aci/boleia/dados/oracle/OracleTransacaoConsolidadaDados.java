@@ -1873,6 +1873,11 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
         } else {
             parametros.add(new ParametroPesquisaIgual("statusIntegracao", null));
         }
+        if(filtro.getModalidadePagamento() != null && filtro.getModalidadePagamento().getValue() != null) {
+            parametros.add(new ParametroPesquisaIgual("modoPagamento", filtro.getModalidadePagamento().getValue()));
+        } else {
+            parametros.add(new ParametroPesquisaIgual("modoPagamento", null));
+        }
 
         String filtroStatus = " ";
         if(filtro.getStatusPagamento() != null && !filtro.getStatusPagamento().isEmpty()) {
