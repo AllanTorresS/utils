@@ -38,7 +38,7 @@ public class OracleTaxaTarifadorDados extends OracleRepositorioBoleiaDados<TaxaT
             "     AND NOT EXISTS (" +
             "         SELECT 1" +
             "         FROM Tarifador t_" +
-            "         LEFT JOIN t.frotas f_" +
+            "         LEFT JOIN t_.frotas f_" +
             "         WHERE" +
             "             t.id <> t_.id" +
             "             AND ((f IS NULL AND f_ IS NULL) OR (f = f_))" +
@@ -62,6 +62,7 @@ public class OracleTaxaTarifadorDados extends OracleRepositorioBoleiaDados<TaxaT
         parametros.add(new ParametroPesquisaIgual("valorLitragem", valorLitragem));
         parametros.add(new ParametroPesquisaIgual("idFrota", idFrota));
 
-        return pesquisar(QUERY_TAXA_VIGENTE_POR_VALOR_FROTA, TaxaTarifador.class, parametros.toArray(new ParametroPesquisa[0])).stream().findFirst().orElse(null);
+        List<TaxaTarifador> resultado = pesquisar(QUERY_TAXA_VIGENTE_POR_VALOR_FROTA, TaxaTarifador.class, parametros.toArray(new ParametroPesquisa[0]));
+        return resultado != null ? resultado.stream().findFirst().orElse(null) : null;
     }
 }
