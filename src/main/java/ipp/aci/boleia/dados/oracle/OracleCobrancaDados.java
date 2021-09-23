@@ -375,8 +375,8 @@ public class OracleCobrancaDados extends OracleRepositorioBoleiaDados<Cobranca> 
     @Override
     public ResultadoPaginado<Cobranca> buscarCobrancasParaExportacaoTarifador(FiltroPesquisaRelatorioTarifadorVo filtro) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
-        povoarParametroDataMaiorIgual("transacoesConsolidadas.dataInicioPeriodo", UtilitarioCalculoData.obterPrimeiroDiaMes(filtro.getDe()), parametros);
-        povoarParametroDataMenorIgual("transacoesConsolidadas.dataFimPeriodo", UtilitarioCalculoData.obterUltimoDiaMes(filtro.getAte()), parametros);
+        povoarParametroDataMaiorIgual("transacoesConsolidadas.dataInicioPeriodo", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe()), parametros);
+        povoarParametroDataMenorIgual("transacoesConsolidadas.dataFimPeriodo", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte()), parametros);
         if(filtro.getFrota() != null) {
             parametros.add(new ParametroPesquisaIgual("transacoesConsolidadas.frotaPtov.frota.id", filtro.getFrota().getId()));
         }
