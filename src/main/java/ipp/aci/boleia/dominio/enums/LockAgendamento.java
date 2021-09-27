@@ -48,8 +48,8 @@ public enum LockAgendamento {
 	AVISO_DE_DEBITO_CONECTCAR                       (ConstantesDuracao.UMA_HORA, ConstantesDuracao.UM_SEGUNDO),
 	AVISO_DE_CREDITO_CONECTCAR                      (ConstantesDuracao.UMA_HORA, ConstantesDuracao.UM_SEGUNDO),
 	EXCLUSAO_DADOS_PESSOAIS_MOTORISTAS              (ConstantesDuracao.CINCO_MINUTO, ConstantesDuracao.UM_SEGUNDO),
-    AVISO_MOTORISTAS_SEM_ABASTECIMENTO              (ConstantesDuracao.CINCO_MINUTO, ConstantesDuracao.UM_SEGUNDO),
-    EXCLUSAO_DADOS_MOTORISTAS_SEM_ABASTECIMENTO     (ConstantesDuracao.CINCO_MINUTO, ConstantesDuracao.UM_SEGUNDO),
+    AVISO_MOTORISTAS_INAVAVOS_E_SEM_ABASTECIMENTO   (ConstantesDuracao.CINCO_MINUTO, ConstantesDuracao.UM_SEGUNDO),
+    EXCLUSAO_DADOS_MOTORISTAS                       (ConstantesDuracao.CINCO_MINUTO, ConstantesDuracao.UM_SEGUNDO),
     DISTRIBUICAO_AUTOMATICA_DE_BENEFICIOS           (ConstantesDuracao.UMA_HORA, ConstantesDuracao.UM_SEGUNDO),
     CANCELAMENTO_CHAMADOS_PENDENTES                 (ConstantesDuracao.QUINZE_MINUTOS, ConstantesDuracao.UM_SEGUNDO),
     ATUALIZACAO_PEDIDO_CREDITO_BENEFICIOS           (ConstantesDuracao.DUAS_HORAS, ConstantesDuracao.UM_SEGUNDO);

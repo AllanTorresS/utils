@@ -68,6 +68,9 @@ public class DispositivoMotoristaPedido implements IPersistente, IPertenceFrota,
     @Column(name = "VR_HORIMETRO")
     private BigDecimal valorHorimetro;
 
+    @Column(name = "VR_OCR")
+    protected String valorHodometroHorimetroObtidoOCR;
+
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_VEICULO")
@@ -330,5 +333,13 @@ public class DispositivoMotoristaPedido implements IPersistente, IPertenceFrota,
 
     public void setPedidoAbastecimentoAdicional(DispositivoMotoristaPedido pedidoAbastecimentoAdicional) {
         this.pedidoAbastecimentoAdicional = pedidoAbastecimentoAdicional;
+    }
+
+    public String getValorHodometroHorimetroObtidoOCR() {
+        return valorHodometroHorimetroObtidoOCR;
+    }
+
+    public void setValorHodometroHorimetroObtidoOCR(String valorHodometroHorimetroObtidoOCR) {
+        this.valorHodometroHorimetroObtidoOCR = valorHodometroHorimetroObtidoOCR;
     }
 }

@@ -7,11 +7,13 @@ import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.util.Ordenacao;
-import static ipp.aci.boleia.util.UtilitarioLambda.obterPrimeiroObjetoDaLista;
+import org.springframework.stereotype.Repository;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import org.springframework.stereotype.Repository;
+
+import static ipp.aci.boleia.util.UtilitarioLambda.obterPrimeiroObjetoDaLista;
 
 /**
  * Implementacao do repositorio de dados da entidade {@link HistoricoPontoVenda}.

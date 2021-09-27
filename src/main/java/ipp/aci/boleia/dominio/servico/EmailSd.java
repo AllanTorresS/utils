@@ -24,6 +24,7 @@ import ipp.aci.boleia.dominio.NfeAnexosArmazem;
 import ipp.aci.boleia.dominio.ParametroCiclo;
 import ipp.aci.boleia.dominio.PedidoCreditoFrota;
 import ipp.aci.boleia.dominio.PontoDeVenda;
+import ipp.aci.boleia.dominio.PropostaAntecipacao;
 import ipp.aci.boleia.dominio.SistemaExterno;
 import ipp.aci.boleia.dominio.TransacaoConectcar;
 import ipp.aci.boleia.dominio.TransacaoConsolidada;
@@ -44,6 +45,7 @@ import ipp.aci.boleia.util.i18n.Mensagens;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import ipp.aci.boleia.util.rotas.ExternoRotas;
 import ipp.aci.boleia.util.rotas.Paginas;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -931,4 +933,16 @@ public class EmailSd {
         emailDados.enviarEmail(assunto, corpo, Collections.singletonList(emailDestinatario), anexo, nomeAnexo);
     }
 
+    /**
+     * Envia email notificando a aprovação da proposta de crédito
+     * @param proposta A proposta de antecipação aprovada
+     * @param destinatarios Lista de destinatários
+     */
+    public void enviarEmailPropostaAntecipacaoAprovada(PropostaAntecipacao proposta, List<String> destinatarios) {
+        if (!CollectionUtils.isEmpty(destinatarios)) {
+            String assunto = mensagens.obterMensagem("proposta.antecipacao.email.sucesso.assunto");
+            String corpo = mensagens.obterMensagem("proposta.antecipacao.email.sucesso.corpo", UtilitarioFormatacaoData.formatarDataCurta(proposta.getDataDesembolso()));
+            emailDados.enviarEmail(assunto, corpo, destinatarios);
+        }
+    }
 }

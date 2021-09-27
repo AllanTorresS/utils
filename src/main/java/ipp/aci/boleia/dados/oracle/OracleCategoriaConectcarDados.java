@@ -1,9 +1,8 @@
 package ipp.aci.boleia.dados.oracle;
 
-import org.springframework.stereotype.Repository;
-
 import ipp.aci.boleia.dados.ICategoriaConectcarDados;
 import ipp.aci.boleia.dominio.CategoriaConectcar;
+import org.springframework.stereotype.Repository;
 
 /**
  * Respositorio de entidades CategoriaConectcar

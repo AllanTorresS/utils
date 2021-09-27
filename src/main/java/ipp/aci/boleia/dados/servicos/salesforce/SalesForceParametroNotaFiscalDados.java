@@ -7,7 +7,6 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
@@ -19,47 +18,43 @@ import java.util.Map;
  * Respositório dos serviços de integração com o salseforce para atualizar os dados de parametrização de NFe
  */
 @Repository
-public class SalesForceParametroNotaFiscalDados extends AcessoSalesForceBase implements ISalesForceParametroNotaFiscalDados  {
+public class SalesForceParametroNotaFiscalDados extends SalesForceAtualizacaoContaBase implements ISalesForceParametroNotaFiscalDados  {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SalesForceParametroNotaFiscalDados.class);
 
     private static final String SEM_NOTA_FISCAL = "SemNotaFiscal__c";
-
     private static final String MSG_LOG_ERRO_AO_ATUALIZAR_DADOS_EXIGENCIA = "Erro ao atualizar dados exigencia de emissao de nota fiscal no sales force: {}";
-
-    @Value("${salesforce.account.atualizar.url}")
-    private String accountUrl;
 
     @Autowired
     private UtilitarioAmbiente utilitarioAmbiente;
 
     @Override
-    public AtualizarExigenciaNfeErroVo atualizarExigenciaNotaFiscal(String cnpj, boolean exigeNotaFiscal) {
+    public AtualizarExigenciaNfeErroVo atualizarExigenciaNotaFiscal(Long cnpj, boolean exigeNotaFiscal) {
         String semNotaFiscal = exigeNotaFiscal ?  mensagens.obterMensagem("texto.comum.nao") : mensagens.obterMensagem("texto.comum.sim");
         Map<String, String> corpo = new LinkedHashMap<>();
-        Date dataAtual = utilitarioAmbiente.buscarDataAmbiente();;
+        Date dataAtual = utilitarioAmbiente.buscarDataAmbiente();
         corpo.put(SEM_NOTA_FISCAL, semNotaFiscal);
 
         try {
             if (Boolean.FALSE.equals(validarAccountExistente(cnpj))) {
                 LOGGER.error(MSG_LOG_ERRO_AO_ATUALIZAR_DADOS_EXIGENCIA, this.mensagem);
-                return new AtualizarExigenciaNfeErroVo(cnpj, exigeNotaFiscal, dataAtual, statusCode);
+                return new AtualizarExigenciaNfeErroVo(cnpj.toString(), exigeNotaFiscal, dataAtual, statusCode);
             }
 
             if (semNotaFiscal.equals(this.responseBody.get(SEM_NOTA_FISCAL).asText())) {
                 return null;
             }
 
-            prepararRequisicao(this.accountUrl.replace(CNPJ_URL, cnpj), corpo);
-            if (!restDados.doPatchJson(this.endpointUrl, corpo, this.authorizationHeaders, this::tratarAtualizacaoAccount)) {
-                if(!restDados.doPatchJson(this.endpointUrl, corpo, this.authorizationHeaders, this::tratarAtualizacaoAccount)){
+            super.prepararRequisicaoAtualizacaoCliente(cnpj, corpo);
+            if (!restDados.doPatchJson(this.endpointUrl, corpo, this.authorizationHeaders, super::tratarAtualizacaoConta)) {
+                if (!restDados.doPatchJson(this.endpointUrl, corpo, this.authorizationHeaders, super::tratarAtualizacaoConta)) {
                     LOGGER.error(MSG_LOG_ERRO_AO_ATUALIZAR_DADOS_EXIGENCIA, this.mensagem);
-                    return new AtualizarExigenciaNfeErroVo(cnpj, exigeNotaFiscal, dataAtual, statusCode);
+                    return new AtualizarExigenciaNfeErroVo(cnpj.toString(), exigeNotaFiscal, dataAtual, statusCode);
                 }
             }
         } catch (Exception e) {
             LOGGER.error(MSG_LOG_ERRO_AO_ATUALIZAR_DADOS_EXIGENCIA, e.getMessage(), e);
-            return new AtualizarExigenciaNfeErroVo(cnpj, exigeNotaFiscal, dataAtual, HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return new AtualizarExigenciaNfeErroVo(cnpj.toString(), exigeNotaFiscal, dataAtual, HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
 
         return null;
@@ -67,34 +62,35 @@ public class SalesForceParametroNotaFiscalDados extends AcessoSalesForceBase imp
 
     /**
      * Verifica se existe uma conta no SalesForce com o cnpj informado
+     *
      * @param cnpj cnpj da Frota/Unidade/Empresa agregada
      * @return true se positivo
      */
-    private Boolean validarAccountExistente(String cnpj) {
+    private Boolean validarAccountExistente(Long cnpj) {
         try {
-            super.prepararRequisicao(this.accountUrl.replace(CNPJ_URL, cnpj), null);
-        }catch (Exception e){
-            if(this.statusCode != HttpStatus.BAD_REQUEST.value()
-                && this.statusCode != HttpStatus.FORBIDDEN.value()
-                && this.statusCode != HttpStatus.UNAUTHORIZED.value()){
+            super.prepararRequisicaoAtualizacaoCliente(cnpj, null);
+        } catch (Exception e) {
+            if (this.statusCode != HttpStatus.BAD_REQUEST.value()
+                    && this.statusCode != HttpStatus.FORBIDDEN.value()
+                    && this.statusCode != HttpStatus.UNAUTHORIZED.value()) {
                 try {
-                    super.prepararRequisicao(this.accountUrl.replace(CNPJ_URL, cnpj), null);
-                }catch (Exception ex){
+                    super.prepararRequisicaoAtualizacaoCliente(cnpj, null);
+                } catch (Exception ex) {
                     LOGGER.error(MSG_LOG_ERRO_AO_ATUALIZAR_DADOS_EXIGENCIA, ex.getMessage(), ex);
                 }
-            }else{
+            } else {
                 LOGGER.error(MSG_LOG_ERRO_AO_ATUALIZAR_DADOS_EXIGENCIA, e.getMessage(), e);
             }
         }
         Boolean integracaoVerificaExistenciaCnpjIsOk = restDados.doGet(this.endpointUrl, this.authorizationHeaders, this::tratarValidarExistenciaAccount);
-        if(integracaoVerificaExistenciaCnpjIsOk){
+        if (integracaoVerificaExistenciaCnpjIsOk) {
             return integracaoVerificaExistenciaCnpjIsOk;
-        }else{
-            if(this.statusCode != HttpStatus.NOT_FOUND.value()){
+        } else {
+            if (this.statusCode != HttpStatus.NOT_FOUND.value()) {
                 integracaoVerificaExistenciaCnpjIsOk = restDados.doGet(this.endpointUrl, this.authorizationHeaders, this::tratarValidarExistenciaAccount);
             }
         }
-        if(!integracaoVerificaExistenciaCnpjIsOk){
+        if (!integracaoVerificaExistenciaCnpjIsOk) {
             LOGGER.error(MSG_LOG_ERRO_AO_ATUALIZAR_DADOS_EXIGENCIA, this.mensagem);
         }
         return integracaoVerificaExistenciaCnpjIsOk;
@@ -109,16 +105,5 @@ public class SalesForceParametroNotaFiscalDados extends AcessoSalesForceBase imp
     private boolean tratarValidarExistenciaAccount(CloseableHttpResponse httpResponse) {
         prepararResposta(httpResponse);
         return this.statusCode == HttpStatus.OK.value() && this.responseBody.get(SEM_NOTA_FISCAL) != null;
-    }
-
-    /**
-     * Tratamento da resposta da solicitação de atualização do cliente Salesforce.
-     *
-     * @param httpResponse A resposta recebida do Salesforce.
-     * @return true em caso sucesso na requisição, caso contrario false.
-     */
-    private Boolean tratarAtualizacaoAccount(CloseableHttpResponse httpResponse) {
-        prepararResposta(httpResponse);
-        return this.statusCode == HttpStatus.OK.value();
     }
 }

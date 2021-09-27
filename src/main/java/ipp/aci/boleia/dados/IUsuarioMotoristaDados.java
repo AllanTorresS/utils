@@ -5,6 +5,8 @@ import ipp.aci.boleia.dominio.UsuarioMotorista;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaUsuarioMotoristaVo;
 
+import java.util.List;
+
 /**
  * Repositorio de dados da entidade {@link UsuarioMotorista}.
  *
@@ -27,4 +29,12 @@ public interface IUsuarioMotoristaDados extends IRepositorioBoleiaDados<UsuarioM
      * @return Uma lista de entidades localizadas
      */
     ResultadoPaginado<UsuarioMotorista> pesquisaPaginada(FiltroPesquisaUsuarioMotoristaVo filtro);
+
+    /**
+     * Obtém todos os usuarios motoristas a partir de um usuario.
+     *
+     * @param usuario o usuario logado
+     * @return UsuarioMotorista do id dado
+     */
+    List<UsuarioMotorista> obterUsuariosMotoristasIncluindoExcluidos(Usuario usuario);
 }

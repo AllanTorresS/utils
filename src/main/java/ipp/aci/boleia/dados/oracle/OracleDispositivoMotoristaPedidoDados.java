@@ -76,4 +76,10 @@ public class OracleDispositivoMotoristaPedidoDados extends OracleRepositorioBole
         return result.stream().map(arr -> (Long) arr[0]).collect(Collectors.toList());
 	}
 
+    @Override
+    public List<DispositivoMotoristaPedido> obterPorMotorista(Motorista motorista) {
+        return pesquisar(new ParametroOrdenacaoColuna(),
+                new ParametroPesquisaIgual("motorista", motorista));
+    }
+
 }

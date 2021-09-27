@@ -70,7 +70,7 @@ public class OracleFrotaDados extends OracleRepositorioBoleiaDados<Frota> implem
             " tc.reembolso IS NOT NULL AND " +
             " ((r.dataPagamento is null  AND r.status <> " + StatusPagamentoReembolso.SEM_REEMBOLSO.getValue() + " AND (r.dataVencimentoPgto >= :dataInicial AND r.dataVencimentoPgto <= :dataFinal)) " +
             " OR (r.dataPagamento >= :dataInicial AND r.dataPagamento <= :dataFinal) " +
-            " OR (r.status = " + StatusPagamentoReembolso.SEM_REEMBOLSO.getValue() + " AND tc.dataInicioPeriodo >= :dataInicial AND tc.dataFimPeriodo <= :dataFinal)) " ;
+            " OR ((r.status = " + StatusPagamentoReembolso.SEM_REEMBOLSO.getValue() + " OR r.valorDescontoAntecipacao > 0) AND tc.dataInicioPeriodo >= :dataInicial AND tc.dataFimPeriodo <= :dataFinal)) " ;
 
     private static final String CLAUSULA_DATA_REEMB_NAO_GERADO =
             " tc.reembolso IS NULL AND " +

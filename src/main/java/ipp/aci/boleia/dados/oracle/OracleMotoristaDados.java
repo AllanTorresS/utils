@@ -2,6 +2,7 @@ package ipp.aci.boleia.dados.oracle;
 
 import ipp.aci.boleia.dados.IMotoristaDados;
 import ipp.aci.boleia.dominio.Motorista;
+import ipp.aci.boleia.dominio.UsuarioMotorista;
 import ipp.aci.boleia.dominio.enums.ClassificacaoAgregado;
 import ipp.aci.boleia.dominio.enums.PeriodoVencimentoCnh;
 import ipp.aci.boleia.dominio.enums.StatusAtivacao;
@@ -24,6 +25,10 @@ import ipp.aci.boleia.dominio.vo.externo.FiltroPesquisaMotoristaExtVo;
 import ipp.aci.boleia.dominio.vo.frotista.FiltroPesquisaMotoristaFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.ResultadoPaginadoFrtVo;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
+import static ipp.aci.boleia.util.UtilitarioCalculoData.adicionarMesesData;
+import static ipp.aci.boleia.util.UtilitarioFormatacao.obterDigitosMascara;
+import static ipp.aci.boleia.util.UtilitarioFormatacao.obterInteiroMascara;
+import static ipp.aci.boleia.util.UtilitarioFormatacao.obterLongMascara;
 import ipp.aci.boleia.util.UtilitarioLambda;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.apache.commons.collections4.CollectionUtils;
@@ -37,11 +42,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import static ipp.aci.boleia.util.UtilitarioCalculoData.adicionarMesesData;
-import static ipp.aci.boleia.util.UtilitarioFormatacao.obterDigitosMascara;
-import static ipp.aci.boleia.util.UtilitarioFormatacao.obterInteiroMascara;
-import static ipp.aci.boleia.util.UtilitarioFormatacao.obterLongMascara;
-
 /**
  * Respositorio de entidades Motorista
  */
@@ -51,17 +51,51 @@ public class OracleMotoristaDados extends OracleRepositorioBoleiaDados<Motorista
     private static final String QUERY_EXCLUSAO_DADOS_MOTORISTA = "DELETE FROM AbastecimentoCta ac " +
             "WHERE ac.dataProcessamento <= :dataProcessamento";
 
+    private static final String CPF_ANONIMIZADO = "99999999999";
+
     private static final String LISTAR_MOTORISTAS_SEM_ABASTECIMENTO =
             "SELECT m " +
-            "FROM Motorista m " +
-            "WHERE trunc(m.dataCriacao) = trunc(:diasDeVerificacao) and " +
-            "NOT EXISTS (" +
-            " 	SELECT 1 " +
-            " 	FROM AbastecimentoCta ac " +
-            " 	JOIN ac.autorizacaoPagamentoImportada ap " +
-            " 	WHERE ap.motorista.id = m.id " +
-            ") " +
-            "ORDER BY m.frota, m.dataCriacao ";
+                    "FROM Motorista m " +
+                    "WHERE trunc(m.dataCriacao) = trunc(:diasDeVerificacao) and " +
+                    "NOT EXISTS (" +
+                    " 	SELECT 1 " +
+                    " 	FROM AutorizacaoPagamento ap " +
+                    " 	WHERE ap.motorista.id = m.id " +
+                    ") " +
+                    "ORDER BY m.frota, m.dataCriacao ";
+
+    private static final String LISTAR_MOTORISTAS_INATIVOS_COM_ABASTECIMENTO =
+            "SELECT m " +
+                    "FROM Motorista m " +
+                    "WHERE m.status = 0 AND trunc(m.dataInativacao) = trunc(:diasDeVerificacao) and " +
+                    "EXISTS (" +
+                    " 	SELECT 1 " +
+                    " 	FROM AutorizacaoPagamento ap " +
+                    " 	WHERE ap.motorista.id = m.id " +
+                    ") " +
+                    "ORDER BY m.frota, m.dataCriacao ";
+
+    private static final String LISTAR_MOTORISTAS_SEM_ABASTECIMENTO_APOS_PERIODO =
+            "SELECT m " +
+                    "FROM Motorista m " +
+                    "WHERE trunc(m.dataCriacao) <= trunc(:diasDeVerificacao) and " +
+                    "NOT EXISTS (" +
+                    " 	SELECT 1 " +
+                    " 	FROM AutorizacaoPagamento ap " +
+                    " 	WHERE ap.motorista.id = m.id " +
+                    ") " +
+                    "ORDER BY m.frota, m.dataCriacao ";
+
+    private static final String LISTAR_MOTORISTAS_INATIVOS_COM_ABASTECIMENTO_APOS_PERIODO =
+            "SELECT m " +
+                    "FROM Motorista m " +
+                    "WHERE m.status = 0 AND trunc(m.dataInativacao) <= trunc(:diasDeVerificacao) and " +
+                    "EXISTS (" +
+                    " 	SELECT 1 " +
+                    " 	FROM AutorizacaoPagamento ap " +
+                    " 	WHERE ap.motorista.id = m.id " +
+                    ") " +
+                    "ORDER BY m.frota, m.dataCriacao ";
 
     private static final String LISTAR_MOTORISTAS_POR_CONSOLIDADO =
             "SELECT DISTINCT m " +
@@ -70,6 +104,27 @@ public class OracleMotoristaDados extends OracleRepositorioBoleiaDados<Motorista
             "WHERE (ap.transacaoConsolidadaPostergada.id = :idConsolidado OR ap.transacaoConsolidada.id = :idConsolidado) AND " +
             "       upper(m.nome) LIKE :nome AND " +
             "       m.excluido = false";
+
+    private  static final String LISTA_MOTORISTAS_EXCLUIDOS_SEM_ANONIMO =
+            "SELECT m FROM Motorista m " +
+                "WHERE m.excluido = true " +
+                    "AND m.cpf != " + CPF_ANONIMIZADO;
+
+    private  static final String OBTEM_MOTORISTA_EXCLUIDO_POR_ID =
+            "SELECT m FROM Motorista m " +
+                "WHERE m.excluido = true AND " +
+                "m.id = :idMotorista";
+
+    private  static final String OBTEM_MOTORISTA_EXCLUIDO_POR_CPF_E_FROTA =
+            "SELECT m FROM Motorista m " +
+                    "WHERE m.excluido = true AND " +
+                    "m.cpf = :cpf AND " +
+                    "m.frota.id = :idFrota";
+
+    private  static final String LISTA_MOTORISTAS_POR_ID_USUARIO_MOTORISTA_INCLUINDO_EXCLUIDOS_SEM_ANONIMO =
+            "SELECT m FROM Motorista m " +
+                    "WHERE m.usuarioMotorista.id = :idUsuarioMotorista " +
+                    "AND m.cpf != " + CPF_ANONIMIZADO;
 
     @Autowired
     private UtilitarioAmbiente utilitarioAmbiente;
@@ -379,6 +434,56 @@ public class OracleMotoristaDados extends OracleRepositorioBoleiaDados<Motorista
     public List<Motorista> obterMotoristasSemAbastecimento(Integer diasDeVerificacao) {
         ParametroPesquisaIgual parametroDiasDeVerificacao = new ParametroPesquisaIgual("diasDeVerificacao", UtilitarioCalculoData.obterPrimeiroInstanteDia(UtilitarioCalculoData.adicionarDiasData(utilitarioAmbiente.buscarDataAmbiente(), -diasDeVerificacao)));
         return pesquisar(null, LISTAR_MOTORISTAS_SEM_ABASTECIMENTO, parametroDiasDeVerificacao).getRegistros();
+    }
+
+    @Override
+    public List<Motorista> obterMotoristasInativosComAbastecimento(Integer diasDeVerificacao) {
+        ParametroPesquisaIgual parametroDiasDeVerificacao = new ParametroPesquisaIgual("diasDeVerificacao", UtilitarioCalculoData.adicionarDiasData(utilitarioAmbiente.buscarDataAmbiente(), -diasDeVerificacao));
+        return pesquisar(null, LISTAR_MOTORISTAS_INATIVOS_COM_ABASTECIMENTO, parametroDiasDeVerificacao).getRegistros();
+    }
+
+    @Override
+    public List<Motorista> obterMotoristasSemAbastecimentoAposPeriodo(Integer diasDeVerificacao) {
+        ParametroPesquisaDataMenorOuIgual parametroDiasDeVerificacao = new ParametroPesquisaDataMenorOuIgual("diasDeVerificacao", UtilitarioCalculoData.obterPrimeiroInstanteDia(UtilitarioCalculoData.adicionarDiasData(utilitarioAmbiente.buscarDataAmbiente(), -diasDeVerificacao)));
+        return pesquisar(null, LISTAR_MOTORISTAS_SEM_ABASTECIMENTO_APOS_PERIODO, parametroDiasDeVerificacao).getRegistros();
+    }
+
+    @Override
+    public List<Motorista> obterMotoristasInativosComAbastecimentoAposPeriodo(Integer diasDeVerificacao) {
+        ParametroPesquisaDataMenorOuIgual parametroDiasDeVerificacao = new ParametroPesquisaDataMenorOuIgual("diasDeVerificacao", UtilitarioCalculoData.adicionarDiasData(utilitarioAmbiente.buscarDataAmbiente(), -diasDeVerificacao));
+        return pesquisar(null, LISTAR_MOTORISTAS_INATIVOS_COM_ABASTECIMENTO_APOS_PERIODO, parametroDiasDeVerificacao).getRegistros();
+    }
+
+    @Override
+    public List<Motorista> obterMotoristasExcluidos() {
+       Query query = getGerenciadorDeEntidade().createQuery(LISTA_MOTORISTAS_EXCLUIDOS_SEM_ANONIMO);
+       return query.getResultList();
+    }
+
+    @Override
+    public Motorista obterMotoristaExcluidoPorId(Long idMotorista) {
+        Query query = getGerenciadorDeEntidade().createQuery(OBTEM_MOTORISTA_EXCLUIDO_POR_ID);
+        query.setParameter("idMotorista", idMotorista);
+        query.setMaxResults(1);
+        List<Motorista> motoristas = query.getResultList();
+        return motoristas.isEmpty() ? null : motoristas.get(0);
+    }
+
+    @Override
+    public Motorista obterExcluidoPorCpfFrota(Long cpf, Long idFrota) {
+        Query query = getGerenciadorDeEntidade().createQuery(OBTEM_MOTORISTA_EXCLUIDO_POR_CPF_E_FROTA);
+        query.setParameter("cpf", cpf);
+        query.setParameter("idFrota", idFrota);
+        query.setMaxResults(1);
+        List<Motorista> motoristas = query.getResultList();
+        return motoristas.isEmpty() ? null : motoristas.get(0);
+    }
+
+    @Override
+    public List<Motorista> obterMotoristasIncluindoExcluidos(UsuarioMotorista usuarioMotorista) {
+        Query query = getGerenciadorDeEntidade().createQuery(LISTA_MOTORISTAS_POR_ID_USUARIO_MOTORISTA_INCLUINDO_EXCLUIDOS_SEM_ANONIMO);
+        query.setParameter("idUsuarioMotorista", usuarioMotorista.getId());
+        return query.getResultList();
     }
 
     @Override

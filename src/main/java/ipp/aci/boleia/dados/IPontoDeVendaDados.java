@@ -4,12 +4,12 @@ package ipp.aci.boleia.dados;
 import ipp.aci.boleia.dominio.PontoDeVenda;
 import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
-import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialPtovVo;
+import ipp.aci.boleia.dominio.vo.FiltroAutoCompletePostoRotaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaLocalizacaoVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaParcialPtovVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaPontoDeVendaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaRIPontoVendaServicosVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaRotaPontoVendaServicosVo;
-import ipp.aci.boleia.dominio.vo.FiltroAutoCompletePostoRotaVo;
 
 import java.util.List;
 
@@ -174,4 +174,11 @@ public interface IPontoDeVendaDados extends IRepositorioBoleiaDados<PontoDeVenda
      * @return lista das pontos de venda que atendem aos criterios de busca
      */
     List<PontoDeVenda> pesquisarParaAutocompleteRota(FiltroAutoCompletePostoRotaVo filtro);
+
+    /**
+     * Retorna os pontos de venda a partir de uma lista de IDs.
+     * @param ids lista dos IDs que devem ser buscados no repositório
+     * @return lista dos pontos de venda associados a cada ID
+     */
+    List<PontoDeVenda> obterPorIds(List<Long> ids);
 }

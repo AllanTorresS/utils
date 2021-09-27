@@ -69,6 +69,10 @@ public class Permissao implements IPersistente {
     @Column(name = "ID_MODULO_INTERNO")
     private boolean moduloInterno;
 
+    @NotNull
+    @Column(name = "ID_INTRANSFERIVEL")
+    private boolean intransferivel;
+
     //O mapeamento como EAGER se deve ao fato da categoria ser necessária ao se buscar uma permissão
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "CD_CATEGORIA_PERMISSAO")
@@ -162,6 +166,14 @@ public class Permissao implements IPersistente {
 
     public void setModuloInterno(boolean moduloInterno) {
         this.moduloInterno = moduloInterno;
+    }
+
+    public boolean isIntransferivel() {
+        return intransferivel;
+    }
+
+    public void setIntransferivel(boolean intransferivel) {
+        this.intransferivel = intransferivel;
     }
 
     public CategoriaPermissao getCategoria() {

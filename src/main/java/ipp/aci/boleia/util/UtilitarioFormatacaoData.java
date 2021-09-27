@@ -202,6 +202,24 @@ public final class UtilitarioFormatacaoData {
     }
 
     /**
+     * Lê uma data a partir de uma String com o formato PADRAO_ISO_8601 sem milissegundos e com Timezone
+     *
+     * @param texto O texto a ser interpretado
+     * @return A data obtida
+     */
+    public static Date lerDataIso8601SemMillisComTimezone(String texto) {
+        try {
+            return StringUtils.isEmpty(texto) ? null : new SimpleDateFormat(ConstantesFormatacao.FORMATO_ISO_8601_SEM_MILLIS_COM_TIMEZONE).parse(texto);
+        } catch (ParseException e) {
+            try {
+                return StringUtils.isEmpty(texto) ? null : new SimpleDateFormat(ConstantesFormatacao.FORMATO_ISO_8601_SEM_TIMEZONE).parse(texto);
+            } catch (ParseException e1) {
+                throw new ExcecaoBoleiaRuntime(Erro.CONVERSAO_DATA, e1);
+            }
+        }
+    }
+
+    /**
      * Le uma data a partir de uma String com o formato PADRAO_ISO_8601 com milisegundos e timezone
      *
      * @param texto O texto a ser interpretado

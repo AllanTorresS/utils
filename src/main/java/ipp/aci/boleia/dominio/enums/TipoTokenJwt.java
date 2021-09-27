@@ -58,6 +58,7 @@ public enum TipoTokenJwt {
             ChavePermissao.API_CREDENCIAMENTO_PDV_HABILITAR,
             ChavePermissao.API_CREDENCIAMENTO_PDV_LISTAR_BANDEIRA,
             ChavePermissao.API_CREDENCIAMENTO_FROTA_CONSULTAR_STATUS,
+            ChavePermissao.PONTO_DE_VENDA_ATUALIZAR_STATUS_ANTECIPACAO,
             ChavePermissao.API_EXTERNO_NOTIFICAR_PENDENCIA_CHAMADO
         );
     }

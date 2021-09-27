@@ -42,6 +42,7 @@ public class AgrupamentoTransacaoConsolidadaCobrancaVo {
     private Boolean totalmenteEmitida;
     private String ultimaJustificativaAjuste;
     private Boolean passivelDeEmissao;
+    private Integer modalidadePagamento;
 
     /**
      * Construtor default
@@ -82,7 +83,7 @@ public class AgrupamentoTransacaoConsolidadaCobrancaVo {
      * @param ultimaJustificativaAjuste a Ultima justificativa do ajuste da cobrança
      * @param passivelDeEmissao indica se ao menos um ciclo do agrupamaneto é passível de emissão de NF
      */
-    public AgrupamentoTransacaoConsolidadaCobrancaVo(Long idFrota, String nomeEmpresa, Long cnpjEmpresa, Date dataInicioPeriodo, Date dataFimPeriodo,
+    public AgrupamentoTransacaoConsolidadaCobrancaVo(Long idFrota, String nomeEmpresa, Long cnpjEmpresa, Integer modalidadePagamento, Date dataInicioPeriodo, Date dataFimPeriodo,
                                                      BigDecimal valorTotal, BigDecimal valorDesconto, BigDecimal valorCobrancaAjustado,
                                                      Integer statusConsolidacao, Integer statusPagamento, Long quantidadeAbastecimentos,
                                                      Date dataVencimento, Date dataLimitePagamento, Date dataPagamento,
@@ -94,6 +95,7 @@ public class AgrupamentoTransacaoConsolidadaCobrancaVo {
         this.idFrota = idFrota;
         this.nomeEmpresa = nomeEmpresa;
         this.cnpjEmpresa = cnpjEmpresa;
+        this.modalidadePagamento = modalidadePagamento;
         this.dataInicioPeriodo = dataInicioPeriodo;
         this.dataFimPeriodo = dataFimPeriodo;
         this.valorTotal = valorTotal;
@@ -360,6 +362,14 @@ public class AgrupamentoTransacaoConsolidadaCobrancaVo {
     public Boolean getPassivelDeEmissao() { return passivelDeEmissao; }
 
     public void setPassivelDeEmissao(Boolean passivelDeEmissao) { this.passivelDeEmissao = passivelDeEmissao;}
+
+    public Integer getModalidadePagamento() {
+        return modalidadePagamento;
+    }
+
+    public void setModalidadePagamento(Integer modalidadePagamento) {
+        this.modalidadePagamento = modalidadePagamento;
+    }
 
     @Transient
     public String getPercentualEmissao() {

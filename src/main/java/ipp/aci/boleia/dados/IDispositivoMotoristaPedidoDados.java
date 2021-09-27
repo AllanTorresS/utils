@@ -37,6 +37,14 @@ public interface IDispositivoMotoristaPedidoDados extends IRepositorioBoleiaDado
     List<Long> buscarCombustiveisPedidosAnteriores(Long idMotorista, Long idVeiculo);
 
     /**
+     * Pesquisa pedidos do motorista.
+     *
+     * @param motorista Identificador do Motorista
+     * @return A lista de pedido
+     */
+    List<DispositivoMotoristaPedido> obterPorMotorista(Motorista motorista);
+
+    /**
      * Pesquisa por numero pedido com o status da autorização pagamento onde estão assiciados.
      *
      * @param numero do pedido
