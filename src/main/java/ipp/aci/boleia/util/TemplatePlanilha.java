@@ -14,6 +14,7 @@ public enum TemplatePlanilha {
     TEMPLATE_MICROMERCADO("template-micromercado.xlsx"),
     TEMPLATE_PRECO_MICROMERCADO("template-preco-micromercado.xlsx"),
     TEMPLATE_PRECO_BASE("template-incluir-precos-posto-em-lote.xlsx"),
+    TEMPLATE_COTA_VEICULO_AGREGADO("template-incluir-cota-veiculo-agregado-lote.xlsx"),
     TEMPLATE_RELATORIO_ABASTECIMENTO_CONSUMO_INTERNO("template-relatorio-abastecimento-consumo-interno.xlsx"),
     TEMPLATE_RELATORIO_ABASTECIMENTO_CONSUMO_FROTA("template-relatorio-abastecimento-consumo-frota.xlsx"),
     TEMPLATE_RELATORIO_ABASTECIMENTO_FROTA("template-relatorio-abastecimento-frota.xlsx"),
