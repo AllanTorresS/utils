@@ -48,6 +48,10 @@ public class AtivacaoTagIntegracaoVo {
 		} else if(TipoUtilizacao.PEDAGIO.getValue().equals(tipoUtilizacaoTag)) {
 			this.servicosBloqueio = new String[1];
 			this.servicosBloqueio[0] = TipoUtilizacao.PEDAGIO.name();
+		} else if(TipoUtilizacao.ESTACIONAMENTO_PEDAGIO.getValue().equals(tipoUtilizacaoTag)) {
+			this.servicosBloqueio = new String[2];
+			this.servicosBloqueio[0] = TipoUtilizacao.ESTACIONAMENTO.name();
+			this.servicosBloqueio[1] = TipoUtilizacao.PEDAGIO.name();
 		}
 	}
 
