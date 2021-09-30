@@ -4,6 +4,7 @@ import ipp.aci.boleia.dados.IHistoricoSaldoVeiculosDados;
 import ipp.aci.boleia.dominio.HistoricoFrotaParametroSistemaCota;
 import ipp.aci.boleia.dominio.HistoricoSaldoVeiculo;
 import ipp.aci.boleia.dominio.enums.StatusAtivacao;
+import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroOrdenacaoColuna;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
@@ -21,6 +22,8 @@ import java.util.List;
 @Repository
 public class OracleHistoricoSaldoVeiculoDados extends OracleRepositorioBoleiaDados<HistoricoSaldoVeiculo> implements IHistoricoSaldoVeiculosDados {
 
+    private static final int TAMANHO_HISTORICO = 5;
+
     /**
      * Construtor do repositório.
      */
@@ -35,6 +38,10 @@ public class OracleHistoricoSaldoVeiculoDados extends OracleRepositorioBoleiaDad
         parametros.add(new ParametroPesquisaIgual("veiculo.status", StatusAtivacao.ATIVO.getValue()));
         parametros.add(new ParametroPesquisaIgual("veiculo.excluido", Boolean.FALSE));
 
-        return pesquisar(new ParametroOrdenacaoColuna("dataAlteracao", Ordenacao.DECRESCENTE), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+        InformacaoPaginacao paginacao = new InformacaoPaginacao();
+        paginacao.setPagina(1);
+        paginacao.setTamanhoPagina(TAMANHO_HISTORICO);
+        paginacao.getParametrosOrdenacaoColuna().add(new ParametroOrdenacaoColuna("dataAlteracao", Ordenacao.DECRESCENTE));
+        return pesquisar(paginacao, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
 }
