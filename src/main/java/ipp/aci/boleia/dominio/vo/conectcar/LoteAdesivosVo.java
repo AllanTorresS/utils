@@ -25,7 +25,7 @@ public class LoteAdesivosVo {
 
 	public void setPlacas(String[] placas) {
 		for(int i = 0; i < placas.length; i++) {
-			if(placas[i] != null && !placas[i].contains("-")) {
+			if(placas[i] != null && !placas[i].contains("-") && placas[i].length() > 3) {
 				placas[i] = placas[i].substring(0, 3) + "-" + placas[i].substring(3);
 			} 
 		}
