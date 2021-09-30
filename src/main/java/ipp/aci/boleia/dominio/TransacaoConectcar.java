@@ -22,8 +22,12 @@ import javax.persistence.Version;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Digits;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Formula;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
@@ -56,6 +60,10 @@ public class TransacaoConectcar implements IPersistente, IPertenceFrota {
 	@Column(name = "VR_TOTAL")
 	private BigDecimal valorTotal;
 
+	@NotAudited
+	@Formula("VR_TOTAL * -1")
+	private BigDecimal valorInvertido;
+	
 	@Column(name = "CD_TIPO_TRANSACAO")
 	private Integer tipoTransacao;
 
@@ -143,7 +151,26 @@ public class TransacaoConectcar implements IPersistente, IPertenceFrota {
 	
 	@Column(name = "DS_NOME_PRACA")
 	private String nomePraca;
-	
+
+	@Column(name = "DT_INICIO_VIAGEM", columnDefinition = "DATE")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date dataInicioViagem;
+
+	@Column(name = "DT_FIM_VIAGEM", columnDefinition = "DATE")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date dataFimViagem;
+
+    @Max(99999999999999L)
+    @Column(name = "CD_CNPJ_EMBARCADOR")
+    private Long cnpjEmbarcador;
+
+    @Size(max=250)
+    @Column(name = "NM_EMBARCADOR")
+    private String embarcador;
+    
+    @Column(name = "CD_VIAGEM")
+	private Long codigoViagem;
+
 	@Override
 	public Long getId() {
 		return id;
@@ -382,6 +409,54 @@ public class TransacaoConectcar implements IPersistente, IPertenceFrota {
 
 	public void setNomePraca(String nomePraca) {
 		this.nomePraca = nomePraca;
+	}
+
+	public Date getDataInicioViagem() {
+		return dataInicioViagem;
+	}
+
+	public void setDataInicioViagem(Date dataInicioViagem) {
+		this.dataInicioViagem = dataInicioViagem;
+	}
+
+	public Date getDataFimViagem() {
+		return dataFimViagem;
+	}
+
+	public void setDataFimViagem(Date dataFimViagem) {
+		this.dataFimViagem = dataFimViagem;
+	}
+
+	public BigDecimal getValorInvertido() {
+		return valorInvertido;
+	}
+
+	public void setValorInvertido(BigDecimal valorInvertido) {
+		this.valorInvertido = valorInvertido;
+	}
+
+	public Long getCnpjEmbarcador() {
+		return cnpjEmbarcador;
+	}
+
+	public void setCnpjEmbarcador(Long cnpjEmbarcador) {
+		this.cnpjEmbarcador = cnpjEmbarcador;
+	}
+
+	public String getEmbarcador() {
+		return embarcador;
+	}
+
+	public void setEmbarcador(String embarcador) {
+		this.embarcador = embarcador;
+	}
+
+	public Long getCodigoViagem() {
+		return codigoViagem;
+	}
+
+	public void setCodigoViagem(Long codigoViagem) {
+		this.codigoViagem = codigoViagem;
 	}
 
 }

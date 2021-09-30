@@ -45,7 +45,9 @@ public enum TipoRelatorioMotorGerador implements IEnumComLabel<TipoRelatorioMoto
     RELATORIO_ROTAS_INTELIGENTES(30, obterMapaTemplatesRotasInteligentes()),
     RELATORIO_REEMBOLSO_ANTECIPADO(31, obterMapaTemplatesReembolsoAntecipado()),
     RELATORIO_DETALHE_REEMBOLSO_ANTECIPADO(32, obterMapaTemplatesDetalheReembolsoAntecipado()),
-    RELATORIO_ULTIMOS_PRECOS(33, obterMapaTemplatesUltimosPrecos());
+    RELATORIO_ULTIMOS_PRECOS(33, obterMapaTemplatesUltimosPrecos()),
+    RELATORIO_EXTRATO_VALE_PEDAGIO(34, obterMapaTemplatesExtratoValePedagio()),
+	RELATORIO_DETALHE_VALE_PEDAGIO(35, obterMapaTemplatesDetalheValePedagio());
 
     private final Integer value;
     private final Map<TipoPerfilUsuario, TemplatePlanilha> templatePerfil;
@@ -396,6 +398,30 @@ public enum TipoRelatorioMotorGerador implements IEnumComLabel<TipoRelatorioMoto
     }
 
     /**
+     * Gera um mapa de templates por perfil para um tipo de relatório (extrato vale pedágio)
+     *
+     * @return O mapa criado
+     */
+    private static Map<TipoPerfilUsuario, TemplatePlanilha> obterMapaTemplatesExtratoValePedagio() {
+        Map<TipoPerfilUsuario, TemplatePlanilha> mapa = new HashMap<>();
+        mapa.put(TipoPerfilUsuario.INTERNO, TemplatePlanilha.TEMPLATE_EXTRATO_VALE_PEDAGIO);
+        mapa.put(TipoPerfilUsuario.FROTA, TemplatePlanilha.TEMPLATE_EXTRATO_VALE_PEDAGIO);
+        return mapa;
+    }
+
+    /**
+     * Gera um mapa de templates por perfil para um tipo de relatório (detalhe vale pedágio)
+     *
+     * @return O mapa criado
+     */
+    private static Map<TipoPerfilUsuario, TemplatePlanilha> obterMapaTemplatesDetalheValePedagio() {
+        Map<TipoPerfilUsuario, TemplatePlanilha> mapa = new HashMap<>();
+        mapa.put(TipoPerfilUsuario.INTERNO, TemplatePlanilha.TEMPLATE_DETALHE_VALE_PEDAGIO);
+        mapa.put(TipoPerfilUsuario.FROTA, TemplatePlanilha.TEMPLATE_DETALHE_VALE_PEDAGIO);
+        return mapa;
+    }
+
+    /**
      * Gera um mapa de templates por perfil para um tipo de relatório (reembolso Conectcar)
      *
      * @return O mapa criado
@@ -452,6 +478,7 @@ public enum TipoRelatorioMotorGerador implements IEnumComLabel<TipoRelatorioMoto
         mapa.put(TipoPerfilUsuario.FROTA, TemplatePlanilha.TEMPLATE_RELATORIO_ROTAS_INTELIGENTES);
         return mapa;
     }
+    
     /**
      * Gera um mapa de templates por perfil para um tipo de relatório (Últimos Preços)
      *

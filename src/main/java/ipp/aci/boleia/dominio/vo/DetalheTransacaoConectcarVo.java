@@ -41,7 +41,7 @@ public class DetalheTransacaoConectcarVo {
         this.setCodigoTipo(transacao.getTipoTransacao());
         this.setPlaca(transacao.getPlaca());
         this.setTag(transacao.getTag().getId().toString());
-        this.setPraca(transacao.getPraca());
+        this.setPraca(transacao.getPraca() != null ? transacao.getPraca() : StringUtils.EMPTY);
         this.setValor(UtilitarioFormatacao.formatarDecimal(transacao.getValorTotal().setScale(2, RoundingMode.HALF_UP)));
         this.setEstorno(StringUtils.EMPTY);
     }
