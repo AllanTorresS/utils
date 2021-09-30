@@ -1271,7 +1271,11 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
             Path<?> navegacaoCampo = obterAtributoEntidade(campo, entityRoot, usarLeftJoins, false, cachePaths);
             if (navegacaoCampo != null) {
                 List<Predicate> in = obterParametroIn((Path<Collection>) navegacaoCampo, (Collection) valor);
-                predicates.add(builder.or(in.toArray(new Predicate[in.size()])));
+                if (((ParametroPesquisaIn) param).getNot()) {
+                	predicates.add(builder.or(in.toArray(new Predicate[in.size()])).not());
+                } else {
+                	predicates.add(builder.or(in.toArray(new Predicate[in.size()])));
+                }
             }
         } else if (valor instanceof Date) {
             povoarParametroTemporalComValor(param, builder, entityRoot, predicates, cachePaths, usarLeftJoins);

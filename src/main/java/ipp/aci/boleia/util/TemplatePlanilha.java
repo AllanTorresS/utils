@@ -80,7 +80,9 @@ public enum TemplatePlanilha {
     TEMPLATE_RELATORIO_ULTIMOS_PRECOS_SOLUCAO("template-relatorio-ultimos-precos-interno.xlsx"),
     TEMPLATE_RELATORIO_REEMBOLSO_ANTECIPADO_SOLUCAO("template-relatorio-reembolso-antecipado-solucao.xlsx"),
     TEMPLATE_RELATORIO_REEMBOLSO_ANTECIPADO_REVENDA("template-relatorio-reembolso-antecipado-revenda.xlsx"),
-    TEMPLATE_RELATORIO_DETALHE_REEMBOLSO_ANTECIPADO("template-relatorio-detalhe-reembolso-antecipado.xlsx");
+    TEMPLATE_RELATORIO_DETALHE_REEMBOLSO_ANTECIPADO("template-relatorio-detalhe-reembolso-antecipado.xlsx"),
+    TEMPLATE_EXTRATO_VALE_PEDAGIO("template-extrato-vale-pedagio.xlsx"),
+	TEMPLATE_DETALHE_VALE_PEDAGIO("template-detalhe-vale-pedagio.xlsx");
 
 
     private static final String BASE_TEMPLATE = "/template-planilhas/";
