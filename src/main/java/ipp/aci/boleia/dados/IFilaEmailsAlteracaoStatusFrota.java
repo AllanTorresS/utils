@@ -1,5 +1,8 @@
 package ipp.aci.boleia.dados;
 
+/**
+ * Contrato para envio de alteração de status frota
+ */
 public interface IFilaEmailsAlteracaoStatusFrota {
 
     /**
