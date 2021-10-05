@@ -15,6 +15,8 @@ import ipp.aci.boleia.dominio.enums.StatusAtivacao;
 import ipp.aci.boleia.dominio.enums.StatusFrota;
 import ipp.aci.boleia.dominio.interfaces.IFluxoAbastecimentoConfig;
 import ipp.aci.boleia.dominio.vo.PreAutorizacaoPedidoVo;
+import ipp.aci.boleia.util.concorrencia.MapeadorLock;
+import ipp.aci.boleia.util.concorrencia.Sincronizador;
 import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
 import ipp.aci.boleia.util.excecao.ExcecaoValidacao;
@@ -23,11 +25,15 @@ import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import ipp.aci.boleia.util.seguranca.UtilitarioJwt;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
 
 import static ipp.aci.boleia.util.UtilitarioFormatacao.formatarCnpjApresentacao;
 
@@ -63,6 +69,43 @@ public class VeiculoSd {
 
     @Autowired
     private UtilitarioJwt utilitarioJwt;
+
+    @Autowired
+    @Qualifier("Redis")
+    private Sincronizador sincronizador;
+
+    @Value("${concorrencia.lock.veiculo.agregado.importacao-cota}")
+    private String prefixoLockFrotaImportacaoCotaVeiculoAgregado;
+
+    private MapeadorLock<Long> mapeadorLockFrotaImportacaoCotaVeiculoAgregado;
+
+    /**
+     * Configura o monitor de autorização de pagamento
+     */
+    @PostConstruct
+    public void inicializador() {
+        mapeadorLockFrotaImportacaoCotaVeiculoAgregado = new MapeadorLock<>(sincronizador, this::construirChaveFrotaImportacaoCotaVeiculoAgregado);
+    }
+
+    /**
+     * Cria a chave do lock de importacao cota veiculo agregado por frota
+     *
+     * @param idFrota id da Frota
+     * @return chave do lock para importacao em lote de motorista
+     */
+    private String construirChaveFrotaImportacaoCotaVeiculoAgregado(Long idFrota) {
+        return String.format("%s:%s", prefixoLockFrotaImportacaoCotaVeiculoAgregado, idFrota.toString());
+    }
+
+    /**
+     * Cria um lock para mutual exclusion de autorização de pagamento em processamento
+     *
+     * @param idFrota Identificador da Frota
+     * @return O Lock criado
+     */
+    public Lock getLockAutorizacaoPagamento(Long idFrota) {
+        return mapeadorLockFrotaImportacaoCotaVeiculoAgregado.getLock(idFrota);
+    }
 
     /**
      * Método que obtém valor negociado para abastecimento em um ponto de venda.

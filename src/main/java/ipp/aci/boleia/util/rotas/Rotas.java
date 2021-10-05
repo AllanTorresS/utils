@@ -132,6 +132,7 @@ public final  class Rotas {
     public static final  String POSTO_CREDENCIADO_API                = BASE_API + "/postoCredenciado";
     public static final  String DOCUMENTO_API                        = BASE_API + "/documento";
     public static final  String PARAMETRO_NF_API                     = BASE_API + "/parametro-nf";
+    public static final  String PARAMETRO_COTA_VEICULO_AGREGADO      = BASE_API + "/paramCotaVeiculoAgregado";
     public static final  String CREDENCIAMENTO_FROTA_API             = BASE_API + "/credenciamentoFrota";
     public static final  String DASHBOARD_CONECTCAR_API              = BASE_API + "/dashboardConectcar";
     public static final  String PEDIDO_TAG_API                       = BASE_API + "/pedidoTag";
@@ -139,7 +140,9 @@ public final  class Rotas {
     public static final  String ATIVACAO_TAG_API                     = BASE_API + "/ativacaoTag";
     public static final  String UTILIZACAO_TAG_API                   = BASE_API + "/utilizacaoTag";
     public static final  String FROTA_CONECTCAR_API                  = BASE_API + "/frota/conectcar";
-
+    public static final  String VALE_PEDAGIO_API                     = BASE_API + "/valePedagio";
+    public static final  String DETALHE_VALE_PEDAGIO_API             = BASE_API + "/detalheValePedagio";
+    
     public static final String CAMPANHA_API                          = BASE_API + "/campanha";
     public static final String BANDEIRA_API                          = BASE_API + "/bandeira";
     public static final String GRUPO_ECONOMICO_API                   = BASE_API + "/grupoEconomico";

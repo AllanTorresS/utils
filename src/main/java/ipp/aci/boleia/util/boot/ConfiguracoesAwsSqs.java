@@ -63,6 +63,12 @@ public class ConfiguracoesAwsSqs {
     private String nomeFilaAutorizacaoPagamentoConsolidacao;
 
     /**
+     * nome da fila que será acessada de envio de emails
+     */
+    @Value("${aws.sqs.envio-email-status-frota}")
+    private String nomeFilaEmailsAlteracaoStatusFrota;
+
+    /**
      * nome da fila que conterá as transações consolidadas
      */
     @Value("${aws.sqs.transacao-consolidada.processar-ciclo}")
@@ -182,7 +188,8 @@ public class ConfiguracoesAwsSqs {
                         ,nomeFilaProcessarCicloPostergacao
                         ,nomeFilaAnonimizacaMotorista
                         ,nomeFilaAnonimizacaoExclusaoMotoristaAuditoria
-                        ,nomeFilaProcessarPropostaAntecipacao);
+                        ,nomeFilaProcessarPropostaAntecipacao
+                        ,nomeFilaEmailsAlteracaoStatusFrota);
         criaFilaSeNaoExistem(amazonSQSAsync, nomeFilas);
         return new QueueMessagingTemplate(amazonSQSAsync);
     }
