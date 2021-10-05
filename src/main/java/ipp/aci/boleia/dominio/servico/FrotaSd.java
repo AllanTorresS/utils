@@ -224,6 +224,10 @@ public class FrotaSd {
 
     }
 
+    /**
+     * Envia o motivo de alteração status frota para a fila de processamento.
+     * @param idMotivoAlteracaoStatus Id do motivo alteração status frota.
+     */
     public void incluirMotivoNaFilaDeEnvio(Long idMotivoAlteracaoStatus){
         filaEmailsAlteracaoStatusFrota.enviarMotivoParaFila(idMotivoAlteracaoStatus);
     }
