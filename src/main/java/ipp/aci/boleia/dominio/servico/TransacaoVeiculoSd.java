@@ -12,6 +12,7 @@ import ipp.aci.boleia.dominio.enums.ParametroSistema;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.excecao.Erro;
 import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
+import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +26,9 @@ import java.util.Date;
 public class TransacaoVeiculoSd {
 
     @Autowired
+    private UtilitarioAmbiente ambiente;
+
+    @Autowired
     private ISaldoVeiculoDados repositorioSaldo;
 
     @Autowired
@@ -32,6 +36,9 @@ public class TransacaoVeiculoSd {
 
     @Autowired
     private IItemAutorizacaoPagamentoDados repositorioItemAutorizacaoPagamento;
+
+    @Autowired
+    private HistoricoSaldoVeiculoSd historicoSaldoVeiculoSd;
 
     /**
      * Registra uma transacao de abastecimento de um veiculo, debitando o valor correspondente do saldo de sua cota mensal
@@ -221,6 +228,7 @@ public class TransacaoVeiculoSd {
         veiculo.setSaldoVeiculo(saldo);
         repositorioVeiculo.armazenar(veiculo);
         repositorioSaldo.armazenar(saldo);
+        historicoSaldoVeiculoSd.criarHistoricoSaldo(saldo, ambiente);
     }
 
 }
