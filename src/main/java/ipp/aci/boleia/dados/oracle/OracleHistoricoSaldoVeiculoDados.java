@@ -22,8 +22,6 @@ import java.util.List;
 @Repository
 public class OracleHistoricoSaldoVeiculoDados extends OracleRepositorioBoleiaDados<HistoricoSaldoVeiculo> implements IHistoricoSaldoVeiculosDados {
 
-    private static final int TAMANHO_HISTORICO = 5;
-
     /**
      * Construtor do repositório.
      */
@@ -39,8 +37,6 @@ public class OracleHistoricoSaldoVeiculoDados extends OracleRepositorioBoleiaDad
         parametros.add(new ParametroPesquisaIgual("veiculo.excluido", Boolean.FALSE));
 
         InformacaoPaginacao paginacao = new InformacaoPaginacao();
-        paginacao.setPagina(1);
-        paginacao.setTamanhoPagina(TAMANHO_HISTORICO);
         paginacao.getParametrosOrdenacaoColuna().add(new ParametroOrdenacaoColuna("dataAlteracao", Ordenacao.DECRESCENTE));
         return pesquisar(paginacao, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
