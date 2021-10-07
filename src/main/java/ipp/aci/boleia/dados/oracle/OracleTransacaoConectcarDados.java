@@ -143,23 +143,13 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
                     " ORDER BY tc.dataTransacao ASC";
 
     private static final String QUERY_EXTRATO_VALE_PEDAGIO = 
-    		"SELECT DISTINCT new ipp.aci.boleia.dominio.vo.DiaValePedagioVo(TRUNC(tc.dataTransacao) as dia, " +
-    		"((SELECT creditoTotal FROM CondicoesComerciais WHERE frota.id = tc.frota.id) - " +
-    		"(SELECT NVL(SUM(valorTotal), 0) from TransacaoConectcar where frota.id = tc.frota.id and dataTransacao < trunc(tc.dataTransacao)) + " +
-    		"(SELECT NVL(SUM(valorTotal - valorMensalidade), 0) FROM CobrancaConectcar WHERE frota.id = tc.frota.id AND dataPagamento < trunc(tc.dataTransacao))) as saldoInicial, " +
-
-    		"(SELECT NVL(SUM(valorTotal), 0) from TransacaoConectcar where tipoTransacao IN (7) AND frota.id = tc.frota.id and trunc(dataTransacao) = trunc(tc.dataTransacao)) * -1 as creditosValePedagio, " +
-    		"(SELECT NVL(SUM(valorTotal), 0) from TransacaoConectcar where tipoTransacao NOT IN (7,8,9,10) AND frota.id = tc.frota.id and trunc(dataTransacao) = trunc(tc.dataTransacao)) as transacoesPfGo, " +
-    		"(SELECT NVL(SUM(valorTotal), 0) from TransacaoConectcar where tipoTransacao IN (8,9) AND frota.id = tc.frota.id and trunc(dataTransacao) = trunc(tc.dataTransacao)) as passagensValePedagio, " +
-    		"(SELECT NVL(SUM(valorTotal), 0) from TransacaoConectcar where tipoTransacao = 10 AND frota.id = tc.frota.id and trunc(dataTransacao) = trunc(tc.dataTransacao)) as estornosValePegadio, " +
-
-    		"((SELECT creditoTotal FROM CondicoesComerciais WHERE frota.id = tc.frota.id) - " +  
-    		"(SELECT NVL(SUM(valorTotal), 0) from TransacaoConectcar where frota.id = tc.frota.id and trunc(dataTransacao) <= trunc(tc.dataTransacao)) + " +
-    		"(SELECT NVL(SUM(valorTotal - valorMensalidade), 0) FROM CobrancaConectcar WHERE frota.id = tc.frota.id AND trunc(dataPagamento) <= trunc(tc.dataTransacao))) as saldoFinal) " +
-    		"FROM TransacaoConectcar tc " + 
+    		"SELECT new ipp.aci.boleia.dominio.vo.DiaValePedagioVo(TRUNC(tc.dataTransacao) as dia, " +
+    		"tc.valorTotal as valorTotalTransacao, tc.tipoTransacao as tipoTransacao,c.valorMensalidade as valorMensalidade," +
+            "c.valorTotal as valorTotalCobranca, c.dataPagamento as dataPagamentoCobranca,tc.dataTransacao as dataTransacao)" +
+            "FROM TransacaoConectcar as tc LEFT JOIN tc.cobranca as c "  +
     		"WHERE tc.frota.id = :idFrota " + 
     		"AND tc.dataTransacao BETWEEN :dataInicioPeriodo AND :dataFimPeriodo " + 
-    		"ORDER BY %s"; 
+    		"ORDER BY tc.dataTransacao DESC";
 
     @Autowired
     private UtilitarioAmbiente ambiente;
@@ -450,7 +440,7 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
 
         ParametroPesquisaIgual parametroDe = new ParametroPesquisaIgual("dataInicioPeriodo", null);
         ParametroPesquisaIgual parametroAte = new ParametroPesquisaIgual("dataFimPeriodo", null);
-        ParametroPesquisaIgual parametroFrota = criarParametroFrota(filtro, usuarioLogado);
+        ParametroPesquisaIgual parametroFrota = criarParametroFrota(filtro, ambiente.getUsuarioLogado());
 
         if (filtro.getDe() != null) {
             parametroDe = new ParametroPesquisaIgual("dataInicioPeriodo", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe()));
@@ -467,14 +457,13 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
         String ordenacao = criarParametroOrdenacao(filtro.getPaginacao() != null ? filtro.getPaginacao().getParametrosOrdenacaoColuna() : null);
         String consultaPesquisa = String.format(QUERY_EXTRATO_VALE_PEDAGIO, ordenacao);
         
-    	return pesquisar(filtro.getPaginacao(), consultaPesquisa, DiaValePedagioVo.class, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    	return pesquisar(null, consultaPesquisa, DiaValePedagioVo.class, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
     /**
      * Realiza a pesquisa de Transacoes Consolidadas através de um filtor
      *
      * @param filtro        parâmetros utilizados na consulta
-     * @param usuarioLogado usuário que está realizando a consulta
      * @return retorna o resultado paginado da consulta
      */
     @Override
