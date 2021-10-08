@@ -56,7 +56,7 @@ public class DiaValePedagioVo {
         this.creditosValePedagio = obterRecargasDeValePedagio().negate();
         this.transacoesPfGo = obterTransacoesDoPfGo();
         this.passagensValePedagio = obterTransacoesDeValePedagio();
-        this.estornosValePedagio = obterEstornoValePedagio();
+        this.estornosValePedagio = obterCancelamentoValePedagio();
     }
 
 	/**
@@ -80,9 +80,10 @@ public class DiaValePedagioVo {
 	 */
 	private BigDecimal obterTransacoesDeValePedagio() {
 		BigDecimal passagensValePedagio = BigDecimal.ZERO;
-		if(tipoTransacao.equals(TipoTransacaoConectcar.PASSAGEM_VALE_PEDAGIO.getValue())
-				||tipoTransacao.equals(TipoTransacaoConectcar.ESTORNO_VALE_PEDAGIO.getValue())){
+		if(tipoTransacao.equals(TipoTransacaoConectcar.PASSAGEM_VALE_PEDAGIO.getValue())){
 			passagensValePedagio = passagensValePedagio.add(valorTotalTransacao);
+		}else if(tipoTransacao.equals(TipoTransacaoConectcar.ESTORNO_VALE_PEDAGIO.getValue())){
+			passagensValePedagio = passagensValePedagio.subtract(valorTotalTransacao);
 		}
 		return  passagensValePedagio;
 	}
@@ -103,9 +104,9 @@ public class DiaValePedagioVo {
 	 * Método que obtem o total de estornos de VPO na transação
 	 * @return o total de estornos de VPO
 	 */
-	private BigDecimal obterEstornoValePedagio() {
+	private BigDecimal obterCancelamentoValePedagio() {
 		BigDecimal estornoValePedagio = BigDecimal.ZERO;
-		if(tipoTransacao.equals(TipoTransacaoConectcar.ESTORNO_VALE_PEDAGIO.getValue())){
+		if(tipoTransacao.equals(TipoTransacaoConectcar.CANCELAMENTO_VALE_PEDAGIO.getValue())){
 			estornoValePedagio = estornoValePedagio.add(valorTotalTransacao);
 		}
 		return  estornoValePedagio;
@@ -209,6 +210,10 @@ public class DiaValePedagioVo {
 
 	public BigDecimal getValorTotalCobranca() {
 		return valorTotalCobranca;
+	}
+
+	public void setValorTotalCobranca(BigDecimal valorTotalCobranca) {
+		this.valorTotalCobranca = valorTotalCobranca;
 	}
 
 	public Date getDataPagamentoCobranca() {
