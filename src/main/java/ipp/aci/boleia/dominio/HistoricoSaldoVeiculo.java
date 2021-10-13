@@ -333,7 +333,7 @@ public class HistoricoSaldoVeiculo implements IPersistente, IPertenceFrota {
      * @param mensal True se a cota do veículo for mensal
      * @return Valor do saldo disponível
      */
-    private BigDecimal saldoDisponivel(Boolean emLitros, Boolean mensal){
+    public BigDecimal saldoDisponivel(Boolean emLitros, Boolean mensal){
         return  (mensal == null || !mensal)
                 ? (emLitros ? getCotaLitrosAbastecimento() : getCotaValorAbastecimento())
                 : (emLitros ? getSaldoLitros() : getSaldoValor());
