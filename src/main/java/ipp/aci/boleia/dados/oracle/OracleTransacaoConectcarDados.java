@@ -151,6 +151,14 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
     		"AND tc.dataTransacao BETWEEN :dataInicioPeriodo AND :dataFimPeriodo " + 
     		"ORDER BY tc.dataTransacao DESC";
 
+    private static final String QUERY_TODAS_TRANSACOES_POR_FROTA=
+            "SELECT new ipp.aci.boleia.dominio.vo.DiaValePedagioVo(TRUNC(tc.dataTransacao) as dia, " +
+                    "tc.valorTotal as valorTotalTransacao, tc.tipoTransacao as tipoTransacao,c.valorMensalidade as valorMensalidade," +
+                    "c.valorTotal as valorTotalCobranca, c.dataPagamento as dataPagamentoCobranca,tc.dataTransacao as dataTransacao)" +
+                    "FROM TransacaoConectcar as tc LEFT JOIN tc.cobranca as c "  +
+                    "WHERE tc.frota.id = :idFrota " +
+                    "ORDER BY tc.dataTransacao DESC";
+
     @Autowired
     private UtilitarioAmbiente ambiente;
 
@@ -458,6 +466,27 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
         String consultaPesquisa = String.format(QUERY_EXTRATO_VALE_PEDAGIO, ordenacao);
         
     	return pesquisar(null, consultaPesquisa, DiaValePedagioVo.class, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+    /**
+     * Realiza a pesquisa de Transacoes  através de um filtor
+     *
+     * @param filtro        parâmetros utilizados na consulta
+     * @return retorna o resultado paginado da consulta
+     */
+    @Override
+    public ResultadoPaginado<DiaValePedagioVo> obterTodasAsTransacoesPorFrota(FiltroPesquisaExtratoValePedagioVo filtro, Usuario usuarioLogado) {
+
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+
+        ParametroPesquisaIgual parametroFrota = criarParametroFrota(filtro, ambiente.getUsuarioLogado());
+
+        parametros.add(parametroFrota);
+
+        String ordenacao = criarParametroOrdenacao(filtro.getPaginacao() != null ? filtro.getPaginacao().getParametrosOrdenacaoColuna() : null);
+        String consultaPesquisa = String.format(QUERY_TODAS_TRANSACOES_POR_FROTA, ordenacao);
+
+        return pesquisar(null, consultaPesquisa, DiaValePedagioVo.class, parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
     /**
