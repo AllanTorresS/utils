@@ -474,7 +474,6 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
      * Realiza a pesquisa de Transacoes Consolidadas através de um filtor
      *
      * @param filtro        parâmetros utilizados na consulta
-     * @param usuarioLogado usuário que está realizando a consulta
      * @return retorna o resultado paginado da consulta
      */
     @Override
