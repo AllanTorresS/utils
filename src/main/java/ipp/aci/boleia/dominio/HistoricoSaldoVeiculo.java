@@ -91,7 +91,6 @@ public class HistoricoSaldoVeiculo implements IPersistente, IPertenceFrota {
     @JoinColumn(name = "CD_VEICULO")
     private Veiculo veiculo;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_USUARIO")
     private Usuario usuario;
