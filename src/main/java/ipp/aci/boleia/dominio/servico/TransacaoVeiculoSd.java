@@ -228,7 +228,7 @@ public class TransacaoVeiculoSd {
         veiculo.setSaldoVeiculo(saldo);
         repositorioVeiculo.armazenar(veiculo);
         repositorioSaldo.armazenar(saldo);
-        historicoSaldoVeiculoSd.criarHistoricoSaldo(saldo, ambiente);
+        //historicoSaldoVeiculoSd.criarHistoricoSaldo(saldo, ambiente);
     }
 
 }
