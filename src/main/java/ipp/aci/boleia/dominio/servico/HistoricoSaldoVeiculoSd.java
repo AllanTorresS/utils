@@ -3,6 +3,9 @@ package ipp.aci.boleia.dominio.servico;
 import ipp.aci.boleia.dados.IHistoricoSaldoVeiculosDados;
 import ipp.aci.boleia.dominio.HistoricoSaldoVeiculo;
 import ipp.aci.boleia.dominio.SaldoVeiculo;
+import ipp.aci.boleia.dominio.Usuario;
+import ipp.aci.boleia.dominio.enums.TipoPerfilUsuario;
+import ipp.aci.boleia.dominio.enums.TipoTokenJwt;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -45,7 +48,10 @@ public class HistoricoSaldoVeiculoSd {
         historicoSaldoVeiculo.setVeiculo(saldo.getVeiculo());
         historicoSaldoVeiculo.setRenovarCotaVeiculoAgregadoAutomaticamente(saldo.getRenovarCotaVeiculoAgregadoAutomaticamente());
 
-        historicoSaldoVeiculo.setUsuario(ambiente.getUsuarioLogado());
+        Usuario usuarioLogado = ambiente.getUsuarioLogado();
+        if (usuarioLogado != null && usuarioLogado.getTipoTokenJwt() != null && (usuarioLogado.getTipoTokenJwt().equals(TipoTokenJwt.USUARIO_BOLEIA) || usuarioLogado.getTipoTokenJwt().getTipoPerfil() != null && !usuarioLogado.getTipoTokenJwt().getTipoPerfil().equals(TipoPerfilUsuario.SISTEMA_EXTERNO))) {
+            historicoSaldoVeiculo.setUsuario(usuarioLogado);
+        }
         historicoSaldoVeiculo.setDataAlteracao(ambiente.buscarDataAmbiente());
 
         repositorioHistoricoSaldoVeiculo.armazenar(historicoSaldoVeiculo);
