@@ -3,6 +3,7 @@ package ipp.aci.boleia.dominio.vo;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -23,6 +24,9 @@ public class DispositivoAllowMeVo {
 
     @JsonProperty("otp_activated")
     private Boolean otpActivated;
+
+    @JsonProperty("otp_activated_at")
+    private Date otpActivatedAt;
 
     @JsonProperty("qrcode_token")
     private String qrcodeToken;
@@ -75,6 +79,14 @@ public class DispositivoAllowMeVo {
 
     public void setOtpActivated(Boolean otpActivated) {
         this.otpActivated = otpActivated;
+    }
+
+    public Date getOtpActivatedAt() {
+        return otpActivatedAt;
+    }
+
+    public void setOtpActivatedAt(Date otpActivatedAt) {
+        this.otpActivatedAt = otpActivatedAt;
     }
 
     public String getQrcodeToken() {
