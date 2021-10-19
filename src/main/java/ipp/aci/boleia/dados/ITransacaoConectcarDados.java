@@ -3,6 +3,8 @@ package ipp.aci.boleia.dados;
 import ipp.aci.boleia.dominio.TransacaoConectcar;
 import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
+import ipp.aci.boleia.dominio.vo.DiaValePedagioVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaExtratoValePedagioVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaTransacaoConsolidadaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaUtilizacaoTagVo;
 
@@ -83,6 +85,14 @@ public interface ITransacaoConectcarDados extends IRepositorioBoleiaDados<Transa
     BigDecimal obterValorUtilizadoCiclo(Long idFrota);
 
     /**
+     * Obtem o crédito Vale Pedágio da frota
+     *
+     * @param idFrota código identificador da frota
+     * @return crédito Vale Pedágio da frota
+     */
+    BigDecimal obterCreditoValePedagio(Long idFrota);
+
+    /**
      * Executa a consulta de registros baseado em um filtro de pesquisa
      *
      * @param filtro parâmetros utilizados na consulta
@@ -106,4 +116,35 @@ public interface ITransacaoConectcarDados extends IRepositorioBoleiaDados<Transa
      */
     TransacaoConectcar obterPrimeiraTransacaoPorFrota(Long idFrota);
 
+    /**
+     * Obtém os vales pedágio que estão ativos para uma frota
+     *
+     * @param idFrota código identificador da frota
+     * @return lista de vales pedágio ativos para a frota
+     */
+    List<TransacaoConectcar> obterValesPedagioAtivos(Long idFrota);
+
+    /**
+     * Obtém os vales pedágio que estão ativos para uma frota
+     *
+     * @return lista de vales pedágio iniciando na data
+     */
+    List<TransacaoConectcar> obterValesPedagioTrocandoStatus();
+
+    /**
+     * Obtém os detalhes de um dia de vale pedágio
+     *
+     * @param filtro parâmetros utilizados na consulta
+     * @return lista de transações de vale pedágio do dia
+     */
+    List<TransacaoConectcar> obterDetalheValePedagio(FiltroPesquisaExtratoValePedagioVo filtro);
+
+    /**
+     * Obtém o extrato do vale pedágio
+     *
+     * @param filtro parâmetros utilizados na consulta
+     * @param usuarioLogado usuario logado que solicita a pesquisa
+     * @return extrato do vale pedágio
+     */
+    ResultadoPaginado<DiaValePedagioVo> obterExtratoValePedagio(FiltroPesquisaExtratoValePedagioVo filtro, Usuario usuarioLogado);
 }

@@ -73,6 +73,8 @@ public class HistoricoLiberacaoConectCar implements IPersistente {
     @Column(name="DT_TERMINO_TEMP")
     private Date terminoAtivacaoTemporaria;
 
+    @Column(name = "ID_TIPO_BLOQUEIO")
+    private String tipoBloqueio;
     
 	/**
      * Construtor default
@@ -186,6 +188,14 @@ public class HistoricoLiberacaoConectCar implements IPersistente {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	public String getTipoBloqueio() {
+		return tipoBloqueio;
+	}
+
+	public void setTipoBloqueio(String tipoBloqueio) {
+		this.tipoBloqueio = tipoBloqueio;
 	}
 
 }

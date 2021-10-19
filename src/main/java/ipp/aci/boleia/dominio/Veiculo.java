@@ -183,7 +183,7 @@ public class Veiculo implements IPersistente, IExclusaoLogica, IPertenceFrota {
     private Long versao;
 
     @NotNull
-    @Max(9999)
+    @Max(99999)
     @Column(name = "VO_CAPACIDADE")
     private Integer capacidadeTanque;
 

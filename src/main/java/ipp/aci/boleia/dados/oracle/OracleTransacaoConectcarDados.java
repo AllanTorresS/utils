@@ -13,7 +13,10 @@ import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMaiorOuIgu
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaDataMenorOuIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgualIgnoreCase;
+import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIn;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaNulo;
+import ipp.aci.boleia.dominio.vo.DiaValePedagioVo;
+import ipp.aci.boleia.dominio.vo.FiltroPesquisaExtratoValePedagioVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaTransacaoConsolidadaVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaUtilizacaoTagVo;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
@@ -27,6 +30,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -44,6 +48,7 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
                     " where " +
                     "     t.cobranca is null " +
                     "     and t.dataFimPeriodo < :hoje " +
+                    "     and (t.dataFimViagem is null or t.dataFimViagem < SYSDATE) " +
                     " order by t.dataFimPeriodo";
 
     private static final String CONSULTA_CONSOLIDADO_SEM_REEMBOLSO =
@@ -52,7 +57,8 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
                     "     JOIN FETCH t.frota fr  " +
                     " WHERE " +
                     "     t.reembolso IS NULL " +
-                    "     AND t.dataFimPeriodo < :primeiroDiaDoMes";
+                    "     AND t.dataFimPeriodo < :primeiroDiaDoMes " +
+                    "     AND (t.dataFimViagem is null or t.dataFimViagem < SYSDATE)";
 
     private static final String CONSULTA_PESQUISA_GRID =
             "SELECT TC " +
@@ -68,11 +74,29 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
                     " ORDER BY " +
                     "   TC.dataFimPeriodo";
 
+    private static final String CONSULTA_PESQUISA_DETALHE_VALE_PEDAGIO =
+            "SELECT TC " +
+                    " FROM TransacaoConectcar TC " +
+                    "   LEFT JOIN TC.frota F " +
+                    " WHERE TC.dataTransacao BETWEEN :inicioDia AND :fimDia " +
+                    "   AND F.id = :idFrota " +
+    				"   AND TC.tipoTransacao IN (7, 10)";
+
     private static final String QUERY_VALOR_UTILIZADO =
             "SELECT NVL(SUM(tc.valorTotal),0) " +
                     " FROM TransacaoConectcar tc " +
                     " LEFT JOIN tc.cobranca c " +
                     "WHERE tc.frota.id  = :idFrota " +
+                    "  AND (tc.dataFimViagem < SYSDATE OR tc.tipoTransacao NOT IN (7,8,9,10))" + 
+                    "  AND c.dataPagamento is null";
+
+    private static final String QUERY_CREDITO_VALE_PEDAGIO =
+            "SELECT NVL(SUM(tc.valorTotal),0) * -1 " +
+                    " FROM TransacaoConectcar tc " +
+                    " LEFT JOIN tc.cobranca c " +
+                    "WHERE tc.frota.id  = :idFrota " +
+                    "  AND tc.tipoTransacao IN (7,8,9,10)" +
+                    "  AND tc.dataFimViagem > SYSDATE" +
                     "  AND c.dataPagamento is null";
 
     private static final String QUERY_ULTIMA_TRANSACAO =
@@ -87,11 +111,55 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
                     " WHERE tc.frota.id = :idFrota " +
                     " ORDER BY tc.dataTransacao ASC";
 
+    private static final String QUERY_VALE_PEDAGIO_ATIVO =
+            "SELECT tc " +
+                    " FROM TransacaoConectcar tc " +
+                    " WHERE tc.frota.id = :idFrota " +
+                    " AND tc.tipoTransacao = 7" +
+                    " AND TRUNC(tc.dataInicioViagem) <= TRUNC(SYSDATE)" +
+                    " AND TRUNC(tc.dataFimViagem) >= TRUNC(SYSDATE)" +
+    		        " AND tc.codigoViagem NOT IN (" +
+    		 		"      SELECT tc1.codigoViagem" +
+    				"	   FROM TransacaoConectcar tc1" +
+    				"	   WHERE tc1.tipoTransacao = 10 AND tc1.frota.id = tc.frota.id AND tc1.codigoViagem = tc.codigoViagem)";
+
+    private static final String QUERY_VALE_PEDAGIO_TROCANDO_STATUS =
+            "SELECT tc " +
+                    " FROM TransacaoConectcar tc " +
+            		" LEFT JOIN FETCH tc.frota " +
+            		" LEFT JOIN FETCH tc.tag " +
+                    " WHERE tc.tipoTransacao = 7" +
+                    " AND (TRUNC(tc.dataInicioViagem) = TRUNC(SYSDATE)" +
+                    " OR TRUNC(tc.dataFimViagem) = TRUNC(SYSDATE) - 1)" +
+                    " AND tc.codigoViagem NOT IN (" +
+    		 		"      SELECT tc1.codigoViagem" +
+    				"	   FROM TransacaoConectcar tc1" +
+    				"	   WHERE tc1.tipoTransacao = 10 AND tc1.frota.id = tc.frota.id AND tc1.codigoViagem = tc.codigoViagem)";
+
     private static final String QUERY_TRANSACOES_DETALHE_COBRANCA =
             "SELECT tc " +
                     " FROM TransacaoConectcar tc " +
                     " WHERE tc.cobranca.id = :idCobranca " +
                     " ORDER BY tc.dataTransacao ASC";
+
+    private static final String QUERY_EXTRATO_VALE_PEDAGIO = 
+    		"SELECT DISTINCT new ipp.aci.boleia.dominio.vo.DiaValePedagioVo(TRUNC(tc.dataTransacao) as dia, " +
+    		"((SELECT creditoTotal FROM CondicoesComerciais WHERE frota.id = tc.frota.id) - " +
+    		"(SELECT NVL(SUM(valorTotal), 0) from TransacaoConectcar where frota.id = tc.frota.id and dataTransacao < trunc(tc.dataTransacao)) + " +
+    		"(SELECT NVL(SUM(valorTotal - valorMensalidade), 0) FROM CobrancaConectcar WHERE frota.id = tc.frota.id AND dataPagamento < trunc(tc.dataTransacao))) as saldoInicial, " +
+
+    		"(SELECT NVL(SUM(valorTotal), 0) from TransacaoConectcar where tipoTransacao IN (7) AND frota.id = tc.frota.id and trunc(dataTransacao) = trunc(tc.dataTransacao)) * -1 as creditosValePedagio, " +
+    		"(SELECT NVL(SUM(valorTotal), 0) from TransacaoConectcar where tipoTransacao NOT IN (7,8,9,10) AND frota.id = tc.frota.id and trunc(dataTransacao) = trunc(tc.dataTransacao)) as transacoesPfGo, " +
+    		"(SELECT NVL(SUM(valorTotal), 0) from TransacaoConectcar where tipoTransacao IN (8,9) AND frota.id = tc.frota.id and trunc(dataTransacao) = trunc(tc.dataTransacao)) as passagensValePedagio, " +
+    		"(SELECT NVL(SUM(valorTotal), 0) from TransacaoConectcar where tipoTransacao = 10 AND frota.id = tc.frota.id and trunc(dataTransacao) = trunc(tc.dataTransacao)) as estornosValePegadio, " +
+
+    		"((SELECT creditoTotal FROM CondicoesComerciais WHERE frota.id = tc.frota.id) - " +  
+    		"(SELECT NVL(SUM(valorTotal), 0) from TransacaoConectcar where frota.id = tc.frota.id and trunc(dataTransacao) <= trunc(tc.dataTransacao)) + " +
+    		"(SELECT NVL(SUM(valorTotal - valorMensalidade), 0) FROM CobrancaConectcar WHERE frota.id = tc.frota.id AND trunc(dataPagamento) <= trunc(tc.dataTransacao))) as saldoFinal) " +
+    		"FROM TransacaoConectcar tc " + 
+    		"WHERE tc.frota.id = :idFrota " + 
+    		"AND tc.dataTransacao BETWEEN :dataInicioPeriodo AND :dataFimPeriodo " + 
+    		"ORDER BY %s"; 
 
     @Autowired
     private UtilitarioAmbiente ambiente;
@@ -200,6 +268,22 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
         return parametroFrota;
     }
 
+    /**
+     * Cria um parametro para comparacao de frota a ser injetado na consulta
+     *
+     * @param filtro O filtro de pesquisa
+     * @return O parametro para a consulta
+     */
+    private ParametroPesquisaIgual criarParametroFrota(FiltroPesquisaExtratoValePedagioVo filtro, Usuario usuarioLogado) {
+        ParametroPesquisaIgual parametroFrota = new ParametroPesquisaIgual("idFrota", null);
+        if (usuarioLogado.isFrotista()) {
+            parametroFrota = new ParametroPesquisaIgual("idFrota", usuarioLogado.getFrota().getId());
+        } else if (filtro.getFrota() != null && filtro.getFrota().getId() > 0) {
+            parametroFrota = new ParametroPesquisaIgual("idFrota", filtro.getFrota().getId());
+        }
+        return parametroFrota;
+    }
+
     @Override
     public List<TransacaoConectcar> obterConsolidacoesSemNotaFiscalEntreDatas(
             Date dataIntervaloMin, Date dataIntervaloMax) {
@@ -259,10 +343,23 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
     }
 
     @Override
+    public BigDecimal obterCreditoValePedagio(Long idFrota) {
+        StringBuilder query = new StringBuilder(QUERY_CREDITO_VALE_PEDAGIO);
+
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaIgual("idFrota", idFrota));
+
+        return pesquisarUnicoSemIsolamentoDados(query.toString(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+    @Override
     public ResultadoPaginado<TransacaoConectcar> pesquisarUtilizacaoTag(
             FiltroPesquisaUtilizacaoTagVo filtro) {
         List<ParametroPesquisa> parametros = new ArrayList<>();
-
+        parametros.add(new ParametroPesquisaIn("tipoTransacao", Arrays.asList(new Integer[] {
+        		TipoTransacaoConectcar.RECARGA_VALE_PEDAGIO.getValue(), 
+        		TipoTransacaoConectcar.CANCELAMENTO_VALE_PEDAGIO.getValue()
+        }), true));
 
         if (filtro.getFrota() != null) {
             parametros.add(new ParametroPesquisaIgual("frota.id", filtro.getFrota().getId()));
@@ -344,6 +441,77 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
         } catch (NoResultException | IndexOutOfBoundsException e) {
             return null;
         }
+    }
+    
+    @Override
+    public ResultadoPaginado<DiaValePedagioVo> obterExtratoValePedagio(FiltroPesquisaExtratoValePedagioVo filtro, Usuario usuarioLogado) {
+    	
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+
+        ParametroPesquisaIgual parametroDe = new ParametroPesquisaIgual("dataInicioPeriodo", null);
+        ParametroPesquisaIgual parametroAte = new ParametroPesquisaIgual("dataFimPeriodo", null);
+        ParametroPesquisaIgual parametroFrota = criarParametroFrota(filtro, usuarioLogado);
+
+        if (filtro.getDe() != null) {
+            parametroDe = new ParametroPesquisaIgual("dataInicioPeriodo", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe()));
+        }
+
+        if (filtro.getAte() != null) {
+            parametroAte = new ParametroPesquisaIgual("dataFimPeriodo", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte()));
+        }
+
+        parametros.add(parametroDe);
+        parametros.add(parametroAte);
+        parametros.add(parametroFrota);
+    	
+        String ordenacao = criarParametroOrdenacao(filtro.getPaginacao() != null ? filtro.getPaginacao().getParametrosOrdenacaoColuna() : null);
+        String consultaPesquisa = String.format(QUERY_EXTRATO_VALE_PEDAGIO, ordenacao);
+        
+    	return pesquisar(filtro.getPaginacao(), consultaPesquisa, DiaValePedagioVo.class, parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+    /**
+     * Realiza a pesquisa de Transacoes Consolidadas através de um filtor
+     *
+     * @param filtro        parâmetros utilizados na consulta
+     * @return retorna o resultado paginado da consulta
+     */
+    @Override
+    public List<TransacaoConectcar> obterDetalheValePedagio(FiltroPesquisaExtratoValePedagioVo filtro) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+
+        parametros.add(new ParametroPesquisaIgual("inicioDia", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe())));
+        parametros.add(new ParametroPesquisaIgual("fimDia", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte())));
+        parametros.add(new ParametroPesquisaIgual("idFrota", filtro.getFrota().getId()));
+
+        return pesquisar(null, CONSULTA_PESQUISA_DETALHE_VALE_PEDAGIO, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+    }
+
+    /**
+     * Cria o parâmetro de ordenação para extrato Vale Pedágio
+     *
+     * @param parametrosOrdenacaoColuna Os critérios de ordenação do resultado definidos pelo usuário
+     * @return O parametro de ordenacao criado.
+     */
+    private String criarParametroOrdenacao(List<ParametroOrdenacaoColuna> parametrosOrdenacaoColuna) {
+        if (parametrosOrdenacaoColuna != null && !parametrosOrdenacaoColuna.isEmpty()) {
+            return parametrosOrdenacaoColuna.get(0).getNome() + " " + (parametrosOrdenacaoColuna.get(0).isDecrescente() ? "DESC" : "ASC");
+        }
+        return "dia DESC";
+    }
+
+    @Override
+    public List<TransacaoConectcar> obterValesPedagioAtivos(Long idFrota) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaIgual("idFrota", idFrota));
+
+        return pesquisar(null, QUERY_VALE_PEDAGIO_ATIVO, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+    }
+
+    @Override
+    public List<TransacaoConectcar> obterValesPedagioTrocandoStatus() {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        return pesquisar(null, QUERY_VALE_PEDAGIO_TROCANDO_STATUS, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
 
 }

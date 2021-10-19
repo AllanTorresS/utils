@@ -51,6 +51,9 @@ public class SituacaoConectCar implements IPersistente {
 
     @Column(name = "DS_ACAO")
     private String descricao;
+
+    @Column(name = "ID_TIPO_BLOQUEIO")
+    private String tipoBloqueio;
     
 	/**
      * Construtor default
@@ -152,6 +155,14 @@ public class SituacaoConectCar implements IPersistente {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	public String getTipoBloqueio() {
+		return tipoBloqueio;
+	}
+
+	public void setTipoBloqueio(String tipoBloqueio) {
+		this.tipoBloqueio = tipoBloqueio;
 	}
 
 }
