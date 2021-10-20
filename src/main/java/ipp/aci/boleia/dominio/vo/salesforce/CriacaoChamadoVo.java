@@ -2,7 +2,6 @@ package ipp.aci.boleia.dominio.vo.salesforce;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonRootName;
 
 /**
  * VO com as informações de um chamado do salesforce.

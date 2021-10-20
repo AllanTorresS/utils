@@ -3,8 +3,6 @@ package ipp.aci.boleia.dominio.vo.beneficios;
 import ipp.aci.boleia.dominio.pesquisa.comum.BaseFiltroPaginado;
 import ipp.aci.boleia.dominio.pesquisa.comum.FiltroBasePeriodoPaginado;
 
-import java.util.Date;
-
 /**
  * Vo com as informações usadas para buscar as operações relacionadas à conta de um beneficiário.
  *

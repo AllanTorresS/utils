@@ -1,7 +1,5 @@
 package ipp.aci.boleia.dominio.vo.salesforce;
 
-import java.util.Date;
-
 /**
  * Vo com os dados de acesso para uma integração para o salesforce.
  * 
