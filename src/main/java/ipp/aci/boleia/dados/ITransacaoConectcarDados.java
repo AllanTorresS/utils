@@ -155,4 +155,14 @@ public interface ITransacaoConectcarDados extends IRepositorioBoleiaDados<Transa
      * @return última transação sem cobrança por frota
      */
     TransacaoConectcar obterPrimeiraTransacaoSemCobrancaPorFrota(Long idFrota);
+
+    /**
+     * Obtém o todas as transações de uma frota
+     *
+     * @param filtro parâmetros utilizados na consulta
+     * @param usuarioLogado usuario logado que solicita a pesquisa
+     * @return trnasações da frota
+     */
+    ResultadoPaginado<DiaValePedagioVo> obterTodasAsTransacoesPorFrota(FiltroPesquisaExtratoValePedagioVo filtro, Usuario usuarioLogado);
+
 }
