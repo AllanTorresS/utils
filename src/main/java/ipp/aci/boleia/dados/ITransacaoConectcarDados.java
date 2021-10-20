@@ -147,4 +147,12 @@ public interface ITransacaoConectcarDados extends IRepositorioBoleiaDados<Transa
      * @return extrato do vale pedágio
      */
     ResultadoPaginado<DiaValePedagioVo> obterExtratoValePedagio(FiltroPesquisaExtratoValePedagioVo filtro, Usuario usuarioLogado);
+
+    /**
+     * Obtem a primeira transação sem cobrança por frota
+     *
+     * @param idFrota identificador da frota
+     * @return última transação sem cobrança por frota
+     */
+    TransacaoConectcar obterPrimeiraTransacaoSemCobrancaPorFrota(Long idFrota);
 }

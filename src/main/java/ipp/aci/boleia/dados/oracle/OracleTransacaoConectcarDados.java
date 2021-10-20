@@ -161,6 +161,13 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
     		"AND tc.dataTransacao BETWEEN :dataInicioPeriodo AND :dataFimPeriodo " + 
     		"ORDER BY %s"; 
 
+    private static final String QUERY_PRIMEIRA_TRANSACAO_SEM_COBRANCA_DA_FROTA =
+            "SELECT tc " +
+                    " FROM TransacaoConectcar tc " +
+                    " WHERE tc.frota.id  = :idFrota " +
+                    " AND tc.cobranca IS NULL " +
+                    " ORDER BY tc.dataFimPeriodo ASC";
+
     @Autowired
     private UtilitarioAmbiente ambiente;
 
@@ -514,4 +521,21 @@ public class OracleTransacaoConectcarDados extends OracleRepositorioBoleiaDados<
         return pesquisar(null, QUERY_VALE_PEDAGIO_TROCANDO_STATUS, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
 
+    /**
+     * Realiza a pesquisa da primeira transacao sem cobranca através de um filtro
+     *
+     * @param idFrota Identificador da frota.
+     * @return a ultima transacao sem cobranca
+     */
+    public TransacaoConectcar obterPrimeiraTransacaoSemCobrancaPorFrota(Long idFrota) {
+        Query query = getGerenciadorDeEntidade().createQuery(QUERY_PRIMEIRA_TRANSACAO_SEM_COBRANCA_DA_FROTA);
+        query.setParameter("idFrota", idFrota);
+        query.setMaxResults(1);
+
+        try {
+            return (TransacaoConectcar) query.getResultList().get(0);
+        } catch (NoResultException | IndexOutOfBoundsException e) {
+            return null;
+        }
+    }
 }
