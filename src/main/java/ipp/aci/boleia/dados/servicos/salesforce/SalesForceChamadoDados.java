@@ -848,18 +848,4 @@ public class SalesForceChamadoDados extends AcessoSalesForceBase implements ICha
             throw new ExcecaoBoleiaRuntime(e);
         }
     }
-
-    /**
-     * Limita um campo a ser enviado no chamado
-     *
-     * @param campo O valor do campo
-     * @param limite O limite de caracteres desejado
-     * @return O campo limitado, caso necessario
-     */
-    private String limitar(String campo, int limite) {
-        if(campo != null && campo.length() > limite) {
-            campo = campo.substring(0, limite);
-        }
-        return campo;
-    }
 }
