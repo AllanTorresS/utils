@@ -34,6 +34,8 @@ import java.util.List;
 @Table(name = "CLONAGEM_PERFIL")
 public class ClonagemPerfil implements IPersistente{
 
+    private static final long serialVersionUID = -122447883859092918L;
+
     @Id
     @Column(name = "CD_CLONAGEM_PERFIL")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_CLONAGEM_PERFIL")

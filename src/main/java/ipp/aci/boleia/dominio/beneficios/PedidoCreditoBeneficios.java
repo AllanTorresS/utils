@@ -36,6 +36,8 @@ import java.util.List;
 @Table(name = "PEDIDO_CREDITO_BENEFICIOS")
 public class PedidoCreditoBeneficios implements IPersistente, IPertenceFrota {
 
+    private static final long serialVersionUID = -8815657776384946157L;
+
     @Id
     @Column(name = "CD_PEDIDO_CREDITO_BENEFICIOS")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_PEDIDO_CREDITO_BENEFICIOS")

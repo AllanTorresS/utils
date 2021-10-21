@@ -36,6 +36,8 @@ import java.util.List;
 @Table(name = "BENEFICIARIO")
 public class Beneficiario implements IPersistente, IExclusaoLogica, IPertenceFrota {
 
+    private static final long serialVersionUID = -718675607021974344L;
+
     /**
      * Formula utilizada para permitir a ordenação direta pelo "Possui Saldo".
      */

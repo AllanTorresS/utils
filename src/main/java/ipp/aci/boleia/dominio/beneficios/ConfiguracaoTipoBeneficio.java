@@ -27,6 +27,8 @@ import java.util.Date;
 @Table(name = "CONFIG_TIPO_BENEFICIO")
 public class ConfiguracaoTipoBeneficio implements IPersistente {
 
+    private static final long serialVersionUID = -5530489013923608297L;
+
     @Id
     @Column(name = "CD_CONFIG_TIPO_BENEFICIO")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_CONFIG_TIPO_BENEFICIO")

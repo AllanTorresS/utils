@@ -21,6 +21,8 @@ import javax.validation.constraints.Size;
 @Table(name = "MOTIVO_CLONAGEM")
 public class MotivoClonagem implements IPersistente {
 
+    private static final long serialVersionUID = -419724588512937598L;
+
     @Id
     @Column(name = "CD_MOTIVO_CLONAGEM")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_MOTIVO_CLONAGEM")

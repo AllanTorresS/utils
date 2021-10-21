@@ -26,6 +26,8 @@ import java.util.Date;
 @Table(name = "AG_FRETE_TAXA_POSTO")
 public class AgenciadorFreteTaxaPosto implements IPersistente {
 
+    private static final long serialVersionUID = -8596930392886580525L;
+    
     @Id
     @Column(name = "CD_AG_FRETE_TAXA_POSTO")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_AG_FRETE_TAXA_POSTO")

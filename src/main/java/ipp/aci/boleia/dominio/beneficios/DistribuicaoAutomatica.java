@@ -30,6 +30,8 @@ import java.util.Date;
 @Table(name = "DISTRIBUICAO_AUTOMATICA")
 public class DistribuicaoAutomatica implements IPersistente {
 
+    private static final long serialVersionUID = 2717567138847221394L;
+
     @Id
     @Column(name = "CD_DISTRIBUICAO_AUTOMATICA")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_DISTRIBUICAO_AUTOMATICA")
