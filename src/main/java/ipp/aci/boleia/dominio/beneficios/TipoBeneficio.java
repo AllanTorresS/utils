@@ -27,6 +27,8 @@ import java.util.List;
 @Table(name = "TIPO_BENEFICIO")
 public class TipoBeneficio implements IPersistente {
 
+    private static final long serialVersionUID = 5725239062801743609L;
+
     @Id
     @Column(name = "CD_TIPO_BENEFICIO")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_TIPO_BENEFICIO")

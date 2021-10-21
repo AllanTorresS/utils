@@ -30,6 +30,8 @@ import java.util.List;
 @Table(name = "CONTA_BENEFICIARIO")
 public class ContaBeneficiario implements IPersistente {
 
+    private static final long serialVersionUID = -3754261212845174880L;
+
     @Id
     @Column(name = "CD_CONTA_BENEFICIARIO")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_CONTA_BENEFICIARIO")
