@@ -90,6 +90,12 @@ public class ConectCarDados extends AcessoSalesForceBase implements ILeadConectC
 		return this.statusCode == HttpStatus.CREATED.value() && this.responseBody.get(CAMPO_SUCESSO).asBoolean();
 	}
 	
+	/**
+	 * Tratamento da resposta da solicitação de um lead ao SalesForce
+	 * 
+	 * @param httpResponse A resposta recebida do Salesforce.
+	 * @return Vo com as informações da solicitacao.
+	 */
 	private SolicitacaoLeadExtVo tratarConsultaAccount(CloseableHttpResponse httpResponse) {
 		prepararResposta(httpResponse);
 		if (this.statusCode == HttpStatus.OK.value()) {
