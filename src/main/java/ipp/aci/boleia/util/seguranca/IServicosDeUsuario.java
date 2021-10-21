@@ -96,6 +96,7 @@ public interface IServicosDeUsuario {
      * Desvincular os perfis temporários já expirados para um usuário.
      *
      * @param usuario usuário que terá os perfis desvinculados.
+     * @return O usuário que teve os perfis desvinculados.
      */
     Usuario desvincularPerfisTemporariosExpirados(Usuario usuario);
 }

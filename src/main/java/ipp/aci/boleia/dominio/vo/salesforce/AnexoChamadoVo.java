@@ -78,7 +78,7 @@ public class AnexoChamadoVo {
     }
 
     /**
-     * Realiza o mapeamento das informações de criação do comentário.
+     * Realiza o mapeamento das informações de anexo de um documento.
      *
      * @param contentDocument Mapa com as informações da criação.
      */
@@ -91,10 +91,10 @@ public class AnexoChamadoVo {
         mapearLatestPublishedVersion((LinkedHashMap) contentDocument.get("LatestPublishedVersion"));
     }
 
-        /**
-     * Realiza o mapeamento das informações de criação do comentário.
+    /**
+     * Realiza o mapeamento do usuário que realizou o upload.
      *
-     * @param contentDocument Mapa com as informações da criação.
+     * @param owner o usuário que realizou o upload.
      */
     @JsonProperty("Owner")
     private void mapearOwner(Map<String, Object> owner) {
@@ -103,9 +103,9 @@ public class AnexoChamadoVo {
     }
 
     /**
-     * Realiza o mapeamento das informações de criação do comentário.
+     * Realiza o mapeamento da versão do anexo.
      *
-     * @param contentDocument Mapa com as informações da criação.
+     * @param version a versão do anexo.
      */
     @JsonProperty("LatestPublishedVersion")
     private void mapearLatestPublishedVersion(Map<String, Object> version) {

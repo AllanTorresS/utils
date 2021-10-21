@@ -21,6 +21,9 @@ import javax.validation.constraints.DecimalMin;
 import java.math.BigDecimal;
 import java.util.Date;
 
+/**
+ * Representa a tabela de Taxa Posto
+ */
 @Entity
 @Audited
 @Table(name = "AG_FRETE_TAXA_POSTO")

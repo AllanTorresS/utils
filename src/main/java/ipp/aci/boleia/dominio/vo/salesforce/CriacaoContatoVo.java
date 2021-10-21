@@ -50,6 +50,9 @@ public class CriacaoContatoVo {
         this.cnpj = cnpj;
     }
 
+    /**
+     * Obtém o identificador externo do contato
+     */
     @JsonProperty("IdExterno__c")
     public String obterIdExterno() {
         return cpf.concat(cnpj);

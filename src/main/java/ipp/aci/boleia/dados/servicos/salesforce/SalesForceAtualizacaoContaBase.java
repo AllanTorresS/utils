@@ -54,6 +54,7 @@ public class SalesForceAtualizacaoContaBase extends AcessoSalesForceBase {
      * Tratamento da resposta à requisição de atualização de conta do Salesforce.
      *
      * @param httpResponse A resposta recebida do Salesforce.
+     * @return true em caso sucesso na requisição, caso contrario false.
      */
     protected boolean tratarAtualizacaoConta(CloseableHttpResponse httpResponse) {
         prepararResposta(httpResponse);

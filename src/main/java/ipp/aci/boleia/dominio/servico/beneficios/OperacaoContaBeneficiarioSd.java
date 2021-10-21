@@ -33,6 +33,7 @@ public class OperacaoContaBeneficiarioSd {
      *
      * @param contaBeneficiario a conta que sofreu a operação.
      * @param valorOperacao o valor da operação.
+     * @param usuarioAutor o usuário que está criando a operação.
      * @return operação criada.
      *
      * @throws ExcecaoValidacao lançada caso seja passado um valor menor ou igual a zero para a criação do crédito.

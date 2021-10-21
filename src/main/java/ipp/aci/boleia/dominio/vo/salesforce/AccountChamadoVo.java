@@ -18,6 +18,11 @@ public class AccountChamadoVo {
     public AccountChamadoVo() {
     }
 
+    /**
+     * Construtor do Vo
+     * 
+     * @param idExterno Identificador externo do contato
+     **/
     public AccountChamadoVo(String idExterno) {
         this.idExterno = idExterno;
     }
