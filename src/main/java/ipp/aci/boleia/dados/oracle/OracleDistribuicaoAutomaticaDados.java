@@ -4,7 +4,6 @@ import ipp.aci.boleia.dados.IDistribuicaoAutomaticaDados;
 import ipp.aci.boleia.dominio.beneficios.DistribuicaoAutomatica;
 import ipp.aci.boleia.dominio.pesquisa.comum.ParametroPesquisa;
 import ipp.aci.boleia.dominio.pesquisa.parametro.ParametroPesquisaIgual;
-import ipp.aci.boleia.util.UtilitarioCalculoData;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;

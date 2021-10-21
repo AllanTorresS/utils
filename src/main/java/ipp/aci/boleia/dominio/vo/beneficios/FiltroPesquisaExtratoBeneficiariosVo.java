@@ -1,6 +1,5 @@
 package ipp.aci.boleia.dominio.vo.beneficios;
 
-import ipp.aci.boleia.dominio.pesquisa.comum.BaseFiltroPaginado;
 import ipp.aci.boleia.dominio.pesquisa.comum.FiltroBasePeriodoPaginado;
 
 /**

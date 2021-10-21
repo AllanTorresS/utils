@@ -4,7 +4,6 @@ import ipp.aci.boleia.dados.IBeneficiarioDados;
 import ipp.aci.boleia.dominio.Frota;
 import ipp.aci.boleia.dominio.beneficios.ConfiguracaoDistribuicaoAutomatica;
 import ipp.aci.boleia.dominio.beneficios.DistribuicaoAutomatica;
-import ipp.aci.boleia.dominio.vo.beneficios.DistribuicaoBeneficioVo;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
 import org.springframework.beans.factory.annotation.Autowired;
