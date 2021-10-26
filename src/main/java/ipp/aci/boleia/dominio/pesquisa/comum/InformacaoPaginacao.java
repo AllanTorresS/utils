@@ -1,5 +1,6 @@
 package ipp.aci.boleia.dominio.pesquisa.comum;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import ipp.aci.boleia.util.Ordenacao;
 
 import javax.persistence.Transient;
@@ -173,6 +174,7 @@ public class InformacaoPaginacao {
 	 * @return valor de offset.
 	 */
 	@Transient
+	@JsonIgnore
 	public Integer getOffset() {
 		return (pagina * tamanhoPagina) - tamanhoPagina;
 	}
