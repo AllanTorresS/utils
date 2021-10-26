@@ -1,6 +1,5 @@
 package ipp.aci.boleia.dados;
 
-import ipp.aci.boleia.dominio.Usuario;
 import ipp.aci.boleia.dominio.UsuarioPerfil;
 
 /**
