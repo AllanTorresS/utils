@@ -42,8 +42,9 @@ public class DetalhesRepasseVo {
 	 * Gera as linhas da tabela do relatorio agrupadas por Produto
 	 * @param dataBase a data Mês / Ano
 	 * @param nomeProduto o nome do produto o qual os precos e detalhes são agrupados
-	 * @param  precosAgrupados o preço de todos os produtos iguais para um mesmo posto e ciclo
-	 * @param  repasse o Ciclo de Repasse
+	 * @param precosAgrupados o preço de todos os produtos iguais para um mesmo posto e ciclo
+	 * @param repasse o Ciclo de Repasse
+	 * @param nomesProdutosAbastecimento Nomes dos produtos abastecidos
 	 */
 	public DetalhesRepasseVo(Date dataBase, String nomeProduto, BigDecimal precosAgrupados, CicloRepasse repasse, Set<String> nomesProdutosAbastecimento){
 		this.mes = MesAno.obterNomePorMes(Integer.parseInt(UtilitarioFormatacaoData.formatarDataMes(dataBase))-1);

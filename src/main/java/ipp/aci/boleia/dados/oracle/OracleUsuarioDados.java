@@ -17,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.Query;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -67,6 +68,32 @@ public class OracleUsuarioDados extends OracleRepositorioBoleiaDados<Usuario> im
      */
     public OracleUsuarioDados() {
         super(Usuario.class);
+    }
+
+    @Override
+    public Usuario obterFrotistaPorCpfECnpj(Long cpfUsuario, Long cnpjFrota) {
+        List<ParametroPesquisa> parametrosPesquisa = new ArrayList<>();
+        parametrosPesquisa.add(new ParametroPesquisaIgual("tipoPerfil.id", TipoPerfilUsuario.FROTA.getValue()));
+        parametrosPesquisa.add(new ParametroPesquisaIgual("cpf", cpfUsuario));
+        parametrosPesquisa.add(new ParametroPesquisaIgual("frota.cnpj", cnpjFrota));
+        return pesquisarUnicoSemIsolamentoDados(parametrosPesquisa.toArray(new ParametroPesquisa[parametrosPesquisa.size()]));
+    }
+
+    @Override
+    public Usuario obterRevendedorPorCpfECnpj(Long cpfUsuario, Long cnpjRevenda) {
+        List<ParametroPesquisa> parametrosPesquisa = new ArrayList<>();
+        parametrosPesquisa.add(new ParametroPesquisaIgual("tipoPerfil.id", TipoPerfilUsuario.REVENDA.getValue()));
+        parametrosPesquisa.add(new ParametroPesquisaIgual("cpf", cpfUsuario));
+        parametrosPesquisa.add(new ParametroPesquisaIgual("pontosDeVenda.cnpj", cnpjRevenda));
+        return pesquisarUnicoSemIsolamentoDados(parametrosPesquisa.toArray(new ParametroPesquisa[parametrosPesquisa.size()]));
+    }
+
+    @Override
+    public Usuario obterInternoPorCpf(Long cpfUsuario) {
+        List<ParametroPesquisa> parametrosPesquisa = new ArrayList<>();
+        parametrosPesquisa.add(new ParametroPesquisaIgual("tipoPerfil.id", TipoPerfilUsuario.INTERNO.getValue()));
+        parametrosPesquisa.add(new ParametroPesquisaIgual("cpf", cpfUsuario));
+        return pesquisarUnicoSemIsolamentoDados(parametrosPesquisa.toArray(new ParametroPesquisa[parametrosPesquisa.size()]));
     }
 
     @Override

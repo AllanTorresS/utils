@@ -347,8 +347,15 @@ public interface ITransacaoConsolidadaDados extends IRepositorioBoleiaDados<Tran
 
     /**
      * Busca uma lista de datas de vencimento disponíveis para antecipação
-     * @param idPv id do ponto de venda
+     * @param filtro o filtro que define onde devem ser buscadas as datas de vencimento
      * @return a lista com as datas de vencimento
      */
-    List<Date> obterDatasVencimentoDisponiveisAntecipacao(Long idPv);
+    List<Date> obterDatasVencimentoDisponiveisAntecipacao(FiltroPesquisaDetalheCicloVo filtro);
+
+    /**
+     * Obtém o total antecipado líquido dentro de um período
+     * @param filtro o filtro da tela de detalhe do ciclo
+     * @return o total antecipado no período
+     */
+    BigDecimal obterTotalAntecipadoNoPeriodo(FiltroPesquisaDetalheCicloVo filtro);
 }

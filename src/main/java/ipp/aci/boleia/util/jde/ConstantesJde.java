@@ -24,7 +24,7 @@ public final class ConstantesJde {
     public static final Long VOUCHER_INDICE_CONTA_CONTABIL_POS_PAGO = 1L;
     public static final Long VOUCHER_INDICE_CONTA_CONTABIL_PRE_PAGO = 3L;
     public static final Long VOUCHER_INDICE_CONTA_CONTABIL_MDR = 2L;
-    public static final Long VOUCHER_INDICE_CONTA_CONTABIL_TAXA_ANTECIPACAO = 4L;
+    public static final Long VOUCHER_INDICE_CONTA_CONTABIL_XP = 4L;
     public static final String VOUCHER_OBSERVACAO_POS_PAGO = "REEMBOLSO PRO FROTAS";
     public static final String VOUCHER_OBSERVACAO_PRE_PAGO = "PRE PAGO PRO FROTAS";
     public static final String VOUCHER_OBSERVACAO_MDR_REEMBOLSO = "MDR";
@@ -43,6 +43,10 @@ public final class ConstantesJde {
     public static final String VOUCHER_CONTAS_PAGAR_CIA_DOCUMENTO = COMPANHIA;
     public static final String VOUCHER_CONTAS_PAGAR_TIPO_DOCUMENTO = "PV";
     public static final String VOUCHER_CONTAS_PAGAR_LINHA_DOCUMENTO = "001";
+
+    public static final Integer CREDITO_FROTA_BENEFICIO_CENARIO = 140;
+    public static final String CREDITO_FROTA_BENEFICIO_TIPO_DOCUMENTO = "F0";
+    public static final String CREDITO_FROTA_BENEFICIO_OBSERVACAO = "CRÉDITO BENEFÍCIOS";
 
     public static final Integer CREDITO_FROTA_CENARIO = 186;
     public static final String CREDITO_FROTA_TIPO_DOCUMENTO = "D4";
@@ -112,7 +116,7 @@ public final class ConstantesJde {
     public static final Long VOUCHER_XP_INDICE_CONTA_CONTABIL = 5L;
     public static final String VOUCHER_XP_OBSERVACAO_REEMBOLSO = "REEMBOLSO XP";
 
-    public static final String VOUCHER_OBSERVACAO_ANTECIPACAO_XP = "ANTECIPACAO DE RECEBIVEIS";
+    public static final String VOUCHER_OBSERVACAO_ANTECIPACAO_XP = "ANTECIPAÇÃO DE RECEBÍVEIS";
 
     /**
      * Impede instanciacao e heranca

@@ -14,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
 import java.util.List;
@@ -55,6 +56,13 @@ public class TagConectcar implements IPersistente, IExclusaoLogicaComData{
 	@Where(clause = "ID_EXCLUIDO = 0 AND ID_STATUS = 1")
 	private List<Veiculo> veiculos;
 
+	@NotNull
+    @Column(name = "ID_TIPO_UTILIZACAO")
+    private Integer tipoUtilizacao;
+
+    @Column(name = "ID_TIPO_BLOQUEIO")
+    private String tipoBloqueio;
+
 	/**
 	 * Construtor padrão da entidade.
 	 */
@@ -62,6 +70,8 @@ public class TagConectcar implements IPersistente, IExclusaoLogicaComData{
 
 	/**
 	 * Construtor por ID e data de ativação
+	 * @param id Identificador da tag
+	 * @param dataExclusao Data de exclusão da tag
 	 */
 	public TagConectcar(Long id, Date dataExclusao) {
 		this.id = id;
@@ -169,6 +179,22 @@ public class TagConectcar implements IPersistente, IExclusaoLogicaComData{
 		} else {
 			return id.equals(other.id);
 		}
+	}
+
+	public Integer getTipoUtilizacao() {
+		return tipoUtilizacao;
+	}
+
+	public void setTipoUtilizacao(Integer tipoUtilizacao) {
+		this.tipoUtilizacao = tipoUtilizacao;
+	}
+
+	public String getTipoBloqueio() {
+		return tipoBloqueio;
+	}
+
+	public void setTipoBloqueio(String tipoBloqueio) {
+		this.tipoBloqueio = tipoBloqueio;
 	}
 
 }

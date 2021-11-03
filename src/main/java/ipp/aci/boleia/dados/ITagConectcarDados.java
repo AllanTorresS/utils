@@ -1,5 +1,7 @@
 package ipp.aci.boleia.dados;
 
+import java.util.List;
+
 import ipp.aci.boleia.dominio.TagConectcar;
 import ipp.aci.boleia.dominio.pesquisa.comum.ResultadoPaginado;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaTagConectcarVo;
@@ -18,8 +20,7 @@ public interface ITagConectcarDados extends IRepositorioBoleiaDados<TagConectcar
      * @return quantidade de tags
      */
     long obterQuantidadeTotalTags(Long codigoFrota);
-    
-    
+
     /**
      * Pesquisa a quantidade total de tags de uma frota
      *
@@ -27,13 +28,12 @@ public interface ITagConectcarDados extends IRepositorioBoleiaDados<TagConectcar
      * @return quantidade de tags
      */
     long obterQuantidadeTotalTagsAtivas(Long codigoFrota);
-    
-    
+
     /**
      * Obtem a primeira tag ativa de uma frota, utilizado para calcular o ciclo de uma frota 
      * na criação de uma transacao
      * 
-     * param idFrota código identificador da frota
+     * @param idFrota código identificador da frota
      * @return tag encontrada
      */
     TagConectcar obtemPrimeiraTagAtivaPorFrota(Long idFrota);
@@ -45,4 +45,21 @@ public interface ITagConectcarDados extends IRepositorioBoleiaDados<TagConectcar
      * @return tag encontrada
      */
     TagConectcar obterTagPorId(Long idTag);
+    
+    /**
+     * Obtem as tags ativas de uma frota
+     *
+     * @param codigoFrota código identificador
+     * @return tags ativas
+     */
+    List<TagConectcar> obterTagsAtivas(Long codigoFrota);
+
+    /**
+     * Obtem as tags bloqueadas em lote de uma frota
+     *
+     * @param codigoFrota código identificador
+     * @return tags bloqueadas em lote
+     */
+    List<TagConectcar> obterTagsBloqueadasEmLote(Long codigoFrota);
+
 }

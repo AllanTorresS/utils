@@ -41,8 +41,7 @@ public class OracleNotificacaoUsuarioDados extends OracleRepositorioBoleiaDados<
             "FROM ipp.aci.boleia.dominio.Notificacao n " +
             "WHERE n.subcategoria.categoria.id = :categoriaId ) ";
 
-    private static final String EXCLUIR_NOTIFICACOES_POR_DATA_LIMITE = "UPDATE ipp.aci.boleia.dominio.NotificacaoUsuario AS nu " +
-            "SET nu.excluido = 1 " +
+    private static final String EXCLUIR_NOTIFICACOES_POR_DATA_LIMITE = "DELETE FROM ipp.aci.boleia.dominio.NotificacaoUsuario AS nu " +
             "WHERE nu.notificacao.id in (SELECT n.id " +
             "FROM ipp.aci.boleia.dominio.Notificacao n " +
             "WHERE n.dataEnvio <= :dataLimite ) ";

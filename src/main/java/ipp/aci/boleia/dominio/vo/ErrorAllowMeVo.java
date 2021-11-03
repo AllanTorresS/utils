@@ -1,10 +1,12 @@
 package ipp.aci.boleia.dominio.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Classe com informacoes relacionadas as mensagens de erro do sistema Allow Me
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ErrorAllowMeVo {
 
     @JsonProperty("error_code")

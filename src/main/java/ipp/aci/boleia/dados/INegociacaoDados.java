@@ -25,6 +25,7 @@ public interface INegociacaoDados extends IRepositorioBoleiaDados<Negociacao> {
      * Pesquisa Negociacao paginada a partir do filtro informado
      *
      * @param filtro O filtro da busca com usuario logado
+     * @param usuarioLogado Usuário autenticado no sistema
      * @return Uma lista de ResultadoPaginado localizadas
      */
     ResultadoPaginado<Negociacao> pesquisaPaginadaValidacaoSegregacao(FiltroPesquisaNegociacaoVo filtro, Usuario usuarioLogado);

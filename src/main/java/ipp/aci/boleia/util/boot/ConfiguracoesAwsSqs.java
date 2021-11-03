@@ -63,6 +63,12 @@ public class ConfiguracoesAwsSqs {
     private String nomeFilaAutorizacaoPagamentoConsolidacao;
 
     /**
+     * nome da fila que será acessada de envio de emails
+     */
+    @Value("${aws.sqs.envio-email-status-frota}")
+    private String nomeFilaEmailsAlteracaoStatusFrota;
+
+    /**
      * nome da fila que conterá as transações consolidadas
      */
     @Value("${aws.sqs.transacao-consolidada.processar-ciclo}")
@@ -134,6 +140,9 @@ public class ConfiguracoesAwsSqs {
     @Value("${aws.sqs.processar-proposta-antecipacao}")
     private String nomeFilaProcessarPropostaAntecipacao;
 
+    @Value("${aws.sqs.beneficios.distribuicao-automatica}")
+    private String nomeFilaDistribuicaoAutomaticaBeneficios;
+
     /**
      * Carrega as mensagens do sistema
      */
@@ -182,7 +191,9 @@ public class ConfiguracoesAwsSqs {
                         ,nomeFilaProcessarCicloPostergacao
                         ,nomeFilaAnonimizacaMotorista
                         ,nomeFilaAnonimizacaoExclusaoMotoristaAuditoria
-                        ,nomeFilaProcessarPropostaAntecipacao);
+                        ,nomeFilaProcessarPropostaAntecipacao
+                        ,nomeFilaDistribuicaoAutomaticaBeneficios
+                        ,nomeFilaEmailsAlteracaoStatusFrota);
         criaFilaSeNaoExistem(amazonSQSAsync, nomeFilas);
         return new QueueMessagingTemplate(amazonSQSAsync);
     }
@@ -304,7 +315,7 @@ public class ConfiguracoesAwsSqs {
 
     private String getMessageTimeoutPorNomeFila(String nomeFila) {
         if (nomeFilaAnonimizacaoExclusaoMotoristaAuditoria.equals(nomeFila)) {
-            return "120";
+            return "180";
         }
         return MESSAGE_TIMEOUT_PADRAO;
     }

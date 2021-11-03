@@ -115,9 +115,10 @@ public class NotaFiscalParserSd {
      *
      * @param documento documento que representa o Xml da nota parseada
      * @param caminho O caminho de nos no XML da nota
+     * @param node O nó onde o campo será buscado
      * @return O valor obtido
      */
-    public Long getLong(Document documento,String caminho, Node node) {
+    public Long getLong(Document documento, String caminho, Node node) {
         if(caminho != null) {
             try {
                 return Long.parseLong(getString(documento, caminho, node).trim(), 10);
@@ -153,6 +154,7 @@ public class NotaFiscalParserSd {
      *
      * @param documento documento que representa o Xml da nota parseada
      * @param caminho O caminho de nos no XML da nota
+     * @param node O nó onde o campo será buscado
      * @return O valor obtido
      */
     public BigDecimal getBigDecimal(Document documento, String caminho, Node node) {

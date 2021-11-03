@@ -64,7 +64,9 @@ public class AgrupamentoTransacaoConsolidadaCobrancaVo {
      * @param statusPagamento O status de pagamento da cobrança
      * @param quantidadeAbastecimentos A quantidade de abastecimentos na cobrança
      * @param dataVencimento A data de vencimento da cobrança
+     * @param dataLimitePagamento Data limite para o pagamento da cobrança
      * @param statusIntegracao o status da integração da cobrança
+     * @param mensagemErroIntegracao Mensagem de erro da integração com o JDE
      * @param idCobranca o id da cobrança
      * @param ultimaCobrancaFrota Flag informando se a cobrança é a ultima gerada para a frota
      * @param numeroDocumento o número de documento da cobrança

@@ -5,11 +5,9 @@ import org.hibernate.envers.Audited;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -59,9 +57,6 @@ public class ReembolsoXP implements IPersistente {
 
     @Column(name = "DS_MSG_ERRO")
     private String mensagemErro;
-
-    @OneToOne(mappedBy = "reembolsoXp", fetch = FetchType.LAZY)
-    private PropostaAntecipacao propostaAntecipacao;
 
     @Version
     @Column(name = "NO_VERSAO")
@@ -163,13 +158,5 @@ public class ReembolsoXP implements IPersistente {
 
     public void setVersao(Long versao) {
         this.versao = versao;
-    }
-
-    public PropostaAntecipacao getPropostaAntecipacao() {
-        return propostaAntecipacao;
-    }
-
-    public void setPropostaAntecipacao(PropostaAntecipacao propostaAntecipacao) {
-        this.propostaAntecipacao = propostaAntecipacao;
     }
 }
