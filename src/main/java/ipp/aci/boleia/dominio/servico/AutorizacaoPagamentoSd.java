@@ -67,7 +67,6 @@ public class AutorizacaoPagamentoSd {
      * @return Uma Resultado Paginado de AutorizacaoPagamento
      */
     public ResultadoPaginado<AutorizacaoPagamento> pesquisarAbastecimentosParaExportacao(FiltroPesquisaAbastecimentoVo filtro, List<ParametroOrdenacaoColuna> ordenacao) {
-        filtro.getPaginacao().setTamanhoPagina(null);
         filtro.getPaginacao().setParametrosOrdenacaoColuna(ordenacao);
         return repositorioAutorizacaoPagamento.pesquisaPaginada(filtro, true);
     }
