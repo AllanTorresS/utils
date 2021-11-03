@@ -56,6 +56,25 @@ public final class UtilitarioCalculoData {
     }
 
     /**
+     * Retorna o dia do mês de uma data.
+     *
+     * @param data Data utilizada.
+     * @return O dia do mês
+     */
+    public static Integer obterCampoDia(Date data) {
+        return obterCampoData(data, Calendar.DAY_OF_MONTH);
+    }
+
+    /**
+     * Retorna o mês de uma data.
+     * @param data Data utilizada.
+     * @return O mês da data.
+     */
+    public static Integer obterCampoMes(Date data) {
+        return obterCampoData(data, Calendar.MONTH);
+    }
+
+    /**
      * Obtem um campo da data, de acordo com o numero do campo no Calendar
      *
      * @param data  A data base
@@ -183,6 +202,17 @@ public final class UtilitarioCalculoData {
     }
 
     /**
+     * Define um dia do mês para a data informada.
+     *
+     * @param data Data Informada
+     * @param dia Dia do mês
+     * @return A data com o dia definido.
+     */
+    public static Date definirDiaData(Date data, Integer dia) {
+        return definirTempoData(data, dia, Calendar.DAY_OF_MONTH);
+    }
+
+    /**
      * Define uma unidade de tempo a data informada
      *
      * @param data  A data informada
@@ -300,7 +330,7 @@ public final class UtilitarioCalculoData {
 
     /**
      * Obtem o primeiro dia do mês seguinte
-     *
+     * @param data Data referência
      * @return o primeiro dia do mês seguinte
      */
     public static Date obterPrimeiroDiaMesSeguinte(Date data) {

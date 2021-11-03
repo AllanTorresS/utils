@@ -300,6 +300,16 @@ public final class UtilitarioFormatacao {
     }
 
     /**
+     * Formata um decimal para apresentação na tela para o formato de porcentagem sem virgula.
+     *
+     * @param decimal valor decimal
+     * @return valor formatado
+     */
+    public static String formatarDecimalPercentualSemVirgula(BigDecimal decimal) {
+        return formatarDecimal(decimal, ConstantesFormatacao.FORMATO_PERCENTUAL_SEM_VIRGULA);
+    }
+
+    /**
      * Formata um decimal para apresentação na tela para o formato de distancia em kilometros
      *
      * @param decimal valor decimal
@@ -506,6 +516,21 @@ public final class UtilitarioFormatacao {
         return valor.length() > 11 ?
                 UtilitarioFormatacao.formatarCnpjApresentacao(valor) :
                 UtilitarioFormatacao.formatarCpfApresentacao(valor);
+    }
+
+    /**
+     * Converte um CNPJ ou CPF para string
+     *
+     * @param valor O valor a ser convertido
+     * @return O valor em string
+     */
+    public static String formatarCpfCnpjString(Long valor) {
+        if (valor == null) {
+            return "";
+        }
+        return valor.toString().length() > 11 ?
+                formatarNumeroZerosEsquerda(valor, TAMANHO_CNPJ).toUpperCase() :
+                formatarNumeroZerosEsquerda(valor, TAMANHO_CPF).toUpperCase();
     }
 
     /**

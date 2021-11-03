@@ -495,4 +495,11 @@ public interface IAutorizacaoPagamentoDados extends IRepositorioBoleiaDados<Auto
      * @return lista de abastecimentos que podem ser antecipados
      */
     ResultadoPaginado<AutorizacaoPagamento> obterAbastecimentosAntecipaveis(FiltroAbastecimentoAntecipavelVo filtro);
+
+    /**
+     * Obtém o último abastecimento do motorista com um veículo ativo e não excluído
+     * @param idMotorista O identificador do motorista
+     * @return O abastecimento encontrado
+     */
+    AutorizacaoPagamento obterUltimoAbastecimentoMotorista(Long idMotorista);
 }

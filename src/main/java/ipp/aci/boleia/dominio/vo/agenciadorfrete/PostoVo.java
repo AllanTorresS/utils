@@ -30,6 +30,7 @@ public class PostoVo {
     /**
      * Constrói a representação com os dados fornecidos
      * @param pontoDeVenda O Ponto de Venda que se deseja representar
+     * @param mdr Valor de MDR
      * @param combustiveis Lista de combustivel
      */
     public PostoVo(PontoDeVenda pontoDeVenda, BigDecimal mdr, List<CombustivelVo> combustiveis) {

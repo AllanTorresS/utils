@@ -153,7 +153,8 @@ public final class ChavePermissao {
     public static final String PARAMETRO_SISTEMA_ALTERAR                    = SPRING_ROLE_PREFIX + "PARAMETRO_SISTEMA_ALTERAR" + SPRING_ROLE_SUFFIX;
     public static final String DISPOSITIVO_MOTORISTA_GERAR_PEDIDO           = SPRING_ROLE_PREFIX + "DISPOSITIVO_MOTORISTA_GERAR_PEDIDO" + SPRING_ROLE_SUFFIX;
     public static final String ROTINA_DISPARAR_MANUALMENTE                  = SPRING_ROLE_PREFIX + "ROTINA_DISPARAR_MANUALMENTE" + SPRING_ROLE_SUFFIX;
-    public static final String ABRIR_CHAMADO                                = SPRING_ROLE_PREFIX + "ABRIR_CHAMADO" + SPRING_ROLE_SUFFIX;
+    public static final String CHAMADO_CONSULTAR                            = SPRING_ROLE_PREFIX + "CHAMADO_CONSULTAR" + SPRING_ROLE_SUFFIX;
+    public static final String CHAMADO_INCLUIR                              = SPRING_ROLE_PREFIX + "CHAMADO_INCLUIR" + SPRING_ROLE_SUFFIX;
     public static final String API_TOKEN_CONSULTAR                          = SPRING_ROLE_PREFIX + "API_TOKEN_CONSULTAR" + SPRING_ROLE_SUFFIX;
     public static final String API_TOKEN_GERAR                              = SPRING_ROLE_PREFIX + "API_TOKEN_GERAR" + SPRING_ROLE_SUFFIX;
     public static final String API_TOKEN_BLOQUEIO                           = SPRING_ROLE_PREFIX + "API_TOKEN_BLOQUEIO" + SPRING_ROLE_SUFFIX;
@@ -198,7 +199,8 @@ public final class ChavePermissao {
     public static final String RASTREAR_PEDIDO_TAG 							= SPRING_ROLE_PREFIX + "RASTREAR_PEDIDO_TAG" + SPRING_ROLE_SUFFIX;
     public static final String ATIVACAO_TAG 								= SPRING_ROLE_PREFIX + "ATIVACAO_TAG" + SPRING_ROLE_SUFFIX;
     public static final String ATIVAR_INATIVAR_TAG						    = SPRING_ROLE_PREFIX + "ATIVAR_INATIVAR_TAG" + SPRING_ROLE_SUFFIX;
-    public static final String UTILIZACAO_TAG  								= SPRING_ROLE_PREFIX + "UTILIZACAO_TAG" + SPRING_ROLE_SUFFIX;	
+    public static final String UTILIZACAO_TAG  								= SPRING_ROLE_PREFIX + "UTILIZACAO_TAG" + SPRING_ROLE_SUFFIX;
+    public static final String VALE_PEDAGIO  								= SPRING_ROLE_PREFIX + "VALE_PEDAGIO" + SPRING_ROLE_SUFFIX;
     public static final String CONSULTA_REEMBOLSO_CONECTCAR 				= SPRING_ROLE_PREFIX + "CONSULTA_REEMBOLSO_CONECTCAR" + SPRING_ROLE_SUFFIX;
     public static final String CONSULTA_FROTA_CONECTCAR 					= SPRING_ROLE_PREFIX + "CONSULTA_FROTA_CONECTCAR" + SPRING_ROLE_SUFFIX;
     public static final String CONSULTA_COBRANCA_CONECTCAR                  = SPRING_ROLE_PREFIX + "CONSULTA_COBRANCA_CONECTCAR" + SPRING_ROLE_SUFFIX;
@@ -244,6 +246,11 @@ public final class ChavePermissao {
     public static final String DETALHAMENTO_REEMBOLSO                       = SPRING_ROLE_PREFIX + "DETALHAMENTO_REEMBOLSO" + SPRING_ROLE_SUFFIX;
 
     public static final String DETALHAMENTO_COBRANCA_EXPORTAR               = FINANCEIRO_EXPORTAR_XLS + " or " +  COBRANCA_EXPORTAR;
+
+    public static final String BENEFICIOS_CONSULTAR                       = SPRING_ROLE_PREFIX + "BENEFICIOS_CONSULTAR" + SPRING_ROLE_SUFFIX;
+    public static final String BENEFICIOS_DISTRIBUIR                      = SPRING_ROLE_PREFIX + "BENEFICIOS_DISTRIBUIR" + SPRING_ROLE_SUFFIX;
+    public static final String BENEFICOS_COMPRA_DE_CREDITO                = SPRING_ROLE_PREFIX + "BENEFICOS_COMPRA_DE_CREDITO" + SPRING_ROLE_SUFFIX;
+    public static final String BENEFICOS_CONSULTAR_EXTRATO                = SPRING_ROLE_PREFIX + "BENEFICOS_CONSULTAR_EXTRATO" + SPRING_ROLE_SUFFIX;
 
     // Permissão da API de Frotistas.
     public static final String API_FROTISTA                                         = SPRING_ROLE_PREFIX + "API_FROTISTA" + SPRING_ROLE_SUFFIX;
@@ -297,6 +304,7 @@ public final class ChavePermissao {
     public static final String API_EXTERNO_BUSCAR_VEICULO                       = SPRING_ROLE_PREFIX + "API_EXTERNO_BUSCAR_VEICULO"                      + SPRING_ROLE_SUFFIX;
     public static final String API_EXTERNO_TRANSACAO_CONECTCAR                  = SPRING_ROLE_PREFIX + "API_EXTERNO_TRANSACAO_CONECTCAR"                 + SPRING_ROLE_SUFFIX;
     public static final String API_EXTERNO_RESPOSTA_LEAD_CONECTCAR              = SPRING_ROLE_PREFIX + "API_EXTERNO_RESPOSTA_LEAD_CONECTCAR"             + SPRING_ROLE_SUFFIX;
+    public static final String API_EXTERNO_NOTIFICAR_PENDENCIA_CHAMADO          = SPRING_ROLE_PREFIX + "API_EXTERNO_NOTIFICAR_PENDENCIA_CHAMADO"         + SPRING_ROLE_SUFFIX;
     
     // Permissão da API de Frotas
     public static final String API_EXTERNO_CONSULTAR_FROTA                      = SPRING_ROLE_PREFIX + "API_EXTERNO_CONSULTAR_FROTA"                     + SPRING_ROLE_SUFFIX;

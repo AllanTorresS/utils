@@ -212,6 +212,9 @@ public class Usuario implements IPersistente, IExclusaoLogica, IPertenceFrota, I
     @JsonIgnoreProperties("usuarioConsultorFarmerLeve")
     private List<Frota> frotasAssessoradasConsultorFarmerLeve;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "usuario")
+    private List<PendenciaChamado> pendenciasChamado;
+
     @Transient
     private Set<Permissao> permissoes;
 
@@ -503,6 +506,14 @@ public class Usuario implements IPersistente, IExclusaoLogica, IPertenceFrota, I
 
     public void setFrotasAssessoradasConsultorFarmerLeve(List<Frota> frotasAssessoradasConsultorFarmerLeve) {
         this.frotasAssessoradasConsultorFarmerLeve = frotasAssessoradasConsultorFarmerLeve;
+    }
+
+    public List<PendenciaChamado> getPendenciasChamado() {
+        return pendenciasChamado;
+    }
+
+    public void setPendenciasChamado(List<PendenciaChamado> pendenciasChamado) {
+        this.pendenciasChamado = pendenciasChamado;
     }
 
     public Date getBloqueioTemporario() {

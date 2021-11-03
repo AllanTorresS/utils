@@ -12,7 +12,7 @@ public class AbastecimentoSd {
 
     /**
      * Calcula valor do Fee relativo ao valor do MDR aplicado
-     *
+     * @param abastecimento Objeto com as informações do abastecimento
      * @return valor relativo do Fee em relação ao valor do MDR
      */
     public BigDecimal obterValorTotalFee(Abastecimento abastecimento) {
@@ -31,7 +31,7 @@ public class AbastecimentoSd {
 
     /**
      * Calcula valor do MDR aplicando seu valor no valor do Abastecimento
-     *
+     * @param abastecimento Objeto com as informações do abastecimento
      * @return valor relativo do MDR em relação ao valor do abastecimento
      */
     public BigDecimal obterValorMdr(Abastecimento abastecimento) {
