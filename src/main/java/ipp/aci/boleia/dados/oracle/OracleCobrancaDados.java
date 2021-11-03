@@ -25,6 +25,7 @@ import ipp.aci.boleia.dominio.vo.FiltroPesquisaCobrancaVo;
 import ipp.aci.boleia.dominio.vo.frotista.FiltroPesquisaCobrancaFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.InformacaoPaginacaoFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.ResultadoPaginadoFrtVo;
+import ipp.aci.boleia.dominio.vo.tarifador.FiltroPesquisaRelatorioTarifadorVo;
 import ipp.aci.boleia.util.Ordenacao;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.negocio.ParametrosPesquisaBuilder;
@@ -369,6 +370,18 @@ public class OracleCobrancaDados extends OracleRepositorioBoleiaDados<Cobranca> 
         List<ParametroPesquisa> parametros = new ArrayList<>();
         parametros.add(new ParametroPesquisaIgual("dataVerificacao", doisDiasUteisAtras));
         return pesquisar(null, CONSULTA_COBRANCAS_ATRASADAS_DOIS_DIAS_UTEIS, Cobranca.class, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
+    }
+
+    @Override
+    public ResultadoPaginado<Cobranca> buscarCobrancasParaExportacaoTarifador(FiltroPesquisaRelatorioTarifadorVo filtro) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        povoarParametroDataMaiorIgual("transacoesConsolidadas.dataInicioPeriodo", UtilitarioCalculoData.obterPrimeiroInstanteDia(filtro.getDe()), parametros);
+        povoarParametroDataMenorIgual("transacoesConsolidadas.dataFimPeriodo", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte()), parametros);
+        if(filtro.getFrota() != null) {
+            parametros.add(new ParametroPesquisaIgual("transacoesConsolidadas.frotaPtov.frota.id", filtro.getFrota().getId()));
+        }
+        parametros.add(new ParametroPesquisaNulo("taxaAplicada", true));
+        return pesquisar(filtro.getPaginacao(), parametros.toArray(new ParametroPesquisa[parametros.size()]));
     }
 
     /**

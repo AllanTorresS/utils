@@ -118,6 +118,7 @@ public final class ConstantesJde {
     public static final String VOUCHER_XP_OBSERVACAO_REEMBOLSO = "REEMBOLSO XP";
 
     public static final String VOUCHER_OBSERVACAO_ANTECIPACAO_XP = "ANTECIPAÇÃO DE RECEBÍVEIS";
+    public static final String FATURA_TARIFADOR_OBSERVACAO = "RECOLHA";
 
     /**
      * Impede instanciacao e heranca

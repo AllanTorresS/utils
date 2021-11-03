@@ -83,6 +83,7 @@ public enum TemplatePlanilha {
     TEMPLATE_RELATORIO_DETALHE_REEMBOLSO_ANTECIPADO("template-relatorio-detalhe-reembolso-antecipado.xlsx"),
     TEMPLATE_EXTRATO_VALE_PEDAGIO("template-extrato-vale-pedagio.xlsx"),
 	TEMPLATE_DETALHE_VALE_PEDAGIO("template-detalhe-vale-pedagio.xlsx"),
+    TEMPLATE_RELATORIO_TARIFADOR("template-relatorio-tarifador.xlsx"),
     TEMPLATE_RELATORIO_DETALHE_REEMBOLSO_ANTECIPADO_SOLUCAO("template-relatorio-detalhe-reembolso-antecipado-solucao.xlsx"),
     TEMPLATE_RELATORIO_DETALHE_REEMBOLSO_ANTECIPADO_REVENDA("template-relatorio-detalhe-reembolso-antecipado-revenda.xlsx");
 

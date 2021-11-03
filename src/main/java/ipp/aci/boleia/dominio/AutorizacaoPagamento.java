@@ -2081,4 +2081,13 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
         return this.autorizacoesEditadas != null && this.autorizacoesEditadas.stream()
                 .anyMatch(e -> e.getStatusEdicao().equals(StatusEdicao.EDITADO.getValue()));
     }
+
+    /**
+     * Retorna a litragem do abastecimento negativa em caso de estorno, ou positiva caso contrário
+     * @return a litragem do abastecimento com sinal
+     */
+    @Transient
+    public BigDecimal getLitragemComSinal() {
+        return valorTotal.compareTo(BigDecimal.ZERO) > 0 ? totalLitrosAbastecimento : totalLitrosAbastecimento.negate();
+    }
 }

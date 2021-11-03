@@ -2,6 +2,7 @@ package ipp.aci.boleia.dominio;
 
 import ipp.aci.boleia.dominio.interfaces.IPersistente;
 import ipp.aci.boleia.dominio.interfaces.IPertenceFrota;
+import ipp.aci.boleia.dominio.tarifador.TaxaTarifador;
 import org.hibernate.annotations.Formula;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
@@ -13,6 +14,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -149,6 +152,13 @@ public class Cobranca implements IPersistente, IPertenceFrota {
     @Basic(fetch = FetchType.LAZY)
     @Formula(FORMULA_ULTIMA_JUSTIFICATIVA_AJUSTE)
     private String ultimaJustificativaAjuste;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CD_TAXA_APLICADA")
+    private TaxaTarifador taxaAplicada;
+
+    @Column(name = "VR_TARIFADOR")
+    private BigDecimal valorTarifador;
 
     @Override
     public Long getId() {
@@ -376,6 +386,22 @@ public class Cobranca implements IPersistente, IPertenceFrota {
 
     public void setUltimaJustificativaAjuste(String ultimaJustificativaAjuste) {
         this.ultimaJustificativaAjuste = ultimaJustificativaAjuste;
+    }
+
+    public TaxaTarifador getTaxaAplicada() {
+        return taxaAplicada;
+    }
+
+    public void setTaxaAplicada(TaxaTarifador taxaAplicada) {
+        this.taxaAplicada = taxaAplicada;
+    }
+
+    public BigDecimal getValorTarifador() {
+        return valorTarifador;
+    }
+
+    public void setValorTarifador(BigDecimal valorTarifador) {
+        this.valorTarifador = valorTarifador;
     }
 
     /**

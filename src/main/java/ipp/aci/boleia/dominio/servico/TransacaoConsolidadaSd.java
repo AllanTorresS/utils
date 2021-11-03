@@ -750,7 +750,8 @@ public class TransacaoConsolidadaSd {
         consolidarNotasFiscaisEJustificativas(transacaoConsolidada);
 
         if(transacaoConsolidada.getReembolso() == null || !transacaoConsolidada.esta(StatusTransacaoConsolidada.FECHADA)){
-            transacaoConsolidada.setValorTotal(calcularValorTotalTransacaoConsolidada(transacaoConsolidada));
+            transacaoConsolidada.setValorTotal(calcularValorTotalTransacaoConsolidada(transacaoConsolidada, AutorizacaoPagamento::getValorTotal));
+            transacaoConsolidada.setLitragemTotalAbastecimentos(calcularValorTotalTransacaoConsolidada(transacaoConsolidada, AutorizacaoPagamento::getLitragemComSinal));
             transacaoConsolidada.setMdr(obterTaxaMdr(transacaoConsolidada));
             transacaoConsolidada.setValorDesconto(calcularValorDescontoTransacaoConsolidada(transacaoConsolidada));
             transacaoConsolidada.setValorFaturamento(calcularFaturamentoTransacaoConsolidada(transacaoConsolidada));
@@ -759,17 +760,16 @@ public class TransacaoConsolidadaSd {
         }
     }
 
-
     /**
      * Calcula o valor total de uma transação consolidada.
      * O valor total de uma transconsol é a soma do valor total de todos os abastecimentos (originais e postergados de outros ciclos)
      * considerando apenas os autorizados e cancelados.
      *
-     * @param transacaoConsolidada A transação consolidada que terá o valor calculado.
+     * @param transacaoConsolidada A transação consolidada com os valores a serem calculados.
+     * @param funcaoMapeadora Obtém o campo que será somado
      * @return O valor calculado.
      */
-    private BigDecimal calcularValorTotalTransacaoConsolidada(TransacaoConsolidada transacaoConsolidada) {
-
+    private BigDecimal calcularValorTotalTransacaoConsolidada(TransacaoConsolidada transacaoConsolidada, Function<AutorizacaoPagamento, BigDecimal> funcaoMapeadora) {
         Stream<AutorizacaoPagamento> autorizacaoPagamentoStream = transacaoConsolidada.getAutorizacoesPagamentoAssociadas().stream().filter(a -> {
             if (a.getValorTotal().compareTo(BigDecimal.ZERO) < 0) {
                 //verifica se um abastecimento negativo deve ser descontado
@@ -779,11 +779,8 @@ public class TransacaoConsolidadaSd {
                 return !transacaoConsolidada.exigeEmissaoNF() || !a.isPendenteEmissaoNF(true);
             }
         });
-        return somarValoresAutorizacaoPagamento(
-                autorizacaoPagamentoStream,
-                AutorizacaoPagamento::estaAutorizado,
-                AutorizacaoPagamento::getValorTotal
-        );
+
+        return somarValoresAutorizacaoPagamento(autorizacaoPagamentoStream, AutorizacaoPagamento::estaAutorizado, funcaoMapeadora);
     }
 
     /**
