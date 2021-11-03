@@ -63,6 +63,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static ipp.aci.boleia.dominio.enums.StatusIntegracaoJde.PREVISTO;
@@ -577,7 +578,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             "    LEFT JOIN TC.empresaAgregada EA " +
             "    LEFT JOIN TC.unidade U, " +
             "    AutorizacaoPagamento AA " +
-            "    LEFT JOIN AA.antecipacoesReembolso A WITH A.statusIntegracao = 1 " +
+            "    JOIN AA.antecipacoesReembolso A WITH A.statusIntegracao = 1 " +
             "WHERE " +
             "    COALESCE(AA.transacaoConsolidadaPostergada, AA.transacaoConsolidada) = TC.id AND " +
             "    TRUNC(TC.dataInicioPeriodo) = TRUNC(:dataInicio) AND " +
@@ -2075,6 +2076,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             parametrosPesquisa.add(new ParametroPesquisaIgual("statusCiclo", null));
         }
 
-        return pesquisar(null, CONSULTA_TOTAL_ANTECIPADO_LIQUIDO, BigDecimal.class, parametrosPesquisa.toArray(new ParametroPesquisa[parametrosPesquisa.size()])).getRegistros().stream().findFirst().orElse(BigDecimal.ZERO);
+        return pesquisar(CONSULTA_TOTAL_ANTECIPADO_LIQUIDO, BigDecimal.class, parametrosPesquisa.toArray(new ParametroPesquisa[parametrosPesquisa.size()]))
+                .stream().filter(Objects::nonNull).findFirst().orElse(BigDecimal.ZERO);
     }
 }
