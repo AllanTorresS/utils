@@ -3,11 +3,13 @@ package ipp.aci.boleia.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
 import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Ferramentas para manipulacao de objetos JSON
@@ -55,7 +57,6 @@ public class UtilitarioJson {
         return toObjectWithConfigureFailOnUnknowProperties(json, classe,true);
     }
 
-
     /**
      * Le uma string Json convertendo-a em um objeto da classe informada
      * e configurando se a mesma deve falhar quando encontrar propriedades desconhecidas
@@ -72,6 +73,27 @@ public class UtilitarioJson {
             return new ObjectMapper()
                     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, failOnUnknownProperties)
                     .readValue(json, classe);
+        } catch (IOException e) {
+            throw new ExcecaoBoleiaRuntime(e);
+        }
+    }
+
+    /**
+     * Le uma string Json convertendo-a em um objeto da classe informada
+     * e configurando se a mesma deve falhar quando encontrar propriedades desconhecidas
+     * @param json a string no formato json
+     * @param classe a classe alvo
+     * @param failOnUnknownProperties se a mesma deve falhar quando encontrar propriedades desconhecidas
+     * @param <T> O tipo alvo da conversao
+     * @return Um objeto da classe informada
+     */
+    public static <T> List<T> toListObjectWithConfigureFailOnUnknowProperties(String json,
+                                                                              Class<T> classe,
+                                                                              Boolean failOnUnknownProperties) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            CollectionType javaType = mapper.getTypeFactory().constructCollectionType(List.class, classe);
+            return mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, failOnUnknownProperties).readValue(json, javaType);
         } catch (IOException e) {
             throw new ExcecaoBoleiaRuntime(e);
         }

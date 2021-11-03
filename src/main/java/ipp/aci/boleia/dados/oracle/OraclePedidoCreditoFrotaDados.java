@@ -2,6 +2,7 @@ package ipp.aci.boleia.dados.oracle;
 
 import ipp.aci.boleia.dados.IPedidoCreditoFrotaDados;
 import ipp.aci.boleia.dominio.PedidoCreditoFrota;
+import ipp.aci.boleia.dominio.enums.MeioPagamentoPedidoCredito;
 import ipp.aci.boleia.dominio.enums.StatusIntegracaoJde;
 import ipp.aci.boleia.dominio.enums.StatusPedidoCredito;
 import ipp.aci.boleia.dominio.pesquisa.comum.InformacaoPaginacao;
@@ -145,6 +146,10 @@ public class OraclePedidoCreditoFrotaDados extends OracleRepositorioBoleiaDados<
             parametros.add(new ParametroPesquisaDataMenorOuIgual("dataPedido", UtilitarioCalculoData.obterUltimoInstanteDia(filtro.getAte())));
         }
 
+        if(filtro.getMeioPagamento() != null && filtro.getMeioPagamento().getName() != null)  {
+            parametros.add(new ParametroPesquisaIgual("tipoPagamento", MeioPagamentoPedidoCredito.valueOf(filtro.getMeioPagamento().getName()).getValue()));
+        }
+
         if(filtro.getPaginacao().getParametrosOrdenacaoColuna() != null) {
             filtro.getPaginacao().getParametrosOrdenacaoColuna().add(new ParametroOrdenacaoColuna("dataPedido", Ordenacao.DECRESCENTE));
         } else {
@@ -204,5 +209,16 @@ public class OraclePedidoCreditoFrotaDados extends OracleRepositorioBoleiaDados<
                 parametros.add(new ParametroPesquisaIgual("status", status.getValue()));
             }
         }
+    }
+
+    /**
+     * Obtem pedido de credito pelo codigo da Mundipagg
+     *
+     * @param codigoMundipagg O codigo do pedido
+     * @return
+     */
+    @Override
+    public PedidoCreditoFrota obterPorCodigoMundipagg(String codigoMundipagg) {
+        return pesquisarUnico(new ParametroPesquisaIgual("codigoPedidoMundipagg", codigoMundipagg));
     }
 }

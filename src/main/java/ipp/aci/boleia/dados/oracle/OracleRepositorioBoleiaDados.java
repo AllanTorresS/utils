@@ -508,7 +508,23 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
      * @return O resultado localizado
      */
     protected <C> C pesquisarUnicoSemIsolamentoDados(String queryString, ParametroPesquisa... parametros) {
+        return pesquisarUnicoSemIsolamentoDados(queryString, false, parametros);
+    }
+
+    /**
+     * Realiza uma pesquisa retornando apenas um registro. Caso muitos sejam encontrados, lanca erro.
+     *
+     * @param queryString Query em string
+     * @param setMaxResult Força um max result 1 para obtenção de resultado unico
+     * @param parametros  Os parametros da busca
+     * @param <C> O tipo do objeto de retorno
+     * @return O resultado localizado
+     */
+    protected <C> C pesquisarUnicoSemIsolamentoDados(String queryString, boolean setMaxResult, ParametroPesquisa... parametros) {
         Query query = criarConsultaComParametros(queryString, parametros);
+        if(setMaxResult) {
+            query.setMaxResults(1);
+        }
         try {
             return (C) query.getSingleResult();
         } catch (NoResultException e) {
@@ -1271,7 +1287,11 @@ public abstract class OracleRepositorioBoleiaDados<T extends IPersistente>
             Path<?> navegacaoCampo = obterAtributoEntidade(campo, entityRoot, usarLeftJoins, false, cachePaths);
             if (navegacaoCampo != null) {
                 List<Predicate> in = obterParametroIn((Path<Collection>) navegacaoCampo, (Collection) valor);
-                predicates.add(builder.or(in.toArray(new Predicate[in.size()])));
+                if (((ParametroPesquisaIn) param).getNot()) {
+                	predicates.add(builder.or(in.toArray(new Predicate[in.size()])).not());
+                } else {
+                	predicates.add(builder.or(in.toArray(new Predicate[in.size()])));
+                }
             }
         } else if (valor instanceof Date) {
             povoarParametroTemporalComValor(param, builder, entityRoot, predicates, cachePaths, usarLeftJoins);

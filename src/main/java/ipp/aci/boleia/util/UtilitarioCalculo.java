@@ -15,6 +15,8 @@ public final class UtilitarioCalculo {
 
     private static final int RAIO_TERRA = 6371;
     private static final int MES_EM_DIAS = 30;
+    private static final float BASE_CALCULO_BASE64 = 0.75f;
+    private static final float VALOR_1_MB = (1024 * 1024);
 
 	/**
 	 * Impede a instanciacao e a heranca
@@ -164,5 +166,24 @@ public final class UtilitarioCalculo {
      */
     public static BigDecimal converterTaxaMensalParaDiaria(BigDecimal taxaMensal) {
         return BigDecimal.valueOf(Math.pow((BigDecimal.ONE.add(taxaMensal)).doubleValue(), 1.0/MES_EM_DIAS)).subtract(BigDecimal.ONE);
+    }
+
+    /**
+     * Calcula o tamanho em bytes de um arquivo em base64.
+     * @param base64 Conteúdo base64.
+     * @return Tamanho do conteúdo em bytes.
+     */
+    public static float calcularTamanhoBase64(String base64) {
+        return (base64.length() * BASE_CALCULO_BASE64) - base64.chars().filter(ch -> ch == '=').count();
+    }
+
+    /**
+     * Converte um valor em bytes para megabytes.
+     *
+     * @param bytes Valor em bytes.
+     * @return Valor em megabytes.
+     */
+    public static long converterBytesParaMB(float bytes) {
+        return (long) (bytes / VALOR_1_MB);
     }
 }

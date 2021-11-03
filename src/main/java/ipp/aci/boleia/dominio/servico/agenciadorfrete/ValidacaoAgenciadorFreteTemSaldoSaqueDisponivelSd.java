@@ -27,7 +27,8 @@ public class ValidacaoAgenciadorFreteTemSaldoSaqueDisponivelSd {
     /**
      * Valida se o agenciador de frete permite o saque solicitado na transação
      * @param transacao A trasação a ser validada
-     * @throws ExcecaoServicoIndisponivel Caso a validação falhe
+     * @throws ExcecaoValidacao Caso ocorra um erro de validação
+     * @throws ExcecaoServicoIndisponivel Caso o serviço externo esteja indisponível
      */
     public void validar(Transacao transacao) throws ExcecaoValidacao, ExcecaoServicoIndisponivel {
         if(transacao.getSaque() != null && transacao.getSaque().getValorSolicitado() != null){

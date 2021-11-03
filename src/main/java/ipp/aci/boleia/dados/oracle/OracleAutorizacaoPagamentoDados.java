@@ -9,6 +9,7 @@ import ipp.aci.boleia.dominio.TransacaoConsolidada;
 import ipp.aci.boleia.dominio.Unidade;
 import ipp.aci.boleia.dominio.enums.ClassificacaoAgregado;
 import ipp.aci.boleia.dominio.enums.ModalidadePagamento;
+import ipp.aci.boleia.dominio.enums.StatusAtivacao;
 import ipp.aci.boleia.dominio.enums.StatusAutorizacao;
 import ipp.aci.boleia.dominio.enums.StatusConfirmacaoTransacao;
 import ipp.aci.boleia.dominio.enums.StatusEdicao;
@@ -45,6 +46,7 @@ import ipp.aci.boleia.dominio.vo.FiltroPesquisaDetalheReembolsoVo;
 import ipp.aci.boleia.dominio.vo.FiltroPesquisaQtdTransacoesFrotaVo;
 import ipp.aci.boleia.dominio.vo.QuantidadeAbastecidaVeiculoVo;
 import ipp.aci.boleia.dominio.vo.TransacaoPendenteVo;
+import ipp.aci.boleia.dominio.vo.ValorAntecipavelPorDataVo;
 import ipp.aci.boleia.dominio.vo.apco.InformacoesVolumeVo;
 import ipp.aci.boleia.dominio.vo.frotista.FiltroPesquisaAbastecimentoFrtVo;
 import ipp.aci.boleia.dominio.vo.frotista.InformacaoPaginacaoFrtVo;
@@ -398,6 +400,53 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
             "     ) " +
             " ORDER BY %s ";
 
+    private static final String QUERY_TOTAL_ANTECIPAVEL_POR_DATA =
+            " SELECT new ipp.aci.boleia.dominio.vo.ValorAntecipavelPorDataVo( " +
+            "     COALESCE(ptcp.dataLimitePagamento, ptc.dataLimitePagamento), " +
+            "     SUM(a.valorTotal) " +
+            " ) " +
+            " FROM AutorizacaoPagamento a " +
+            " JOIN a.frota f " +
+            " LEFT JOIN a.unidade u " +
+            " LEFT JOIN a.empresaAgregada ea " +
+            " JOIN a.pontoVenda pv " +
+            " JOIN pv.usuarios u " +
+            " JOIN a.transacaoConsolidada tc " +
+            " JOIN tc.prazos ptc " +
+            " LEFT JOIN a.transacaoConsolidadaPostergada tcp " +
+            " LEFT JOIN tcp.prazos ptcp, " +
+            " ConfiguracaoAntecipacaoRecebiveis ca " +
+            " WHERE " +
+            "     u.id = :idUsuario " +
+            "     AND pv.statusInteresseAntecipacao = " + StatusInteresseAntecipacao.APROVADO.getValue() +
+            "     AND a.valorTotal > 0 " +
+            "     AND a.status = " + StatusAutorizacao.AUTORIZADO.getValue() +
+            "     AND a.statusNotaFiscal = " + StatusNotaFiscalAbastecimento.EMITIDA.getValue() +
+            "     AND COALESCE(tcp.statusConsolidacao, tc.statusConsolidacao) <> " + StatusTransacaoConsolidada.FECHADA.getValue() +
+            "     AND NOT EXISTS ( " +
+            "         SELECT 1 " +
+            "         FROM ReembolsoAntecipado ra " +
+            "         LEFT JOIN ra.propostaAntecipacao pa " +
+            "         JOIN ra.autorizacoesPagamento a1 " +
+            "         WHERE " +
+            "             a.id = a1.id " +
+            "             AND ((ra.tipoAntecipacao = " + TipoAntecipacao.PARCEIRO_XP.getValue() +
+            "             AND (pa.isAceito IS NULL OR pa.isAceito = true) " +
+            "             AND (pa.status IS NULL OR pa.status <> " + StatusPropostaXP.CANCELED.getValue() + ")) " +
+            "             OR (ra.tipoAntecipacao = " + TipoAntecipacao.SOLUCAO.getValue() +
+            "                 AND ra.statusIntegracao = " + StatusIntegracaoReembolsoJde.REALIZADO.getValue() + "))" +
+            "     ) AND a.valorTotal - :margemErroNf <= ( " +
+            "         SELECT COALESCE(SUM(nf.valorTotal), 0) " +
+            "         FROM AutorizacaoPagamento a1 " +
+            "         JOIN a1.notasFiscais nf " +
+            "         WHERE " +
+            "             a.id = a1.id " +
+            "             AND nf.isJustificativa = false " +
+            "     ) " +
+            " GROUP BY COALESCE(ptcp.dataLimitePagamento, ptc.dataLimitePagamento) " +
+            " HAVING SUM(a.valorTotal) >= MAX(ca.valorAntecipacaoMinimo) " +
+            " ORDER BY COALESCE(ptcp.dataLimitePagamento, ptc.dataLimitePagamento) ";
+
     /**
      * Instancia o repositorio
      */
@@ -511,7 +560,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
 
     @Override
     public AutorizacaoPagamento obterAutorizacaoPagamentoPosterior(AutorizacaoPagamento autorizacaoPagamento){
-        InformacaoPaginacao paginacao = new InformacaoPaginacao(1, 1, new ParametroOrdenacaoColuna("dataProcessamento", Ordenacao.CRESCENTE));
+        InformacaoPaginacao paginacao = new InformacaoPaginacao(1, 1, new ParametroOrdenacaoColuna("dataRequisicao", Ordenacao.CRESCENTE));
 
         List<ParametroPesquisa> parametros = new ArrayList<>();
         parametros.add(new ParametroPesquisaIgual("status", StatusAutorizacao.AUTORIZADO.getValue()));
@@ -529,7 +578,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
 
     @Override
     public AutorizacaoPagamento obterUltimoAbastecimentoVeiculo(Long idVeiculo, Date dataMaxima, Boolean filtrarPorEstorno) {
-        InformacaoPaginacao paginacao = new InformacaoPaginacao(1, 1, new ParametroOrdenacaoColuna("dataRequisicao", Ordenacao.DECRESCENTE));
+        InformacaoPaginacao paginacao = new InformacaoPaginacao(1, 1, new ParametroOrdenacaoColuna("dataProcessamento", Ordenacao.DECRESCENTE));
 
         List<ParametroPesquisa> parametros = new ArrayList<>();
         parametros.add(new ParametroPesquisaIgual("status", StatusAutorizacao.AUTORIZADO.getValue()));
@@ -551,7 +600,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
 
     @Override
     public AutorizacaoPagamento obterAutorizacaoPagamentoAnterior(AutorizacaoPagamento autorizacaoPagamento) {
-        InformacaoPaginacao paginacao = new InformacaoPaginacao(1, 1, new ParametroOrdenacaoColuna("dataProcessamento", Ordenacao.DECRESCENTE));
+        InformacaoPaginacao paginacao = new InformacaoPaginacao(1, 1, new ParametroOrdenacaoColuna("dataRequisicao", Ordenacao.DECRESCENTE));
 
         List<ParametroPesquisa> parametros = new ArrayList<>();
         parametros.add(new ParametroPesquisaIgual("status", StatusAutorizacao.AUTORIZADO.getValue()));
@@ -1541,7 +1590,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
 
     @Override
     public AutorizacaoPagamento obterUltimoAbastecimentoVeiculoHodometroValido(Long idVeiculo) {
-        InformacaoPaginacao paginacao = new InformacaoPaginacao(1, 1, new ParametroOrdenacaoColuna("dataProcessamento", Ordenacao.DECRESCENTE));
+        InformacaoPaginacao paginacao = new InformacaoPaginacao(1, 1, new ParametroOrdenacaoColuna("dataRequisicao", Ordenacao.DECRESCENTE));
 
         List<ParametroPesquisa> parametros = new ArrayList<>();
         parametros.add(new ParametroPesquisaIgual("status", StatusAutorizacao.AUTORIZADO.getValue()));
@@ -1558,7 +1607,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
 
     @Override
     public AutorizacaoPagamento obterUltimoAbastecimentoVeiculoHorimetroValido(Long idVeiculo) {
-        InformacaoPaginacao paginacao = new InformacaoPaginacao(1, 1, new ParametroOrdenacaoColuna("dataProcessamento", Ordenacao.DECRESCENTE));
+        InformacaoPaginacao paginacao = new InformacaoPaginacao(1, 1, new ParametroOrdenacaoColuna("dataRequisicao", Ordenacao.DECRESCENTE));
 
         List<ParametroPesquisa> parametros = new ArrayList<>();
         parametros.add(new ParametroPesquisaIgual("status", StatusAutorizacao.AUTORIZADO.getValue()));
@@ -1596,5 +1645,24 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         }
 
         return pesquisar(filtro.getPaginacao(), String.format(QUERY_ABASTECIMENTOS_ANTECIPAVEIS, clausulaOrdenacao), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+    @Override
+    public AutorizacaoPagamento obterUltimoAbastecimentoMotorista(Long idMotorista) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaIgual("motorista.id", idMotorista));
+        parametros.add(new ParametroPesquisaIgual("veiculo.status", StatusAtivacao.ATIVO.getValue()));
+        parametros.add(new ParametroPesquisaIgual("veiculo.excluido", Boolean.FALSE));
+
+        return pesquisar(new ParametroOrdenacaoColuna("id", Ordenacao.DECRESCENTE), parametros.toArray(new ParametroPesquisa[parametros.size()])).stream().findFirst().orElse(null);
+    }
+
+    @Override
+    public List<ValorAntecipavelPorDataVo> obterValoresDisponiveisAntecipacao(Long idUsuario) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaIgual("margemErroNf", ConstantesNotaFiscal.MARGEM_VALOR_ABAST));
+        parametros.add(new ParametroPesquisaIgual("idUsuario", idUsuario));
+
+        return pesquisar(null, QUERY_TOTAL_ANTECIPAVEL_POR_DATA, ValorAntecipavelPorDataVo.class, parametros.toArray(new ParametroPesquisa[parametros.size()])).getRegistros();
     }
 }

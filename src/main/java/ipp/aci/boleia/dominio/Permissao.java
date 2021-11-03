@@ -5,7 +5,10 @@ import org.hibernate.envers.Audited;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -69,6 +72,12 @@ public class Permissao implements IPersistente {
     @NotNull
     @Column(name = "ID_INTRANSFERIVEL")
     private boolean intransferivel;
+
+    //O mapeamento como EAGER se deve ao fato da categoria ser necessária ao se buscar uma permissão
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "CD_CATEGORIA_PERMISSAO")
+    @NotNull
+    private CategoriaPermissao categoria;
 
 	@Override
     public Long getId() {
@@ -166,6 +175,14 @@ public class Permissao implements IPersistente {
 
     public void setIntransferivel(boolean intransferivel) {
         this.intransferivel = intransferivel;
+    }
+
+    public CategoriaPermissao getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(CategoriaPermissao categoria) {
+        this.categoria = categoria;
     }
 
     @Override

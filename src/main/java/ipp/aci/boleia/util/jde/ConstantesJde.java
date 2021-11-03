@@ -33,6 +33,7 @@ public final class ConstantesJde {
     public static final Integer VOUCHER_TEMPO_HORA = 12;
     public static final Integer VOUCHER_TEMPO_MINUTO = 0;
     public static final Integer VOUCHER_TEMPO_SEGUNDO = 0;
+    public static final int VOUCHER_DIAS_ADICIONAIS_DATA_PREVISTA_REEMBOLSO = 2;
     
     public static final Long VOUCHER_CONECTCAR_CENARIO = 754L;
     public static final String VOUCHER_CONECTCAR_OBSERVACAO = "ProFrotas X Connectcar";
@@ -43,6 +44,10 @@ public final class ConstantesJde {
     public static final String VOUCHER_CONTAS_PAGAR_CIA_DOCUMENTO = COMPANHIA;
     public static final String VOUCHER_CONTAS_PAGAR_TIPO_DOCUMENTO = "PV";
     public static final String VOUCHER_CONTAS_PAGAR_LINHA_DOCUMENTO = "001";
+
+    public static final Integer CREDITO_FROTA_BENEFICIO_CENARIO = 140;
+    public static final String CREDITO_FROTA_BENEFICIO_TIPO_DOCUMENTO = "F0";
+    public static final String CREDITO_FROTA_BENEFICIO_OBSERVACAO = "CRÉDITO BENEFÍCIOS";
 
     public static final Integer CREDITO_FROTA_CENARIO = 186;
     public static final String CREDITO_FROTA_TIPO_DOCUMENTO = "D4";

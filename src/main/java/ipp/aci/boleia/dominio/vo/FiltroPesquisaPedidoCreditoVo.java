@@ -14,6 +14,7 @@ public class FiltroPesquisaPedidoCreditoVo extends BaseFiltroPaginado {
     private EntidadeVo codigoPedido;
     private EnumVo statusSolucao;
     private EnumVo statusMundiPagg;
+    private EnumVo meioPagamento;
 
     public EntidadeVo getFrota() {
         return frota;
@@ -61,5 +62,13 @@ public class FiltroPesquisaPedidoCreditoVo extends BaseFiltroPaginado {
 
     public void setStatusMundiPagg(EnumVo statusMundiPagg) {
         this.statusMundiPagg = statusMundiPagg;
+    }
+
+    public EnumVo getMeioPagamento() {
+        return meioPagamento;
+    }
+
+    public void setMeioPagamento(EnumVo meioPagamento) {
+        this.meioPagamento = meioPagamento;
     }
 }

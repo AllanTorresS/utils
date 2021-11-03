@@ -35,7 +35,7 @@ public class MundipaggPagamentoVo {
     public MundipaggPagamentoVo(Frota frota, BigDecimal valor, Date vencimentoBoleto, String code) {
         paymentMethod = CHECKOUT_PAYMENT_METHOD;
         currency = BRL_CURRENCY;
-        amount = valor.multiply(new BigDecimal(100)).intValue();
+        amount = valor.multiply(new BigDecimal(100)).intValue();;
         checkout = new MundipaggCheckoutPedidoVo(frota, vencimentoBoleto);
         this.code = code;
     }

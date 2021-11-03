@@ -11,6 +11,7 @@ public class EntidadeVo {
 
     private Long id;
     private String nome;
+    private String cpf;
 
     public EntidadeVo(){
         // serializacao json
@@ -58,6 +59,13 @@ public class EntidadeVo {
         this.nome = nome;
     }
 
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
 
     /**
      * Método que obtém nome de uma entidade

@@ -56,12 +56,13 @@ public final  class Rotas {
     public static final  String ESTADOS_API                          = BASE_API + "/estado";
     public static final  String VEICULO_API                          = BASE_API + "/veiculo";
     public static final  String VEICULO_COTA_API                     = BASE_API + "/veiculo/cota";
-    public static final  String ABRIR_CHAMADO_API                    = BASE_API + "/chamado";
+    public static final  String CHAMADO_API                          = BASE_API + "/chamado";
     public static final  String MOTIVO_CHAMADO_API                   = BASE_API + "/motivoChamado";
     public static final  String FROTA_API                            = BASE_API + "/frota";
     public static final  String PV_API                               = BASE_API + "/pv";
     public static final  String PERFIL_API                           = BASE_API + "/perfil";
     public static final  String PERMISSAO_API                        = BASE_API + "/permissao";
+    public static final  String CATEGORIA_API                        = BASE_API + "/categoria";
     public static final  String USUARIO_API                          = BASE_API + "/usuario";
     public static final  String USUARIO_FROTA_API                    = BASE_API + "/usuarioFrota";
     public static final  String USUARIO_REVENDA_API                  = BASE_API + "/usuarioRevenda";
@@ -132,6 +133,7 @@ public final  class Rotas {
     public static final  String POSTO_CREDENCIADO_API                = BASE_API + "/postoCredenciado";
     public static final  String DOCUMENTO_API                        = BASE_API + "/documento";
     public static final  String PARAMETRO_NF_API                     = BASE_API + "/parametro-nf";
+    public static final  String PARAMETRO_COTA_VEICULO_AGREGADO      = BASE_API + "/paramCotaVeiculoAgregado";
     public static final  String CREDENCIAMENTO_FROTA_API             = BASE_API + "/credenciamentoFrota";
     public static final  String DASHBOARD_CONECTCAR_API              = BASE_API + "/dashboardConectcar";
     public static final  String PEDIDO_TAG_API                       = BASE_API + "/pedidoTag";
@@ -139,7 +141,9 @@ public final  class Rotas {
     public static final  String ATIVACAO_TAG_API                     = BASE_API + "/ativacaoTag";
     public static final  String UTILIZACAO_TAG_API                   = BASE_API + "/utilizacaoTag";
     public static final  String FROTA_CONECTCAR_API                  = BASE_API + "/frota/conectcar";
-
+    public static final  String VALE_PEDAGIO_API                     = BASE_API + "/valePedagio";
+    public static final  String DETALHE_VALE_PEDAGIO_API             = BASE_API + "/detalheValePedagio";
+    
     public static final String CAMPANHA_API                          = BASE_API + "/campanha";
     public static final String BANDEIRA_API                          = BASE_API + "/bandeira";
     public static final String GRUPO_ECONOMICO_API                   = BASE_API + "/grupoEconomico";
@@ -160,6 +164,7 @@ public final  class Rotas {
     public static final String RELATORIO_NOTA_FISCAL_API             = BASE_API + "/relatorioNotaFiscal";
     public static final String RELATORIO_ULTIMOS_PRECOS_API          = BASE_API + "/relatorioUltimosPrecos";
 
+    public static final String BENEFICIOS_API                        = BASE_API + "/beneficios";
     /**
      * Construtor privado, impede instanciacao e heranca
      */

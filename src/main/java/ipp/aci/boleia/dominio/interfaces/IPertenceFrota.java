@@ -19,8 +19,11 @@ import ipp.aci.boleia.dominio.Negociacao;
 import ipp.aci.boleia.dominio.NotaFiscal;
 import ipp.aci.boleia.dominio.PontoRota;
 import ipp.aci.boleia.dominio.Preco;
+import ipp.aci.boleia.dominio.SaldoVeiculo;
 import ipp.aci.boleia.dominio.TransacaoConsolidada;
 import ipp.aci.boleia.dominio.TransacaoConsolidadaDetalhe;
+import ipp.aci.boleia.dominio.beneficios.OperacaoContaBeneficiario;
+import ipp.aci.boleia.dominio.beneficios.PedidoCreditoBeneficios;
 
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +47,8 @@ public interface IPertenceFrota {
     String CAMPO_VEICULO = "veiculo." + NOME_CAMPO;
     String CAMPO_TRANSACAO_FROTA = "transacaoFrota." + NOME_CAMPO;
     String CAMPO_MOTORISTA = "motorista." + NOME_CAMPO;
+    String CAMPO_FROTA_OPERACAO_CONTA_BENEFICIARIO = "contaBeneficiario.beneficiario." + NOME_CAMPO;
+    String CAMPO_CONTA_BENEFICIOS_FROTA = "contaBeneficiosFrota." + NOME_CAMPO;
 
     Map<Class<?>, String> MAPA_RELACIONAMENTO_FROTA = inicializarMapaCaminhosFrota();
 
@@ -103,6 +108,9 @@ public interface IPertenceFrota {
         mapa.put(ExtratoPedidoTransacao.class, CAMPO_TRANSACAO_FROTA);
         mapa.put(HistoricoFrotaPtovPreco.class, CAMPO_FROTA_PONTOVENDA);
         mapa.put(FluxoAbastecimentoMotoristaConfig.class, CAMPO_MOTORISTA);
+        mapa.put(SaldoVeiculo.class, CAMPO_VEICULO);
+        mapa.put(OperacaoContaBeneficiario.class, CAMPO_FROTA_OPERACAO_CONTA_BENEFICIARIO);
+        mapa.put(PedidoCreditoBeneficios.class, CAMPO_CONTA_BENEFICIOS_FROTA);
         return mapa;
     }
 }

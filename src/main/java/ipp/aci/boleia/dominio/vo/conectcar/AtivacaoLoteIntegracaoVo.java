@@ -2,6 +2,7 @@ package ipp.aci.boleia.dominio.vo.conectcar;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ipp.aci.boleia.dominio.TagConectcar;
+import ipp.aci.boleia.dominio.enums.TipoUtilizacao;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,20 @@ public class AtivacaoLoteIntegracaoVo {
 		this.adesivos = new ArrayList<AdesivosIntegracaoVo>();
 		
 		for (TagConectcar tag : listaConectCar) {
-			adesivos.add(new AdesivosIntegracaoVo(false, tag.getId(), new VeiculoIntegracaoVo(tag.getPlaca())));
+			if(tag != null) {
+				String[] servicosBloqueio = null;
+				boolean bloquear = false;
+				if(TipoUtilizacao.ESTACIONAMENTO.getValue().equals(tag.getTipoUtilizacao())) {
+					bloquear = true;
+					servicosBloqueio = new String[1];
+					servicosBloqueio[0] = TipoUtilizacao.PEDAGIO.name();
+				} else if(TipoUtilizacao.PEDAGIO.getValue().equals(tag.getTipoUtilizacao())) {
+					bloquear = true;
+					servicosBloqueio = new String[1];
+					servicosBloqueio[0] = TipoUtilizacao.ESTACIONAMENTO.name();
+				}
+				adesivos.add(new AdesivosIntegracaoVo(bloquear, servicosBloqueio, tag.getId(), new VeiculoIntegracaoVo(tag.getPlaca())));
+			}
 		}
 		
 	}

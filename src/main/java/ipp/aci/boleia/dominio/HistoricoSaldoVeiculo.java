@@ -91,7 +91,6 @@ public class HistoricoSaldoVeiculo implements IPersistente, IPertenceFrota {
     @JoinColumn(name = "CD_VEICULO")
     private Veiculo veiculo;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CD_USUARIO")
     private Usuario usuario;
@@ -333,7 +332,7 @@ public class HistoricoSaldoVeiculo implements IPersistente, IPertenceFrota {
      * @param mensal True se a cota do veículo for mensal
      * @return Valor do saldo disponível
      */
-    private BigDecimal saldoDisponivel(Boolean emLitros, Boolean mensal){
+    public BigDecimal saldoDisponivel(Boolean emLitros, Boolean mensal){
         return  (mensal == null || !mensal)
                 ? (emLitros ? getCotaLitrosAbastecimento() : getCotaValorAbastecimento())
                 : (emLitros ? getSaldoLitros() : getSaldoValor());

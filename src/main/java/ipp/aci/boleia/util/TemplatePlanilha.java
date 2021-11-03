@@ -14,6 +14,7 @@ public enum TemplatePlanilha {
     TEMPLATE_MICROMERCADO("template-micromercado.xlsx"),
     TEMPLATE_PRECO_MICROMERCADO("template-preco-micromercado.xlsx"),
     TEMPLATE_PRECO_BASE("template-incluir-precos-posto-em-lote.xlsx"),
+    TEMPLATE_COTA_VEICULO_AGREGADO("template-incluir-cota-veiculo-agregado-lote.xlsx"),
     TEMPLATE_RELATORIO_ABASTECIMENTO_CONSUMO_INTERNO("template-relatorio-abastecimento-consumo-interno.xlsx"),
     TEMPLATE_RELATORIO_ABASTECIMENTO_CONSUMO_FROTA("template-relatorio-abastecimento-consumo-frota.xlsx"),
     TEMPLATE_RELATORIO_ABASTECIMENTO_FROTA("template-relatorio-abastecimento-frota.xlsx"),
@@ -80,7 +81,11 @@ public enum TemplatePlanilha {
     TEMPLATE_RELATORIO_REEMBOLSO_ANTECIPADO_SOLUCAO("template-relatorio-reembolso-antecipado-solucao.xlsx"),
     TEMPLATE_RELATORIO_REEMBOLSO_ANTECIPADO_REVENDA("template-relatorio-reembolso-antecipado-revenda.xlsx"),
     TEMPLATE_RELATORIO_DETALHE_REEMBOLSO_ANTECIPADO("template-relatorio-detalhe-reembolso-antecipado.xlsx"),
-    TEMPLATE_RELATORIO_TARIFADOR("template-relatorio-tarifador.xlsx");
+    TEMPLATE_EXTRATO_VALE_PEDAGIO("template-extrato-vale-pedagio.xlsx"),
+	TEMPLATE_DETALHE_VALE_PEDAGIO("template-detalhe-vale-pedagio.xlsx"),
+    TEMPLATE_RELATORIO_TARIFADOR("template-relatorio-tarifador.xlsx"),
+    TEMPLATE_RELATORIO_DETALHE_REEMBOLSO_ANTECIPADO_SOLUCAO("template-relatorio-detalhe-reembolso-antecipado-solucao.xlsx"),
+    TEMPLATE_RELATORIO_DETALHE_REEMBOLSO_ANTECIPADO_REVENDA("template-relatorio-detalhe-reembolso-antecipado-revenda.xlsx");
 
 
     private static final String BASE_TEMPLATE = "/template-planilhas/";

@@ -68,7 +68,8 @@ import static ipp.aci.boleia.util.UtilitarioCalculo.calcularValorTotalJuros;
 @Table(name = "AUTORIZACAO_PAGAMENTO")
 public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPertenceRevendedor, IPertenceMotorista {
 
-    public static final String VALOR_MAXIMO_AUTORIZACAO = "99999.999";
+    public static final String VALOR_MAXIMO_AUTORIZACAO = "9999999.999";
+    public static final String QUANTIDADE_LITROS_MAXIMO_AUTORIZACAO = "99999.999";
     private static final long serialVersionUID = 5442724833587865453L;
 
     /**
@@ -331,7 +332,7 @@ public class AutorizacaoPagamento implements IPersistente, IPertenceFrota, IPert
     @JoinColumn(name = "CD_TRANSACAO_FROTA")
     private TransacaoFrota transacaoFrota;
 
-    @DecimalMax(VALOR_MAXIMO_AUTORIZACAO)
+    @DecimalMax(QUANTIDADE_LITROS_MAXIMO_AUTORIZACAO)
     @Column(name = "QT_TOTAL_LIT_ABAS")
     private BigDecimal totalLitrosAbastecimento;
 

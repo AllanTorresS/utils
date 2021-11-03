@@ -12,6 +12,8 @@ import java.util.List;
  */
 public interface ISistemaExternoDados extends IRepositorioBoleiaDados<SistemaExterno>{
 
+    SistemaExterno obterPorClientESecretComPermissao(String client, String secret);
+
     /**
      * Obtem o Sistema de Externo
      * @param client credencial de id do sistema de integração
