@@ -45,6 +45,10 @@ public final class ConstantesJde {
     public static final String VOUCHER_CONTAS_PAGAR_TIPO_DOCUMENTO = "PV";
     public static final String VOUCHER_CONTAS_PAGAR_LINHA_DOCUMENTO = "001";
 
+    public static final Integer CREDITO_FROTA_BENEFICIO_CENARIO = 140;
+    public static final String CREDITO_FROTA_BENEFICIO_TIPO_DOCUMENTO = "F0";
+    public static final String CREDITO_FROTA_BENEFICIO_OBSERVACAO = "CRÉDITO BENEFÍCIOS";
+
     public static final Integer CREDITO_FROTA_CENARIO = 186;
     public static final String CREDITO_FROTA_TIPO_DOCUMENTO = "D4";
     public static final String CREDITO_FROTA_OBSERVACAO = "CRÉDITO PRÉ PAGO";

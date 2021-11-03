@@ -59,7 +59,7 @@ public class Perfil implements IPersistente, IPertenceFrota, IPertenceRevendedor
     private Rede rede;
 
     @NotNull
-    @Size(max=50)
+    @Size(max=80)
     @Column(name = "NM_PERFIL")
     private String nome;
 

@@ -24,6 +24,8 @@ import ipp.aci.boleia.dominio.enums.TipoTokenJwt;
 import ipp.aci.boleia.util.UtilitarioCalculoData;
 import ipp.aci.boleia.util.excecao.ExcecaoBoleiaRuntime;
 import ipp.aci.boleia.util.excecao.ExcecaoTokenJwtExpirado;
+import ipp.aci.boleia.util.negocio.UtilitarioAmbiente;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,6 +87,9 @@ public class UtilitarioJwt {
 
     @Autowired
     private VerificadorVersaoTokenJwt verificadorVersaoTokenJwt;
+
+    @Autowired
+    private UtilitarioAmbiente utilitarioAmbiente;
 
     private Algorithm algoritmo;
     private JWTVerifier verificador;
@@ -425,7 +430,7 @@ public class UtilitarioJwt {
     public String criarTokenDownloadArquivo(String url) {
         try {
             return JWT.create()
-                .withExpiresAt(UtilitarioCalculoData.adicionarHorasData(new Date(), TipoTokenJwt.DOWNLOAD_ARQUIVO.getDuracaoHoras()))
+                .withExpiresAt(UtilitarioCalculoData.adicionarHorasData(utilitarioAmbiente.buscarDataAmbiente(), TipoTokenJwt.DOWNLOAD_ARQUIVO.getDuracaoHoras()))
                 .withClaim(CAMPO_URL, url)
                 .withIssuer(CAMPO_ISSUER)
                 .sign(algoritmo);
@@ -454,7 +459,7 @@ public class UtilitarioJwt {
      */
     private String criarTokenJWT(TipoTokenJwt tipo, Long codigoValidacaoTokenJwt, TipoPerfilUsuario tipoPerfil, Long idUsuario, String nomeUsuario, String fingerprint, Long contadorRenovacoes, String[] permissoes, Long idFrota, Long idRede, Long idMotorista, Long[] idsPontoVenda, Long[] codsCorpPontoVenda) {
         try {
-            Date agora = new Date();
+            Date agora = utilitarioAmbiente.buscarDataAmbiente();
             return JWT.create()
                 .withExpiresAt(UtilitarioCalculoData.adicionarHorasData(agora, tipo.getDuracaoHoras()))
                 .withClaim(CAMPO_USUARIO_ID,                     idUsuario)
@@ -548,7 +553,7 @@ public class UtilitarioJwt {
         usuario.setId(idUsuario != null ? idUsuario : gerarIdAleatorio());
         usuario.setLogin(Long.toString(gerarIdAleatorio()));
         usuario.setNome(jwt.getClaim(CAMPO_USUARIO_NOME).asString());
-        usuario.setDataUltimoLogin(new Date());
+        usuario.setDataUltimoLogin(utilitarioAmbiente.buscarDataAmbiente());
         usuario.setStatus(StatusAtivacao.ATIVO.getValue());
         usuario.setGestor(false);
         usuario.setExcluido(false);
@@ -941,7 +946,7 @@ public class UtilitarioJwt {
         if (claim != null && claim.asLong() != null) {
             double geradoEm = claim.asDate().getTime();
             double expiraEm = token.getExpiresAt().getTime();
-            double agora = new Date().getTime();
+            double agora = utilitarioAmbiente.buscarDataAmbiente().getTime();
             return agora < expiraEm && ((agora - geradoEm)/(expiraEm - geradoEm) >= LIMIAR_EXPIRACAO_TOKEN);
         }
         return false;
@@ -956,10 +961,10 @@ public class UtilitarioJwt {
     public boolean expiracaoProxima(DecodedJWT token){
         double geradoEm = token.getIssuedAt().getTime();
         double expiraEm = token.getExpiresAt().getTime();
-        double agora = new Date().getTime();
+        double agora = utilitarioAmbiente.buscarDataAmbiente().getTime();
         return agora < expiraEm && ((agora - geradoEm) / (expiraEm - geradoEm) >= LIMIAR_EXPIRACAO_TOKEN);
     }
-
+    
     /**
      * Verifica se o token está expirado.
      *
@@ -967,7 +972,7 @@ public class UtilitarioJwt {
      * @return se está ou não expirado
      */
     public boolean isTokenExpirado(DecodedJWT token){
-        return new Date().getTime() > token.getExpiresAt().getTime();
+        return utilitarioAmbiente.buscarDataAmbiente().getTime() > token.getExpiresAt().getTime();
     }
 
     /**

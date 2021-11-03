@@ -13,6 +13,32 @@ import java.util.List;
 public interface IUsuarioDados extends IRepositorioBoleiaDados<Usuario> {
 
     /**
+     * Obtém um usuário frotista a partir do CPF e CNPJ.
+     *
+     * @param cpfUsuario CPF do usuário.
+     * @param cnpjFrota CNPJ da frota
+     * @return usuário frotista encontrado.
+     */
+    Usuario obterFrotistaPorCpfECnpj(Long cpfUsuario, Long cnpjFrota);
+
+    /**
+     * Obtém um usuário revendedor a partir do CPF e CNPJ.
+     *
+     * @param cpfUsuario CPF do usuário.
+     * @param cnpjRevenda CNPJ da revenda
+     * @return usuário revendedor encontrado.
+     */
+    Usuario obterRevendedorPorCpfECnpj(Long cpfUsuario, Long cnpjRevenda);
+
+    /**
+     * Obtém um usuário interno a partir do CPF.
+     *
+     * @param cpfUsuario CPF do usuário.
+     * @return usuário interno encontrado.
+     */
+    Usuario obterInternoPorCpf(Long cpfUsuario);
+
+    /**
      * Pesquisa Usuarios a partir do filtro informado
      *
      * @param filtro O filtro da busca

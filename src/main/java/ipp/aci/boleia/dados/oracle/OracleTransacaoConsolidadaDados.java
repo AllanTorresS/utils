@@ -321,6 +321,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             " SELECT SUM(tc.valorTotal) - SUM(tc.valorDescontoAbastecimentos) " +
                     "FROM TransacaoConsolidada tc " +
                     "LEFT JOIN tc.frotaPtov fpv " +
+                    "LEFT JOIN fpv.frota f " +
                     "LEFT JOIN tc.cobranca c " +
                     "WHERE %s " +
                     "((tc.dataInicioPeriodo >= :dataInicioPeriodo AND tc.dataFimPeriodo <= :dataFimPeriodo) OR (tc.dataFimPeriodo >= :dataInicioPeriodo AND tc.dataInicioPeriodo <= :dataFimPeriodo)) " +
@@ -328,6 +329,7 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
                     "AND (tc.statusConsolidacao = :statusCiclo OR :statusCiclo is null) " +
                     "AND (c.statusIntegracaoJDE = :statusIntegracao OR (c.statusIntegracaoJDE IS NULL AND :statusIntegracao = " + PREVISTO.getValue() + ") OR :statusIntegracao is null) " +
                     "AND (c.numeroDocumento = :numeroDocumento OR :numeroDocumento is null) " +
+                    "AND (f.modoPagamento = :modoPagamento OR :modoPagamento is null) " +
                     "%s ";
 
     private static final String CONSULTA_NUMERO_REEMBOLSOS_ATRASADOS =
@@ -1873,6 +1875,11 @@ public class OracleTransacaoConsolidadaDados extends OracleRepositorioBoleiaDado
             parametros.add(new ParametroPesquisaIgual("statusIntegracao", filtro.getStatusIntegracao().getValue()));
         } else {
             parametros.add(new ParametroPesquisaIgual("statusIntegracao", null));
+        }
+        if(filtro.getModalidadePagamento() != null && filtro.getModalidadePagamento().getValue() != null) {
+            parametros.add(new ParametroPesquisaIgual("modoPagamento", filtro.getModalidadePagamento().getValue()));
+        } else {
+            parametros.add(new ParametroPesquisaIgual("modoPagamento", null));
         }
 
         String filtroStatus = " ";

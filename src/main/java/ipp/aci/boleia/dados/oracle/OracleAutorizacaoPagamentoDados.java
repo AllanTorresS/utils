@@ -9,6 +9,7 @@ import ipp.aci.boleia.dominio.TransacaoConsolidada;
 import ipp.aci.boleia.dominio.Unidade;
 import ipp.aci.boleia.dominio.enums.ClassificacaoAgregado;
 import ipp.aci.boleia.dominio.enums.ModalidadePagamento;
+import ipp.aci.boleia.dominio.enums.StatusAtivacao;
 import ipp.aci.boleia.dominio.enums.StatusAutorizacao;
 import ipp.aci.boleia.dominio.enums.StatusConfirmacaoTransacao;
 import ipp.aci.boleia.dominio.enums.StatusEdicao;
@@ -559,7 +560,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
 
     @Override
     public AutorizacaoPagamento obterAutorizacaoPagamentoPosterior(AutorizacaoPagamento autorizacaoPagamento){
-        InformacaoPaginacao paginacao = new InformacaoPaginacao(1, 1, new ParametroOrdenacaoColuna("dataProcessamento", Ordenacao.CRESCENTE));
+        InformacaoPaginacao paginacao = new InformacaoPaginacao(1, 1, new ParametroOrdenacaoColuna("dataRequisicao", Ordenacao.CRESCENTE));
 
         List<ParametroPesquisa> parametros = new ArrayList<>();
         parametros.add(new ParametroPesquisaIgual("status", StatusAutorizacao.AUTORIZADO.getValue()));
@@ -599,7 +600,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
 
     @Override
     public AutorizacaoPagamento obterAutorizacaoPagamentoAnterior(AutorizacaoPagamento autorizacaoPagamento) {
-        InformacaoPaginacao paginacao = new InformacaoPaginacao(1, 1, new ParametroOrdenacaoColuna("dataProcessamento", Ordenacao.DECRESCENTE));
+        InformacaoPaginacao paginacao = new InformacaoPaginacao(1, 1, new ParametroOrdenacaoColuna("dataRequisicao", Ordenacao.DECRESCENTE));
 
         List<ParametroPesquisa> parametros = new ArrayList<>();
         parametros.add(new ParametroPesquisaIgual("status", StatusAutorizacao.AUTORIZADO.getValue()));
@@ -1589,7 +1590,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
 
     @Override
     public AutorizacaoPagamento obterUltimoAbastecimentoVeiculoHodometroValido(Long idVeiculo) {
-        InformacaoPaginacao paginacao = new InformacaoPaginacao(1, 1, new ParametroOrdenacaoColuna("dataProcessamento", Ordenacao.DECRESCENTE));
+        InformacaoPaginacao paginacao = new InformacaoPaginacao(1, 1, new ParametroOrdenacaoColuna("dataRequisicao", Ordenacao.DECRESCENTE));
 
         List<ParametroPesquisa> parametros = new ArrayList<>();
         parametros.add(new ParametroPesquisaIgual("status", StatusAutorizacao.AUTORIZADO.getValue()));
@@ -1606,7 +1607,7 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
 
     @Override
     public AutorizacaoPagamento obterUltimoAbastecimentoVeiculoHorimetroValido(Long idVeiculo) {
-        InformacaoPaginacao paginacao = new InformacaoPaginacao(1, 1, new ParametroOrdenacaoColuna("dataProcessamento", Ordenacao.DECRESCENTE));
+        InformacaoPaginacao paginacao = new InformacaoPaginacao(1, 1, new ParametroOrdenacaoColuna("dataRequisicao", Ordenacao.DECRESCENTE));
 
         List<ParametroPesquisa> parametros = new ArrayList<>();
         parametros.add(new ParametroPesquisaIgual("status", StatusAutorizacao.AUTORIZADO.getValue()));
@@ -1644,6 +1645,16 @@ public class OracleAutorizacaoPagamentoDados extends OracleRepositorioBoleiaDado
         }
 
         return pesquisar(filtro.getPaginacao(), String.format(QUERY_ABASTECIMENTOS_ANTECIPAVEIS, clausulaOrdenacao), parametros.toArray(new ParametroPesquisa[parametros.size()]));
+    }
+
+    @Override
+    public AutorizacaoPagamento obterUltimoAbastecimentoMotorista(Long idMotorista) {
+        List<ParametroPesquisa> parametros = new ArrayList<>();
+        parametros.add(new ParametroPesquisaIgual("motorista.id", idMotorista));
+        parametros.add(new ParametroPesquisaIgual("veiculo.status", StatusAtivacao.ATIVO.getValue()));
+        parametros.add(new ParametroPesquisaIgual("veiculo.excluido", Boolean.FALSE));
+
+        return pesquisar(new ParametroOrdenacaoColuna("id", Ordenacao.DECRESCENTE), parametros.toArray(new ParametroPesquisa[parametros.size()])).stream().findFirst().orElse(null);
     }
 
     @Override

@@ -467,7 +467,7 @@ public class UsuarioSd {
 
     /**
      * Obtém a quantidade total de usuarios de um tipo de perfil.
-     *
+     * @param tipoPerfilUsuario Tipo de perfil
      * @return Quantidade total de usuarios de um tipo de perfil
      */
     public long obterQuantidadeTotalAtivosDeTipoPerfil(TipoPerfilUsuario tipoPerfilUsuario){

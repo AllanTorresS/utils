@@ -1,5 +1,6 @@
 package ipp.aci.boleia.dominio.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.List;
 /**
  * Classe com informacoes relacionadas ao usuario do sistema Allow Me
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class UsuarioAllowMeVo {
 
     private String id;

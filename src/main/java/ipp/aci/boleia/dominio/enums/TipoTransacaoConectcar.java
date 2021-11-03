@@ -12,7 +12,11 @@ public enum TipoTransacaoConectcar implements IEnumComLabel<TipoTransacaoConectc
     ESTORNO_PEDAGIO(3),
     ESTORNO_ESTACIONAMENTO(4),
     AJUSTE_PEDAGIO(5),
-    AJUSTE_ESTACIONAMENTO(6);
+    AJUSTE_ESTACIONAMENTO(6),
+    RECARGA_VALE_PEDAGIO(7),
+    PASSAGEM_VALE_PEDAGIO(8),
+    ESTORNO_VALE_PEDAGIO(9),
+    CANCELAMENTO_VALE_PEDAGIO(10);
 
     private final Integer value;
 

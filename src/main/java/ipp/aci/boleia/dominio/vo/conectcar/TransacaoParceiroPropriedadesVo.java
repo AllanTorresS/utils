@@ -49,6 +49,27 @@ public class TransacaoParceiroPropriedadesVo {
 	@JsonProperty("NumeroEixo")
 	private String numeroEixo;
 
+	@JsonProperty("DataInicioViagem")
+	private String dataInicioViagem;
+
+	@JsonProperty("DataFimViagem")
+	private String dataFimViagem;
+
+	@JsonProperty("DataCadastroViagem")
+	private String dataCadastroViagem;
+
+	@JsonProperty("DataCancelamentoRecargaValePedagio")
+	private String dataCancelamentoRecargaValePedagio;
+
+	@JsonProperty("Embarcador")
+	private String embarcador;
+
+	@JsonProperty("CnpjEmbarcador")
+	private String cnpjEmbarcador;
+	
+	@JsonProperty("ViagemId")
+	private Long viagemId;
+
 	public TransacaoParceiroPropriedadesVo() {
 	}
 
@@ -154,6 +175,62 @@ public class TransacaoParceiroPropriedadesVo {
 
 	public void setNumeroEixo(String numeroEixo) {
 		this.numeroEixo = numeroEixo;
+	}
+
+	public String getDataInicioViagem() {
+		return dataInicioViagem;
+	}
+
+	public void setDataInicioViagem(String dataInicioViagem) {
+		this.dataInicioViagem = dataInicioViagem;
+	}
+
+	public String getDataFimViagem() {
+		return dataFimViagem;
+	}
+
+	public void setDataFimViagem(String dataFimViagem) {
+		this.dataFimViagem = dataFimViagem;
+	}
+
+	public String getDataCadastroViagem() {
+		return dataCadastroViagem;
+	}
+
+	public void setDataCadastroViagem(String dataCadastroViagem) {
+		this.dataCadastroViagem = dataCadastroViagem;
+	}
+
+	public String getDataCancelamentoRecargaValePedagio() {
+		return dataCancelamentoRecargaValePedagio;
+	}
+
+	public void setDataCancelamentoRecargaValePedagio(String dataCancelamentoRecargaValePedagio) {
+		this.dataCancelamentoRecargaValePedagio = dataCancelamentoRecargaValePedagio;
+	}
+
+	public String getEmbarcador() {
+		return embarcador;
+	}
+
+	public void setEmbarcador(String embarcador) {
+		this.embarcador = embarcador;
+	}
+
+	public String getCnpjEmbarcador() {
+		return cnpjEmbarcador;
+	}
+
+	public void setCnpjEmbarcador(String cnpjEmbarcador) {
+		this.cnpjEmbarcador = cnpjEmbarcador;
+	}
+
+	public Long getViagemId() {
+		return viagemId;
+	}
+
+	public void setViagemId(Long viagemId) {
+		this.viagemId = viagemId;
 	}
 
 }

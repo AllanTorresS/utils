@@ -823,8 +823,9 @@ public class EmailSd {
     }
 
     /**
-     * Envia um email com todas as mensagens de falhas da sincronizaÃ§Ã£o com o SalesForce
+     * Envia um email com todas as mensagens de falhas da sincronização com o SalesForce
      * @param motivosFalhas motivos das falhas
+     * @param destinatariosIntegracaoParametroNf Destinatarios que receberão o email
      */
     public void enviarEmailsFalhasAtualizacaoExigenciaNfSalesForce(List<AtualizarExigenciaNfeErroVo> motivosFalhas, List<String> destinatariosIntegracaoParametroNf){
         final String assunto = mensagens.obterMensagem("integracao.salesforce.assunto.email.erro.atualizasao.parametrizacao.nfe");
