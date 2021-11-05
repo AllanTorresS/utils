@@ -132,6 +132,7 @@ public class UtilitarioJwt {
      * Informando o tipo de token a extrair (Bearer ou Basic)
      *
      * @param request A requisicao HTTP
+     * @param tipo o tipo do token a ser extraído
      * @return O token codificado
      */
     public String extrairToken(HttpServletRequest request, String tipo) {

@@ -8,9 +8,17 @@ import ipp.aci.boleia.dominio.Frota;
 public class MundipaggTelefoneVo {
     private MundipaggTelefoneMovelVo home_phone;
 
+    /**
+     * Construtor padrão
+     */
     public MundipaggTelefoneVo() {
     }
 
+    /**
+     * Constrói o VO a partir de uma entidade Frota
+     *
+     * @param frota a frota
+     */
     public MundipaggTelefoneVo(Frota frota) {
         this.home_phone = new MundipaggTelefoneMovelVo(frota);
     }

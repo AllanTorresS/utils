@@ -45,6 +45,7 @@ public class SistemaExternoSd {
      * Verificar permissão para acesso via Authentication Basic
      * @param client da autenticação básica do token enviado
      * @param secret da autenticação básica do token enviado
+     * @return O sistema externo associado às credenciais
      */
     public SistemaExterno verificarAutorizacaoBasic(String client, String secret) {
         SistemaExterno sistemaExterno = this.repositorio.obterPorClientESecretComPermissao(client, secret);
