@@ -180,7 +180,8 @@ public class ProvedorAutenticacao implements AuthenticationProvider {
 
     /**
      * Autentica um sistema externo com autenticação basic
-     *
+     * @param sistemaExterno o sistema externo a ser autenticado
+     * @return Um objeto Authentication, do Spring Security, caso o usuário seja autenticado com sucesso
      */
     public Authentication autenticaSistemaExternoBasic(SistemaExterno sistemaExterno) {
 

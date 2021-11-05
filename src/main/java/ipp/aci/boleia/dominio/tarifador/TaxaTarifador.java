@@ -30,6 +30,8 @@ import java.util.List;
 @Table(name = "TAXA_TARIFADOR")
 public class TaxaTarifador implements IPersistente {
 
+    private static final long serialVersionUID = -774480937554545456L;
+
     @Id
     @Column(name = "CD_TAXA_TARIFADOR")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_TAXA_TARIFADOR")
@@ -152,6 +154,11 @@ public class TaxaTarifador implements IPersistente {
         this.cobrancas = cobrancas;
     }
 
+    /**
+     * Obtém o valor da tarifa a partir do total da cobrança
+     * @param totalEmReais o total (líquido) da cobrança, em reais
+     * @return o valor da tarifa em reais
+     */
     @Transient
     public BigDecimal getAcrescimoTarifador(BigDecimal totalEmReais) {
         TipoCalculoTaxa tipoCalculoTaxaEnum = TipoCalculoTaxa.obterPorValor(tipoCalculoTaxa);

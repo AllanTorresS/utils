@@ -1,6 +1,5 @@
 package ipp.aci.boleia.dominio.vo;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import ipp.aci.boleia.dominio.Frota;
 
 /**
@@ -14,9 +13,17 @@ public class MundipaggTelefoneMovelVo {
     private String number;
     private String area_code;
 
+    /**
+     * Construtor padrão
+     */
     public MundipaggTelefoneMovelVo() {
     }
 
+    /**
+     * Constrói o VO a partir de uma entidade Frota
+     *
+     * @param frota a frota
+     */
     public MundipaggTelefoneMovelVo(Frota frota) {
         this.country_code = BR_COUNTRY_CODE;
         this.number =  frota.getTelefone().toString();
