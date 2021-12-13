@@ -66,6 +66,7 @@ public class ArmazenamentoArquivosSd {
         repositoriosPorTipoArquivo.put(TipoArquivo.RELATORIO_48_HORAS_PDF, arquivoDados);
         repositoriosPorTipoArquivo.put(TipoArquivo.RELATORIO_48_HORAS_PDF_TEMP_DATASOURCE, arquivoDados);
         repositoriosPorTipoArquivo.put(TipoArquivo.ANONIMIZACAO_MOTORISTA, arquivoDados);
+        repositoriosPorTipoArquivo.put(TipoArquivo.DOWNLOAD_PRESIGNED_NOTA_FISCAL_ZIP, arquivoDados);
     }
 
     /**

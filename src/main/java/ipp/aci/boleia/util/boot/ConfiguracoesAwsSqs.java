@@ -144,6 +144,12 @@ public class ConfiguracoesAwsSqs {
     private String nomeFilaDistribuicaoAutomaticaBeneficios;
 
     /**
+     * Nome da fila que processa arquivos em lote
+     */
+    @Value("${aws.sqs.arquivos.download-lote}")
+    private String nomeFilaProcessaArquivoDownloadLote;
+
+    /**
      * Carrega as mensagens do sistema
      */
     @Autowired
@@ -193,7 +199,8 @@ public class ConfiguracoesAwsSqs {
                         ,nomeFilaAnonimizacaoExclusaoMotoristaAuditoria
                         ,nomeFilaProcessarPropostaAntecipacao
                         ,nomeFilaDistribuicaoAutomaticaBeneficios
-                        ,nomeFilaEmailsAlteracaoStatusFrota);
+                        ,nomeFilaEmailsAlteracaoStatusFrota
+                        ,nomeFilaProcessaArquivoDownloadLote);
         criaFilaSeNaoExistem(amazonSQSAsync, nomeFilas);
         return new QueueMessagingTemplate(amazonSQSAsync);
     }
